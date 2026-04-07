@@ -56,6 +56,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import {
   IRnaPreset,
   LabeledNodesWithPositionInSequence,
@@ -629,7 +630,10 @@ export class SequenceMode extends BaseMode {
     );
 
     const newPeptide = peptideAddCommand.operations[0].monomer as BaseMonomer;
-    const newPeptideNode = new MonomerSequenceNode(newPeptide);
+    const newPeptideNode =
+      newPeptide instanceof AmbiguousMonomer
+        ? new AmbiguousMonomerSequenceNode(newPeptide)
+        : new MonomerSequenceNode(newPeptide);
 
     modelChanges.merge(peptideAddCommand);
 

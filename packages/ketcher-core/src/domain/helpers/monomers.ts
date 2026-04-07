@@ -29,7 +29,7 @@ type AmbiguousMonomerEntity = BaseMonomer &
   };
 
 type AmbiguousMonomerLike = {
-  isAmbiguous?: boolean;
+  monomerItem?: { isAmbiguous?: boolean };
   monomerClass?: KetMonomerClass;
 };
 
@@ -43,7 +43,8 @@ const isAmbiguousMonomerEntity = (
   const ambiguousMonomer = monomer as AmbiguousMonomerLike | undefined;
 
   return Boolean(
-    ambiguousMonomer?.isAmbiguous && ambiguousMonomer?.monomerClass,
+    ambiguousMonomer?.monomerItem?.isAmbiguous &&
+      ambiguousMonomer?.monomerClass,
   );
 };
 
@@ -52,12 +53,16 @@ const getMonomerClass = (
 ): KetMonomerClass | string | undefined => {
   const monomerLike = monomer as
     | {
-        monomerItem?: { class?: KetMonomerClass | string };
+        monomerItem?: {
+          props?: { MonomerClass?: KetMonomerClass | string };
+        };
         monomerClass?: KetMonomerClass | string;
       }
     | undefined;
 
-  return monomerLike?.monomerItem?.class ?? monomerLike?.monomerClass;
+  return (
+    monomerLike?.monomerItem?.props?.MonomerClass ?? monomerLike?.monomerClass
+  );
 };
 
 const isMonomerOfClass = (

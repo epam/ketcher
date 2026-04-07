@@ -11,14 +11,15 @@ type PolymerBondLike = {
 };
 
 type MonomerLikeWithClass = {
-  monomerItem?: { class?: string };
+  monomerItem?: { props?: { MonomerClass?: string } };
   monomerClass?: string;
 };
 
 const getMonomerClass = (monomer?: BaseMonomer) =>
   // BaseMonomer does not expose normalized class metadata on its TS contract,
   // so we read it from runtime monomer payload fields used across KET models.
-  (monomer as MonomerLikeWithClass | undefined)?.monomerItem?.class ??
+  (monomer as MonomerLikeWithClass | undefined)?.monomerItem?.props
+    ?.MonomerClass ??
   (monomer as MonomerLikeWithClass | undefined)?.monomerClass;
 
 const isPolymerBondLike = (bond: unknown): bond is PolymerBondLike =>

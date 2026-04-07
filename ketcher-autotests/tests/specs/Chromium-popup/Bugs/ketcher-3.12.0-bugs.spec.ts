@@ -17,7 +17,6 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -27,6 +26,8 @@ import {
   takeElementScreenshot,
   takeEditorScreenshot,
   dragMouseTo,
+  clickOnMiddleOfCanvas,
+  takeTopToolbarScreenshot,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -51,6 +52,9 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 let page: Page;
 
@@ -82,7 +86,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await selectAllStructuresOnCanvas(page);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
     await ContextMenu(page, targetAtom).open();
-    await expect(page.getByTestId('copy')).toBeVisible();
+    await expect(page.getByTestId(MonomerOption.Copy)).toBeEnabled();
   });
 
   test('Case 2 — Ketcher wrongly considers R3-R1 connection between unknown sugar and/or unknown base as side chain connection', async ({
@@ -94,16 +98,21 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Description: Ketcher wrongly considers R3-R1 connection between unknown sugar and/or unknown base as side chain connection
      * Scenario:
      * 1. Go to Macromolecules mode - Snake mode (empty canvas!)
-     * 2. Load from HELM: RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0
+     * 2. Load from HELM: RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]C.([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0
      *
      * Version 3.12.0
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar](A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0',
+      'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar]C.(A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0',
     );
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await clickOnMiddleOfCanvas(page);
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'C' }),
+      { padding: 180 },
+    );
   });
 
   test('Case 3 — Unknown peptide looks like chem', async ({
@@ -124,7 +133,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{Aaaa}$$$$V2.0',
     );
-    await takeElementScreenshot(page, page.getByTestId('monomer'));
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'Aaaa' }),
+    );
   });
 
   test('Case 4 — Unknown sugar, unknown base and unknown phosphate looks like chems', async ({
@@ -145,7 +157,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       MacroFileType.HELM,
       'RNA1{Raaa(Aaaa)Paaa}$$$$V2.0',
     );
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'Raaa' }),
+      { padding: 70 },
+    );
   });
 
   test('Case 5 — Deleting one of multiple monomers does not trigger recalculation in Calculate Properties window', async ({
@@ -171,9 +187,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getMonomerLocator(page, { monomerAlias: 'A' }).click();
     await CommonLeftToolbar(page).erase();
-    await expect(page.getByTestId('Molecular-Mass-Value')).toHaveText(
-      '215.252',
-    );
+    await page.waitForTimeout(1000);
+    await expect(
+      await CalculateVariablesPanel(page).getMolecularMassValue(),
+    ).toBe('215.252');
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 6 — Sense chain monomers remain selected FOREVER after antisense chain creation', async ({
@@ -199,7 +217,8 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await selectAllStructuresOnCanvas(page);
     const monomer = getMonomerLocator(page, { monomerAlias: 'W' }).first();
     await createRNAAntisenseChain(page, monomer);
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await CommonLeftToolbar(page).handTool();
+    await takeElementScreenshot(page, monomer, { padding: 300 });
   });
 
   test('Case 7 — Long bond for antisense layouted wrong', async ({
@@ -251,7 +270,11 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopLeftToolbar(page).undo();
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomIsotopeAtomicMass: 2 }),
+      { padding: 220 },
+    );
   });
 
   test('Case 9 — Cycled aromatic bond looks wrong on Macro canvas', async ({}) => {
@@ -267,9 +290,13 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await pasteFromClipboardAndAddToCanvas(page, 'c1ccccc1.C1=CC=CC=C1');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickOnMiddleOfCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await takeElementScreenshot(
+      page,
+      getAtomLocator(page, { atomId: 1 }).first(),
+      { padding: 150 },
+    );
   });
 
   test('Case 10 — It is possible to connect all APs to same atom', async ({}) => {
@@ -304,7 +331,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await getMonomerLocator(page, { monomerAlias: 'Test-6-Ch' }).hover({
       force: true,
     });
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'Test-6-Ch' }),
+    );
   });
 
   test('Case 11 — Bond properties are not implemented', async ({}) => {
@@ -356,7 +386,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeElementScreenshot(page, page.getByTestId('top-toolbar'));
+    await takeTopToolbarScreenshot(page);
   });
 
   test('Case 13 — After copying and pasting, structure under cursor causes Uncaught TypeErrors', async ({}) => {
@@ -407,14 +437,22 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await CommonTopRightToolbar(page).zoomSelector.click();
-    await page.getByTestId('zoom-out').waitFor({ state: 'visible' });
-    await expect(page.getByTestId('zoom-out')).toContainText('Ctrl+Minus');
-    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopRightToolbar(page).zoomOutButton.waitFor({
+      state: 'visible',
+    });
+    await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
+      'Ctrl+Minus',
+    );
+    await clickOnMiddleOfCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).zoomSelector.click();
-    await page.getByTestId('zoom-out').waitFor({ state: 'visible' });
-    await expect(page.getByTestId('zoom-out')).toContainText('Ctrl+Minus');
-    await clickInTheMiddleOfTheScreen(page);
+    await CommonTopRightToolbar(page).zoomOutButton.waitFor({
+      state: 'visible',
+    });
+    await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
+      'Ctrl+Minus',
+    );
+    await clickOnMiddleOfCanvas(page);
   });
 
   test('Case 15 — After clicking the "Clear Canvas" button multiple times, a user has to click the "Undo" button multiple times to return the structure', async ({
@@ -439,35 +477,14 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       await CommonTopLeftToolbar(page).clearCanvas();
     }
     await CommonTopLeftToolbar(page).undo();
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
+    await takeElementScreenshot(
+      page,
+      getMonomerLocator(page, { monomerAlias: 'R' }),
+      { padding: 70 },
+    );
   });
 
-  test('Case 16 — Leaving group atom position is incorrect for nucleotides created in monomer wizard', async ({
-    FlexCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/9125
-     * Bug: https://github.com/epam/ketcher/issues/9047
-
-     * Description: Leaving group atom position is incorrect for nucleotides created in monomer wizard
-     * Scenario:
-     * 1. Select Macromolecules mode
-     * 2. Draw any structure on the canvas (for example click any structure in macromolecules library)
-     * 3. Click on the "Clear Canvas" button 5 times
-     * 4. Click on the "Undo" button
-     *
-     * Version 3.12.0
-     */
-
-    await Library(page).clickMonomerAutochain(Preset.A);
-    for (let i = 1; i <= 5; i++) {
-      await CommonTopLeftToolbar(page).clearCanvas();
-    }
-    await CommonTopLeftToolbar(page).undo();
-    await takeElementScreenshot(page, page.getByTestId('drawn-structures'));
-  });
-
-  test('Case 17 — Change event does not trigger after switching to Micro mode', async ({
+  test('Case 16 — Change event does not trigger after switching to Micro mode', async ({
     FlexCanvas: _,
   }) => {
     /*
@@ -511,12 +528,12 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(eventFired).toBeTruthy();
   });
 
-  test('Case 18 — CIP labels are not added correctly when loading from a cdxml file with no CIP labels', async ({}) => {
+  test('Case 17 — CIP labels are not added correctly when loading from a cdxml file with no CIP labels', async ({}) => {
     /*
      * Test case: https://github.com/epam/Indigo/issues/3360
      * Bug: https://github.com/epam/Indigo/issues/3360
 
-     * Description: Leaving group atom position is incorrect for nucleotides created in monomer wizard
+     * Description: CIP labels are not added correctly when loading from a cdxml file with no CIP labels
      * Scenario:
      * 1. Open a structure in Micro mode ketcher - noCIPLabels.cdxml.txt
      * 2. Calculate CIP labels
@@ -535,7 +552,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     );
   });
 
-  test('Case 19 — Leaving group atom position is incorrect for nucleotides created in monomer wizard', async ({}) => {
+  test('Case 18 — Leaving group atom position is incorrect for nucleotides created in monomer wizard', async ({}) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9047
      * Bug: https://github.com/epam/ketcher/issues/9047
@@ -596,30 +613,22 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const atom = getAtomLocator(page, { atomId: 15 });
     await collapseMonomers(page, atom);
 
-    await page.getByText('Base').hover({ force: true });
-    await page
-      .getByTestId('monomer-preview-micro')
-      .waitFor({ state: 'visible' });
-    await takeElementScreenshot(page, page.getByText('Base'), {
-      padding: 250,
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await getAbbreviationLocator(page, { name: 'Base' }).hover({ force: true });
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
+    await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
+    await clickOnMiddleOfCanvas(page);
 
-    await page.getByText('Sugar').hover({ force: true });
-    await page
-      .getByTestId('monomer-preview-micro')
-      .waitFor({ state: 'visible' });
-    await takeElementScreenshot(page, page.getByText('Sugar'), {
-      padding: 250,
+    await getAbbreviationLocator(page, { name: 'Sugar' }).hover({
+      force: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
+    await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
+    await clickOnMiddleOfCanvas(page);
 
-    await page.getByText('Phosphate').hover({ force: true });
-    await page
-      .getByTestId('monomer-preview-micro')
-      .waitFor({ state: 'visible' });
-    await takeElementScreenshot(page, page.getByText('Phosphate'), {
-      padding: 250,
+    await getAbbreviationLocator(page, { name: 'Phosphate' }).hover({
+      force: true,
     });
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
+    await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
   });
 });

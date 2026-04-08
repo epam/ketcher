@@ -100,21 +100,26 @@ export class AutochainPreviewView extends TransientView {
         return;
       }
 
+      const phosphateOnLeft =
+        (monomerOrRnaItem.phosphatePosition ??
+          getRnaPresetPhosphatePosition(monomerOrRnaItem)) === 'left';
+      const sugarPosition =
+        phosphateOnLeft && monomerOrRnaItem.phosphate
+          ? position.add(new Vec2(1.5, 0))
+          : position;
+      const scaledSugarPosition = Coordinates.modelToCanvas(sugarPosition);
+
       sizeOfAutochainPreviewToConnect =
         AutochainPreviewView.showSingleMonomerPreview(
           transientLayer,
           monomerOrRnaItem.sugar,
-          scaledPosition,
+          scaledSugarPosition,
         );
-
-      const phosphateOnLeft =
-        (monomerOrRnaItem.phosphatePosition ??
-          getRnaPresetPhosphatePosition(monomerOrRnaItem)) === 'left';
       let leftConnectionPointX =
-        scaledPosition.x - sizeOfAutochainPreviewToConnect.width / 2;
+        scaledSugarPosition.x - sizeOfAutochainPreviewToConnect.width / 2;
 
       if (monomerOrRnaItem.base) {
-        const basePosition = position.add(new Vec2(0, 1.5));
+        const basePosition = sugarPosition.add(new Vec2(0, 1.5));
         const scaledBasePosition = Coordinates.modelToCanvas(basePosition);
 
         const sizeOfBaseAutochainPreview =
@@ -126,17 +131,17 @@ export class AutochainPreviewView extends TransientView {
 
         AutochainPreviewView.showBondPreview(
           transientLayer,
-          scaledPosition.x,
-          scaledPosition.y + sizeOfAutochainPreviewToConnect.height / 2,
-          scaledPosition.x,
+          scaledSugarPosition.x,
+          scaledSugarPosition.y + sizeOfAutochainPreviewToConnect.height / 2,
+          scaledSugarPosition.x,
           scaledBasePosition.y - sizeOfBaseAutochainPreview.height / 2,
         );
       }
 
       if (monomerOrRnaItem.phosphate) {
-        const phosphatePosition = position.add(
-          new Vec2(phosphateOnLeft ? -1.5 : 1.5, 0),
-        );
+        const phosphatePosition = phosphateOnLeft
+          ? position
+          : sugarPosition.add(new Vec2(1.5, 0));
         const scaledPhosphatePosition =
           Coordinates.modelToCanvas(phosphatePosition);
 
@@ -152,13 +157,13 @@ export class AutochainPreviewView extends TransientView {
           phosphateOnLeft
             ? scaledPhosphatePosition.x +
                 sizeOfPhosphateAutochainPreview.width / 2
-            : scaledPosition.x + sizeOfAutochainPreviewToConnect.width / 2,
-          scaledPosition.y,
+            : scaledSugarPosition.x + sizeOfAutochainPreviewToConnect.width / 2,
+          scaledSugarPosition.y,
           phosphateOnLeft
-            ? scaledPosition.x - sizeOfAutochainPreviewToConnect.width / 2
+            ? scaledSugarPosition.x - sizeOfAutochainPreviewToConnect.width / 2
             : scaledPhosphatePosition.x -
                 sizeOfPhosphateAutochainPreview.width / 2,
-          scaledPosition.y,
+          scaledSugarPosition.y,
         );
 
         if (phosphateOnLeft) {

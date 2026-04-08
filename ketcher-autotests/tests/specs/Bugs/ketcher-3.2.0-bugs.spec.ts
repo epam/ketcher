@@ -375,7 +375,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'KET/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    const anySymbolR = getSymbolLocator(page, { symbolAlias: 'r' }).first();
+    const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
     await createDNAAntisenseChain(page, anySymbolR);
     await verifyHELMExport(
       page,

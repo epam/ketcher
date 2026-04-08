@@ -667,7 +667,7 @@ test.describe('Bond Tool', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await takeElementScreenshot(
       page,
-      getMonomerLocator(page, { monomerId: 617 }),
+      getMonomerLocator(page, { monomerId: 102 }),
       {
         padding: 215,
       },

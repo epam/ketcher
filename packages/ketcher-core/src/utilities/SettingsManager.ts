@@ -32,8 +32,13 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+interface SelectionTool {
+  tool: string;
+  opts: string;
+}
+
 interface SavedSettings {
-  selectionTool?: string;
+  selectionTool?: SelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];

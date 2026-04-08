@@ -23,9 +23,11 @@ import {
   RxnArrow as MicromoleculeRxnArrow,
   MultitailArrow as MicromoleculeMultitailArrow,
   RxnPlus as MicromoleculeRxnPlus,
+  KetFileImageNode,
+  KetFileMultitailArrowNode,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
-import { Serializer } from '../serializers.types';
+import { KetFileNode, Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
@@ -101,7 +103,11 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
-function parseNode(node: any, struct: any) {
+interface RGroupData {
+  rgnumber: number | string;
+}
+
+function parseNode(node: KetFileNode<unknown>, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -115,9 +121,12 @@ function parseNode(node: any, struct: any) {
     }
     case 'molecule': {
       const currentStruct = moleculeToStruct(node);
-      if (node.stereoFlagPosition) {
+      const moleculeNode = node as KetFileNode<unknown> & {
+        stereoFlagPosition?: Vec2;
+      };
+      if (moleculeNode.stereoFlagPosition) {
         const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        fragment.stereoFlagPosition = new Vec2(moleculeNode.stereoFlagPosition);
       }
 
       currentStruct.mergeInto(struct);
@@ -132,11 +141,14 @@ function parseNode(node: any, struct: any) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(node, struct);
+      multitailArrowToStruct(
+        node as KetFileNode<KetFileMultitailArrowNode>,
+        struct,
+      );
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node, struct);
+      imageToStruct(node as KetFileImageNode, struct);
       break;
     }
     default:
@@ -158,8 +170,10 @@ export class KetSerializer implements Serializer<Struct> {
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
-      if (nodes[i].type) parseNode(nodes[i], resultingStruct);
-      else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
+      const node = nodes[i] as KetFileNode<unknown> & { $ref?: string };
+      if (node.type) parseNode(node, resultingStruct);
+      else if (node.$ref)
+        parseNode(ket[node.$ref] as KetFileNode<unknown>, resultingStruct);
     });
     resultingStruct.name = ket.header?.moleculeName ?? null;
 
@@ -186,10 +200,11 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
         case 'rgroup': {
-          result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` });
-          result[`rg${item.data!.rgnumber}`] = rgroupToKet(
+          const rgData = item.data as RGroupData;
+          result.root.nodes.push({ $ref: `rg${rgData.rgnumber}` });
+          result[`rg${rgData.rgnumber}`] = rgroupToKet(
             item.fragment!,
-            item.data,
+            item.data as RGroupData,
           );
           break;
         }
@@ -297,10 +312,12 @@ export class KetSerializer implements Serializer<Struct> {
 
     assert(deserializedContent);
 
-    MacromoleculesConverter.convertDrawingEntitiesToStruct(
-      deserializedContent?.drawingEntitiesManager,
-      struct,
-    );
+    if (deserializedContent?.drawingEntitiesManager) {
+      MacromoleculesConverter.convertDrawingEntitiesToStruct(
+        deserializedContent.drawingEntitiesManager,
+        struct,
+      );
+    }
 
     return struct;
   }
@@ -475,22 +492,28 @@ export class KetSerializer implements Serializer<Struct> {
           ? firstAtomInLeavingGroup
           : attachmentPoint.attachmentAtom,
       );
-      assert(leavingGroupAtom);
-      leavingGroupAtom.rglabel = (
-        0 |
-        (1 <<
-          (Number(
-            (attachmentPoint.label
-              ? attachmentPoint.label
-              : attachmentPointsList[attachmentPointIndex]
-            ).replace('R', ''),
-          ) -
-            1))
-      ).toString();
-      assert(monomerItem.props.MonomerCaps);
-      monomerItem.props.MonomerCaps[
-        getAttachmentPointLabelWithBinaryShift(Number(leavingGroupAtom.rglabel))
-      ] = leavingGroupAtom.label;
+
+      if (leavingGroupAtom) {
+        leavingGroupAtom.rglabel = (
+          0 |
+          (1 <<
+            (Number(
+              (attachmentPoint.label
+                ? attachmentPoint.label
+                : attachmentPointsList[attachmentPointIndex]
+              ).replace('R', ''),
+            ) -
+              1))
+        ).toString();
+
+        if (monomerItem.props.MonomerCaps) {
+          monomerItem.props.MonomerCaps[
+            getAttachmentPointLabelWithBinaryShift(
+              Number(leavingGroupAtom.rglabel),
+            )
+          ] = leavingGroupAtom.label;
+        }
+      }
     });
   }
 
@@ -923,6 +946,7 @@ export class KetSerializer implements Serializer<Struct> {
     });
 
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      if (!polymerBond.secondMonomer) return;
       assert(polymerBond.secondMonomer);
       fileContent.root.connections.push({
         connectionType:

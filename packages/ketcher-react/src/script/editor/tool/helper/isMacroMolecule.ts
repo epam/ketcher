@@ -2,8 +2,8 @@ import { Editor } from '../../Editor';
 
 interface DragContext {
   mergeItems?: {
-    atomToFunctionalGroup?: Map<number, number>;
-  };
+    atomToFunctionalGroup?: Map<number, number> | Map<unknown, unknown>;
+  } | null;
 }
 
 const isMacroMolecule = (editor: Editor, id: number): boolean => {
@@ -29,6 +29,10 @@ const isMergingToMacroMolecule = (
   }
 
   const targetObjectId = firstEntry[1];
+
+  if (typeof targetObjectId !== 'number') {
+    return false;
+  }
 
   return isMacroMolecule(editor, targetObjectId);
 };

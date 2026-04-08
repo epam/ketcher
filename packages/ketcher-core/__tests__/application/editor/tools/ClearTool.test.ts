@@ -176,9 +176,7 @@ describe('Clear Tool', () => {
       ),
     );
 
-    const clearTool = new ClearTool(editor);
-
-    expect(clearTool).toBeInstanceOf(ClearTool);
+    clearCanvas();
 
     EditorHistory.getInstance(editor).undo();
 

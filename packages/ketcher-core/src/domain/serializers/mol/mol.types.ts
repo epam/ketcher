@@ -24,3 +24,13 @@ export interface MolSerializerOptions {
 }
 
 export type MolfileFormat = 'v2000' | 'v3000';
+
+export type SGroupMap = Record<number, import('domain/entities').SGroup>;
+
+export type AtomMap = Record<number, number>;
+
+export type PostLoadHandler = (
+  sgroup: import('domain/entities').SGroup,
+  mol?: import('domain/entities').Struct,
+  atomMap?: AtomMap,
+) => void;

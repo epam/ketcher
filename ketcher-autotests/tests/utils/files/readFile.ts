@@ -32,7 +32,7 @@ export function getTestDataDirectory() {
 export async function readFileContent(filePath: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filePath);
-  return fs.promises.readFile(resolvedFilePath, 'utf8');
+  return await fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(page: Page, filename: string) {

@@ -3,7 +3,7 @@
 import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   dragMouseTo,
   selectPartOfChain,
@@ -75,7 +75,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     (all angles in each structure are equal after the clean action)
    */
     await openFileAndAddToCanvas(page, 'Molfiles-V3000/different-angle-fr.mol');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);

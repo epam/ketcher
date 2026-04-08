@@ -4,7 +4,7 @@ import { expect, test, Page } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   receiveFileComparisonData,
   saveToFile,
   waitForRender,
@@ -110,7 +110,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     await IndigoFunctionsToolbar(page).calculateCIP();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);

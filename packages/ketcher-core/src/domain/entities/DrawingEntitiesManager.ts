@@ -323,6 +323,22 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
+  public resetState() {
+    this.monomers.clear();
+    this.polymerBonds.clear();
+    this.bondsMonomersOverlaps.clear();
+    this.atoms.clear();
+    this.bonds.clear();
+    this.monomerToAtomBonds.clear();
+    this.rxnArrows.clear();
+    this.multitailArrows.clear();
+    this.rxnPluses.clear();
+    this.clearMicromoleculesHiddenEntities();
+    this.canvasMatrix = undefined;
+    this.snakeLayoutMatrix = undefined;
+    this.antisenseMonomerToSenseChain.clear();
+  }
+
   public addMonomerChangeModel(
     monomerItem: MonomerItemType,
     position: Vec2,

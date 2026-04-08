@@ -26,6 +26,19 @@ export abstract class DrawingEntity {
     }
   }
 
+  public static resetIdCounter(nextId = 0) {
+    id = nextId;
+  }
+
+  public static syncIdCounter(drawingEntities: DrawingEntity[]) {
+    const nextId =
+      drawingEntities.reduce((maxId, drawingEntity) => {
+        return Math.max(maxId, drawingEntity.id);
+      }, -1) + 1;
+
+    DrawingEntity.resetIdCounter(nextId);
+  }
+
   moveRelative(position: Vec2) {
     this._position.x += position.x;
     this._position.y += position.y;

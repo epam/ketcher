@@ -17,6 +17,31 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { Operation } from 'domain/entities/Operation';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+
+class ResetDrawingEntitiesModelOperation implements Operation {
+  constructor(private readonly editor: CoreEditor) {}
+
+  public execute() {
+    // intentional no-op: actual cleanup happens after entity delete operations
+  }
+
+  public invert() {
+    // intentional no-op: actual counter sync happens after entity restore operations
+  }
+
+  public executeAfterAllOperations() {
+    this.editor.drawingEntitiesManager.resetState();
+    DrawingEntity.resetIdCounter();
+  }
+
+  public invertAfterAllOperations() {
+    DrawingEntity.syncIdCounter(
+      this.editor.drawingEntitiesManager.allEntitiesArray,
+    );
+  }
+}
 
 class ClearTool implements BaseTool {
   constructor(private readonly editor: CoreEditor) {
@@ -35,6 +60,8 @@ class ClearTool implements BaseTool {
     if (mode.modeName === 'sequence-layout-mode') {
       modelChanges.addOperation(new ReinitializeModeOperation());
     }
+
+    modelChanges.addOperation(new ResetDrawingEntitiesModelOperation(editor));
 
     this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);

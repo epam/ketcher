@@ -24,11 +24,13 @@ class ResetDrawingEntitiesModelOperation implements Operation {
   constructor(private readonly editor: CoreEditor) {}
 
   public execute() {
-    // intentional no-op: actual cleanup happens after entity delete operations
+    // intentional no-op: executeAfterAllOperations must run after delete operations
+    // remove entities from the current model
   }
 
   public invert() {
-    // intentional no-op: actual counter sync happens after entity restore operations
+    // intentional no-op: invertAfterAllOperations must run after restore operations
+    // return deleted entities to the current model
   }
 
   public executeAfterAllOperations() {

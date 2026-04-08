@@ -25,6 +25,12 @@ import { AttachmentPointName } from 'domain/types';
 import { AtomLabel } from 'domain/constants';
 import { KetMonomerClass } from 'application/formatters';
 
+const consumePeptideDrawingEntityIds = (count: number) => {
+  return Array.from({ length: count }, () => {
+    return new Peptide(peptideMonomerItem);
+  });
+};
+
 describe('Drawing Entities Manager', () => {
   beforeEach(() => {
     DrawingEntity.resetIdCounter();
@@ -191,8 +197,7 @@ describe('Drawing Entities Manager', () => {
       return { width: 30, height: 20 } as DOMRect;
     });
 
-    new Peptide(peptideMonomerItem);
-    new Peptide(peptideMonomerItem);
+    consumePeptideDrawingEntityIds(2);
 
     const editor = new CoreEditor({
       canvas,
@@ -225,8 +230,7 @@ describe('Drawing Entities Manager', () => {
       return { width: 30, height: 20 } as DOMRect;
     });
 
-    new Peptide(peptideMonomerItem);
-    new Peptide(peptideMonomerItem);
+    consumePeptideDrawingEntityIds(2);
 
     const editor = new CoreEditor({
       canvas,
@@ -271,8 +275,7 @@ describe('Drawing Entities Manager', () => {
       return { width: 30, height: 20 } as DOMRect;
     });
 
-    new Peptide(peptideMonomerItem);
-    new Peptide(peptideMonomerItem);
+    consumePeptideDrawingEntityIds(2);
 
     const editor = new CoreEditor({
       canvas,

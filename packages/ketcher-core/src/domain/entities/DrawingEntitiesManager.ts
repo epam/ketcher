@@ -283,6 +283,47 @@ export class DrawingEntitiesManager {
     return this.allEntities.map(([, drawingEntity]) => drawingEntity);
   }
 
+  public getKetMonomerIdMap() {
+    const monomerIdMap = new Map<number, number>();
+    let nextMonomerId = 0;
+
+    this.monomers.forEach((monomer) => {
+      if (
+        monomer instanceof Chem &&
+        monomer.monomerItem.props.isMicromoleculeFragment
+      ) {
+        return;
+      }
+
+      monomerIdMap.set(monomer.id, nextMonomerId);
+      nextMonomerId++;
+    });
+
+    return monomerIdMap;
+  }
+
+  public getDomBondIdMap() {
+    const bondIdMap = new Map<number, number>();
+    let nextBondId = 0;
+
+    this.polymerBonds.forEach((polymerBond) => {
+      bondIdMap.set(polymerBond.id, nextBondId);
+      nextBondId++;
+    });
+
+    this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      bondIdMap.set(monomerToAtomBond.id, nextBondId);
+      nextBondId++;
+    });
+
+    this.bonds.forEach((bond) => {
+      bondIdMap.set(bond.id, nextBondId);
+      nextBondId++;
+    });
+
+    return bondIdMap;
+  }
+
   public get hasDrawingEntities() {
     return this.allEntities.length !== 0;
   }
@@ -2680,11 +2721,14 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
 
+    editor.renderersContainer.syncMonomerDomAttributes();
+
     return command;
   }
 
   public rerenderBondsOverlappedByMonomers() {
     const editor = CoreEditor.provideEditorInstance();
+    let needSyncMonomerDomAttributes = false;
 
     if (editor.mode instanceof SequenceMode) {
       return;
@@ -2710,8 +2754,13 @@ export class DrawingEntitiesManager {
       if (polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer) {
         editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
         editor.renderersContainer.addPolymerBond(polymerBond, false);
+        needSyncMonomerDomAttributes = true;
       }
     });
+
+    if (needSyncMonomerDomAttributes) {
+      editor.renderersContainer.syncMonomerDomAttributes();
+    }
   }
 
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {

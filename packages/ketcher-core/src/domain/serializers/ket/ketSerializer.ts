@@ -823,8 +823,7 @@ export class KetSerializer implements Serializer<Struct> {
       atoms: [],
       bonds: [],
     };
-    const monomerIdMap = new Map<number, number>();
-    let nextMonomerId = 0;
+    const monomerIdMap = drawingEntitiesManager.getKetMonomerIdMap();
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
       const monomerItem = monomer.monomerItem;
@@ -853,13 +852,17 @@ export class KetSerializer implements Serializer<Struct> {
         monomerToAtomIdMap.set(monomer, atomIdMap);
         monomerToBondIdMap.set(monomer, bondIdMap);
       } else {
+        const monomerId = monomerIdMap.get(monomer.id);
+
+        if (!isNumber(monomerId)) {
+          return;
+        }
+
         let templateId;
-        const monomerKey = setMonomerPrefix(nextMonomerId);
+        const monomerKey = setMonomerPrefix(monomerId);
         const position: Vec2 = switchIntoChemistryCoordSystem(
           new Vec2(monomer.position.x, monomer.position.y),
         );
-
-        monomerIdMap.set(monomer.id, nextMonomerId);
 
         if (monomer instanceof AmbiguousMonomer) {
           const ambiguousMonomerItem = monomer.variantMonomerItem;
@@ -890,7 +893,7 @@ export class KetSerializer implements Serializer<Struct> {
             monomer instanceof AmbiguousMonomer
               ? KetNodeType.AMBIGUOUS_MONOMER
               : KetNodeType.MONOMER,
-          id: nextMonomerId.toString(),
+          id: monomerId.toString(),
           position: {
             x: position.x,
             y: position.y,
@@ -907,8 +910,6 @@ export class KetSerializer implements Serializer<Struct> {
           selected: (needSetSelection && monomer.selected) || undefined,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
-
-        nextMonomerId++;
 
         if (monomer instanceof AmbiguousMonomer) {
           this.serializeVariantMonomerTemplate(

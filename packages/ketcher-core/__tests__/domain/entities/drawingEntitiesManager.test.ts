@@ -1,6 +1,6 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { peptideMonomerItem } from '../../mock-data';
-import { Vec2 } from 'domain/entities';
+import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
+import { Struct, Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import {
   PolymerBondAddOperation,
@@ -20,8 +20,17 @@ import {
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { AttachmentPointName } from 'domain/types';
+import { AtomLabel } from 'domain/constants';
+import { KetMonomerClass } from 'application/formatters';
 
 describe('Drawing Entities Manager', () => {
+  beforeEach(() => {
+    DrawingEntity.resetIdCounter();
+    document.body.innerHTML = '';
+  });
+
   it('should create monomer', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const command = drawingEntitiesManager.addMonomer(
@@ -173,5 +182,191 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should use ket-style ids for rendered monomers even if drawing entity ids have gaps', () => {
+    const canvas = createPolymerEditorCanvas();
+
+    global.SVGElement.prototype.getBBox = jest.fn(() => {
+      return { width: 30, height: 20 } as DOMRect;
+    });
+
+    new Peptide(peptideMonomerItem);
+    new Peptide(peptideMonomerItem);
+
+    const editor = new CoreEditor({
+      canvas,
+      theme: polymerEditorTheme,
+    });
+
+    const firstMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(firstMonomerCommand);
+
+    const secondMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(10, 0),
+    );
+    editor.renderersContainer.update(secondMonomerCommand);
+
+    const monomerIds = Array.from(
+      canvas.querySelectorAll('[data-testid="monomer"]'),
+    ).map((element) => element.getAttribute('data-monomerid'));
+
+    expect(monomerIds).toEqual(['0', '1']);
+  });
+
+  it('should use a separate sequential counter for rendered bonds', () => {
+    const canvas = createPolymerEditorCanvas();
+
+    global.SVGElement.prototype.getBBox = jest.fn(() => {
+      return { width: 30, height: 20 } as DOMRect;
+    });
+
+    new Peptide(peptideMonomerItem);
+    new Peptide(peptideMonomerItem);
+
+    const editor = new CoreEditor({
+      canvas,
+      theme: polymerEditorTheme,
+    });
+
+    const firstMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(firstMonomerCommand);
+
+    const secondMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(10, 0),
+    );
+    editor.renderersContainer.update(secondMonomerCommand);
+
+    const [firstMonomer, secondMonomer] = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    );
+
+    const bondCommand = editor.drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
+      secondMonomer,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
+    editor.renderersContainer.update(bondCommand);
+
+    const bondIds = Array.from(
+      canvas.querySelectorAll('[data-testid="bond"]'),
+    ).map((element) => element.getAttribute('data-bondid'));
+
+    expect(bondIds).toEqual(['0']);
+  });
+
+  it('should keep data-bondid unique across polymer and chemistry bonds in macromolecules mode', () => {
+    const canvas = createPolymerEditorCanvas();
+
+    global.SVGElement.prototype.getBBox = jest.fn(() => {
+      return { width: 30, height: 20 } as DOMRect;
+    });
+
+    new Peptide(peptideMonomerItem);
+    new Peptide(peptideMonomerItem);
+
+    const editor = new CoreEditor({
+      canvas,
+      theme: polymerEditorTheme,
+    });
+
+    const firstMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(firstMonomerCommand);
+
+    const secondMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(10, 0),
+    );
+    editor.renderersContainer.update(secondMonomerCommand);
+
+    const [firstMonomer, secondMonomer] = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    );
+
+    const polymerBondCommand = editor.drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
+      secondMonomer,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
+    editor.renderersContainer.update(polymerBondCommand);
+
+    const chemMonomerItem = {
+      ...peptideMonomerItem,
+      label: 'F1',
+      struct: new Struct(),
+      props: {
+        ...peptideMonomerItem.props,
+        Name: 'F1',
+        MonomerName: 'F1',
+        MonomerType: 'CHEM',
+        MonomerClass: KetMonomerClass.CHEM,
+        MonomerNaturalAnalogCode: '',
+        isMicromoleculeFragment: true,
+      },
+    };
+
+    const chemMonomerCommand = editor.drawingEntitiesManager.addMonomer(
+      chemMonomerItem,
+      new Vec2(20, 0),
+    );
+    editor.renderersContainer.update(chemMonomerCommand);
+
+    const chemMonomer = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    ).find((monomer) => monomer.monomerItem.props.isMicromoleculeFragment);
+
+    expect(chemMonomer).toBeDefined();
+
+    if (!chemMonomer) {
+      return;
+    }
+
+    const firstAtomCommand = editor.drawingEntitiesManager.addAtom(
+      new Vec2(20, 0),
+      chemMonomer,
+      0,
+      AtomLabel.C,
+    );
+    editor.renderersContainer.update(firstAtomCommand);
+
+    const secondAtomCommand = editor.drawingEntitiesManager.addAtom(
+      new Vec2(21, 0),
+      chemMonomer,
+      1,
+      AtomLabel.C,
+    );
+    editor.renderersContainer.update(secondAtomCommand);
+
+    const [firstAtom, secondAtom] = Array.from(
+      editor.drawingEntitiesManager.atoms.values(),
+    );
+
+    const chemistryBondCommand = editor.drawingEntitiesManager.addBond(
+      firstAtom,
+      secondAtom,
+      1,
+      0,
+      0,
+    );
+    editor.renderersContainer.update(chemistryBondCommand);
+
+    const bondIds = Array.from(canvas.querySelectorAll('[data-testid="bond"]'))
+      .map((element) => element.getAttribute('data-bondid'))
+      .sort();
+
+    expect(bondIds).toEqual(['0', '1']);
   });
 });

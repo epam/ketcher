@@ -315,6 +315,10 @@ export class BondRenderer extends BaseRenderer {
     return rootElement as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
+  public setDataBondId(bondId: number) {
+    this.rootElement?.attr('data-bondid', bondId);
+  }
+
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
     const editor = CoreEditor.provideEditorInstance();

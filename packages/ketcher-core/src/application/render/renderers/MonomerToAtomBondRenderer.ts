@@ -195,6 +195,14 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     // intentional no-op: this renderer type does not require a hover area element
   }
 
+  public setDataFromMonomerId(monomerId: number) {
+    this.rootElement?.attr('data-frommonomerid', monomerId);
+  }
+
+  public setDataBondId(bondId: number) {
+    this.rootElement?.attr('data-bondid', bondId);
+  }
+
   public drawSelection() {
     if (!this.rootElement) {
       return;

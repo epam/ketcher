@@ -111,6 +111,19 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     };
   }
 
+  public setDataMonomerIds(
+    fromMonomerId: number,
+    toMonomerId: number | undefined,
+  ) {
+    this.bodyElement
+      ?.attr('data-frommonomerid', fromMonomerId)
+      .attr('data-tomonomerid', toMonomerId ?? null);
+  }
+
+  public setDataBondId(bondId: number) {
+    this.bodyElement?.attr('data-bondid', bondId);
+  }
+
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;

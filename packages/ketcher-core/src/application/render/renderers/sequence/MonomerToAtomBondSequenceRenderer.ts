@@ -70,6 +70,14 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
       .attr('d', this.getBondPath());
   }
 
+  public setDataFromMonomerId(_monomerId: number) {
+    // intentional no-op: sequence renderer does not expose DOM monomer ids
+  }
+
+  public setDataBondId(_bondId: number) {
+    // intentional no-op: sequence renderer does not expose DOM bond ids
+  }
+
   private getBondPath() {
     return `M ${this.scaledPosition.startPosition.x + 6}, ${
       this.mainLineY.mainLineY1

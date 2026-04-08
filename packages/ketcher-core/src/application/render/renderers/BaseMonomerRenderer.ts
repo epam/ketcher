@@ -365,6 +365,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return rootElement;
   }
 
+  public setDataMonomerId(monomerId: number) {
+    this.rootElement?.attr('data-monomerid', monomerId);
+    this.rootElement
+      ?.selectAll('[data-monomerid]')
+      .attr('data-monomerid', monomerId);
+  }
+
   protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const fontSize = 6;
     const textElement = rootElement

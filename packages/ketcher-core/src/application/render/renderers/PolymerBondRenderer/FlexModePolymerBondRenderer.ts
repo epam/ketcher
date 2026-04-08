@@ -251,6 +251,19 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
+  public setDataMonomerIds(
+    fromMonomerId: number,
+    toMonomerId: number | undefined,
+  ) {
+    this.bodyElement
+      ?.attr('data-frommonomerid', fromMonomerId)
+      .attr('data-tomonomerid', toMonomerId ?? null);
+  }
+
+  public setDataBondId(bondId: number) {
+    this.bodyElement?.attr('data-bondid', bondId);
+  }
+
   private getExpandedBoundingBox(bbox) {
     const expansionFactor = this.polymerBond.isSideChainConnection
       ? MonomerSize - 0.1

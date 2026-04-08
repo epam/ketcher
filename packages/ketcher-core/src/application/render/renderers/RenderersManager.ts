@@ -288,6 +288,56 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = false;
   }
 
+  public syncMonomerDomAttributes() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (!editor) {
+      return;
+    }
+
+    const monomerIdMap = editor.drawingEntitiesManager.getKetMonomerIdMap();
+    const bondIdMap = editor.drawingEntitiesManager.getDomBondIdMap();
+    const getDomMonomerId = (monomer: BaseMonomer) => {
+      return monomerIdMap.get(monomer.id) ?? monomer.id;
+    };
+    const getDomBondId = (
+      bond: PolymerBond | HydrogenBond | MonomerToAtomBond,
+    ) => bondIdMap.get(bond.id) ?? bond.id;
+
+    this.monomers.forEach((monomerRenderer) => {
+      monomerRenderer.setDataMonomerId(
+        getDomMonomerId(monomerRenderer.monomer),
+      );
+    });
+
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      polymerBondRenderer.setDataMonomerIds(
+        getDomMonomerId(polymerBondRenderer.polymerBond.firstMonomer),
+        polymerBondRenderer.polymerBond.secondMonomer
+          ? getDomMonomerId(polymerBondRenderer.polymerBond.secondMonomer)
+          : undefined,
+      );
+      polymerBondRenderer.setDataBondId(
+        getDomBondId(polymerBondRenderer.polymerBond),
+      );
+    });
+
+    editor.drawingEntitiesManager.monomerToAtomBonds.forEach(
+      (monomerToAtomBond) => {
+        monomerToAtomBond.renderer?.setDataFromMonomerId(
+          getDomMonomerId(monomerToAtomBond.monomer),
+        );
+        monomerToAtomBond.renderer?.setDataBondId(
+          getDomBondId(monomerToAtomBond),
+        );
+      },
+    );
+
+    editor.drawingEntitiesManager.bonds.forEach((bond) => {
+      bond.renderer?.setDataBondId(bondIdMap.get(bond.id) ?? bond.id);
+    });
+  }
+
   // FIXME: Specify the types.
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
@@ -593,6 +643,7 @@ export class RenderersManager {
   }
 
   public runPostRenderMethods() {
+    this.syncMonomerDomAttributes();
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
     }

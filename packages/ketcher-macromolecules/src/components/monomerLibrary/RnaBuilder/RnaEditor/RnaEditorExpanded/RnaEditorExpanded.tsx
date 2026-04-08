@@ -534,7 +534,7 @@ export const RnaEditorExpanded = ({
       presetWithSameName &&
       activePreset.nameInList !== presetWithSameName.name
     ) {
-      dispatch(setUniqueNameError(presetToSave.name));
+      dispatch(setUniqueNameError(presetToSave.name ?? ''));
       return;
     }
     dispatch(savePreset(presetToSave));

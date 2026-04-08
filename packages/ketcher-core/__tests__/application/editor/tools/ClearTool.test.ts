@@ -94,6 +94,7 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 describe('Clear Tool', () => {
   let canvas: SVGSVGElement;
   let editor: CoreEditor;
+  let clearCanvas: () => ClearTool;
 
   beforeEach(() => {
     DrawingEntity.resetIdCounter();
@@ -103,6 +104,7 @@ describe('Clear Tool', () => {
       canvas,
       mode: new FlexMode(),
     });
+    clearCanvas = () => new ClearTool(editor);
   });
 
   afterEach(() => {
@@ -116,9 +118,7 @@ describe('Clear Tool', () => {
     // Try to clear empty canvas - verify hasDrawingEntities is false
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
 
-    const clearTool = new ClearTool(editor);
-
-    expect(clearTool).toBeInstanceOf(ClearTool);
+    clearCanvas();
 
     // transientDrawingView.clear should not be called because we return early
     expect(clearSpy).not.toHaveBeenCalled();
@@ -150,9 +150,7 @@ describe('Clear Tool', () => {
       ),
     );
 
-    const clearTool = new ClearTool(editor);
-
-    expect(clearTool).toBeInstanceOf(ClearTool);
+    clearCanvas();
 
     editor.renderersContainer.update(
       editor.drawingEntitiesManager.addMonomer(

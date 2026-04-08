@@ -49,8 +49,11 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
   constructor(props: OpenButtonProps) {
     super(props);
     this.state = {};
-    if (props.server) {
-      fileOpener(props.server).then((opener: OpenerFunction) => {
+  }
+
+  componentDidMount() {
+    if (this.props.server) {
+      fileOpener(this.props.server).then((opener: OpenerFunction) => {
         this.setState({ opener });
       });
     }

@@ -36,7 +36,6 @@ interface TableProps {
   label?: string;
   disabledQueryElements: Array<string> | null | undefined;
   onOk: (result: unknown) => void;
-  onCancel: () => void;
 }
 
 const Table = (props: TableProps) => {

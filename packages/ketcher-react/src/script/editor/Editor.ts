@@ -1391,8 +1391,8 @@ class Editor implements KetcherEditor {
       } = monomerData;
       const reversedAtomIdMap = new Map();
 
-      for (const [key, value] of atomIdMap.entries()) {
-        reversedAtomIdMap.set(value, key);
+      for (const [originalId, newId] of atomIdMap.entries()) {
+        reversedAtomIdMap.set(newId, originalId);
       }
       const sGroupAttachmentPoints =
         MacromoleculesConverter.convertMonomerAttachmentPointsToSGroupAttachmentPoints(

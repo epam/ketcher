@@ -37,13 +37,14 @@ import { ketcherProvider, Struct } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
+type ImageFile = File | FileContent | null;
 
 function isImage(file: File | null): boolean {
   return file?.type?.includes('image') ?? false;
 }
 
 interface FooterContentProps {
-  onImage: (file: File | FileContent | null) => void;
+  onImage: (file: ImageFile) => void;
   structStr: StructStringOrPromise;
   openHandler: () => void;
   copyHandler: () => void;
@@ -99,7 +100,7 @@ interface RecognizeDialogProps {
   onCancel: () => void;
   onRecognize: (file: File | null, version: string) => void;
   isFragment: (v: boolean) => void;
-  onImage: (file: File | FileContent | null) => void;
+  onImage: (file: ImageFile) => void;
   onChangeImago: (version: string) => void;
 }
 
@@ -271,7 +272,7 @@ const mapStateToProps = (state: RecognizeState) => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mapDispatchToProps = (dispatch: any) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
-  onImage: (file: File | FileContent | null) => dispatch(changeImage(file)),
+  onImage: (file: ImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>
     dispatch(recognize(file, ver)),
   onChangeImago: (ver: string) => dispatch(changeVersion(ver)),

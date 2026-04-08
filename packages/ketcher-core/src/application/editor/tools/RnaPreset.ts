@@ -73,6 +73,11 @@ class RnaPresetTool implements Tool {
       return;
     }
 
+    const phosphateXOffset =
+      getRnaPresetPhosphatePosition(this) === 'left'
+        ? -SnakeLayoutCellWidth
+        : SnakeLayoutCellWidth;
+
     const { command: modelChanges, monomers } =
       this.editor.drawingEntitiesManager.addRnaPreset({
         sugar: this.sugar,
@@ -86,10 +91,7 @@ class RnaPresetTool implements Tool {
         phosphatePosition: this.phosphatePreviewRenderer
           ? Coordinates.canvasToModel(
               new Vec2(
-                this.editor.lastCursorPositionOfCanvas.x +
-                  (getRnaPresetPhosphatePosition(this) === 'left'
-                    ? -SnakeLayoutCellWidth
-                    : SnakeLayoutCellWidth),
+                this.editor.lastCursorPositionOfCanvas.x + phosphateXOffset,
                 this.editor.lastCursorPositionOfCanvas.y,
               ),
             )

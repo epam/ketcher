@@ -196,8 +196,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     );
   }
 
-  UNSAFE_componentWillReceiveProps(props: StructEditorProps) {
-    setupEditor(this.editor, props, this.props);
+  componentDidUpdate(prevProps: StructEditorProps) {
+    setupEditor(this.editor, this.props, prevProps);
   }
 
   componentDidMount() {
@@ -284,7 +284,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'move': {
+        case 'move':
+        case 'mouseover': {
           this.editorRef.current?.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
@@ -301,13 +302,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'mouseover': {
-          this.editorRef.current?.classList.add(classes.enableCursor);
-          this.setState({
-            enableCursor: true,
-          });
-          break;
-        }
         default:
           break;
       }

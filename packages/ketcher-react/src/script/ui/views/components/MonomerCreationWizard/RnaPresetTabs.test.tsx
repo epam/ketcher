@@ -16,6 +16,7 @@
 
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import { ReactNode } from 'react';
@@ -25,7 +26,6 @@ import { ReactNode } from 'react';
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { RnaPresetWizardState } from './MonomerCreationWizard.types';
-import { KetMonomerClass } from 'ketcher-core';
 
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
@@ -34,7 +34,9 @@ jest.mock('components', () => ({
 
 // Mock the selectors
 jest.mock('../../../state/editor/selectors', () => ({
-  selectionSelector: jest.fn(),
+  selectionSelector: (state) => state.editor?.selection,
+  editorMonomerCreationStateSelector: (state) =>
+    state.editor?.monomerCreationState,
 }));
 
 // Mock useAppContext
@@ -48,22 +50,38 @@ jest.mock('../../../../../hooks', () => ({
 jest.mock('./MonomerCreationWizardFields', () => ({
   __esModule: true,
   default: ({
+    assignedAttachmentPoints,
     attachmentPointsExtra,
   }: {
+    assignedAttachmentPoints?: Map<string, [number, number]>;
     attachmentPointsExtra?: ReactNode;
   }) => (
     <div data-testid="monomer-creation-wizard-fields">
       <div data-testid="attachment-points-section">Attachment points</div>
+      <div data-testid="attachment-points-values">
+        {Array.from(assignedAttachmentPoints?.keys() ?? []).join(',')}
+      </div>
       {attachmentPointsExtra}
     </div>
   ),
 }));
 
+jest.mock('./components/AttachmentPoint/AttachmentPoint', () => ({
+  __esModule: true,
+  default: ({ name }: { name: string }) => <div>{name}</div>,
+}));
+
 // Create a mock store
-const createMockStore = (selection = { atoms: [], bonds: [] }) => {
+const createMockStore = (
+  selection = { atoms: [], bonds: [] },
+  monomerCreationState = {
+    assignedAttachmentPoints: new Map(),
+  },
+) => {
   const reducer = combineReducers({
     editor: () => ({
       selection,
+      monomerCreationState,
     }),
   });
   return createStore(reducer);
@@ -80,6 +98,13 @@ const createMockEditor = () => {
   return {
     highlights: highlightsMock,
     selection: jest.fn(),
+    struct: jest.fn(() => ({
+      atoms: new Map(),
+      halfBonds: new Map(),
+    })),
+    reassignAttachmentPoint: jest.fn(),
+    changeLeavingAtomLabel: jest.fn(),
+    removeAttachmentPoint: jest.fn(),
     render: {
       ctab: {
         molecule: {
@@ -539,5 +564,92 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(screen.getByTestId('phosphate-position-5-button'));
 
     expect(mockOnPhosphatePositionChange).toHaveBeenCalledWith('5');
+  });
+
+  it('shows only non-occupied attachment points on the preset tab', () => {
+    mockStore = createMockStore(undefined, {
+      assignedAttachmentPoints: new Map([
+        [AttachmentPointName.R1, [1, 11]],
+        [AttachmentPointName.R2, [2, 12]],
+        [AttachmentPointName.R4, [4, 14]],
+      ]),
+    });
+    wizardState.base.structure = {
+      atoms: [1],
+      bonds: [],
+    };
+    wizardState.sugar.structure = {
+      atoms: [2, 4],
+      bonds: [],
+    };
+    mockEditor.struct.mockReturnValue({
+      atoms: new Map([
+        [1, { neighbors: [1, 2] }],
+        [2, { neighbors: [3, 4] }],
+        [4, { neighbors: [5] }],
+      ]),
+      halfBonds: new Map([
+        [1, { begin: 1, end: 11 }],
+        [2, { begin: 1, end: 2 }],
+        [3, { begin: 2, end: 12 }],
+        [4, { begin: 2, end: 1 }],
+        [5, { begin: 4, end: 14 }],
+      ]),
+    });
+
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    expect(
+      screen.getByTestId('attachment-point-info-icon'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('R1')).not.toBeInTheDocument();
+    expect(screen.queryByText('R2')).not.toBeInTheDocument();
+    expect(screen.getByText('R4')).toBeInTheDocument();
+  });
+
+  it('passes all component attachment points to the selected component tab', () => {
+    mockStore = createMockStore(undefined, {
+      assignedAttachmentPoints: new Map([
+        [AttachmentPointName.R1, [1, 11]],
+        [AttachmentPointName.R2, [2, 12]],
+        [AttachmentPointName.R3, [3, 13]],
+      ]),
+    });
+    wizardState.base.structure = {
+      atoms: [1, 3],
+      bonds: [],
+    };
+    wizardState.sugar.structure = {
+      atoms: [2],
+      bonds: [],
+    };
+
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition={undefined}
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-base-tab'));
+
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R1,R3',
+    );
   });
 });

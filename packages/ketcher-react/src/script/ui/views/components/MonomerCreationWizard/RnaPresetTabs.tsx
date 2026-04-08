@@ -1,7 +1,20 @@
 import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
-import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
+import {
+  AtomLabel,
+  AttachmentPointName,
+  KetMonomerClass,
+  RnaPresetComponentKey,
+} from 'ketcher-core';
+import {
+  ChangeEvent,
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -10,19 +23,27 @@ import {
   WizardState,
 } from './MonomerCreationWizard.types';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
-import { KetMonomerClass, RnaPresetComponentKey } from 'ketcher-core';
 import clsx from 'clsx';
 import monomerCreationWizardStyles from './MonomerCreationWizard.module.less';
 import styles from './RnaPresetTabs.module.less';
 import AttributeField from './components/AttributeField/AttributeField';
-import { selectionSelector } from '../../../state/editor/selectors';
+import {
+  editorMonomerCreationStateSelector,
+  selectionSelector,
+} from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import { Editor } from '../../../../editor';
 import inputStyles from '../../../component/form/Input/Input.module.less';
+import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
   MonomerCreationMarkAsComponentAction,
   RnaPresetComponentType,
 } from './MonomerCreationWizard.constants';
+import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import {
+  getAttachmentPointsForRnaPresetComponent,
+  getVisibleAttachmentPointsForRnaPreset,
+} from './RnaPresetAttachmentPointsVisibility';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -45,10 +66,43 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [isHighlightEnabled, setIsHighlightEnabled] = useState(true);
   const structureSelection = useSelector(selectionSelector);
+  const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
   const { phosphatePosition, onPhosphatePositionChange } = props;
+  const assignedAttachmentPoints =
+    monomerCreationState?.assignedAttachmentPoints ?? new Map();
+
+  const presetAttachmentPoints = useMemo(
+    () =>
+      getVisibleAttachmentPointsForRnaPreset(
+        assignedAttachmentPoints,
+        wizardState,
+        editor.struct(),
+      ),
+    [assignedAttachmentPoints, editor, wizardState],
+  );
+  const componentAttachmentPoints = useMemo(
+    () => ({
+      base: getAttachmentPointsForRnaPresetComponent(
+        assignedAttachmentPoints,
+        wizardState,
+        'base',
+      ),
+      sugar: getAttachmentPointsForRnaPresetComponent(
+        assignedAttachmentPoints,
+        wizardState,
+        'sugar',
+      ),
+      phosphate: getAttachmentPointsForRnaPresetComponent(
+        assignedAttachmentPoints,
+        wizardState,
+        'phosphate',
+      ),
+    }),
+    [assignedAttachmentPoints, wizardState],
+  );
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {
@@ -128,6 +182,24 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   const handlePhosphatePositionChange = (position: '3' | '5') => {
     onPhosphatePositionChange(position);
+  };
+
+  const handleAttachmentPointNameChange = (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+  ) => {
+    editor.reassignAttachmentPoint(currentName, newName);
+  };
+
+  const handleLeavingAtomChange = (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => {
+    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+  };
+
+  const handleAttachmentPointRemove = (name: AttachmentPointName) => {
+    editor.removeAttachmentPoint(name);
   };
 
   const currentTabStructure = currentTabState?.structure;
@@ -240,26 +312,70 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       </Tabs>
       <div className={styles.tabsContentWrapper}>
         {selectedTab === 0 && (
-          <AttributeField
-            title="Code"
-            control={
-              <input
-                type="text"
-                className={clsx(
-                  monomerCreationWizardStyles.input,
-                  wizardState.preset.errors.name &&
-                    monomerCreationWizardStyles.inputError,
-                )}
-                placeholder="e.g. Diethylene Glycol"
-                value={wizardState.preset.name}
-                data-testid="code-input"
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  handleFieldChange('name', event.target.value, 'preset')
-                }
-              />
-            }
-            required
-          />
+          <>
+            <AttributeField
+              title="Code"
+              control={
+                <input
+                  type="text"
+                  className={clsx(
+                    monomerCreationWizardStyles.input,
+                    wizardState.preset.errors.name &&
+                      monomerCreationWizardStyles.inputError,
+                  )}
+                  placeholder="e.g. Diethylene Glycol"
+                  value={wizardState.preset.name}
+                  data-testid="code-input"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    handleFieldChange('name', event.target.value, 'preset')
+                  }
+                />
+              }
+              required
+            />
+            <div className={monomerCreationWizardStyles.divider} />
+            <div
+              className={clsx(
+                monomerCreationWizardStyles.attributesFields,
+                selectStyles.selectContainer,
+              )}
+            >
+              <div
+                className={monomerCreationWizardStyles.attachmentPointsHeader}
+              >
+                <p
+                  className={monomerCreationWizardStyles.attachmentPointsTitle}
+                >
+                  Attachment points
+                </p>
+                <span
+                  className={
+                    monomerCreationWizardStyles.attachmentPointInfoIcon
+                  }
+                  title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                  data-testid="attachment-point-info-icon"
+                >
+                  <Icon name="about" />
+                </span>
+              </div>
+              {presetAttachmentPoints.size > 0 && (
+                <div className={monomerCreationWizardStyles.attachmentPoints}>
+                  {Array.from(presetAttachmentPoints.entries()).map(
+                    ([name, atomPair]) => (
+                      <AttachmentPoint
+                        name={name}
+                        editor={editor}
+                        onNameChange={handleAttachmentPointNameChange}
+                        onLeavingAtomChange={handleLeavingAtomChange}
+                        onRemove={handleAttachmentPointRemove}
+                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                      />
+                    ),
+                  )}
+                </div>
+              )}
+            </div>
+          </>
         )}
         {RNA_COMPONENT_KEYS.map((rnaComponentKey, index) => {
           return (
@@ -280,7 +396,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   </button>
                 </div>
                 <MonomerCreationWizardFields
-                  assignedAttachmentPoints={new Map()}
+                  assignedAttachmentPoints={
+                    componentAttachmentPoints[rnaComponentKey]
+                  }
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (

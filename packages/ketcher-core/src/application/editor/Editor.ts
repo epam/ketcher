@@ -1616,7 +1616,7 @@ export class CoreEditor extends CoreEditorBase {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = getModeConstructor(mode);
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
       history.previousCommand?.operations.find((operation) => {

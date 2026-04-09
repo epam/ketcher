@@ -143,6 +143,38 @@ function parseNode(node: any, struct: any) {
       break;
   }
 }
+
+function getKetMonomerIdMap(
+  drawingEntitiesManager: DrawingEntitiesManager,
+): Map<number, number> {
+  const getMonomerIdMap = (
+    drawingEntitiesManager as DrawingEntitiesManager & {
+      getKetMonomerIdMap?: () => Map<number, number>;
+    }
+  ).getKetMonomerIdMap;
+
+  if (typeof getMonomerIdMap === 'function') {
+    return getMonomerIdMap.call(drawingEntitiesManager);
+  }
+
+  const monomerIdMap = new Map<number, number>();
+  let nextMonomerId = 0;
+
+  drawingEntitiesManager.monomers.forEach((monomer) => {
+    if (
+      monomer instanceof Chem &&
+      monomer.monomerItem.props.isMicromoleculeFragment
+    ) {
+      return;
+    }
+
+    monomerIdMap.set(monomer.id, nextMonomerId);
+    nextMonomerId++;
+  });
+
+  return monomerIdMap;
+}
+
 export class KetSerializer implements Serializer<Struct> {
   deserializeMicromolecules(content: string): Struct {
     const ket = JSON.parse(content);
@@ -823,7 +855,7 @@ export class KetSerializer implements Serializer<Struct> {
       atoms: [],
       bonds: [],
     };
-    const monomerIdMap = drawingEntitiesManager.getKetMonomerIdMap();
+    const monomerIdMap = getKetMonomerIdMap(drawingEntitiesManager);
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
       const monomerItem = monomer.monomerItem;

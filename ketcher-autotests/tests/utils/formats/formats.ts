@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
@@ -61,12 +62,12 @@ export async function getSequence(
   );
 }
 
-export function setZoom(page: Page, value: number) {
-  return page.evaluate((value) => window.ketcher.setZoom(value), value);
+export async function setZoom(page: Page, value: number) {
+  return await page.evaluate((value) => window.ketcher.setZoom(value), value);
 }
 
-export function setMode(page: Page, mode: SupportedModes) {
-  return page.evaluate((mode) => window.ketcher.setMode(mode), mode);
+export async function setMode(page: Page, mode: SupportedModes) {
+  return await page.evaluate((mode) => window.ketcher.setMode(mode), mode);
 }
 
 export async function getCml(page: Page): Promise<string> {
@@ -146,11 +147,37 @@ export async function setMolecule(
   structStr: string,
   position?: { x: number; y: number },
 ): Promise<void> {
-  return await page.evaluate(
-    ({ structStr, position }) =>
-      window.ketcher.setMolecule(structStr, { position }),
-    { structStr, position },
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForFunction(
+    () => window.ketcher && typeof window.ketcher.setMolecule === 'function',
   );
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await page.evaluate(
+        ({ structStr, position }) =>
+          window.ketcher.setMolecule(structStr, { position }),
+        { structStr, position },
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (
+        attempt === 0 &&
+        errorMessage.includes('Execution context was destroyed')
+      ) {
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForFunction(
+          () =>
+            window.ketcher && typeof window.ketcher.setMolecule === 'function',
+        );
+        continue;
+      }
+
+      throw error;
+    }
+  }
 }
 
 export async function updateMonomersLibrary(

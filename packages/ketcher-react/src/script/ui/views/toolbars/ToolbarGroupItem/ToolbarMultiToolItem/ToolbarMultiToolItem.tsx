@@ -98,20 +98,23 @@ const ToolbarMultiToolItem = (props: Props) => {
   );
 
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
-
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool;
     const savedSelectionToolId =
       savedSelectionTool &&
       `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      (savedSelectionTool &&
-        savedSelectionToolId &&
-        options.filter(
-          (option) =>
-            !status[option.id]?.hidden && option.id === savedSelectionToolId,
-        )[0]?.id) ||
-      id;
+
+    const foundSavedId =
+      savedSelectionTool &&
+      savedSelectionToolId &&
+      options.filter(
+        (option) =>
+          !status[option.id]?.hidden && option.id === savedSelectionToolId,
+      )[0]?.id;
+
+    if (foundSavedId) {
+      currentId = foundSavedId;
+    }
 
     if (!currentId) {
       currentId =

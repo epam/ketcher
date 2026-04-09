@@ -14,6 +14,7 @@ import {
   IKetAttachmentPoint,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
+import { MONOMER_CONST } from 'domain/constants/monomers';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
@@ -370,11 +371,19 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isPhosphate() {
-    return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Phosphate;
+    return (
+      this.monomerItem?.props?.MonomerClass === KetMonomerClass.Phosphate ||
+      (this.monomerItem?.props?.MonomerType === MONOMER_CONST.RNA &&
+        this.monomerItem?.props?.MonomerNaturalAnalogCode === MONOMER_CONST.P)
+    );
   }
 
   public get isSugar() {
-    return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Sugar;
+    return (
+      this.monomerItem?.props?.MonomerClass === KetMonomerClass.Sugar ||
+      (this.monomerItem?.props?.MonomerType === MONOMER_CONST.RNA &&
+        this.monomerItem?.props?.MonomerNaturalAnalogCode === MONOMER_CONST.R)
+    );
   }
 
   public get usedAttachmentPointsNamesList() {

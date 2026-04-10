@@ -406,28 +406,6 @@ const rnaPresetWizardReducer = (
 };
 
 /**
- * Checks if all mandatory properties required for a non-hidden monomer are filled.
- * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
- * @param values - The wizard form values to check
- * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
- */
-const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
-  const { type, symbol, naturalAnalogue } = values;
-
-  // Check if Code/symbol is filled
-  if (!symbol?.trim()) {
-    return false;
-  }
-
-  // Check if Natural analogue is filled (only required for certain types)
-  if (isNaturalAnalogueRequired(type) && !naturalAnalogue?.trim()) {
-    return false;
-  }
-
-  return true;
-};
-
-/**
  * Gets the appropriate leaving atom for a specific attachment point based on component type.
  * Per requirement 2.3.2.2:
  * - Base R1: H
@@ -520,6 +498,19 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
           type: 'error',
           message: NotificationMessages.symbolExists,
         });
+      }
+    }
+
+    if (key === 'name') {
+      const nameRegex = /^[a-zA-Z0-9-_*]*$/;
+      if (!nameRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidName', {
+          type: 'error',
+          message: NotificationMessages.invalidName,
+        });
+
+        return;
       }
     }
 
@@ -1330,34 +1321,32 @@ const MonomerCreationWizard = () => {
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
 
-      // Check if all mandatory properties are filled
-      // If not, we'll auto-assign properties instead of validating
-      const hasMandatoryProperties =
-        hasAllMandatoryPropertiesFilled(valuesToSave);
+      // Simulate auto-assignment to validate the final values that would be saved.
+      // This ensures format validation runs even when some mandatory fields are empty
+      // (they will be auto-filled), catching invalid characters in user-entered fields.
+      const valuesToValidate = presetCode
+        ? autoAssignPropertiesForHiddenMonomer(valuesToSave, presetCode)
+        : valuesToSave;
 
-      if (hasMandatoryProperties) {
-        // User has filled properties - validate them
-        // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
-        const { errors: inputsErrors, notifications: inputsNotifications } =
-          validateInputs(valuesToSave, true);
-        if (Object.keys(inputsErrors).length > 0) {
-          needSaveMonomers = false;
-          rnaPresetWizardStateDispatch({
-            type: 'SetErrors',
-            errors: inputsErrors,
-            rnaComponentKey,
-            editor,
-          });
-          rnaPresetWizardStateDispatch({
-            type: 'SetNotifications',
-            notifications: inputsNotifications,
-            rnaComponentKey,
-            editor,
-          });
-          return;
-        }
+      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToValidate, true);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: inputsErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
       }
-      // If no mandatory properties filled, skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {

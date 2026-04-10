@@ -151,7 +151,6 @@ const MonomerGroup = ({
               isSelected={isMonomerSelected(monomer)}
               onMouseLeave={closeLibraryPreview}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
-              onStarClick={closeLibraryPreview}
               onClick={() => selectMonomer(monomer)}
             />
           );

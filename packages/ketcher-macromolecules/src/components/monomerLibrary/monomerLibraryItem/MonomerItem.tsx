@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback, MouseEvent, useRef, useState } from 'react';
+import { useCallback, useEffect, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
@@ -30,7 +30,7 @@ import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { selectEditor, selectIsSequenceMode } from 'state/common';
+import { selectEditor, selectIsSequenceMode, showPreview } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
   cardMouseOverHandler,
@@ -44,7 +44,6 @@ const MonomerItem = ({
   groupName,
   onMouseLeave,
   onMouseMove,
-  onStarClick,
   isSelected,
   disabled,
   onClick = EmptyFunction,
@@ -73,13 +72,18 @@ const MonomerItem = ({
     ? undefined
     : (item as MonomerItemType);
 
+  useEffect(() => {
+    return () => {
+      dispatch(showPreview(undefined));
+    };
+  }, [dispatch]);
+
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
-      onStarClick?.();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item, onStarClick],
+    [dispatch, item],
   );
 
   const onAutochainIconClick = useCallback(

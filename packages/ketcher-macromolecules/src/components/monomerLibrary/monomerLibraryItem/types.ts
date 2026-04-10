@@ -23,5 +23,4 @@ export interface IMonomerItemProps {
   onClick?: VoidFunction;
   onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseMove?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onStarClick?: VoidFunction;
 }

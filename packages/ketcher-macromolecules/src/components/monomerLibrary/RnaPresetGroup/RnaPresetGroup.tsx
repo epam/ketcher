@@ -204,7 +204,6 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
               onContextMenu={handleContextMenu(preset)}
               onMouseMove={(e) => handleItemMouseMove(preset, e)}
               onMouseLeave={closeLibraryPreview}
-              onStarClick={closeLibraryPreview}
             />
           );
         })}

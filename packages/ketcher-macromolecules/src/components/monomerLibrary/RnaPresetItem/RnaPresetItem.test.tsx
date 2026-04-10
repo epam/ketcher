@@ -34,35 +34,4 @@ describe('Test Rna Preset Item component', () => {
 
     expect(rnaPresetItemHandleClick.mock.calls.length).toEqual(1);
   });
-
-  it('calls onStarClick when favorite star is clicked', () => {
-    const onStarClick = jest.fn();
-    const preset: IRnaPreset = {
-      base: undefined,
-      name: 'MyRnaStar',
-      phosphate: undefined,
-      nameInList: undefined,
-      sugar: undefined,
-    };
-
-    const { container } = render(
-      withThemeAndStoreProvider(
-        <RnaPresetItem
-          isSelected={false}
-          onClick={jest.fn()}
-          onContextMenu={jest.fn()}
-          onMouseLeave={jest.fn()}
-          onMouseMove={jest.fn()}
-          onStarClick={onStarClick}
-          preset={preset}
-        />,
-      ),
-    );
-
-    const star = container.querySelector('.star');
-    expect(star).not.toBeNull();
-    fireEvent.click(star as HTMLElement);
-
-    expect(onStarClick).toHaveBeenCalledTimes(1);
-  });
 });

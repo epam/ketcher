@@ -3682,16 +3682,21 @@ export class DrawingEntitiesManager {
             const isModifiedPhosphate =
               monomer instanceof Phosphate && monomer.isModification;
             const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
-            const antisenseMonomerItem =
-              isModifiedPhosphate || isAmbiguousMonomer
-                ? getRnaPartLibraryItem(
-                    editor,
-                    RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
-                  ) ??
-                  (isAmbiguousMonomer
-                    ? monomer.variantMonomerItem
-                    : monomer.monomerItem)
-                : monomer.monomerItem;
+            let antisenseMonomerItem: MonomerOrAmbiguousType =
+              monomer.monomerItem;
+
+            if (isModifiedPhosphate || isAmbiguousMonomer) {
+              const nonModifiedPhosphateItem = getRnaPartLibraryItem(
+                editor,
+                RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+              );
+
+              if (nonModifiedPhosphateItem) {
+                antisenseMonomerItem = nonModifiedPhosphateItem;
+              } else if (isAmbiguousMonomer) {
+                antisenseMonomerItem = monomer.variantMonomerItem;
+              }
+            }
             const monomerAddCommand = this.addMonomer(
               antisenseMonomerItem,
               monomer.position.add(new Vec2(0, 4.25)),

@@ -68,7 +68,7 @@ export function fromBondAddition(
     const newBeginAtomId: number = (
       action.addOp(
         new AtomAdd(
-          { ...beginAtomAttr, fragment: newFragmentId },
+          { ...beginAtomAttr, fragment: newFragmentId as number },
           beginAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
@@ -77,7 +77,7 @@ export function fromBondAddition(
     const newEndAtomId: number = (
       action.addOp(
         new AtomAdd(
-          { ...endAtomAttr, fragment: newFragmentId },
+          { ...endAtomAttr, fragment: newFragmentId as number },
           endAtomPos,
         ).perform(reStruct),
       ) as AtomAdd

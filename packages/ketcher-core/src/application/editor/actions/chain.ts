@@ -52,7 +52,9 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
       ? atomId
       : (
           action.addOp(
-            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
+            new AtomAdd({ label: 'C', fragment: frid as number }, p0).perform(
+              restruct,
+            ),
           ) as AtomAdd
         ).data.aid;
 

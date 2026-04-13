@@ -17,6 +17,7 @@ import {
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { ErrorTooltip } from '@tests/pages/macromolecules/canvas/ErrorTooltip';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
@@ -568,10 +569,7 @@ test.describe('Connection rules for peptides: ', () => {
                   );
 
                   await expect(bondLine).toBeVisible();
-                  const errorMessage = page
-                    .getByTestId('error-tooltip')
-                    .first();
-                  await expect(errorMessage).toContainText(
+                  expect(await ErrorTooltip(page).getErrorText()).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );
                 });

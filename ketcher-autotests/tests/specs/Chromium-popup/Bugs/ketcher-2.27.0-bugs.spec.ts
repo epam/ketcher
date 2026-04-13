@@ -50,6 +50,10 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import {
+  AttachmentPointType,
+  getAtomAttachmentPointLocator,
+} from '@utils/canvas/r-groups/getAtomAttachmentPointLocator';
 
 let page: Page;
 
@@ -274,11 +278,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       MicroBondOption.Highlight,
       HighlightOption.Red,
     ]);
-    const primaryAattachmentPoint = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .locator('path')
-      .nth(8);
+    const primaryAattachmentPoint = getAtomAttachmentPointLocator(page, {
+      primaryOrSecondary: AttachmentPointType.Primary,
+    }).first();
     await ContextMenu(page, primaryAattachmentPoint).click([
       MicroBondOption.Highlight,
       HighlightOption.Blue,

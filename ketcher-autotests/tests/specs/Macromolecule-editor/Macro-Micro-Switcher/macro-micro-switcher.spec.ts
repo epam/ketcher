@@ -1271,7 +1271,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AttachmentPoint.R1,
       AttachmentPoint.R3,
     );
-    await getBondLocator(page, {}).first().hover();
+    await getBondLocator(page, {}).first().hover({ force: true });
     await takeEditorScreenshot(page);
   });
 

@@ -19,15 +19,15 @@ import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 type Data = {
-  frid: any;
-  aid: any;
+  frid: number;
+  aid: number;
 };
 
 class FragmentStereoAtom extends BaseOperation {
   readonly data: Data;
   private readonly add: boolean;
 
-  constructor(fragmentId: any, atomId: any, add: boolean) {
+  constructor(fragmentId: number, atomId: number, add: boolean) {
     super(
       add
         ? OperationType.FRAGMENT_ADD_STEREO_ATOM
@@ -56,13 +56,13 @@ class FragmentStereoAtom extends BaseOperation {
 }
 
 class FragmentAddStereoAtom extends FragmentStereoAtom {
-  constructor(fragmentId: any, atomId: any) {
+  constructor(fragmentId: number, atomId: number) {
     super(fragmentId, atomId, true);
   }
 }
 
 class FragmentDeleteStereoAtom extends FragmentStereoAtom {
-  constructor(fragmentId: any, atomId: any) {
+  constructor(fragmentId: number, atomId: number) {
     super(fragmentId, atomId, false);
   }
 }

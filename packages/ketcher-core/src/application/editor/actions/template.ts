@@ -80,7 +80,9 @@ function extraBondAction(restruct, aid, angle) {
 
     action.addOp(operation);
     action.addOp(
-      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct),
+      new BondAdd(aid, operation.data.aid as number, { type: 1 }).perform(
+        restruct,
+      ),
     );
 
     additionalAtom = operation.data.aid;
@@ -166,9 +168,11 @@ export function fromTemplateOnAtom(
       bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
+    new BondAttr(operation.data.bid as number, 'isPreview', isPreview).perform(
+      restruct,
+    );
 
-    pasteItems.bonds.push(operation.data.bid);
+    pasteItems.bonds.push(operation.data.bid as number);
   });
 
   tmpl.sgroups.forEach((sg: SGroup) => {
@@ -348,7 +352,7 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
       atomsMap.get(tBond.begin),
       atomsMap.get(tBond.end),
     );
-    let previewBondId = null;
+    let previewBondId: number | null = null;
     if (existId === null) {
       const operation = new BondAdd(
         atomsMap.get(tBond.begin),
@@ -356,7 +360,7 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
         tBond,
       ).perform(restruct) as BondAdd;
       action.addOp(operation);
-      const newBondId = operation.data.bid;
+      const newBondId = operation.data.bid as number;
       previewBondId = newBondId;
 
       if (isFusingBenzeneBySpecialRules) {

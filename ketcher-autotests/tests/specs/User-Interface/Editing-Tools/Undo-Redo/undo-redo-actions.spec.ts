@@ -58,7 +58,6 @@ import {
   BondTopologyOption,
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {

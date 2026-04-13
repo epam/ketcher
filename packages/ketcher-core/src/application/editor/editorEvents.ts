@@ -259,7 +259,6 @@ export const hotkeysConfiguration = {
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
-      // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
       // Sequence mode handles Delete/Backspace itself (even when not editing),
       // so skip tool switching here.
       if (editor.isSequenceMode) return;

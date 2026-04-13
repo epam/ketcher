@@ -120,9 +120,7 @@ interface Editor {
   errorHandler: (message: string) => void;
   struct: () => Struct;
   canvas?: SVGSVGElement;
-  ketcherRootElementBoundingClientRect?: DOMRect;
   render: {
-    clientArea?: HTMLElement;
     paper?: {
       canvas?: SVGSVGElement;
     };
@@ -158,8 +156,6 @@ interface SaveDialogState {
   isLoading: boolean;
   structStr?: string;
   imageSrc?: string;
-  imageMimeType?: string;
-  useCanvasImageExport?: boolean;
 }
 
 interface AppState {
@@ -256,7 +252,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       imageFormat: 'svg',
       tabIndex: 0,
       isLoading: true,
-      useCanvasImageExport: false,
     };
     this.isRxn =
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
@@ -330,15 +325,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return format === 'svg' ? 'image/svg+xml' : `image/${format}`;
   };
 
-  getCanvasExportMargins = () => {
-    return {
-      horizontal: 0,
-      vertical: 0,
-    };
-  };
-
   getEditorCanvas = (): SVGSVGElement | undefined => {
     return this.props.editor.canvas || this.props.editor.render.paper?.canvas;
+  };
+
+  shouldUseCanvasImageExport = (format: string): format is 'svg' | 'png' => {
+    return !!this.getEditorCanvas() && (format === 'svg' || format === 'png');
   };
 
   encodeBase64 = (value: string): string => {
@@ -359,11 +351,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return undefined;
     }
 
-    return getSvgFromDrawnStructures(
-      canvas,
-      'file',
-      this.getCanvasExportMargins(),
-    );
+    return getSvgFromDrawnStructures(canvas, 'file');
   };
 
   rasterizeSvgToPngBase64 = (svgData: string): Promise<string> => {
@@ -427,9 +415,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         tabIndex: 0,
         structStr: svgData,
         imageSrc: this.encodeBase64(svgData),
-        imageMimeType: this.getImageMimeType(type),
         isLoading: false,
-        useCanvasImageExport: true,
       });
       return;
     }
@@ -441,17 +427,16 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       tabIndex: 0,
       structStr: pngBase64,
       imageSrc: pngBase64,
-      imageMimeType: this.getImageMimeType(type),
       isLoading: false,
-      useCanvasImageExport: true,
     });
   };
 
   saveCanvasImage = (): void => {
-    const { structStr, imageMimeType } = this.state;
+    const { structStr } = this.state;
     const { filename, format } = this.props.formState.result;
+    const imageMimeType = this.getImageMimeType(format);
 
-    if (!structStr || !imageMimeType) {
+    if (!structStr || !this.shouldUseCanvasImageExport(format)) {
       return;
     }
 
@@ -469,13 +454,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
-      if (this.getEditorCanvas() && (type === 'svg' || type === 'png')) {
+      if (this.shouldUseCanvasImageExport(type)) {
         this.setState({
           disableControls: true,
           tabIndex: 0,
           imageFormat: type,
           isLoading: true,
-          useCanvasImageExport: true,
         });
 
         return this.generateCanvasImagePreview(type)
@@ -487,7 +471,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             this.setState({
               disableControls: false,
               isLoading: false,
-              useCanvasImageExport: false,
             });
             return e;
           });
@@ -501,8 +484,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         imageFormat: type,
         structStr,
         isLoading: true,
-        imageMimeType: this.getImageMimeType(type),
-        useCanvasImageExport: false,
       });
       const serverOptions = { ...options };
 
@@ -515,7 +496,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             disableControls: false,
             tabIndex: 0,
             imageSrc: base64,
-            imageMimeType: this.getImageMimeType(type),
             isLoading: false,
           });
         })
@@ -570,7 +550,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             this.setState({
               tabIndex: 0,
               structStr,
-              useCanvasImageExport: false,
             });
           },
           (e) => {
@@ -722,9 +701,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           classes={classes}
           format={format}
           imageSrc={imageSrc || ''}
-          imageMimeType={
-            this.state.imageMimeType || this.getImageMimeType(format)
-          }
+          imageMimeType={this.getImageMimeType(format)}
           isCleanStruct={isCleanStruct}
         />
       );
@@ -761,18 +738,16 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   getButtons = (): JSX.Element[] => {
-    const {
-      disableControls,
-      imageFormat,
-      isLoading,
-      structStr,
-      useCanvasImageExport,
-    } = this.state;
+    const { disableControls, imageFormat, isLoading, structStr } = this.state;
     const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
+    const useCanvasImageExport = this.shouldUseCanvasImageExport(format);
 
-    options.outputFormat = imageFormat;
+    const imageOptions = {
+      ...options,
+      outputFormat: imageFormat,
+    };
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading
@@ -824,7 +799,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           <SaveButton
             mode="saveImage"
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            options={options as any}
+            options={imageOptions as any}
             data={structStr || ''}
             filename={filename}
             key="save-image-button"

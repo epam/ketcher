@@ -9,6 +9,33 @@ type Margins = {
   vertical: number;
 };
 
+const createDomRect = (
+  left: number,
+  top: number,
+  right: number,
+  bottom: number,
+): DOMRect =>
+  ({
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+    left,
+    top,
+    right,
+    bottom,
+    toJSON: () => ({
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+      left,
+      top,
+      right,
+      bottom,
+    }),
+  } as DOMRect);
+
 const getElementBoundingBox = (
   element: Element,
   canvas: SVGSVGElement,
@@ -40,7 +67,14 @@ const getElementBoundingBox = (
     return null;
   }
 
-  const box = element.getBBox();
+  let box: DOMRect;
+
+  try {
+    box = element.getBBox();
+  } catch {
+    return null;
+  }
+
   const matrix = element.getCTM();
 
   if ((!box.width && !box.height) || !matrix) {
@@ -66,26 +100,7 @@ const getElementBoundingBox = (
   const right = Math.max(...points.map((point) => point.x));
   const bottom = Math.max(...points.map((point) => point.y));
 
-  return {
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-    left,
-    top,
-    right,
-    bottom,
-    toJSON: () => ({
-      x: left,
-      y: top,
-      width: right - left,
-      height: bottom - top,
-      left,
-      top,
-      right,
-      bottom,
-    }),
-  } as DOMRect;
+  return createDomRect(left, top, right, bottom);
 };
 
 const getDrawnStructuresBoundingClientRect = (canvas: SVGSVGElement) => {
@@ -104,26 +119,7 @@ const getDrawnStructuresBoundingClientRect = (canvas: SVGSVGElement) => {
   const right = Math.max(...exportableElements.map((rect) => rect.right));
   const bottom = Math.max(...exportableElements.map((rect) => rect.bottom));
 
-  return {
-    x: left,
-    y: top,
-    width: right - left,
-    height: bottom - top,
-    left,
-    top,
-    right,
-    bottom,
-    toJSON: () => ({
-      x: left,
-      y: top,
-      width: right - left,
-      height: bottom - top,
-      left,
-      top,
-      right,
-      bottom,
-    }),
-  } as DOMRect;
+  return createDomRect(left, top, right, bottom);
 };
 
 export const getSvgFromDrawnStructures = (

@@ -30,12 +30,7 @@ import SGroupDataRender from './SGroupDataRender';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import {
-  AmbiguousMonomerPreview,
-  PreviewType,
-  StructRender,
-  calculateAmbiguousMonomerPreviewTop,
-} from 'components';
+import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
@@ -138,6 +133,10 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   if (sGroup instanceof MonomerMicromolecule) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      const markerPos = CoordinateTransformation.modelToView(position, render);
+      const TOOLTIP_GAP = 10;
+
       return (
         <AmbiguousMonomerPreview
           preview={{
@@ -146,14 +145,8 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           }}
           style={{
             position: 'absolute',
-            left: `${clientX - 50}px`,
-            top: calculateAmbiguousMonomerPreviewTop(
-              monomer.variantMonomerItem,
-            )({
-              left: clientX - 50,
-              top: clientY - 65,
-              bottom: clientY - 25,
-            }),
+            left: `${markerPos.x}px`,
+            top: `${markerPos.y + TOOLTIP_GAP}px`,
             transform: 'translate(-50%, 0)',
           }}
         />

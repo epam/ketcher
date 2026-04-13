@@ -872,8 +872,6 @@ export class SequenceMode extends BaseMode {
         selectionEndTwoStrandedNode,
         strandType,
       );
-      let isPhosphateAdditionalyDeleted = false;
-
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
         selectionStartTwoStrandedNode,
       );
@@ -1027,8 +1025,6 @@ export class SequenceMode extends BaseMode {
               nodeBeforeSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
-          isPhosphateAdditionalyDeleted = true;
         }
 
         if (
@@ -1056,9 +1052,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isPhosphateAdditionalyDeleted
-                ? nodeBeforeSelection.firstMonomerInNode
-                : nodeBeforeSelection.lastMonomerInNode,
+              nodeBeforeSelection.lastMonomerInNode,
               nodeAfterSelection.firstMonomerInNode,
             ),
           );
@@ -1084,8 +1078,6 @@ export class SequenceMode extends BaseMode {
               nodeAfterSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
-          isPhosphateAdditionalyDeleted = true;
         }
 
         if (
@@ -1113,9 +1105,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isPhosphateAdditionalyDeleted
-                ? nodeAfterSelection.firstMonomerInNode
-                : nodeAfterSelection.lastMonomerInNode,
+              nodeAfterSelection.lastMonomerInNode,
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );

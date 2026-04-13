@@ -31,6 +31,7 @@ import {
   isClipboardAPIAvailable,
   legacyCopy,
   Struct,
+  getSvgFromDrawnStructures,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -47,6 +48,7 @@ import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
 import { Dispatch } from 'redux';
+import { saveAs } from 'file-saver';
 
 const saveSchema = {
   title: 'Save',
@@ -82,6 +84,7 @@ interface ImageContentProps {
   classes: typeof classes;
   format: string;
   imageSrc: string;
+  imageMimeType: string;
   isCleanStruct: boolean;
 }
 
@@ -116,7 +119,13 @@ interface Editor {
   selection: () => { atoms?: number[] } | null;
   errorHandler: (message: string) => void;
   struct: () => Struct;
+  canvas?: SVGSVGElement;
+  ketcherRootElementBoundingClientRect?: DOMRect;
   render: {
+    clientArea?: HTMLElement;
+    paper?: {
+      canvas?: SVGSVGElement;
+    };
     options: {
       ignoreChiralFlag: boolean;
     };
@@ -149,6 +158,8 @@ interface SaveDialogState {
   isLoading: boolean;
   structStr?: string;
   imageSrc?: string;
+  imageMimeType?: string;
+  useCanvasImageExport?: boolean;
 }
 
 interface AppState {
@@ -182,12 +193,13 @@ const ImageContent = ({
   classes,
   format,
   imageSrc,
+  imageMimeType,
   isCleanStruct,
 }: ImageContentProps) => (
   <div className={classes.imageContainer}>
     {!isCleanStruct && (
       <img
-        src={`data:image/${format}+xml;base64,${imageSrc}`}
+        src={`data:${imageMimeType};base64,${imageSrc}`}
         alt={`${format} preview`}
         data-testid="preview-area"
       />
@@ -244,6 +256,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       imageFormat: 'svg',
       tabIndex: 0,
       isLoading: true,
+      useCanvasImageExport: false,
     };
     this.isRxn =
       this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
@@ -313,11 +326,173 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return format !== 'mol' && Object.keys(errors).length > 0;
   };
 
+  getImageMimeType = (format: string): string => {
+    return format === 'svg' ? 'image/svg+xml' : `image/${format}`;
+  };
+
+  getCanvasExportMargins = () => {
+    return {
+      horizontal: 0,
+      vertical: 0,
+    };
+  };
+
+  getEditorCanvas = (): SVGSVGElement | undefined => {
+    return this.props.editor.canvas || this.props.editor.render.paper?.canvas;
+  };
+
+  encodeBase64 = (value: string): string => {
+    const encodedValue = new TextEncoder().encode(value);
+    let binaryValue = '';
+
+    encodedValue.forEach((byte) => {
+      binaryValue += String.fromCharCode(byte);
+    });
+
+    return window.btoa(binaryValue);
+  };
+
+  getCanvasSvgData = (): string | undefined => {
+    const canvas = this.getEditorCanvas();
+
+    if (!canvas) {
+      return undefined;
+    }
+
+    return getSvgFromDrawnStructures(
+      canvas,
+      'file',
+      this.getCanvasExportMargins(),
+    );
+  };
+
+  rasterizeSvgToPngBase64 = (svgData: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const parsedSvg = new DOMParser().parseFromString(
+        svgData,
+        'image/svg+xml',
+      ).documentElement;
+      const width = Math.ceil(
+        Number.parseFloat(parsedSvg.getAttribute('width') || '0'),
+      );
+      const height = Math.ceil(
+        Number.parseFloat(parsedSvg.getAttribute('height') || '0'),
+      );
+
+      if (!width || !height) {
+        reject(new Error('Cannot prepare PNG export preview'));
+        return;
+      }
+
+      const image = new Image();
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+      const svgBlobUrl = URL.createObjectURL(svgBlob);
+
+      image.onload = () => {
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = width;
+        exportCanvas.height = height;
+        const context = exportCanvas.getContext('2d');
+
+        if (!context) {
+          URL.revokeObjectURL(svgBlobUrl);
+          reject(new Error('Cannot prepare PNG export preview'));
+          return;
+        }
+
+        context.drawImage(image, 0, 0, width, height);
+        URL.revokeObjectURL(svgBlobUrl);
+        resolve(exportCanvas.toDataURL('image/png').split(',')[1] || '');
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(svgBlobUrl);
+        reject(new Error('Cannot prepare PNG export preview'));
+      };
+
+      image.src = svgBlobUrl;
+    });
+  };
+
+  generateCanvasImagePreview = async (type: 'svg' | 'png'): Promise<void> => {
+    const svgData = this.getCanvasSvgData();
+
+    if (!svgData) {
+      throw new Error('Cannot get image data from canvas');
+    }
+
+    if (type === 'svg') {
+      this.setState({
+        disableControls: false,
+        tabIndex: 0,
+        structStr: svgData,
+        imageSrc: this.encodeBase64(svgData),
+        imageMimeType: this.getImageMimeType(type),
+        isLoading: false,
+        useCanvasImageExport: true,
+      });
+      return;
+    }
+
+    const pngBase64 = await this.rasterizeSvgToPngBase64(svgData);
+
+    this.setState({
+      disableControls: false,
+      tabIndex: 0,
+      structStr: pngBase64,
+      imageSrc: pngBase64,
+      imageMimeType: this.getImageMimeType(type),
+      isLoading: false,
+      useCanvasImageExport: true,
+    });
+  };
+
+  saveCanvasImage = (): void => {
+    const { structStr, imageMimeType } = this.state;
+    const { filename, format } = this.props.formState.result;
+
+    if (!structStr || !imageMimeType) {
+      return;
+    }
+
+    const blob =
+      format === 'png'
+        ? b64toBlob(structStr, imageMimeType)
+        : new Blob([structStr], { type: imageMimeType });
+
+    saveAs(blob, `${filename}.${format}`);
+    this.props.onOk();
+  };
+
   changeType = (type: string): Promise<Error | void> => {
     const { struct, server, options, formState, ignoreChiralFlag } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
+      if (this.getEditorCanvas() && (type === 'svg' || type === 'png')) {
+        this.setState({
+          disableControls: true,
+          tabIndex: 0,
+          imageFormat: type,
+          isLoading: true,
+          useCanvasImageExport: true,
+        });
+
+        return this.generateCanvasImagePreview(type)
+          .then(() => undefined)
+          .catch((e) => {
+            KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
+            errorHandler(e);
+            this.props.onResetForm(formState);
+            this.setState({
+              disableControls: false,
+              isLoading: false,
+              useCanvasImageExport: false,
+            });
+            return e;
+          });
+      }
+
       const ketSerialize = new KetSerializer();
       const structStr = ketSerialize.serialize(struct);
       this.setState({
@@ -326,6 +501,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         imageFormat: type,
         structStr,
         isLoading: true,
+        imageMimeType: this.getImageMimeType(type),
+        useCanvasImageExport: false,
       });
       const serverOptions = { ...options };
 
@@ -338,6 +515,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             disableControls: false,
             tabIndex: 0,
             imageSrc: base64,
+            imageMimeType: this.getImageMimeType(type),
             isLoading: false,
           });
         })
@@ -392,6 +570,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
             this.setState({
               tabIndex: 0,
               structStr,
+              useCanvasImageExport: false,
             });
           },
           (e) => {
@@ -543,6 +722,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           classes={classes}
           format={format}
           imageSrc={imageSrc || ''}
+          imageMimeType={
+            this.state.imageMimeType || this.getImageMimeType(format)
+          }
           isCleanStruct={isCleanStruct}
         />
       );
@@ -579,7 +761,13 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   getButtons = (): JSX.Element[] => {
-    const { disableControls, imageFormat, isLoading, structStr } = this.state;
+    const {
+      disableControls,
+      imageFormat,
+      isLoading,
+      structStr,
+      useCanvasImageExport,
+    } = this.state;
     const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
@@ -618,29 +806,44 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
 
     if (this.isImageFormat(format)) {
-      buttons.push(
-        <SaveButton
-          mode="saveImage"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          options={options as any}
-          data={structStr || ''}
-          filename={filename}
-          key="save-image-button"
-          type={`image/${format}+xml`}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSave={this.props.onOk as any}
-          testId="save-button"
-          disabled={
-            disableControls ||
-            !formState.valid ||
-            isCleanStruct ||
-            !this.props.server
-          }
-          className={classes.ok}
-        >
-          Save
-        </SaveButton>,
-      );
+      if (useCanvasImageExport) {
+        buttons.push(
+          <button
+            key="save-image-button"
+            onClick={this.saveCanvasImage}
+            type="button"
+            data-testid="save-button"
+            disabled={disableControls || !formState.valid || isCleanStruct}
+            className={classes.ok}
+          >
+            Save
+          </button>,
+        );
+      } else {
+        buttons.push(
+          <SaveButton
+            mode="saveImage"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            options={options as any}
+            data={structStr || ''}
+            filename={filename}
+            key="save-image-button"
+            type={`image/${format}+xml`}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onSave={this.props.onOk as any}
+            testId="save-button"
+            disabled={
+              disableControls ||
+              !formState.valid ||
+              isCleanStruct ||
+              !this.props.server
+            }
+            className={classes.ok}
+          >
+            Save
+          </SaveButton>,
+        );
+      }
     } else {
       buttons.push(
         <SaveButton

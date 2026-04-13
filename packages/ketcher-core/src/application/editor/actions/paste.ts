@@ -108,14 +108,14 @@ export function fromPaste(
     action.addOp(operation);
     aidMap.set(aid, operation.data.aid);
 
-    pasteItems.atoms.push(operation.data.aid);
-    items.atoms.push(operation.data.aid);
+    pasteItems.atoms.push(operation.data.aid as number);
+    items.atoms.push(operation.data.aid as number);
 
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
         restruct,
         tmpAtom.attachmentPoints,
-        operation.data.aid,
+        operation.data.aid as number,
       ),
     );
   });

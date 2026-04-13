@@ -72,7 +72,7 @@ export function fromBondAddition(
           beginAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const newEndAtomId: number = (
       action.addOp(
@@ -81,7 +81,7 @@ export function fromBondAddition(
           endAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     return [newBeginAtomId, newEndAtomId] as const;
   };
@@ -95,11 +95,11 @@ export function fromBondAddition(
     const newBeginAtomId: number = (
       action.addOp(
         new AtomAdd(
-          { ...beginAtomAttr, fragment: fragmentId },
+          { ...beginAtomAttr, fragment: fragmentId as number },
           beginAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const endAtom = struct.atoms.get(endAtomId);
     if (
@@ -126,12 +126,12 @@ export function fromBondAddition(
         new AtomAdd(
           {
             ...endAtomAttr,
-            fragment: fragmentId,
+            fragment: fragmentId as number,
           },
           endAtomPos ?? atomForNewBond(reStruct, begin, bond).pos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const beginAtom = struct.atoms.get(beginAtomId);
     if (

@@ -1247,8 +1247,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      const bondLine = page.locator('g path').first();
-      await bondLine.hover();
+      await getBondLocator(page, {}).hover({ force: true });
       await takeEditorScreenshot(page);
     });
   }

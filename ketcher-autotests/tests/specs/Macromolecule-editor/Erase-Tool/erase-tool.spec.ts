@@ -172,13 +172,12 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted and restored.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/two-chems-connected.ket`,
     );
     await CommonLeftToolbar(page).erase();
-    await bondLine.click();
+    await getBondLocator(page, {}).first().click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

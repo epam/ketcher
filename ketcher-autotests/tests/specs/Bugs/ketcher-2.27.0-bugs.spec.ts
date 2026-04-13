@@ -19,6 +19,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 
 import {
+  AttachmentPoint,
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -48,19 +49,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -142,7 +131,12 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

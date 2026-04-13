@@ -36,6 +36,7 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
@@ -67,21 +68,9 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
 
 async function interactWithMicroMolecule(
   page: Page,
@@ -193,7 +182,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page);
   });
 

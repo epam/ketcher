@@ -46,7 +46,10 @@ import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function drawThreeMonomers(page: Page) {
@@ -846,9 +849,8 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
-    await bondLine.hover();
+    await getBondLocator(page, {}).nth(1).hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
@@ -891,10 +893,9 @@ test.describe('RNA Library', () => {
     Test case: Bond tool
     Description: Bond deleted.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await CommonLeftToolbar(page).erase();
-    await bondLine.click();
+    await getBondLocator(page, {}).nth(1).click({ force: true });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

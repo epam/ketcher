@@ -130,7 +130,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await bondMonomerPointToMoleculeAtom(
       page,
       getMonomerLocator(page, Peptide.A).first(),

@@ -181,7 +181,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     await bondMonomerPointToMoleculeAtom(
       page,
       getMonomerLocator(page, Peptide.A).first(),
@@ -996,10 +995,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Library(page).selectMonomer(Base.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    const baseA = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('A', { exact: true });
+    const baseA = getAbbreviationLocator(page, { name: 'A' }).first();
     await expandMonomer(page, baseA);
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });

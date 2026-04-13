@@ -14,6 +14,7 @@ import {
   zoomInByKeyboard,
   zoomOutByKeyboard,
   dragTo,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -839,10 +840,7 @@ test.describe('Undo/Redo Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .hover({ force: true });
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);

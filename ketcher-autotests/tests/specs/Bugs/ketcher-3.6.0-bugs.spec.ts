@@ -10,7 +10,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   selectAllStructuresOnCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   keyboardTypeOnCanvas,
   keyboardPressOnCanvas,
@@ -290,7 +290,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'baA' }));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -320,7 +320,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       'PEPTIDE1{A.A.A.[Cys_Bn]}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await ContextMenu(
       page,
       getAbbreviationLocator(page, { name: 'Cys_Bn' }),

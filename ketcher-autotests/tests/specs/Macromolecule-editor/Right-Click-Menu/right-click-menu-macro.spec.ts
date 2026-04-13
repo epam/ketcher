@@ -7,7 +7,7 @@ import {
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   zoomInByKeyboard,
   zoomOutByKeyboard,
   dragMouseTo,
@@ -395,7 +395,7 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
   );
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).click(MonomerOption.Copy);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await ContextMenu(page, canvas).click(MonomerOption.Paste);
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

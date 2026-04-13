@@ -4,7 +4,7 @@ import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -39,7 +39,7 @@ test.describe('Loading SMARTS files', () => {
     */
     const smartsStringToPaste = 'c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1';
     await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

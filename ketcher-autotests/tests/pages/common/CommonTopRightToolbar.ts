@@ -59,6 +59,10 @@ export const CommonTopRightToolbar = (page: Page) => {
       await locators.aboutButton.click();
     },
 
+    async fullScreen() {
+      await locators.fullScreenButton.click();
+    },
+
     async setZoomInputValue(value: string) {
       await locators.zoomSelector.click();
       await zoomLocators.zoomValueEditbox.fill(value);

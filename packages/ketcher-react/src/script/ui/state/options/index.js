@@ -26,8 +26,6 @@ import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
 import { APP_OPTIONS_ACTION } from './actions';
 
-export { appUpdate } from './actions';
-
 export const initOptionsState = {
   app: {
     server: false,

@@ -104,7 +104,10 @@ import {
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import {
+  setEditorInstance,
+  resetEditorInstance,
+} from 'application/editor/editorSingleton';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -162,7 +165,7 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
 
 let editor;
 
-export class CoreEditor extends CoreEditorBase {
+export class CoreEditor {
   public events: IEditorEvents;
   public ketcherId?: string;
 
@@ -219,7 +222,6 @@ export class CoreEditor extends CoreEditorBase {
     renderersContainer,
     mode,
   }: ICoreEditorConstructorParams) {
-    super();
     const ketcher = ketcherProvider.getKetcher(ketcherId);
 
     this._type = EditorType.Micromolecules;
@@ -252,7 +254,7 @@ export class CoreEditor extends CoreEditorBase {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    CoreEditorBase.setEditorInstance(this);
+    setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -305,10 +307,6 @@ export class CoreEditor extends CoreEditorBase {
       this.drawingEntitiesManager.unselectAllDrawingEntities();
 
     this.renderersContainer.update(modelChanges);
-  }
-
-  static override provideEditorInstance(): CoreEditor {
-    return editor;
   }
 
   public clearMonomersLibrary() {
@@ -2074,6 +2072,6 @@ export class CoreEditor extends CoreEditorBase {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
-    CoreEditorBase.resetEditorInstance();
+    resetEditorInstance();
   }
 }

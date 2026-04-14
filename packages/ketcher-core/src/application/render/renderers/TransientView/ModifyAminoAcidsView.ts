@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
 import { BaseMonomer } from 'domain/entities';
@@ -5,7 +6,7 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
-import { CoreEditor, SequenceMode } from 'application/editor';
+import { SequenceMode } from 'application/editor';
 
 export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
@@ -20,7 +21,7 @@ export class ModifyAminoAcidsView extends TransientView {
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: ModifyAminoAcidsViewParams,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const { monomersToModify } = params;
 
     if (editor.mode instanceof SequenceMode) {

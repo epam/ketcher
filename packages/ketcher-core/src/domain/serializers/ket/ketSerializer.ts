@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -53,7 +54,7 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
   createMonomersForVariantMonomer,
@@ -228,7 +229,7 @@ export class KetSerializer implements Serializer<Struct> {
   private validateMonomerNodeTemplate(
     node: IKetMonomerNode,
     parsedFileContent: IKetMacromoleculesContent,
-    editor: CoreEditorBase,
+    editor: CoreEditor,
   ) {
     const template =
       parsedFileContent[setMonomerTemplatePrefix(node.templateId)];
@@ -242,7 +243,7 @@ export class KetSerializer implements Serializer<Struct> {
 
   private validateConnectionTypeAndEndpoints(
     connection: IKetConnection,
-    editor: CoreEditorBase,
+    editor: CoreEditor,
   ) {
     if (
       connection.connectionType !== KetConnectionType.SINGLE &&
@@ -255,7 +256,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);

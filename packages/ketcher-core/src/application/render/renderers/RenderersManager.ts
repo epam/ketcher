@@ -1,4 +1,4 @@
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { notifyRenderComplete } from 'application/render/internal';
@@ -264,7 +264,7 @@ export class RenderersManager extends RenderersManagerBase {
   }
 
   private recalculateMonomersEnumeration() {
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -333,7 +333,7 @@ export class RenderersManager extends RenderersManagerBase {
   }
 
   public reinitializeViewModel() {
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
@@ -462,7 +462,7 @@ export class RenderersManager extends RenderersManagerBase {
   }
 
   private renderAromaticCircles() {
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const canvas = ZoomTool.instance?.canvas;
 

@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor/internal';
 import {
   AromatizeData,
   AromatizeResult,
@@ -239,7 +239,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryParsedJson,
     );
     const expandedOptions = {
       monomerLibrary,

@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -106,14 +107,14 @@ abstract class SelectBase implements BaseTool {
     this.destroy();
     this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
       (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+        if (provideEditorInstance().isSequenceAnyEditMode) return;
         if (this.mode === 'rotating') return;
         this.startRotation(payload.event);
       },
     );
     this.rotationCenterUnsubscribe = RotationView.subscribeRotationCenter(
       (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+        if (provideEditorInstance().isSequenceAnyEditMode) return;
         this.startRotationCenterDrag(payload.event);
       },
     );
@@ -134,7 +135,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mousedown(event: MouseEvent) {
-    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+    if (provideEditorInstance().isSequenceAnyEditMode) return;
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -425,7 +426,7 @@ abstract class SelectBase implements BaseTool {
       return { bondLengthSnapPosition: null };
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     let angle: number;
     if (editor.mode.isSnakeLayoutMode) {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);

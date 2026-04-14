@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Command } from 'domain/entities/Command';
-import { CoreEditorBase } from './CoreEditorBase';
+import type { CoreEditor } from './Editor';
 import assert from 'assert';
 import { ketcherProvider } from 'application/ketcherProvider';
 const HISTORY_SIZE = 32; // put me to options
@@ -25,16 +25,16 @@ export type HistoryOperationType = 'undo' | 'redo';
 export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;
-  editor!: CoreEditorBase;
+  editor!: CoreEditor;
 
   private static _instance: object | null = null;
 
-  constructor(editor: CoreEditorBase) {
+  constructor(editor: CoreEditor) {
     this.editor = editor;
     this.historyPointer = 0;
   }
 
-  static getInstance(editor: CoreEditorBase): EditorHistory {
+  static getInstance(editor: CoreEditor): EditorHistory {
     const instance = EditorHistory._instance;
     if (EditorHistory.isInstance(instance)) {
       return instance;

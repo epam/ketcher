@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -95,7 +95,7 @@ export abstract class RenderersManagerBase {
     let right;
     let top;
     let bottom;
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     (
       drawingEntities ||

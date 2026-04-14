@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
@@ -6,7 +7,6 @@ import {
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -124,20 +124,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditorBase.provideEditorInstance().isSequenceEditMode;
+    return provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditorBase.provideEditorInstance()
-      .isSequenceEditInRNABuilderMode;
+    return provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    return CoreEditorBase.provideEditorInstance().mode.isAntisenseEditMode;
+    return provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    return CoreEditorBase.provideEditorInstance().mode.isSyncEditMode;
+    return provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {

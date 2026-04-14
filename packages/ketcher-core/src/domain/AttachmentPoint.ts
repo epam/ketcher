@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -15,7 +16,6 @@ import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
@@ -244,7 +244,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond

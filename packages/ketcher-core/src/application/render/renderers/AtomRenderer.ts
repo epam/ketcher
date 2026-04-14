@@ -1,7 +1,8 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor, editorEvents } from 'application/editor';
+import { editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
@@ -44,7 +45,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const { hydrogenAmount } = this.atom.calculateValence();
     const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
@@ -219,7 +220,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
-    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     if (atomHaldEdges?.length === 0) {
@@ -246,7 +247,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get isAtomTerminal() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -256,7 +257,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get isLabelVisible() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
@@ -696,7 +697,7 @@ export class AtomRenderer extends BaseRenderer {
 
   private bisectLargestSector(): Vec2 {
     const { neighborAngle, largestAngle } =
-      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
+      provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
         this.atom,
       );
 

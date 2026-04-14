@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Struct } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
@@ -7,7 +8,7 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { CoreEditor, EditorHistory } from './editor/internal';
+import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 import { EditorSelection } from './editor/editor.types';
@@ -74,7 +75,7 @@ export function parseStruct(
 }
 
 export function deleteAllEntitiesOnCanvas() {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
   EditorHistory.getInstance(editor).update(modelChanges);
@@ -86,7 +87,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
   structService: StructService,
   mergeWithLatestHistoryCommand = false,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct);
   let ketStruct = struct;

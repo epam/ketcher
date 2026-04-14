@@ -1,5 +1,6 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
@@ -29,7 +30,7 @@ let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editorEvents: typeof editorEvents;
-  private readonly editor: CoreEditorBase;
+  private readonly editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
@@ -70,7 +71,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditorBase.provideEditorInstance();
+    this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;

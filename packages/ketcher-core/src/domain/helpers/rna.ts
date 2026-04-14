@@ -1,4 +1,4 @@
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
+import type { CoreEditor } from 'application/editor/Editor';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   MONOMER_CONST,
@@ -10,7 +10,7 @@ import { KetMonomerClass } from 'application/formatters/types/ket';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 
 export function getRnaPartLibraryItem(
-  editor: CoreEditorBase,
+  editor: CoreEditor,
   libraryItemLabel: string,
   monomerClass?: KetMonomerClass,
   isDna = false,
@@ -44,10 +44,7 @@ export function getRnaPartLibraryItem(
   });
 }
 
-export function getPeptideLibraryItem(
-  editor: CoreEditorBase,
-  peptideName: string,
-) {
+export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
   return editor.monomersLibrary.find((libraryItem) => {
     // Check for ambiguous peptides
     if (isAmbiguousMonomerLibraryItem(libraryItem)) {

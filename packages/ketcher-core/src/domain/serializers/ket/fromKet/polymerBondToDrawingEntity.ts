@@ -1,10 +1,10 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AttachmentPointName } from 'domain/types';
-import { CoreEditorBase } from 'application/editor/CoreEditorBase';
 
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,
@@ -63,7 +63,7 @@ export function polymerBondToDrawingEntity(
       secondAttachmentPoint as AttachmentPointName,
     )
   ) {
-    const editor = CoreEditorBase.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.error.dispatch(
       'There is no free attachment point for bond creation.',
     );

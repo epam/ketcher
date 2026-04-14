@@ -1,4 +1,4 @@
-/****************************************************************************
+/*******************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ***************************************************************************/
+ ******************************************************************************/
 
 import {
   GroupBlockContainer,
@@ -26,6 +26,8 @@ import { useAppSelector } from 'hooks';
 import { selectIsEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
 import { PropsWithChildren } from 'react';
+import { AttachmentPointsSection } from '../AttachmentPointsSection';
+import { getMonomerAttachmentPoints } from 'helpers/attachmentPoints';
 
 export const GroupBlockWide = ({
   groupName,
@@ -35,10 +37,14 @@ export const GroupBlockWide = ({
   onClick,
   testid,
   children,
+  monomerItem,
 }: IGroupBlockProps & PropsWithChildren) => {
   const isEditMode = useAppSelector(selectIsEditMode);
 
   const empty = !monomerName;
+
+  // Collect all APs for this monomer (component tab: show all)
+  const attachmentPoints = getMonomerAttachmentPoints(monomerItem);
 
   return (
     <GroupBlockContainer
@@ -59,6 +65,13 @@ export const GroupBlockWide = ({
         </TextContainer>
         {children}
       </>
+      {/* Always show all APs for a component tab */}
+      {attachmentPoints.length > 0 && (
+        <AttachmentPointsSection
+          attachmentPoints={attachmentPoints}
+          isEditMode={isEditMode}
+        />
+      )}
     </GroupBlockContainer>
   );
 };

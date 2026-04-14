@@ -63,7 +63,7 @@
     "intersection-observer": "^0.12.2",
     "ketcher-core": "*",
     "lexical": "^0.40.0",
-    "lodash": "^4.18.1",
+    "lodash": "^4.17.23",
     "miew-react": "0.11.0",
     "paper": "^0.12.18",
     "react-colorful": "^5.4.0",

@@ -9,6 +9,8 @@ import {
 import { groupNameToRnaEditorItemLabel } from './utils';
 import GroupIcon from './GroupIcon';
 import { PropsWithChildren } from 'react';
+import { AttachmentPointsSection } from '../AttachmentPointsSection';
+import { getMonomerAttachmentPoints } from 'helpers/attachmentPoints';
 
 export const GroupBlockCompact = ({
   groupName,
@@ -18,10 +20,14 @@ export const GroupBlockCompact = ({
   onClick,
   testid,
   children,
+  monomerItem,
 }: IGroupBlockProps & PropsWithChildren) => {
   const isEditMode = useAppSelector(selectIsEditMode);
 
   const empty = !monomerName;
+
+  // Collect all APs for this monomer (component tab: show all)
+  const attachmentPoints = getMonomerAttachmentPoints(monomerItem);
 
   return (
     <CompactGroupBlockContainer
@@ -37,6 +43,13 @@ export const GroupBlockCompact = ({
           {monomerName ?? groupNameToRnaEditorItemLabel[groupName]}
         </CompactGroupText>
         {children}
+        <!-- Show all APs for compact component tab -->
+        {attachmentPoints.length > 0 && (
+          <AttachmentPointsSection
+            attachmentPoints={attachmentPoints}
+            isEditMode={isEditMode}
+          />
+        )}
       </>
     </CompactGroupBlockContainer>
   );

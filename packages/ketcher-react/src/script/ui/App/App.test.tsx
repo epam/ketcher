@@ -6,8 +6,14 @@ const mockUseSelector = jest.fn();
 const mockRemoveKetcherInstance = jest.fn();
 
 jest.mock('@mui/material', () => ({
-  ThemeProvider: ({ children }: any) => children,
-  Snackbar: ({ children, open }: any) => (open ? <div>{children}</div> : null),
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
+  Snackbar: ({
+    children,
+    open,
+  }: {
+    children: React.ReactNode;
+    open: boolean;
+  }) => (open ? <div>{children}</div> : null),
   createTheme: () => ({}),
 }));
 

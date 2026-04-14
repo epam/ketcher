@@ -32,7 +32,6 @@ import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { ErrorTooltip } from '@tests/pages/macromolecules/canvas/ErrorTooltip';
 
 let page: Page;
 test.setTimeout(40000);
@@ -459,7 +458,11 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(25000);
 
-      const errorTooltip = ErrorTooltip(page);
+      const errorTooltip = page.getByTestId('error-tooltip').first();
+      const errorTooltipCloseButton = page
+        .locator('#error-tooltip')
+        .getByRole('button')
+        .first();
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
@@ -478,8 +481,8 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
-        await errorTooltip.close();
-        await errorTooltip.waitForBecomeHidden();
+        await errorTooltipCloseButton.click();
+        await errorTooltip.waitFor({ state: 'detached' });
       }
 
       await bondTwoMonomersByCenterToCenter(
@@ -491,13 +494,13 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       // Error message is wrong because of a bug!
       // it should be "Unable to establish a hydrogen bond between two monomers connected with a single bond"
-      expect(await errorTooltip.getErrorText()).toContain(
+      await expect(errorTooltip).toHaveText(
         "There can't be more than 1 bond between the first and the second monomer",
       );
 
       if (await errorTooltip.isVisible()) {
-        await errorTooltip.close();
-        await errorTooltip.waitForBecomeHidden();
+        await errorTooltipCloseButton.click();
+        await errorTooltip.waitFor({ state: 'detached' });
       }
 
       test.fixme(

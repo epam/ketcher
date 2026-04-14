@@ -32,7 +32,7 @@ import { AttachmentPoint } from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { ErrorTooltip } from '@tests/pages/macromolecules/canvas/ErrorTooltip';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 let page: Page;
 test.setTimeout(40000);
@@ -459,7 +459,7 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(25000);
 
-      const errorTooltip = ErrorTooltip(page);
+      const errorTooltip = NotificationBanner(page);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
@@ -491,7 +491,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       // Error message is wrong because of a bug!
       // it should be "Unable to establish a hydrogen bond between two monomers connected with a single bond"
-      expect(await errorTooltip.getErrorText()).toContain(
+      expect(await errorTooltip.getNotificationText()).toContain(
         "There can't be more than 1 bond between the first and the second monomer",
       );
 

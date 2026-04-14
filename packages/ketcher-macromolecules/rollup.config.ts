@@ -4,27 +4,41 @@ import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
+import { createRequire } from 'node:module';
 import nodeResolve from '@rollup/plugin-node-resolve';
-import path from 'path';
+import path from 'node:path';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import pkg from './package.json';
 import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
+import type { Plugin, RollupOptions } from 'rollup';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
 import ttypescript from 'ttypescript';
 import { string } from 'rollup-plugin-string';
 
+type PackageJson = {
+  main: string;
+  module: string;
+  source: string;
+  version: string;
+};
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json') as PackageJson;
+
+const asPlugin = (plugin: unknown): Plugin => plugin as Plugin;
+
 const mode = {
   PRODUCTION: 'production',
   DEVELOPMENT: 'development',
-};
+} as const;
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
-export const valuesToReplace = {
+
+export const valuesToReplace: Record<string, string> = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
@@ -43,7 +57,7 @@ export const valuesToReplace = {
   ),
 };
 
-const config = {
+const config: RollupOptions = {
   input: pkg.source,
   output: [
     {
@@ -71,7 +85,7 @@ const config = {
       sourceMap: true,
       include: includePattern,
     }),
-    svgr({ include: includePattern }),
+    asPlugin(svgr({ include: includePattern })),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
@@ -93,13 +107,15 @@ const config = {
       include: includePattern,
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.trimStart('.')),
+      extensions: extensions.map((extension) => extension.replace(/^\./, '')),
       comments: 'none',
       include: includePattern,
     }),
-    string({
-      include: '**/*.ket',
-    }),
+    asPlugin(
+      string({
+        include: '**/*.ket',
+      }),
+    ),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };

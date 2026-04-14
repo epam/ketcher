@@ -15,6 +15,11 @@ import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { LayerMap } from './generalEnumTypes';
 import Visel from './visel';
 
+type AttachmentPointShape = {
+  items?: Array<{ node?: SVGElement | null }>;
+  node?: SVGElement | null;
+};
+
 class ReRGroupAttachmentPoint extends ReObject {
   item: RGroupAttachmentPoint;
   reAtom: ReAtom;
@@ -173,13 +178,14 @@ class ReRGroupAttachmentPoint extends ReObject {
     }
     this.lineDirectionVector = directionVector;
 
-    showAttachmentPointShape(
+    const attachmentPointShape = showAttachmentPointShape(
       this.reAtom,
       restruct.render,
       directionVector,
       restruct.addReObjectPath.bind(restruct),
       this.visel,
     );
+    this.addTestAttributes(attachmentPointShape);
 
     const showLabel = isAttachmentPointLabelRequired(restruct);
     if (showLabel) {
@@ -211,6 +217,26 @@ class ReRGroupAttachmentPoint extends ReObject {
       const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
+  }
+
+  private addTestAttributes(attachmentPointShape: AttachmentPointShape) {
+    const attachmentPointElement = attachmentPointShape.items
+      ? attachmentPointShape.items[0]?.node
+      : attachmentPointShape.node;
+
+    if (!attachmentPointElement) {
+      return;
+    }
+
+    attachmentPointElement.setAttribute('data-testid', 'attachment-point');
+    attachmentPointElement.setAttribute(
+      'data-primary-or-secondary',
+      this.item.type,
+    );
+    attachmentPointElement.setAttribute(
+      'data-attached-to-atomid',
+      String(this.item.atomId),
+    );
   }
 
   private getHoverPlatePath(options: RenderOptions, isHighlight = false) {
@@ -297,7 +323,7 @@ function showAttachmentPointShape(
   directionVector: Vec2,
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
   visel: Visel,
-): void {
+): AttachmentPointShape {
   const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
   const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
     options,
@@ -323,6 +349,8 @@ function showAttachmentPointShape(
     atomPositionVector,
     true,
   );
+
+  return resultShape;
 }
 
 function trisectionLargestSector(

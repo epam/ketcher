@@ -35,7 +35,6 @@ import {
   expandAbbreviation,
   removeAbbreviation,
 } from '@utils/sgroup/helpers';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   FunctionalGroupsTabItems,
@@ -548,12 +547,9 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('me')
-      .first()
-      .hover();
+    await getAbbreviationLocator(page, {
+      name: SaltsAndSolventsTabItems.MethaneSulphonicAcid,
+    }).hover();
     await takeEditorScreenshot(page);
   });
 

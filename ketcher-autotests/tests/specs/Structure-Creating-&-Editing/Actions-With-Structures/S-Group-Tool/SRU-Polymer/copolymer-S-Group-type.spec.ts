@@ -29,7 +29,12 @@ test.describe('Copolymer S-Group type', () => {
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Verify that a new option added to the S-group type menu - Copolymer,
      * and it become active if there are at least two structure repeating units (SRU) defined in the selected structure.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and check that Copolymer option is active.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
@@ -74,7 +79,14 @@ test.describe('Copolymer S-Group type', () => {
      * Description: Check that when a user after selecting the structure chooses Copolymer type,
      * two new drop-down menus added below the type drop-down menu,
      * the first one titled Subtype and the second one, that comes below it, titled Repeat Pattern.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and select Copolymer option.
+     * 6. Check that two new drop-down menus added below the type drop-down menu,
+     * the first one titled Subtype and the second one, that comes below it, titled Repeat Pattern.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
@@ -121,8 +133,16 @@ test.describe('Copolymer S-Group type', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Verify that Subtype drop-down menu contain options Random, Alternating and Block
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and select Copolymer option.
+     * 6. Check that Subtype drop-down menu contain options Random, Alternating and Block.
      * Version 3.12.0
+     * Currently this test is failed because of issue: https://github.com/epam/ketcher/issues/9559
+     * There is unexpected option "Not Specified" for Subtype dropdown menu.
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
@@ -173,7 +193,13 @@ test.describe('Copolymer S-Group type', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Check that Repeat Pattern drop-down menu contain options Head-to-Tail, Head-to-Head and Either/Unknown.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and select Copolymer option.
+     * 6. Check that Repeat Pattern drop-down menu contain options Head-to-Tail, Head-to-Head and Either/Unknown.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
@@ -231,7 +257,14 @@ test.describe('Copolymer S-Group type', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Verify that after the user chooses the subtype and the repeating pattern, the Apply button become active.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and select Copolymer option.
+     * 6. Choose any options in Subtype and Repeat Pattern drop-down menus.
+     * 7. Check that Apply button become active.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
@@ -279,7 +312,13 @@ test.describe('Copolymer S-Group type', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Check that when Apply is selected, the selected structure encompassed with large brackets.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Select Subtype and Repeat Pattern for copolymer and click Apply button.
+     * 6. Check that when Apply is selected, the selected structure encompassed with large brackets.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
@@ -331,7 +370,14 @@ test.describe('Copolymer S-Group type', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Check that the chosen Subtype and Repeat Pattern areshown next to the right bracket as an abbreviation.
-     *
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Select Subtype and Repeat Pattern for copolymer and click Apply button.
+     * 6. Check that the chosen Subtype and Repeat Pattern areshown next to the right bracket as an abbreviation.
+     * 7. Clear canvas and repeat steps 1-6, but choose another options in Subtype and Repeat Pattern drop-down menus.
      * Version 3.12.0
      */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');

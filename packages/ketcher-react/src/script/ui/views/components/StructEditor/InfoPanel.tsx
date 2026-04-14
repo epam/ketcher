@@ -107,30 +107,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     setMolecule(groupStruct ? groupStruct.clone() : null);
   }, [groupName, groupStruct]);
 
-  const nonTooltipSGroup =
-    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
-
-  if (
-    nonTooltipSGroup ||
-    (!molecule && !sGroupData) ||
-    clientX === undefined ||
-    clientY === undefined
-  ) {
-    return null;
-  }
-
-  const [position, size] = getPanelPosition(clientX, clientY, render, sGroup);
-  const { x, y } = position;
-  const width = size.x;
-  const height = size.y;
-
-  const showMolecule =
-    molecule &&
-    sGroup &&
-    !SGroup.isDataSGroup(sGroup) &&
-    !SGroup.isQuerySGroup(sGroup);
-
-  if (sGroup instanceof MonomerMicromolecule) {
+  // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
+  // so it must be checked before the clientX/clientY guard
+  if (sGroup instanceof MonomerMicromolecule && render) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
       const { position } = sGroup.getContractedPosition(render.ctab.molecule);
@@ -153,6 +132,29 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       );
     }
   }
+
+  const nonTooltipSGroup =
+    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
+
+  if (
+    nonTooltipSGroup ||
+    (!molecule && !sGroupData) ||
+    clientX === undefined ||
+    clientY === undefined
+  ) {
+    return null;
+  }
+
+  const [position, size] = getPanelPosition(clientX, clientY, render, sGroup);
+  const { x, y } = position;
+  const width = size.x;
+  const height = size.y;
+
+  const showMolecule =
+    molecule &&
+    sGroup &&
+    !SGroup.isDataSGroup(sGroup) &&
+    !SGroup.isQuerySGroup(sGroup);
 
   return showMolecule ? (
     <div

@@ -502,7 +502,7 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
     }
 
     if (key === 'name') {
-      const nameRegex = /^[a-zA-Z0-9-_*]*$/;
+      const nameRegex = /^[a-zA-Z0-9-_* ]*$/;
       if (!nameRegex.test(value)) {
         errors[key as WizardFormFieldId] = true;
         notifications.set('invalidName', {

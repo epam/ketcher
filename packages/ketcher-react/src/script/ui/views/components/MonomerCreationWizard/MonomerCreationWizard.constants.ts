@@ -64,7 +64,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidPresetCode:
     'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   invalidName:
-    'The monomer name must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    'The monomer name must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), asterisks (*), and spaces.',
   invalidPhosphatePositionAttachmentPoints:
     '3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.',
   phosphatePositionNotSelected:

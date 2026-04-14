@@ -7,7 +7,10 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  ConnectionPointOption,
+  MonomerOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -126,6 +129,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await AttachmentPointsDialog(page).cancel();
   });
+
   test('2.The Arrange as a Ring option should be inactive(disabled), when fewer than three monomers are selected. ', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8369
@@ -141,8 +145,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * Version 3.10.0
      */
 
-    const arrangeAsARingButton =
-      MacromoleculesTopToolbar(page).arrangeAsARingButton;
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -158,8 +163,12 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
       state: 'visible',
     });
-    await expect(arrangeAsARingButton).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
+
   test('3.Context menu incorrectly allows “Arrange as a Ring” even when selection criteria are not met', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8368
@@ -175,8 +184,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARingButton =
-      MacromoleculesTopToolbar(page).arrangeAsARingButton;
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, { monomerId: 90 }).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -191,8 +201,12 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
       state: 'visible',
     });
-    await expect(arrangeAsARingButton).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
+
   test('4.Undo does not revert "Arrange as a ring" - structure disappears, ghost bonds remain and cause console errors', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8367
@@ -211,8 +225,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARingButton =
-      MacromoleculesTopToolbar(page).arrangeAsARingButton;
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
@@ -225,11 +240,11 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARingButton).toHaveAttribute(
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
       'aria-disabled',
       'false',
     );
-    await arrangeAsARingButton.click();
+    await arrangeAsARingMenuOption.click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

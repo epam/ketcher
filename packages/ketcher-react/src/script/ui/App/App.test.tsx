@@ -69,17 +69,24 @@ jest.mock('../state/templates/init-lib', () => ({
 
 jest.mock('ketcher-core', () => ({
   ketcherProvider: {
-    removeKetcherInstance: (...args: any[]) =>
+    removeKetcherInstance: (...args: unknown[]) =>
       mockRemoveKetcherInstance(...args),
   },
 }));
 
 jest.mock('react-redux', () => ({
-  useSelector: (selector: any) => mockUseSelector(selector),
+  useSelector: (selector: (state: unknown) => unknown) =>
+    mockUseSelector(selector),
 }));
 
 jest.mock('components', () => ({
-  IconButton: ({ testId, onClick }: any) => (
+  IconButton: ({
+    testId,
+    onClick,
+  }: {
+    testId: string;
+    onClick: () => void;
+  }) => (
     <button data-testid={testId} onClick={onClick} type="button">
       close
     </button>

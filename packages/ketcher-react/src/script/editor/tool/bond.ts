@@ -58,9 +58,6 @@ class BondTool implements Tool {
 
   mousedown(event) {
     if (this.dragCtx) return;
-    if (isBondingWithMacroMolecule(this.editor, event)) {
-      return;
-    }
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;
@@ -69,6 +66,33 @@ class BondTool implements Tool {
       'bonds',
       'functionalGroups',
     ]);
+
+    if (ci?.map === 'bonds' && molecule.isBondFromMacromolecule(ci.id)) {
+      const fgId = FunctionalGroup.findFunctionalGroupByBond(
+        molecule,
+        functionalGroups,
+        ci.id,
+      );
+      if (fgId !== null) {
+        this.editor.event.removeFG.dispatch({ fgIds: [fgId] });
+        return;
+      }
+    }
+
+    if (ci?.map === 'atoms' && molecule.isAtomFromMacromolecule(ci.id)) {
+      const fgId = FunctionalGroup.findFunctionalGroupByAtom(
+        functionalGroups,
+        ci.id,
+      );
+      if (fgId !== null) {
+        this.editor.event.removeFG.dispatch({ fgIds: [fgId] });
+        return;
+      }
+    }
+
+    if (isBondingWithMacroMolecule(this.editor, event)) {
+      return;
+    }
     const atomResult: Array<number> = [];
     const bondResult: Array<number> = [];
     const result: Array<number> = [];

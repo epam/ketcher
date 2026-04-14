@@ -121,10 +121,6 @@ class AtomTool implements Tool {
     const ci = editor.findItem(event, eventMaps);
     const struct = editor.struct();
 
-    if (struct.isTargetFromMacromolecule(ci)) {
-      return;
-    }
-
     if (ci?.map === 'atoms') {
       const atomId = ci.id;
 
@@ -137,6 +133,10 @@ class AtomTool implements Tool {
         editor.event.removeFG.dispatch({ fgIds: [fgId] });
         return;
       }
+    }
+
+    if (struct.isTargetFromMacromolecule(ci)) {
+      return;
     }
 
     const ciFunctionalGroupName =

@@ -33,7 +33,6 @@ import {
   Bond,
   BondAttr,
   AtomAttr,
-  MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
@@ -197,10 +196,6 @@ class TemplateTool implements Tool {
       return false;
     }
     const functionalGroup = this.functionalGroups.get(targetId);
-
-    if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
-      return false;
-    }
 
     const isTargetExpanded = functionalGroup?.isExpanded;
     const isTargetAtomOrBond =

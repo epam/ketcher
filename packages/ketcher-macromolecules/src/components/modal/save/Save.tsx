@@ -27,12 +27,12 @@ import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
   legacyCopy,
   isHelmCompatible,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -97,7 +97,7 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);

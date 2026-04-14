@@ -18,11 +18,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
+import type { CoreEditor } from 'ketcher-core';
 import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   EditorHistory,
   SequenceMode,
@@ -31,6 +31,7 @@ import {
   SnakeMode,
   FlexMode,
   normalizeError,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -234,7 +235,7 @@ const onOk = async ({
   const isSeq = formatSelection === SEQ;
   const isFasta = formatSelection === FASTA;
   const ketSerializer = new KetSerializer();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   let inputFormat;
   let fileData = struct;
 
@@ -356,7 +357,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 

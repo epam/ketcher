@@ -2778,6 +2778,13 @@ export class DrawingEntitiesManager {
   }
 
   public validateIfApplicableForFasta() {
+    if (
+      this.monomers.size === 0 &&
+      this.micromoleculesHiddenEntities.atoms.size > 0
+    ) {
+      return false;
+    }
+
     const monomerTypes = new Set();
     let isValid = true;
 

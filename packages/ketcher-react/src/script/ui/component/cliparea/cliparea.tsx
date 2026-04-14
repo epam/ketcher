@@ -31,7 +31,6 @@ const ieCb: DataTransfer | undefined =
     : undefined;
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
-let needSkipCopyEvent = false;
 
 const isUserEditing = (): boolean => {
   const el = document.activeElement;
@@ -128,31 +127,7 @@ class ClipArea extends Component<ClipAreaProps> {
             });
           });
         } else {
-          if (needSkipCopyEvent) {
-            needSkipCopyEvent = false;
-            return;
-          }
-          needSkipCopyEvent = true;
-
-          this.props.onCopy().then((data) => {
-            // It is possible to have access to clipboard data through evt.clipboardData
-            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-            // It will not work with long operations which time > 5 sec, because browser will close access
-            // to clipboard data if user did not interact with application.
-            addEventListener(
-              'copy',
-              (evt: Event) => {
-                const clipboardEvent = evt as ClipboardEvent;
-                if (clipboardEvent.clipboardData && data) {
-                  legacyCopy(clipboardEvent.clipboardData, data);
-                }
-                evt.preventDefault();
-              },
-              { once: true },
-            );
-            document.execCommand('copy');
-          });
-
+          // Legacy browsers without Clipboard API: copy is not supported.
           event.preventDefault();
         }
       },
@@ -368,24 +343,8 @@ async function pasteByKeydown(
 
 export const actions = ['cut', 'copy', 'paste'];
 
-export function exec(action: string): boolean {
-  let enabled = document.queryCommandSupported(action);
-  if (enabled) {
-    try {
-      const windowWithClipboardEvent = window as Window & {
-        ClipboardEvent?: typeof ClipboardEvent;
-      };
-      enabled =
-        document.execCommand(action) ||
-        Boolean(windowWithClipboardEvent.ClipboardEvent) ||
-        Boolean(ieCb);
-    } catch (e) {
-      // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
-      enabled = false;
-    }
-  }
-  return enabled;
+export function exec(_action: string): boolean {
+  return isClipboardAPIAvailable() || Boolean(ieCb);
 }
 
 export default ClipArea;

@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-const isMac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
+const isMac = (() => {
+  if (typeof navigator === 'undefined') return false;
+  const uad = (
+    navigator as Navigator & { userAgentData?: { platform?: string } }
+  ).userAgentData;
+  if (uad?.platform) return /mac/i.test(uad.platform);
+  return /Mac/.test(navigator.userAgent);
+})();
 
 export const KeyboardModifiers = {
   Alt: 'Alt',

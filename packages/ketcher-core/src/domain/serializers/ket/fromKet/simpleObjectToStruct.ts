@@ -27,8 +27,8 @@ export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
 }
 
 /**
- * @deprecated TODO to remove after release 2.3
- * As circle has been migrated to ellipses here is function for converting old files data with circles to ellipse type
+ * Converts legacy circle format (from files before release 2.3) to ellipse type.
+ * Circles have been migrated to ellipses in the current format.
  * @param ketItem
  */
 function circleToEllipse(ketItem) {

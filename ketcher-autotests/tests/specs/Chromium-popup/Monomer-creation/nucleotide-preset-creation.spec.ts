@@ -409,7 +409,7 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     });
     await dialog.submit();
 
-    expect(NotificationBanner(page).getNotificationText()).toContain(
+    expect(await NotificationBanner(page).getNotificationText()).toContain(
       'The preset was successfully added to the library',
     );
   });

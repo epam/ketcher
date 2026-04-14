@@ -18,8 +18,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
-import type { CoreEditor } from 'ketcher-core';
 import {
+  type CoreEditor,
   ChemicalMimeType,
   KetSerializer,
   StructService,

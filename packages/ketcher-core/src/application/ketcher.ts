@@ -634,6 +634,30 @@ export class Ketcher {
     }, this.eventBus);
   }
 
+  async aromatize(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Aromatize is not available in macro mode');
+    }
+
+    await runAsyncAction<void>(async () => {
+      const struct = await this._indigo.aromatize(this.editor.struct());
+      const ketSerializer = new KetSerializer();
+      await this.setMolecule(ketSerializer.serialize(struct));
+    }, this.eventBus);
+  }
+
+  async dearomatize(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Dearomatize is not available in macro mode');
+    }
+
+    await runAsyncAction<void>(async () => {
+      const struct = await this._indigo.dearomatize(this.editor.struct());
+      const ketSerializer = new KetSerializer();
+      await this.setMolecule(ketSerializer.serialize(struct));
+    }, this.eventBus);
+  }
+
   async calculate(options?: CalculateData): Promise<CalculateResult> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('Calculate is not available in macro mode');

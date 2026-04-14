@@ -108,8 +108,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   }, [groupName, groupStruct]);
 
   // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
-  // so it must be checked before the clientX/clientY guard
-  if (sGroup instanceof MonomerMicromolecule && render) {
+  // so it must be checked before the clientX/clientY guard.
+  // sGroup.pp must exist to avoid assertion error in getContractedPosition.
+  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
     const monomer = sGroup.monomer;
     if (monomer instanceof AmbiguousMonomer) {
       const { position } = sGroup.getContractedPosition(render.ctab.molecule);

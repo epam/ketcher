@@ -403,7 +403,7 @@ export async function bondMonomerPointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,
-  monomerAttachmentPoint?: string,
+  monomerAttachmentPoint?: AttachmentPoint,
   connectionPointShift?: { x: number; y: number },
 ) {
   await CommonLeftToolbar(page).bondTool(MacroBondType.Single);

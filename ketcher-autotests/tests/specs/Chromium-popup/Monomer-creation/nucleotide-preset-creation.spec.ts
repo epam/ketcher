@@ -35,6 +35,7 @@ import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/Confirm
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
+import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -408,9 +409,9 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     });
     await dialog.submit();
 
-    await expect(
-      page.getByText('The preset was successfully added to the library'),
-    ).toBeVisible();
+    expect(NotificationBanner(page).getNotificationText()).toContain(
+      'The preset was successfully added to the library',
+    );
   });
 });
 

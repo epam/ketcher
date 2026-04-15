@@ -18,7 +18,58 @@ import { mapOf } from './schema-helper';
 import { range } from 'lodash/fp';
 import { sdataCustomSchema } from './sdata-schema';
 
-export const atom = {
+interface CommonStructSchema {
+  key?: string;
+  title: string;
+  type?: string;
+  required?: string[];
+}
+
+export interface SchemaProperty extends CommonStructSchema {
+  enum?: unknown[];
+  enumNames?: string[];
+  default?: unknown;
+  format?: string;
+  pattern?: string;
+  maxLength?: number;
+  minLength?: number;
+  invalidMessage?: string | ((data: unknown) => string);
+}
+
+export interface StructSchema<
+  T = Record<string, SchemaProperty | Record<string, unknown>>,
+> extends CommonStructSchema {
+  properties: T;
+}
+
+interface AtomProperties extends Record<string, SchemaProperty> {
+  alias: SchemaProperty;
+  aromaticity: SchemaProperty;
+  atomList: SchemaProperty;
+  atomType: SchemaProperty;
+  charge: SchemaProperty;
+  chirality: SchemaProperty;
+  cip: SchemaProperty;
+  connectivity: SchemaProperty;
+  customQuery: SchemaProperty;
+  exactChangeFlag: SchemaProperty;
+  explicitValence: SchemaProperty;
+  hCount: SchemaProperty;
+  implicitHCount: SchemaProperty;
+  invRet: SchemaProperty;
+  isotope: SchemaProperty;
+  label: SchemaProperty;
+  notList: SchemaProperty;
+  pseudo: SchemaProperty;
+  radical: SchemaProperty;
+  ringBondCount: SchemaProperty;
+  ringMembership: SchemaProperty;
+  ringSize: SchemaProperty;
+  substitutionCount: SchemaProperty;
+  unsaturatedAtom: SchemaProperty;
+}
+
+export const atom: StructSchema<AtomProperties> = {
   title: 'Atom',
   type: 'object',
   required: ['label'],
@@ -197,7 +248,7 @@ export const atom = {
   },
 };
 
-export const rgroupSchema = {
+export const rgroupSchema: StructSchema = {
   title: 'R-group',
   type: 'object',
   properties: {
@@ -206,13 +257,13 @@ export const rgroupSchema = {
       items: {
         type: 'string',
         enum: range(1, 33),
-        enumNames: range(1, 33).map((item) => 'R' + item),
+        enumNames: range(1, 33).map((item: number) => 'R' + item),
       },
     },
   },
 };
 
-export const labelEdit = {
+export const labelEdit: StructSchema = {
   title: 'Label Edit',
   type: 'object',
   required: ['label'],
@@ -226,7 +277,7 @@ export const labelEdit = {
   },
 };
 
-export const attachmentPoints = {
+export const attachmentPoints: StructSchema = {
   title: 'Attachment Points',
   type: 'object',
   properties: {
@@ -241,7 +292,7 @@ export const attachmentPoints = {
   },
 };
 
-export const bond = {
+export const bond: StructSchema = {
   title: 'Bond',
   type: 'object',
   required: ['type'],
@@ -319,7 +370,9 @@ export const bond = {
   },
 };
 
-const sgroup = {
+const sgroup: Omit<StructSchema, 'properties'> & {
+  oneOf?: Partial<StructSchema>[];
+} = {
   title: 'SGroup',
   type: 'object',
   required: ['type'],
@@ -428,9 +481,10 @@ const sgroup = {
     },
   ],
 };
-export const sgroupMap = mapOf(sgroup, 'type');
 
-export const rgroupLogic = {
+export const sgroupMap: Record<string, StructSchema> = mapOf(sgroup, 'type');
+
+export const rgroupLogic: StructSchema = {
   title: 'R-Group',
   type: 'object',
   properties: {
@@ -447,12 +501,12 @@ export const rgroupLogic = {
     ifthen: {
       title: 'Condition',
       type: 'integer',
-      minium: 0,
+      minimum: 0,
     },
   },
 };
 
-export const textSchema = {
+export const textSchema: StructSchema = {
   title: 'Text Edit',
   type: 'object',
   required: ['label'],
@@ -464,7 +518,7 @@ export const textSchema = {
   },
 };
 
-export const attachSchema = {
+export const attachSchema: StructSchema = {
   title: 'Template edit',
   type: 'object',
   required: ['name'],

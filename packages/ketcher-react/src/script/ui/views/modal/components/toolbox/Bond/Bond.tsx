@@ -156,7 +156,7 @@ function customQueryValid(customQuery: string, isCustomQuery: boolean) {
   if (!isCustomQuery) {
     return true;
   }
-  const regex = new RegExp(bondSchema.properties.customQuery.pattern);
+  const regex = new RegExp(bondSchema.properties.customQuery.pattern as string);
   const isValid = regex.test(customQuery);
   return isValid;
 }

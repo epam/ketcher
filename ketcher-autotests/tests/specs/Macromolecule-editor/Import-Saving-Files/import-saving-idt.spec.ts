@@ -122,7 +122,7 @@ test.describe('Import-Saving .idt Files', () => {
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
-    const expectedValues = ['IDT'];
+    const expectedValues = [MacroFileType.IDT];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }

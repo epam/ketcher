@@ -71,6 +71,8 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  lonePairDisplay?: 'inherit' | 'show' | 'hide';
+  expectedLonePairs?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */

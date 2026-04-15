@@ -43,6 +43,13 @@ interface SavedSettings {
 interface SavedOptions {
   ignoreChiralFlag?: boolean;
   disableQueryElements?: string[] | null;
+
+  showLonePairs?: boolean;
+  lonePairDefaultMode?: 'off' | 'eligible-only';
+  lonePairDotDiameter?: number;
+  lonePairOffset?: number;
+  lonePairSpread?: number;
+  respectManualLonePairPositions?: boolean;
 }
 
 export class SettingsManager {
@@ -161,6 +168,70 @@ export class SettingsManager {
       ...options,
       ignoreChiralFlag,
     });
+  }
+
+  static get showLonePairs() {
+    const { showLonePairs } = this.getOptions();
+    return showLonePairs;
+  }
+
+  static set showLonePairs(showLonePairs: boolean | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, showLonePairs });
+  }
+
+  static get lonePairDefaultMode() {
+    const { lonePairDefaultMode } = this.getOptions();
+    return lonePairDefaultMode;
+  }
+
+  static set lonePairDefaultMode(
+    lonePairDefaultMode: 'off' | 'eligible-only' | undefined,
+  ) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairDefaultMode });
+  }
+
+  static get lonePairDotDiameter() {
+    const { lonePairDotDiameter } = this.getOptions();
+    return lonePairDotDiameter;
+  }
+
+  static set lonePairDotDiameter(lonePairDotDiameter: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairDotDiameter });
+  }
+
+  static get lonePairOffset() {
+    const { lonePairOffset } = this.getOptions();
+    return lonePairOffset;
+  }
+
+  static set lonePairOffset(lonePairOffset: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairOffset });
+  }
+
+  static get lonePairSpread() {
+    const { lonePairSpread } = this.getOptions();
+    return lonePairSpread;
+  }
+
+  static set lonePairSpread(lonePairSpread: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairSpread });
+  }
+
+  static get respectManualLonePairPositions() {
+    const { respectManualLonePairPositions } = this.getOptions();
+    return respectManualLonePairPositions;
+  }
+
+  static set respectManualLonePairPositions(
+    respectManualLonePairPositions: boolean | undefined,
+  ) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, respectManualLonePairPositions });
   }
 
   static get monomerLibraryUpdates() {

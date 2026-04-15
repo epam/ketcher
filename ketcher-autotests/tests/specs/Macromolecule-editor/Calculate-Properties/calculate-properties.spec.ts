@@ -60,16 +60,19 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro
      * 2. Check that "Calculate Properties" icon added to the main toolbar, with the tooltip preview of "Calculate Properties (Alt+C)"
      */
-    const icon = {
+    const calculatePropertiesButton = {
       testId: 'calculate-macromolecule-properties-button',
       title: 'Calculate properties (Alt+C)',
     };
-    const iconButton = page.getByTestId(icon.testId);
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    await expect(icon.title).toBeTruthy();
+    const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
+    await button.hover();
+    expect(calculatePropertiesButton.title).toBeTruthy();
     await takeTopToolbarScreenshot(page);
-    await iconButton.click();
+    await button.click();
     await takeTopToolbarScreenshot(page);
   });
 

@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class EllipticalArcFilledBowArrowRenderer {
   static preparePaths(
@@ -25,14 +25,14 @@ export class EllipticalArcFilledBowArrowRenderer {
     const attr = direction * arrowHeadAttr;
     const endX = start.x + arrowLength;
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
-        endX,
-      )},${tfx(start.y)}` +
-      `L${tfx(endX - width)},${tfx(start.y - length)}` +
-      `l${tfx(width)},${tfx(attr)}` +
-      `l${tfx(width)},${tfx(-attr)}` +
-      `l${tfx(-width)},${length}`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `A${arrowLength / 2},${height},${0},${0},${
+        direction > 0 ? 1 : 0
+      },${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
+      `l${toFixed(width)},${toFixed(attr)}` +
+      `l${toFixed(width)},${toFixed(-attr)}` +
+      `l${toFixed(-width)},${length}`;
 
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)

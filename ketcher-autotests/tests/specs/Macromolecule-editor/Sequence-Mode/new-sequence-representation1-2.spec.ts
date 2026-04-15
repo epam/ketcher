@@ -4,7 +4,7 @@
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Page, test, expect, Locator } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   MacroFileType,
   MonomerType,
@@ -1906,8 +1906,8 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       // 4. Check if a symbol has H-bonds with a symbol opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
       // Dirty hack to make sure that the symbol got menu opened for it
       await senseSymbol.dblclick({ force: true });
-      await clickInTheMiddleOfTheScreen(page);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await ContextMenu(page, senseSymbol).open();
 
       await expect(establishHydrogenBondsOption).toBeDisabled();

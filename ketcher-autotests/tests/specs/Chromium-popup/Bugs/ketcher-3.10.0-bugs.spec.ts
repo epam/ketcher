@@ -129,6 +129,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await AttachmentPointsDialog(page).cancel();
   });
+
   test('2.The Arrange as a Ring option should be inactive(disabled), when fewer than three monomers are selected. ', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8369
@@ -144,7 +145,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      * Version 3.10.0
      */
 
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -160,8 +163,12 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
       state: 'visible',
     });
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
+
   test('3.Context menu incorrectly allows “Arrange as a Ring” even when selection criteria are not met', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8368
@@ -177,7 +184,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, { monomerId: 90 }).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
@@ -192,8 +201,12 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
       state: 'visible',
     });
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
+
   test('4.Undo does not revert "Arrange as a ring" - structure disappears, ghost bonds remain and cause console errors', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8367
@@ -212,7 +225,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
+    const arrangeAsARingMenuOption = page.getByTestId(
+      MonomerOption.ArrangeAsARing,
+    );
     const anyMonomer = getMonomerLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
@@ -225,8 +240,11 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'false');
-    await arrangeAsARing.click();
+    await expect(arrangeAsARingMenuOption).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
+    await arrangeAsARingMenuOption.click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -250,7 +268,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
+    const arrangeAsARingButton =
+      MacromoleculesTopToolbar(page).arrangeAsARingButton;
     const anyMonomer = getMonomerLocator(page, {}).first();
     const anyMonomerSymbol = getSymbolLocator(page, {}).first();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
@@ -264,13 +283,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toBeHidden();
+    await expect(arrangeAsARingButton).toBeHidden();
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
     await ContextMenu(page, anyMonomerSymbol).open();
-    await expect(arrangeAsARing).toBeHidden();
+    await expect(arrangeAsARingButton).toBeHidden();
   });
   test('6.No limit on the number of added modification fields; new fields extend beyond the visible wizard area and shift action buttons', async () => {
     /*

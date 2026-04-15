@@ -15,7 +15,7 @@ import {
   takeTopToolbarScreenshot,
   clickOnCanvas,
   Monomer,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
@@ -46,7 +46,10 @@ import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function drawThreeMonomers(page: Page) {
@@ -846,9 +849,8 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
-    await bondLine.hover();
+    await getBondLocator(page, {}).nth(1).hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
@@ -891,10 +893,9 @@ test.describe('RNA Library', () => {
     Test case: Bond tool
     Description: Bond deleted.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await CommonLeftToolbar(page).erase();
-    await bondLine.click();
+    await getBondLocator(page, {}).nth(1).click({ force: true });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -1107,7 +1108,7 @@ test.describe('RNA Library', () => {
 
       await page.keyboard.press('Escape');
       await Library(page).openRNASection(RNASection.Nucleotides);
-      await clickOnMiddleOfCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1240,7 +1241,7 @@ test.describe('RNA Library', () => {
         fromCenter: true,
       });
       await page.keyboard.press('Escape');
-      await clickOnMiddleOfCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

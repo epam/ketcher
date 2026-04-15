@@ -258,6 +258,25 @@ const SettingsDialog = (props: Props) => {
           )}
           data-testid="show-hydrogen-labels"
         />
+        <Field name="showLonePairs" data-testid="show-lone-pairs" />
+        <Field
+          name="lonePairDefaultMode"
+          component={Select}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.lonePairDefaultMode,
+          )}
+          data-testid="lone-pair-default-mode"
+        />
+        <Field
+          name="lonePairDotDiameter"
+          data-testid="lone-pair-dot-diameter"
+        />
+        <Field name="lonePairOffset" data-testid="lone-pair-offset" />
+        <Field name="lonePairSpread" data-testid="lone-pair-spread" />
+        <Field
+          name="respectManualLonePairPositions"
+          data-testid="respect-manual-lone-pair-positions"
+        />
       </fieldset>
     ),
   };

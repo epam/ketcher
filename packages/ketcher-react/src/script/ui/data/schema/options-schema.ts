@@ -96,6 +96,12 @@ const render: {
   hashSpacing: ExtendedSchema;
   hashSpacingUnit: ExtendedSchema;
   imageResolution: ExtendedSchema;
+  showLonePairs: ExtendedSchema;
+  lonePairDefaultMode: ExtendedSchema;
+  lonePairDotDiameter: ExtendedSchema;
+  lonePairOffset: ExtendedSchema;
+  lonePairSpread: ExtendedSchema;
+  respectManualLonePairPositions: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -324,6 +330,45 @@ const render: {
     enum: Object.values(ImageResolution),
     enumNames: Object.keys(ImageResolution),
     default: ImageResolution.low,
+  },
+  showLonePairs: {
+    title: 'Display lone pairs',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairDefaultMode: {
+    title: 'Default lone-pair mode',
+    enum: ['off', 'eligible-only'],
+    enumNames: ['Off', 'Eligible heteroatoms only'],
+    default: 'eligible-only',
+  },
+  lonePairDotDiameter: {
+    title: 'Lone-pair dot diameter',
+    type: 'number',
+    default: 1.8,
+    minimum: 0.5,
+    maximum: 8,
+  },
+  lonePairOffset: {
+    title: 'Lone-pair offset',
+    type: 'number',
+    default: 9,
+    minimum: 1,
+    maximum: 40,
+  },
+  lonePairSpread: {
+    title: 'Lone-pair spread',
+    type: 'number',
+    default: 3.5,
+    minimum: 1,
+    maximum: 20,
+  },
+  respectManualLonePairPositions: {
+    title: 'Respect manual lone-pair positions',
+    type: 'boolean',
+    description: 'slider',
+    default: true,
   },
 };
 

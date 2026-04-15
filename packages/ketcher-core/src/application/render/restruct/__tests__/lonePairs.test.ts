@@ -211,8 +211,9 @@ describe('getAnchorPlacements', () => {
   });
 
   it('penalizes placement that overlaps an occupied box', () => {
-    // Occupy the top anchor dot positions
-    const topDotBox = { x: -3.75, y: -21, width: 7.5, height: 5 };
+    // Top dots land at y = center.y - halfH - offset = 0 - 5 - 9 = -14
+    // Build a box that covers exactly those dot positions
+    const topDotBox = { x: -3.75, y: -15, width: 7.5, height: 3 };
     const placements = getAnchorPlacements(center, box, 9, 3.5, [topDotBox]);
     const topPlacement = placements.find((p) => p.anchor === 'top')!;
     const rightPlacement = placements.find((p) => p.anchor === 'right')!;

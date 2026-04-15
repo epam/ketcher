@@ -1,4 +1,4 @@
-import { Bond, Struct } from 'domain/entities';
+import { Struct } from 'domain/entities';
 import {
   LonePairAnchor,
   LonePairDisplayOverride,

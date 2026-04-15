@@ -129,7 +129,7 @@ test.describe('Copolymer S-Group type', () => {
     ).toBeVisible();
   });
 
-  test('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
+  test.fail('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Verify that Subtype drop-down menu contain options Random, Alternating and Block

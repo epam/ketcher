@@ -14,6 +14,10 @@ export class FlexMode extends BaseMode {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
+    const antisenseChanges =
+      editor.drawingEntitiesManager.recalculateAntisenseChains();
+    editor.renderersContainer.update(antisenseChanges);
+
     const modelChanges =
       editor.drawingEntitiesManager.applyFlexLayoutMode(true);
 

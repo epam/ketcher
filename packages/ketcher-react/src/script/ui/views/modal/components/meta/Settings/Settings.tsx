@@ -258,15 +258,13 @@ const SettingsDialog = (props: Props) => {
           )}
           data-testid="show-hydrogen-labels"
         />
-        <Field name="showLonePairs" data-testid="show-lone-pairs" />
-        <Field
-          name="lonePairDefaultMode"
-          component={Select}
-          options={getSelectOptionsFromSchema(
-            settingsProps?.lonePairDefaultMode,
-          )}
-          data-testid="lone-pair-default-mode"
-        />
+        <Field name="lonePairShowN" data-testid="lone-pair-show-n" />
+        <Field name="lonePairShowO" data-testid="lone-pair-show-o" />
+        <Field name="lonePairShowS" data-testid="lone-pair-show-s" />
+        <Field name="lonePairShowF" data-testid="lone-pair-show-f" />
+        <Field name="lonePairShowCl" data-testid="lone-pair-show-cl" />
+        <Field name="lonePairShowBr" data-testid="lone-pair-show-br" />
+        <Field name="lonePairShowI" data-testid="lone-pair-show-i" />
         <Field
           name="lonePairDotDiameter"
           data-testid="lone-pair-dot-diameter"

@@ -113,7 +113,7 @@ describe('getExpectedLonePairCount', () => {
   });
 
   it('oxygen bonded by double bond has 2 lone pairs', () => {
-    // C=O (carbonyl O): ve=6, usedElectrons = 2*2 + 0 + 0 = 4, nonbonding=2, pairs=1
+    // C=O (carbonyl O): RDKit formula floor((6 - 0 - 2 - 0 - 0) / 2) = 2
     expect(
       getExpectedLonePairCount({
         label: 'O',
@@ -122,7 +122,110 @@ describe('getExpectedLonePairCount', () => {
         bondOrderSum: 2,
         implicitHs: 0,
       }),
+    ).toBe(2);
+  });
+
+  it('sulfur in H2S has 2 lone pairs', () => {
+    // S with 2 implicit H: floor((6 - 0 - 0 - 2 - 0) / 2) = 2
+    expect(
+      getExpectedLonePairCount({
+        label: 'S',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 0,
+        implicitHs: 2,
+      }),
+    ).toBe(2);
+  });
+
+  it('bromine in HBr has 3 lone pairs', () => {
+    // Br with 1 implicit H: floor((7 - 0 - 0 - 1 - 0) / 2) = 3
+    expect(
+      getExpectedLonePairCount({
+        label: 'Br',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 0,
+        implicitHs: 1,
+      }),
+    ).toBe(3);
+  });
+
+  it('pyridine-like aromatic nitrogen has 1 lone pair', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'N',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 3,
+        implicitHs: 0,
+        isAromatic: true,
+      }),
     ).toBe(1);
+  });
+
+  it('pyrrolic aromatic [nH] has 1 lone pair', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'N',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 3,
+        implicitHs: 1,
+        isAromatic: true,
+      }),
+    ).toBe(1);
+  });
+
+  it('furan-like aromatic oxygen has 2 lone pairs', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'O',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 3,
+        implicitHs: 0,
+        isAromatic: true,
+      }),
+    ).toBe(2);
+  });
+
+  it('thiophene-like aromatic sulfur has 2 lone pairs', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'S',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 3,
+        implicitHs: 0,
+        isAromatic: true,
+      }),
+    ).toBe(2);
+  });
+
+  it('aromatic cationic nitrogen has 0 lone pairs', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'N',
+        charge: 1,
+        radical: 0,
+        bondOrderSum: 3,
+        implicitHs: 0,
+        isAromatic: true,
+      }),
+    ).toBe(0);
+  });
+
+  it('returns null for impossible negative electron bookkeeping', () => {
+    expect(
+      getExpectedLonePairCount({
+        label: 'O',
+        charge: 0,
+        radical: 0,
+        bondOrderSum: 7,
+        implicitHs: 0,
+      }),
+    ).toBeNull();
   });
 });
 
@@ -132,64 +235,68 @@ describe('getExpectedLonePairCount', () => {
 
 describe('shouldRenderLonePairs', () => {
   const baseOptions: Partial<RenderOptions> = {
-    showLonePairs: true,
-    lonePairDefaultMode: 'eligible-only',
+    lonePairShowO: true,
   };
 
   it('returns false when lonePairCount is null', () => {
     expect(
-      shouldRenderLonePairs('inherit', null, baseOptions as RenderOptions),
+      shouldRenderLonePairs('O', 'inherit', null, baseOptions as RenderOptions),
     ).toBe(false);
   });
 
   it('returns false when lonePairCount is 0', () => {
     expect(
-      shouldRenderLonePairs('inherit', 0, baseOptions as RenderOptions),
+      shouldRenderLonePairs('O', 'inherit', 0, baseOptions as RenderOptions),
     ).toBe(false);
   });
 
   it('returns false when override is hide', () => {
-    expect(shouldRenderLonePairs('hide', 2, baseOptions as RenderOptions)).toBe(
+    expect(
+      shouldRenderLonePairs('O', 'hide', 2, baseOptions as RenderOptions),
+    ).toBe(false);
+  });
+
+  it('returns true when override is show even if element default is off', () => {
+    expect(shouldRenderLonePairs('O', 'show', 2, {} as RenderOptions)).toBe(
+      true,
+    );
+  });
+
+  it('returns false when element default is off and override is inherit', () => {
+    expect(shouldRenderLonePairs('O', 'inherit', 2, {} as RenderOptions)).toBe(
       false,
     );
   });
 
-  it('returns true when override is show even if global is off', () => {
+  it('returns false for unknown element when override is inherit', () => {
     expect(
-      shouldRenderLonePairs('show', 2, {
-        ...baseOptions,
-        showLonePairs: false,
-      } as RenderOptions),
-    ).toBe(true);
-  });
-
-  it('returns false when global showLonePairs is false and override is inherit', () => {
-    expect(
-      shouldRenderLonePairs('inherit', 2, {
-        ...baseOptions,
-        showLonePairs: false,
-      } as RenderOptions),
+      shouldRenderLonePairs('P', 'inherit', 2, baseOptions as RenderOptions),
     ).toBe(false);
   });
 
-  it('returns false when mode is off and override is inherit', () => {
+  it('returns true when element default is on and override is inherit', () => {
     expect(
-      shouldRenderLonePairs('inherit', 2, {
-        ...baseOptions,
-        lonePairDefaultMode: 'off',
-      } as RenderOptions),
-    ).toBe(false);
-  });
-
-  it('returns true when global is on and override is inherit', () => {
-    expect(
-      shouldRenderLonePairs('inherit', 2, baseOptions as RenderOptions),
+      shouldRenderLonePairs('O', 'inherit', 2, baseOptions as RenderOptions),
     ).toBe(true);
   });
 
-  it('returns true when override is undefined and global is on', () => {
+  it('returns true when override is undefined and element default is on', () => {
     expect(
-      shouldRenderLonePairs(undefined, 2, baseOptions as RenderOptions),
+      shouldRenderLonePairs('O', undefined, 2, baseOptions as RenderOptions),
+    ).toBe(true);
+  });
+
+  it('returns false for nitrogen when only oxygen is enabled', () => {
+    expect(
+      shouldRenderLonePairs('N', 'inherit', 1, baseOptions as RenderOptions),
+    ).toBe(false);
+  });
+
+  it('returns true for nitrogen when nitrogen is enabled', () => {
+    expect(
+      shouldRenderLonePairs('N', 'inherit', 1, {
+        lonePairShowN: true,
+      } as RenderOptions),
     ).toBe(true);
   });
 });
@@ -201,6 +308,11 @@ describe('shouldRenderLonePairs', () => {
 describe('getAnchorPlacements', () => {
   const center = { x: 0, y: 0 };
   const box = { x: -5, y: -5, width: 10, height: 10 };
+  const getPlacement = (placements, anchor) => {
+    const placement = placements.find((p) => p.anchor === anchor);
+    expect(placement).toBeDefined();
+    return placement;
+  };
 
   it('returns 4 placements sorted by score descending', () => {
     const placements = getAnchorPlacements(center, box, 9, 3.5, []);
@@ -215,16 +327,16 @@ describe('getAnchorPlacements', () => {
     // Build a box that covers exactly those dot positions
     const topDotBox = { x: -3.75, y: -15, width: 7.5, height: 3 };
     const placements = getAnchorPlacements(center, box, 9, 3.5, [topDotBox]);
-    const topPlacement = placements.find((p) => p.anchor === 'top')!;
-    const rightPlacement = placements.find((p) => p.anchor === 'right')!;
+    const topPlacement = getPlacement(placements, 'top');
+    const rightPlacement = getPlacement(placements, 'right');
     expect(topPlacement.score).toBeLessThan(rightPlacement.score);
   });
 
   it('penalizes anchors aligned with bond directions', () => {
     // Bond going right (angle=0) should penalize 'right' anchor
     const placements = getAnchorPlacements(center, box, 9, 3.5, [], [0]);
-    const right = placements.find((p) => p.anchor === 'right')!;
-    const top = placements.find((p) => p.anchor === 'top')!;
+    const right = getPlacement(placements, 'right');
+    const top = getPlacement(placements, 'top');
     expect(right.score).toBeLessThan(top.score);
   });
 
@@ -233,7 +345,7 @@ describe('getAnchorPlacements', () => {
     const spread = 3.5;
     const halfH = 5; // box height/2
     const placements = getAnchorPlacements(center, box, offset, spread, []);
-    const top = placements.find((p) => p.anchor === 'top')!;
+    const top = getPlacement(placements, 'top');
     expect(top.dot1.y).toBeCloseTo(center.y - halfH - offset);
     expect(top.dot2.y).toBeCloseTo(center.y - halfH - offset);
     expect(top.dot1.x).toBeCloseTo(center.x - spread / 2);

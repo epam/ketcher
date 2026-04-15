@@ -96,6 +96,11 @@ const toolActions = {
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus'),
   },
+  'lone-pair-toggle': {
+    title: 'Toggle Lone Pair Display',
+    action: { tool: 'lonepair' },
+    hidden: (options) => isHidden(options, 'lone-pair-toggle'),
+  },
   'transform-rotate': {
     title: 'Rotate Tool',
     action: { tool: 'rotate' },

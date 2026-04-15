@@ -44,8 +44,13 @@ interface SavedOptions {
   ignoreChiralFlag?: boolean;
   disableQueryElements?: string[] | null;
 
-  showLonePairs?: boolean;
-  lonePairDefaultMode?: 'off' | 'eligible-only';
+  lonePairShowN?: boolean;
+  lonePairShowO?: boolean;
+  lonePairShowS?: boolean;
+  lonePairShowF?: boolean;
+  lonePairShowCl?: boolean;
+  lonePairShowBr?: boolean;
+  lonePairShowI?: boolean;
   lonePairDotDiameter?: number;
   lonePairOffset?: number;
   lonePairSpread?: number;
@@ -170,26 +175,60 @@ export class SettingsManager {
     });
   }
 
-  static get showLonePairs() {
-    const { showLonePairs } = this.getOptions();
-    return showLonePairs;
+  static get lonePairShowN() {
+    return this.getOptions().lonePairShowN;
   }
 
-  static set showLonePairs(showLonePairs: boolean | undefined) {
-    const options = this.getOptions();
-    this.saveOptions({ ...options, showLonePairs });
+  static set lonePairShowN(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowN: v });
   }
 
-  static get lonePairDefaultMode() {
-    const { lonePairDefaultMode } = this.getOptions();
-    return lonePairDefaultMode;
+  static get lonePairShowO() {
+    return this.getOptions().lonePairShowO;
   }
 
-  static set lonePairDefaultMode(
-    lonePairDefaultMode: 'off' | 'eligible-only' | undefined,
-  ) {
-    const options = this.getOptions();
-    this.saveOptions({ ...options, lonePairDefaultMode });
+  static set lonePairShowO(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowO: v });
+  }
+
+  static get lonePairShowS() {
+    return this.getOptions().lonePairShowS;
+  }
+
+  static set lonePairShowS(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowS: v });
+  }
+
+  static get lonePairShowF() {
+    return this.getOptions().lonePairShowF;
+  }
+
+  static set lonePairShowF(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowF: v });
+  }
+
+  static get lonePairShowCl() {
+    return this.getOptions().lonePairShowCl;
+  }
+
+  static set lonePairShowCl(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowCl: v });
+  }
+
+  static get lonePairShowBr() {
+    return this.getOptions().lonePairShowBr;
+  }
+
+  static set lonePairShowBr(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowBr: v });
+  }
+
+  static get lonePairShowI() {
+    return this.getOptions().lonePairShowI;
+  }
+
+  static set lonePairShowI(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowI: v });
   }
 
   static get lonePairDotDiameter() {

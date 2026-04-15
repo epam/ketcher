@@ -6,6 +6,7 @@
   "scripts": {
     "report": "npx playwright show-report playwright-report/html",
     "test": "npx playwright test",
+    "capture:lone-pair-pr": "npx playwright test tests/specs/PR-assets/lone-pair-molecules-pr.spec.ts --project=chromium-pr-assets",
     "test:debug": "npx playwright test --debug",
     "test:update": "npx playwright test --update-snapshots",
     "test:trace": "npx playwright test --trace on",

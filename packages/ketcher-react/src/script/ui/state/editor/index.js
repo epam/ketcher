@@ -100,7 +100,7 @@ export default function initEditor(dispatch, getState) {
           isMultipleAtoms: true,
         }).then(toElement);
       }
-      const elem = selem.type === 'text' ? selem : fromElement(selem);
+      let elem = selem.type === 'text' ? selem : fromElement(selem);
       let dlg = null;
       if (elem.type === 'text') {
         // TODO: move textdialog opening logic to another place

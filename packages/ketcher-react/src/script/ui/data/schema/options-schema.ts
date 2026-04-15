@@ -96,8 +96,13 @@ const render: {
   hashSpacing: ExtendedSchema;
   hashSpacingUnit: ExtendedSchema;
   imageResolution: ExtendedSchema;
-  showLonePairs: ExtendedSchema;
-  lonePairDefaultMode: ExtendedSchema;
+  lonePairShowN: ExtendedSchema;
+  lonePairShowO: ExtendedSchema;
+  lonePairShowS: ExtendedSchema;
+  lonePairShowF: ExtendedSchema;
+  lonePairShowCl: ExtendedSchema;
+  lonePairShowBr: ExtendedSchema;
+  lonePairShowI: ExtendedSchema;
   lonePairDotDiameter: ExtendedSchema;
   lonePairOffset: ExtendedSchema;
   lonePairSpread: ExtendedSchema;
@@ -331,17 +336,47 @@ const render: {
     enumNames: Object.keys(ImageResolution),
     default: ImageResolution.low,
   },
-  showLonePairs: {
-    title: 'Display lone pairs',
+  lonePairShowN: {
+    title: 'Show lone pairs on Nitrogen (N)',
     type: 'boolean',
     description: 'slider',
     default: false,
   },
-  lonePairDefaultMode: {
-    title: 'Default lone-pair mode',
-    enum: ['off', 'eligible-only'],
-    enumNames: ['Off', 'Eligible heteroatoms only'],
-    default: 'eligible-only',
+  lonePairShowO: {
+    title: 'Show lone pairs on Oxygen (O)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowS: {
+    title: 'Show lone pairs on Sulfur (S)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowF: {
+    title: 'Show lone pairs on Fluorine (F)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowCl: {
+    title: 'Show lone pairs on Chlorine (Cl)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowBr: {
+    title: 'Show lone pairs on Bromine (Br)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowI: {
+    title: 'Show lone pairs on Iodine (I)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
   },
   lonePairDotDiameter: {
     title: 'Lone-pair dot diameter',

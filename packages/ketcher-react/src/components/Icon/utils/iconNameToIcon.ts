@@ -37,6 +37,7 @@ import CapitalTIcon from '../../../assets/icons/files/capital-t.svg';
 import ChainIcon from '../../../assets/icons/files/chain.svg';
 import ChargeMinusIcon from '../../../assets/icons/files/charge-minus.svg';
 import ChargePlusIcon from '../../../assets/icons/files/charge-plus.svg';
+import LonePairToggleIcon from '../../../assets/icons/files/lone-pair-toggle.svg';
 import CheckIcon from '../../../assets/icons/files/check.svg';
 import CheckMarkIcon from '../../../assets/icons/files/checkmark.svg';
 import ChiralFlagIcon from '../../../assets/icons/files/chiral-flag.svg';
@@ -325,6 +326,7 @@ export const iconNameToIcon = {
   chain: ChainIcon,
   'charge-minus': ChargeMinusIcon,
   'charge-plus': ChargePlusIcon,
+  'lone-pair-toggle': LonePairToggleIcon,
   check: CheckIcon,
   'check-mark': CheckMarkIcon,
   'chiral-flag': ChiralFlagIcon,

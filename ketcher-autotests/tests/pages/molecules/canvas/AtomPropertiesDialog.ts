@@ -16,6 +16,7 @@ import {
   RingSize,
   SubstitutionCount,
   Valence,
+  LonePairDisplay,
   GeneralPropertiesSettings,
   QuerySpecificPropertiesSettings,
   ReactionFlagsPropertiesSettings,
@@ -40,6 +41,8 @@ type GeneralProperties = {
     isotopeInput: Locator;
     valenceDropdown: Locator;
     radicalDropdown: Locator;
+    expectedLonePairsReadonlyInput: Locator;
+    lonePairDisplayDropdown: Locator;
   };
 };
 
@@ -110,6 +113,8 @@ export const AtomPropertiesDialog = (page: Page) => {
       isotopeInput: page.getByTestId('isotope-input-span'),
       valenceDropdown: page.getByTestId('explicitValence-input-span'),
       radicalDropdown: page.getByTestId('radical-input-span'),
+      expectedLonePairsReadonlyInput: page.getByTestId('expected-lone-pairs'),
+      lonePairDisplayDropdown: page.getByTestId('lone-pair-display-input-span'),
     }),
 
     querySpecificSection: Object.assign(
@@ -181,6 +186,10 @@ export const AtomPropertiesDialog = (page: Page) => {
       await ifNotNull(p => this.fillIsotope(p), generalProperties.Isotope);
       await ifNotNull(p => this.selectValence(p), generalProperties.Valence);
       await ifNotNull(p => this.selectRadical(p), generalProperties.Radical);
+      await ifNotNull(
+        p => this.selectLonePairDisplay(p),
+        generalProperties.LonePairDisplay,
+      );
     },
 
     // prettier-ignore
@@ -303,6 +312,13 @@ export const AtomPropertiesDialog = (page: Page) => {
     async selectRadical(option: Radical) {
       await selectDropdownValue(
         locators.generalSection.radicalDropdown,
+        option,
+      );
+    },
+
+    async selectLonePairDisplay(option: LonePairDisplay) {
+      await selectDropdownValue(
+        locators.generalSection.lonePairDisplayDropdown,
         option,
       );
     },

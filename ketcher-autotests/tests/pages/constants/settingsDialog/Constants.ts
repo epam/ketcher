@@ -44,6 +44,9 @@ export enum AtomsSetting {
   DisplayCharge = 'show-charge-input-span',
   DisplayValence = 'show-valence-input-span',
   ShowHydrogenLabels = 'show-hydrogen-labels-input-span',
+  LonePairShowN = 'lone-pair-show-n-input-span',
+  LonePairShowO = 'lone-pair-show-o-input-span',
+  LonePairShowS = 'lone-pair-show-s-input-span',
 }
 
 export enum BondsSetting {
@@ -202,6 +205,9 @@ export const switcherOptions: AllSettingsOptions[] = [
   AtomsSetting.DisplayCarbonExplicitly,
   AtomsSetting.DisplayCharge,
   AtomsSetting.DisplayValence,
+  AtomsSetting.LonePairShowN,
+  AtomsSetting.LonePairShowO,
+  AtomsSetting.LonePairShowS,
   BondsSetting.AromaticBondsAsCircle,
   ServerSetting.SmartLayout,
   ServerSetting.IgnoreStereochemistryErrors,

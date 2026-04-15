@@ -10,6 +10,7 @@ type LeftToolbarLocators = {
   stereochemistryButton: Locator;
   chargePlusButton: Locator;
   chargeMinusButton: Locator;
+  lonePairToggleButton: Locator;
   sGroupButton: Locator;
   rGroupToolsButton: Locator;
   createMonomerButton: Locator;
@@ -27,6 +28,7 @@ export const LeftToolbar = (page: Page) => {
     stereochemistryButton: page.getByTestId('enhanced-stereo'),
     chargePlusButton: page.getByTestId('charge-plus'),
     chargeMinusButton: page.getByTestId('charge-minus'),
+    lonePairToggleButton: page.getByTestId('lone-pair-toggle'),
     sGroupButton: page.getByTestId('sgroup'),
     rGroupToolsButton: page.getByTestId('rgroup-drop-down-button'),
     createMonomerButton: page.getByTestId('create-monomer'),
@@ -57,6 +59,10 @@ export const LeftToolbar = (page: Page) => {
 
     async chargeMinus() {
       await locators.chargeMinusButton.click();
+    },
+
+    async lonePairToggle() {
+      await locators.lonePairToggleButton.click();
     },
 
     async sGroup() {

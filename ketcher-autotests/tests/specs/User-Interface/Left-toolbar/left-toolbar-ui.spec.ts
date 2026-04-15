@@ -73,4 +73,14 @@ test.describe('Left toolbar UI tests', () => {
     await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeLeftToolbarScreenshot(page);
   });
+
+  test('lone-pair toggle button is visible and selectable', async ({
+    page,
+  }) => {
+    await expect(LeftToolbar(page).lonePairToggleButton).toBeVisible();
+    await LeftToolbar(page).lonePairToggle();
+    await expect(LeftToolbar(page).lonePairToggleButton).toHaveClass(
+      /selected/,
+    );
+  });
 });

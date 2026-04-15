@@ -5,7 +5,17 @@ export type RenderOptionStyles = Record<string, string | number>;
 
 export type LonePairAnchor = 'top' | 'right' | 'bottom' | 'left';
 export type LonePairDisplayOverride = 'inherit' | 'show' | 'hide';
-export type LonePairDefaultMode = 'off' | 'eligible-only';
+
+/** Maps element symbol → the corresponding RenderOptions key for per-element LP display. */
+export const LONE_PAIR_ELEMENT_OPTIONS: Record<string, string> = {
+  N: 'lonePairShowN',
+  O: 'lonePairShowO',
+  S: 'lonePairShowS',
+  F: 'lonePairShowF',
+  Cl: 'lonePairShowCl',
+  Br: 'lonePairShowBr',
+  I: 'lonePairShowI',
+};
 
 export enum MeasurementUnits {
   Px = 'px',
@@ -112,8 +122,13 @@ export type RenderOptions = {
   usageInMacromolecule?: UsageInMacromolecule;
   viewOnlyMode?: boolean;
 
-  showLonePairs?: boolean;
-  lonePairDefaultMode?: LonePairDefaultMode;
+  lonePairShowN?: boolean;
+  lonePairShowO?: boolean;
+  lonePairShowS?: boolean;
+  lonePairShowF?: boolean;
+  lonePairShowCl?: boolean;
+  lonePairShowBr?: boolean;
+  lonePairShowI?: boolean;
   lonePairDotDiameter?: number;
   lonePairOffset?: number;
   lonePairSpread?: number;

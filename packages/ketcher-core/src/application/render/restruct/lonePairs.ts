@@ -3,8 +3,10 @@ import {
   LonePairAnchor,
   LonePairDisplayOverride,
   RenderOptions,
+  LONE_PAIR_ELEMENT_OPTIONS,
 } from 'application/render/render.types';
 import { Render } from 'application/render/raphaelRender';
+import { RaphaelSet } from 'raphael';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -25,6 +27,7 @@ export type LonePairContext = {
   radical: number;
   bondOrderSum: number;
   implicitHs: number;
+  isAromatic?: boolean;
 };
 
 // ---------------------------------------------------------------------------
@@ -54,8 +57,31 @@ const BOND_ORDER: Record<number, number> = {
 // Lone-pair count calculation
 // ---------------------------------------------------------------------------
 
+function getAromaticTemplateLonePairCount(ctx: LonePairContext): number | null {
+  const { label, charge, isAromatic } = ctx;
+
+  if (!isAromatic) return null;
+
+  if (label === 'N') {
+    if (charge > 0) return 0;
+    if (charge === 0) return 1;
+    return null;
+  }
+
+  if ((label === 'O' || label === 'S') && charge === 0) {
+    return 2;
+  }
+
+  return null;
+}
+
 /**
- * Conservative display-only lone-pair estimate.
+ * Lone-pair count using the RDKit formula:
+ *   nLP = floor((v_e - formal_charge - sum_bond_orders - implicit_H_count - radical_electrons) / 2)
+ *
+ * Aromatic O/S/N heteroatoms use explicit templates because aromatic bond order
+ * 1.5 bookkeeping undercounts pyrrolic and furan/thiophene-like lone pairs.
+ *
  * Returns null for atoms that should not show lone pairs (C, H, unknowns).
  */
 export function getExpectedLonePairCount(ctx: LonePairContext): number | null {
@@ -66,9 +92,15 @@ export function getExpectedLonePairCount(ctx: LonePairContext): number | null {
   const ve = VALENCE_ELECTRONS[label];
   if (ve === undefined) return null;
 
-  const usedElectrons = 2 * bondOrderSum + implicitHs + charge;
-  const nonbondingElectrons = ve - usedElectrons - radical;
-  const lonePairs = Math.floor(Math.max(0, nonbondingElectrons) / 2);
+  const aromaticTemplate = getAromaticTemplateLonePairCount(ctx);
+  if (aromaticTemplate !== null) return aromaticTemplate;
+
+  const nonbondingElectrons = ve - charge - bondOrderSum - implicitHs - radical;
+  if (!Number.isFinite(nonbondingElectrons) || nonbondingElectrons < 0) {
+    return null;
+  }
+
+  const lonePairs = Math.floor(nonbondingElectrons / 2);
 
   return Number.isFinite(lonePairs) ? lonePairs : null;
 }
@@ -215,8 +247,14 @@ export function choosePlacements(
 /**
  * Returns true if lone pairs should be rendered for this atom given
  * the current options and atom-level override.
+ *
+ * Override precedence (highest to lowest):
+ *   'hide' → always false
+ *   'show' → always true
+ *   'inherit' → check per-element global setting (lonePairShowN, lonePairShowO, etc.)
  */
 export function shouldRenderLonePairs(
+  label: string,
   lonePairDisplay: LonePairDisplayOverride | undefined,
   lonePairCount: number | null,
   options: RenderOptions,
@@ -228,11 +266,10 @@ export function shouldRenderLonePairs(
   if (override === 'hide') return false;
   if (override === 'show') return true;
 
-  // 'inherit': use global setting
-  if (!options.showLonePairs) return false;
-  if (options.lonePairDefaultMode === 'off') return false;
-
-  return true;
+  // 'inherit': check element-specific setting
+  const optKey = LONE_PAIR_ELEMENT_OPTIONS[label];
+  if (!optKey) return false;
+  return !!options[optKey as keyof RenderOptions];
 }
 
 // ---------------------------------------------------------------------------
@@ -249,7 +286,7 @@ export function renderLonePairDots(
   dot2: { x: number; y: number },
   diameter: number,
   color: string,
-): any {
+): RaphaelSet {
   const r = diameter / 2;
   const set = render.paper.set();
   set.push(

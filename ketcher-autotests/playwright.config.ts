@@ -5,6 +5,7 @@ import {
   REMOTE_URL,
   STANDALONE_URL,
   DEFAULT_KETCHER_STANDALONE_URL,
+  DEFAULT_KETCHER_POPUP_URL,
   MODES,
   STANDALONE_POPUP_URL,
   REMOTE_POPUP_URL,
@@ -29,7 +30,7 @@ function baseURLFullScale(): string {
 
 function baseURLPopup(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
-    return DEFAULT_KETCHER_STANDALONE_URL;
+    return DEFAULT_KETCHER_POPUP_URL;
   }
 
   if (process.env.MODE === MODES.STANDALONE) {
@@ -69,14 +70,14 @@ const config: PlaywrightTestConfig = {
   projects: [
     {
       name: 'chromium',
-      testIgnore: '**/Chromium-popup/**/*.ts',
+      testIgnore: ['**/Chromium-popup/**/*.ts', '**/PR-assets/**/*.ts'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
         baseURL: baseURLFullScale(),
         launchOptions: {
           headless: true,
-          args: ['--disable-gpu', '--no-sandbox'],
+          args: ['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage'],
         },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
       },
@@ -91,7 +92,22 @@ const config: PlaywrightTestConfig = {
         baseURL: baseURLPopup(),
         launchOptions: {
           headless: true,
-          args: ['--disable-gpu', '--no-sandbox'],
+          args: ['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage'],
+        },
+        contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
+      },
+    },
+    {
+      name: 'chromium-pr-assets',
+      testMatch: '**/PR-assets/**/*.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1200 },
+        deviceScaleFactor: 2,
+        baseURL: baseURLFullScale(),
+        launchOptions: {
+          headless: true,
+          args: ['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage'],
         },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
       },

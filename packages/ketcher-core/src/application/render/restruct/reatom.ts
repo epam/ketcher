@@ -723,14 +723,18 @@ class ReAtom extends ReObject {
         radical: this.a.radical ?? 0,
         bondOrderSum: getBondOrderSumForAtom(struct, aid),
         implicitHs: Math.floor(this.a.implicitH || 0),
+        isAromatic: Atom.isInAromatizedRing(struct, aid),
       });
 
-      const displayOverride =
-        (this.a as unknown as { lonePairDisplay?: 'inherit' | 'show' | 'hide' })
-          .lonePairDisplay ?? 'inherit';
+      const displayOverride = this.a.lonePairDisplay ?? 'inherit';
 
       if (
-        shouldRenderLonePairs(displayOverride, lonePairCount, render.options)
+        shouldRenderLonePairs(
+          this.a.label,
+          displayOverride,
+          lonePairCount,
+          render.options,
+        )
       ) {
         // Convert relative visel exts to absolute occupied boxes
         const occupied = this.visel.exts.map((ext: Box2Abs) => {

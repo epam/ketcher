@@ -176,6 +176,7 @@ const LeftToolbar = (props: Props) => {
             { id: 'enhanced-stereo' },
             { id: 'charge-plus' },
             { id: 'charge-minus' },
+            { id: 'lone-pair-toggle' },
           ]}
           height={height}
           rest={rest}

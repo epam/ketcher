@@ -16,7 +16,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { test, expect, Page } from '@fixtures';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import {
   AtomsSetting,
   SettingsSection,
@@ -26,11 +25,7 @@ import {
   SettingsDialog,
 } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { setMolecule } from '@utils/formats';
-import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { resetZoomLevelToDefault, zoomInByKeyboard } from '@utils/keyboard';
 
 const OUT_DIR = path.join(
   process.cwd(),
@@ -39,9 +34,6 @@ const OUT_DIR = path.join(
   'images',
   'lone-pairs',
 );
-
-/** Zoom steps so the structure fills more of the canvas (after reset). */
-const ZOOM_IN_REPEAT = 18;
 
 const LEGACY_PNG = [
   'ammonia-lone-pairs.png',
@@ -62,7 +54,7 @@ test.afterAll(async ({ closePage }) => {
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
 test.describe('PR asset: lone-pair screenshots', () => {
-  test('toolbar, settings, and methylamine / methanol / methanethiol (PNG)', async () => {
+  test('toolbar and settings screenshots (PNG)', async () => {
     fs.mkdirSync(OUT_DIR, { recursive: true });
     for (const name of LEGACY_PNG) {
       const p = path.join(OUT_DIR, name);
@@ -70,10 +62,6 @@ test.describe('PR asset: lone-pair screenshots', () => {
         fs.unlinkSync(p);
       }
     }
-
-    const canvas = page.locator(
-      `[data-testid="${KETCHER_CANVAS}"][data-canvasmode="molecules-mode"]`,
-    );
 
     await setSettingsOptions(page, [
       { option: AtomsSetting.DisplayCarbonExplicitly },
@@ -106,54 +94,6 @@ test.describe('PR asset: lone-pair screenshots', () => {
       type: 'png',
     });
     await SettingsDialog(page).cancel();
-
-    const shots: { smiles: string; file: string; title: string }[] = [
-      {
-        smiles: 'CN',
-        file: 'methylamine-lone-pairs.png',
-        title: 'methylamine',
-      },
-      {
-        smiles: 'CO',
-        file: 'methanol-lone-pairs.png',
-        title: 'methanol',
-      },
-      {
-        smiles: 'CS',
-        file: 'methanethiol-lone-pairs.png',
-        title: 'methanethiol',
-      },
-    ];
-
-    for (const { smiles, file, title } of shots) {
-      await CommonTopLeftToolbar(page).clearCanvas();
-      await waitForSpinnerFinishedWork(page, async () => {
-        await setMolecule(page, smiles);
-      });
-      await waitForRender(page, async () => {
-        await expect(canvas).toBeVisible();
-      });
-      const canvasBox = await canvas.boundingBox();
-      if (!canvasBox) {
-        throw new Error('Unable to get canvas bounding box for PR screenshot');
-      }
-      await page.mouse.click(canvasBox.x + 20, canvasBox.y + 20);
-      await resetZoomLevelToDefault(page);
-      await zoomInByKeyboard(page, { repeat: ZOOM_IN_REPEAT });
-      await expect(
-        page.evaluate(() => window.ketcher.editor.selection() === null),
-      ).resolves.toBe(true);
-
-      const outPath = path.join(OUT_DIR, file);
-      await canvas.screenshot({
-        path: outPath,
-        type: 'png',
-      });
-      expect(
-        fs.existsSync(outPath),
-        `${title} screenshot missing`,
-      ).toBeTruthy();
-    }
 
     expect(
       fs.existsSync(

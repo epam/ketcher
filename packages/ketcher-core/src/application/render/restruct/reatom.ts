@@ -51,6 +51,14 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import {
+  getExpectedLonePairCount,
+  getBondOrderSumForAtom,
+  getAnchorPlacements,
+  choosePlacements,
+  renderLonePairDots,
+  shouldRenderLonePairs,
+} from './lonePairs';
 
 interface ElemAttr {
   text: string;
@@ -704,6 +712,76 @@ class ReAtom extends ReObject {
           0.3 * label.rbb.height,
         );
         /* eslint-enable no-mixed-operators */
+      }
+    }
+
+    // Lone-pair display-only annotations
+    if (this.showLabel && label) {
+      const lonePairCount = getExpectedLonePairCount({
+        label: this.a.label,
+        charge: this.a.charge ?? 0,
+        radical: this.a.radical ?? 0,
+        bondOrderSum: getBondOrderSumForAtom(struct, aid),
+        implicitHs: Math.floor(this.a.implicitH || 0),
+      });
+
+      const displayOverride =
+        (this.a as unknown as { lonePairDisplay?: 'inherit' | 'show' | 'hide' })
+          .lonePairDisplay ?? 'inherit';
+
+      if (
+        shouldRenderLonePairs(displayOverride, lonePairCount, render.options)
+      ) {
+        // Convert relative visel exts to absolute occupied boxes
+        const occupied = this.visel.exts.map((ext: Box2Abs) => {
+          const abs = ext.translate(ps);
+          return {
+            x: abs.p0.x,
+            y: abs.p0.y,
+            width: abs.p1.x - abs.p0.x,
+            height: abs.p1.y - abs.p0.y,
+          };
+        });
+
+        // Collect bond directions for the scorer
+        const bondAngles: number[] = atom.neighbors.map((hbId) => {
+          const hb = struct.halfBonds.get(hbId);
+          return hb ? hb.ang : 0;
+        });
+
+        const offset = render.options.lonePairOffset ?? 9;
+        const spread = render.options.lonePairSpread ?? 3.5;
+        const diameter = render.options.lonePairDotDiameter ?? 1.8;
+        const count = lonePairCount as number;
+
+        // Use label absolute bbox for placement geometry
+        const labelAbsBBox = {
+          x: label.rbb.x,
+          y: label.rbb.y,
+          width: label.rbb.width,
+          height: label.rbb.height,
+        };
+
+        const placements = getAnchorPlacements(
+          { x: ps.x, y: ps.y },
+          labelAbsBBox,
+          offset,
+          spread,
+          occupied,
+          bondAngles,
+        );
+        const chosen = choosePlacements(placements, count);
+
+        for (const p of chosen) {
+          const dots = renderLonePairDots(
+            render,
+            p.dot1,
+            p.dot2,
+            diameter,
+            this.color,
+          );
+          restruct.addReObjectPath(LayerMap.data, this.visel, dots, ps, true);
+        }
       }
     }
 

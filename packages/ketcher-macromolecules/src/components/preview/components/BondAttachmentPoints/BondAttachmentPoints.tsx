@@ -22,10 +22,13 @@ const BondAttachmentPoints = ({
           inBond={attachmentPoint.id === attachmentPointInBond}
           key={attachmentPoint.id}
         >
-          <AttachmentPointName>{attachmentPoint.id}</AttachmentPointName>
-          <LeavingGroup inBond={attachmentPoint.id === attachmentPointInBond}>
-            {attachmentPoint.label}
-          </LeavingGroup>
+          <AttachmentPointName
+            connected={attachmentPoint.connected}
+            inBond={attachmentPoint.id === attachmentPointInBond}
+          >
+            {attachmentPoint.id}
+          </AttachmentPointName>
+          <LeavingGroup>{attachmentPoint.label}</LeavingGroup>
         </AttachmentPoint>
       ))}
     </>

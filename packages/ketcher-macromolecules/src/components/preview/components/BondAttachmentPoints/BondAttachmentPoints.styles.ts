@@ -16,28 +16,34 @@ export const AttachmentPoint = styled.div<AttachmentPointProps>(
 );
 
 interface AttachmentPointNameProps {
-  connected?: boolean;
-}
-
-export const AttachmentPointName = styled.p<AttachmentPointNameProps>(
-  ({ theme }) => ({
-    margin: 0,
-    fontSize: theme.ketcher.font.size.small,
-    lineHeight: '12px',
-  }),
-);
-
-interface LeavingGroupProps {
+  connected: boolean;
   inBond: boolean;
 }
 
-export const LeavingGroup = styled.p<LeavingGroupProps>(
-  ({ inBond, theme }) => ({
+export const AttachmentPointName = styled.p<AttachmentPointNameProps>(
+  ({ theme, connected, inBond }) => ({
     margin: 0,
-    padding: '4px',
+    padding: '4px 6px',
+    fontSize: theme.ketcher.font.size.small,
     fontWeight: theme.ketcher.font.weight.bold,
-    lineHeight: '14px',
+    lineHeight: '12px',
     borderRadius: '4px',
-    backgroundColor: inBond ? '#CDF1FC' : 'transparent',
+    color: inBond
+      ? theme.ketcher.color.button.text.primary
+      : connected
+      ? '#B4B9D6'
+      : theme.ketcher.color.text.primary,
+    backgroundColor: inBond
+      ? theme.ketcher.color.button.primary.active
+      : 'transparent',
   }),
 );
+
+export const LeavingGroup = styled.p(({ theme }) => ({
+  margin: 0,
+  padding: '4px',
+  fontWeight: theme.ketcher.font.weight.bold,
+  lineHeight: '14px',
+  borderRadius: '4px',
+  backgroundColor: 'transparent',
+}));

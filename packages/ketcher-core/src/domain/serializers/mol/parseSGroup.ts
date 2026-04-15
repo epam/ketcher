@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,18 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pool, SGroup, Vec2, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  Pool,
+  SGroup,
+  Struct,
+  Vec2,
+  SGroupAttachmentPoint,
+} from 'domain/entities';
 
+import { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
 import assert from 'assert';
 
-/**
- * @param str { string }
- * @param valueString { boolean }
- * @returns { Pool }
- */
-function readKeyValuePairs(str, valueString) {
-  const ret = new Pool();
+function readKeyValuePairs(
+  str: string,
+  valueString: boolean,
+): Pool<string | number> {
+  const ret = new Pool<string | number>();
   const partition = utils.partitionLineFixed(str, 3, true);
   const count = utils.parseDecimalInt(partition[0]);
 
@@ -41,14 +46,11 @@ function readKeyValuePairs(str, valueString) {
   return ret;
 }
 
-/**
- * @param str { string }
- * @param valueString { boolean }
- * @returns { Array }
- */
-function readKeyMultiValuePairs(str, valueString) {
-  /* reader */
-  const ret = [];
+function readKeyMultiValuePairs(
+  str: string,
+  valueString: boolean,
+): Array<[number, string | number]> {
+  const ret: Array<[number, string | number]> = [];
   const partition = utils.partitionLineFixed(str, 3, true);
   const count = utils.parseDecimalInt(partition[0]);
   for (let i = 0; i < count; ++i) {
@@ -64,10 +66,11 @@ function readKeyMultiValuePairs(str, valueString) {
   return ret;
 }
 
-function postLoadMul(sgroup, mol, atomMap) {
-  // eslint-disable-line max-statements
+function postLoadMul(sgroup: SGroup, mol?: Struct, atomMap?: AtomMap): void {
+  if (!mol || !atomMap) return;
+
   sgroup.data.mul = sgroup.data.subscript - 0;
-  const atomReductionMap = {};
+  const atomReductionMap: Record<number, number> = {};
 
   sgroup.atoms = SGroup.filterAtoms(sgroup.atoms, atomMap);
   sgroup.patoms = SGroup.filterAtoms(sgroup.patoms, atomMap);
@@ -85,26 +88,22 @@ function postLoadMul(sgroup, mol, atomMap) {
 
   const patomsMap = identityMap(sgroup.patoms);
 
-  const bondsToRemove = [];
+  const bondsToRemove: number[] = [];
   mol.bonds.forEach((bond, bid) => {
     const beginIn = bond.begin in atomReductionMap;
     const endIn = bond.end in atomReductionMap;
-    // if both adjacent atoms of a bond are to be merged, remove it
-    /* eslint-disable no-mixed-operators */
+    const endInPatoms = bond.end in patomsMap;
+    const beginInPatoms = bond.begin in patomsMap;
     if (
       (beginIn && endIn) ||
-      (beginIn && bond.end in patomsMap) ||
-      (endIn && bond.begin in patomsMap)
+      (beginIn && endInPatoms) ||
+      (endIn && beginInPatoms)
     ) {
       bondsToRemove.push(bid);
-    }
-    /* eslint-enable no-mixed-operators */
-    // if just one atom is merged, modify the bond accordingly
-    else if (beginIn) bond.begin = atomReductionMap[bond.begin];
+    } else if (beginIn) bond.begin = atomReductionMap[bond.begin];
     else if (endIn) bond.end = atomReductionMap[bond.end];
-  }, sgroup);
+  });
 
-  // apply removal lists
   for (const bondId of bondsToRemove) {
     mol.bonds.delete(bondId);
   }
@@ -116,76 +115,78 @@ function postLoadMul(sgroup, mol, atomMap) {
   sgroup.patoms = null;
 }
 
-function postLoadSru(sgroup) {
+function postLoadSru(sgroup: SGroup): void {
   sgroup.data.connectivity = (sgroup.data.connectivity || 'EU')
     .trim()
     .toLowerCase();
   sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
-function postLoadSup(sgroup) {
+function postLoadSup(sgroup: SGroup): void {
   sgroup.data.name = (sgroup.data.subscript || '').trim();
   sgroup.data.subscript = '';
 }
 
-function postLoadGen(sgroup, _mol, _atomMap) {
+function postLoadGen(sgroup: SGroup, _mol?: Struct, _atomMap?: AtomMap): void {
   sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
     .trim()
     .toLowerCase();
   sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
-function postLoadDat(sgroup, mol) {
-  if (!sgroup.data.absolute) {
+function postLoadDat(sgroup: SGroup, mol?: Struct): void {
+  if (!sgroup.data.absolute && mol) {
+    if (!sgroup.pp) {
+      throw new Error('SGroup pp is not set');
+    }
     sgroup.pp = sgroup.pp.add(SGroup.getMassCentre(mol, sgroup.atoms));
   }
 }
 
-function postLoadMon(_sgroup) {
+function postLoadMon(_sgroup: SGroup): void {
   // TODO: Implement after adding MON type support
 }
 
-function postLoadMer(_sgroup) {
+function postLoadMer(_sgroup: SGroup): void {
   // TODO: Implement after adding MER type support
 }
 
-function postLoadCop(sgroup) {
+function postLoadCop(sgroup: SGroup): void {
   sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
     .trim()
     .toLowerCase();
   sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
 }
 
-function postLoadCro(_sgroup) {
+function postLoadCro(_sgroup: SGroup): void {
   // TODO: Implement after adding CRO type support
 }
 
-function postLoadMod(_sgroup) {
+function postLoadMod(_sgroup: SGroup): void {
   // TODO: Implement after adding MOD type support
 }
 
-function postLoadGra(_sgroup) {
+function postLoadGra(_sgroup: SGroup): void {
   // TODO: Implement after adding GRA type support
 }
 
-function postLoadCom(_sgroup) {
+function postLoadCom(_sgroup: SGroup): void {
   // TODO: Implement after adding COM type support
 }
 
-function postLoadMix(_sgroup) {
+function postLoadMix(_sgroup: SGroup): void {
   // TODO: Implement after adding MIX type support
 }
 
-function postLoadFor(_sgroup) {
+function postLoadFor(_sgroup: SGroup): void {
   // TODO: Implement after adding FOR type support
 }
 
-function postLoadAny(_sgroup) {
+function postLoadAny(_sgroup: SGroup): void {
   // TODO: Implement after adding ANY type support
 }
 
-// Map of allowed SGroup types to their post-load handlers
-const postLoadMap = {
+const postLoadMap: Record<string, PostLoadHandler> = {
   SUP: postLoadSup,
   MUL: postLoadMul,
   SRU: postLoadSru,
@@ -203,24 +204,21 @@ const postLoadMap = {
   GEN: postLoadGen,
 };
 
-// Set of allowed SGroup types for validation to prevent unvalidated dynamic method calls
 const allowedSGroupTypes = new Set(Object.keys(postLoadMap));
 
-function loadSGroup(mol, sg, atomMap) {
-  // add the group to the molecule
+function loadSGroup(mol: Struct, sg: SGroup, atomMap: AtomMap): number {
   sg.id = mol.sgroups.add(sg);
 
-  // apply type-specific post-processing
-  // Only call handlers for explicitly allowed types
   if (allowedSGroupTypes.has(sg.type)) {
     const handler = postLoadMap[sg.type];
     if (typeof handler === 'function') {
       handler(sg, mol, atomMap);
     }
   }
-  // mark atoms in the group as belonging to it
+
   for (const atomId of sg.atoms) {
-    if (mol.atoms.has(atomId)) mol.atoms.get(atomId).sgs.add(sg.id);
+    const atom = mol.atoms.get(atomId);
+    if (atom) atom.sgs.add(sg.id);
   }
 
   if (sg.type === 'DAT') mol.sGroupForest.insert(sg, -1, []);
@@ -229,27 +227,34 @@ function loadSGroup(mol, sg, atomMap) {
   return sg.id;
 }
 
-function initSGroup(sGroups, propData) {
-  /* reader */
+function initSGroup(sGroups: SGroupMap, propData: string): void {
   const kv = readKeyValuePairs(propData, true);
   for (const [key, type] of kv) {
-    const sg = new SGroup(type);
-    sg.number = key;
+    const sg = new SGroup(type as string);
+    (sg as SGroup & { number: number }).number = key;
     sGroups[key] = sg;
   }
 }
 
-function applySGroupProp(sGroups, propName, propData, numeric, core) {
-  // eslint-disable-line max-params
+function applySGroupProp(
+  sGroups: SGroupMap,
+  propName: string,
+  propData: string,
+  numeric?: boolean,
+  core?: boolean,
+): void {
   const kv = readKeyValuePairs(propData, !numeric);
-  // "core" properties are stored directly in an sgroup, not in sgroup.data
   for (const key of kv.keys()) {
     (core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
   }
 }
 
-function applySGroupArrayProp(sGroups, propName, propData, shift) {
-  /* reader */
+function applySGroupArrayProp(
+  sGroups: SGroupMap,
+  propName: string,
+  propData: string,
+  shift: number,
+): void {
   const sid = utils.parseDecimalInt(propData.slice(1, 4)) - 1;
   const num = utils.parseDecimalInt(propData.slice(4, 8));
   let part = toIntArray(utils.partitionLineFixed(propData.slice(8), 3, true));
@@ -260,27 +265,23 @@ function applySGroupArrayProp(sGroups, propName, propData, shift) {
   sGroups[sid][propName] = sGroups[sid][propName].concat(part);
 }
 
-function applyDataSGroupName(sg, name) {
-  /* reader */
+function applyDataSGroupName(sg: SGroup, name: string): void {
   sg.data.fieldName = name;
 }
 
-function applyDataSGroupExpand(sg, expanded) {
+function applyDataSGroupExpand(sg: SGroup, expanded: boolean): void {
   sg.data.expanded = expanded;
 }
 
-function applyDataSGroupQuery(sg, query) {
-  /* reader */
+function applyDataSGroupQuery(sg: SGroup, query: string): void {
   sg.data.query = query;
 }
 
-function applyDataSGroupQueryOp(sg, queryOp) {
-  /* reader */
+function applyDataSGroupQueryOp(sg: SGroup, queryOp: string): void {
   sg.data.queryOp = queryOp;
 }
 
-function applyDataSGroupDesc(sGroups, propData) {
-  /* reader */
+function applyDataSGroupDesc(sGroups: SGroupMap, propData: string): void {
   const split = utils.partitionLine(propData, [4, 31, 2, 20, 2, 3], false);
   const id = utils.parseDecimalInt(split[0]) - 1;
   const fieldName = split[1].trim();
@@ -296,9 +297,7 @@ function applyDataSGroupDesc(sGroups, propData) {
   sGroup.data.queryOp = queryOp;
 }
 
-function applyDataSGroupInfo(sg, propData) {
-  // eslint-disable-line max-statements
-  /* reader */
+function applyDataSGroupInfo(sg: SGroup, propData: string): void {
   const split = utils.partitionLine(
     propData,
     [
@@ -314,9 +313,9 @@ function applyDataSGroupInfo(sg, propData) {
   const attached = split[3].trim() === 'A';
   const absolute = split[4].trim() === 'A';
   const showUnits = split[5].trim() === 'U';
-  let nCharsToDisplay = split[7].trim();
-  nCharsToDisplay =
-    nCharsToDisplay === 'ALL' ? -1 : utils.parseDecimalInt(nCharsToDisplay);
+  const nCharsRaw = split[7].trim();
+  const nCharsToDisplay =
+    nCharsRaw === 'ALL' ? -1 : utils.parseDecimalInt(nCharsRaw);
   const tagChar = split[10].trim();
   const daspPos = utils.parseDecimalInt(split[11].trim());
 
@@ -329,15 +328,17 @@ function applyDataSGroupInfo(sg, propData) {
   sg.data.daspPos = daspPos;
 }
 
-function applyDataSGroupInfoLine(sGroups, propData) {
-  /* reader */
+function applyDataSGroupInfoLine(sGroups: SGroupMap, propData: string): void {
   const id = utils.parseDecimalInt(propData.substr(0, 4)) - 1;
   const sg = sGroups[id];
   applyDataSGroupInfo(sg, propData.substr(5));
 }
 
-function applyDataSGroupData(sg, data, finalize) {
-  /* reader */
+function applyDataSGroupData(
+  sg: SGroup,
+  data: string,
+  finalize: boolean,
+): void {
   sg.data.fieldValue = (sg.data.fieldValue || '') + data;
   if (finalize) {
     sg.data.fieldValue = trimRight(sg.data.fieldValue);
@@ -353,30 +354,33 @@ function applyDataSGroupData(sg, data, finalize) {
   }
 }
 
-function applyDataSGroupDataLine(sGroups, propData, finalize) {
-  /* reader */
+function applyDataSGroupDataLine(
+  sGroups: SGroupMap,
+  propData: string,
+  finalize: boolean,
+): void {
   const id = utils.parseDecimalInt(propData.substr(0, 5)) - 1;
   const data = propData.substr(5);
   const sg = sGroups[id];
   applyDataSGroupData(sg, data, finalize);
 }
 
-// Utilities functions
-function toIntArray(strArray) {
-  /* reader */
-  const ret = [];
+// Utility functions
+
+function toIntArray(strArray: string[]): number[] {
+  const ret: number[] = [];
   for (let j = 0; j < strArray.length; ++j) {
     ret[j] = utils.parseDecimalInt(strArray[j]);
   }
   return ret;
 }
 
-function trimRight(str) {
+function trimRight(str: string): string {
   return str.trimEnd();
 }
 
-function identityMap(array) {
-  const map = {};
+function identityMap(array: number[]): Record<number, number> {
+  const map: Record<number, number> = {};
   for (const item of array) map[item] = item;
   return map;
 }
@@ -384,13 +388,15 @@ function identityMap(array) {
 /**
  * Superatom attachment point parsing for 'ctab' v2000
  * Implemented based on: https://github.com/epam/ketcher/issues/2467
- * @param ctabString {string} example '   1  1   2   0   '
+ * @param ctabString example '   1  1   2   0   '
  *        M SAP sssnn6 iii ooo cc
  *             ^
  *             start position for ctabString content
- * @returns {{sGroupId: number, attachmentPoints: SGroupAttachmentPoint[]}}
  */
-function parseSGroupSAPLineV2000(ctabString) {
+function parseSGroupSAPLineV2000(ctabString: string): {
+  sGroupId: number;
+  attachmentPoints: SGroupAttachmentPoint[];
+} {
   const [, sss, nn6] = utils.partitionLine(
     ctabString.slice(0, 7),
     [1, 3, 3],
@@ -400,9 +406,8 @@ function parseSGroupSAPLineV2000(ctabString) {
   assert(chunksNumberInLine <= 6);
   const sGroupId = utils.parseDecimalInt(sss) - 1;
   const attachmentPointsStr = ctabString.slice(7);
-  const attachmentPoints = [];
+  const attachmentPoints: SGroupAttachmentPoint[] = [];
   for (let i = 0; i < chunksNumberInLine; i++) {
-    // length of ' iii ooo cc'
     const CHUNK_SIZE = 11;
     const stringForParse = attachmentPointsStr.slice(i * CHUNK_SIZE);
     const CHUNK_PARTS_LENGTHS = [1, 3, 1, 3, 1, 2];

@@ -3,6 +3,10 @@ import { StereLabelStyleType } from 'application/render/restruct';
 
 export type RenderOptionStyles = Record<string, string | number>;
 
+export type LonePairAnchor = 'top' | 'right' | 'bottom' | 'left';
+export type LonePairDisplayOverride = 'inherit' | 'show' | 'hide';
+export type LonePairDefaultMode = 'off' | 'eligible-only';
+
 export enum MeasurementUnits {
   Px = 'px',
   Cm = 'cm',
@@ -107,6 +111,13 @@ export type RenderOptions = {
   hashSpacingInPx: number;
   usageInMacromolecule?: UsageInMacromolecule;
   viewOnlyMode?: boolean;
+
+  showLonePairs?: boolean;
+  lonePairDefaultMode?: LonePairDefaultMode;
+  lonePairDotDiameter?: number;
+  lonePairOffset?: number;
+  lonePairSpread?: number;
+  respectManualLonePairPositions?: boolean;
 };
 
 export interface RelativeBox {

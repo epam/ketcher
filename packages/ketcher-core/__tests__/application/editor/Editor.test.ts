@@ -225,6 +225,73 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should skip monomer with invalid HELM alias and still load valid aliases with brackets and dots', () => {
+      const monomersWithMixedAliases = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-SUGAR3',
+            },
+            {
+              $ref: 'monomerTemplate-SUGAR4',
+            },
+          ],
+        },
+        'monomerTemplate-SUGAR3': {
+          type: 'monomerTemplate',
+          id: 'SUGAR3',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Invalid Alias Sugar',
+          name: 'SUGAR3',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR3',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR3',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: 'Invalid Alias',
+        },
+        'monomerTemplate-SUGAR4': {
+          type: 'monomerTemplate',
+          id: 'SUGAR4',
+          class: 'SUGAR',
+          classHELM: 'SUGAR',
+          fullName: 'Valid Alias Sugar',
+          name: 'SUGAR4',
+          naturalAnalogShort: 'R',
+          props: {
+            MonomerName: 'SUGAR4',
+            MonomerClass: 'SUGAR',
+            Name: 'SUGAR4',
+            MonomerNaturalAnalogCode: 'R',
+          },
+          aliasHELM: '[Sugar].(1)',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Load of "SUGAR3" monomer has failed, monomer definition contains invalid HELM alias value.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'SUGAR3',
+        ),
+      ).toBeUndefined();
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'SUGAR4',
+        )?.props.aliasHELM,
+      ).toBe('[Sugar].(1)');
+    });
+
     it('should log IDT alias collision across monomers', () => {
       const monomerWithIdtAlias = {
         root: {

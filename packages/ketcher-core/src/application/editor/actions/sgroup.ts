@@ -556,7 +556,8 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
   struct.sgroups.forEach((sgroup: SGroup) => {
     if (
       sgroup.isNotContractible(struct) &&
-      !(sgroup instanceof MonomerMicromolecule)
+      !(sgroup instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sgroup)
     ) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {

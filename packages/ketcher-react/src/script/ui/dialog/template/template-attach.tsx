@@ -27,7 +27,7 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
-import Form, { Field } from '../../component/form/form/form';
+import Form, { Field, FormState } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
 import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
@@ -53,12 +53,6 @@ interface TemplateItem {
 interface NormalizedTemplate {
   struct: Struct;
   props: AttachPoints;
-}
-
-interface FormState {
-  errors: Record<string, string>;
-  valid: boolean;
-  result: Record<string, unknown>;
 }
 
 interface AttachOwnProps {

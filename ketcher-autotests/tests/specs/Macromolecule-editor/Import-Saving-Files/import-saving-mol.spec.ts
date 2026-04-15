@@ -2,7 +2,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -77,7 +77,7 @@ test.describe('Import-Saving .mol Files', () => {
       MacroFileType.MOLv3000,
       fileContent,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -583,7 +583,7 @@ test.describe('Import modified .mol files from external editor', () => {
         await CommonTopRightToolbar(page).selectZoomOutTool(
           numberOfPressZoomOut,
         );
-        await clickInTheMiddleOfTheScreen(page);
+        await clickInTheMiddleOfTheCanvas(page);
       });
     }
   }

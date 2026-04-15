@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class EquilibriumOpenAngleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -19,19 +19,19 @@ export class EquilibriumOpenAngleArrowRenderer {
 
     // First arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}`,
     );
 
     // Second arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-        `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x + arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+        `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(start.x + arrowHeadLength)},${toFixed(
           start.y + arrowOffset + arrowHeadWidth,
         )}`,
     );

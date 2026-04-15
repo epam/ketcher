@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromElement, toElement } from '../../../../data/convert/structconv';
+import {
+  ElementFormData,
+  fromElement,
+  toElement,
+} from '../../../../data/convert/structconv';
 
 import { Dialog } from '../../../components';
 import GenericGroups from './components/GenericGroups';
@@ -107,7 +111,8 @@ function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    return { ...fromElement(atom) };
+    if (!atom) return {};
+    return { ...fromElement(atom) } as Partial<StateProps>;
   }
 
   return {};
@@ -126,7 +131,12 @@ const mapDispatchToProps = (
   return {
     onOk: (result: unknown) => {
       if (!ownProps.isNestedModal) {
-        dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+        dispatch(
+          onAction({
+            tool: 'atom',
+            opts: toElement(result as ElementFormData),
+          }),
+        );
       }
       ownProps.onOk(result);
     },

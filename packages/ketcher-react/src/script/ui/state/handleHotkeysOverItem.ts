@@ -184,10 +184,13 @@ function handleBondPropsDialog({
 
   openDialog(dispatch, newAction.dialog, convertedBondForModal)
     .then((res) => {
+      const convertedBond = toBond(res);
+      if (!convertedBond) return;
+
       const updatedBond = fromBondsAttrs(
         restruct,
         hoveredItemId,
-        toBond(res),
+        convertedBond,
         false,
       );
 

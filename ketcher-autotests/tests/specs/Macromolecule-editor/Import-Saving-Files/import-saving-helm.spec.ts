@@ -7,7 +7,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
 } from '@utils';
-import { closeOpenStructure, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';

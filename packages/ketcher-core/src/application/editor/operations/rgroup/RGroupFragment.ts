@@ -16,7 +16,7 @@
 
 import { ReRGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { RGroup } from 'domain/entities';
 

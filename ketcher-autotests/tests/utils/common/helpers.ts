@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit } from './loaders/waitForKetcherInit/waitForKetcherInit';
 import { waitForIndigoToLoad } from './loaders/waitForIndigoToLoad';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 export async function emptyFunction() {
   // Intentionally empty callback used as a default async no-op in wait helpers.
@@ -31,7 +30,7 @@ export async function pageReloadMicro(page: Page) {
  * @param {Page} page - The Playwright page object.
  */
 export async function clearLocalStorage(page: Page) {
-  page.evaluate(() => {
+  await page.evaluate(() => {
     localStorage.clear();
   });
 }

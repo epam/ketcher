@@ -31,7 +31,6 @@ import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreview
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
-import { preview } from 'ketcher-react';
 
 interface Props {
   className?: string;
@@ -39,6 +38,7 @@ interface Props {
 
 const MonomerPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as MonomerPreviewState;
+  const LONG_NAME_THRESHOLD = 100;
 
   const { monomer, attachmentPointsToBonds } = preview;
 
@@ -74,6 +74,7 @@ const MonomerPreview = ({ className }: Props) => {
     (monomer.struct || isUnresolved) && (
       <Container
         className={className}
+        isLongName={!!monomerName && monomerName.length > LONG_NAME_THRESHOLD}
         data-testid="polymer-library-preview"
         data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
@@ -81,7 +82,10 @@ const MonomerPreview = ({ className }: Props) => {
         data-modificationtype={getModificationTypeAttribute(modificationTypes)}
       >
         {monomerName && (
-          <MonomerName data-testid="preview-tooltip-title">
+          <MonomerName
+            data-testid="preview-tooltip-title"
+            isLongName={monomerName.length > 100}
+          >
             {monomerName}
           </MonomerName>
         )}
@@ -120,10 +124,7 @@ const MonomerPreview = ({ className }: Props) => {
   );
 };
 
-const StyledPreview = styled(MonomerPreview)`
-  width: ${preview.width + 'px'};
-  height: ${preview.height + 'px'};
-`;
+const StyledPreview = styled(MonomerPreview)``;
 
 export default StyledPreview;
 export { MonomerPreview };

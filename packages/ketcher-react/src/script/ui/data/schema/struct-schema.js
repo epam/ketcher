@@ -88,6 +88,18 @@ export const atom = {
       ],
       default: 0,
     },
+    lonePairDisplay: {
+      title: 'Lone pair display',
+      enum: ['inherit', 'show', 'hide'],
+      enumNames: ['Inherit', 'Show expected', 'Hide'],
+      default: 'inherit',
+    },
+    expectedLonePairs: {
+      title: 'Expected lone pairs',
+      type: 'integer',
+      readOnly: true,
+      default: 0,
+    },
     cip: {
       title: 'CIP',
       type: 'string',

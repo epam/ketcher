@@ -180,6 +180,17 @@ const Atom: FC<Props> = (props: Props) => {
             options={getSelectOptionsFromSchema(atomProps.radical)}
             data-testid="radical"
           />
+          <Field
+            name="expectedLonePairs"
+            disabled
+            data-testid="expected-lone-pairs"
+          />
+          <Field
+            name="lonePairDisplay"
+            component={Select}
+            options={getSelectOptionsFromSchema(atomProps.lonePairDisplay)}
+            data-testid="lone-pair-display"
+          />
         </div>
       ),
     },

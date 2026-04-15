@@ -30,7 +30,6 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { setMolecule } from '@utils/formats';
 import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { clickInTheMiddleOfTheCanvas } from '@utils';
 import { resetZoomLevelToDefault, zoomInByKeyboard } from '@utils/keyboard';
 
 const OUT_DIR = path.join(
@@ -134,9 +133,16 @@ test.describe('PR asset: lone-pair screenshots', () => {
       await waitForRender(page, async () => {
         await expect(canvas).toBeVisible();
       });
-      await clickInTheMiddleOfTheCanvas(page);
+      const canvasBox = await canvas.boundingBox();
+      if (!canvasBox) {
+        throw new Error('Unable to get canvas bounding box for PR screenshot');
+      }
+      await page.mouse.click(canvasBox.x + 20, canvasBox.y + 20);
       await resetZoomLevelToDefault(page);
       await zoomInByKeyboard(page, { repeat: ZOOM_IN_REPEAT });
+      await expect(
+        page.evaluate(() => window.ketcher.editor.selection() === null),
+      ).resolves.toBe(true);
 
       const outPath = path.join(OUT_DIR, file);
       await canvas.screenshot({

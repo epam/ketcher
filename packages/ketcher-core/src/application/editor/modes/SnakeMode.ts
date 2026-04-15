@@ -8,7 +8,7 @@ import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { registerMode } from './modesRegistry';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -52,8 +52,7 @@ export class SnakeMode extends BaseMode {
 
   async scrollForView() {
     const zoom = ZoomTool.instance;
-    const drawnEntitiesBoundingBox =
-      RenderersManagerBase.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = getRenderedStructuresBbox();
 
     if (zoom.isFitToCanvasHeight(drawnEntitiesBoundingBox.height)) {
       zoom.scrollTo(

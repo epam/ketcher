@@ -41,7 +41,8 @@ import {
 } from 'application/formatters';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   NodeSelection,
@@ -139,7 +140,7 @@ interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
-  renderersContainer: RenderersManagerBase;
+  renderersContainer: RenderersManager;
   mode?: BaseMode;
 }
 
@@ -170,7 +171,7 @@ export class CoreEditor {
   public ketcherId?: string;
 
   public _type: EditorType;
-  public renderersContainer: RenderersManagerBase;
+  public renderersContainer: RenderersManager;
   public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
@@ -2051,14 +2052,13 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = RenderersManagerBase.getRenderedStructuresBbox();
+    const structureBbox = getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 
   public scrollToTopLeftCorner() {
-    const drawnEntitiesBoundingBox =
-      RenderersManagerBase.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = getRenderedStructuresBbox();
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),

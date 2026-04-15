@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 
@@ -29,12 +29,12 @@ export class RxnPlusAddOperation implements Operation {
     this.rxnPlus = this.addRxnPlusChangeModel();
   }
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     this.rxnPlus = this.addRxnPlusChangeModel(this.rxnPlus);
     renderersManager.addRxnPlus(this.rxnPlus);
   }
 
-  public invert(renderersManager: RenderersManagerBase) {
+  public invert(renderersManager: RenderersManager) {
     if (this.rxnPlus) {
       this.deleteRxnPlusChangeModel(this.rxnPlus);
       renderersManager.deleteRxnPlus(this.rxnPlus);
@@ -51,12 +51,12 @@ export class RxnPlusDeleteOperation implements Operation {
     public addRxnPlusChangeModel: (rxnPlus: RxnPlus) => RxnPlus,
   ) {}
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     this.deleteRxnPlusChangeModel(this.rxnPlus);
     renderersManager.deleteRxnPlus(this.rxnPlus);
   }
 
-  public invert(renderersManager: RenderersManagerBase) {
+  public invert(renderersManager: RenderersManager) {
     this.addRxnPlusChangeModel(this.rxnPlus);
     renderersManager.addRxnPlus(this.rxnPlus);
   }

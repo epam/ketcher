@@ -1,4 +1,4 @@
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseBond } from 'domain/entities/BaseBond';
@@ -8,7 +8,7 @@ import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private readonly drawingEntity: DrawingEntity) {}
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     renderersManager.hoverDrawingEntity(this.drawingEntity);
   }
 
@@ -29,7 +29,7 @@ export class DrawingEntitySelectOperation implements Operation {
     }
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 
@@ -57,7 +57,7 @@ export class DrawingEntityMoveOperation implements Operation {
     this.wasInverted = true;
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     // Redraw Polymer bonds instead of moving needed here because
     // they have two drawing modes: straight and curved.
     // During switching snake/flex layout modes and undo/redo
@@ -74,7 +74,7 @@ export class DrawingEntityMoveOperation implements Operation {
     }
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     if (
       this.drawingEntity instanceof BaseBond ||
       this.drawingEntity instanceof RxnArrow ||
@@ -94,12 +94,12 @@ export class DrawingEntityRedrawOperation implements Operation {
     private readonly invertDrawingEntityRedrawModelChange: () => DrawingEntity,
   ) {}
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     const drawingEntity = this.drawingEntityRedrawModelChange();
     renderersManager.redrawDrawingEntity(drawingEntity, true);
   }
 
-  public invert(renderersManager: RenderersManagerBase) {
+  public invert(renderersManager: RenderersManager) {
     const drawingEntity = this.invertDrawingEntityRedrawModelChange();
     renderersManager.redrawDrawingEntity(drawingEntity, true);
   }

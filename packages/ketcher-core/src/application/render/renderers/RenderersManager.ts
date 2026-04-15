@@ -1,6 +1,5 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
 import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
@@ -46,7 +45,7 @@ type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
-export class RenderersManager extends RenderersManagerBase {
+export class RenderersManager {
   // FIXME: Specify the types.
   private readonly theme;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
@@ -64,7 +63,6 @@ export class RenderersManager extends RenderersManagerBase {
   private needRecalculateMonomersEnumeration = false;
 
   constructor({ theme }) {
-    super();
     this.theme = theme;
   }
 

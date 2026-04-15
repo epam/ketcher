@@ -1,4 +1,4 @@
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Atom } from 'domain/entities/CoreAtom';
@@ -18,8 +18,8 @@ export interface Operation {
   rxnArrow?: RxnArrow;
   multitailArrow?: MultitailArrow;
   rxnPlus?: RxnPlus;
-  execute(renderersManager: RenderersManagerBase): void;
-  invert(renderersManager: RenderersManagerBase): void;
-  executeAfterAllOperations?(renderersManager: RenderersManagerBase): void;
-  invertAfterAllOperations?(renderersManager: RenderersManagerBase): void;
+  execute(renderersManager: RenderersManager): void;
+  invert(renderersManager: RenderersManager): void;
+  executeAfterAllOperations?(renderersManager: RenderersManager): void;
+  invertAfterAllOperations?(renderersManager: RenderersManager): void;
 }

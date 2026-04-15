@@ -16,7 +16,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { Bond } from 'domain/entities/CoreBond';
 import { Bond as MicromoleculesBond } from 'domain/entities/bond';
@@ -66,11 +66,11 @@ export class BondAddOperation implements Operation {
     this.bondInMoleculeStruct = deleteBondFromMoleculeStruct(this.bond);
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addBond(this.bond);
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteBond(this.bond);
   }
 }
@@ -99,11 +99,11 @@ export class BondDeleteOperation implements Operation {
     }
   }
 
-  public executeAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteBond(this.bond);
   }
 
-  public invertAfterAllOperations(renderersManager: RenderersManagerBase) {
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addBond(this.bond);
   }
 }

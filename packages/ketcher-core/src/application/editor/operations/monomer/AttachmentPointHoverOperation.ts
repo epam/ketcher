@@ -17,7 +17,7 @@
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AttachmentPointName } from 'domain/types';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class AttachmentPointHoverOperation implements Operation {
   constructor(
@@ -25,7 +25,7 @@ export class AttachmentPointHoverOperation implements Operation {
     private readonly attachmentPointName: AttachmentPointName,
   ) {}
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     renderersManager.hoverAttachmentPoint(
       this.peptide,
       this.attachmentPointName,

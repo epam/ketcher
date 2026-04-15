@@ -1,5 +1,5 @@
 import { Operation } from 'domain/entities/Operation';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class Command {
   public operations: Operation[] = [];
@@ -26,7 +26,7 @@ export class Command {
     this.setUndoOperationByPriority = true;
   }
 
-  public invert(renderersManagers: RenderersManagerBase) {
+  public invert(renderersManagers: RenderersManager) {
     const operations = this.undoOperationReverse
       ? this.operations.slice().reverse()
       : [...this.operations];
@@ -41,7 +41,7 @@ export class Command {
     renderersManagers.runPostRenderMethods();
   }
 
-  public execute(renderersManagers: RenderersManagerBase) {
+  public execute(renderersManagers: RenderersManager) {
     this.operations.forEach((operation) =>
       operation.execute(renderersManagers),
     );
@@ -51,7 +51,7 @@ export class Command {
   }
 
   public executeAfterAllOperations(
-    renderersManagers: RenderersManagerBase,
+    renderersManagers: RenderersManager,
     operations = this.operations,
   ) {
     operations.forEach((operation) => {
@@ -62,7 +62,7 @@ export class Command {
   }
 
   public invertAfterAllOperations(
-    renderersManagers: RenderersManagerBase,
+    renderersManagers: RenderersManager,
     operations = this.operations,
   ) {
     operations.forEach((operation) => {

@@ -16,7 +16,7 @@
 
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { RenderersManagerBase } from 'application/render/renderers/RenderersManagerBase';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerMoveOperation implements Operation {
   public monomer: BaseMonomer;
@@ -27,12 +27,12 @@ export class MonomerMoveOperation implements Operation {
     this.monomer = this.monomerMoveModelChange();
   }
 
-  public execute(renderersManager: RenderersManagerBase) {
+  public execute(renderersManager: RenderersManager) {
     this.monomer = this.monomerMoveModelChange();
     renderersManager.moveMonomer(this.monomer);
   }
 
-  public invert(renderersManager: RenderersManagerBase) {
+  public invert(renderersManager: RenderersManager) {
     this.monomer = this.invertMonomerMoveModelChange();
     renderersManager.moveMonomer(this.monomer);
   }

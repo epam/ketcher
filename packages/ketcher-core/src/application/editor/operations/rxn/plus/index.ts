@@ -49,6 +49,7 @@ class RxnPlusAdd extends BaseOperation {
     const { pos, plid } = this.data;
 
     const structRxn = struct.rxnPluses.get(plid);
+    if (!structRxn) return;
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 

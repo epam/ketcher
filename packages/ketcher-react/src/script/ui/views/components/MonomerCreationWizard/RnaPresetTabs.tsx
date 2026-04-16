@@ -7,14 +7,7 @@ import {
   KetMonomerClass,
   RnaPresetComponentKey,
 } from 'ketcher-core';
-import {
-  ChangeEvent,
-  Fragment,
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
+import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
   RnaPresetWizardAction,
   RnaPresetWizardState,
@@ -74,35 +67,28 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
 
-  const presetAttachmentPoints = useMemo(
-    () =>
-      getVisibleAttachmentPointsForRnaPreset(
-        assignedAttachmentPoints,
-        wizardState,
-        editor.struct(),
-      ),
-    [assignedAttachmentPoints, editor, wizardState],
+  const presetAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
+    assignedAttachmentPoints,
+    wizardState,
+    editor.struct(),
   );
-  const componentAttachmentPoints = useMemo(
-    () => ({
-      base: getAttachmentPointsForRnaPresetComponent(
-        assignedAttachmentPoints,
-        wizardState,
-        'base',
-      ),
-      sugar: getAttachmentPointsForRnaPresetComponent(
-        assignedAttachmentPoints,
-        wizardState,
-        'sugar',
-      ),
-      phosphate: getAttachmentPointsForRnaPresetComponent(
-        assignedAttachmentPoints,
-        wizardState,
-        'phosphate',
-      ),
-    }),
-    [assignedAttachmentPoints, wizardState],
-  );
+  const componentAttachmentPoints = {
+    base: getAttachmentPointsForRnaPresetComponent(
+      assignedAttachmentPoints,
+      wizardState,
+      'base',
+    ),
+    sugar: getAttachmentPointsForRnaPresetComponent(
+      assignedAttachmentPoints,
+      wizardState,
+      'sugar',
+    ),
+    phosphate: getAttachmentPointsForRnaPresetComponent(
+      assignedAttachmentPoints,
+      wizardState,
+      'phosphate',
+    ),
+  };
 
   const applyHighlights = useCallback(
     (activeTabIndex: number, highlightEnabled: boolean) => {

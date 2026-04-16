@@ -14,12 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import {
-  CoreEditor,
-  EditorHistory,
-  SelectRectangle,
-} from 'application/editor/internal';
+import { Vec2 } from 'domain/entities';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
@@ -33,49 +29,11 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment, vectorUtils } from 'application/editor';
-import {
-  HalfMonomerSize,
-  MonomerSize,
-  StandardBondLength,
-} from 'domain/constants';
 import { EraserTool } from 'application/editor/tools/Erase';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { RotationView } from 'application/render/renderers/TransientView/RotationView';
-import { Atom } from 'domain/entities/CoreAtom';
-
-type EmptySnapResult = {
-  snapPosition: null;
-  connectionLength: number;
-};
-
-type SnapResult = {
-  snapPosition: Vec2;
-  showAngleSnapping: boolean;
-  connectedMonomer: BaseMonomer;
-  bond: PolymerBond | HydrogenBond;
-  showBondLengthSnapping: boolean;
-  showDistanceSnapping: boolean;
-  showGroupCenterSnapping: boolean;
-  alignment: MonomersAlignment | undefined;
-  alignedMonomers: BaseMonomer[] | undefined;
-  connectionLength: number;
-};
-
-type GroupCenterSnapResult = {
-  snapPosition: Vec2;
-  isVertical: boolean;
-  absoluteSnapPosition: Vec2;
-  monomerPair: [BaseMonomer, BaseMonomer];
-  connectionLength: number;
-  showGroupCenterSnapping: true;
-};
-
-function isGroupCenterSnapResult(
-  result: SnapResult | EmptySnapResult | GroupCenterSnapResult,
-): result is GroupCenterSnapResult {
-  return (result as GroupCenterSnapResult).showGroupCenterSnapping;
-}
+import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { SelectBaseMode } from 'application/editor/tools/select/SelectBase.types';
+import { SelectBaseSnappingHandler } from 'application/editor/tools/select/SelectBaseSnappingHandler';
+import { SelectBaseTransformHandler } from 'application/editor/tools/select/SelectBaseTransformHandler';
 
 abstract class SelectBase implements BaseTool {
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
@@ -84,41 +42,28 @@ abstract class SelectBase implements BaseTool {
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
   private readonly canvasResizeObserver?: ResizeObserver;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
-  public mode:
-    | 'moving'
-    | 'selecting'
-    | 'standby'
-    | 'rotating'
-    | 'rotating-center' = 'standby';
-
-  protected rotationStartAngle = 0;
-  protected rotationCenter: Vec2 | null = null;
-  protected currentRotationAngle = 0;
-  protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
-  protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
-  protected rotationStartPositions = new Map<number, Vec2>();
-  protected userRotationCenter: Vec2 | null = null;
+  public mode: SelectBaseMode = 'standby';
+  private readonly snappingHandler: SelectBaseSnappingHandler;
+  private readonly transformHandler: SelectBaseTransformHandler;
   private readonly rotationHandleUnsubscribe?: () => void;
   private readonly rotationCenterUnsubscribe?: () => void;
   private readonly selectEntitiesHandler = () => {
-    this.updateRotationView();
+    this.transformHandler.updateRotationView();
   };
 
   constructor(protected readonly editor: CoreEditor) {
+    this.snappingHandler = new SelectBaseSnappingHandler(editor);
+    this.transformHandler = new SelectBaseTransformHandler(
+      editor,
+      (mode) => {
+        this.mode = mode;
+      },
+      () => this.mode,
+      (center, bbox) => this.buildRotationViewParams(center, bbox),
+    );
     this.destroy();
-    this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
-      (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
-        if (this.mode === 'rotating') return;
-        this.startRotation(payload.event);
-      },
-    );
-    this.rotationCenterUnsubscribe = RotationView.subscribeRotationCenter(
-      (payload) => {
-        if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
-        this.startRotationCenterDrag(payload.event);
-      },
-    );
+    [this.rotationHandleUnsubscribe, this.rotationCenterUnsubscribe] =
+      this.transformHandler.subscribeToRotationControls();
     this.editor.events.selectEntities.add(this.selectEntitiesHandler);
   }
 
@@ -207,68 +152,28 @@ abstract class SelectBase implements BaseTool {
     };
   }
 
+  protected get userRotationCenter() {
+    return this.transformHandler.getUserRotationCenter();
+  }
+
+  protected updateRotationView() {
+    this.transformHandler.updateRotationView();
+  }
+
   protected startRotation(event: MouseEvent | PointerEvent) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    this.mode = 'rotating';
-    this.rotationCenter =
-      this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
-
-    if (!this.rotationCenter) {
-      this.mode = 'standby';
-      this.rotationStartPositions.clear();
-      return;
-    }
-
-    this.rotationStartPositions = new Map(
-      this.editor.drawingEntitiesManager.selectedEntitiesArr.map((entity) => [
-        entity.id,
-        new Vec2(entity.position),
-      ]),
-    );
-
-    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
-    const cursorPos = this.editor.lastCursorPositionOfCanvas;
-    this.rotationStartAngle = Math.atan2(
-      cursorPos.y - canvasCenter.y,
-      cursorPos.x - canvasCenter.x,
-    );
-    this.currentRotationAngle = 0;
-
-    const bbox =
-      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    if (bbox) {
-      const viewParams = this.buildRotationViewParams(
-        this.rotationCenter,
-        bbox,
-      );
-      this.editor.transientDrawingView.showRotation({
-        ...viewParams,
-        rotationAngle: 0,
-        isRotating: true,
-      });
-      this.editor.transientDrawingView.update();
-    }
+    this.transformHandler.startRotation(event);
   }
 
   protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
-    event.stopPropagation();
-    event.preventDefault();
+    this.transformHandler.startRotationCenterDrag(event);
+  }
 
-    if (
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
-    ) {
-      return;
-    }
+  protected handleRotationMove(event: MouseEvent) {
+    this.transformHandler.handleRotationMove(event);
+  }
 
-    this.mode = 'rotating-center';
-    const cursorCanvas = Coordinates.viewToCanvas(
-      this.editor.lastCursorPosition,
-    );
-    this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
-    this.updateRotationView();
+  protected finishRotation() {
+    this.transformHandler.finishRotation();
   }
 
   protected mousedownEntity(
@@ -278,6 +183,11 @@ abstract class SelectBase implements BaseTool {
   ): void {
     const modelChanges = new Command();
     const drawingEntitiesToSelect: DrawingEntity[] = [];
+    const rxnArrowResizeHandle =
+      !shiftKey && !modKey
+        ? this.transformHandler.getRxnArrowResizeHandle(renderer)
+        : null;
+
     if (renderer instanceof BaseSequenceItemRenderer) {
       const twoStrandedNode = renderer.twoStrandedNode;
       if (twoStrandedNode.senseNode) {
@@ -291,8 +201,10 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (!shiftKey && !modKey) {
-      this.startMoveIfNeeded(renderer);
-      if (renderer.drawingEntity.selected) {
+      if (!rxnArrowResizeHandle) {
+        this.startMoveIfNeeded(renderer);
+      }
+      if (renderer.drawingEntity.selected && !rxnArrowResizeHandle) {
         return;
       }
       modelChanges.merge(
@@ -344,6 +256,13 @@ abstract class SelectBase implements BaseTool {
     );
 
     this.editor.renderersContainer.update(modelChanges);
+
+    if (renderer.drawingEntity instanceof RxnArrow && rxnArrowResizeHandle) {
+      this.transformHandler.startRxnArrowResize(
+        renderer.drawingEntity,
+        rxnArrowResizeHandle,
+      );
+    }
   }
 
   protected onSelectionStart() {
@@ -361,614 +280,6 @@ abstract class SelectBase implements BaseTool {
 
   protected abstract onSelectionMove(isShiftPressed: boolean);
 
-  static calculateAngleSnap(
-    monomerPositionPlusCursorDelta: Vec2,
-    connectedPosition: Vec2,
-    snapAngle: number,
-    snappedDistance?: number,
-  ) {
-    const angle = vectorUtils.calcAngle(
-      monomerPositionPlusCursorDelta,
-      connectedPosition,
-    );
-    const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
-    const snapRest = Math.abs(angleInDegrees % snapAngle);
-    const leftBorder = snapAngle / 3;
-    const rightBorder = (2 * snapAngle) / 3;
-    let snappedAngle: number | null = null;
-
-    if (snapRest < leftBorder) {
-      snappedAngle = angleInDegrees - snapRest;
-    } else if (snapRest > rightBorder) {
-      snappedAngle = angleInDegrees + snapAngle - snapRest;
-    }
-
-    if (snappedAngle === null) {
-      return { angleSnapPosition: null };
-    }
-
-    const snappedAngleRad = (snappedAngle * Math.PI) / 180;
-    const distance =
-      snappedDistance ??
-      Vec2.diff(monomerPositionPlusCursorDelta, connectedPosition).length();
-    const angleSnapPosition = new Vec2(
-      connectedPosition.x - distance * Math.cos(snappedAngleRad),
-      connectedPosition.y - distance * Math.sin(snappedAngleRad),
-    );
-    const isAngleSnapped =
-      Vec2.diff(monomerPositionPlusCursorDelta, angleSnapPosition).length() <
-      HalfMonomerSize;
-
-    if (!isAngleSnapped) {
-      return {
-        angleSnapPosition: null,
-      };
-    }
-
-    return {
-      angleSnapPosition,
-      snappedAngleRad,
-    };
-  }
-
-  static calculateBondLengthSnap(
-    cursorPosition: Vec2,
-    connectedPosition: Vec2,
-    snappedAngle: number | undefined,
-  ) {
-    const currentDistance = Vec2.diff(
-      cursorPosition,
-      connectedPosition,
-    ).length();
-    const isBondLengthSnapped =
-      Math.abs(currentDistance - StandardBondLength) < HalfMonomerSize;
-
-    if (!isBondLengthSnapped) {
-      return { bondLengthSnapPosition: null };
-    }
-
-    const editor = CoreEditor.provideEditorInstance();
-    let angle: number;
-    if (editor.mode.modeName === 'snake-layout-mode') {
-      let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
-      rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      const step = Math.PI / 2;
-      angle = Math.round(rawAngle / step) * step;
-    } else {
-      angle =
-        snappedAngle ??
-        vectorUtils.calcAngle(cursorPosition, connectedPosition);
-    }
-
-    const bondLengthSnapPosition = new Vec2(
-      connectedPosition.x + StandardBondLength * -Math.cos(angle),
-      connectedPosition.y + StandardBondLength * -Math.sin(angle),
-    );
-    return { bondLengthSnapPosition };
-  }
-
-  static needApplyGroupCenterSnapForOneAxis(
-    pointToCheck: number,
-    snappingPoint: number,
-    threshold: number,
-    pointToCheckOnAnotherAxis: number,
-    snappingPointOnAnotherAxis: number,
-    thresholdOnAnotherAxis,
-  ) {
-    return (
-      pointToCheck < snappingPoint + threshold &&
-      pointToCheck > snappingPoint - threshold &&
-      pointToCheckOnAnotherAxis <
-        snappingPointOnAnotherAxis + thresholdOnAnotherAxis &&
-      pointToCheckOnAnotherAxis >
-        snappingPointOnAnotherAxis - thresholdOnAnotherAxis
-    );
-  }
-
-  static calculateGroupCenterSnapPosition(
-    selectedEntities: BaseMonomer[],
-    connectedMonomers: BaseMonomer[],
-    movementDelta: Vec2,
-  ) {
-    const results: GroupCenterSnapResult[] = [];
-    const selectedEntitiesBbox =
-      DrawingEntitiesManager.getStructureBbox(selectedEntities);
-    const selectedEntitiesCenter = new Vec2(
-      selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
-      selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
-    );
-    const selectedEntitiesCenterWithMovementDelta =
-      selectedEntitiesCenter.add(movementDelta);
-
-    for (let i = 0; i < connectedMonomers.length; i++) {
-      for (let j = i + 1; j < connectedMonomers.length; j++) {
-        const monomerA = connectedMonomers[i];
-        const monomerB = connectedMonomers[j];
-        const pairBbox = DrawingEntitiesManager.getStructureBbox([
-          monomerA,
-          monomerB,
-        ]);
-        const pairCenter = new Vec2(
-          pairBbox.left + pairBbox.width / 2,
-          pairBbox.top + pairBbox.height / 2,
-        );
-
-        if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
-            selectedEntitiesCenterWithMovementDelta.x,
-            pairCenter.x,
-            HalfMonomerSize,
-            selectedEntitiesCenterWithMovementDelta.y,
-            pairCenter.y,
-            HalfMonomerSize * 2,
-          )
-        ) {
-          results.push({
-            snapPosition: Vec2.diff(pairCenter, selectedEntitiesCenter),
-            isVertical: false,
-            absoluteSnapPosition: pairCenter,
-            monomerPair: [monomerA, monomerB],
-            // connectionLength: 0 is set to prioritize this type of snapping over others to prevent jumps
-            connectionLength: 0,
-            showGroupCenterSnapping: true,
-          });
-        } else if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
-            selectedEntitiesCenterWithMovementDelta.y,
-            pairCenter.y,
-            HalfMonomerSize,
-            selectedEntitiesCenterWithMovementDelta.x,
-            pairCenter.x,
-            HalfMonomerSize * 2,
-          )
-        ) {
-          results.push({
-            snapPosition: Vec2.diff(pairCenter, selectedEntitiesCenter),
-            isVertical: true,
-            absoluteSnapPosition: pairCenter,
-            monomerPair: [monomerA, monomerB],
-            // connectionLength: 0 is set to prioritize this type of snapping over others to prevent jumps
-            connectionLength: 0,
-            showGroupCenterSnapping: true,
-          });
-        }
-      }
-    }
-
-    return results;
-  }
-
-  static determineAlignment(
-    firstPosition: Vec2,
-    secondPosition: Vec2,
-  ): MonomersAlignment | null {
-    const verticalDiff = Math.abs(firstPosition.y - secondPosition.y);
-    const horizontalDiff = Math.abs(firstPosition.x - secondPosition.x);
-
-    if (verticalDiff < MonomerSize && horizontalDiff >= MonomerSize) {
-      return 'horizontal';
-    } else if (horizontalDiff < MonomerSize && verticalDiff >= MonomerSize) {
-      return 'vertical';
-    }
-
-    return null;
-  }
-
-  static checkMonomersAlignment(
-    firstMonomer: BaseMonomer,
-    secondMonomer: BaseMonomer,
-    snapAlignment: MonomersAlignment,
-    distance: number,
-  ) {
-    const alignment = SelectBase.determineAlignment(
-      firstMonomer.center,
-      secondMonomer.center,
-    );
-
-    if (alignment !== snapAlignment) {
-      return false;
-    }
-
-    const distanceBetweenMonomers =
-      alignment === 'horizontal'
-        ? Math.abs(firstMonomer.center.x - secondMonomer.center.x)
-        : Math.abs(firstMonomer.center.y - secondMonomer.center.y);
-
-    return Math.abs(distanceBetweenMonomers - distance) < 0.0001;
-  }
-
-  static getNextMonomers(
-    currentMonomer: BaseMonomer,
-    visitedMonomers: Set<number>,
-  ) {
-    return currentMonomer.polymerBondsSortedByLength
-      .map((bond) => bond.getAnotherMonomer(currentMonomer))
-      .filter((monomer) => monomer && !visitedMonomers.has(monomer.id));
-  }
-
-  static findRemainingAlignedMonomers(
-    startingMonomer: BaseMonomer,
-    initialState: BaseMonomer[],
-    alignment: MonomersAlignment,
-    distance: number,
-  ) {
-    const visitedMonomers = new Set(initialState.map((monomer) => monomer.id));
-    const remainingAlignedMonomers: BaseMonomer[] = [];
-
-    const traverse = (currentMonomer: BaseMonomer) => {
-      const nextMonomers = SelectBase.getNextMonomers(
-        currentMonomer,
-        visitedMonomers,
-      );
-      for (const nextMonomer of nextMonomers) {
-        if (!nextMonomer) {
-          continue;
-        }
-
-        if (
-          SelectBase.checkMonomersAlignment(
-            currentMonomer,
-            nextMonomer,
-            alignment,
-            distance,
-          )
-        ) {
-          visitedMonomers.add(nextMonomer.id);
-          remainingAlignedMonomers.push(nextMonomer);
-          traverse(nextMonomer);
-        }
-      }
-    };
-
-    traverse(startingMonomer);
-
-    return remainingAlignedMonomers;
-  }
-
-  static calculateSideDistanceSnap(
-    cursorPosition: Vec2,
-    initialMonomer: BaseMonomer,
-    connectedMonomer: BaseMonomer,
-  ) {
-    const bondToMonomerForAlignment =
-      connectedMonomer.polymerBondsSortedByLength.find(
-        (bond) => bond.getAnotherMonomer(connectedMonomer) !== initialMonomer,
-      );
-    if (!bondToMonomerForAlignment) {
-      return { distanceSnapPosition: null };
-    }
-
-    const monomerForAlignment =
-      bondToMonomerForAlignment.getAnotherMonomer(connectedMonomer);
-    if (!monomerForAlignment) {
-      return { distanceSnapPosition: null };
-    }
-
-    const alignment = SelectBase.determineAlignment(
-      connectedMonomer.center,
-      monomerForAlignment.center,
-    );
-    if (!alignment) {
-      return { distanceSnapPosition: null };
-    }
-
-    const isHorizontal = alignment === 'horizontal';
-    const primaryAxis: 'x' | 'y' = isHorizontal ? 'x' : 'y';
-    const secondaryAxis: 'x' | 'y' = isHorizontal ? 'y' : 'x';
-
-    if (
-      Math.abs(
-        cursorPosition[secondaryAxis] - connectedMonomer.center[secondaryAxis],
-      ) >= MonomerSize
-    ) {
-      return { distanceSnapPosition: null };
-    }
-
-    const snapDistance = Math.abs(
-      connectedMonomer.center[primaryAxis] -
-        monomerForAlignment.center[primaryAxis],
-    );
-    const distanceToMonomerForSnapping = Math.abs(
-      cursorPosition[primaryAxis] - connectedMonomer.center[primaryAxis],
-    );
-    if (
-      Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
-    ) {
-      return { distanceSnapPosition: null };
-    }
-
-    const sign = Math.sign(
-      connectedMonomer.center[primaryAxis] - cursorPosition[primaryAxis],
-    );
-    const newPrimaryCoord =
-      connectedMonomer.center[primaryAxis] - sign * snapDistance;
-    const distanceSnapPosition = isHorizontal
-      ? new Vec2(newPrimaryCoord, cursorPosition.y)
-      : new Vec2(cursorPosition.x, newPrimaryCoord);
-
-    const alignedMonomers = [
-      initialMonomer,
-      connectedMonomer,
-      monomerForAlignment,
-    ];
-    const additionalAlignedMonomers = SelectBase.findRemainingAlignedMonomers(
-      monomerForAlignment,
-      alignedMonomers,
-      alignment,
-      snapDistance,
-    );
-
-    return {
-      snapDistance,
-      distanceSnapPosition,
-      alignment,
-      alignedMonomers: [...alignedMonomers, ...additionalAlignedMonomers],
-    };
-  }
-
-  static calculateInBetweenDistanceSnap(
-    cursorPosition: Vec2,
-    initialMonomer: BaseMonomer,
-    firstConnectedMonomer: BaseMonomer,
-    secondConnectedMonomer: BaseMonomer,
-    alignment: MonomersAlignment,
-  ) {
-    const isHorizontal = alignment === 'horizontal';
-    const primaryAxis: 'x' | 'y' = isHorizontal ? 'x' : 'y';
-    const secondaryAxis: 'x' | 'y' = isHorizontal ? 'y' : 'x';
-
-    const firstDelta = Math.abs(
-      cursorPosition[secondaryAxis] -
-        firstConnectedMonomer.center[secondaryAxis],
-    );
-    const secondDelta = Math.abs(
-      cursorPosition[secondaryAxis] -
-        secondConnectedMonomer.center[secondaryAxis],
-    );
-    if (firstDelta >= MonomerSize || secondDelta >= MonomerSize) {
-      return { distanceSnapPosition: null };
-    }
-
-    const distanceToMonomerForSnapping = Math.abs(
-      cursorPosition[primaryAxis] - firstConnectedMonomer.center[primaryAxis],
-    );
-    const snapDistance =
-      Math.abs(
-        firstConnectedMonomer.center[primaryAxis] -
-          secondConnectedMonomer.center[primaryAxis],
-      ) / 2;
-    if (
-      Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
-    ) {
-      return { distanceSnapPosition: null };
-    }
-
-    const midPoint =
-      (firstConnectedMonomer.center[primaryAxis] +
-        secondConnectedMonomer.center[primaryAxis]) /
-      2;
-    const distanceSnapPosition = isHorizontal
-      ? new Vec2(midPoint, cursorPosition.y)
-      : new Vec2(cursorPosition.x, midPoint);
-
-    const alignedMonomers = [
-      initialMonomer,
-      firstConnectedMonomer,
-      secondConnectedMonomer,
-    ];
-
-    const additionalAlignedMonomersFromOneSide =
-      SelectBase.findRemainingAlignedMonomers(
-        firstConnectedMonomer,
-        alignedMonomers,
-        alignment,
-        snapDistance,
-      );
-    const additionalAlignedMonomersFromOtherSide =
-      SelectBase.findRemainingAlignedMonomers(
-        secondConnectedMonomer,
-        alignedMonomers,
-        alignment,
-        snapDistance,
-      );
-
-    return {
-      snapDistance,
-      distanceSnapPosition,
-      alignment,
-      alignedMonomers: [
-        ...alignedMonomers,
-        ...additionalAlignedMonomersFromOneSide,
-        ...additionalAlignedMonomersFromOtherSide,
-      ],
-    };
-  }
-
-  static calculateDistanceSnap(
-    cursorPosition: Vec2,
-    initialMonomer: BaseMonomer,
-    connectedMonomer: BaseMonomer,
-  ) {
-    const secondShortestBond = initialMonomer.polymerBondsSortedByLength[1];
-    if (!secondShortestBond) {
-      return SelectBase.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    const secondConnectedMonomer =
-      secondShortestBond.getAnotherMonomer(initialMonomer);
-    if (!secondConnectedMonomer) {
-      return SelectBase.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    const alignment = SelectBase.determineAlignment(
-      connectedMonomer.center,
-      secondConnectedMonomer.center,
-    );
-
-    if (!alignment) {
-      return SelectBase.calculateSideDistanceSnap(
-        cursorPosition,
-        initialMonomer,
-        connectedMonomer,
-      );
-    }
-
-    return SelectBase.calculateInBetweenDistanceSnap(
-      cursorPosition,
-      initialMonomer,
-      connectedMonomer,
-      secondConnectedMonomer,
-      alignment,
-    );
-  }
-
-  private tryToSnap(event: MouseEvent, movementDelta: Vec2) {
-    let snapPosition: Vec2 | undefined;
-    const emptyResult: EmptySnapResult = {
-      snapPosition: null,
-      connectionLength: Infinity,
-    };
-
-    if (this.editor.mode.modeName === 'sequence-layout-mode') {
-      return emptyResult;
-    }
-    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
-    const externalConnectionsToSelection =
-      this.editor.drawingEntitiesManager.externalConnectionsToSelection;
-
-    if (modKeyPressed || externalConnectionsToSelection.length === 0) {
-      return emptyResult;
-    }
-
-    const snappingOptions: Array<
-      SnapResult | EmptySnapResult | GroupCenterSnapResult
-    > = externalConnectionsToSelection.map(
-      ({ monomerFromSelection, monomerConnectedToSelection, bond }) => {
-        const selectedMonomer = monomerFromSelection;
-        const connectedMonomer = monomerConnectedToSelection;
-        const connectionLength = Vec2.diff(
-          monomerFromSelection.position,
-          monomerConnectedToSelection.position,
-        ).length();
-
-        if (!connectedMonomer) {
-          return emptyResult;
-        }
-
-        const {
-          distanceSnapPosition,
-          snapDistance,
-          alignment,
-          alignedMonomers,
-        } = SelectBase.calculateDistanceSnap(
-          selectedMonomer.position,
-          selectedMonomer,
-          connectedMonomer,
-        );
-
-        const { angleSnapPosition, snappedAngleRad } =
-          SelectBase.calculateAngleSnap(
-            selectedMonomer.position.add(movementDelta),
-            connectedMonomer.position,
-            this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
-            snapDistance,
-          );
-
-        const { bondLengthSnapPosition } = SelectBase.calculateBondLengthSnap(
-          selectedMonomer.position,
-          connectedMonomer.position,
-          snappedAngleRad,
-        );
-
-        if (bondLengthSnapPosition) {
-          snapPosition = bondLengthSnapPosition;
-        } else if (angleSnapPosition) {
-          snapPosition = angleSnapPosition;
-        } else if (distanceSnapPosition) {
-          snapPosition = distanceSnapPosition;
-        }
-
-        if (!snapPosition) {
-          return emptyResult;
-        }
-
-        const movementDeltaLength = movementDelta.length();
-
-        const thresholdValue =
-          Boolean(distanceSnapPosition) && Boolean(angleSnapPosition)
-            ? HalfMonomerSize + 0.1
-            : HalfMonomerSize;
-
-        if (movementDeltaLength >= thresholdValue) {
-          return emptyResult;
-        }
-
-        const showAngleSnapping = Boolean(angleSnapPosition);
-        const showBondLengthSnapping = Boolean(bondLengthSnapPosition);
-        const showDistanceSnapping =
-          !showBondLengthSnapping && Boolean(distanceSnapPosition);
-
-        if (
-          !showAngleSnapping &&
-          !showBondLengthSnapping &&
-          !showDistanceSnapping
-        ) {
-          return emptyResult;
-        }
-
-        return {
-          snapPosition: snapPosition.sub(selectedMonomer.position),
-          showAngleSnapping,
-          bond,
-          connectedMonomer,
-          showBondLengthSnapping,
-          showDistanceSnapping,
-          showGroupCenterSnapping: false,
-          alignment,
-          alignedMonomers,
-          connectionLength,
-        };
-      },
-    );
-
-    const selectedMonomers =
-      this.editor.drawingEntitiesManager.selectedMonomers;
-
-    if (
-      externalConnectionsToSelection.length >= 2 &&
-      selectedMonomers.length >= 2
-    ) {
-      const connectedMonomers = externalConnectionsToSelection.map(
-        ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
-      );
-      const groupCenterSnapResult =
-        SelectRectangle.calculateGroupCenterSnapPosition(
-          selectedMonomers,
-          connectedMonomers,
-          movementDelta,
-        );
-      const firstGroupCenterSnapResult = groupCenterSnapResult[0];
-
-      if (firstGroupCenterSnapResult) {
-        snappingOptions.push(firstGroupCenterSnapResult);
-      }
-    }
-
-    snappingOptions.sort((a, b) => {
-      return a.connectionLength - b.connectionLength;
-    });
-
-    return snappingOptions[0] || emptyResult;
-  }
-
   mousemove(event: MouseEvent) {
     if (this.mode === 'standby') {
       return;
@@ -981,16 +292,17 @@ abstract class SelectBase implements BaseTool {
     }
 
     if (this.mode === 'rotating') {
-      this.handleRotationMove(event);
+      this.transformHandler.handleRotationMove(event);
       return;
     }
 
     if (this.mode === 'rotating-center') {
-      const cursorCanvas = Coordinates.viewToCanvas(
-        this.editor.lastCursorPosition,
-      );
-      this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
-      this.updateRotationView();
+      this.transformHandler.updateRotationCenterFromCursor();
+      return;
+    }
+
+    if (this.mode === 'resizing-rxn-arrow') {
+      this.transformHandler.resizeRxnArrow(event);
       return;
     }
 
@@ -1035,62 +347,11 @@ abstract class SelectBase implements BaseTool {
     );
 
     const modelChanges = new Command();
-
-    const snapResult = this.tryToSnap(event, movementDelta);
-    const { snapPosition } = snapResult;
-
-    this.editor.transientDrawingView.clear();
-
-    if (snapPosition) {
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          snapPosition,
-        ),
-      );
-
-      if (isGroupCenterSnapResult(snapResult)) {
-        this.editor.transientDrawingView.showGroupCenterSnap({
-          isVertical: snapResult.isVertical,
-          absoluteSnapPosition: snapResult.absoluteSnapPosition,
-          monomerPair: snapResult.monomerPair,
-        });
-      } else {
-        const {
-          showAngleSnapping,
-          connectedMonomer,
-          bond,
-          showBondLengthSnapping,
-          showDistanceSnapping,
-          alignment,
-          alignedMonomers,
-        } = snapResult;
-
-        if (showAngleSnapping) {
-          this.editor.transientDrawingView.showAngleSnap({
-            connectedMonomer,
-            polymerBond: bond,
-            isBondLengthSnapped: showBondLengthSnapping,
-          });
-        }
-
-        if (showBondLengthSnapping) {
-          this.editor.transientDrawingView.showBondSnap(bond);
-        }
-
-        if (showDistanceSnapping) {
-          this.editor.transientDrawingView.showDistanceSnap({
-            alignment,
-            alignedMonomers,
-          });
-        }
-      }
-    } else {
-      modelChanges.merge(
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          movementDelta,
-        ),
-      );
-    }
+    this.snappingHandler.applyMovementWithSnapping(
+      event,
+      movementDelta,
+      modelChanges,
+    );
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
 
@@ -1103,17 +364,21 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
-    const history = EditorHistory.getInstance(this.editor);
 
     try {
+      if (this.mode === 'resizing-rxn-arrow') {
+        this.transformHandler.finishRxnArrowResize();
+        return;
+      }
+
       if (this.mode === 'rotating') {
-        this.finishRotation();
+        this.transformHandler.finishRotation();
         return;
       }
 
       if (this.mode === 'rotating-center') {
         this.mode = 'standby';
-        this.updateRotationView();
+        this.transformHandler.updateRotationView();
         return;
       }
 
@@ -1139,6 +404,7 @@ abstract class SelectBase implements BaseTool {
             return;
           }
 
+          const history = EditorHistory.getInstance(this.editor);
           const modelChanges =
             this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
               new Vec2(0, 0),
@@ -1154,6 +420,7 @@ abstract class SelectBase implements BaseTool {
             return;
           }
 
+          const history = EditorHistory.getInstance(this.editor);
           const fullMovementOffset = Coordinates.canvasToModel(canvasDelta);
           const modelChanges =
             this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
@@ -1224,125 +491,7 @@ abstract class SelectBase implements BaseTool {
     this.editor.events.selectEntities.dispatch(
       this.previousSelectedEntities.map((entity) => entity[1]),
     );
-    this.updateRotationView();
-  }
-
-  protected updateRotationView() {
-    const selectedEntities =
-      this.editor.drawingEntitiesManager.selectedEntitiesArr;
-    const selectedMonomersAndAtoms = selectedEntities.filter(
-      (entity) => entity instanceof BaseMonomer || entity instanceof Atom,
-    );
-
-    if (
-      selectedMonomersAndAtoms.length < 2 ||
-      this.editor.mode.modeName === 'sequence-layout-mode' ||
-      (this.mode !== 'standby' && this.mode !== 'rotating-center')
-    ) {
-      this.editor.transientDrawingView.hideRotation();
-      this.editor.transientDrawingView.update();
-      return;
-    }
-
-    const bbox =
-      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-    const center =
-      this.userRotationCenter ??
-      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
-
-    if (!bbox || !center) {
-      this.editor.transientDrawingView.hideRotation();
-      this.editor.transientDrawingView.update();
-      return;
-    }
-
-    const viewParams = this.buildRotationViewParams(center, bbox);
-    this.editor.transientDrawingView.showRotation(viewParams);
-    this.editor.transientDrawingView.update();
-  }
-
-  protected handleRotationMove(event: MouseEvent) {
-    if (!this.rotationCenter) return;
-
-    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
-    const cursorPos = this.editor.lastCursorPositionOfCanvas;
-
-    const currentAngle = Math.atan2(
-      cursorPos.y - canvasCenter.y,
-      cursorPos.x - canvasCenter.x,
-    );
-
-    let angleDelta = currentAngle - this.rotationStartAngle;
-    let angleDeltaDegrees = (angleDelta * 180) / Math.PI;
-
-    // Snap to 15 degree increments (the default rotation angle from requirements)
-    if (!event.ctrlKey) {
-      const snapAngle = SelectBase.ROTATION_SNAP_ANGLE;
-      angleDeltaDegrees = Math.round(angleDeltaDegrees / snapAngle) * snapAngle;
-      angleDelta = (angleDeltaDegrees * Math.PI) / 180;
-    }
-
-    // Calculate the incremental rotation needed
-    const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
-    this.currentRotationAngle = angleDeltaDegrees;
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.rotateSelectedDrawingEntities(
-        this.rotationCenter,
-        incrementalDegrees,
-        true,
-      );
-
-    requestAnimationFrame(() => {
-      this.editor.renderersContainer.update(modelChanges);
-      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
-
-      const bbox =
-        this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
-      if (bbox && this.rotationCenter) {
-        const viewParams = this.buildRotationViewParams(
-          this.rotationCenter,
-          bbox,
-        );
-        this.editor.transientDrawingView.showRotation({
-          ...viewParams,
-          rotationAngle: angleDelta,
-          isRotating: true,
-        });
-        this.editor.transientDrawingView.update();
-      }
-    });
-  }
-
-  protected finishRotation() {
-    const history = EditorHistory.getInstance(this.editor);
-
-    if (
-      !this.rotationCenter ||
-      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
-    ) {
-      this.mode = 'standby';
-      this.rotationCenter = null;
-      this.userRotationCenter = null;
-      this.currentRotationAngle = 0;
-      this.rotationStartPositions.clear();
-      this.updateRotationView();
-      return;
-    }
-
-    const modelChanges =
-      this.editor.drawingEntitiesManager.createRotationHistoryCommand(
-        this.rotationStartPositions,
-      );
-
-    history.update(modelChanges);
-
-    this.mode = 'standby';
-    this.rotationCenter = null;
-    this.userRotationCenter = null;
-    this.currentRotationAngle = 0;
-    this.rotationStartPositions.clear();
-    this.updateRotationView();
+    this.transformHandler.updateRotationView();
   }
 
   destroy() {
@@ -1361,8 +510,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   public stopMovement() {
-    this.mode = 'standby';
-    this.editor.transientDrawingView.clear();
+    this.transformHandler.stopMovement();
   }
 }
 

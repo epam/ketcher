@@ -1928,14 +1928,17 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: Check for multiple side chain connections in Linkers
+    const usedAttachmentPoints = new Set<AttachmentPointName>();
+
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         firstMonomerAttachmentPointName,
         secondMonomer,
         secondMonomerAttachmentPointName,
       } = sideConnectionData;
+
       if (
+        usedAttachmentPoints.has(firstMonomerAttachmentPointName) ||
         !this.isConnectionPossible(
           newMonomer,
           firstMonomerAttachmentPointName,
@@ -1946,6 +1949,7 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
+      usedAttachmentPoints.add(firstMonomerAttachmentPointName);
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
           newMonomer,

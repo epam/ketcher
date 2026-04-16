@@ -770,13 +770,14 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        // TODO separate by two events for modes
-        this.events.rightClickCanvas.dispatch([
-          event,
-          this.mode instanceof SequenceMode
-            ? sequenceSelections
-            : selectedMonomers,
-        ]);
+        if (this.mode instanceof SequenceMode) {
+          this.events.rightClickCanvasSequence.dispatch([
+            event,
+            sequenceSelections,
+          ]);
+        } else {
+          this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
+        }
       }
 
       return false;

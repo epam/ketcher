@@ -38,7 +38,6 @@ import {
 } from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-import { resolveMonomerClass } from './resolveMonomerClass';
 import {
   MONOMER_CONST,
   rnaDnaNaturalAnalogues,
@@ -116,7 +115,7 @@ export const monomerFactory = (
   } else {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;
-    ketMonomerClass = resolveMonomerClass(monomer);
+    ketMonomerClass = KetMonomerClass.CHEM;
   }
 
   return [Monomer, MonomerRenderer, ketMonomerClass];

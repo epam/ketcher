@@ -46,7 +46,7 @@ import {
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 import {
   ChainsCollection,
   MonomerToAtomBond,

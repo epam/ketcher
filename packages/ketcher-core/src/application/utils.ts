@@ -1,6 +1,5 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   FormatterFactory,
   SupportedFormat,
@@ -11,33 +10,6 @@ import { ChemicalMimeType, StructService } from 'domain/services';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
-import { EditorSelection } from './editor/editor.types';
-
-import { ketcherProvider } from './ketcherProvider';
-
-export { ketcherProvider };
-
-export function getStructure(
-  ketcherId: string,
-  formatterFactory: FormatterFactory,
-  struct: Struct,
-  structureFormat = SupportedFormat.rxn,
-  drawingEntitiesManager?: DrawingEntitiesManager,
-  selection?: EditorSelection,
-): Promise<string> {
-  const serverSettings =
-    ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
-  const formatter = formatterFactory.create(structureFormat, serverSettings);
-  const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
-    new DrawingEntitiesManager(),
-  );
-
-  return formatter.getStructureFromStructAsync(
-    struct,
-    drawingEntitiesManagerCloningResult?.mergedDrawingEntities,
-    selection,
-  );
-}
 
 export async function prepareStructToRender(
   structStr: string,

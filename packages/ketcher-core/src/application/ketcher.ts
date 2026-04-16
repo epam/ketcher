@@ -46,10 +46,9 @@ import {
   KetcherLogger,
   ensureString,
 } from 'utilities';
+import { ketcherProvider } from './ketcherProvider';
 import {
   deleteAllEntitiesOnCanvas,
-  getStructure,
-  ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
@@ -64,6 +63,7 @@ import {
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import { getStructure } from 'application/getStructure';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };

@@ -25,7 +25,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { ElementColor, Elements } from 'domain/constants';
 import {
   LayerMap,
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
 } from './generalEnumTypes';
 
@@ -1277,15 +1277,15 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereLabelStyleType.Off:
+    case StereoLabelStyleType.Off:
       return false;
-    case StereLabelStyleType.On:
+    case StereoLabelStyleType.On:
       return true;
-    case StereLabelStyleType.Classic:
+    case StereoLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereLabelStyleType.IUPAC:
+    case StereoLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );

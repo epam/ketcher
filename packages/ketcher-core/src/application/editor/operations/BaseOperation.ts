@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 // todo: rename file in another PR
-import { StereLabelStyleType } from '../../render/restruct/generalEnumTypes';
+import { StereoLabelStyleType } from '../../render/restruct/generalEnumTypes';
 import ReStruct from '../../render/restruct/restruct';
 
 import { OperationType } from './OperationType';
@@ -91,8 +91,8 @@ class BaseOperation {
 
     restruct.atoms.forEach((atom, atomId) => {
       if (
-        stereoLabelStyle === StereLabelStyleType.IUPAC ||
-        stereoLabelStyle === StereLabelStyleType.Classic
+        stereoLabelStyle === StereoLabelStyleType.IUPAC ||
+        stereoLabelStyle === StereoLabelStyleType.Classic
       ) {
         if (atom.a.fragment === fragment) restruct.markAtom(atomId, 0);
       }

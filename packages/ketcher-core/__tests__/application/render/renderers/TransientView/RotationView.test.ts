@@ -44,8 +44,8 @@ describe('RotationView', () => {
       (text) => text.textContent === '75°',
     );
     expect(angleText).toBeTruthy();
-    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(100);
-    expect(Number(angleText?.getAttribute('y'))).toBeCloseTo(-10);
+    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(120);
+    expect(Number(angleText?.getAttribute('y'))).toBeCloseTo(0);
 
     const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
       path.getAttribute('d')?.includes('A90,90 0 0,1'),
@@ -83,8 +83,8 @@ describe('RotationView', () => {
       (text) => text.textContent === '-75°',
     );
     expect(angleText).toBeTruthy();
-    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(100);
-    expect(Number(angleText?.getAttribute('y'))).toBeCloseTo(-10);
+    expect(Number(angleText?.getAttribute('x'))).toBeCloseTo(120);
+    expect(Number(angleText?.getAttribute('y'))).toBeCloseTo(0);
 
     const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
       path.getAttribute('d')?.includes('A90,90 0 0,0'),

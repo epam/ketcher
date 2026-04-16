@@ -1,6 +1,6 @@
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -119,7 +119,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -134,7 +134,7 @@ test.describe('Reagents RXN format', () => {
       page,
       'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -148,7 +148,7 @@ test.describe('Reagents RXN format', () => {
       'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -163,7 +163,7 @@ test.describe('Reagents RXN format', () => {
       'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -179,7 +179,7 @@ test.describe('Reagents RXN format', () => {
         page,
         'Rxn-V3000/reagents-below-and-above.rxn',
       );
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     },

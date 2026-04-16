@@ -123,24 +123,24 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
    * 3. Hover over the Selection tool icon and check the tooltip for the shortcut
    */
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  const cases = [
+  const selectionToolButtons = [
     {
       tool: SelectionToolType.Lasso,
-      testId: 'select-lasso',
+      testId: SelectionToolType.Lasso,
       title: 'Lasso selection (Shift+Tab)',
     },
     {
       tool: SelectionToolType.Fragment,
-      testId: 'select-structure',
+      testId: SelectionToolType.Fragment,
       title: 'Structure Selection (Shift+Tab)',
     },
   ];
-  for (const c of cases) {
-    await CommonLeftToolbar(page).areaSelectionTool(c.tool);
-    const iconButton = page.getByTestId(c.testId);
-    await expect(iconButton).toHaveAttribute('title', c.title);
-    await iconButton.hover();
-    await expect(c.title).toBeTruthy();
+  for (const selectionToolButton of selectionToolButtons) {
+    await CommonLeftToolbar(page).areaSelectionTool(selectionToolButton.tool);
+    const button = page.getByTestId(selectionToolButton.testId);
+    await expect(button).toHaveAttribute('title', selectionToolButton.title);
+    await button.hover();
+    expect(selectionToolButton.title).toBeTruthy();
     await takeLeftToolbarMacromoleculeScreenshot(page);
   }
 });

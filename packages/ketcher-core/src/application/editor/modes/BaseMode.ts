@@ -39,14 +39,6 @@ export abstract class BaseMode {
     return false;
   }
 
-  public get isSnakeLayoutMode(): boolean {
-    return false;
-  }
-
-  public get isSequenceLayoutMode(): boolean {
-    return false;
-  }
-
   private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = getModeConstructor(modeName);

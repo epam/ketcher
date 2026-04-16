@@ -106,10 +106,6 @@ export class SequenceMode extends BaseMode {
     super('sequence-layout-mode', previousMode);
   }
 
-  public override get isSequenceLayoutMode(): boolean {
-    return true;
-  }
-
   public get isEditMode() {
     return this._isEditMode;
   }

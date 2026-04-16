@@ -76,7 +76,7 @@ function isGroupCenterSnapResult(
 }
 
 abstract class SelectBase implements BaseTool {
-  readonly isSelectTool = true;
+  readonly name = 'select-tool';
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
@@ -126,7 +126,7 @@ abstract class SelectBase implements BaseTool {
     renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
   ) {
     let shouldStartMove;
-    if (this.editor.mode.isSequenceLayoutMode) {
+    if (this.editor.mode.modeName === 'sequence-layout-mode') {
       shouldStartMove = !(renderer instanceof BaseSequenceItemRenderer);
     } else {
       shouldStartMove = true;
@@ -428,7 +428,7 @@ abstract class SelectBase implements BaseTool {
 
     const editor = provideEditorInstance();
     let angle: number;
-    if (editor.mode.isSnakeLayoutMode) {
+    if (editor.mode.modeName === 'snake-layout-mode') {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
       rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
       const step = Math.PI / 2;
@@ -836,7 +836,7 @@ abstract class SelectBase implements BaseTool {
       connectionLength: Infinity,
     };
 
-    if (this.editor.mode.isSequenceLayoutMode) {
+    if (this.editor.mode.modeName === 'sequence-layout-mode') {
       return emptyResult;
     }
     const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
@@ -877,7 +877,7 @@ abstract class SelectBase implements BaseTool {
           SelectBase.calculateAngleSnap(
             selectedMonomer.position.add(movementDelta),
             connectedMonomer.position,
-            this.editor.mode.isSnakeLayoutMode ? 90 : 30,
+            this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
             snapDistance,
           );
 
@@ -1349,9 +1349,7 @@ abstract class SelectBase implements BaseTool {
     this.rotationCenterUnsubscribe?.();
     this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (
-      !(this.editor.selectedTool && 'isEraserTool' in this.editor.selectedTool)
-    ) {
+    if (this.editor.selectedTool?.name !== 'eraser-tool') {
       const modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();

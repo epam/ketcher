@@ -415,7 +415,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool?.isSelectTool) cursor = 'move';
+    if (this.editor.selectedTool?.name === 'select-tool') cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)

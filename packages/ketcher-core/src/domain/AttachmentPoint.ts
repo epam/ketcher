@@ -262,7 +262,8 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode.isSnakeLayoutMode && polymerBond.isSideChainConnection))
+        (editor.mode.modeName === 'snake-layout-mode' &&
+          polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;

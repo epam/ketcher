@@ -25,11 +25,8 @@ import {
   StructService,
   KetcherLogger,
   EditorHistory,
-  SequenceMode,
   macromoleculesFilesInputFormats,
   ModeTypes,
-  SnakeMode,
-  FlexMode,
   normalizeError,
   provideEditorInstance,
 } from 'ketcher-core';
@@ -170,9 +167,9 @@ const addToCanvas = ({
       editor.drawingEntitiesManager,
     );
   const editorHistory = EditorHistory.getInstance(editor);
-  const isSequenceMode = editor.mode instanceof SequenceMode;
-  const isSnakeMode = editor.mode instanceof SnakeMode;
-  const isFlexMode = editor.mode instanceof FlexMode;
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode) {
     if (editor.drawingEntitiesManager.hasAntisenseChains) {

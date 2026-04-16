@@ -134,7 +134,7 @@ export interface Tool extends ToolEventHandler {
 
   isNotActiveTool?: boolean;
 
-  readonly isSelectTool?: boolean;
+  readonly name?: string;
 }
 
 export interface BaseTool extends Tool {

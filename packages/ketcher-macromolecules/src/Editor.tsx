@@ -34,7 +34,6 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
-  SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -271,7 +270,7 @@ function Editor({
         dispatch(setContextMenuActive(true));
 
         // TODO separate by two events
-        if (editor.mode instanceof SequenceMode) {
+        if (editor.mode.modeName === 'sequence-layout-mode') {
           setSelections(selections as NodesSelection);
           showSequenceContextMenu({
             event,

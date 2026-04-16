@@ -979,7 +979,7 @@ export class DrawingEntitiesManager {
       let isValueChanged;
       const editor = provideEditorInstance();
       if (
-        editor.mode.isSequenceLayoutMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -1023,7 +1023,7 @@ export class DrawingEntitiesManager {
       let isValueChanged;
       const editor = provideEditorInstance();
       if (
-        editor.mode.isSequenceLayoutMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -1275,7 +1275,7 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
-    if (editor.mode.isSnakeLayoutMode) {
+    if (editor.mode.modeName === 'snake-layout-mode') {
       command.merge(this.recalculateCanvasMatrix());
     }
 
@@ -2667,7 +2667,7 @@ export class DrawingEntitiesManager {
   public rerenderBondsOverlappedByMonomers() {
     const editor = provideEditorInstance();
 
-    if (editor.mode.isSequenceLayoutMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -2733,7 +2733,7 @@ export class DrawingEntitiesManager {
 
     const editor = provideEditorInstance();
     if (
-      !editor.mode.isSequenceLayoutMode ||
+      editor.mode.modeName !== 'sequence-layout-mode' ||
       drawingEntity instanceof PolymerBond
     ) {
       return { command, drawingEntities };
@@ -3715,7 +3715,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.applySnakeLayout(true, true));
 
-    if (editor.mode.isSequenceLayoutMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       command.addOperation(new ReinitializeModeOperation());
     }
 
@@ -3746,7 +3746,7 @@ export class DrawingEntitiesManager {
     monomers?: BaseMonomer[],
   ) {
     const editor = provideEditorInstance();
-    if (!editor || editor.mode.isSequenceLayoutMode) {
+    if (!editor || editor.mode.modeName === 'sequence-layout-mode') {
       return false;
     }
 

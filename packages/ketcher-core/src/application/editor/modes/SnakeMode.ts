@@ -15,10 +15,6 @@ export class SnakeMode extends BaseMode {
     super('snake-layout-mode', previousMode);
   }
 
-  public override get isSnakeLayoutMode(): boolean {
-    return true;
-  }
-
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
     const editor = provideEditorInstance();

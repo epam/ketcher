@@ -44,7 +44,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { ErrorTooltip } from '@tests/pages/macromolecules/canvas/ErrorTooltip';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 let page: Page;
 
@@ -178,7 +178,9 @@ test('Select monomers and pass a bond', async () => {
   await bondTwoMonomers(page, peptide2, peptide1);
   const errorMessage =
     "There can't be more than 1 bond between the first and the second monomer";
-  expect(await ErrorTooltip(page).getErrorText()).toEqual(errorMessage);
+  expect(await NotificationBanner(page).getNotificationText()).toEqual(
+    errorMessage,
+  );
 });
 
 test('Check in full-screen mode it is possible to add a bond between a Peptide monomers if this bond is pulled not from a specific attachment point R', async () => {

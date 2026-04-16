@@ -75,16 +75,14 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Clear canvas button tooltip is located in the left toolbar.
     */
-    const icon = {
+    const clearCanvasButton = {
       testId: 'clear-canvas',
       title: 'Clear Canvas (Ctrl+Del)',
     };
-    const iconButton = page
-      .getByTestId(icon.testId)
-      .filter({ has: page.locator(':visible') });
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
+    await expect(button).toHaveAttribute('title', clearCanvasButton.title);
+    await button.hover();
+    expect(clearCanvasButton.title).toBeTruthy();
   });
 
   test('Check clearing canvas by use short key "CTRL+Delete"', async ({

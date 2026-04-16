@@ -56,7 +56,6 @@ const MonomerPreview = ({ className }: Props) => {
   const idtAliasesText = useIDTAliasesTextForMonomer({
     idtAliases,
     attachmentPointsToBonds,
-    monomerClass: monomer?.props.MonomerClass,
   });
 
   if (!monomer) {

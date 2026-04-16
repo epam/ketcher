@@ -127,7 +127,7 @@ describe('Test Rna Editor Expanded component', () => {
     fireEvent.click(editBtn);
     fireEvent.click(duplicateBtn);
 
-    expect(onDuplicateHandler).toBeCalled();
+    expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 });

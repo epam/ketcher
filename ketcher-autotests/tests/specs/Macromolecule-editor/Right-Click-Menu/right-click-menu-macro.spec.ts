@@ -7,9 +7,9 @@ import {
   MacroFileType,
   takeElementScreenshot,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  clickInTheMiddleOfTheCanvas,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   dragMouseTo,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -395,7 +395,7 @@ test(`7. Verify Undo/Redo after using Copy, Paste from right-click menu`, async 
   );
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).click(MonomerOption.Copy);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await ContextMenu(page, canvas).click(MonomerOption.Paste);
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,
@@ -482,7 +482,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     MacroFileType.HELM,
     'PEPTIDE1{A.C.D.E.F}|RNA1{R(A)P}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
   );
-  await ZoomInByKeyboard(page, { repeat: 2 });
+  await zoomInByKeyboard(page, { repeat: 2 });
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
@@ -490,7 +490,7 @@ test(`9. Verify that context menu works correctly on canvas after zooming`, asyn
     ContextMenu(page, peptideA).contextMenuBody,
   );
   await resetZoomLevelToDefault(page);
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await ContextMenu(page, peptideA).open();
   await takeElementScreenshot(
     page,

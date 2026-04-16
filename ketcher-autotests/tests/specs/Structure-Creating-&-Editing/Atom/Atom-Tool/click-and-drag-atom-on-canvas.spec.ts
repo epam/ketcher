@@ -12,7 +12,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
   dragMouseAndMoveTo,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
@@ -53,7 +53,7 @@ test.describe('Click and drag Atom on canvas', () => {
     */
     const atomToolbar = RightToolbar(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -75,7 +75,7 @@ test.describe('Click and drag Atom on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
     await clickInTheMiddleOfTheScreen(page);
@@ -116,7 +116,7 @@ test.describe('Click and drag Atom on canvas', () => {
     await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -148,7 +148,7 @@ test.describe('Click and drag Atom on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     for (const [atomId, direction] of directions.entries()) {
       const previousAtom = getAtomLocator(page, {

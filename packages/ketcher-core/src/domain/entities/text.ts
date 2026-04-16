@@ -30,7 +30,12 @@ export enum TextCommand {
 }
 
 export interface TextAttributes {
-  // TODO: add Interface for content type
+  /**
+   * Serialized editor state stored as a JSON string in Lexical format.
+   * Previously this could contain Draft.js serialized state; after
+   * the import-time conversion change `content` MUST be a stringified
+   * Lexical `SerializedEditorState` (or an empty string).
+   */
   content: string;
   position: Point;
   pos: Array<Point>;
@@ -46,6 +51,9 @@ function preparePositions(positions?: Array<Point>) {
 }
 
 export class Text extends BaseMicromoleculeEntity {
+  /**
+   * Stringified Lexical editor state. Parsable JSON with a `root` node.
+   */
   content: string;
   position: Vec2;
   pos: Array<Vec2>;

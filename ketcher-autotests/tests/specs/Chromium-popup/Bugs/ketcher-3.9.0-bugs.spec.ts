@@ -56,7 +56,7 @@ import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -73,7 +73,7 @@ import {
   takeElementScreenshot,
   takeMonomerLibraryScreenshot,
   updateMonomersLibrary,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -121,7 +121,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      *
      * Version 3.9
      */
-    await ZoomOutByKeyboard(page, { repeat: 2 });
+    await zoomOutByKeyboard(page, { repeat: 2 });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -158,7 +158,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      * Version 3.9
      */
     await BottomToolbar(page).benzene();
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,

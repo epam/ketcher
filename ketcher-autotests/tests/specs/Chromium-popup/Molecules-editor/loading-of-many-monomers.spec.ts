@@ -6,8 +6,10 @@ import { test, expect } from '@fixtures';
 import { Page } from '@playwright/test';
 import { openFileAndAddToCanvasAsNewProject } from '@utils';
 
-const countByDataSgroupName = (page: Page): Promise<number> =>
-  page.evaluate(() => document.querySelectorAll('[data-sgroup-name]').length);
+const countByDataSgroupName = async (page: Page): Promise<number> =>
+  await page.evaluate(
+    () => document.querySelectorAll('[data-sgroup-name]').length,
+  );
 
 let page: Page;
 

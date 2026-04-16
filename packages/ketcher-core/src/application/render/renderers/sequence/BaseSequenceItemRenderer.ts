@@ -1,4 +1,5 @@
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
 import {
   SubChainNode,
@@ -151,7 +152,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(
@@ -749,7 +750,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
@@ -811,10 +812,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return;
     }
 
-    this.backgroundElement?.attr(
-      'fill',
-      this.node.monomer.selected ? 'none' : '#E1E8E9',
-    );
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr('fill', '#35f073');
+    } else {
+      this.backgroundElement?.attr('fill', '#E1E8E9');
+    }
 
     if (this.node.modified) {
       this.drawModification();
@@ -822,7 +824,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public removeBackgroundElementHover() {
-    this.backgroundElement?.attr('fill', 'none');
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#99D6DC'
+          : SELECTION_COLOR,
+      );
+    } else {
+      this.backgroundElement?.attr('fill', 'none');
+    }
 
     if (this.node.modified) {
       this.drawModification();

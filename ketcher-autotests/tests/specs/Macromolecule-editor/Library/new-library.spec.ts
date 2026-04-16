@@ -34,8 +34,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/keyboard';
 import {
   FileType,
@@ -573,7 +573,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -624,7 +626,9 @@ for (const monomer of monomerToDrag2) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -667,14 +671,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -710,14 +714,14 @@ for (const monomer of monomerToDrag) {
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

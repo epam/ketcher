@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect, Page } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  openPasteFromClipboard,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
@@ -19,6 +18,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 test.describe('', () => {
@@ -42,7 +42,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1963-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -59,7 +59,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1967-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -76,7 +76,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1968-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -93,7 +93,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1969-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -110,7 +110,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1970-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -127,7 +127,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1971-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -144,7 +144,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1974-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -161,7 +161,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1975-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -178,7 +178,7 @@ test.describe('', () => {
       const fileContent = await readFileContent('Txt/1976-inchi.txt');
 
       await pasteFromClipboardAndAddToCanvas(page, fileContent);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -514,11 +514,15 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button
      */
     await openFileAndAddToCanvas(page, 'KET/nonone-chain-structure.ket');
-    await openPasteFromClipboard(page, '123.!@*');
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('123.!@*');
     await PasteFromClipboardDialog(page).cancel();
-    await openPasteFromClipboard(page, '123.!@*');
+
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('123.!@*');
     await page.keyboard.press('Escape');
-    // await press
   });
 
   test('Open and Save file - InChi string for Rgroup', async () => {

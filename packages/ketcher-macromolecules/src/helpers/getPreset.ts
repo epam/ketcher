@@ -18,6 +18,7 @@ interface RnaPresetsTemplatesType
       IKetMonomerGroupTemplate,
       'templates' | 'idtAliases' | 'aliasAxoLabs'
     >,
+    Partial<Pick<IKetMonomerGroupTemplate, 'connections'>>,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
   connections?: IKetTemplateConnection[];
 }

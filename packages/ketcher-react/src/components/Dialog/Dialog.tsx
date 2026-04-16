@@ -44,6 +44,7 @@ interface DialogProps {
   params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
+  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -73,6 +74,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
+    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,
@@ -84,8 +86,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
-    if (focusable) {
-      (dialogElement as HTMLElement).focus();
+    if (focusable && dialogElement) {
+      setTimeout(() => {
+        (dialogElement as HTMLElement).focus();
+      }, 0);
     }
 
     return () => {

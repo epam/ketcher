@@ -843,31 +843,26 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async () => {
-    /* 
-      Test case: https://github.com/epam/ketcher/issues/5995
-      Description: Switching the typing type using hotkeys updates the library tab accordingly
-      Case:
-      1. Open macromolecules mode
-      2. Press Ctrl+Alt+D for DNA
-      3. Press Ctrl+Alt+P for Peptides
-      4. Press Ctrl+Alt+R for RNA
-      */
-    await pageReloadMicro(page);
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5995
+     * Description: Switching the typing type using hotkeys updates the library tab accordingly
+     * Case:
+     * 1. Open macromolecules mode
+     * 2. Press Ctrl+Alt+D for DNA
+     * 3. Press Ctrl+Alt+P for Peptides
+     * 4. Press Ctrl+Alt+R for RNA
+     */
+    // await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
 
-    // waiting appearance of empty seqeunce in edit mode appearence
-    // (otherwise - keyboard shortcuts doesn't work)
-    await page.getByTestId(`sequence-item`).first().waitFor({
-      state: 'attached',
-    });
-    await keyboardPressOnCanvas(page, 'Control+Alt+D');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+P');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
     await takeMonomerLibraryScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Control+Alt+R');
+    await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+R');
     await takeMonomerLibraryScreenshot(page);
   });
 

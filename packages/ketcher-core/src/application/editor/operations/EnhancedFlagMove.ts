@@ -16,7 +16,7 @@
 
 import { Fragment, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 

@@ -39,6 +39,7 @@ import {
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
   IKetAttachmentPoint,
+  IKetTemplateConnection,
   IKetMonomerTemplate,
   IMAGE_KEY,
   isSingleRGroupAttachmentPoint,
@@ -46,6 +47,7 @@ import {
   ketcherProvider,
   KetSerializer,
   KetTemplateType,
+  KetConnectionType,
   MacromoleculesConverter,
   MonomerCreationState,
   monomerFactory,
@@ -1369,7 +1371,11 @@ class Editor implements KetcherEditor {
     };
   }
 
-  finishNewMonomersCreation(monomersData, rnaPresetName?: string) {
+  finishNewMonomersCreation(
+    monomersData,
+    rnaPresetName?: string,
+    phosphatePosition?: '3' | '5',
+  ) {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
 
@@ -1466,6 +1472,56 @@ class Editor implements KetcherEditor {
         .map((monomerData) => monomerData.monomerTemplate.id)
         .join('_');
       const templateRef = setMonomerGroupTemplatePrefix(templateId);
+      const sugarMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) =>
+          monomerTemplate.class === KetMonomerClass.Sugar,
+      )?.monomerTemplate;
+      const phosphateMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) =>
+          monomerTemplate.class === KetMonomerClass.Phosphate,
+      )?.monomerTemplate;
+      const baseMonomerTemplate = monomersData.find(
+        ({ monomerTemplate }) => monomerTemplate.class === KetMonomerClass.Base,
+      )?.monomerTemplate;
+      const rnaPresetConnections: IKetTemplateConnection[] = [];
+
+      if (sugarMonomerTemplate && phosphateMonomerTemplate) {
+        const sugarAttachmentPointId =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R1
+            : AttachmentPointName.R2;
+        const phosphateAttachmentPointId =
+          phosphatePosition === '5'
+            ? AttachmentPointName.R2
+            : AttachmentPointName.R1;
+
+        rnaPresetConnections.push({
+          connectionType: KetConnectionType.SINGLE,
+          endpoint1: {
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
+            attachmentPointId: sugarAttachmentPointId,
+          },
+          endpoint2: {
+            templateId: setMonomerTemplatePrefix(phosphateMonomerTemplate.id),
+            attachmentPointId: phosphateAttachmentPointId,
+          },
+        });
+      }
+
+      if (sugarMonomerTemplate && baseMonomerTemplate) {
+        rnaPresetConnections.push({
+          connectionType: KetConnectionType.SINGLE,
+          endpoint1: {
+            templateId: setMonomerTemplatePrefix(sugarMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R3,
+          },
+          endpoint2: {
+            templateId: setMonomerTemplatePrefix(baseMonomerTemplate.id),
+            attachmentPointId: AttachmentPointName.R1,
+          },
+        });
+      }
+
       const libraryItem = {
         root: {
           templates: [getKetRef(templateRef)],
@@ -1480,13 +1536,13 @@ class Editor implements KetcherEditor {
               return getKetRef(monomerData.monomerRef);
             }),
           ],
+          connections: rnaPresetConnections,
         },
       };
 
       ket.root.templates.push(getKetRef(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
-
     ketcher.updateMonomersLibrary(JSON.stringify(ket), {
       format: 'ket',
       shouldPersist: true,
@@ -2315,7 +2371,7 @@ class Editor implements KetcherEditor {
               },
             );
 
-            this.removeAtomsAndBondsFromRnaComponents([], [...ids.values()]);
+            this.removeAtomsAndBondsFromRnaComponents([...ids.values()], []);
           }
           break;
 

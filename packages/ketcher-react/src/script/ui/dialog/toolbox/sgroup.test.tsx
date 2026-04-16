@@ -56,9 +56,27 @@ describe('Copolymer S-Group type availability', () => {
   });
 });
 
+describe('S-Group DAT type rendering', () => {
+  it('should render SDataFieldset when type is DAT', () => {
+    renderWithMockStore(<SGroup type="DAT" />, {
+      modal: {
+        form: {
+          result: {
+            type: 'DAT',
+            context: 'Fragment',
+            fieldName: 'Field name',
+            fieldValue: 'Field value',
+          },
+        },
+      },
+    });
+    expect(screen.getByText('S-Group Properties')).toBeInTheDocument();
+  });
+});
+
 function renderWithMockStore(
   component,
-  initialState = {
+  initialState: Record<string, unknown> = {
     modal: {
       form: {
         result: {

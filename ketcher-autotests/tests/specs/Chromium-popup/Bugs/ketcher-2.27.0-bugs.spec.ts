@@ -19,6 +19,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 
 import {
+  AttachmentPoint,
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -42,23 +43,16 @@ import {
   HighlightOption,
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import {
+  AttachmentPointType,
+  getAtomAttachmentPointLocator,
+} from '@utils/canvas/r-groups/getAtomAttachmentPointLocator';
 
 let page: Page;
 
@@ -139,8 +133,12 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -274,16 +272,14 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Chromium-popup/Bugs/benzene-ring-with-two-attachment-points.ket',
     );
     await takeEditorScreenshot(page);
-    const attachmentPointR1 = page.getByText('R1');
-    await ContextMenu(page, attachmentPointR1).click([
+    // R1 group is actually H atom
+    await ContextMenu(page, getAtomLocator(page, { atomLabel: 'H' })).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
     ]);
-    const primaryAattachmentPoint = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .locator('path')
-      .nth(8);
+    const primaryAattachmentPoint = getAtomAttachmentPointLocator(page, {
+      primaryOrSecondary: AttachmentPointType.Primary,
+    }).first();
     await ContextMenu(page, primaryAattachmentPoint).click([
       MicroBondOption.Highlight,
       HighlightOption.Blue,
@@ -453,7 +449,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Chromium-popup/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
     );
-    await page.getByText('X').hover();
+    await getAbbreviationLocator(page, { name: 'X' }).hover();
     await takeEditorScreenshot(page);
   });
 
@@ -549,7 +545,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await expandMonomer(page, page.getByText('2Nal'));
+    await expandMonomer(page, getAbbreviationLocator(page, { name: '2Nal' }));
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

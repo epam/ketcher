@@ -11,9 +11,10 @@ import {
   clickOnCanvas,
   undoByKeyboard,
   redoByKeyboard,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   dragTo,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -57,7 +58,6 @@ import {
   BondTopologyOption,
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -759,7 +759,7 @@ test.describe('Undo/Redo Actions', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
       await undoByKeyboard(page);
     }
@@ -768,7 +768,7 @@ test.describe('Undo/Redo Actions', () => {
       await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -839,10 +839,7 @@ test.describe('Undo/Redo Actions', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .hover({ force: true });
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);

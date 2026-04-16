@@ -22,7 +22,7 @@ import Raphael from './raphael-ext';
 import svgPath from 'svgpath';
 import util from './util';
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import { PathBuilder } from './pathBuilder';
 
 export const ARROW_HEAD_LENGHT = 0.25; // 10
@@ -52,10 +52,10 @@ function getUnbalancedArrowHeadOffset(options: RenderOptions) {
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
-    tfx(Math.min(points[0].x, points[1].x)),
-    tfx(Math.min(points[0].y, points[1].y)),
-    tfx(Math.abs(points[1].x - points[0].x)),
-    tfx(Math.abs(points[1].y - points[0].y)),
+    toFixed(Math.min(points[0].x, points[1].x)),
+    toFixed(Math.min(points[0].y, points[1].y)),
+    toFixed(Math.abs(points[1].x - points[0].x)),
+    toFixed(Math.abs(points[1].y - points[0].y)),
   );
 }
 
@@ -69,11 +69,15 @@ function rectangleArrowHighlightAndSelection(
   const [wOffset, hOffset] = [5, height || 8];
 
   const path =
-    `M${tfx(start.x - wOffset)},${tfx(start.y)}` +
-    `L${tfx(start.x - wOffset)},${tfx(start.y - hOffset)}` +
-    `L${tfx(endX + wOffset)},${tfx(start.y - hOffset)}` +
-    `L${tfx(endX + wOffset)},${tfx(start.y + (!height ? hOffset : 0))}` +
-    `L${tfx(start.x - wOffset)},${tfx(start.y + (!height ? hOffset : 0))}Z`;
+    `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
+    `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
+    `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
+    `L${toFixed(endX + wOffset)},${toFixed(
+      start.y + (!height ? hOffset : 0),
+    )}` +
+    `L${toFixed(start.x - wOffset)},${toFixed(
+      start.y + (!height ? hOffset : 0),
+    )}Z`;
 
   return svgPath(path).rotate(angle, start.x, start.y).toString();
 }
@@ -318,14 +322,14 @@ function arrowEllipticalArcFilledBow(
 
   const endX = start.x + arrowLength;
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${toFixed(
       endX,
-    )},${tfx(start.y)}` +
-    `L${tfx(endX - width)},${tfx(start.y - length)}` +
-    `l${tfx(width)},${tfx(attr)}` +
-    `l${tfx(width)},${tfx(-attr)}` +
-    `l${tfx(-width)},${length}`;
+    )},${toFixed(start.y)}` +
+    `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
+    `l${toFixed(width)},${toFixed(attr)}` +
+    `l${toFixed(width)},${toFixed(-attr)}` +
+    `l${toFixed(-width)},${length}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -357,13 +361,13 @@ function arrowEllipticalArcFilledTriangle(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${toFixed(
       endX,
-    )},${tfx(start.y)}` +
-    `L${tfx(endX - triangleWidth)},${tfx(start.y - triangleLength)}` +
-    `l${tfx(triangleLength)},${tfx(0)}` +
-    `l${tfx(-triangleWidth)},${tfx(triangleLength)}`;
+    )},${toFixed(start.y)}` +
+    `L${toFixed(endX - triangleWidth)},${toFixed(start.y - triangleLength)}` +
+    `l${toFixed(triangleLength)},${toFixed(0)}` +
+    `l${toFixed(-triangleWidth)},${toFixed(triangleLength)}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -395,13 +399,13 @@ function arrowEllipticalArcOpenAngle(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${toFixed(
       endX,
-    )},${tfx(start.y)}` +
-    `L${tfx(endX - width)},${tfx(start.y - length)}` +
-    `M${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX + width)}, ${tfx(start.y - length)}`;
+    )},${toFixed(start.y)}` +
+    `L${toFixed(endX - width)},${toFixed(start.y - length)}` +
+    `M${toFixed(endX)},${toFixed(start.y)}` +
+    `L${toFixed(endX + width)}, ${toFixed(start.y - length)}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -432,11 +436,11 @@ function arrowEllipticalArcOpenHalfAngle(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0}, ${tfx(
-      endX,
-    )},${tfx(start.y)}` +
-    `L${tfx(endX + width)}, ${tfx(start.y - length)}`;
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `A${arrowLength / 2},${height},${0},${0},${
+      direction > 0 ? 1 : 0
+    }, ${toFixed(endX)},${toFixed(start.y)}` +
+    `L${toFixed(endX + width)}, ${toFixed(start.y - length)}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -490,11 +494,11 @@ function arrowFilledTriangle(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-    `L${tfx(endX)},${tfx(start.y)}Z`;
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y + arrowHeadWidth)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowHeadWidth)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}Z`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -521,12 +525,12 @@ function arrowFilledBow(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-    `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-    `L${tfx(endX)},${tfx(start.y)}Z`;
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y + arrowHeadWidth)}` +
+    `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(start.y)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowHeadWidth)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}Z`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -559,18 +563,22 @@ function arrowDashedOpenAngle(
   // Dashed arrow
   for (let i = 0; i < arrowLength / dashInterval; i++) {
     if (i % 2) {
-      path.push(`L${tfx(start.x + i * dashInterval)},${tfx(start.y)}`);
+      path.push(`L${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
     } else {
-      path.push(`M${tfx(start.x + i * dashInterval)},${tfx(start.y)}`);
+      path.push(`M${toFixed(start.x + i * dashInterval)},${toFixed(start.y)}`);
     }
   }
 
   // Arrowhead
   path.push(
-    `M${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `M${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}`,
+    `M${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `M${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -606,24 +614,38 @@ function arrowFailed(
 
   // Arrow with arrowhead
   path.push(
-    `M${tfx(start.x)},${tfx(start.y)}` +
-      `L${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-      `L${tfx(endX)},${tfx(start.y)}Z`,
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `L${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+        start.y,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX)},${toFixed(start.y)}Z`,
   );
 
   // Failed sign line 1
   path.push(
-    `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y + failSignWidth)}` +
-      `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y - failSignWidth)}`,
+    `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
+      start.y + failSignWidth,
+    )}` +
+      `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
+        start.y - failSignWidth,
+      )}`,
   );
 
   // Failed sign line 2
   path.push(
-    `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y - failSignWidth)}` +
-      `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y + failSignWidth)}`,
+    `M${toFixed(arrowCenter + failSignWidth)},${toFixed(
+      start.y - failSignWidth,
+    )}` +
+      `L${toFixed(arrowCenter - failSignWidth)},${toFixed(
+        start.y + failSignWidth,
+      )}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -654,22 +676,22 @@ function arrowRetrosynthetic(
 
   // First arrow and arrowhead
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
+      `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
   );
 
   // Second arrow and arrowhead
   path.push(
-    `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
+      `L${toFixed(endX + arrowHeadLength)},${toFixed(start.y)}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -697,15 +719,19 @@ function arrowBothEndsFilledTriangle(
   const endX = start.x + arrowLength;
 
   const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(start.x + arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-    `L${tfx(start.x + arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-    `L${tfx(start.x)},${tfx(start.y)}`;
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y + arrowHeadWidth)}` +
+    `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowHeadWidth)}` +
+    `L${toFixed(endX)},${toFixed(start.y)}` +
+    `M${toFixed(start.x)},${toFixed(start.y)}` +
+    `L${toFixed(start.x + arrowHeadLength)},${toFixed(
+      start.y - arrowHeadWidth,
+    )}` +
+    `L${toFixed(start.x + arrowHeadLength)},${toFixed(
+      start.y + arrowHeadWidth,
+    )}` +
+    `L${toFixed(start.x)},${toFixed(start.y)}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -735,24 +761,24 @@ function arrowEquilibriumFilledHalfBow(
 
   // top arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
   );
 
   // bottom arrow
   path.push(
-    `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(
+    `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowHeadLength - arrowHeadAttr)},${
+      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -785,28 +811,28 @@ function arrowEquilibriumFilledTriangle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}Z`,
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}Z`,
   );
 
   // Second arrow
   path.push(
-    `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(
+    `M${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}Z`,
+      `L${toFixed(start.x)},${toFixed(start.y + arrowOffset)}Z`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -837,19 +863,19 @@ function arrowEquilibriumOpenAngle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
   );
 
   // Second arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
-      `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength)},${toFixed(
         start.y + arrowOffset + arrowHeadWidth,
       )}`,
   );
@@ -884,24 +910,24 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + unbalanceVal + arrowHeadLength)},${tfx(
+    `M${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + unbalanceVal + arrowHeadLength)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr)},${
+      `L${toFixed(start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -935,19 +961,19 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
         start.y + arrowOffset + arrowHeadWidth,
       )}`,
   );
@@ -989,25 +1015,25 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
         start.y - arrowOffset,
       )}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1041,23 +1067,23 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(
+    `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
         start.y - arrowHeadWidth - arrowOffset,
       )}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowOffset)}Z`,
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(start.y - arrowOffset)}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+    `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
         start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${
+      `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${
         start.y + arrowOffset
       }Z`,
   );
@@ -1078,12 +1104,12 @@ function plus(paper: RaphaelPaper, point: Vec2, options: RenderOptions) {
   return paper
     .path(
       'M{0},{4}L{0},{5}M{2},{1}L{3},{1}',
-      tfx(point.x),
-      tfx(point.y),
-      tfx(point.x - s),
-      tfx(point.x + s),
-      tfx(point.y - s),
-      tfx(point.y + s),
+      toFixed(point.x),
+      toFixed(point.y),
+      toFixed(point.x - s),
+      toFixed(point.x + s),
+      toFixed(point.y - s),
+      toFixed(point.y + s),
     )
     .attr(options.lineattr);
 }
@@ -1121,12 +1147,12 @@ function bondSingleUp(
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}Z',
-      tfx(a.x),
-      tfx(a.y),
-      tfx(b2.x),
-      tfx(b2.y),
-      tfx(b3.x),
-      tfx(b3.y),
+      toFixed(a.x),
+      toFixed(a.y),
+      toFixed(b2.x),
+      toFixed(b2.y),
+      toFixed(b3.x),
+      toFixed(b3.y),
     )
     .attr(options.lineattr)
     .attr({
@@ -1150,14 +1176,14 @@ function bondSingleStereoBold(
   const bond = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
-      tfx(a1.x),
-      tfx(a1.y),
-      tfx(a2.x),
-      tfx(a2.y),
-      tfx(a3.x),
-      tfx(a3.y),
-      tfx(a4.x),
-      tfx(a4.y),
+      toFixed(a1.x),
+      toFixed(a1.y),
+      toFixed(a2.x),
+      toFixed(a2.y),
+      toFixed(a3.x),
+      toFixed(a3.y),
+      toFixed(a4.x),
+      toFixed(a4.y),
     )
     .attr(options.lineattr)
     .attr({
@@ -1181,7 +1207,13 @@ function bondDoubleStereoBold(
   return paper.set([
     sgBondPath,
     paper
-      .path('M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
+      .path(
+        'M{0},{1}L{2},{3}',
+        toFixed(b1.x),
+        toFixed(b1.y),
+        toFixed(b2.x),
+        toFixed(b2.y),
+      )
       .attr(options.lineattr)
       .attr({
         stroke: color,
@@ -1241,13 +1273,13 @@ function bondSingleEither(
   const n = halfBond1.norm;
   const bsp = 0.7 * options.stereoBond;
 
-  let path = 'M' + tfx(a.x) + ',' + tfx(a.y);
+  let path = 'M' + toFixed(a.x) + ',' + toFixed(a.y);
   let r = a;
   for (let i = 0; i < nlines; ++i) {
     r = a
       .addScaled(d, step * (i + 0.5))
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5));
-    path += 'L' + tfx(r.x) + ',' + tfx(r.y);
+    path += 'L' + toFixed(r.x) + ',' + toFixed(r.y);
   }
   return paper
     .path(path)
@@ -1274,14 +1306,14 @@ function bondDouble(
       cisTrans
         ? 'M{0},{1}L{6},{7}M{4},{5}L{2},{3}'
         : 'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
-      tfx(a1.x),
-      tfx(a1.y),
-      tfx(b1.x),
-      tfx(b1.y),
-      tfx(a2.x),
-      tfx(a2.y),
-      tfx(b2.x),
-      tfx(b2.y),
+      toFixed(a1.x),
+      toFixed(a1.y),
+      toFixed(b1.x),
+      toFixed(b1.y),
+      toFixed(a2.x),
+      toFixed(a2.y),
+      toFixed(b2.x),
+      toFixed(b2.y),
     )
     .attr(options.lineattr)
     .attr(isSnapping ? options.bondSnappingStyle : {});
@@ -1496,12 +1528,12 @@ function radicalCap(paper: RaphaelPaper, point1: Vec2, options: RenderOptions) {
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}',
-      tfx(point1.x - dw),
-      tfx(point1.y + dh),
-      tfx(point1.x),
-      tfx(point1.y),
-      tfx(point1.x + dw),
-      tfx(point1.y + dh),
+      toFixed(point1.x - dw),
+      toFixed(point1.y + dh),
+      toFixed(point1.x),
+      toFixed(point1.y),
+      toFixed(point1.x + dw),
+      toFixed(point1.y + dh),
     )
     .attr({
       stroke: '#000',
@@ -1516,10 +1548,12 @@ function radicalBullet(
   point1: Vec2,
   options: RenderOptions,
 ) {
-  return paper.circle(tfx(point1.x), tfx(point1.y), options.lineWidth).attr({
-    stroke: null,
-    fill: '#000',
-  });
+  return paper
+    .circle(toFixed(point1.x), toFixed(point1.y), options.lineWidth)
+    .attr({
+      stroke: null,
+      fill: '#000',
+    });
 }
 
 function bracket(
@@ -1555,14 +1589,14 @@ function bracket(
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-      tfx(bracketArc0.x),
-      tfx(bracketArc0.y),
-      tfx(bracketPoint0.x),
-      tfx(bracketPoint0.y),
-      tfx(bracketPoint1.x),
-      tfx(bracketPoint1.y),
-      tfx(bracketArc1.x),
-      tfx(bracketArc1.y),
+      toFixed(bracketArc0.x),
+      toFixed(bracketArc0.y),
+      toFixed(bracketPoint0.x),
+      toFixed(bracketPoint0.y),
+      toFixed(bracketPoint1.x),
+      toFixed(bracketPoint1.y),
+      toFixed(bracketArc1.x),
+      toFixed(bracketArc1.y),
     )
     .attr(options.sgroupBracketStyle);
 }
@@ -1575,10 +1609,10 @@ function selectionRectangle(
 ) {
   return paper
     .rect(
-      tfx(Math.min(point1.x, point2.x)),
-      tfx(Math.min(point1.y, point2.y)),
-      tfx(Math.abs(point2.x - point1.x)),
-      tfx(Math.abs(point2.y - point1.y)),
+      toFixed(Math.min(point1.x, point2.x)),
+      toFixed(Math.min(point1.y, point2.y)),
+      toFixed(Math.abs(point2.x - point1.x)),
+      toFixed(Math.abs(point2.y - point1.y)),
     )
     .attr(options.lassoStyle);
 }
@@ -1589,9 +1623,9 @@ function selectionPolygon(
   options: RenderOptions,
 ) {
   const v = r[r.length - 1];
-  let pstr = 'M' + tfx(v.x) + ',' + tfx(v.y);
+  let pstr = 'M' + toFixed(v.x) + ',' + toFixed(v.y);
   for (const point of r) {
-    pstr += 'L' + tfx(point.x) + ',' + tfx(point.y);
+    pstr += 'L' + toFixed(point.x) + ',' + toFixed(point.y);
   }
   return paper.path(pstr).attr(options.lassoStyle);
 }
@@ -1608,13 +1642,13 @@ function selectionLine(
 function makeStroke(point1: Vec2, point2: Vec2) {
   return (
     'M' +
-    tfx(point1.x) +
+    toFixed(point1.x) +
     ',' +
-    tfx(point1.y) +
+    toFixed(point1.y) +
     'L' +
-    tfx(point2.x) +
+    toFixed(point2.x) +
     ',' +
-    tfx(point2.y) +
+    toFixed(point2.y) +
     '	'
   );
 }
@@ -1677,10 +1711,10 @@ function rgroupAttachmentPoint(
 ) {
   const linePath = paper.path(
     'M{0},{1}L{2},{3}',
-    tfx(shiftedAtomPositionVector.x),
-    tfx(shiftedAtomPositionVector.y),
-    tfx(attachmentPointEnd.x),
-    tfx(attachmentPointEnd.y),
+    toFixed(shiftedAtomPositionVector.x),
+    toFixed(shiftedAtomPositionVector.y),
+    toFixed(attachmentPointEnd.x),
+    toFixed(attachmentPointEnd.y),
   );
 
   const curvePath = paper.path(

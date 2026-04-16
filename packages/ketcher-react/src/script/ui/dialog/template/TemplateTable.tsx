@@ -27,7 +27,7 @@ export interface Template {
     bondid: number;
     group: string;
     prerender?: string;
-    abbreviation: string;
+    abbreviation?: string;
     name: string;
   };
 }
@@ -58,9 +58,13 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation;
+    return tmpl.props.abbreviation || '';
   }
-  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+  return (
+    tmpl.props.abbreviation ||
+    tmpl.struct.name ||
+    `${tmpl.props.group} template ${i + 1}`
+  );
 }
 
 function createKeyDownHandler(callback: () => void) {
@@ -93,8 +97,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {templates.map((tmpl, i) => {
         return (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className={
               tmpl.struct !== selected?.struct
                 ? classes.td
@@ -107,6 +112,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            onKeyDown={createKeyDownHandler(() => onSelect(tmpl))}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -129,7 +135,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             </div>
             {tmpl.props.group === 'User Templates' && (
               <button
-                tabIndex={0}
                 data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
                 onClick={(e) => {
@@ -144,7 +149,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             {!isFunctionalGroupTemplate(tmpl) &&
               !isSaltOrSolventTemplate(tmpl) && (
                 <button
-                  tabIndex={0}
                   data-testid={'edit-template-button'}
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
@@ -156,7 +160,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   <Icon name="edit" />
                 </button>
               )}
-          </button>
+          </div>
         );
       })}
     </div>

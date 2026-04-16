@@ -20,14 +20,13 @@ import {
 } from '@utils/canvas';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
-  dragMouseTo,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndOpenAsNewProject,
   waitForRender,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/index';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -46,6 +45,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   horizontalFlipByKeyboard,
+  rotateToCoordinates,
   verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 
@@ -110,7 +110,7 @@ test('3. Verify the star atom can be added to the canvas using the extended tabl
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await selectExtendedTableElement(page, ExtendedTableButton.STAR);
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
@@ -128,7 +128,7 @@ test('4. Verify the star atom can be added to the canvas using the hotkey (Shift
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
@@ -211,7 +211,7 @@ test('7. Verify the star atom s behavior during undo/redo actions after adding o
    */
   await CommonTopRightToolbar(page).setZoomInputValue('400');
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
   await moveMouseAway(page);
   // Change to getAtomLocator later
@@ -238,13 +238,13 @@ test('8. Verify that the star atom is displayed correctly when zooming in and ou
    * Version 3.7
    */
   await page.keyboard.press('Shift+8');
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
 
-  await ZoomInByKeyboard(page, { repeat: 11 });
+  await zoomInByKeyboard(page, { repeat: 11 });
   await takeEditorScreenshot(page);
-  await ZoomOutByKeyboard(page, { repeat: 6 });
+  await zoomOutByKeyboard(page, { repeat: 6 });
   await takeEditorScreenshot(page);
 });
 
@@ -264,7 +264,7 @@ test('9. Verify the copy-paste functionality for structures containing the star 
     page,
     'C1=C*=CC=C1 |$;;star_e;;;$|',
   );
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
   await cutToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
@@ -647,16 +647,13 @@ test('24. Verify that the star atom retains its properties when the structure is
    *
    * Version 3.7
    */
-  const rotationHandle = page.getByTestId('rotation-handle');
-
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Star-Atom/LayoutValidation.ket',
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await rotationHandle.hover();
-  await dragMouseTo(page, 720, 300);
+  await rotateToCoordinates(page, { x: 720, y: 300 });
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

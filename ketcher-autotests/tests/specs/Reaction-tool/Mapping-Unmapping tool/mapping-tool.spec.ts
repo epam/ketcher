@@ -62,10 +62,10 @@ test.describe('Mapping Tools', () => {
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionMapping,
       );
-      await page.getByText('ALK').click();
-      await page.getByText('ABH').click();
-      await page.getByText('CHC').click();
-      await page.getByText('ARY').click();
+      await getAtomLocator(page, { atomLabel: 'ALK' }).click();
+      await getAtomLocator(page, { atomLabel: 'ABH' }).click();
+      await getAtomLocator(page, { atomLabel: 'CHC' }).click();
+      await getAtomLocator(page, { atomLabel: 'ARY' }).click();
     });
   });
 
@@ -119,7 +119,7 @@ test.describe('Mapping Tools', () => {
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionMapping,
       );
-      await page.getByText('CEL').click();
+      await getAtomLocator(page, { atomLabel: 'CEL' }).click();
       await deleteByKeyboard(page);
       await takeEditorScreenshot(page);
 
@@ -131,7 +131,7 @@ test.describe('Mapping Tools', () => {
       await LeftToolbar(page).selectReactionMappingTool(
         ReactionMappingType.ReactionUnmapping,
       );
-      await page.getByText('CEL').click();
+      await getAtomLocator(page, { atomLabel: 'CEL' }).click();
     });
   });
 });

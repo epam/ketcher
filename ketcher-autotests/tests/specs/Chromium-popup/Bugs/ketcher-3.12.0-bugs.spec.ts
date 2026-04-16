@@ -37,6 +37,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
+  AttachmentPoint,
   createRNAAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -325,7 +326,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
         page,
         getMonomerLocator(page, Chem.Test_6_Ch),
         getAtomLocator(page, { atomId: 0 }),
-        `R${i}`,
+        (Object.values(AttachmentPoint) as AttachmentPoint[])[i - 1],
       );
     }
     await getMonomerLocator(page, { monomerAlias: 'Test-6-Ch' }).hover({

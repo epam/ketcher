@@ -201,7 +201,7 @@ export function fromBondAddition(
 export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
-  attrs: Bond,
+  attrs: Partial<Bond>,
   reset?: boolean,
 ): Action {
   const struct = restruct.molecule;

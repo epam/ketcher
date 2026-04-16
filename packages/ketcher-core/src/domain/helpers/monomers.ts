@@ -400,6 +400,26 @@ export function isRnaBaseOrAmbiguousRnaBase(
   );
 }
 
+export function isPhosphateOrAmbiguousPhosphate(
+  monomer?: BaseMonomer,
+): monomer is Phosphate | AmbiguousMonomer {
+  return (
+    monomer instanceof Phosphate ||
+    (monomer instanceof AmbiguousMonomer &&
+      monomer.monomerClass === KetMonomerClass.Phosphate)
+  );
+}
+
+export function isSugarOrAmbiguousSugar(
+  monomer?: BaseMonomer,
+): monomer is Sugar | AmbiguousMonomer {
+  return (
+    monomer instanceof Sugar ||
+    (monomer instanceof AmbiguousMonomer &&
+      monomer.monomerClass === KetMonomerClass.Sugar)
+  );
+}
+
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (
     isMonomerOfClass(monomer, KetMonomerClass.RNA) ||

@@ -4,6 +4,7 @@ import { Vec2 } from './vec2';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { isSugarOrAmbiguousSugar } from 'domain/helpers/monomers';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
@@ -15,7 +16,8 @@ export class Phosphate extends BaseMonomer {
       return this.firstFreeAttachmentPoint;
     }
 
-    return this.getValidPoint(
+    return Phosphate.getValidPoint(
+      this,
       secondMonomer,
       secondMonomer.potentialSecondAttachmentPointForBond,
     );
@@ -27,45 +29,47 @@ export class Phosphate extends BaseMonomer {
     }
 
     // same implementation for both source and target attachment points
-    return this.getValidPoint(
+    return Phosphate.getValidPoint(
+      this,
       firstMonomer,
       firstMonomer.chosenFirstAttachmentPointForBond,
     );
   }
 
-  private getValidPoint(
+  private static getValidPoint(
+    self: BaseMonomer,
     otherMonomer: BaseMonomer,
     potentialPointOnOther: string | null,
   ) {
     // If we chose specific start AP on this monomer, return it
-    if (this.chosenFirstAttachmentPointForBond) {
-      return this.chosenFirstAttachmentPointForBond;
+    if (self.chosenFirstAttachmentPointForBond) {
+      return self.chosenFirstAttachmentPointForBond;
     }
 
     // If we want to choose specific end AP on this monomer, return it
-    if (this.potentialSecondAttachmentPointForBond) {
-      return this.potentialSecondAttachmentPointForBond;
+    if (self.potentialSecondAttachmentPointForBond) {
+      return self.potentialSecondAttachmentPointForBond;
     }
 
     // If this is the only available AP on this monomer, return it
-    if (this.unUsedAttachmentPointsNamesList.length === 1) {
-      return this.unUsedAttachmentPointsNamesList[0];
+    if (self.unUsedAttachmentPointsNamesList.length === 1) {
+      return self.unUsedAttachmentPointsNamesList[0];
     }
 
     // If other monomer is not a Sugar, we want to open modal
-    if (!otherMonomer.isSugar) {
+    if (!isSugarOrAmbiguousSugar(otherMonomer)) {
       return;
     }
     // If we chose a specific AP on other monomer, we want to determine the correct AP on this one
     if (potentialPointOnOther) {
       if (
         potentialPointOnOther === AttachmentPointName.R2 &&
-        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+        self.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
         return AttachmentPointName.R1;
       } else if (
         potentialPointOnOther !== AttachmentPointName.R2 &&
-        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
+        self.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
         return AttachmentPointName.R2;
       } else {
@@ -75,14 +79,14 @@ export class Phosphate extends BaseMonomer {
 
     if (
       otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
-      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+      self.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
       return AttachmentPointName.R1;
     }
 
     if (
       !otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
-      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
+      self.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
       return AttachmentPointName.R2;
     }

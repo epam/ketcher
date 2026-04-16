@@ -12,11 +12,10 @@ import {
   AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
-  bondTwoMonomersPointToPoint,
+  bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
@@ -538,53 +537,6 @@ test.describe('Connection rules for RNAs: ', () => {
     };
   }
 
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = getMonomerLocator(page, {
-      monomerAlias: leftMonomer.alias,
-    }).first();
-
-    const rightMonomerLocators = getMonomerLocator(page, {
-      monomerAlias: rightMonomer.alias,
-    });
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? rightMonomerLocators.nth(1)
-        : rightMonomerLocators.nth(0);
-
-    await rightMonomerLocator.hover();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstAttachmentPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.attachmentPoints,
-      )[0];
-      const leftMonomerAttachmentPoint =
-        leftMonomer.attachmentPoints[firstAttachmentPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerAttachmentPoint).first().click();
-
-      const firstAttachmentPointKeyForRightMonomer = Object.keys(
-        rightMonomer.attachmentPoints,
-      )[0];
-      const rightMonomerAttachmentPoint =
-        rightMonomer.attachmentPoints[firstAttachmentPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerAttachmentPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerAttachmentPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerAttachmentPoint).first().click();
-
-      await AttachmentPointsDialog(page).connect();
-    }
-  }
-
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       /*
@@ -597,7 +549,15 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftSugar, rightBase);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightBase.alias === leftSugar.alias
+            ? getMonomerLocator(page, { monomerAlias: rightBase.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightBase.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
           bondType: MacroBondDataIds.Single,
@@ -620,7 +580,17 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftPhosphate, rightSugar);
 
-        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, {
+            monomerAlias: leftPhosphate.alias,
+          }).first(),
+          rightSugar.alias === leftPhosphate.alias
+            ? getMonomerLocator(page, { monomerAlias: rightSugar.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightSugar.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
           bondType: MacroBondDataIds.Single,
@@ -643,7 +613,17 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftSugar, rightPhosphate);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPhosphate);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightPhosphate.alias === leftSugar.alias
+            ? getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
           bondType: MacroBondDataIds.Single,

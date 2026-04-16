@@ -577,16 +577,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Hover over the “Calculate Properties” button in main toolbar
      * 3. Verify that tooltip is displayed
      */
-    const icon = {
+    const calculatePropertiesButton = {
       testId: 'calculate-macromolecule-properties-button',
       title: 'Calculate properties (Alt+C)',
     };
-    const iconButton = page.getByTestId(icon.testId);
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    await expect(icon.title).toBeTruthy();
+    const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
+    await button.hover();
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
     await takeTopToolbarScreenshot(page);
-    await iconButton.click();
+    await button.click();
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });

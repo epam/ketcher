@@ -17,7 +17,7 @@ import {
 } from '@utils/canvas';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
 } from '@utils/index';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -863,7 +863,7 @@ test(`20. Check that the monomer creation wizard enabled when no selection is ma
    * Version 3.10
    */
   await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickOnMiddleOfCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
 });
 

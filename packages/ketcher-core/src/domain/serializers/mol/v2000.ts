@@ -24,6 +24,7 @@ import {
   Pool,
   RGroup,
   RGroupAttachmentPoint,
+  RGroupAttributes,
   SGroup,
   StereoLabel,
   Struct,
@@ -33,10 +34,14 @@ import {
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';
 import utils from './utils';
+import { AtomMap, SGroupMap } from './mol.types';
 
 const loadRGroupFragments = true; // TODO: set to load the fragments
 
-function parseAtomLine(atomLine) {
+/** M-property block: string keys (CHG, alias, …) map to per-atom pools */
+type MPropertyProps = Map<string, Pool>;
+
+function parseAtomLine(atomLine: string): Atom {
   /* reader */
   const atomSplit = utils.partitionLine(
     atomLine,
@@ -58,7 +63,7 @@ function parseAtomLine(atomLine) {
     charge: utils.fmtInfo.chargeMap[utils.parseDecimalInt(atomSplit[6])],
 
     // query
-    hCount: utils.parseDecimalInt(utils.parseDecimalInt(atomSplit[8])),
+    hCount: utils.parseDecimalInt(atomSplit[8]),
     stereoCare: utils.parseDecimalInt(atomSplit[9]) !== 0,
 
     // reaction
@@ -71,7 +76,7 @@ function parseAtomLine(atomLine) {
   return new Atom(params);
 }
 
-function parseBondLine(bondLine) {
+function parseBondLine(bondLine: string): Bond {
   /* reader */
   const bondSplit = utils.partitionLine(
     bondLine,
@@ -92,7 +97,10 @@ function parseBondLine(bondLine) {
   return new Bond(params);
 }
 
-function parseAtomListLine(/* string */ atomListLine) {
+function parseAtomListLine(atomListLine: string): {
+  aid: number;
+  atomList: AtomList;
+} {
   /* reader */
   const split = utils.partitionLine(
     atomListLine,
@@ -104,7 +112,7 @@ function parseAtomListLine(/* string */ atomListLine) {
   const count = utils.parseDecimalInt(split[4].trim());
 
   const ids = atomListLine.slice(utils.fmtInfo.atomListHeaderLength);
-  const list = [];
+  const list: number[] = [];
   const itemLength = utils.fmtInfo.atomListHeaderItemLength;
   for (let i = 0; i < count; ++i) {
     list[i] = utils.parseDecimalInt(
@@ -124,7 +132,12 @@ function parseAtomListLine(/* string */ atomListLine) {
 /**
  * Handles 'A' property lines (atom alias/pseudo)
  */
-function handleAliasProperty(line, ctabLines, shift, props) {
+function handleAliasProperty(
+  line: string,
+  ctabLines: string[],
+  shift: number,
+  props: MPropertyProps,
+): void {
   const propValue = ctabLines[shift];
   // TODO: Atom entity only have pseudo getter. Check during refactoring
   // this type of pseudo labeling is not used in current BIOVIA products. See ctab documentation 2020
@@ -136,27 +149,40 @@ function handleAliasProperty(line, ctabLines, shift, props) {
     props.set(propType, new Pool());
   }
 
-  props.get(propType).set(utils.parseDecimalInt(line.slice(3)) - 1, propValue);
+  const aliasPool = props.get(propType);
+  if (aliasPool) {
+    aliasPool.set(utils.parseDecimalInt(line.slice(3)) - 1, propValue);
+  }
 }
 
 /**
  * Handles simple atom property types (CHG, RAD, ISO, RBC, UNS, APO)
  */
-function handleSimpleAtomProperty(propName, propertyData, props) {
+function handleSimpleAtomProperty(
+  propName: string,
+  propertyData: string,
+  props: MPropertyProps,
+): void {
   if (!props.get(propName)) {
-    props.set(propName, sGroup.readKeyValuePairs(propertyData));
+    props.set(propName, sGroup.readKeyValuePairs(propertyData, false));
   }
 }
 
 /**
  * Handles SUB (substitution count) property
  */
-function handleSubstitutionProperty(propertyData, props) {
+function handleSubstitutionProperty(
+  propertyData: string,
+  props: MPropertyProps,
+): void {
   if (!props.get('substitutionCount')) {
     props.set('substitutionCount', new Pool());
   }
   const subLabels = props.get('substitutionCount');
-  const arrs = sGroup.readKeyMultiValuePairs(propertyData);
+  if (!subLabels) {
+    return;
+  }
+  const arrs = sGroup.readKeyMultiValuePairs(propertyData, false);
 
   for (const a2r of arrs) {
     subLabels.set(a2r[0], a2r[1]);
@@ -166,41 +192,55 @@ function handleSubstitutionProperty(propertyData, props) {
 /**
  * Handles RGP (rgroup label) property
  */
-function handleRGroupProperty(propertyData, props) {
+function handleRGroupProperty(
+  propertyData: string,
+  props: MPropertyProps,
+): void {
   if (!props.get('rglabel')) {
     props.set('rglabel', new Pool());
   }
   const rglabels = props.get('rglabel');
-  const a2rs = sGroup.readKeyMultiValuePairs(propertyData);
+  if (!rglabels) {
+    return;
+  }
+  const a2rs = sGroup.readKeyMultiValuePairs(propertyData, false);
 
   for (const a2r of a2rs) {
-    rglabels.set(a2r[0], (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1)));
+    const rg = Number(a2r[1]);
+    rglabels.set(a2r[0], (rglabels.get(a2r[0]) || 0) | (1 << (rg - 1)));
   }
 }
 
 /**
  * Handles LOG (rgroup logic) property
  */
-function handleRGroupLogic(propertyData, rLogic) {
+function handleRGroupLogic(
+  propertyData: string,
+  rLogic: Record<number, RGroupAttributes>,
+): void {
   const data = propertyData.slice(4);
   const rgid = utils.parseDecimalInt(data.slice(0, 3).trim());
   const iii = utils.parseDecimalInt(data.slice(4, 7).trim());
   const hhh = utils.parseDecimalInt(data.slice(8, 11).trim());
   const ooo = data.slice(12).trim();
 
-  const logic = {};
+  const logic: RGroupAttributes = {
+    resth: hhh === 1,
+    range: ooo,
+  };
   if (iii > 0) {
     logic.ifthen = iii;
   }
-  logic.resth = hhh === 1;
-  logic.range = ooo;
   rLogic[rgid] = logic;
 }
 
 /**
  * Handles ALS (atom list) property
  */
-function handleAtomListProperty(propertyData, props) {
+function handleAtomListProperty(
+  propertyData: string,
+  props: MPropertyProps,
+): void {
   const pool = parsePropertyLineAtomList(
     utils.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
     utils.partitionLineFixed(propertyData.slice(10), 4, false),
@@ -213,16 +253,26 @@ function handleAtomListProperty(propertyData, props) {
     props.set('label', new Pool());
   }
 
+  const labelPool = props.get('label');
+  const atomListPool = props.get('atomList');
+  if (!labelPool || !atomListPool) {
+    return;
+  }
+
   pool.forEach((atomList, aid) => {
-    props.get('label').set(aid, 'L#');
-    props.get('atomList').set(aid, atomList);
+    labelPool.set(aid, 'L#');
+    atomListPool.set(aid, atomList);
   });
 }
 
 /**
  * Handles SMT/SCL (sGroup subscript/class) properties
  */
-function handleSGroupDataProperty(type, propertyData, sGroups) {
+function handleSGroupDataProperty(
+  type: string,
+  propertyData: string,
+  sGroups: SGroupMap,
+): void {
   const sid = utils.parseDecimalInt(propertyData.slice(0, 4)) - 1;
   const value = propertyData.slice(4).trim();
 
@@ -236,7 +286,10 @@ function handleSGroupDataProperty(type, propertyData, sGroups) {
 /**
  * Handles SDS (sGroup expanded state) property
  */
-function handleSGroupExpandedProperty(propertyData, sGroups) {
+function handleSGroupExpandedProperty(
+  propertyData: string,
+  sGroups: SGroupMap,
+): void {
   const expandedSGroups = propertyData.slice(7).trim().split('   ');
   expandedSGroups.forEach((eg) => {
     const sGroupId = Number(eg) - 1;
@@ -247,7 +300,10 @@ function handleSGroupExpandedProperty(propertyData, sGroups) {
 /**
  * Handles SAP (sGroup attachment point) property
  */
-function handleSGroupAttachmentProperty(propertyData, sGroups) {
+function handleSGroupAttachmentProperty(
+  propertyData: string,
+  sGroups: SGroupMap,
+): void {
   const { sGroupId, attachmentPoints } =
     sGroup.parseSGroupSAPLineV2000(propertyData);
   attachmentPoints.forEach((attachmentPoint) => {
@@ -258,7 +314,13 @@ function handleSGroupAttachmentProperty(propertyData, sGroups) {
 /**
  * Processes M-type property line
  */
-function processMPropertyLine(type, propertyData, props, sGroups, rLogic) {
+function processMPropertyLine(
+  type: string,
+  propertyData: string,
+  props: MPropertyProps,
+  sGroups: SGroupMap,
+  rLogic: Record<number, RGroupAttributes>,
+): boolean {
   if (type === 'END') {
     return true; // Signal to break loop
   }
@@ -327,9 +389,16 @@ function processMPropertyLine(type, propertyData, props, sGroups, rLogic) {
  * @param rLogic
  * @returns { Pool }
  */
-function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
+function parsePropertyLines(
+  _ctab: Struct,
+  ctabLines: string[],
+  shift: number,
+  end: number,
+  sGroups: SGroupMap,
+  rLogic: Record<number, RGroupAttributes>,
+): MPropertyProps {
   /* reader */
-  const props = new Pool();
+  const props = new Map<string, Pool>();
 
   while (shift < end) {
     const line = ctabLines[shift];
@@ -363,10 +432,13 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
  * @param values { Pool }
  * @param propId { string }
  */
-function applyAtomProp(atoms, values, propId) {
+function applyAtomProp(atoms: Pool<Atom>, values: Pool, propId: string): void {
   /* reader */
   values.forEach((propVal, aid) => {
-    atoms.get(aid)[propId] = propVal;
+    const atom = atoms.get(aid);
+    if (atom) {
+      (atom as Atom & Record<string, unknown>)[propId] = propVal;
+    }
   });
 }
 
@@ -375,7 +447,7 @@ function applyAtomProp(atoms, values, propId) {
  * This is called after parsing MOL files to convert atom.attachmentPoints to struct.rgroupAttachmentPoints
  * @param struct { Struct }
  */
-function createRGroupAttachmentPointsFromAtoms(struct) {
+function createRGroupAttachmentPointsFromAtoms(struct: Struct): void {
   struct.atoms.forEach((atom, atomId) => {
     if (!atom.attachmentPoints) {
       return;
@@ -403,14 +475,14 @@ function createRGroupAttachmentPointsFromAtoms(struct) {
 }
 
 function parseCTabV2000(
-  ctabLines,
-  countsSplit,
-  /* boolean */ ignoreChiralFlag,
-) {
+  ctabLines: string[],
+  countsSplit: string[],
+  ignoreChiralFlag?: boolean,
+): Struct {
   // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct();
-  let i;
+  let i: number;
   const atomCount = utils.parseDecimalInt(countsSplit[0]);
   const bondCount = utils.parseDecimalInt(countsSplit[1]);
   const atomListCount = utils.parseDecimalInt(countsSplit[2]);
@@ -432,23 +504,30 @@ function parseCTabV2000(
 
   const bonds = bondLines.map(parseBondLine);
   bonds.forEach((bond) => {
-    if (bond.stereo && isAbs) {
-      ctab.atoms.get(bond.begin).stereoLabel = StereoLabel.Abs;
-    }
-    if (bond.stereo && isAnd) {
-      ctab.atoms.get(bond.begin).stereoLabel = `${StereoLabel.And}1`;
+    const beginAtom = ctab.atoms.get(bond.begin);
+    if (beginAtom) {
+      if (bond.stereo && isAbs) {
+        beginAtom.stereoLabel = StereoLabel.Abs;
+      }
+      if (bond.stereo && isAnd) {
+        beginAtom.stereoLabel = `${StereoLabel.And}1`;
+      }
     }
     ctab.bonds.add(bond);
   });
 
   const atomLists = atomListLines.map(parseAtomListLine);
   atomLists.forEach((pair) => {
-    ctab.atoms.get(pair.aid).atomList = pair.atomList;
-    ctab.atoms.get(pair.aid).label = 'L#';
+    const atom = ctab.atoms.get(pair.aid);
+    if (!atom) {
+      throw new Error('Atom index out of range for atom list');
+    }
+    atom.atomList = pair.atomList;
+    atom.label = 'L#';
   });
 
-  const sGroups = {};
-  const rLogic = {};
+  const sGroups: SGroupMap = {};
+  const rLogic: Record<number, RGroupAttributes> = {};
   const props = parsePropertyLines(
     ctab,
     ctabLines,
@@ -461,12 +540,12 @@ function parseCTabV2000(
     applyAtomProp(ctab.atoms, values, propId);
   });
 
-  const atomMap = {};
-  let sid;
+  const atomMap: AtomMap = {};
+  let sid: string;
   for (sid in sGroups) {
     const sg = sGroups[sid];
     if (sg.type === 'DAT' && sg.atoms.length === 0) {
-      const parent = sGroups[sid].parent;
+      const parent = (sGroups[sid] as SGroup & { parent: number }).parent;
       if (parent >= 0) {
         const psg = sGroups[parent - 1];
         if (psg.type === 'GEN') sg.atoms = [].slice.call(psg.atoms);
@@ -474,7 +553,7 @@ function parseCTabV2000(
     }
   }
   for (sid in sGroups) sGroup.loadSGroup(ctab, sGroups[sid], atomMap);
-  const emptyGroups = [];
+  const emptyGroups: number[] = [];
   for (sid in sGroups) {
     // TODO: why do we need that?
     SGroup.filter(ctab, sGroups[sid], atomMap);
@@ -497,10 +576,7 @@ function parseCTabV2000(
   return ctab;
 }
 
-function parseRg2000(
-  /* string[] */ ctabLines,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
+function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
@@ -511,7 +587,7 @@ function parseRg2000(
   }
   const coreLines = ctabLines.slice(1, i);
   ctabLines = ctabLines.slice(i + 1);
-  const fragmentLines = {};
+  const fragmentLines: Record<number, string[][]> = {};
   while (true) {
     // eslint-disable-line no-constant-condition
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
@@ -545,7 +621,7 @@ function parseRg2000(
   }
 
   const core = parseCTab(coreLines, ignoreChiralFlag);
-  const frag = {};
+  const frag: Record<number, Struct[]> = {};
   if (loadRGroupFragments) {
     for (const strId in fragmentLines) {
       const id = parseInt(strId, 10);
@@ -559,10 +635,10 @@ function parseRg2000(
 }
 
 function parseRxn2000(
-  /* string[] */ ctabLines,
-  /* boolean */ shouldReactionRelayout,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
+  ctabLines: string[],
+  shouldReactionRelayout?: boolean,
+  ignoreChiralFlag?: boolean,
+): Struct {
   // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
@@ -574,18 +650,18 @@ function parseRxn2000(
   const nProducts = countsSplit[1] - 0;
   const nAgents = countsSplit[2] - 0;
   ctabLines = ctabLines.slice(1); // consume counts line
-  const mols = [];
+  const mols: Struct[] = [];
   while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) === '$MOL') {
     ctabLines = ctabLines.slice(1);
     let n = 0;
     while (n < ctabLines.length && ctabLines[n].substr(0, 4) !== '$MOL') n++;
 
     const lines = ctabLines.slice(0, n);
-    let struct;
+    let struct: Struct;
     if (lines[0].search('\\$MDL') === 0) {
-      struct = parseRg2000(lines, /* boolean */ ignoreChiralFlag);
+      struct = parseRg2000(lines, ignoreChiralFlag);
     } else {
-      struct = parseCTab(lines.slice(3), /* boolean */ ignoreChiralFlag);
+      struct = parseCTab(lines.slice(3), ignoreChiralFlag);
       struct.name = lines[0].trim();
     }
     mols.push(struct);
@@ -600,10 +676,7 @@ function parseRxn2000(
   );
 }
 
-function parseCTab(
-  /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
+function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   /* reader */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
@@ -613,9 +686,9 @@ function parseCTab(
   return parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
 }
 
-function labelsListToIds(labels) {
+function labelsListToIds(labels: string[]): number[] {
   /* reader */
-  const ids = [];
+  const ids: number[] = [];
   for (const label of labels) {
     const element = Elements.get(label.trim());
     if (element) {
@@ -631,7 +704,7 @@ function labelsListToIds(labels) {
  * @param lst
  * @returns { Pool }
  */
-function parsePropertyLineAtomList(hdr, lst) {
+function parsePropertyLineAtomList(hdr: string[], lst: string[]): Pool {
   /* reader */
   const aid = utils.parseDecimalInt(hdr[1]) - 1;
   const count = utils.parseDecimalInt(hdr[2]);

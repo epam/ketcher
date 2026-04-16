@@ -6,7 +6,7 @@ import {
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor';
 import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 export class FilledBowArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -17,12 +17,18 @@ export class FilledBowArrowRenderer {
     const endX = start.x + arrowLength;
 
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `L${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
-      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
-      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
-      `L${tfx(endX)},${tfx(start.y)}Z`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `L${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y + arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength + arrowHeadAttr)},${toFixed(
+        start.y,
+      )}` +
+      `L${toFixed(endX - arrowHeadLength)},${toFixed(
+        start.y - arrowHeadWidth,
+      )}` +
+      `L${toFixed(endX)},${toFixed(start.y)}Z`;
 
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)

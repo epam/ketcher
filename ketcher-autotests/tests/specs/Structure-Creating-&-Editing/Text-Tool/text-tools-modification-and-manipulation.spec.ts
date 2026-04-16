@@ -214,10 +214,7 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await page
-      .getByTestId('erase')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonLeftToolbar(page).erase();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();

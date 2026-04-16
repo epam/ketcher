@@ -16,15 +16,20 @@
 
 import isHidden from './isHidden';
 import { serverTransform } from '../state/server';
+import type { UiAction } from './action.types';
 
-const config = {
+type ServerConfig = {
+  [key: string]: UiAction;
+};
+
+const config: ServerConfig = {
   layout: {
     shortcut: 'Mod+l',
     title: 'Layout',
     action: {
       thunk: serverTransform('layout'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'layout'),
   },
   clean: {
@@ -33,7 +38,7 @@ const config = {
     action: {
       thunk: serverTransform('clean'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'clean'),
   },
   arom: {
@@ -42,7 +47,7 @@ const config = {
     action: {
       thunk: serverTransform('aromatize'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'arom'),
   },
   dearom: {
@@ -51,7 +56,7 @@ const config = {
     action: {
       thunk: serverTransform('dearomatize'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'dearom'),
   },
   cip: {
@@ -60,7 +65,7 @@ const config = {
     action: {
       thunk: serverTransform('calculateCip'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'cip'),
   },
   check: {
@@ -68,7 +73,7 @@ const config = {
     enabledInViewOnly: true,
     title: 'Check Structure',
     action: { dialog: 'check' },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'check'),
   },
   analyse: {
@@ -76,15 +81,15 @@ const config = {
     enabledInViewOnly: true,
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'analyse'),
   },
   recognize: {
     title: 'Recognize Molecule',
     action: { dialog: 'recognize' },
-    disabled: (editor, server, options) =>
-      // TODO: provide the list of disabled functions as array
-      !options.app.server || !options.app.imagoVersions?.length > 0,
+    disabled: (_editor, _server, options) =>
+      !options.app.server ||
+      !(options.app as { imagoVersions?: unknown[] }).imagoVersions?.length,
     hidden: (options) => isHidden(options, 'recognize'),
   },
   miew: {
@@ -98,7 +103,7 @@ const config = {
     action: {
       thunk: serverTransform('toggleExplicitHydrogens'),
     },
-    disabled: (editor, server, options) => !options.app.server,
+    disabled: (_editor, _server, options) => !options.app.server,
     hidden: (options) => isHidden(options, 'explicit-hydrogens'),
   },
 };

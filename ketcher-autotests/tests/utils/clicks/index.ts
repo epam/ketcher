@@ -173,7 +173,7 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   };
 }
 
-export async function clickOnMiddleOfCanvas(page: Page) {
+export async function clickInTheMiddleOfTheCanvas(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
   await clickOnCanvas(page, x, y);
 }

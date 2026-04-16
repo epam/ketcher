@@ -324,7 +324,7 @@ export class DrawingEntitiesManager {
   }
 
   public addMonomerChangeModel(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -370,7 +370,7 @@ export class DrawingEntitiesManager {
   }
 
   public addMonomer(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -3679,8 +3679,26 @@ export class DrawingEntitiesManager {
               return;
             }
 
+            const isModifiedPhosphate =
+              monomer instanceof Phosphate && monomer.isModification;
+            const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            let antisenseMonomerItem: MonomerOrAmbiguousType =
+              monomer.monomerItem;
+
+            if (isModifiedPhosphate || isAmbiguousMonomer) {
+              const nonModifiedPhosphateItem = getRnaPartLibraryItem(
+                editor,
+                RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+              );
+
+              if (nonModifiedPhosphateItem) {
+                antisenseMonomerItem = nonModifiedPhosphateItem;
+              } else if (isAmbiguousMonomer) {
+                antisenseMonomerItem = monomer.variantMonomerItem;
+              }
+            }
             const monomerAddCommand = this.addMonomer(
-              monomer.monomerItem,
+              antisenseMonomerItem,
               monomer.position.add(new Vec2(0, 4.25)),
             );
             const addedMonomer = monomerAddCommand.operations[0]

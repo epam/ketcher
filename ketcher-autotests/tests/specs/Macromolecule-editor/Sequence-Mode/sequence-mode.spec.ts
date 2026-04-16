@@ -333,11 +333,7 @@ test.describe('Sequence Mode', () => {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
-      await page
-        .locator('g.drawn-structures')
-        .locator('g', { has: page.locator('text="G"') })
-        .first()
-        .hover();
+      await getSymbolLocator(page, { symbolAlias: 'G' }).first().hover();
 
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);

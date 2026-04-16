@@ -312,7 +312,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       // Step 2: Open Save Structure dialog
       await CommonTopLeftToolbar(page).saveFile();
 
-      // const saveDialog = page.getByTestId('save-structure-dialog');
       const dialog = SaveStructureDialog(page);
 
       // Step 3: switch formats repeatedly

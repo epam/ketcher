@@ -59,3 +59,8 @@ output.txt
 /test-results/
 
 lone_pair_prd.md
+
+# npm pack from repo root (upload .tgz to GitHub Releases; do not commit)
+/ketcher-core-*.tgz
+/ketcher-react-*.tgz
+/ketcher-standalone-*.tgz

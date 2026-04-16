@@ -63,7 +63,10 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { inferPhosphatePosition } from './PhosphatePositionInference';
-import { hasPhosphatePositionAttachmentPointConflict } from './RnaPresetAttachmentPointValidation';
+import {
+  getLeavingAtomForAttachmentPoint,
+  hasPhosphatePositionAttachmentPointConflict,
+} from './RnaPresetAttachmentPointValidation';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
@@ -425,35 +428,6 @@ const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   }
 
   return true;
-};
-
-/**
- * Gets the appropriate leaving atom for a specific attachment point based on component type.
- * Per requirement 2.3.2.2:
- * - Base R1: H
- * - Sugar R2: H, R3: O (representing OH)
- * - Phosphate R1: O (representing OH)
- * @param componentType - The monomer class (Base, Sugar, or Phosphate)
- * @param attachmentPointName - The attachment point name (R1, R2, R3)
- * @returns The atom label to use for the leaving group
- */
-const getLeavingAtomForAttachmentPoint = (
-  componentType: KetMonomerClass,
-  attachmentPointName: AttachmentPointName,
-): AtomLabel => {
-  switch (componentType) {
-    case KetMonomerClass.Base:
-      return AtomLabel.H;
-    case KetMonomerClass.Sugar:
-      if (attachmentPointName === AttachmentPointName.R3) {
-        return AtomLabel.O; // OH group for base connection
-      }
-      return AtomLabel.H; // H for R2 (phosphate connection) and R1
-    case KetMonomerClass.Phosphate:
-      return AtomLabel.O;
-    default:
-      return AtomLabel.H;
-  }
 };
 
 const autoAssignPropertiesForHiddenMonomer = (

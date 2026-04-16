@@ -13,6 +13,7 @@ type Props = {
   additionalControls?: ReactNode;
   highlight?: boolean;
   isPopup?: boolean;
+  disabled?: boolean;
 };
 
 const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
@@ -25,6 +26,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
       additionalControls,
       highlight,
       isPopup,
+      disabled,
     },
     ref,
   ) => {
@@ -58,6 +60,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           options={nameOptions}
           value={currentNameOption?.value}
           onChange={handleNameChange}
+          disabled={disabled}
           data-testid={
             isPopup
               ? `attachment-point-name-select`
@@ -69,6 +72,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           options={leavingAtomOptions}
           value={currentLeavingAtomOption?.value}
           onChange={handleLeavingAtomChange}
+          disabled={disabled}
           data-testid={
             isPopup
               ? `attachment-point-atom-select`

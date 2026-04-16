@@ -34,7 +34,12 @@ import {
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
 import {
+  getLeavingAtomForAttachmentPoint,
+  PhosphatePosition,
+} from './RnaPresetAttachmentPointValidation';
+import {
   getAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
 
@@ -88,6 +93,55 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       wizardState,
       'phosphate',
     ),
+  };
+  const componentConnectionAttachmentPoints = {
+    base: getConnectionAttachmentPointsForRnaPresetComponent(
+      wizardState,
+      editor.struct(),
+      'base',
+      phosphatePosition as PhosphatePosition | undefined,
+    ),
+    sugar: getConnectionAttachmentPointsForRnaPresetComponent(
+      wizardState,
+      editor.struct(),
+      'sugar',
+      phosphatePosition as PhosphatePosition | undefined,
+    ),
+    phosphate: getConnectionAttachmentPointsForRnaPresetComponent(
+      wizardState,
+      editor.struct(),
+      'phosphate',
+      phosphatePosition as PhosphatePosition | undefined,
+    ),
+  };
+  const readonlyComponentAttachmentPoints = {
+    base: componentConnectionAttachmentPoints.base
+      .filter((name) => !componentAttachmentPoints.base.has(name))
+      .map((name) => ({
+        name,
+        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+          KetMonomerClass.Base,
+          name,
+        ),
+      })),
+    sugar: componentConnectionAttachmentPoints.sugar
+      .filter((name) => !componentAttachmentPoints.sugar.has(name))
+      .map((name) => ({
+        name,
+        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+          KetMonomerClass.Sugar,
+          name,
+        ),
+      })),
+    phosphate: componentConnectionAttachmentPoints.phosphate
+      .filter((name) => !componentAttachmentPoints.phosphate.has(name))
+      .map((name) => ({
+        name,
+        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+          KetMonomerClass.Phosphate,
+          name,
+        ),
+      })),
   };
 
   const applyHighlights = useCallback(
@@ -384,6 +438,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 <MonomerCreationWizardFields
                   assignedAttachmentPoints={
                     componentAttachmentPoints[rnaComponentKey]
+                  }
+                  readonlyAttachmentPoints={
+                    readonlyComponentAttachmentPoints[rnaComponentKey]
                   }
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   attachmentPointsExtra={

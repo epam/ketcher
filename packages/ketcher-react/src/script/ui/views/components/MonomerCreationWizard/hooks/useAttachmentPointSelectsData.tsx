@@ -35,6 +35,33 @@ const getAtomTypeDisplayLabel = (
   return label;
 };
 
+const getLeavingAtomOption = (
+  label: AtomLabel,
+  implicitH = label === AtomLabel.O ? 1 : 0,
+): Option => ({
+  value: label,
+  label,
+  children: <>{getAtomTypeDisplayLabel(label, implicitH)}</>,
+});
+
+export const createReadonlyAttachmentPointSelectData = (
+  attachmentPointName: AttachmentPointName,
+  leavingAtomLabel: AtomLabel,
+): AttachmentPointSelectData => {
+  const currentNameOption = {
+    value: attachmentPointName,
+    label: attachmentPointName,
+  };
+  const currentLeavingAtomOption = getLeavingAtomOption(leavingAtomLabel);
+
+  return {
+    nameOptions: [currentNameOption],
+    leavingAtomOptions: [currentLeavingAtomOption],
+    currentNameOption,
+    currentLeavingAtomOption,
+  };
+};
+
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
@@ -89,37 +116,18 @@ export const useAttachmentPointSelectsData = (
     currentLeavingAtomImplicitH === 1;
 
   const leavingAtomOptions: Option[] = [
-    {
-      value: AtomLabel.H,
-      label: AtomLabel.H,
-      children: <>{AtomLabel.H}</>,
-    },
-    {
-      value: AtomLabel.O,
-      label: AtomLabel.O,
-      children: (
-        <>
-          {AtomLabel.O}
-          {AtomLabel.H}
-        </>
-      ),
-    },
+    getLeavingAtomOption(AtomLabel.H, 0),
+    getLeavingAtomOption(AtomLabel.O),
   ];
 
   // Add current atom type as third option if it's different from H and OH
   if (!isCurrentH && !isCurrentOH) {
-    leavingAtomOptions.push({
-      value: currentLeavingAtomLabel,
-      label: currentLeavingAtomLabel,
-      children: (
-        <>
-          {getAtomTypeDisplayLabel(
-            currentLeavingAtomLabel,
-            currentLeavingAtomImplicitH,
-          )}
-        </>
+    leavingAtomOptions.push(
+      getLeavingAtomOption(
+        currentLeavingAtomLabel,
+        currentLeavingAtomImplicitH,
       ),
-    });
+    );
   }
 
   const currentNameOption = nameOptions.find(

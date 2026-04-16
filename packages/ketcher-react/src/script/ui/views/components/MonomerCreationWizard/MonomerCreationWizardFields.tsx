@@ -23,16 +23,22 @@ import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import AttachmentPointControls from './components/AttachmentPointControls/AttachmentPointControls';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
+import { createReadonlyAttachmentPointSelectData } from './hooks/useAttachmentPointSelectsData';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  readonlyAttachmentPoints?: Array<{
+    name: AttachmentPointName;
+    leavingAtomLabel: AtomLabel;
+  }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
   showNaturalAnalogue?: boolean;
@@ -53,6 +59,7 @@ const MonomerCreationWizardFields = (
   const {
     wizardState,
     assignedAttachmentPoints,
+    readonlyAttachmentPoints = [],
     onChangeModificationTypes,
     onFieldChange,
     attachmentPointsExtra,
@@ -212,7 +219,8 @@ const MonomerCreationWizardFields = (
             <Icon name="about" />
           </span>
         </div>
-        {assignedAttachmentPoints.size > 0 && (
+        {(assignedAttachmentPoints.size > 0 ||
+          readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
             {Array.from(assignedAttachmentPoints.entries()).map(
               ([name, atomPair]) => (
@@ -223,6 +231,21 @@ const MonomerCreationWizardFields = (
                   onLeavingAtomChange={handleLeavingAtomChange}
                   onRemove={handleAttachmentPointRemove}
                   key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                />
+              ),
+            )}
+            {readonlyAttachmentPoints.map(
+              ({ name: attachmentPointName, leavingAtomLabel }) => (
+                <AttachmentPointControls
+                  key={`readonly-${attachmentPointName}`}
+                  data={createReadonlyAttachmentPointSelectData(
+                    attachmentPointName,
+                    leavingAtomLabel,
+                  )}
+                  onNameChange={() => null}
+                  onLeavingAtomChange={() => null}
+                  className={styles.selects}
+                  disabled
                 />
               ),
             )}

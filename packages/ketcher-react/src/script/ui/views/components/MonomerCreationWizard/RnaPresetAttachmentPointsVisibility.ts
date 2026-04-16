@@ -5,14 +5,40 @@ import {
 } from 'ketcher-core';
 
 import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import {
+  PhosphatePosition,
+  getRequiredAttachmentPointsForPhosphatePosition,
+} from './RnaPresetAttachmentPointValidation';
+import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
 type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type ComponentAttachmentPointNames = Record<
+  RnaPresetComponentKey,
+  AttachmentPointName[]
+>;
 
 const RNA_COMPONENT_KEYS: RnaPresetComponentKey[] = [
   'base',
   'sugar',
   'phosphate',
 ];
+
+const getEmptyComponentAttachmentPointNames =
+  (): ComponentAttachmentPointNames => ({
+    base: [],
+    sugar: [],
+    phosphate: [],
+  });
+
+const addComponentAttachmentPoint = (
+  attachmentPoints: ComponentAttachmentPointNames,
+  componentKey: RnaPresetComponentKey,
+  attachmentPointName: AttachmentPointName,
+) => {
+  if (!attachmentPoints[componentKey].includes(attachmentPointName)) {
+    attachmentPoints[componentKey].push(attachmentPointName);
+  }
+};
 
 const getAtomToComponentMap = (wizardState: RnaPresetWizardState) => {
   const atomToComponentMap = new Map<number, RnaPresetComponentKey>();
@@ -40,6 +66,70 @@ export const getAttachmentPointsForRnaPresetComponent = (
       ([, [attachmentAtomId]]) => componentAtomIds.has(attachmentAtomId),
     ),
   );
+};
+
+export const getConnectionAttachmentPointsForRnaPreset = (
+  wizardState: RnaPresetWizardState,
+  struct: Struct,
+  phosphatePosition?: PhosphatePosition,
+): ComponentAttachmentPointNames => {
+  const connectionAttachmentPoints = getEmptyComponentAttachmentPointNames();
+  const baseAtoms = wizardState.base.structure?.atoms ?? [];
+  const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
+  const phosphateAtoms = wizardState.phosphate.structure?.atoms ?? [];
+
+  if (
+    sugarAtoms.length > 0 &&
+    baseAtoms.length > 0 &&
+    findBondBetweenRnaPresetComponents(struct, sugarAtoms, baseAtoms)
+  ) {
+    addComponentAttachmentPoint(
+      connectionAttachmentPoints,
+      'sugar',
+      AttachmentPointName.R3,
+    );
+    addComponentAttachmentPoint(
+      connectionAttachmentPoints,
+      'base',
+      AttachmentPointName.R1,
+    );
+  }
+
+  if (
+    phosphatePosition &&
+    sugarAtoms.length > 0 &&
+    phosphateAtoms.length > 0 &&
+    findBondBetweenRnaPresetComponents(struct, sugarAtoms, phosphateAtoms)
+  ) {
+    const requiredAttachmentPoints =
+      getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
+
+    addComponentAttachmentPoint(
+      connectionAttachmentPoints,
+      'sugar',
+      requiredAttachmentPoints.sugar,
+    );
+    addComponentAttachmentPoint(
+      connectionAttachmentPoints,
+      'phosphate',
+      requiredAttachmentPoints.phosphate,
+    );
+  }
+
+  return connectionAttachmentPoints;
+};
+
+export const getConnectionAttachmentPointsForRnaPresetComponent = (
+  wizardState: RnaPresetWizardState,
+  struct: Struct,
+  componentKey: RnaPresetComponentKey,
+  phosphatePosition?: PhosphatePosition,
+): AttachmentPointName[] => {
+  return getConnectionAttachmentPointsForRnaPreset(
+    wizardState,
+    struct,
+    phosphatePosition,
+  )[componentKey];
 };
 
 export const getVisibleAttachmentPointsForRnaPreset = (

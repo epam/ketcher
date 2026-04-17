@@ -263,10 +263,23 @@ export const hotkeysConfiguration = {
       // Sequence mode handles Delete/Backspace itself (even when not editing),
       // so skip tool switching here.
       if (editor.isSequenceMode) return;
+
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
+
+      // Select hovered entities so the erase tool deletes them
+      if (!hasSelectedEntities) {
+        const hoveredEntities =
+          editor.drawingEntitiesManager.allEntities.filter(
+            ([, entity]) => entity.hovered,
+          );
+        hoveredEntities.forEach(([, entity]) => entity.turnOnSelection());
+      }
+
+      const hasEntitiesToDelete =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
       editor.events.selectTool.dispatch([ToolName.erase]);
-      if (hasSelectedEntities) {
+      if (hasEntitiesToDelete) {
         editor.events.selectTool.dispatch([ToolName.selectRectangle]);
       }
     },

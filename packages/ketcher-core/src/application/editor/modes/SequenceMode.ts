@@ -858,6 +858,7 @@ export class SequenceMode extends BaseMode {
   private handleNodesDeletion(
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
+    monomersBeingDeleted: Set<BaseMonomer> = new Set(),
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
@@ -889,13 +890,19 @@ export class SequenceMode extends BaseMode {
       const twoStrandedNodeInSameChainAfterSelection =
         SequenceRenderer.getNextNodeInSameChain(selectionEndTwoStrandedNode);
 
-      const nodeBeforeSelection =
+      const rawNodeBeforeSelection =
         (twoStrandedNodeBeforeSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeBeforeSelection,
             strandType,
           )) ??
         undefined;
+
+      const nodeBeforeSelection =
+        rawNodeBeforeSelection &&
+        monomersBeingDeleted.has(rawNodeBeforeSelection.lastMonomerInNode)
+          ? undefined
+          : rawNodeBeforeSelection;
       const potentialNodeAfterSelection =
         (twoStrandedNodeAfterSelection &&
           getNodeFromTwoStrandedNode(
@@ -910,6 +917,16 @@ export class SequenceMode extends BaseMode {
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode;
       }
+
+      if (
+        nodeAfterSelection &&
+        !(nodeAfterSelection instanceof EmptySequenceNode) &&
+        !(nodeAfterSelection instanceof BackBoneSequenceNode) &&
+        monomersBeingDeleted.has(nodeAfterSelection.firstMonomerInNode)
+      ) {
+        nodeAfterSelection = undefined;
+      }
+
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -1173,11 +1190,18 @@ export class SequenceMode extends BaseMode {
           ),
         );
 
+        const monomersBeingDeleted = new Set<BaseMonomer>(
+          editor.drawingEntitiesManager.selectedMonomers,
+        );
         modelChanges.merge(this.deleteSelectedDrawingEntities());
 
         if (this.needToEditSense) {
           modelChanges.merge(
-            this.handleNodesDeletion(senseNodesToDelete, STRAND_TYPE.SENSE),
+            this.handleNodesDeletion(
+              senseNodesToDelete,
+              STRAND_TYPE.SENSE,
+              monomersBeingDeleted,
+            ),
           );
         }
         if (this.needToEditAntisense) {
@@ -1185,6 +1209,7 @@ export class SequenceMode extends BaseMode {
             this.handleNodesDeletion(
               antisenseNodesToDelete,
               STRAND_TYPE.ANTISENSE,
+              monomersBeingDeleted,
             ),
           );
         }
@@ -1255,14 +1280,22 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Delete'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Right);
+          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
+            this.deleteSelection();
+          } else {
+            deleteNode(Direction.Right);
+          }
         },
       },
       backspace: {
         shortcut: ['Backspace'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          deleteNode(Direction.Left);
+          if (!this.isEditMode && SequenceRenderer.selections.length > 0) {
+            this.deleteSelection();
+          } else {
+            deleteNode(Direction.Left);
+          }
         },
       },
       'turn-off-edit-mode': {
@@ -1618,16 +1651,28 @@ export class SequenceMode extends BaseMode {
   }
 
   public deleteSelection() {
+    const editor = CoreEditor.provideEditorInstance();
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
+      const monomersBeingDeleted = new Set<BaseMonomer>(
+        editor.drawingEntitiesManager.selectedMonomers,
+      );
       const deletionModelChanges = this.deleteSelectedDrawingEntities();
 
       deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+        this.handleNodesDeletion(
+          selections,
+          STRAND_TYPE.SENSE,
+          monomersBeingDeleted,
+        ),
       );
       deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+        this.handleNodesDeletion(
+          selections,
+          STRAND_TYPE.ANTISENSE,
+          monomersBeingDeleted,
+        ),
       );
       this.finishNodesDeletion(
         deletionModelChanges,

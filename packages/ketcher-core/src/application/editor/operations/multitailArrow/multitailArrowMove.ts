@@ -2,7 +2,7 @@ import { Vec2 } from 'domain/entities';
 import { OperationType } from 'application/editor';
 import { Scale } from 'domain/helpers';
 import { ReStruct } from 'application/render';
-import BaseOperation from 'application/editor/operations/base';
+import BaseOperation from 'application/editor/operations/BaseOperation';
 
 export class MultitailArrowMove extends BaseOperation {
   constructor(private readonly id: number, private readonly offset: Vec2) {

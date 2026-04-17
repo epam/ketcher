@@ -3,6 +3,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import util from '../util';
@@ -250,7 +251,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#57ff8f')
+      .attr('stroke', SELECTION_COLOR)
       .attr('stroke-width', 10);
   }
 

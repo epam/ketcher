@@ -18,7 +18,7 @@
 import { ReRxnPlus, ReStruct } from '../../../../render';
 import { RxnPlus, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from '../../base';
+import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -49,6 +49,7 @@ class RxnPlusAdd extends BaseOperation {
     const { pos, plid } = this.data;
 
     const structRxn = struct.rxnPluses.get(plid);
+    if (!structRxn) return;
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 

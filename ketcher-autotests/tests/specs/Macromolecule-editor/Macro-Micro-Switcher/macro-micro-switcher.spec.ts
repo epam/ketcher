@@ -9,7 +9,7 @@ import { Page, expect, test } from '@fixtures';
 import {
   MolFileFormat,
   SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   moveMouseAway,
@@ -146,32 +146,30 @@ test.afterAll(async ({ closePage }) => {
 });
 
 test.describe('Macro-Micro-Switcher', () => {
-  test(
-    'Check that preview window of macro structure does not change in micro mode ',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Check that preview window of macro structure does not change in micro mode ', async () => {
+    /* 
     Test case: https://github.com/epam/ketcher/issues/3603
     Description: Preview window of macro structure doesn't change in micro mode
-    Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3603
     */
-      const scrollValue = -400;
-      const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
-      await openFileAndAddToCanvasMacro(page, 'KET/five-monomers.ket');
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await scrollHorizontally(page, scrollValue);
-      for (const label of moleculeLabels) {
-        await waitForRender(page, async () => {
-          await page
-            .getByTestId(KETCHER_CANVAS)
-            .filter({ has: page.locator(':visible') })
-            .getByText(label, { exact: true })
-            .hover();
-        });
-        await takeEditorScreenshot(page);
-      }
-    },
-  );
+    const scrollValue = -400;
+    const monomerLabelsOnMacromoleculesCanvas = [
+      'A',
+      '25R',
+      'baA',
+      'Test-6-Ph',
+      'Test-6-Ch',
+    ];
+    await openFileAndAddToCanvasMacro(page, 'KET/five-monomers.ket');
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await scrollHorizontally(page, scrollValue);
+    for (const label of monomerLabelsOnMacromoleculesCanvas) {
+      await getAbbreviationLocator(page, {
+        name: label,
+      }).hover();
+      await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
+      await takeEditorScreenshot(page);
+    }
+  });
 
   test('Check that macromolecule structures in micromode are represented as S-Groups with bonds', async () => {
     /* 
@@ -374,7 +372,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
 
@@ -395,7 +393,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       await readFileContent('KET/one-functional-group-expanded.ket'),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
       padding: 150,
@@ -437,7 +435,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       ),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 10 }), {
       padding: 190,
@@ -525,7 +523,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
@@ -549,7 +547,7 @@ test.describe('Macro-Micro-Switcher', () => {
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).selectMonomer(Peptide.bAla);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -827,10 +825,7 @@ test.describe('Macro-Micro-Switcher', () => {
       topLeftCorner.x,
       topLeftCorner.y,
     );
-    await page
-      .getByTestId('fullscreen-mode-button')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonTopRightToolbar(page).fullScreen();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToRNATab();
     await takePageScreenshot(page);
@@ -850,7 +845,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -894,7 +889,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -1247,8 +1242,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      const bondLine = page.locator('g path').first();
-      await bondLine.hover();
+      await getBondLocator(page, {}).hover({ force: true });
       await takeEditorScreenshot(page);
     });
   }
@@ -1277,8 +1271,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AttachmentPoint.R1,
       AttachmentPoint.R3,
     );
-    const bondLine = page.locator('g path').first();
-    await bondLine.hover();
+    await getBondLocator(page, {}).first().hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -1463,10 +1456,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).erase();
-    const canvasLocator = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(6).click();
+    await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1498,10 +1488,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
-    const canvasLocator = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(6).click();
+    await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
   });
 

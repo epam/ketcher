@@ -94,7 +94,7 @@ function applyFontStyleOverrides(
   target: KETFontStyleOverrides,
   child: LexicalTextChild,
 ): void {
-  const format = child.format || 0;
+  const format = child.format ?? 0;
 
   if (format & IS_BOLD) target.bold = true;
   if (format & IS_ITALIC) target.italic = true;
@@ -111,7 +111,7 @@ function applyFontStyleOverrides(
   }
 
   if (child.style) {
-    const fontSizeMatch = child.style.match(/font-size:\s*(\d+(?:\.\d+)?)px/);
+    const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(child.style);
     if (fontSizeMatch) {
       font.size = parseFloat(fontSizeMatch[1]);
       hasFont = true;
@@ -124,7 +124,7 @@ function applyFontStyleOverrides(
 
   // Extract color from Lexical style string (e.g. "color:#FF0000;")
   if (child.style) {
-    const colorMatch = child.style.match(/(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/);
+    const colorMatch = /(?:^|;)\s*color:\s*(#[0-9A-Fa-f]+)/.exec(child.style);
     if (colorMatch) {
       target.color = colorMatch[1];
     }

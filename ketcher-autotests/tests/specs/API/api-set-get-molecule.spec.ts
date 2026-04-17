@@ -13,9 +13,9 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
@@ -73,7 +73,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10091
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
     */
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -95,7 +95,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       const MolV2000File = await readFileContent(
         'Molfiles-V2000/aromatized-benzene-ring.mol',
       );
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await enableDearomatizeOnLoad(page);
       await waitForSpinnerFinishedWork(
         page,
@@ -247,7 +247,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
     // Called to make sure the page has been fully loaded
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await disableQueryElements(page);
     await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);

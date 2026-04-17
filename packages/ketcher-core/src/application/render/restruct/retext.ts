@@ -268,8 +268,8 @@ class ReText extends ReObject {
     // Parse font-size from style string
     let customFontSize: number | null = null;
     if (textNode.style) {
-      const fontSizeMatch = textNode.style.match(
-        /font-size:\s*(\d+(?:\.\d+)?)px/,
+      const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(
+        textNode.style,
       );
       if (fontSizeMatch) {
         customFontSize = parseFloat(fontSizeMatch[1]);

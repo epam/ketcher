@@ -75,20 +75,20 @@ test.describe('Rotation', () => {
     await selectAllStructuresOnCanvas(page);
     const icons = [
       {
-        testId: 'transform-flip-h',
+        button: RotationTool(page).flipHorizontallyButton,
         title: 'Horizontal Flip (Alt+H)',
       },
       {
-        testId: 'transform-flip-v',
+        button: RotationTool(page).flipVerticallyButton,
         title: 'Vertical Flip (Alt+V)',
       },
       {
-        testId: 'delete',
+        button: RotationTool(page).deleteButton,
         title: 'Erase (Del)',
       },
     ];
     for (const icon of icons) {
-      const iconButton = page.getByTestId(icon.testId);
+      const iconButton = icon.button;
       await expect(iconButton).toHaveAttribute('title', icon.title);
       await iconButton.click();
       await takeEditorScreenshot(page);
@@ -492,7 +492,7 @@ test.describe('Rotation', () => {
       'Molfiles-V2000/rings-heteroatoms-query-features.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandle = RotationTool(page).rotationHandle;
     const rotationHandleBoundingBox = await rotationHandle.boundingBox();
     if (!rotationHandleBoundingBox) {
       throw new Error('Rotation handle bounding box is not available.');
@@ -839,7 +839,6 @@ test.describe('Rotation snapping', () => {
     await page.mouse.up();
 
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('floating-tools').isVisible();
     await takeEditorScreenshot(page);
   });
 });

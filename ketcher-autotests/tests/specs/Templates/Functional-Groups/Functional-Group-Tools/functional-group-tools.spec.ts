@@ -673,7 +673,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await StructureLibraryDialog(page).clickSearch();
     await takeEditorScreenshot(page);
 
-    await page.getByRole('banner').getByRole('button').click();
+    await StructureLibraryDialog(page).closeWindow();
 
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).setSearchValue('Y');

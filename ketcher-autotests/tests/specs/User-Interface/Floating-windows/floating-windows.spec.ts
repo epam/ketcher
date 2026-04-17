@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@fixtures';
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -19,12 +19,6 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
-async function editText(page: Page, text: string) {
-  await page.getByTestId('openStructureModal').getByRole('textbox').click();
-  await page.keyboard.press('Home');
-  await page.keyboard.insertText(text);
-}
-
 test.describe('Floating windows', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -40,18 +34,18 @@ test.describe('Floating windows', () => {
       fileContent,
     );
 
-    await editText(page, '  NEW TEXT   ');
+    await PasteFromClipboardDialog(page).openStructureTextarea.click();
+    await page.keyboard.press('Home');
+    await page.keyboard.insertText('  NEW TEXT   ');
     await takeEditorScreenshot(page);
   });
 
   test('Open structure: Errors of input (text file)', async ({ page }) => {
     // Test case: EPMLSOPKET-4007
     // Verify if adding incorrect text file triggers Error message
-    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'Txt/incorect-text.txt');
-    await addToCanvasButton.click();
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 

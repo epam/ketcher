@@ -158,7 +158,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandle = RotationTool(page).rotationHandle;
     const rotationHandleBoundingBox = await rotationHandle.boundingBox();
     if (!rotationHandleBoundingBox) {
       throw new Error('Rotation handle bounding box is not available.');

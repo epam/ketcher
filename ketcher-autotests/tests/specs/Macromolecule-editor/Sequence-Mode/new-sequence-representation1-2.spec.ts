@@ -1469,7 +1469,9 @@ async function exitFromEditMode(page: Page) {
 async function closeContextMenu(page: Page) {
   await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await clickOnCanvas(page, 0, 0, { waitForRenderTimeOut: 0 });
-  await page.getByRole('menu').waitFor({ state: 'hidden' });
+  await ContextMenu(page, { x: 0, y: 0 }).contextMenuBody.waitFor({
+    state: 'hidden',
+  });
 }
 
 // Due to rare bug - sometimes wrong menu appears for selected symbol

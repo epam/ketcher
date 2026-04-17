@@ -32,7 +32,6 @@ const fieldGroups = {
   lonePairDotDiameter: 'Atoms',
   lonePairOffset: 'Atoms',
   lonePairSpread: 'Atoms',
-  respectManualLonePairPositions: 'Atoms',
   aromaticCircle: 'Bonds',
   bondSpacing: 'Bonds',
   bondThickness: 'Bonds',

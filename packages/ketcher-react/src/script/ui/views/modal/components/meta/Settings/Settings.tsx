@@ -271,10 +271,6 @@ const SettingsDialog = (props: Props) => {
         />
         <Field name="lonePairOffset" data-testid="lone-pair-offset" />
         <Field name="lonePairSpread" data-testid="lone-pair-spread" />
-        <Field
-          name="respectManualLonePairPositions"
-          data-testid="respect-manual-lone-pair-positions"
-        />
       </fieldset>
     ),
   };

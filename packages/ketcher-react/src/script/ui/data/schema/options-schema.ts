@@ -106,7 +106,6 @@ const render: {
   lonePairDotDiameter: ExtendedSchema;
   lonePairOffset: ExtendedSchema;
   lonePairSpread: ExtendedSchema;
-  respectManualLonePairPositions: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -398,12 +397,6 @@ const render: {
     default: 3.5,
     minimum: 1,
     maximum: 20,
-  },
-  respectManualLonePairPositions: {
-    title: 'Respect manual lone-pair positions',
-    type: 'boolean',
-    description: 'slider',
-    default: true,
   },
 };
 

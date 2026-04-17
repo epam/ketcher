@@ -132,7 +132,6 @@ export type RenderOptions = {
   lonePairDotDiameter?: number;
   lonePairOffset?: number;
   lonePairSpread?: number;
-  respectManualLonePairPositions?: boolean;
 };
 
 export interface RelativeBox {

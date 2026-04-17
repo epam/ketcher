@@ -142,7 +142,6 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     lonePairDotDiameter: 1.8,
     lonePairOffset: 9,
     lonePairSpread: 3.5,
-    respectManualLonePairPositions: true,
   };
 
   return { ...(defaultOptions || {}), ...(options || {}) };

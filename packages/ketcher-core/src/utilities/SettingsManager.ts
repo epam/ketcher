@@ -54,7 +54,6 @@ interface SavedOptions {
   lonePairDotDiameter?: number;
   lonePairOffset?: number;
   lonePairSpread?: number;
-  respectManualLonePairPositions?: boolean;
 }
 
 export class SettingsManager {
@@ -259,18 +258,6 @@ export class SettingsManager {
   static set lonePairSpread(lonePairSpread: number | undefined) {
     const options = this.getOptions();
     this.saveOptions({ ...options, lonePairSpread });
-  }
-
-  static get respectManualLonePairPositions() {
-    const { respectManualLonePairPositions } = this.getOptions();
-    return respectManualLonePairPositions;
-  }
-
-  static set respectManualLonePairPositions(
-    respectManualLonePairPositions: boolean | undefined,
-  ) {
-    const options = this.getOptions();
-    this.saveOptions({ ...options, respectManualLonePairPositions });
   }
 
   static get monomerLibraryUpdates() {

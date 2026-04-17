@@ -21,7 +21,7 @@ import { StructServiceOptions } from 'domain/services';
 import { EditorSelection } from 'application/editor';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (
+  getStringFromStructureAsync: (
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,

@@ -25,7 +25,7 @@ export class MolfileV2000Formatter implements StructFormatter {
     this.#molSerializer = molSerializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStringFromStructureAsync(struct: Struct): Promise<string> {
     const stringifiedMolfile = this.#molSerializer.serialize(struct);
     return stringifiedMolfile;
   }

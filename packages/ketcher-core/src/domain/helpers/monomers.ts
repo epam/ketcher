@@ -19,7 +19,6 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { MONOMER_CONST } from 'domain/constants/monomers';
 
 /**
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class

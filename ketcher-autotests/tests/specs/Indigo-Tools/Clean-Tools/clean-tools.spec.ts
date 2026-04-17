@@ -388,12 +388,12 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: Clean action is correct for the selected R-Group label.
     Non-selected part is invariable.
     */
-    const anyRGroupLabel = 'R18';
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V2000/distorted-r-group-structure.mol',
     );
-    await page.getByText(anyRGroupLabel).click();
+    // to select R18 R-Group atom
+    await getAtomLocator(page, { atomLabel: 'R#', atomId: 71 }).click();
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });

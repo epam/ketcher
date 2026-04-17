@@ -692,11 +692,14 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('<invalid name>');
     await dialog.submit();
 
-    await expect(
-      page.getByText(
-        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
-      ),
-    ).toBeVisible();
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.invalidSymbol,
+      ).getNotificationMessage(),
+    ).toEqual(
+      'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    );
 
     await takeElementScreenshot(page, dialog.nucleotidePresetSection.presetTab);
     await takeElementScreenshot(page, presetSection.presetTab.nameEditbox);

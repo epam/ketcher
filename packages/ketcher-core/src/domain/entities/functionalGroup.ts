@@ -19,7 +19,7 @@ import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
 import { Pool } from './pool';
-import type { SGroup } from './sgroup';
+import { SGroup } from './sgroup';
 import { Struct } from './struct';
 import type { HalfBond } from './halfBond';
 
@@ -46,17 +46,6 @@ const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
 
   return bonds;
 };
-
-const isSGroupLike = (
-  sgroup: unknown,
-): sgroup is Pick<SGroup, 'functionalGroup' | 'atoms' | 'data'> =>
-  Boolean(
-    sgroup &&
-      typeof sgroup === 'object' &&
-      'functionalGroup' in sgroup &&
-      'atoms' in sgroup &&
-      'data' in sgroup,
-  );
 
 export class FunctionalGroup {
   readonly #sgroup: SGroup;
@@ -272,7 +261,7 @@ export class FunctionalGroup {
     let isFunctionalGroup = false;
     let expanded = false;
 
-    if (isSGroupLike(sgroup)) {
+    if (sgroup instanceof SGroup) {
       if (sgroup.functionalGroup) {
         isFunctionalGroup = true;
         expanded = sgroup.functionalGroup.isExpanded;

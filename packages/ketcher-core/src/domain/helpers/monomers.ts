@@ -19,6 +19,7 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { Phosphate } from 'domain/entities/Phosphate';
+import { MONOMER_CONST } from 'domain/constants/monomers';
 
 /**
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
@@ -419,6 +420,22 @@ export function isSugarOrAmbiguousSugar(
     monomer instanceof Sugar ||
     (monomer instanceof AmbiguousMonomer &&
       monomer.monomerClass === KetMonomerClass.Sugar)
+  );
+}
+
+export function isMonomerItemSugar(monomer: MonomerItemType): boolean {
+  return (
+    monomer.props.MonomerClass === KetMonomerClass.Sugar ||
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R)
+  );
+}
+
+export function isMonomerItemPhosphate(monomer: MonomerItemType): boolean {
+  return (
+    monomer.props.MonomerClass === KetMonomerClass.Phosphate ||
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P)
   );
 }
 

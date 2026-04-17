@@ -22,6 +22,6 @@ export const resetRnaBuilderAfterSequenceUpdate = (
   resetRnaBuilderCommon(dispatch);
   dispatch(setSequenceSelection([]));
   editor?.events.turnOffSequenceEditInRNABuilderMode.dispatch();
-  if (editor?.mode.modeName === 'sequence-layout-mode')
+  if (editor?.mode?.modeName === 'sequence-layout-mode')
     (editor.mode as unknown as { turnOffEditMode(): void }).turnOffEditMode();
 };

@@ -26,7 +26,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
 import { AtomCIP } from './types';
-import type { SGroup } from 'domain/entities/sgroup';
+import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
 /**
@@ -1101,10 +1101,7 @@ export class Atom extends BaseMicromoleculeEntity {
   private static isSGroup(
     structOrSgroup: Struct | SGroup,
   ): structOrSgroup is SGroup {
-    return (
-      'getAttachmentPoints' in structOrSgroup &&
-      'getContractedPosition' in structOrSgroup
-    );
+    return structOrSgroup instanceof SGroup;
   }
 }
 

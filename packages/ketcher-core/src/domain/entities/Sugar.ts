@@ -1,5 +1,4 @@
 import { BaseMonomer } from './BaseMonomer';
-import { RNABase } from './RNABase';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
@@ -126,7 +125,7 @@ export class Sugar extends BaseMonomer {
 
     return (
       r3PolymerBond instanceof PolymerBond &&
-      r3PolymerBond?.getAnotherMonomer(this) instanceof RNABase
+      isRnaBaseOrAmbiguousRnaBase(r3PolymerBond?.getAnotherMonomer(this))
     );
   }
 }

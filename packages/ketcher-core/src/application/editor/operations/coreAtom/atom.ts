@@ -16,13 +16,11 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { Atom } from 'domain/entities/CoreAtom';
-import {
-  Bond as MicromoleculesBond,
-  Atom as MicromoleculesAtom,
-} from 'domain/entities';
+import { Bond as MicromoleculesBond } from 'domain/entities/bond';
+import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { KetcherLogger } from 'utilities';
 
 interface BondWithIdInMicromolecules {

@@ -1,11 +1,10 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
-import { CoreEditor, EditorHistory } from '../internal';
-import {
-  DEFAULT_LAYOUT_MODE,
-  LayoutMode,
-  modesMap,
-} from 'application/editor/modes';
+import { EditorHistory } from '../EditorHistory';
+import type { CoreEditor } from '../Editor';
+import { provideEditorInstance } from '../editorSingleton';
+import { DEFAULT_LAYOUT_MODE, LayoutMode } from './types';
+import { getModeConstructor } from './modesRegistry';
 import {
   getStructStringFromClipboardData,
   initHotKeys,
@@ -17,10 +16,11 @@ import {
   normalizeError,
 } from 'utilities';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
-import { identifyStructFormat, SupportedFormat } from 'application/formatters';
-import { KetSerializer } from 'domain/serializers';
+import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
+import { SupportedFormat } from 'application/formatters/structFormatter.types';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export abstract class BaseMode {
@@ -31,9 +31,17 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
+  public get isAntisenseEditMode(): boolean {
+    return false;
+  }
+
+  public get isSyncEditMode(): boolean {
+    return false;
+  }
+
   private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
-    const ModeConstructor = modesMap[modeName];
+    const ModeConstructor = getModeConstructor(modeName);
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
     editor.mode.initialize(true, isUndo, false);
@@ -45,7 +53,7 @@ export abstract class BaseMode {
     _needReArrangeChains = false,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     command.addOperation(
       new SelectLayoutModeOperation(
@@ -66,7 +74,7 @@ export abstract class BaseMode {
   async onKeyDown(event: KeyboardEvent) {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
-        const editor = CoreEditor.provideEditorInstance();
+        const editor = provideEditorInstance();
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
           const shortcutKey = keyNorm.lookup(hotKeys, event);
@@ -96,13 +104,13 @@ export abstract class BaseMode {
     drawingEntitiesManager: DrawingEntitiesManager,
   ): boolean;
 
-  abstract scrollForView(): void;
+  abstract scrollForView(): void | Promise<void>;
 
   onCopy(event?: ClipboardEvent) {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const drawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
@@ -125,7 +133,7 @@ export abstract class BaseMode {
       return;
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     // Check if there's anything selected to cut
     if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
@@ -145,13 +153,13 @@ export abstract class BaseMode {
     if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const isCanvasEmptyBeforePaste =
       !editor.drawingEntitiesManager.hasDrawingEntities;
 
     if (isClipboardAPIAvailable()) {
       const isSequenceEditInRNABuilderMode =
-        CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+        provideEditorInstance().isSequenceEditInRNABuilderMode;
 
       if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
       this._pasteIsInProgress = true;
@@ -185,7 +193,7 @@ export abstract class BaseMode {
 
   async pasteFromClipboard(clipboardData) {
     let modelChanges;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
@@ -205,11 +213,11 @@ export abstract class BaseMode {
     editor.renderersContainer.update(modelChanges);
     EditorHistory.getInstance(editor).update(modelChanges);
     editor.events.mouseLeaveSequenceItem.dispatch();
-    this.scrollForView();
+    await this.scrollForView();
   }
 
   pasteKetFormatFragment(pastedStr: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
       ketSerializer.deserializeToDrawingEntities(pastedStr);
@@ -250,7 +258,7 @@ export abstract class BaseMode {
     pastedStr: string,
     sequenceType: SequenceType,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
@@ -286,7 +294,7 @@ export abstract class BaseMode {
   }
 
   unsupportedSymbolsError(errorMessage: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error',
       errorMessage,

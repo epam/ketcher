@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerItemModifyOperation implements Operation {
   monomer: BaseMonomer;

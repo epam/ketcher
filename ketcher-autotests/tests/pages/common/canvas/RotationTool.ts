@@ -12,10 +12,12 @@ type RotationToolLocators = {
 
 export const RotationTool = (page: Page) => {
   const locators: RotationToolLocators = {
-    flipHorizontallyButton: page.getByTestId('floating-tool-flip-h'),
-    flipVerticallyButton: page.getByTestId('floating-tool-flip-v'),
-    deleteButton: page.getByTestId('floating-tool-delete'),
+    flipHorizontallyButton: page.getByTestId('transform-flip-h'),
+    flipVerticallyButton: page.getByTestId('transform-flip-v'),
+    deleteButton: page.getByTestId('delete'),
     rotationHandle: page.getByTestId('rotation-handle'),
+    // Note: data-testid for rotation center handle is absent on Molecules canvas, but present on Macromolecules canvas.
+    //       Need to be added to Molecules canvas for consistency
     rotationCenterHandle: page.getByTestId('rotation-center-handle'),
   };
 
@@ -37,6 +39,30 @@ export const RotationTool = (page: Page) => {
     async delete() {
       await waitForRender(page, async () => {
         await locators.deleteButton.click();
+      });
+    },
+
+    async moveRotationHandleTo(
+      coordinates: { x: number; y: number },
+      performMouseUp = true,
+    ) {
+      await locators.rotationHandle.hover();
+      await waitForRender(page, async () => {
+        await page.mouse.down();
+        await page.mouse.move(coordinates.x, coordinates.y);
+        if (performMouseUp) {
+          await page.mouse.up();
+        }
+      });
+    },
+
+    async moveRotationCenterHandleTo(coordinates: { x: number; y: number }) {
+      await locators.rotationCenterHandle.hover();
+      await waitForRender(page, async () => {
+        await page.mouse.down();
+        await page.mouse.move(coordinates.x, coordinates.y);
+
+        await page.mouse.up();
       });
     },
   };

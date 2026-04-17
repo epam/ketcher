@@ -46,14 +46,9 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SuperatomOption } from '@tests/pages/constants/contextMenu/Constants';
-import {
-  horizontalFlip,
-  rotateToCoordinates,
-  selectionDelete,
-  verticalFlip,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Templates - Functional Group Tools', () => {
   let page: Page;
@@ -134,7 +129,9 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo(
+      COORDINATES_TO_PERFORM_ROTATION,
+    );
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -158,7 +155,9 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectAllStructuresOnCanvas(page);
 
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo(
+      COORDINATES_TO_PERFORM_ROTATION,
+    );
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -324,7 +323,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expand-functional-group-with-benzene.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
 
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -334,7 +333,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -353,7 +352,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
 
     await selectAllStructuresOnCanvas(page);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
 
     await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
@@ -363,7 +362,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await CommonLeftToolbar(page).handTool();
     await takeEditorScreenshot(page);
   });
@@ -397,7 +396,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
     );
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
   });
 

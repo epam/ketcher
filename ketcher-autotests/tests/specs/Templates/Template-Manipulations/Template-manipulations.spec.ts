@@ -52,11 +52,8 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
-import {
-  horizontalFlip,
-  verticalFlip,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -348,9 +345,9 @@ test.describe('Template Manupulations', () => {
       force: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await takeEditorScreenshot(page);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await takeEditorScreenshot(page);
   });
 

@@ -38,11 +38,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import {
-  horizontalFlip,
-  selectionDelete,
-  verticalFlip,
-} from '../Rotation/utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
@@ -53,6 +48,7 @@ import {
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Selection tools', () => {
   let page: Page;
@@ -137,7 +133,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await takeEditorScreenshot(page);
   });
 
@@ -148,7 +144,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await takeEditorScreenshot(page);
   });
 
@@ -185,7 +181,7 @@ test.describe('Selection tools', () => {
     await clickOnCanvas(page, 100, 100);
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
       padding: 210,
     });
@@ -209,7 +205,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyFileExport(
       page,
       'KET/flipping-horizontally-one-monomer-expected.ket',
@@ -238,7 +234,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyFileExport(
       page,
       'Molfiles-V3000/flipping-horizontally-one-monomer-expected.mol',
@@ -266,7 +262,7 @@ test.describe('Selection tools', () => {
      */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyPNGExport(page);
     await verifySVGExport(page);
   });
@@ -284,7 +280,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
       padding: 250,
     });
@@ -309,7 +305,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyFileExport(
       page,
       'KET/flipping-vertically-one-monomer-expected.ket',
@@ -338,7 +334,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await CommonTopRightToolbar(page).setZoomInputValue('70');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyFileExport(
       page,
       'Molfiles-V3000/flipping-vertically-one-monomer-expected.mol',
@@ -366,7 +362,7 @@ test.describe('Selection tools', () => {
      */
     await openFileAndAddToCanvasAsNewProject(page, 'KET/flipping-monomers.ket');
     await getAtomLocator(page, { atomId: 7 }).click();
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyPNGExport(page);
     await verifySVGExport(page);
   });
@@ -399,7 +395,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
       padding: 210,
     });
@@ -433,7 +429,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyFileExport(
       page,
       'KET/flipping-horizontally-monomers-expected.ket',
@@ -476,7 +472,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyFileExport(
       page,
       'Molfiles-V3000/flipping-horizontally-monomers-expected.mol',
@@ -519,7 +515,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await verifyPNGExport(page);
     await verifySVGExport(page);
   });
@@ -552,7 +548,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
       padding: 250,
     });
@@ -586,7 +582,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyFileExport(
       page,
       'KET/flipping-vertically-monomers-expected.ket',
@@ -629,7 +625,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyFileExport(
       page,
       'Molfiles-V3000/flipping-vertically-monomers-expected.mol',
@@ -672,7 +668,7 @@ test.describe('Selection tools', () => {
       { x: locator1.x - padding, y: locator2.y + locator2.height + padding },
       { x: locator1.x - padding, y: locator1.y - padding },
     ]);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifyPNGExport(page);
     await verifySVGExport(page);
   });
@@ -684,7 +680,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
   });
 

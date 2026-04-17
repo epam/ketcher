@@ -46,11 +46,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import {
-  COORDINATES_TO_PERFORM_ROTATION,
-  rotateToCoordinates,
-  verticalFlip,
-} from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -80,6 +75,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -521,7 +517,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await verifySVGExport(page);
   });
@@ -636,7 +635,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -693,7 +695,10 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1087,7 +1092,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifySVGExport(page);
   });
 

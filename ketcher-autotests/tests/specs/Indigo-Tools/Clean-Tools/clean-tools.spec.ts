@@ -6,7 +6,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   dragMouseTo,
-  selectPartOfChain,
   selectPartOfMolecules,
   MolFileFormat,
 } from '@utils';
@@ -296,7 +295,20 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       'Molfiles-V2000/ditorted-chain-with-double-bond.mol',
     );
-    await selectPartOfChain(page);
+    const coordinatesToStartSelection = 70;
+    const smallShift = 20;
+    const doubleBond = getBondLocator(page, { bondId: 18 });
+    const box = await doubleBond.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await page.mouse.move(
+      coordinatesToStartSelection,
+      coordinatesToStartSelection,
+    );
+    await page.mouse.down();
+    await page.mouse.move(centerX + 1, centerY + smallShift);
+    await page.mouse.up();
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
@@ -310,7 +322,20 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       'Molfiles-V2000/distorted-cyclic-structure.mol',
     );
-    await selectPartOfChain(page);
+    const coordinatesToStartSelection = 70;
+    const smallShift = 20;
+    const doubleBond = getBondLocator(page, { bondId: 18 });
+    const box = await doubleBond.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await page.mouse.move(
+      coordinatesToStartSelection,
+      coordinatesToStartSelection,
+    );
+    await page.mouse.down();
+    await page.mouse.move(centerX + 1, centerY + smallShift);
+    await page.mouse.up();
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });

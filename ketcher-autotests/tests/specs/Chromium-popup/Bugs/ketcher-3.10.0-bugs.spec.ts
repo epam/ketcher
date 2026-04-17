@@ -52,15 +52,12 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
-  resetSelection,
-  rotateToCoordinates,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import {
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -79,6 +76,7 @@ import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/Attac
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -585,8 +583,10 @@ test.describe('Ketcher-3.10 Bugs', () => {
     });
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, { x: 10, y: 20 });
-    await resetSelection(page);
+    await RotationTool(page).moveRotationHandleTo({ x: 10, y: 20 });
+    await clickOnCanvas(page, 70, 90, {
+      from: 'pageTopLeft',
+    });
   });
   test('15.System throws error to console after every monomer creation', async () => {
     /*

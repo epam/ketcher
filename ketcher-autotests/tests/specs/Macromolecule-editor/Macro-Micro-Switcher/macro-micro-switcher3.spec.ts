@@ -29,16 +29,14 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
-import {
-  rotateToCoordinates,
-  verticalFlipByKeyboard,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -1208,7 +1206,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await rotateToCoordinates(page, { x: 750, y: 150 });
+      await RotationTool(page).moveRotationHandleTo({ x: 750, y: 150 });
       await verifyPNGExport(page);
       await resetZoomLevelToDefault(page);
       // Test should be skipped if related bug exists
@@ -1246,7 +1244,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await rotateToCoordinates(page, { x: 750, y: 150 });
+      await RotationTool(page).moveRotationHandleTo({ x: 750, y: 150 });
       await verifySVGExport(page);
       await resetZoomLevelToDefault(page);
       // Test should be skipped if related bug exists
@@ -1511,7 +1509,7 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
-      await rotateToCoordinates(page, { x: 950, y: 150 });
+      await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
       await selectAllStructuresOnCanvas(page);
       const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
@@ -1572,7 +1570,7 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
-      await rotateToCoordinates(page, { x: 950, y: 150 });
+      await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,

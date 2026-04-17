@@ -73,13 +73,13 @@ import {
   getKetRef,
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
-  fromFragmentDeletion,
   MonomerCreationComponentStructureUpdateEvent,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
   LayerMap,
   Visel,
   paperPathFromSVGElement,
+  fromFragmentDeletion,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1379,31 +1379,6 @@ class Editor implements KetcherEditor {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
 
-    // Snapshot pre-creation struct for the single atomic undo entry
-    const preCreationStruct = this.originalStruct.clone(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      true,
-    );
-
-    this.closeMonomerCreationWizard();
-
-    // Swap in a temporary history stack so all intermediate canvas operations
-    // record their entries there (to be discarded). This is the same pattern
-    // used by the wizard itself in openMonomerCreationWizard.
-    const savedHistoryStack = this.historyStack;
-    const savedHistoryPtr = this.historyPtr;
-    this.historyStack = [];
-    this.historyPtr = 0;
-
     const libraryItems = monomersData.map((monomerData) => {
       const {
         monomer,
@@ -1440,7 +1415,7 @@ class Editor implements KetcherEditor {
       this.render.ctab.molecule.clearFragments();
       this.render.ctab.molecule.markFragments();
 
-      this.update(action, true);
+      this.update(action);
 
       const { root: templateRoot, ...templateData } = monomerTemplate;
       const libraryItem = {
@@ -1575,27 +1550,37 @@ class Editor implements KetcherEditor {
       }
     });
 
-    // Capture wizard struct with SGroups before loading original
+    // Build reverse mapping: original atom ID → wizard atom ID
+    const originalToSelectedAtomsIdMap = new Map<number, number>();
+    this.selectedToOriginalAtomsIdMap.forEach(
+      (originalAtomId, selectedAtomId) => {
+        originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+      },
+    );
+
     const structFromWizard = this.struct();
 
-    // Load original struct onto canvas (ignoring history)
-    const loadOriginalAction = fromNewCanvas(
-      this.render.ctab,
-      this.originalStruct,
-    );
-    this.update(loadOriginalAction, true);
+    // Manually perform wizard close steps in a specific order so that
+    // loading the original struct uses ignoreHistory (wizard still "active").
+    this.unsubscribeFromChangeEventInMonomerCreationWizard();
+    this.historyStack = this.originalHistoryStack;
+    this.historyPtr = this.originalHistoryPointer;
+    // Load original struct while wizard is still "active" (ignoreHistory).
+    this.struct(this.originalStruct, false);
+    // Now fully close the wizard.
+    this.monomerCreationState = null;
+    this.tool('select');
 
-    // this.struct(struct) ⟶ fromNewCanvas uses setTimeout-deferred render
-    // calculations internally, so subsequent canvas mutations must wait.
+    // this.struct() defers render via setTimeout, so wait for that.
     setTimeout(() => {
-      // Delete selected atoms from the original struct on canvas
+      // Delete selected atoms (ignoreHistory — intermediate step).
       const newAction = new Action();
       newAction.mergeWith(
         fromFragmentDeletion(this.render.ctab, this.originalSelection),
       );
       this.update(newAction, true);
 
-      // Merge wizard struct (with SGroups) into canvas
+      // Merge wizard struct (with SGroups) into the canvas molecule.
       const atomIdMap = new Map<number, number>();
       structFromWizard.mergeInto(
         this.struct(),
@@ -1613,16 +1598,13 @@ class Editor implements KetcherEditor {
         true,
       );
 
-      // Restore original atom positions after merge
+      // Restore original positions for selected atoms (now part of monomer).
       const struct = this.struct();
-      const originalToSelectedAtomsIdMap = new Map<number, number>();
 
       this.selectedToOriginalAtomsIdMap.forEach(
         (originalAtomId, selectedAtomId) => {
-          originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
-
-          const originalPosition = originalAtomPositions.get(originalAtomId);
           const newAtomId = atomIdMap.get(selectedAtomId);
+          const originalPosition = originalAtomPositions.get(originalAtomId);
           if (originalPosition && isNumber(newAtomId)) {
             const atom = struct.atoms.get(newAtomId);
             if (atom) {
@@ -1632,37 +1614,38 @@ class Editor implements KetcherEditor {
         },
       );
 
-      // Re-add external bonds with remapped atom IDs
+      // Re-add external bonds (crossing the selection boundary).
       externalBonds.forEach((bond) => {
-        const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
-        const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
-        const newBegin =
-          isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
-        const newEnd = isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
+        const isBeginSelected = this.originalSelection.atoms?.includes(
+          bond.begin,
+        );
+        const isEndSelected = this.originalSelection.atoms?.includes(bond.end);
 
-        if (
-          this.originalSelection.atoms?.includes(bond.begin) &&
-          !this.originalSelection.atoms?.includes(bond.end) &&
-          isNumber(beginIdInWizard) &&
-          isNumber(newBegin)
-        ) {
-          const newBond = bond.clone();
-          newBond.begin = newBegin;
-          struct.bonds.add(newBond);
+        if (isBeginSelected && !isEndSelected) {
+          const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
+          const newBegin = isNumber(wizardId)
+            ? atomIdMap.get(wizardId)
+            : undefined;
+          if (isNumber(newBegin)) {
+            const newBond = bond.clone();
+            newBond.begin = newBegin;
+            struct.bonds.add(newBond);
+          }
         }
-        if (
-          this.originalSelection.atoms?.includes(bond.end) &&
-          !this.originalSelection.atoms?.includes(bond.begin) &&
-          isNumber(endIdInWizard) &&
-          isNumber(newEnd)
-        ) {
-          const newBond = bond.clone();
-          newBond.end = newEnd;
-          struct.bonds.add(newBond);
+        if (isEndSelected && !isBeginSelected) {
+          const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
+          const newEnd = isNumber(wizardId)
+            ? atomIdMap.get(wizardId)
+            : undefined;
+          if (isNumber(newEnd)) {
+            const newBond = bond.clone();
+            newBond.end = newEnd;
+            struct.bonds.add(newBond);
+          }
         }
       });
 
-      // Fix attachment point numbers on inter-monomer bonds
+      // Fix attachment point numbers on inter-monomer bonds.
       struct.bonds.forEach((bond) => {
         const fromSgroup = struct.getGroupFromAtomId(bond.begin);
         const toSgroup = struct.getGroupFromAtomId(bond.end);
@@ -1688,35 +1671,24 @@ class Editor implements KetcherEditor {
         }
       });
 
-      // Clone the fully assembled structure
-      const finalStruct = this.struct().clone(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        true,
+      // The CanvasLoad swaps the canvas from the current (post-mutation)
+      // state to a clean clone. Undo reverses the swap, restoring the
+      // pre-mutation originalStruct.
+      this.struct(
+        this.struct().clone(
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        ),
       );
-
-      // Restore the global history stack (discarding temp entries).
-      this.historyStack = savedHistoryStack;
-      this.historyPtr = savedHistoryPtr;
-
-      // Load preCreationStruct onto canvas without recording history.
-      // This sets up the state so that the subsequent this.struct(finalStruct)
-      // creates ONE history entry where undo restores preCreationStruct.
-      const preLoadAction = fromNewCanvas(this.render.ctab, preCreationStruct);
-      this.update(preLoadAction, true);
-
-      // Load the final struct through the standard path — this creates
-      // a single canonical history entry. Undo restores preCreationStruct;
-      // redo restores finalStruct.
-      this.struct(finalStruct);
     }, 0);
   }
 

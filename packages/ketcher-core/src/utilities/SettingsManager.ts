@@ -43,6 +43,17 @@ interface SavedSettings {
 interface SavedOptions {
   ignoreChiralFlag?: boolean;
   disableQueryElements?: string[] | null;
+
+  lonePairShowN?: boolean;
+  lonePairShowO?: boolean;
+  lonePairShowS?: boolean;
+  lonePairShowF?: boolean;
+  lonePairShowCl?: boolean;
+  lonePairShowBr?: boolean;
+  lonePairShowI?: boolean;
+  lonePairDotDiameter?: number;
+  lonePairOffset?: number;
+  lonePairSpread?: number;
 }
 
 export class SettingsManager {
@@ -161,6 +172,92 @@ export class SettingsManager {
       ...options,
       ignoreChiralFlag,
     });
+  }
+
+  static get lonePairShowN() {
+    return this.getOptions().lonePairShowN;
+  }
+
+  static set lonePairShowN(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowN: v });
+  }
+
+  static get lonePairShowO() {
+    return this.getOptions().lonePairShowO;
+  }
+
+  static set lonePairShowO(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowO: v });
+  }
+
+  static get lonePairShowS() {
+    return this.getOptions().lonePairShowS;
+  }
+
+  static set lonePairShowS(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowS: v });
+  }
+
+  static get lonePairShowF() {
+    return this.getOptions().lonePairShowF;
+  }
+
+  static set lonePairShowF(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowF: v });
+  }
+
+  static get lonePairShowCl() {
+    return this.getOptions().lonePairShowCl;
+  }
+
+  static set lonePairShowCl(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowCl: v });
+  }
+
+  static get lonePairShowBr() {
+    return this.getOptions().lonePairShowBr;
+  }
+
+  static set lonePairShowBr(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowBr: v });
+  }
+
+  static get lonePairShowI() {
+    return this.getOptions().lonePairShowI;
+  }
+
+  static set lonePairShowI(v: boolean | undefined) {
+    this.saveOptions({ ...this.getOptions(), lonePairShowI: v });
+  }
+
+  static get lonePairDotDiameter() {
+    const { lonePairDotDiameter } = this.getOptions();
+    return lonePairDotDiameter;
+  }
+
+  static set lonePairDotDiameter(lonePairDotDiameter: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairDotDiameter });
+  }
+
+  static get lonePairOffset() {
+    const { lonePairOffset } = this.getOptions();
+    return lonePairOffset;
+  }
+
+  static set lonePairOffset(lonePairOffset: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairOffset });
+  }
+
+  static get lonePairSpread() {
+    const { lonePairSpread } = this.getOptions();
+    return lonePairSpread;
+  }
+
+  static set lonePairSpread(lonePairSpread: number | undefined) {
+    const options = this.getOptions();
+    this.saveOptions({ ...options, lonePairSpread });
   }
 
   static get monomerLibraryUpdates() {

@@ -33,6 +33,7 @@ export interface SchemaProperty extends CommonStructSchema {
   pattern?: string;
   maxLength?: number;
   minLength?: number;
+  readOnly?: boolean;
   invalidMessage?: string | ((data: unknown) => string);
 }
 
@@ -62,6 +63,8 @@ interface AtomProperties extends Record<string, SchemaProperty> {
   notList: SchemaProperty;
   pseudo: SchemaProperty;
   radical: SchemaProperty;
+  lonePairDisplay: SchemaProperty;
+  expectedLonePairs: SchemaProperty;
   ringBondCount: SchemaProperty;
   ringMembership: SchemaProperty;
   ringSize: SchemaProperty;
@@ -137,6 +140,18 @@ export const atom: StructSchema<AtomProperties> = {
         'Diradical (singlet)',
         'Diradical (triplet)',
       ],
+      default: 0,
+    },
+    lonePairDisplay: {
+      title: 'Lone pair display',
+      enum: ['inherit', 'show', 'hide'],
+      enumNames: ['Inherit', 'Show expected', 'Hide'],
+      default: 'inherit',
+    },
+    expectedLonePairs: {
+      title: 'Expected lone pairs',
+      type: 'integer',
+      readOnly: true,
       default: 0,
     },
     cip: {

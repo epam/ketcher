@@ -105,6 +105,7 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
   initiallySelected?: initiallySelectedType;
+  lonePairDisplay?: 'inherit' | 'show' | 'hide';
 }
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<
@@ -177,6 +178,7 @@ export class Atom extends BaseMicromoleculeEntity {
     stereoLabel: null,
     stereoParity: 0,
     implicitHCount: null,
+    lonePairDisplay: 'inherit' as 'inherit' | 'show' | 'hide',
   };
 
   label: string;
@@ -211,6 +213,7 @@ export class Atom extends BaseMicromoleculeEntity {
   stereoParity: number;
   hasImplicitH?: boolean;
   pseudo!: string;
+  lonePairDisplay: 'inherit' | 'show' | 'hide';
 
   /** @deprecated */
   get attpnt() {
@@ -294,6 +297,10 @@ export class Atom extends BaseMicromoleculeEntity {
     this.atomList = attributes.atomList
       ? new AtomList(attributes.atomList)
       : null;
+    this.lonePairDisplay = getValueOrDefault(
+      attributes.lonePairDisplay,
+      Atom.attrlist.lonePairDisplay,
+    );
     this.neighbors = []; // set of half-bonds having this atom as their origin
     this.badConn = false;
 

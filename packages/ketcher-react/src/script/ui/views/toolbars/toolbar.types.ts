@@ -96,6 +96,7 @@ type LeftToolbarItemVariant =
   // charge group
   | 'charge-plus'
   | 'charge-minus'
+  | 'lone-pair-toggle'
   // sgroup group
   | 'sgroup'
   // reaction

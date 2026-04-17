@@ -44,3 +44,23 @@ ketcher-autotests/results.json
 .yarn/*
 output.txt
 .github/agents/*
+
+# -----------------------------------------------------------------------------
+# Local-only: agent tooling, personal notes, and test artifacts outside autotests
+# (Keeps contribution paths like packages/, ketcher-autotests/, documentation/ visible to git.)
+# -----------------------------------------------------------------------------
+.agents/
+.claude/
+.junie/
+.kiro/
+/skills/
+/skills-lock.json
+/docs/
+/test-results/
+
+lone_pair_prd.md
+
+# npm pack from repo root (upload .tgz to GitHub Releases; do not commit)
+/ketcher-core-*.tgz
+/ketcher-react-*.tgz
+/ketcher-standalone-*.tgz

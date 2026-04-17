@@ -12,7 +12,15 @@ Now you're ready to clone the repository :tada:
 1. Go to a folder on your machine that you will use as your working directory.
 2. Clone repository to your working directory using this guide [how to clone Git repo](https://docs.gitlab.com/ee/user/project/repository/#clone-and-open-in-visual-studio-code)
 3. Open a terminal, go to your working directory and run `npm install`. This will install the dependencies from `package.json` file.
-4. Possible you may need install browsers (f.ex. `npx playwright install chromium`)
+4. Install the Chromium used by tests: `cd ketcher-autotests && npx playwright install chromium` (required once per machine / Playwright upgrade).
+
+### PR documentation screenshots (lone pairs)
+
+From repo root: `npm run build`, then in one terminal `npm run serve:standalone` (listens on **127.0.0.1:4002** — stop anything else using that port), and in another:
+
+`cd ketcher-autotests && npx playwright install chromium && npm run capture:lone-pair-pr`
+
+Uses Playwright project **`chromium-pr-assets`** (larger viewport + `deviceScaleFactor: 2` for sharper PNGs). This writes PNGs under `documentation/images/lone-pairs/`. Commit only those images (not browser cache or `playwright-report/`).
 
 # Add environment variables to your .env file
 

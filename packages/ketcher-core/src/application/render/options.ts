@@ -131,6 +131,17 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
 
     previewOpacity: 0.5,
     viewOnlyMode: false,
+
+    lonePairShowN: false,
+    lonePairShowO: false,
+    lonePairShowS: false,
+    lonePairShowF: false,
+    lonePairShowCl: false,
+    lonePairShowBr: false,
+    lonePairShowI: false,
+    lonePairDotDiameter: 1.8,
+    lonePairOffset: 9,
+    lonePairSpread: 3.5,
   };
 
   return { ...(defaultOptions || {}), ...(options || {}) };

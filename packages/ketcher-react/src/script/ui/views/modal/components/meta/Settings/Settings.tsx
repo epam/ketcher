@@ -258,6 +258,19 @@ const SettingsDialog = (props: Props) => {
           )}
           data-testid="show-hydrogen-labels"
         />
+        <Field name="lonePairShowN" data-testid="lone-pair-show-n" />
+        <Field name="lonePairShowO" data-testid="lone-pair-show-o" />
+        <Field name="lonePairShowS" data-testid="lone-pair-show-s" />
+        <Field name="lonePairShowF" data-testid="lone-pair-show-f" />
+        <Field name="lonePairShowCl" data-testid="lone-pair-show-cl" />
+        <Field name="lonePairShowBr" data-testid="lone-pair-show-br" />
+        <Field name="lonePairShowI" data-testid="lone-pair-show-i" />
+        <Field
+          name="lonePairDotDiameter"
+          data-testid="lone-pair-dot-diameter"
+        />
+        <Field name="lonePairOffset" data-testid="lone-pair-offset" />
+        <Field name="lonePairSpread" data-testid="lone-pair-spread" />
       </fieldset>
     ),
   };

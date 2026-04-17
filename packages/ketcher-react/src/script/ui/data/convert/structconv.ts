@@ -71,6 +71,8 @@ export interface ElementFormData {
   ringSize?: number | null;
   connectivity?: number | null;
   chirality?: string | null;
+  lonePairDisplay?: 'inherit' | 'show' | 'hide';
+  expectedLonePairs?: number;
 }
 
 /** S-group data as it comes from the editor (pre-dialog). */
@@ -240,6 +242,8 @@ export function fromAtom(satom?: Atom) {
       satom.queryProperties.customQuery == null
         ? ''
         : satom.queryProperties.customQuery.toString(),
+    lonePairDisplay: satom.lonePairDisplay ?? 'inherit',
+    expectedLonePairs: 0, // computed and overridden by the dialog opener
   };
 }
 
@@ -253,6 +257,9 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     connectivity = null,
     chirality = null,
     customQuery = '',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    expectedLonePairs: _expectedLonePairs, // read-only, strip before saving
+    lonePairDisplay = 'inherit',
     ...restAtom
   } = atom;
   if (customQuery && customQuery !== '') {
@@ -295,6 +302,7 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     alias: restAtom.alias || null,
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
+    lonePairDisplay,
     queryProperties: {
       aromaticity,
       ringMembership,

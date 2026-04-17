@@ -26,7 +26,12 @@ import {
   toStereoLabel,
 } from '../../data/convert/structconv';
 
-import { Elements, KetcherLogger } from 'ketcher-core';
+import {
+  Elements,
+  KetcherLogger,
+  getExpectedLonePairCount,
+  getBondOrderSumForAtom,
+} from 'ketcher-core';
 import acts from '../../action';
 import { debounce } from 'lodash/fp';
 import { openDialog } from '../modal';
@@ -95,12 +100,33 @@ export default function initEditor(dispatch, getState) {
           isMultipleAtoms: true,
         }).then(toElement);
       }
-      const elem = selem.type === 'text' ? selem : fromElement(selem);
+      let elem = selem.type === 'text' ? selem : fromElement(selem);
       let dlg = null;
       if (elem.type === 'text') {
         // TODO: move textdialog opening logic to another place
         return openDialog(dispatch, 'text', elem);
       } else if (Elements.get(elem.label)) {
+        // Compute display-only expectedLonePairs for the dialog
+        try {
+          const struct = getState().editor.render.ctab.molecule;
+          const aid = struct.atoms.keyOf(selem);
+          if (aid !== null) {
+            const bondOrderSum = getBondOrderSumForAtom(struct, aid);
+            elem = {
+              ...elem,
+              expectedLonePairs:
+                getExpectedLonePairCount({
+                  label: selem.label,
+                  charge: selem.charge ?? 0,
+                  radical: selem.radical ?? 0,
+                  bondOrderSum,
+                  implicitHs: Math.floor(selem.implicitH || 0),
+                }) ?? 0,
+            };
+          }
+        } catch (_) {
+          // non-critical; dialog still opens without the count
+        }
         dlg = openDialog(dispatch, 'atomProps', elem);
       } else if (Object.keys(elem).length === 1 && 'ap' in elem) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({

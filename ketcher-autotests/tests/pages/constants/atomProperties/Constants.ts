@@ -26,6 +26,12 @@ export const enum Radical {
   Diradical_Triplet = 'Diradical (triplet)-option',
 }
 
+export const enum LonePairDisplay {
+  Inherit = 'Inherit-option',
+  ShowExpected = 'Show expected-option',
+  Hide = 'Hide-option',
+}
+
 export const enum RingBondCount {
   Empty = '-option',
   As_Drawn = 'As drawn-option',
@@ -157,6 +163,7 @@ export type GeneralPropertiesSettings = {
   Isotope?: string;
   Valence?: Valence;
   Radical?: Radical;
+  LonePairDisplay?: LonePairDisplay;
 };
 
 export type QuerySpecificPropertiesSettings = {

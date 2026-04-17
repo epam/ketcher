@@ -36,6 +36,8 @@ export * from './rergroupAttachmentPoint';
 export * from './reImage';
 export * from './remultitailArrow';
 export * from './draftToLexical';
+export { getExpectedLonePairCount, getBondOrderSumForAtom } from './lonePairs';
+export type { LonePairContext, AnchorPlacement } from './lonePairs';
 export {
   ReObject,
   ReAtom,

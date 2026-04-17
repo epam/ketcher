@@ -60,6 +60,7 @@ import {
   RingBondCount,
   SubstitutionCount,
   Valence,
+  LonePairDisplay,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
@@ -137,6 +138,29 @@ test.describe('Atom Properties', () => {
     });
     await waitForRender(page, async () => {
       await page.keyboard.press('/');
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Shows expected lone-pair count in atom properties', async () => {
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
+
+    await expect(
+      AtomPropertiesDialog(page).generalSection.expectedLonePairsReadonlyInput,
+    ).toHaveValue('2');
+    await AtomPropertiesDialog(page).cancel();
+  });
+
+  test('Applies lone-pair display override from atom properties', async () => {
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
+    await getAtomLocator(page, { atomLabel: 'O' }).first().dblclick({
+      force: true,
+    });
+    await AtomPropertiesDialog(page).setOptions({
+      GeneralProperties: { LonePairDisplay: LonePairDisplay.Hide },
     });
     await takeEditorScreenshot(page);
   });

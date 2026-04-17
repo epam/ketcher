@@ -96,6 +96,16 @@ const render: {
   hashSpacing: ExtendedSchema;
   hashSpacingUnit: ExtendedSchema;
   imageResolution: ExtendedSchema;
+  lonePairShowN: ExtendedSchema;
+  lonePairShowO: ExtendedSchema;
+  lonePairShowS: ExtendedSchema;
+  lonePairShowF: ExtendedSchema;
+  lonePairShowCl: ExtendedSchema;
+  lonePairShowBr: ExtendedSchema;
+  lonePairShowI: ExtendedSchema;
+  lonePairDotDiameter: ExtendedSchema;
+  lonePairOffset: ExtendedSchema;
+  lonePairSpread: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -324,6 +334,69 @@ const render: {
     enum: Object.values(ImageResolution),
     enumNames: Object.keys(ImageResolution),
     default: ImageResolution.low,
+  },
+  lonePairShowN: {
+    title: 'Show lone pairs on Nitrogen (N)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowO: {
+    title: 'Show lone pairs on Oxygen (O)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowS: {
+    title: 'Show lone pairs on Sulfur (S)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowF: {
+    title: 'Show lone pairs on Fluorine (F)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowCl: {
+    title: 'Show lone pairs on Chlorine (Cl)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowBr: {
+    title: 'Show lone pairs on Bromine (Br)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairShowI: {
+    title: 'Show lone pairs on Iodine (I)',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
+  },
+  lonePairDotDiameter: {
+    title: 'Lone-pair dot diameter',
+    type: 'number',
+    default: 1.8,
+    minimum: 0.5,
+    maximum: 8,
+  },
+  lonePairOffset: {
+    title: 'Lone-pair offset',
+    type: 'number',
+    default: 9,
+    minimum: 1,
+    maximum: 40,
+  },
+  lonePairSpread: {
+    title: 'Lone-pair spread',
+    type: 'number',
+    default: 3.5,
+    minimum: 1,
+    maximum: 20,
   },
 };
 

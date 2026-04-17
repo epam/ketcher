@@ -55,6 +55,8 @@ interface ToolEventHandler {
 
   rightClickCanvas?(event: Event): void;
 
+  rightClickCanvasSequence?(event: Event): void;
+
   rightClickPolymerBond?(event: Event): void;
 
   rightClickSelectedMonomers?(event: Event): void;

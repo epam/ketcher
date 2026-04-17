@@ -331,6 +331,15 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
+    const windowContext = window as unknown as Record<string, unknown>;
+
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+      document.documentElement.requestFullscreen?.().catch(() => {
+        /* Fullscreen restoration failed or was denied by the browser */
+      });
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
+    }
+
     const onLoad = (fileContent) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);

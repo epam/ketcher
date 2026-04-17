@@ -90,6 +90,22 @@ const FileDrop = ({
     multiple: false,
     noClick: true,
     disabled,
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
     ...rest,
   });
 

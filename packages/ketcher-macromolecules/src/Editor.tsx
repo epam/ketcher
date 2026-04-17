@@ -264,25 +264,27 @@ function Editor({
       },
     );
     editor?.events.rightClickCanvas.add(
-      ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
+      ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
-
-        // TODO separate by two events
-        if (editor.mode.modeName === 'sequence-layout-mode') {
-          setSelections(selections as NodesSelection);
-          showSequenceContextMenu({
-            event,
-            props: {},
-          });
-        } else {
-          setSelectedMonomers(selections as BaseMonomer[]);
-          showSelectedMonomersContextMenu({
-            event,
-            props: { selectedMonomers: selections },
-          });
-        }
+        setSelectedMonomers(selections);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers: selections },
+        });
+      },
+    );
+    editor?.events.rightClickCanvasSequence.add(
+      ([event, selections]: [PointerEvent, NodesSelection]) => {
+        setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
+        setSelections(selections);
+        showSequenceContextMenu({
+          event,
+          props: {},
+        });
       },
     );
     editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {

@@ -91,9 +91,12 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     };
 
     const monomerCode = this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const monomerLabel = this.monomer.monomerItem.label;
     let baseColor = peptideColorsMap[monomerCode] ?? super.textColor;
 
-    if (this.monomer.isModification) {
+    if (monomerLabel?.includes('*')) {
+      baseColor = LIGHT_COLOR;
+    } else if (this.monomer.isModification) {
       baseColor = baseColor === LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
     }
 

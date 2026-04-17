@@ -22,7 +22,7 @@ import { CoreEditor } from 'application/editor/internal';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
-  public priority = 2;
+  public priority = 3;
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();

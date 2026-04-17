@@ -116,7 +116,7 @@ import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
 } from 'domain/serializers';
-import { SequenceMode } from './modes/types/sequenceMode';
+import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 

@@ -23,7 +23,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
   isMonomerItemPhosphate,
   isMonomerItemSugar,
-} from 'domain/helpers/monomers';
+} from 'domain/helpers/monomerItem';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';

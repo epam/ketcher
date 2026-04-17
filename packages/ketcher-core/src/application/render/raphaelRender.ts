@@ -108,7 +108,8 @@ export class Render {
   };
 
   unobserveCanvasResize = () => {
-    this.resizeObserver?.unobserve(this.paper.canvas);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   };
 
   updateOptions(opts: string) {

@@ -695,7 +695,7 @@ test.describe('Preset code formatting and default component code behavior', () =
     expect(
       await NotificationMessageBanner(
         page,
-        ErrorMessage.invalidSymbol,
+        ErrorMessage.invalidPresetCode,
       ).getNotificationMessage(),
     ).toEqual(
       'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',

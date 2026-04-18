@@ -170,7 +170,7 @@ describe('Rotate controller', () => {
       options: {
         microModeScale: 1,
         offset: new Vec2(),
-      },
+      } as any,
     };
 
     // @ts-ignore

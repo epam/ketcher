@@ -507,6 +507,8 @@ class ReAtom extends ReObject {
             'font-family': fontFamily,
           });
 
+        path.node?.setAttribute('data-testid', 's-group-label');
+        path.node?.setAttribute('data-label-text', sGroupName);
         path.node?.setAttribute('data-sgroup-id', sgroup.id);
         path.node?.setAttribute('data-sgroup-name', sGroupName);
         path.node?.setAttribute('data-sgroup-type', sgroup.type);

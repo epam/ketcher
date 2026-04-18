@@ -512,6 +512,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning

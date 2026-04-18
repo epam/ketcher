@@ -87,8 +87,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await ContextMenu(page, targetAtom).open();
-    await expect(page.getByTestId(MonomerOption.Copy)).toBeEnabled();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionEnabled(MonomerOption.Copy),
+    ).toBeTruthy();
   });
 
   test('Case 2 — Ketcher wrongly considers R3-R1 connection between unknown sugar and/or unknown base as side chain connection', async ({

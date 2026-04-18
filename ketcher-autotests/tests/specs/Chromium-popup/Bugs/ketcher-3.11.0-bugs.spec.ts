@@ -104,6 +104,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
+import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 
 let page: Page;
 
@@ -290,6 +291,29 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
   });
 
+  test('Case 2.6 — Context menu closes on Escape in popup mode', async () => {
+    /* Test case: regression for popup context menu dismissal
+     * Steps:
+     * 1. Open a structure in popup mode.
+     * 2. Open a context menu on canvas.
+     * 3. Press Escape.
+     * Expected Result: The context menu closes.
+     */
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await clickInTheMiddleOfTheScreen(page);
+
+    const contextMenu = ContextMenu(page, getAtomLocator(page, { atomId: 0 }));
+
+    await contextMenu.open();
+    await expect(contextMenu.contextMenuBody).toBeVisible();
+
+    await page.keyboard.press('Escape');
+
+    await expect(contextMenu.contextMenuBody).toBeHidden();
+  });
+
   test('Case 3 — Superatom rendering with multiple connection points — part of structure should not disappear', async () => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/2517
@@ -305,7 +329,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await LeftToolbar(page).sGroup();
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
 
-    const wLocator = page.getByText('w', { exact: true });
+    const wLocator = getSGroupLabelLocator(page, { labelText: 'w' });
     const wBox = await wLocator.boundingBox();
     if (wBox) {
       const clickX = wBox.x - 10;
@@ -504,8 +528,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
-    await ContextMenu(page, getBondLocator(page, { bondId: 45 })).open();
-    await expect(page.getByTestId(MacroBondOption.Delete)).toBeVisible();
+    expect(
+      await ContextMenu(
+        page,
+        getBondLocator(page, { bondId: 45 }),
+      ).isOptionEnabled(MacroBondOption.Delete),
+    ).toBeTruthy();
   });
 
   test('Case 11 - Preview tooltips for monomers loaded from HELM with inline smiles are wrong', async ({

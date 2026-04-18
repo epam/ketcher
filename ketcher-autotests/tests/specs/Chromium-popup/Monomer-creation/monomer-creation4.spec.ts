@@ -78,11 +78,11 @@ test(`1. Verify that right clicking on a potential LGA on canvas, shows an optio
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
 
-  await ContextMenu(page, targetAtom).open();
-
-  await expect(
-    page.getByTestId(ConnectionPointOption.MarkAsLeavingGroup),
-  ).toBeVisible();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(
+      ConnectionPointOption.MarkAsLeavingGroup,
+    ),
+  ).toBeTruthy();
 
   await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();
@@ -119,10 +119,11 @@ test(`2. Check that potential LGA is every atom that has one and only one simple
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'C' });
   for (const targetAtom of await targetAtoms.all()) {
-    await ContextMenu(page, targetAtom).open();
-    await expect(
-      page.getByTestId(ConnectionPointOption.MarkAsLeavingGroup),
-    ).toBeVisible();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionVisible(
+        ConnectionPointOption.MarkAsLeavingGroup,
+      ),
+    ).toBeTruthy();
     await clickOnCanvas(page, 0, 0);
   }
 
@@ -163,10 +164,11 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'C' });
   for (const targetAtom of await targetAtoms.all()) {
-    await ContextMenu(page, targetAtom).open();
-    await expect(
-      page.getByTestId(ConnectionPointOption.MarkAsLeavingGroup),
-    ).not.toBeVisible();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionVisible(
+        ConnectionPointOption.MarkAsLeavingGroup,
+      ),
+    ).toBeTruthy();
     await clickOnCanvas(page, 0, 0);
   }
 
@@ -283,11 +285,11 @@ test(`6. Check that right clicking on a potential AA on canvas, shows an option 
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
 
-  await ContextMenu(page, targetAtom).open();
-
-  await expect(
-    page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-  ).toBeVisible();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(
+      ConnectionPointOption.MarkAsConnectionPoint,
+    ),
+  ).toBeTruthy();
 
   await CreateMonomerDialog(page).discard();
 });
@@ -320,11 +322,11 @@ test(`7. Check that right clicking on a non potential AA on canvas, not shows an
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
-  await ContextMenu(page, targetAtom).open();
-
-  await expect(
-    page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-  ).toBeVisible();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(
+      ConnectionPointOption.MarkAsConnectionPoint,
+    ),
+  ).toBeTruthy();
 
   await CreateMonomerDialog(page).discard();
 });
@@ -360,10 +362,11 @@ test(`8. Check that potential AA is every atom that is connected to a potential 
 
   const targetAtoms = getAtomLocator(page, { atomLabel: 'N' });
   for (const targetAtom of await targetAtoms.all()) {
-    await ContextMenu(page, targetAtom).open();
-    await expect(
-      page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-    ).toBeVisible();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionVisible(
+        ConnectionPointOption.MarkAsLeavingGroup,
+      ),
+    ).toBeTruthy();
     await clickOnCanvas(page, 0, 0);
   }
 
@@ -538,14 +541,16 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
   );
 
   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  await ContextMenu(page, attachmentPointR1).open();
-
-  await expect(
-    page.getByTestId(ConnectionPointOption.EditConnectionPoint),
-  ).toBeVisible();
-  await expect(
-    page.getByTestId(ConnectionPointOption.RemoveAssignment),
-  ).toBeVisible();
+  expect(
+    ContextMenu(page, attachmentPointR1).isOptionVisible(
+      ConnectionPointOption.EditConnectionPoint,
+    ),
+  ).toBeTruthy();
+  expect(
+    ContextMenu(page, attachmentPointR1).isOptionVisible(
+      ConnectionPointOption.RemoveAssignment,
+    ),
+  ).toBeTruthy();
 
   await CreateMonomerDialog(page).discard();
 });

@@ -49,6 +49,7 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
+import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 
 test.describe('Selection tools', () => {
   let page: Page;
@@ -875,11 +876,11 @@ test.describe('Selection tools', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('33', { exact: true }).click();
+    await getSGroupLabelLocator(page, { labelText: '33' }).click();
     await dragMouseTo(page, pointx, pointy);
     await takeEditorScreenshot(page);
 
-    await page.getByText('33', { exact: true }).click();
+    await getSGroupLabelLocator(page, { labelText: '33' }).click();
     await dragMouseTo(page, pointx1, pointy1);
     await takeEditorScreenshot(page);
   });

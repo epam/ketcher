@@ -19,7 +19,6 @@ import { useEffect, useState } from 'react';
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
 import { TextArea } from 'components/shared/TextArea';
-import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
 import { IconButton, IndigoProvider } from 'ketcher-react';
@@ -43,6 +42,8 @@ import {
   PreviewContainer,
   Row,
   StyledDropdown,
+  StyledTextInputField,
+  fileNameInputClassName,
   stylesForExpanded,
   SvgPreview,
 } from './Save.styles';
@@ -239,11 +240,12 @@ export const Save = ({
         <Form onSubmit={handleSave} id="save">
           <Row style={{ padding: '12px 12px 10px' }}>
             <div>
-              <TextInputField
+              <StyledTextInputField
                 value={currentFileName}
                 id="filename"
                 onChange={handleInputChange}
                 label="File name:"
+                inputClassName={fileNameInputClassName}
                 data-testid="filename-input"
               />
             </div>

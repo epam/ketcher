@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { DropDown } from 'components/shared/dropDown';
+import { TextInputField } from 'components/shared/textInputField';
 
 export const Form = styled.form({
   display: 'flex',
@@ -11,6 +12,19 @@ export const Row = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
   marginBottom: '16px',
+});
+
+export const fileNameInputClassName = 'save-file-name-input';
+
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const StyledTextInputField = styled(TextInputField)({
+  // Align File name input height with File format dropdown (28px)
+  [`.${fileNameInputClassName}`]: {
+    height: '28px',
+    boxSizing: 'border-box',
+  },
 });
 
 export const StyledDropdown = styled(DropDown)(({ theme }) => ({

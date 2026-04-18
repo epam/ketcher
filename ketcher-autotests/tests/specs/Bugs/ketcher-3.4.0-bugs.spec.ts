@@ -69,7 +69,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';

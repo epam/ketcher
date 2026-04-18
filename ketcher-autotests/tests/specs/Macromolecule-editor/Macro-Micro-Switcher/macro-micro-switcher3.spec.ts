@@ -35,7 +35,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;

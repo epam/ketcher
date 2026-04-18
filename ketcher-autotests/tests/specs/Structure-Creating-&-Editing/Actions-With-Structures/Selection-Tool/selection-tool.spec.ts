@@ -39,7 +39,7 @@ import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
 import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {

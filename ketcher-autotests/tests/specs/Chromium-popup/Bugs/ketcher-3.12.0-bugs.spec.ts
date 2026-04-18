@@ -55,7 +55,7 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 let page: Page;

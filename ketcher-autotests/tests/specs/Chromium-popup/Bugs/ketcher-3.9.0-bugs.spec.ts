@@ -76,7 +76,7 @@ import {
   zoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 import { pageReload } from '@utils/common/helpers';
 import {

@@ -38,7 +38,7 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Superatom S-Group tool', () => {

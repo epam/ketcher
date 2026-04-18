@@ -98,7 +98,7 @@ import {
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
 import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';

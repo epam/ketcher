@@ -723,6 +723,46 @@ export class SequenceRenderer {
     SequenceRenderer.setCaretPosition(newCaretPosition);
   }
 
+  public static moveCaretToRowStart() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentNodeIndexInRow =
+      this.currentChainRow.indexOf(currentEdittingNode);
+
+    if (currentNodeIndexInRow <= 0) {
+      return;
+    }
+
+    const newCaretPosition = this.caretPosition - currentNodeIndexInRow;
+
+    SequenceRenderer.setCaretPosition(newCaretPosition);
+  }
+
+  public static moveCaretToRowEnd() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentNodeIndexInRow =
+      this.currentChainRow.indexOf(currentEdittingNode);
+    const rowEndIndex = this.currentChainRow.length - 1;
+
+    if (currentNodeIndexInRow >= rowEndIndex) {
+      return;
+    }
+
+    const newCaretPosition =
+      this.caretPosition + (rowEndIndex - currentNodeIndexInRow);
+
+    SequenceRenderer.setCaretPosition(newCaretPosition);
+  }
+
   public static moveCaretForward() {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,

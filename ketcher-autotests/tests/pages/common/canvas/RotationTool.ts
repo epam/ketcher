@@ -14,10 +14,8 @@ export const RotationTool = (page: Page) => {
   const locators: RotationToolLocators = {
     flipHorizontallyButton: page.getByTestId('transform-flip-h'),
     flipVerticallyButton: page.getByTestId('transform-flip-v'),
-    deleteButton: page.getByTestId('delete'),
+    deleteButton: page.getByTestId('float-delete'),
     rotationHandle: page.getByTestId('rotation-handle'),
-    // Note: data-testid for rotation center handle is absent on Molecules canvas, but present on Macromolecules canvas.
-    //       Need to be added to Molecules canvas for consistency
     rotationCenterHandle: page.getByTestId('rotation-center-handle'),
   };
 

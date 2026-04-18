@@ -143,6 +143,46 @@ describe('Rotate controller', () => {
     expect(controller.center.y).toBe(3);
   });
 
+  it('adds test id to rotation center handle hitbox', () => {
+    const setAttribute = jest.fn();
+    const cross = {
+      attr: jest.fn().mockReturnThis(),
+    };
+    const circle = {
+      attr: jest.fn().mockReturnThis(),
+      node: { setAttribute },
+    };
+    const crossSet = {
+      push: jest.fn(),
+      translate: jest.fn(),
+    };
+
+    const controller = new RotateController({ selection: () => null } as any);
+    // @ts-ignore
+    controller.originalCenter = new Vec2(1, 1);
+    // @ts-ignore
+    controller.editor.render = {
+      paper: {
+        path: jest.fn().mockReturnValue(cross),
+        circle: jest.fn().mockReturnValue(circle),
+        set: jest.fn().mockReturnValue(crossSet),
+      },
+      options: {
+        microModeScale: 1,
+        offset: new Vec2(),
+      },
+    };
+
+    // @ts-ignore
+    controller.drawCross();
+
+    expect(setAttribute).toHaveBeenCalledWith(
+      'data-testid',
+      'rotation-center-handle',
+    );
+    expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
+  });
+
   it('shows half predefined degrees', () => {
     let structRotateDegree = 180;
     let predefinedDegree1 = 90;

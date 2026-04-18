@@ -191,7 +191,11 @@ export const FloatingTools = () => {
       >
         <Icon name={'transform-flip-v' as IconName} />
       </ToolButton>
-      <ToolButton onClick={handleDelete} title="Delete" data-testid="delete">
+      <ToolButton
+        onClick={handleDelete}
+        title="Delete"
+        data-testid="float-delete"
+      >
         <Icon name={'delete' as IconName} />
       </ToolButton>
     </FloatingToolsWrapper>

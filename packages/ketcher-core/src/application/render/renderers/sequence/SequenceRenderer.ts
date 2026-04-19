@@ -760,15 +760,31 @@ export class SequenceRenderer {
 
     const currentChainRow = this.currentChainRow;
     const currentNodeIndexInRow = currentChainRow.indexOf(currentEdittingNode);
-    const lastNodeIndexInRow = currentChainRow.length - 1;
 
-    if (currentNodeIndexInRow < 0 || currentNodeIndexInRow >= lastNodeIndexInRow) {
+    if (currentNodeIndexInRow < 0) {
       return;
     }
 
-    SequenceRenderer.setCaretPosition(
-      this.caretPosition + (lastNodeIndexInRow - currentNodeIndexInRow),
-    );
+    // Caret is rendered before the node at caretPosition. To place the caret
+    // AFTER the last symbol of the row:
+    // - If the row ends with an EmptySequenceNode (chain terminator that
+    //   occupies a slot at the row end), position the caret on it.
+    // - Otherwise (middle row of a long chain), position the caret one past
+    //   the last node — i.e. the slot immediately after the last symbol.
+    const lastNode = currentChainRow[currentChainRow.length - 1];
+    const rowEndsWithEmptyNode =
+      lastNode?.senseNode instanceof EmptySequenceNode;
+    const targetIndexInRow = rowEndsWithEmptyNode
+      ? currentChainRow.length - 1
+      : currentChainRow.length;
+
+    const delta = targetIndexInRow - currentNodeIndexInRow;
+
+    if (delta <= 0) {
+      return;
+    }
+
+    SequenceRenderer.setCaretPosition(this.caretPosition + delta);
   }
 
   public static moveCaretBack() {

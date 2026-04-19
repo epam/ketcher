@@ -72,6 +72,7 @@ export class SequenceRenderer {
   private static lastChainStartPositionValue: Vec2;
   private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
+  private static caretAtRowEndValue = false;
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -79,6 +80,14 @@ export class SequenceRenderer {
 
   private static set caretPosition(value: number) {
     this.caretPositionValue = value;
+  }
+
+  // Indicates that the caret should be rendered to the RIGHT of its host
+  // node rather than the default LEFT side. Used when pressing End on a
+  // middle row of a split chain, where there is no node slot after the last
+  // symbol to host the caret.
+  public static get isCaretAtRowEnd(): boolean {
+    return this.caretAtRowEndValue;
   }
 
   public static get lastUserDefinedCaretPosition(): number {
@@ -444,9 +453,11 @@ export class SequenceRenderer {
     });
   }
 
-  public static setCaretPosition(caretPosition: number) {
+  public static setCaretPosition(caretPosition: number, atRowEnd = false) {
     const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+
+    this.caretAtRowEndValue = atRowEnd;
 
     if (oldActiveTwoStrandedNode) {
       const renderer = oldActiveTwoStrandedNode.senseNode?.renderer;
@@ -765,26 +776,31 @@ export class SequenceRenderer {
       return;
     }
 
-    // Caret is rendered before the node at caretPosition. To place the caret
-    // AFTER the last symbol of the row:
-    // - If the row ends with an EmptySequenceNode (chain terminator that
-    //   occupies a slot at the row end), position the caret on it.
-    // - Otherwise (middle row of a long chain), position the caret one past
-    //   the last node — i.e. the slot immediately after the last symbol.
     const lastNode = currentChainRow[currentChainRow.length - 1];
     const rowEndsWithEmptyNode =
       lastNode?.senseNode instanceof EmptySequenceNode;
-    const targetIndexInRow = rowEndsWithEmptyNode
-      ? currentChainRow.length - 1
-      : currentChainRow.length;
+    const lastNodeIndexInRow = currentChainRow.length - 1;
 
-    const delta = targetIndexInRow - currentNodeIndexInRow;
-
-    if (delta <= 0) {
+    // On chain-terminating rows the last slot is an EmptySequenceNode, and
+    // the caret rendered on its left sits visually right after the last
+    // symbol — no extra shift needed.
+    //
+    // On middle rows of a split chain there is no trailing empty slot; the
+    // caret is parked on the last node and rendered on its RIGHT side so it
+    // visually appears after the last symbol of the current row (instead of
+    // before it, or on the first symbol of the next row).
+    if (currentNodeIndexInRow >= lastNodeIndexInRow) {
+      if (!rowEndsWithEmptyNode && !this.isCaretAtRowEnd) {
+        SequenceRenderer.setCaretPosition(this.caretPosition, true);
+      }
       return;
     }
 
-    SequenceRenderer.setCaretPosition(this.caretPosition + delta);
+    const delta = lastNodeIndexInRow - currentNodeIndexInRow;
+    SequenceRenderer.setCaretPosition(
+      this.caretPosition + delta,
+      !rowEndsWithEmptyNode,
+    );
   }
 
   public static moveCaretBack() {

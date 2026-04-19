@@ -619,11 +619,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (
       this.isAntisenseEditMode ? this.isAntisenseNode : !this.isAntisenseNode
     ) {
+      // Normally the caret is drawn on the LEFT side of the node (at x=-17
+      // relative to the spacer). When the caret is parked at the end of a
+      // middle row of a split chain (End key), there is no node slot after
+      // the last symbol to host the caret, so we shift it one cell width
+      // (+20) to the right so it renders AFTER the last symbol of the row.
+      const caretX = -17 + (SequenceRenderer.isCaretAtRowEnd ? 20 : 0);
+
       this.caretElement
         ?.append('line')
-        .attr('x1', -17)
+        .attr('x1', caretX)
         .attr('y1', -1)
-        .attr('x2', -17)
+        .attr('x2', caretX)
         .attr('y2', 21)
         .attr('stroke', '#333')
         .attr('class', 'blinking');

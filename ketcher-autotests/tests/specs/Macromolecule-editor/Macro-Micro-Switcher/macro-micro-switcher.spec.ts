@@ -497,15 +497,16 @@ test.describe('Macro-Micro-Switcher', () => {
     const test6Ch = getAbbreviationLocator(page, {
       name: Chem.Test_6_Ch.alias,
     });
-    await test6Ch.hover();
-    await ContextMenu(page, test6Ch).open();
-    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
-    await expect(
-      page.getByTestId(MonomerOnMicroOption.ExpandMonomer),
-    ).toBeVisible();
-    await expect(
-      page.getByTestId(SuperatomOption.RemoveAbbreviation),
-    ).not.toBeVisible();
+    expect(
+      await ContextMenu(page, test6Ch).isOptionVisible(
+        MonomerOnMicroOption.ExpandMonomer,
+      ),
+    ).toBe(true);
+    expect(
+      await ContextMenu(page, test6Ch).isOptionVisible(
+        SuperatomOption.RemoveAbbreviation,
+      ),
+    ).toBe(false);
   });
 
   test('The 3D view works for micromolecules when there are macromolecules on the canvas', async () => {
@@ -2508,12 +2509,11 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
       const monomerOnMicro = getAbbreviationLocator(page, {
         name: nonExpandableMonomer.monomerAlias,
       });
-      await ContextMenu(page, monomerOnMicro).open();
-
-      const disableState = await page
-        .getByTestId(MonomerOnMicroOption.ExpandMonomer)
-        .isDisabled();
-      expect(disableState).toBe(true);
+      expect(
+        await ContextMenu(page, monomerOnMicro).isOptionEnabled(
+          MonomerOnMicroOption.ExpandMonomer,
+        ),
+      ).toBe(false);
     });
   }
 });

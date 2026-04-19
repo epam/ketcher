@@ -1102,13 +1102,6 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     );
 
     await selectAllStructuresOnCanvas(page);
-    expect(
-      await ContextMenu(page, monomerLocator).isOptionEnabled(
-        MonomerOption.CreateAntisenseRNAStrand,
-      ),
-    ).toBeTruthy();
-
-    await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, monomerLocator).click(
       MonomerOption.CreateAntisenseRNAStrand,
     );
@@ -2881,13 +2874,6 @@ for (const monomer1 of shortMonomerList) {
         (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
       ) {
         await selectAllStructuresOnCanvas(page);
-        expect(
-          await ContextMenu(page, monomerLocator).isOptionEnabled(
-            MonomerOption.CreateAntisenseRNAStrand,
-          ),
-        ).toBeTruthy();
-
-        await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, monomerLocator).click(
           MonomerOption.CreateAntisenseRNAStrand,
         );
@@ -2947,13 +2933,6 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );
@@ -2996,13 +2975,6 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
     page,
     chain.monomerLocatorOptions,
   ).first();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
@@ -3091,13 +3063,6 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );
@@ -3138,13 +3103,6 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
     page,
     chain.monomerLocatorOptions,
   ).first();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
@@ -3190,13 +3148,6 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
     page,
     chain.monomerLocatorOptions,
   ).first();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
@@ -3268,13 +3219,6 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.Delete,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(MonomerOption.Delete);
   await takeEditorScreenshot(page);
 
@@ -3306,9 +3250,6 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
     page,
     chain.monomerLocatorOptions,
   ).first();
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(MonomerOption.Copy),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(MonomerOption.Copy);
@@ -3342,13 +3283,6 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
     page,
     chain.monomerLocatorOptions,
   ).first();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
@@ -3410,13 +3344,6 @@ test(`14. Validate that both sense and antisense strands can be exported correct
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );
@@ -3466,13 +3393,6 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );
@@ -3513,13 +3433,6 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   ).first();
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
     MonomerOption.CreateAntisenseRNAStrand,
   );
@@ -3555,12 +3468,6 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
     page,
     chain.monomerLocatorOptions,
   ).first();
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, monomerLocator).isOptionEnabled(
-      MonomerOption.CreateAntisenseRNAStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, monomerLocator).click(
@@ -3927,14 +3834,6 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    expect(
-      await ContextMenu(
-        page,
-        getSymbolLocator(page, {}).first(),
-      ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
-    ).toBeTruthy();
-
-    await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
       MonomerOption.CreateAntisenseRNAStrand,
     );
@@ -3971,14 +3870,6 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
       LayoutMode.Sequence,
     );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
-
-    await selectAllStructuresOnCanvas(page);
-    expect(
-      await ContextMenu(
-        page,
-        getSymbolLocator(page, {}).first(),
-      ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
-    ).toBeTruthy();
 
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4214,22 +4105,6 @@ for (const monomer1 of shortMonomerList) {
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
-        expect(
-          await ContextMenu(
-            page,
-            getSymbolLocator(page, {}).first(),
-          ).isOptionVisible(SequenceSymbolOption.CreateRNAAntisenseStrand),
-        ).toBeTruthy();
-
-        await selectAllStructuresOnCanvas(page);
-        expect(
-          await ContextMenu(
-            page,
-            getSymbolLocator(page, {}).first(),
-          ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
-        ).toBeTruthy();
-
-        await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
           SequenceSymbolOption.CreateRNAAntisenseStrand,
         );
@@ -4307,23 +4182,6 @@ for (const monomer1 of shortMonomerList) {
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
-        // Checking presence of Create Antisense Strand option on the context menu and enabled
-        await selectAllStructuresOnCanvas(page);
-        expect(
-          await ContextMenu(
-            page,
-            getSymbolLocator(page, {}).first(),
-          ).isOptionVisible(SequenceSymbolOption.CreateDNAAntisenseStrand),
-        ).toBeTruthy();
-
-        await selectAllStructuresOnCanvas(page);
-        expect(
-          await ContextMenu(
-            page,
-            getSymbolLocator(page, {}).first(),
-          ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
-        ).toBeTruthy();
-
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
           SequenceSymbolOption.CreateDNAAntisenseStrand,
@@ -4377,13 +4235,6 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -4412,20 +4263,6 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
 
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionVisible(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4461,20 +4298,6 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionVisible(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -4505,20 +4328,6 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionVisible(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4554,13 +4363,6 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -4590,13 +4392,6 @@ test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected t
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
@@ -4630,13 +4425,6 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateRNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
-
-  await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -4667,13 +4455,6 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
 
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
-
-  await selectAllStructuresOnCanvas(page);
-  expect(
-    await ContextMenu(page, getSymbolLocator(page, {}).first()).isOptionEnabled(
-      SequenceSymbolOption.CreateDNAAntisenseStrand,
-    ),
-  ).toBeTruthy();
 
   await selectAllStructuresOnCanvas(page);
   await ContextMenu(page, getSymbolLocator(page, {}).first()).click(

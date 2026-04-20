@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import {
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
   ShowHydrogenLabels,
   ShowHydrogenLabelNames,
@@ -118,13 +118,13 @@ const render: {
   stereoLabelStyle: {
     title: 'Label display at\u00A0stereogenic\u00A0centers',
     enum: [
-      StereLabelStyleType.IUPAC,
-      StereLabelStyleType.Classic,
-      StereLabelStyleType.On,
-      StereLabelStyleType.Off,
+      StereoLabelStyleType.IUPAC,
+      StereoLabelStyleType.Classic,
+      StereoLabelStyleType.On,
+      StereoLabelStyleType.Off,
     ],
     enumNames: ['IUPAC style', 'Classic', 'On', 'Off'],
-    default: StereLabelStyleType.IUPAC,
+    default: StereoLabelStyleType.IUPAC,
   },
   colorOfAbsoluteCenters: {
     title: ' Absolute Center color',

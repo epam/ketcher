@@ -25,7 +25,6 @@ import {
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -957,7 +956,7 @@ export class Atom extends BaseMicromoleculeEntity {
   ) {
     let sgroup: SGroup | undefined;
 
-    if (structOrSgroup instanceof SGroup) {
+    if (Atom.isSGroup(structOrSgroup)) {
       sgroup = structOrSgroup;
     } else if (searchBySgroups) {
       sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
@@ -1081,7 +1080,7 @@ export class Atom extends BaseMicromoleculeEntity {
     const sGroup = searchBySgroups
       ? struct.getGroupFromAtomIdBySgroups(atomId)
       : struct.getGroupFromAtomId(atomId);
-    const isMonomer = sGroup instanceof MonomerMicromolecule;
+    const isMonomer = sGroup?.isMonomer;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
@@ -1097,6 +1096,12 @@ export class Atom extends BaseMicromoleculeEntity {
               attachmentPoint?.attachmentPointNumber,
         ) !== null,
     );
+  }
+
+  private static isSGroup(
+    structOrSgroup: Struct | SGroup,
+  ): structOrSgroup is SGroup {
+    return structOrSgroup instanceof SGroup;
   }
 }
 

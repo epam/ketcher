@@ -19,6 +19,7 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {

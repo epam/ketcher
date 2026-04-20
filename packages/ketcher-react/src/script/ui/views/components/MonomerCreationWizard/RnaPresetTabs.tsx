@@ -71,11 +71,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const { phosphatePosition, onPhosphatePositionChange } = props;
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
+  const struct = editor.struct();
 
   const presetAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
     assignedAttachmentPoints,
     wizardState,
-    editor.struct(),
+    struct,
   );
   const componentAttachmentPoints = {
     base: getAttachmentPointsForRnaPresetComponent(
@@ -97,51 +98,45 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const componentConnectionAttachmentPoints = {
     base: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
-      editor.struct(),
+      struct,
       'base',
       phosphatePosition as PhosphatePosition | undefined,
     ),
     sugar: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
-      editor.struct(),
+      struct,
       'sugar',
       phosphatePosition as PhosphatePosition | undefined,
     ),
     phosphate: getConnectionAttachmentPointsForRnaPresetComponent(
       wizardState,
-      editor.struct(),
+      struct,
       'phosphate',
       phosphatePosition as PhosphatePosition | undefined,
     ),
   };
   const readonlyComponentAttachmentPoints = {
-    base: componentConnectionAttachmentPoints.base
-      .filter((name) => !componentAttachmentPoints.base.has(name))
-      .map((name) => ({
+    base: componentConnectionAttachmentPoints.base.map((name) => ({
+      name,
+      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+        KetMonomerClass.Base,
         name,
-        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-          KetMonomerClass.Base,
-          name,
-        ),
-      })),
-    sugar: componentConnectionAttachmentPoints.sugar
-      .filter((name) => !componentAttachmentPoints.sugar.has(name))
-      .map((name) => ({
+      ),
+    })),
+    sugar: componentConnectionAttachmentPoints.sugar.map((name) => ({
+      name,
+      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+        KetMonomerClass.Sugar,
         name,
-        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-          KetMonomerClass.Sugar,
-          name,
-        ),
-      })),
-    phosphate: componentConnectionAttachmentPoints.phosphate
-      .filter((name) => !componentAttachmentPoints.phosphate.has(name))
-      .map((name) => ({
+      ),
+    })),
+    phosphate: componentConnectionAttachmentPoints.phosphate.map((name) => ({
+      name,
+      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
+        KetMonomerClass.Phosphate,
         name,
-        leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-          KetMonomerClass.Phosphate,
-          name,
-        ),
-      })),
+      ),
+    })),
   };
 
   const applyHighlights = useCallback(

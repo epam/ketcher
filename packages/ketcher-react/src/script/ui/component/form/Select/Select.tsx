@@ -18,7 +18,7 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
@@ -61,19 +61,11 @@ const Select = ({
   'data-testid': testId,
   error,
 }: Props) => {
-  const [currentValue, setCurrentValue] = useState<Option>();
+  const currentValue = options?.find((option) => option.value === value);
   const isFullscreen = !!document.fullscreenElement;
   const portalContainer = isFullscreen
     ? document.querySelector('#root')
     : undefined;
-
-  useEffect(() => {
-    let option;
-    if (options) {
-      option = options.find((option) => option.value === value);
-    }
-    return setCurrentValue(option);
-  }, [options, value]);
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);

@@ -759,6 +759,104 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     },
   );
 
+  it('recalculates sugar/phosphate connection attachment points when phosphate position changes', () => {
+    wizardState.sugar.structure = {
+      atoms: [2],
+      bonds: [],
+    };
+    wizardState.phosphate.structure = {
+      atoms: [3],
+      bonds: [],
+    };
+    mockEditor.struct.mockReturnValue({
+      atoms: new Map(),
+      bonds: new Map([[1, { begin: 2, end: 3 }]]),
+      halfBonds: new Map(),
+    });
+
+    const { rerender } = render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition="3"
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-sugar-tab'));
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R2',
+    );
+
+    rerender(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition="5"
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R1',
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R2',
+    );
+  });
+
+  it('shows both explicit and connection attachment points when they share the same label', () => {
+    mockStore = createMockStore(undefined, {
+      assignedAttachmentPoints: new Map([
+        [AttachmentPointName.R2, [2, 12]],
+        [AttachmentPointName.R1, [3, 13]],
+      ]),
+    });
+    wizardState.sugar.structure = {
+      atoms: [2],
+      bonds: [],
+    };
+    wizardState.phosphate.structure = {
+      atoms: [3],
+      bonds: [],
+    };
+    mockEditor.struct.mockReturnValue({
+      atoms: new Map(),
+      bonds: new Map([[1, { begin: 2, end: 3 }]]),
+      halfBonds: new Map(),
+    });
+
+    render(
+      <Provider store={mockStore}>
+        <RnaPresetTabs
+          wizardState={wizardState}
+          editor={mockEditor}
+          wizardStateDispatch={mockDispatch}
+          phosphatePosition="3"
+          onPhosphatePositionChange={mockOnPhosphatePositionChange}
+        />
+      </Provider>,
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-sugar-tab'));
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R2,R2',
+    );
+
+    fireEvent.click(screen.getByTestId('nucleotide-phosphate-tab'));
+    expect(screen.getByTestId('attachment-points-values')).toHaveTextContent(
+      'R1,R1',
+    );
+  });
+
   it('keeps connection attachment points hidden on the preset tab', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: new Map([

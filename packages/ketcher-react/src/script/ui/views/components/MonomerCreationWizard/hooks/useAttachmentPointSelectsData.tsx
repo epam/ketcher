@@ -36,7 +36,7 @@ const getAtomTypeDisplayLabel = (
 };
 
 const getLeavingAtomOption = (
-  label: AtomLabel,
+  label: string,
   implicitH = label === AtomLabel.O ? 1 : 0,
 ): Option => ({
   value: label,

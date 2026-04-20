@@ -16,7 +16,7 @@
 
 import { Action } from '../editor/actions';
 import { MonomerCreationState, Render } from 'application/render';
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { selectionKeys } from './shared/constants';
 import { PipelineSubscription, Subscription } from 'subscription';
 import { IRnaPreset } from 'application/editor/tools';

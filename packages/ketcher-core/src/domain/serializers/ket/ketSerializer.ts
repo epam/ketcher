@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -53,7 +54,8 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditor, EditorSelection } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { EditorSelection } from 'application/editor/editor.types';
 import {
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
@@ -99,7 +101,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -254,7 +256,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);

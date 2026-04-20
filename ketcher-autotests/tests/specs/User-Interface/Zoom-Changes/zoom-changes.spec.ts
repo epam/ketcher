@@ -25,7 +25,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {

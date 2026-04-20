@@ -1,4 +1,5 @@
 import { test, expect } from '@fixtures';
+import { AbbreviationLookup } from '@tests/pages/molecules/canvas/AbbreviationLookupDialog';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -29,8 +30,7 @@ test.describe('Lookup Abbreviations window', () => {
   test('is shown, when entering some text', async ({ page }) => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('mek');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    expect(await AbbreviationLookup(page).window.isVisible()).toBe(true);
     await takeEditorScreenshot(page);
   });
 
@@ -42,8 +42,7 @@ test.describe('Lookup Abbreviations window', () => {
     await page.keyboard.type('1');
     await page.keyboard.type('1');
     await page.keyboard.type('1');
-    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(false);
+    expect(await AbbreviationLookup(page).window.isVisible()).toBe(false);
   });
 
   test('is not shown, when pressing "t" multiple times to change template', async ({
@@ -54,7 +53,6 @@ test.describe('Lookup Abbreviations window', () => {
     await page.keyboard.type('t');
     await page.keyboard.type('t');
     await page.keyboard.type('t');
-    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(false);
+    expect(await AbbreviationLookup(page).window.isVisible()).toBe(false);
   });
 });

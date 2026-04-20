@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
   'The HELM alias must consist only of uppercase and lowercase letters, numbers, underscores (_), asterisks (*), square brackets ([]), parentheses (()), dots (.), and hyphens (-), spaces prohibited.';

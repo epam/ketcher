@@ -4,7 +4,7 @@ import type {
 } from 'application/render';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import type { BaseMonomer } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {
   Connection,

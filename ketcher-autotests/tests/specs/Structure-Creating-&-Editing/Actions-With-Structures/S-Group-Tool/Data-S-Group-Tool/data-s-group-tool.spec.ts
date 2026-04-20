@@ -42,7 +42,7 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { selectionDelete } from '../../Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -375,7 +375,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

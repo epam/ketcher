@@ -14,14 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  MonomerMicromolecule,
-  Pile,
-  SGroup,
-  Struct,
-} from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Pile } from 'domain/entities/pile';
+import { SGroup } from 'domain/entities/sgroup';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { Struct } from 'domain/entities/struct';
 
 import { Mapping } from './mol.types';
 import utils from './utils';

@@ -18,7 +18,10 @@ import {
   MonomerHoverOperation,
 } from 'application/editor/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { createPolymerEditorCanvas } from '../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ClearTool } from 'application/editor/tools/Clear';
@@ -98,6 +101,7 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
+      renderersContainer: createRenderersManager(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
@@ -115,6 +119,7 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
+      renderersContainer: createRenderersManager(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });

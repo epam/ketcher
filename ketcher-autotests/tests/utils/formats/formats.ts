@@ -1,4 +1,3 @@
-/* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
 import { Page, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -63,12 +62,12 @@ export async function getSequence(
   );
 }
 
-export function setZoom(page: Page, value: number) {
-  return page.evaluate((value) => window.ketcher.setZoom(value), value);
+export async function setZoom(page: Page, value: number) {
+  return await page.evaluate((value) => window.ketcher.setZoom(value), value);
 }
 
-export function setMode(page: Page, mode: SupportedModes) {
-  return page.evaluate((mode) => window.ketcher.setMode(mode), mode);
+export async function setMode(page: Page, mode: SupportedModes) {
+  return await page.evaluate((mode) => window.ketcher.setMode(mode), mode);
 }
 
 export async function getCml(page: Page): Promise<string> {

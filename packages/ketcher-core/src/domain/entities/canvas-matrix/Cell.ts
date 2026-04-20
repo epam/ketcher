@@ -1,4 +1,5 @@
-import { BaseMonomer, SubChainNode } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 
 export class Cell {

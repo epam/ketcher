@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { AnyAction } from 'redux';
-import { appUpdate } from '../options';
+import { appUpdate } from '../options/actions';
 import { FunctionalGroupsProvider, Struct } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';

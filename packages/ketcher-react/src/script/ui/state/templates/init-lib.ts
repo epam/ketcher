@@ -16,7 +16,7 @@
 
 import { KetcherLogger, KetSerializer } from 'ketcher-core';
 
-import { appUpdate } from '../options';
+import { appUpdate } from '../options/actions';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
 import { AnyAction, Dispatch } from 'redux';

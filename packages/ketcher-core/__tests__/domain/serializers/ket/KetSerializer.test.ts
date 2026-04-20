@@ -37,7 +37,10 @@ import {
 } from './fixtures/toStruct';
 
 import { KetSerializer } from 'domain/serializers';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import { CoreEditor } from 'application/editor';
 
 const ket = new KetSerializer();
@@ -45,7 +48,11 @@ const ket = new KetSerializer();
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
   // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
-  const _editor = new CoreEditor({ canvas, theme: {} });
+  const _editor = new CoreEditor({
+    canvas,
+    theme: {},
+    renderersContainer: createRenderersManager(),
+  });
   const parsedPrepareContent = JSON.parse(preparedKet);
   const deserData = ket.deserialize(preparedKet);
   it('correct work with atoms', () => {
@@ -181,7 +188,11 @@ describe('deserialize (ToStruct)', () => {
 describe('serialize (ToKet)', () => {
   const canvas = createPolymerEditorCanvas();
   // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
-  const _editor = new CoreEditor({ canvas, theme: {} });
+  const _editor = new CoreEditor({
+    canvas,
+    theme: {},
+    renderersContainer: createRenderersManager(),
+  });
   const parsedNewPrepareStruct = JSON.parse(ket.serialize(prepareStruct));
   const parsedPrepareContent = JSON.parse(preparedKet);
   it('correct work with atoms', () => {

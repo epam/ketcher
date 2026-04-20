@@ -27,8 +27,8 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.ts --configPlugin typescript2 -m true",
+    "start": "cross-env NODE_ENV=development rollup -c rollup.config.ts --configPlugin typescript2 -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
@@ -63,7 +63,7 @@
     "intersection-observer": "^0.12.2",
     "ketcher-core": "*",
     "lexical": "^0.40.0",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "miew-react": "0.11.0",
     "paper": "^0.12.18",
     "react-colorful": "^5.4.0",

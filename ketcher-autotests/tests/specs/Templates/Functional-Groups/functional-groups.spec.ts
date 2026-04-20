@@ -35,14 +35,13 @@ import {
   expandAbbreviation,
   removeAbbreviation,
 } from '@utils/sgroup/helpers';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   FunctionalGroupsTabItems,
   SaltsAndSolventsTabItems,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
@@ -548,12 +547,9 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('me')
-      .first()
-      .hover();
+    await getAbbreviationLocator(page, {
+      name: SaltsAndSolventsTabItems.MethaneSulphonicAcid,
+    }).hover();
     await takeEditorScreenshot(page);
   });
 

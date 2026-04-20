@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
@@ -5,6 +6,7 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   clickOnCanvas,
+  takeElementScreenshot,
 } from '@utils';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
@@ -92,13 +94,10 @@ test.describe('Atom Settings', () => {
   test(' Add simple atom query primitives to the query specific properties', async ({
     page,
   }) => {
-    const pointX = 200;
-    const pointY = 200;
-
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
-    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
-    const point = getAtomLocator(page, { atomLabel: 'C', atomId: 4 });
+    // await page.keyboard.press('Escape');
+    const point = getAtomLocator(page, { atomLabel: 'C', atomId: 10 });
 
     await ContextMenu(page, point).click([
       MicroAtomOption.QueryProperties,
@@ -120,7 +119,6 @@ test.describe('Atom Settings', () => {
       QueryAtomOption.RingSize,
       RingSizeOption.Eight,
     ]);
-    await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, point, { padding: 20 });
   });
 });

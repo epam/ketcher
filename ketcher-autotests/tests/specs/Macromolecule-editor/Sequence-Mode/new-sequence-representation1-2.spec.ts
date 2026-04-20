@@ -2,10 +2,9 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
-import { Page, test, expect, Locator } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
+  clickInTheMiddleOfTheCanvas,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -30,12 +29,13 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { logTestWarning } from '@utils/testLogging';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 let page: Page;
 
@@ -1466,35 +1466,6 @@ async function exitFromEditMode(page: Page) {
   await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
 }
 
-async function closeContextMenu(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
-  await clickOnCanvas(page, 0, 0, { waitForRenderTimeOut: 0 });
-  await page.getByRole('menu').waitFor({ state: 'hidden' });
-}
-
-// Due to rare bug - sometimes wrong menu appears for selected symbol
-// Function below is workaround - it closes wrong menu and tries to open it once again
-async function callContextMenuForSelectedAllSymbol(
-  page: Page,
-  symbol: Locator,
-) {
-  let attempts = 0;
-  const maxAttempts = 5;
-  while (attempts < maxAttempts) {
-    await ContextMenu(page, symbol).open();
-    if (await page.getByTestId('sequence_menu_title').isVisible()) {
-      return;
-    }
-    attempts++;
-    await closeContextMenu(page);
-    await page.waitForTimeout(1 * 1000);
-    await selectAllStructuresOnCanvas(page);
-  }
-  logTestWarning(
-    'It was impossible to open contex menu for selected symbol in 5 tries',
-  );
-}
-
 async function turnIntoEditModeAndPlaceCursorToThePosition(
   page: Page,
   {
@@ -1859,6 +1830,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
       );
+      await CommonLeftToolbar(page).areaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
 
       const senseSymbolId = await getSymbolLocator(page, {
         hydrogenConnectionNumber: 0,
@@ -1880,21 +1854,26 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         symbolId: antisenseSymbolId ?? '',
       }).first();
 
-      const establishHydrogenBondsOption = page
-        .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
-        .first();
-      const deleteHydrogenBondsOption = page
-        .getByTestId(SequenceSymbolOption.DeleteHydrogenBonds)
-        .first();
-
       // 1. Check that right clicking on a symbol that has no hydrogen bonds with a symbol bellow/above it, give the option to "Establish Hydrogen Bonds"
-      await ContextMenu(page, senseSymbol).open();
-      await expect(establishHydrogenBondsOption).toBeEnabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeTruthy();
       // 2. Check If there are no H-bonds, the option "Delete Hydrogen Bonds" is disabled ( Requirement: 1.2 )
-      await expect(deleteHydrogenBondsOption).toBeDisabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
       // 3. Check that a hydrogen bond established between the monomer that was clicked on and the monomer placed bellow/above it ( Requirement: 1.1 )
-      await establishHydrogenBondsOption.click({ force: true });
+      await clickInTheMiddleOfTheCanvas(page);
+      await ContextMenu(page, senseSymbol).click(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      );
       const senseHydrogenConnectionNumber = await senseSymbol.getAttribute(
         'data-hydrogen-connection-number',
       );
@@ -1906,11 +1885,13 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       // 4. Check if a symbol has H-bonds with a symbol opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
       // Dirty hack to make sure that the symbol got menu opened for it
       await senseSymbol.dblclick({ force: true });
-      await clickInTheMiddleOfTheScreen(page);
-      await clickInTheMiddleOfTheScreen(page);
-      await ContextMenu(page, senseSymbol).open();
-
-      await expect(establishHydrogenBondsOption).toBeDisabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
       // 5. Check that if the symbol represents a nucleotide/nucleoside, a hydrogen bond established from the base (no need for a "sense base" check) ( Requirement: 1.1 )
       const senseSymbolType = await senseSymbol.getAttribute(
@@ -1947,11 +1928,18 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       }
 
       // 6. Check that right clicking on a symbol that has any H-bonds give the option to "Delete Hydrogen Bonds" ( Requirement: 1.2 )
-      await ContextMenu(page, senseSymbol).open();
-      await expect(deleteHydrogenBondsOption).toBeEnabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeTruthy();
 
       // 7. Check that clicking on "Delete Hydrogen Bonds" will remove hydrogen bond
-      await deleteHydrogenBondsOption.click({ force: true });
+      await clickInTheMiddleOfTheCanvas(page);
+      await ContextMenu(page, senseSymbol).click(
+        SequenceSymbolOption.DeleteHydrogenBonds,
+      );
       expect(
         await senseSymbol.getAttribute('data-hydrogen-connection-number'),
       ).toBe('0');
@@ -1990,6 +1978,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
 
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Sequence,
+      );
+      await CommonLeftToolbar(page).areaSelectionTool(
+        SelectionToolType.Rectangle,
       );
 
       const senseSymbolId = await getSymbolLocator(page, {
@@ -2031,49 +2022,57 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         symbolId: antisenseSymbolWithHBondId ?? '',
       }).first();
 
-      const establishHydrogenBondsOption = page
-        .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
-        .first();
-      const deleteHydrogenBondsOption = page
-        .getByTestId(SequenceSymbolOption.DeleteHydrogenBonds)
-        .first();
-
       // 1. Check if multiple monomers/symbols are selected and at least one of them does not have hydrogen bonds established
       //    with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" available from the r-click menu ( Requirement: 1.3 )
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await ContextMenu(page, senseSymbolWithHBond).open();
-      await expect(establishHydrogenBondsOption).toBeEnabled();
+      expect(
+        await ContextMenu(page, senseSymbolWithHBond).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBe(true);
 
       // 3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds"
       //    available in the r-click menu ( Requirement: 1.4 )
-      await closeContextMenu(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, senseSymbol);
-      await expect(deleteHydrogenBondsOption).toBeEnabled();
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeTruthy();
 
       // 2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol
       //    above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
-      await closeContextMenu(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, senseSymbolWithHBond);
-      await establishHydrogenBondsOption.click({ force: true });
+      await ContextMenu(page, senseSymbolWithHBond).click(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      );
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, antisenseSymbol);
-      await expect(establishHydrogenBondsOption).toBeDisabled();
+      expect(
+        await ContextMenu(page, antisenseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
-      // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
-      await closeContextMenu(page);
+      // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds"
+      //    disabled in the r-click menu ( Requirement: 1.4 )
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
       await ContextMenu(page, antisenseSymbol).click(
         SequenceSymbolOption.DeleteHydrogenBonds,
       );
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
       await ConfirmYourActionDialog(page).yes();
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await antisenseSymbolWithHBond.hover();
-      await ContextMenu(page, antisenseSymbolWithHBond).open();
-      await expect(deleteHydrogenBondsOption).toBeDisabled();
-      await closeContextMenu(page);
+      expect(
+        await ContextMenu(page, antisenseSymbolWithHBond).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeFalsy();
     });
   }
 }
@@ -2095,6 +2094,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2107,13 +2109,13 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       symbolId: senseSymbolId ?? '',
     }).first();
 
-    const establishHydrogenBondsOption = page
-      .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
-      .first();
-
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await ContextMenu(page, senseSymbol).open();
-    await expect(establishHydrogenBondsOption).toBeDisabled();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, senseSymbol).isOptionEnabled(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      ),
+    ).toBeFalsy();
   });
 }
 
@@ -2138,6 +2140,9 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2150,13 +2155,13 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       symbolId: senseSymbolId ?? '',
     }).first();
 
-    const establishHydrogenBondsOption = page
-      .getByTestId(SequenceSymbolOption.EstablishHydrogenBonds)
-      .first();
-
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await ContextMenu(page, senseSymbol).open();
-    await expect(establishHydrogenBondsOption).toBeDisabled();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, senseSymbol).isOptionEnabled(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      ),
+    ).toBeFalsy();
   });
 }
 

@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
@@ -24,7 +26,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 type Arrow = {
   pos: Array<Vec2>;
@@ -221,7 +223,7 @@ class ReRxnArrow extends ReObject {
 }
 
 function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
-  if (+tfx(height) === 0) {
+  if (+toFixed(height) === 0) {
     const minX = Math.min(a.x, b.x);
     const minY = Math.min(a.y, b.y);
     const x = minX + Math.abs(a.x - b.x) / 2;

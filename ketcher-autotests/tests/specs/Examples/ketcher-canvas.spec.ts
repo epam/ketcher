@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   dragMouseAndMoveTo,
@@ -22,7 +22,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await dragMouseAndMoveTo(page, 100);
@@ -49,7 +49,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -60,7 +60,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
      */
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });

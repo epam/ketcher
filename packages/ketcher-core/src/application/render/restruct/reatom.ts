@@ -915,102 +915,72 @@ class ReAtom extends ReObject {
           );
         }
 
-        // Render connection (readonly) attachment points
+        // Render connection (readonly) attachment points — blue circle around
+        // the connection atom, same visual style as regular attachment atoms
+        // but without an R-label. Hover syncs with the panel row.
         if (connectionAttachmentPoints) {
-          const connectionApName = Array.from(
-            connectionAttachmentPoints.keys(),
-          ).find((key) => {
-            const atomsPair = connectionAttachmentPoints.get(key);
-            assert(atomsPair);
-            return atomsPair[0] === aid;
-          });
+          const isConnectionAtom = Array.from(
+            connectionAttachmentPoints.values(),
+          ).some(([connectionAtomId]) => connectionAtomId === aid);
 
-          if (connectionApName) {
-            const atomsPair = connectionAttachmentPoints.get(connectionApName);
-            assert(atomsPair);
-            const [connectionAtomId, otherAtomId] = atomsPair;
-
-            const connectionAtom = struct.atoms.get(connectionAtomId);
-            const otherAtom = struct.atoms.get(otherAtomId);
-
-            assert(connectionAtom);
-            assert(otherAtom);
-
-            const connectionPos = connectionAtom.pp;
-            const otherPos = otherAtom.pp;
-            const direction = otherPos.sub(connectionPos).normalized();
-
-            const shiftedPos = this.getShiftedSegmentPosition(
-              render.options,
-              direction,
-              otherPos,
+          if (isConnectionAtom) {
+            // Draw the same blue outline ring used for regular attachment atoms
+            const ringPath = this.makeHighlightePlate(
+              restruct,
+              {
+                fill: 'none',
+                stroke: '#4da3f8',
+                'stroke-width': '2px',
+              },
+              -4,
             );
-            const labelPos = shiftedPos.addScaled(direction, 8);
+            restruct.addReObjectPath(LayerMap.atom, this.visel, ringPath);
 
-            const rLabelElement = render.paper
-              .text(labelPos.x, labelPos.y, connectionApName)
-              .attr({
-                font: options.font,
-                'font-size': options.fontszsubInPx,
-                fill: '#666666',
-                'font-weight': '700',
-                cursor: 'default',
-              });
-
-            const labelBBox = rLabelElement.getBBox();
-            const bgRadius =
-              Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
-            const background = render.paper
-              .circle(labelPos.x, labelPos.y, bgRadius)
-              .attr({
-                fill: '#888888',
-                stroke: 'none',
-                cursor: 'default',
-                opacity: 0,
-              });
-
-            const labelGroup = render.paper.set();
-            labelGroup.push(background, rLabelElement);
-
-            labelGroup.forEach((element) => {
-              element.node?.setAttribute(
-                'data-attachment-point-name',
-                connectionApName,
-              );
-              element.node?.setAttribute(
-                'data-testid',
-                `connection-${connectionApName}`,
-              );
+            // Invisible hit-area circle for hover detection, centred on the
+            // atom's screen-space position (ps is already computed above)
+            const hitArea = render.paper.circle(ps.x, ps.y, 10).attr({
+              fill: '#4da3f8',
+              stroke: 'none',
+              opacity: 0,
+              cursor: 'pointer',
             });
 
-            // Hover: highlight the controls row in the panel
-            labelGroup.hover(
+            // Find the AP name(s) for this connection atom to drive panel sync
+            const connectionApNames = Array.from(
+              connectionAttachmentPoints.entries(),
+            )
+              .filter(([, [caid]]) => caid === aid)
+              .map(([apName]) => apName);
+
+            hitArea.hover(
               () => {
-                background.attr({ opacity: 1 });
-                rLabelElement.attr({ fill: '#ffffff' });
-                window.dispatchEvent(
-                  new CustomEvent<AttachmentPointName>(
-                    'highlightAttachmentPointControls',
-                    { detail: connectionApName },
-                  ),
-                );
+                hitArea.attr({ opacity: 0.15 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'highlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
               },
               () => {
-                background.attr({ opacity: 0 });
-                rLabelElement.attr({ fill: '#666666' });
-                window.dispatchEvent(
-                  new CustomEvent<AttachmentPointName>(
-                    'resetHighlightAttachmentPointControls',
-                    { detail: connectionApName },
-                  ),
-                );
+                hitArea.attr({ opacity: 0 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'resetHighlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
               },
             );
 
             restruct.addReObjectPath(
               LayerMap.data,
               this.visel,
-              labelGroup,
+              hitArea,
               ps,
               false,
             );

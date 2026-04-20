@@ -5,8 +5,8 @@ import {
   ARROW_HEAD_LENGHT,
   ARROW_HEAD_WIDTH,
 } from 'application/render/draw';
-import { provideEditorSettings } from 'application/editor';
-import { Vec2 } from 'domain/entities';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Vec2 } from 'domain/entities/vec2';
 import { toFixed } from 'utilities';
 
 export class FailedArrowRenderer {

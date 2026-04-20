@@ -2,7 +2,6 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
-  CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
@@ -15,6 +14,7 @@ import {
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
   MonomerToAtomBond,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -142,7 +142,7 @@ export const getModifyAminoAcidsMenuItems = (
   const modificationsForSelection = new Set<string>();
   const modificationTypesDisabledByAttachmentPoints = new Set<string>();
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =

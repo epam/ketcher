@@ -31,7 +31,9 @@ import {
   ImageMove,
   MultitailArrowMove,
 } from '../operations';
-import { Pile, RGroup, Vec2 } from 'domain/entities';
+import { Pile } from 'domain/entities/pile';
+import { RGroup } from 'domain/entities/rgroup';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';

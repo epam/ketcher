@@ -39,7 +39,7 @@ export enum StereoColoringType {
   Off = 'Off',
 }
 
-export enum StereLabelStyleType {
+export enum StereoLabelStyleType {
   IUPAC = 'Iupac',
   Classic = 'Classic',
   On = 'On',

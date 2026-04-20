@@ -36,11 +36,12 @@ const getInitialSequenceType = (): SequenceType => {
     const cachedSequenceType = localStorageWrapper.getItem(
       LAST_SELECTED_SEQUENCE_TYPE,
     );
-    if (
-      cachedSequenceType === SequenceType.RNA ||
-      cachedSequenceType === SequenceType.DNA ||
-      cachedSequenceType === SequenceType.PEPTIDE
-    ) {
+    const supportedSequenceTypes: SequenceType[] = [
+      SequenceType.RNA,
+      SequenceType.DNA,
+      SequenceType.PEPTIDE,
+    ];
+    if (supportedSequenceTypes.includes(cachedSequenceType)) {
       return cachedSequenceType;
     }
   } catch (e) {

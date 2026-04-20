@@ -23,7 +23,7 @@ import {
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
-import { ketcherProvider } from './utils';
+import { ketcherProvider } from './ketcherProvider';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,

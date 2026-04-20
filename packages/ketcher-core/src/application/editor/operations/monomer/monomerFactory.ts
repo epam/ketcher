@@ -37,7 +37,11 @@ import {
   UnsplitNucleotide,
 } from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
-import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import {
+  isAmbiguousMonomerLibraryItem,
+  isMonomerItemPhosphate,
+  isMonomerItemSugar,
+} from 'domain/helpers/monomers';
 import {
   MONOMER_CONST,
   rnaDnaNaturalAnalogues,
@@ -82,19 +86,11 @@ export const monomerFactory = (
     Monomer = Peptide;
     MonomerRenderer = PeptideRenderer;
     ketMonomerClass = KetMonomerClass.AminoAcid;
-  } else if (
-    monomer.props.MonomerClass === KetMonomerClass.Sugar ||
-    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
-      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R)
-  ) {
+  } else if (isMonomerItemSugar(monomer)) {
     Monomer = Sugar;
     MonomerRenderer = SugarRenderer;
     ketMonomerClass = KetMonomerClass.Sugar;
-  } else if (
-    monomer.props.MonomerClass === KetMonomerClass.Phosphate ||
-    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
-      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P)
-  ) {
+  } else if (isMonomerItemPhosphate(monomer)) {
     Monomer = Phosphate;
     MonomerRenderer = PhosphateRenderer;
     ketMonomerClass = KetMonomerClass.Phosphate;

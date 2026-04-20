@@ -34,6 +34,7 @@ export interface IEditorEvents {
   mouseUpMonomer: Subscription;
   rightClickSequence: Subscription;
   rightClickCanvas: Subscription;
+  rightClickCanvasSequence: Subscription;
   rightClickPolymerBond: Subscription;
   rightClickSelectedMonomers: Subscription;
   keyDown: Subscription;
@@ -109,6 +110,7 @@ export const editorEvents: IEditorEvents = {
   mouseUpMonomer: new Subscription(),
   rightClickSequence: new Subscription(),
   rightClickCanvas: new Subscription(),
+  rightClickCanvasSequence: new Subscription(),
   rightClickPolymerBond: new Subscription(),
   rightClickSelectedMonomers: new Subscription(),
   keyDown: new Subscription(),
@@ -176,6 +178,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseUpMonomer',
   'rightClickSequence',
   'rightClickCanvas',
+  'rightClickCanvasSequence',
   'rightClickPolymerBond',
   'rightClickSelectedMonomers',
   'editSequence',

@@ -19,29 +19,45 @@
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 
+export interface RaphaelPath {
+  translateAbs(x: number, y: number): void;
+  rotate(degree: number, cx: number, cy: number): void;
+  insertBefore(element: unknown): void;
+  remove(): void;
+  next?: RaphaelPath;
+  [key: string]: unknown;
+}
+
 class Visel {
-  constructor(type) {
+  public type: string;
+  public paths: RaphaelPath[];
+  public boxes: Box2Abs[];
+  public boundingBox: Box2Abs | null;
+  public oldBoundingBox: Box2Abs | null;
+  public exts: Box2Abs[];
+
+  constructor(type: string) {
     this.type = type;
     this.paths = [];
-    /** @type {Box2Abs[]} */
     this.boxes = [];
-    /** @type {Box2Abs | null} */
     this.boundingBox = null;
     this.oldBoundingBox = null;
     this.exts = [];
   }
 
-  add(path, bb, ext) {
+  add(path: RaphaelPath, bb?: Box2Abs | null, ext?: Box2Abs | null): void {
     this.paths.push(path);
     if (bb) {
       this.boxes.push(bb);
       this.boundingBox =
-        this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb);
+        this.boundingBox === null ? bb : Box2Abs.union(this.boundingBox, bb);
     }
-    if (ext) this.exts.push(ext);
+    if (ext) {
+      this.exts.push(ext);
+    }
   }
 
-  clear() {
+  clear(): void {
     this.paths = [];
     this.boxes = [];
     this.exts = [];
@@ -51,17 +67,14 @@ class Visel {
     this.boundingBox = null;
   }
 
-  translate(...args) {
-    if (args.length > 2) {
-      // TODO: replace to debug time assert
-      throw new Error('One vector or two scalar arguments expected');
-    }
+  translate(vector: Vec2): void;
+  translate(x: number, y: number): void;
+  translate(...args: [Vec2] | [number, number]): void {
     if (args.length === 1) {
-      const vector = args[0];
+      const vector = args[0] as Vec2;
       this.translate(vector.x, vector.y);
     } else {
-      const x = args[0];
-      const y = args[1];
+      const [x, y] = args;
       const delta = new Vec2(x, y);
       for (const path of this.paths) {
         path.translateAbs(x, y);
@@ -73,21 +86,21 @@ class Visel {
     }
   }
 
-  /**
-   * @param {number} degree
-   * @param {Vec2} center
-   */
-  rotate(degree, center) {
+  rotate(degree: number, center: Vec2): void {
     for (const path of this.paths) {
       path.rotate(degree, center.x, center.y);
     }
 
     this.boxes = this.boxes.map((box) =>
-      box.transform((point) => point.rotateAroundOrigin(degree, center)),
+      box.transform(
+        (point) => point.rotateAroundOrigin(degree, center),
+        undefined,
+      ),
     );
     if (this.boundingBox !== null) {
-      this.boundingBox = this.boundingBox.transform((point) =>
-        point.rotateAroundOrigin(degree, center),
+      this.boundingBox = this.boundingBox.transform(
+        (point) => point.rotateAroundOrigin(degree, center),
+        undefined,
       );
     }
   }

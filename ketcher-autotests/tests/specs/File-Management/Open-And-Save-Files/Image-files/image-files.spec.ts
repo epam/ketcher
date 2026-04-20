@@ -978,7 +978,10 @@ test.describe('Image files', () => {
     );
     await StructureLibraryDialog(page).setSearchValue('My Custom Template');
     await takeEditorScreenshot(page);
-    await page.getByText('My Custom Template').click();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.UserTemplate,
+      'My Custom Template',
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

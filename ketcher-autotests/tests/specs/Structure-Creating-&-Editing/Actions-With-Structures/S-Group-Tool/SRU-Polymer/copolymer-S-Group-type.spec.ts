@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { openFileAndAddToCanvas, takeElementScreenshot } from '@utils';
@@ -18,9 +19,8 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ MoleculesCanvas: _ }) => {
-    // Request MoleculesCanvas fixture so its teardown runs between tests.
-  });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
     await closePage();

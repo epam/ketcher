@@ -1297,10 +1297,12 @@ test(`24. Verify that options/toolbar icons are now enabled for atoms in create 
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
 
-  await ContextMenu(page, targetAtom).open();
-
-  await expect(page.getByTestId(MicroAtomOption.Edit)).toBeEnabled();
-  await expect(page.getByTestId(MicroAtomOption.Delete)).toBeEnabled();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(MicroAtomOption.Edit),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetAtom).isOptionVisible(MicroAtomOption.Delete),
+  ).toBeTruthy();
 
   await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();
@@ -1429,21 +1431,54 @@ test(`27. Verify that in create monomer wizard: for bonds in the right-click men
 
   const targetBond = getBondLocator(page, {}).first();
 
-  await ContextMenu(page, targetBond).open();
-
-  await Promise.all([
-    expect(page.getByTestId(MicroBondOption.Edit)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Single)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleUp)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleDown)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.SingleUpDown)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Double)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.DoubleCisTrans)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Triple)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Hydrogen)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Dative)).toBeEnabled(),
-    expect(page.getByTestId(MicroBondOption.Delete)).toBeEnabled(),
-  ]);
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Edit),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Single),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Double),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleUp,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleDown,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.SingleUpDown,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.DoubleCisTrans,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.DoubleCisTrans,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Triple),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(
+      MicroBondOption.Hydrogen,
+    ),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Dative),
+  ).toBeTruthy();
+  expect(
+    await ContextMenu(page, targetBond).isOptionVisible(MicroBondOption.Delete),
+  ).toBeTruthy();
 
   await clickOnCanvas(page, 0, 0);
   await CreateMonomerDialog(page).discard();

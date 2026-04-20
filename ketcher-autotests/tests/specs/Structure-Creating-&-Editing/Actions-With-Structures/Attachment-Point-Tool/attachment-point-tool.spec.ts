@@ -45,7 +45,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
-import { rotateToCoordinates } from '../Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -555,7 +555,9 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas(page, 'KET/chain-with-attachment-points.ket');
     await selectAllStructuresOnCanvas(page);
 
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo(
+      COORDINATES_TO_PERFORM_ROTATION,
+    );
     await takeEditorScreenshot(page);
   });
 

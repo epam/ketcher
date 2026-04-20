@@ -24,7 +24,30 @@ import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { setSelectedTabIndex } from 'state/library';
-import { LIBRARY_TAB_INDEX, MONOMER_TYPES } from 'src/constants';
+import {
+  LAST_SELECTED_SEQUENCE_TYPE,
+  LIBRARY_TAB_INDEX,
+  MONOMER_TYPES,
+} from 'src/constants';
+import { localStorageWrapper } from 'helpers/localStorage';
+
+const getInitialSequenceType = (): SequenceType => {
+  try {
+    const cachedSequenceType = localStorageWrapper.getItem(
+      LAST_SELECTED_SEQUENCE_TYPE,
+    );
+    if (
+      cachedSequenceType === SequenceType.RNA ||
+      cachedSequenceType === SequenceType.DNA ||
+      cachedSequenceType === SequenceType.PEPTIDE
+    ) {
+      return cachedSequenceType;
+    }
+  } catch (e) {
+    // ignore corrupted localStorage values and fall back to the default
+  }
+  return SequenceType.RNA;
+};
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -97,8 +120,11 @@ export const SequenceTypeGroupButton = () => {
         ),
       );
       setActiveSequenceType(mode);
+      localStorageWrapper.setItem(LAST_SELECTED_SEQUENCE_TYPE, mode);
     });
-    editor?.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
+    editor?.events.changeSequenceTypeEnterMode.dispatch(
+      getInitialSequenceType(),
+    );
 
     return () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);

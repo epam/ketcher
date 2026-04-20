@@ -18,6 +18,7 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
+  NO_NATURAL_ANALOGUE,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -83,8 +84,14 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
 
 const initialWizardState: WizardState = getInitialWizardState();
 
+const getInitialRnaBaseWizardState = (): WizardState => {
+  const state = getInitialWizardState(KetMonomerClass.Base);
+  state.values.naturalAnalogue = NO_NATURAL_ANALOGUE;
+  return state;
+};
+
 const initialRnaPresetWizardState: RnaPresetWizardState = {
-  base: getInitialWizardState(KetMonomerClass.Base),
+  base: getInitialRnaBaseWizardState(),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {
@@ -473,7 +480,7 @@ const autoAssignPropertiesForHiddenMonomer = (
     // For other types, clear whitespace-only values
     naturalAnalogue:
       values.type === KetMonomerClass.Base
-        ? values.naturalAnalogue?.trim() || 'X'
+        ? values.naturalAnalogue?.trim() || NO_NATURAL_ANALOGUE
         : values.naturalAnalogue?.trim() || '',
   };
 };

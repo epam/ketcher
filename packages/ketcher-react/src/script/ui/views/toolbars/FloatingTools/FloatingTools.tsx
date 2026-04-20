@@ -7,6 +7,8 @@ import { type ToolbarItemVariant } from '../toolbar.types';
 import classes from './FloatingTools.module.less';
 import { getIconName } from 'components';
 
+const FLOATING_ERASE_TEST_ID = 'float-delete';
+
 export type FloatingToolsProps = {
   visible: boolean;
   rotateHandlePosition: { x: number; y: number };
@@ -56,6 +58,7 @@ export const FloatingTools: React.FC<Props> = ({
               indigoVerification={indigoVerification}
               onAction={onAction}
               disableableButtons={[]}
+              dataTestId={name === 'erase' ? FLOATING_ERASE_TEST_ID : undefined}
               key={name}
             />
           )

@@ -14,14 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  Vec2,
-  MonomerMicromolecule,
-  SUPERATOM_CLASS,
-} from 'domain/entities';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup, SUPERATOM_CLASS } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
 import ReStruct from './restruct';
@@ -512,6 +509,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
@@ -548,6 +549,8 @@ function showValue(
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
+  text.node?.setAttribute('data-testid', 's-group-label');
+  text.node?.setAttribute('data-label-text', sgroup.data.fieldValue);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,

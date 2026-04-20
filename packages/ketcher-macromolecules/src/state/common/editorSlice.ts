@@ -17,6 +17,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
+  RenderersManager,
   type LayoutMode,
   SettingsManager,
   type EditorLineLength,
@@ -133,6 +134,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
+        renderersContainer: new RenderersManager({
+          theme: action.payload.theme,
+        }),
       });
 
       editor.initializeMonomersLibraryFromKetcher(

@@ -30,7 +30,7 @@ import {
   setIsEditMode,
   setUniqueNameError,
 } from 'state/rna-builder';
-import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
+import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditorScroll';
 import {
   MonomerLibraryContainer,
   MonomerLibraryHeader,

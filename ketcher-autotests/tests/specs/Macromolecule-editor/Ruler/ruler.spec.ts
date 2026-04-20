@@ -542,7 +542,7 @@ test.describe('Tests for Ruler', () => {
      */
     await Ruler(page).setLength('100');
     await Ruler(page).hoverOnInputField();
-    await expect(page.getByTitle('Number of monomers in a line')).toBeVisible();
+    await expect(Ruler(page).valueInput).toBeVisible();
     await Ruler(page).setLength('30');
   });
 

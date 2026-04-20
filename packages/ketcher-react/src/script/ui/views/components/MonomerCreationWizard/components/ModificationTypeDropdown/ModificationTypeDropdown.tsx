@@ -3,7 +3,10 @@ import clsx from 'clsx';
 import { forwardRef, HTMLAttributes } from 'react';
 import styles from './ModificationTypeDropdown.module.less';
 import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
-import { CoreEditor, compareByTitleWithNaturalFirst } from 'ketcher-core';
+import {
+  compareByTitleWithNaturalFirst,
+  provideEditorInstance,
+} from 'ketcher-core';
 
 const OptionsListbox = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
   (props, ref) => {
@@ -36,7 +39,7 @@ interface IModificationTypeDropdownProps {
 export default function ModificationTypeDropdown(
   props: Readonly<IModificationTypeDropdownProps>,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const modificationTypesGroupedByNaturalAnalogue =
     editor.getAllAminoAcidsModificationTypesGroupedByNaturalAnalogue();
   const modificationTypesOthersFromCurrentNaturalAnalogue = [

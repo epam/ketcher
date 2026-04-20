@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import { MolSerializer } from 'domain/serializers/mol/molSerializer';
+import { Struct } from 'domain/entities/struct';
 import { StructFormatter } from './structFormatter.types';
 
 export class MolfileV2000Formatter implements StructFormatter {

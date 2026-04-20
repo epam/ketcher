@@ -23,7 +23,6 @@ import {
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { SGroup } from 'domain/entities/sgroup';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
@@ -376,7 +375,7 @@ export class Bond extends BaseMicromoleculeEntity {
           (sgroup.atoms.includes(bond.end) &&
             !sgroup.atoms.includes(bond.begin))) &&
         sgroup.isExpanded() &&
-        sgroup instanceof MonomerMicromolecule
+        sgroup.isMonomer
       );
     });
   }

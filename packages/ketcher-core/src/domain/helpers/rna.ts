@@ -1,12 +1,13 @@
-import { CoreEditor } from 'application/editor/internal';
-import { AmbiguousMonomer, SequenceType } from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaBaseNames,
 } from 'domain/constants/monomers';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
+import { SequenceType } from 'domain/entities/monomer-chains/types';
 
 export function getRnaPartLibraryItem(
   editor: CoreEditor,

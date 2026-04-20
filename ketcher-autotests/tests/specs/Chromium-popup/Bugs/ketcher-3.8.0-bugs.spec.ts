@@ -41,7 +41,7 @@ import {
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,

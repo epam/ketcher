@@ -18,6 +18,7 @@ import {
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
   NO_NATURAL_ANALOGUE,
+  provideEditorInstance,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';

@@ -14,15 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Bond,
-  Vec2,
-  AtomAttributes,
-  BondAttributes,
-  FunctionalGroup,
-  SGroupAttachmentPoint,
-  SGroup,
-} from 'domain/entities';
+import { AtomAttributes } from 'domain/entities/atom';
+import { Bond, BondAttributes } from 'domain/entities/bond';
+import { Vec2 } from 'domain/entities/vec2';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
 import {
   AtomAdd,
   BondAdd,
@@ -43,8 +40,8 @@ import {
 import { Action } from './action';
 import { ReSGroup, ReStruct } from '../../render';
 import utils from '../shared/utils';
-import { fromSgroupAttachmentPointRemove } from 'application/editor';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 
 export function fromBondAddition(
   reStruct: ReStruct,
@@ -204,7 +201,7 @@ export function fromBondAddition(
 export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
-  attrs: Bond,
+  attrs: Partial<Bond>,
   reset?: boolean,
 ): Action {
   const struct = restruct.molecule;

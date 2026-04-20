@@ -264,6 +264,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
+        circle.node.setAttribute('data-testid', 'rotation-center-handle');
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);

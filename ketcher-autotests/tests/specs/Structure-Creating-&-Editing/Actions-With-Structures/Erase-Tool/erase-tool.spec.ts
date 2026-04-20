@@ -13,7 +13,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectionDelete } from '../Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -128,7 +128,7 @@ test.describe('Erase Tool', () => {
     };
 
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await await RotationTool(page).delete();
 
     await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
       from: 'pageTopLeft',

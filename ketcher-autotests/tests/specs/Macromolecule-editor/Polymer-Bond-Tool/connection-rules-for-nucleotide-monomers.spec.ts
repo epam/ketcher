@@ -1740,13 +1740,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
     await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
-
-    const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomer.alias}`)
-      .first();
-
-    await leftMonomerLocator.hover({ force: true });
+    await getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).hover({
+      force: true,
+    });
     await dragMouseTo(page, 300, 380);
     await moveMouseAway(page);
   }
@@ -1814,9 +1810,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            (Object.values(leftMonomer.attachmentPoints) as AttachmentPoint[])[
-              atomIndex
-            ],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

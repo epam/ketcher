@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { Image, KetFileImageNode } from 'domain/entities/image';
 
 export function imageToStruct(

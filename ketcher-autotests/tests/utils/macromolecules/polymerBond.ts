@@ -405,8 +405,14 @@ export async function bondMonomerPointToMoleculeAtom(
   atom: Locator,
   monomerAttachmentPoint?: AttachmentPoint,
   connectionPointShift?: { x: number; y: number },
+  bondType?: MacroBondType,
 ) {
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  if (bondType) {
+    await CommonLeftToolbar(page).bondTool(bondType);
+  } else {
+    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  }
+
   await monomer.hover({ force: true });
 
   if (monomerAttachmentPoint) {

@@ -1,12 +1,16 @@
 import ReObject from './reobject';
 import { Line, MultitailArrow } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
-import { LayerMap, Render, ReStruct } from 'application/render';
+import { LayerMap } from './generalEnumTypes';
+import { Render } from '../raphaelRender';
+import ReStruct from './restruct';
 import { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
-import { Box2Abs, Pool, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pool } from 'domain/entities/pool';
+import { Vec2 } from 'domain/entities/vec2';
 import util from 'application/render/util';
 import { RaphaelPaper } from 'raphael';
 

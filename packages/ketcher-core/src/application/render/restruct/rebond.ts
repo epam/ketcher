@@ -14,15 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  FunctionalGroup,
-  HalfBond,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { HalfBond } from 'domain/entities/halfBond';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap, StereoColoringType } from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 
@@ -35,8 +33,8 @@ import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
-import { Visel } from 'application/render';
-import { Coordinates } from 'application/editor';
+import Visel from './visel';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 class ReBond extends ReObject {
   b: Bond;

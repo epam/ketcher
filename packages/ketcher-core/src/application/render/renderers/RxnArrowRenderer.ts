@@ -2,7 +2,8 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
-import { RxnArrowMode, Vec2 } from 'domain/entities';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { OpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/OpenAngleArrowRenderer';
 import { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
@@ -19,7 +20,7 @@ import { UnbalancedEquilibriumFilledHalfBowArrowRenderer } from 'application/ren
 import { UnbalancedEquilibriumOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumOpenHalfAngleArrowRenderer';
 import { UnbalancedEquilibriumFilledHalfTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumFilledHalfTriangleArrowRenderer';
 import { EllipticalArcFilledBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledBowArrowRenderer';
-import { provideEditorSettings } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { EllipticalArcFilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledTriangleArrowRenderer';
 import { EllipticalArcOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenAngleArrowRenderer';
 import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenHalfAngleArrowRenderer';

@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  Bond,
-  RxnArrow,
-  RxnPlus,
-  Struct,
-  Vec2,
-  RGroup,
-  Fragment,
-} from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
+import { RxnArrow } from 'domain/entities/rxnArrow';
+import { RxnPlus } from 'domain/entities/rxnPlus';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import { RGroup } from 'domain/entities/rgroup';
+import { Fragment } from 'domain/entities/fragment';
 
 function paddedNum(number, width, precision) {
   const parsedNumber = parseFloat(number);

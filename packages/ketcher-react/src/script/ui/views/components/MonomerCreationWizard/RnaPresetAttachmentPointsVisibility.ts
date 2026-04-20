@@ -132,6 +132,77 @@ export const getConnectionAttachmentPointsForRnaPresetComponent = (
   )[componentKey];
 };
 
+/**
+ * Returns a Map of connection (inter-component) attachment point names to
+ * [componentAtomId, otherComponentAtomId] pairs for the given RNA component tab.
+ * Used to render and highlight these readonly APs on the canvas.
+ */
+export const getConnectionAttachmentPointAtomIdsForComponent = (
+  wizardState: RnaPresetWizardState,
+  struct: Struct,
+  componentKey: RnaPresetComponentKey,
+  phosphatePosition?: PhosphatePosition,
+): Map<AttachmentPointName, [number, number]> => {
+  const result = new Map<AttachmentPointName, [number, number]>();
+
+  const baseAtoms = wizardState.base.structure?.atoms ?? [];
+  const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
+  const phosphateAtoms = wizardState.phosphate.structure?.atoms ?? [];
+
+  // Sugar ↔ Base connection
+  if (sugarAtoms.length > 0 && baseAtoms.length > 0) {
+    const bond = findBondBetweenRnaPresetComponents(
+      struct,
+      sugarAtoms,
+      baseAtoms,
+    );
+    if (bond) {
+      // eslint-disable-next-line prettier/prettier
+      const sugarAtomId = sugarAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+      // eslint-disable-next-line prettier/prettier
+      const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
+
+      if (componentKey === 'sugar') {
+        result.set(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
+      } else if (componentKey === 'base') {
+        result.set(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
+      }
+    }
+  }
+
+  // Sugar ↔ Phosphate connection
+  if (phosphatePosition && sugarAtoms.length > 0 && phosphateAtoms.length > 0) {
+    const bond = findBondBetweenRnaPresetComponents(
+      struct,
+      sugarAtoms,
+      phosphateAtoms,
+    );
+    if (bond) {
+      // eslint-disable-next-line prettier/prettier
+      const sugarAtomId = sugarAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+      // eslint-disable-next-line prettier/prettier
+      const phosphateAtomId = phosphateAtoms.includes(bond.begin)
+        ? bond.begin
+        : bond.end;
+
+      const { sugar: sugarApName, phosphate: phosphateApName } =
+        getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
+
+      if (componentKey === 'sugar') {
+        result.set(sugarApName, [sugarAtomId, phosphateAtomId]);
+      } else if (componentKey === 'phosphate') {
+        result.set(phosphateApName, [phosphateAtomId, sugarAtomId]);
+      }
+    }
+  }
+
+  return result;
+};
+
 export const getVisibleAttachmentPointsForRnaPreset = (
   assignedAttachmentPoints: AttachmentPointMap,
   wizardState: RnaPresetWizardState,

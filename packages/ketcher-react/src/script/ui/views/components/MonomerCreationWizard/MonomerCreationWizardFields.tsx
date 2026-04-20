@@ -23,14 +23,13 @@ import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
-import AttachmentPointControls from './components/AttachmentPointControls/AttachmentPointControls';
+import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
-import { createReadonlyAttachmentPointSelectData } from './hooks/useAttachmentPointSelectsData';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
@@ -236,16 +235,11 @@ const MonomerCreationWizardFields = (
             )}
             {readonlyAttachmentPoints.map(
               ({ name: attachmentPointName, leavingAtomLabel }) => (
-                <AttachmentPointControls
+                <ReadonlyAttachmentPoint
                   key={`readonly-${attachmentPointName}`}
-                  data={createReadonlyAttachmentPointSelectData(
-                    attachmentPointName,
-                    leavingAtomLabel,
-                  )}
-                  onNameChange={() => null}
-                  onLeavingAtomChange={() => null}
-                  className={styles.selects}
-                  disabled
+                  name={attachmentPointName}
+                  leavingAtomLabel={leavingAtomLabel}
+                  editor={editor}
                 />
               ),
             )}

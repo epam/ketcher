@@ -39,6 +39,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,
+  getConnectionAttachmentPointAtomIdsForComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
@@ -253,6 +254,25 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     isHighlightEnabled,
     selectedTab,
   ]);
+
+  // Sync connection (readonly) attachment points with the canvas whenever the
+  // active RNA component tab or the wizard state changes.
+  useEffect(() => {
+    const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
+    if (!activeComponentKey) {
+      // Preset tab: no connection APs to show
+      editor.setConnectionAttachmentPoints(new Map());
+      return;
+    }
+
+    const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
+      wizardState,
+      struct,
+      activeComponentKey,
+      phosphatePosition as PhosphatePosition | undefined,
+    );
+    editor.setConnectionAttachmentPoints(connectionAtomIds);
+  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
 
   useEffect(() => {
     return () => {

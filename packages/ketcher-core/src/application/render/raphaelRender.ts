@@ -50,6 +50,8 @@ export type MonomerCreationState = {
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
   isRnaPresetMode?: boolean;
+  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
 } | null;
 
 export class Render {

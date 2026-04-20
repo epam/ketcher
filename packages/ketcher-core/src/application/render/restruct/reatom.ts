@@ -700,8 +700,11 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints, problematicAttachmentPoints } =
-        render.monomerCreationState;
+      const {
+        assignedAttachmentPoints,
+        problematicAttachmentPoints,
+        connectionAttachmentPoints,
+      } = render.monomerCreationState;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -910,6 +913,108 @@ class ReAtom extends ReObject {
             ps,
             false,
           );
+        }
+
+        // Render connection (readonly) attachment points
+        if (connectionAttachmentPoints) {
+          const connectionApName = Array.from(
+            connectionAttachmentPoints.keys(),
+          ).find((key) => {
+            const atomsPair = connectionAttachmentPoints.get(key);
+            assert(atomsPair);
+            return atomsPair[0] === aid;
+          });
+
+          if (connectionApName) {
+            const atomsPair = connectionAttachmentPoints.get(connectionApName);
+            assert(atomsPair);
+            const [connectionAtomId, otherAtomId] = atomsPair;
+
+            const connectionAtom = struct.atoms.get(connectionAtomId);
+            const otherAtom = struct.atoms.get(otherAtomId);
+
+            assert(connectionAtom);
+            assert(otherAtom);
+
+            const connectionPos = connectionAtom.pp;
+            const otherPos = otherAtom.pp;
+            const direction = otherPos.sub(connectionPos).normalized();
+
+            const shiftedPos = this.getShiftedSegmentPosition(
+              render.options,
+              direction,
+              otherPos,
+            );
+            const labelPos = shiftedPos.addScaled(direction, 8);
+
+            const rLabelElement = render.paper
+              .text(labelPos.x, labelPos.y, connectionApName)
+              .attr({
+                font: options.font,
+                'font-size': options.fontszsubInPx,
+                fill: '#666666',
+                'font-weight': '700',
+                cursor: 'default',
+              });
+
+            const labelBBox = rLabelElement.getBBox();
+            const bgRadius =
+              Math.max(labelBBox.width, labelBBox.height) / 2 + 5;
+            const background = render.paper
+              .circle(labelPos.x, labelPos.y, bgRadius)
+              .attr({
+                fill: '#888888',
+                stroke: 'none',
+                cursor: 'default',
+                opacity: 0,
+              });
+
+            const labelGroup = render.paper.set();
+            labelGroup.push(background, rLabelElement);
+
+            labelGroup.forEach((element) => {
+              element.node?.setAttribute(
+                'data-attachment-point-name',
+                connectionApName,
+              );
+              element.node?.setAttribute(
+                'data-testid',
+                `connection-${connectionApName}`,
+              );
+            });
+
+            // Hover: highlight the controls row in the panel
+            labelGroup.hover(
+              () => {
+                background.attr({ opacity: 1 });
+                rLabelElement.attr({ fill: '#ffffff' });
+                window.dispatchEvent(
+                  new CustomEvent<AttachmentPointName>(
+                    'highlightAttachmentPointControls',
+                    { detail: connectionApName },
+                  ),
+                );
+              },
+              () => {
+                background.attr({ opacity: 0 });
+                rLabelElement.attr({ fill: '#666666' });
+                window.dispatchEvent(
+                  new CustomEvent<AttachmentPointName>(
+                    'resetHighlightAttachmentPointControls',
+                    { detail: connectionApName },
+                  ),
+                );
+              },
+            );
+
+            restruct.addReObjectPath(
+              LayerMap.data,
+              this.visel,
+              labelGroup,
+              ps,
+              false,
+            );
+          }
         }
       }
     }

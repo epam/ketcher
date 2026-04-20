@@ -142,7 +142,7 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
    *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
    *      4. Press Create Monomer button
    *      5. r-click on a potential LGA on canvas
-   *      6. Verify that context menu contains option "Mark as leaving group"
+   *      6. Verify that context menu does NOT contain option "Mark as leaving group"
    *      7. Repeat steps 5-6 for every atom in the structure that has one and only one either simple-single or stereo (up or down) bond
    *         to another atom in the structure, and is not already an LGA
    *
@@ -168,7 +168,7 @@ test(`3. Check that non potential LGA is every atom that has any another kind of
       await ContextMenu(page, targetAtom).isOptionVisible(
         ConnectionPointOption.MarkAsLeavingGroup,
       ),
-    ).toBeTruthy();
+    ).toBeFalsy();
     await clickOnCanvas(page, 0, 0);
   }
 
@@ -364,7 +364,7 @@ test(`8. Check that potential AA is every atom that is connected to a potential 
   for (const targetAtom of await targetAtoms.all()) {
     expect(
       await ContextMenu(page, targetAtom).isOptionVisible(
-        ConnectionPointOption.MarkAsLeavingGroup,
+        ConnectionPointOption.MarkAsConnectionPoint,
       ),
     ).toBeTruthy();
     await clickOnCanvas(page, 0, 0);

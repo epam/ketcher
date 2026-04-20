@@ -52,11 +52,8 @@ import {
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
-import {
-  horizontalFlip,
-  verticalFlip,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -161,7 +158,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    const rotationHandle = page.getByTestId('rotation-handle');
+    const rotationHandle = RotationTool(page).rotationHandle;
     const rotationHandleBoundingBox = await rotationHandle.boundingBox();
     if (!rotationHandleBoundingBox) {
       throw new Error('Rotation handle bounding box is not available.');
@@ -348,9 +345,9 @@ test.describe('Template Manupulations', () => {
       force: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await takeEditorScreenshot(page);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await takeEditorScreenshot(page);
   });
 

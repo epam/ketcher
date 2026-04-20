@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -54,7 +55,7 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 let page: Page;
@@ -86,8 +87,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await ContextMenu(page, targetAtom).open();
-    await expect(page.getByTestId(MonomerOption.Copy)).toBeEnabled();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionEnabled(MonomerOption.Copy),
+    ).toBeTruthy();
   });
 
   test('Case 2 — Ketcher wrongly considers R3-R1 connection between unknown sugar and/or unknown base as side chain connection', async ({

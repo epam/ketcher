@@ -76,6 +76,7 @@ type GenerateImageOptions = {
   outputFormat?: OutputFormatType;
   backgroundColor?: string;
   bondThickness?: number;
+  font?: string;
 };
 
 function convertStructToString(
@@ -230,6 +231,7 @@ export class Indigo {
         outputFormat,
         backgroundColor,
         bondThickness,
+        font: options?.font,
       },
     );
   }

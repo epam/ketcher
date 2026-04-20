@@ -92,6 +92,7 @@ function getSerilizedServerOptions(options) {
   }
 
   let newOptions = {
+    font: options.font,
     'render-coloring': options.atomColoring,
     'render-font-size': options.fontsz,
     'render-font-size-unit': options.fontszUnit,

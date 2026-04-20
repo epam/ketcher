@@ -2,7 +2,7 @@ import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -50,7 +50,7 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -95,7 +95,7 @@ test.describe('Open Ketcher', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Tf,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -126,7 +126,7 @@ test.describe('Open Ketcher', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Anthracene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

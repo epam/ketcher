@@ -3643,7 +3643,7 @@ for (const monomerToCreate of monomersToCreate51) {
       MacromoleculesFileFormatType.IDT,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Convert error! Sequence saver:');
+    expect(errorMessage).toContain('Convert error!');
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

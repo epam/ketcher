@@ -172,7 +172,7 @@ export function fromBondAddition(
     action.addOp(
       new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct),
     ) as BondAdd
-  ).data.bid;
+  ).data.bid as number;
   const newBond = struct.bonds.get(newBondId);
   if (newBond) {
     action.addOp(
@@ -195,7 +195,7 @@ export function fromBondAddition(
     );
   }
 
-  return [action, beginAtomId, endAtomId, newBondId];
+  return [action, beginAtomId, endAtomId, newBondId as number];
 }
 
 export function fromBondsAttrs(
@@ -333,7 +333,7 @@ export function bondChangingAction(
     bond.stereo === bondProps.stereo
   ) {
     action.mergeWith(fromBondFlipping(restruct, itemID));
-    newItemId = (action.operations[1] as BondAdd).data.bid;
+    newItemId = (action.operations[1] as BondAdd).data.bid as number;
   }
   // if bondTool is stereo and equal to bond for change
 

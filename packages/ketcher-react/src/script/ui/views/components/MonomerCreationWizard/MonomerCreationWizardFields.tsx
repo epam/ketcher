@@ -40,6 +40,10 @@ interface IMonomerCreationWizardFieldsProps {
   }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
+  onReadonlyLeavingAtomChange?: (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
 }
@@ -61,6 +65,7 @@ const MonomerCreationWizardFields = (
     readonlyAttachmentPoints = [],
     onChangeModificationTypes,
     onFieldChange,
+    onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
@@ -240,7 +245,7 @@ const MonomerCreationWizardFields = (
                   name={attachmentPointName}
                   leavingAtomLabel={leavingAtomLabel}
                   editor={editor}
-                  onLeavingAtomChange={handleLeavingAtomChange}
+                  onLeavingAtomChange={onReadonlyLeavingAtomChange}
                 />
               ),
             )}

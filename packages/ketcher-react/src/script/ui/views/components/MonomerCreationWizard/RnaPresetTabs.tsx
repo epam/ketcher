@@ -50,6 +50,10 @@ interface IRnaPresetTabsProps {
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
   phosphatePosition: '3' | '5' | undefined;
   onPhosphatePositionChange: (position: '3' | '5') => void;
+  onConnectionLeavingAtomChange?: (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => void;
 }
 
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
@@ -69,7 +73,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
-  const { phosphatePosition, onPhosphatePositionChange } = props;
+  const {
+    phosphatePosition,
+    onPhosphatePositionChange,
+    onConnectionLeavingAtomChange,
+  } = props;
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();
@@ -525,6 +533,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   ) => {
                     handleFieldChange(fieldId, value, rnaComponentKey);
                   }}
+                  onReadonlyLeavingAtomChange={onConnectionLeavingAtomChange}
                   wizardState={wizardState[rnaComponentKey]}
                 />
               </Fragment>

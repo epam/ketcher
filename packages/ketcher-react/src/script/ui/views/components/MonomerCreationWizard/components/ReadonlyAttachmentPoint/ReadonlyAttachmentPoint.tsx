@@ -28,6 +28,14 @@ const ReadonlyAttachmentPoint = ({
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
+  // Track the currently selected leaving atom so the select reflects user changes.
+  const [currentLeavingAtomLabel, setCurrentLeavingAtomLabel] =
+    useState<AtomLabel>(leavingAtomLabel);
+
+  // Reset when the default label changes (e.g. component re-assigned).
+  useEffect(() => {
+    setCurrentLeavingAtomLabel(leavingAtomLabel);
+  }, [leavingAtomLabel]);
 
   // Panel hover → canvas highlight
   useEffect(() => {
@@ -86,16 +94,19 @@ const ReadonlyAttachmentPoint = ({
 
   const selectsData = createReadonlyAttachmentPointSelectData(
     name,
-    leavingAtomLabel,
+    currentLeavingAtomLabel,
   );
+
+  const handleLeavingAtomChange = (newLabel: AtomLabel) => {
+    setCurrentLeavingAtomLabel(newLabel);
+    onLeavingAtomChange?.(name, newLabel);
+  };
 
   return (
     <AttachmentPointControls
       data={selectsData}
       onNameChange={() => null}
-      onLeavingAtomChange={(newLeavingAtomLabel) =>
-        onLeavingAtomChange?.(name, newLeavingAtomLabel)
-      }
+      onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}
       highlight={highlight}
       disabledName

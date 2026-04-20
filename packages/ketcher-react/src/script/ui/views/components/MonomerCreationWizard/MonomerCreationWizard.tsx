@@ -715,6 +715,25 @@ const MonomerCreationWizard = () => {
   const [phosphatePosition, setPhosphatePosition] = useState<
     '3' | '5' | undefined
   >();
+  /**
+   * Stores user-overridden leaving atom labels for connection (readonly)
+   * attachment points, keyed by attachment point name.
+   * These override the defaults from getLeavingAtomForAttachmentPoint on save.
+   */
+  const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
+    Map<AttachmentPointName, AtomLabel>
+  >(new Map());
+
+  const handleConnectionLeavingAtomChange = useCallback(
+    (apName: AttachmentPointName, newLeavingAtomLabel: AtomLabel) => {
+      setConnectionLeavingAtoms((prev) => {
+        const next = new Map(prev);
+        next.set(apName, newLeavingAtomLabel);
+        return next;
+      });
+    },
+    [],
+  );
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -1469,6 +1488,14 @@ const MonomerCreationWizard = () => {
             ? AttachmentPointName.R2
             : AttachmentPointName.R1;
 
+        // Helper: returns user override if set, otherwise falls back to default.
+        const getConnectionLeavingAtom = (
+          componentType: KetMonomerClass,
+          apName: AttachmentPointName,
+        ): AtomLabel =>
+          connectionLeavingAtoms.get(apName) ??
+          getLeavingAtomForAttachmentPoint(componentType, apName);
+
         if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
           const sugarAtoms = sugarStructure.atoms || [];
           const baseAtoms = baseStructure.atoms || [];
@@ -1495,7 +1522,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
             rnaPresetWizardState.base.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Base,
               AttachmentPointName.R1,
             ),
@@ -1507,7 +1534,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               AttachmentPointName.R3,
             ),
@@ -1545,7 +1572,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               sugarPhosphateAttachmentPointName,
             ),
@@ -1559,7 +1586,7 @@ const MonomerCreationWizard = () => {
             ),
             rnaPresetWizardState.phosphate.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Phosphate,
               phosphateSugarAttachmentPointName,
             ),
@@ -1718,6 +1745,9 @@ const MonomerCreationWizard = () => {
                 editor={editor}
                 phosphatePosition={phosphatePosition}
                 onPhosphatePositionChange={handlePhosphatePositionChange}
+                onConnectionLeavingAtomChange={
+                  handleConnectionLeavingAtomChange
+                }
               />
             ) : (
               <MonomerCreationWizardFields

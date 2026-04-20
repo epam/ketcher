@@ -392,13 +392,13 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               return !Atom.isSuperatomLeavingGroupAtom(struct, selectedAtomId);
             });
           }
-          return service.getStructureFromStructAsync(
+          return service.getStringFromStructureAsync(
             struct,
             undefined,
             selection || undefined,
           );
         }
-        return service.getStructureFromStructAsync(struct);
+        return service.getStringFromStructureAsync(struct);
       };
       return getStructFromStringByType()
         .then(

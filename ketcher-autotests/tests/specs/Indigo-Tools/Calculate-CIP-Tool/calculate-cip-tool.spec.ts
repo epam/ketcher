@@ -35,12 +35,6 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import {
-  COORDINATES_TO_PERFORM_ROTATION,
-  horizontalFlip,
-  rotateToCoordinates,
-  verticalFlip,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   setACSSettings,
@@ -61,6 +55,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   let page: Page;
@@ -362,7 +357,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
 
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo(
+      COORDINATES_TO_PERFORM_ROTATION,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -760,7 +757,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -785,7 +785,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await horizontalFlip(page);
+    await RotationTool(page).flipHorizontally();
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -813,7 +813,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
@@ -900,7 +900,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     }
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     if (await InfoMessageDialog(page).isVisible()) {

@@ -142,7 +142,7 @@ const MiewDialog = ({
       const service = factory.create(SupportedFormat.cml);
 
       service
-        .getStructureFromStructAsync(struct)
+        .getStringFromStructureAsync(struct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )

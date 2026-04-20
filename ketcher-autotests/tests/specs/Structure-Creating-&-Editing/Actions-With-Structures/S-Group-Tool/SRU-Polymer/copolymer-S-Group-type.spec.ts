@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { openFileAndAddToCanvas, takeElementScreenshot } from '@utils';
@@ -130,68 +131,65 @@ test.describe('Copolymer S-Group type', () => {
     ).toBeVisible();
   });
 
-  test.fail(
-    'Verify that Subtype drop-down menu contain options Random, Alternating and Block',
-    async () => {
-      /*
-       * Test case: https://github.com/epam/ketcher/issues/9695
-       * Description: Verify that Subtype drop-down menu contain options Random, Alternating and Block
-       * Scenario:
-       * 1. Put simple chain structure on canvas.
-       * 2. Add SRU polymer via selecting one atom.
-       * 3. Add another SRU polymer via selecting two atoms.
-       * 4. Select the whole structure and open S-group properties dialog.
-       * 5. Click on Type drop-down menu and select Copolymer option.
-       * 6. Check that Subtype drop-down menu contain options Random, Alternating and Block.
-       * Version 3.12.0
-       * Currently this test is failed because of issue: https://github.com/epam/ketcher/issues/9559
-       * There is unexpected option "Not Specified" for Subtype dropdown menu.
-       */
-      await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
-      await LeftToolbar(page).sGroup();
+  test('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/9695
+     * Description: Verify that Subtype drop-down menu contain options Random, Alternating and Block
+     * Scenario:
+     * 1. Put simple chain structure on canvas.
+     * 2. Add SRU polymer via selecting one atom.
+     * 3. Add another SRU polymer via selecting two atoms.
+     * 4. Select the whole structure and open S-group properties dialog.
+     * 5. Click on Type drop-down menu and select Copolymer option.
+     * 6. Check that Subtype drop-down menu contain options Random, Alternating and Block.
+     * Version 3.12.0
+     * Currently this test is failed because of issue: https://github.com/epam/ketcher/issues/9559
+     * There is unexpected option "Not Specified" for Subtype dropdown menu.
+     */
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await LeftToolbar(page).sGroup();
 
-      await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
-        force: true,
-      });
-      await SGroupPropertiesDialog(page).setOptions({
-        Type: TypeOption.SRUPolymer,
-        PolymerLabel: 'A',
-        RepeatPattern: RepeatPatternOption.HeadToTail,
-      });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
 
-      await getAtomLocator(page, { atomLabel: 'C', atomId: 12 }).hover({
-        force: true,
-      });
-      await page.mouse.down();
-      await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).hover({
-        force: true,
-      });
-      await page.mouse.up();
-      await SGroupPropertiesDialog(page).setOptions({
-        Type: TypeOption.SRUPolymer,
-        PolymerLabel: 'B',
-        RepeatPattern: RepeatPatternOption.HeadToTail,
-      });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 12 }).hover({
+      force: true,
+    });
+    await page.mouse.down();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 13 }).hover({
+      force: true,
+    });
+    await page.mouse.up();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'B',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
 
-      await selectAllStructuresOnCanvas(page);
-      await LeftToolbar(page).sGroup();
-      await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
-        force: true,
-      });
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
 
-      await SGroupPropertiesDialog(page).typeDropdown.click();
-      await page.getByTestId(TypeOption.Copolymer).click();
-      await SGroupPropertiesDialog(page).subtypeDropdown.click();
+    await SGroupPropertiesDialog(page).typeDropdown.click();
+    await page.getByTestId(TypeOption.Copolymer).click();
+    await SGroupPropertiesDialog(page).subtypeDropdown.click();
 
-      const listbox = page.getByRole('listbox');
-      const options = await listbox.locator('> [role="option"]').all();
+    const listbox = page.getByRole('listbox');
+    const options = await listbox.locator('> [role="option"]').all();
 
-      await expect(page.getByTestId(SubtypeOption.Random)).toBeVisible();
-      await expect(page.getByTestId(SubtypeOption.Block)).toBeVisible();
-      await expect(page.getByTestId(SubtypeOption.Alternating)).toBeVisible();
-      await expect(options).toHaveLength(3);
-    },
-  );
+    await expect(page.getByTestId(SubtypeOption.Random)).toBeVisible();
+    await expect(page.getByTestId(SubtypeOption.Block)).toBeVisible();
+    await expect(page.getByTestId(SubtypeOption.Alternating)).toBeVisible();
+    await expect(options).toHaveLength(3);
+  });
 
   test('Check that Repeat Pattern drop-down menu contain options Head-to-Tail, Head-to-Head and Either/Unknown.', async () => {
     /*

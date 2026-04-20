@@ -18,6 +18,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 
 let page: Page;
 test.describe('SMILES files', () => {
@@ -358,7 +359,7 @@ test.describe('SMILES files', () => {
       'SMILES/structure-with-s-group-properties.smi',
       FileType.SMILES,
     );
-    await page.getByText('info2').dblclick();
+    await getSGroupLabelLocator(page, { labelText: 'info2' }).dblclick();
     await SGroupPropertiesDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(

@@ -240,6 +240,7 @@ const MonomerCreationWizardFields = (
                   name={attachmentPointName}
                   leavingAtomLabel={leavingAtomLabel}
                   editor={editor}
+                  onLeavingAtomChange={handleLeavingAtomChange}
                 />
               ),
             )}

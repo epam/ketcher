@@ -9,6 +9,10 @@ type Props = {
   name: AttachmentPointName;
   leavingAtomLabel: AtomLabel;
   editor: Editor;
+  onLeavingAtomChange?: (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => void;
 };
 
 /**
@@ -16,7 +20,12 @@ type Props = {
  * Hovering highlights the corresponding atom on canvas,
  * and hovering the atom on canvas highlights this row in the panel.
  */
-const ReadonlyAttachmentPoint = ({ name, leavingAtomLabel, editor }: Props) => {
+const ReadonlyAttachmentPoint = ({
+  name,
+  leavingAtomLabel,
+  editor,
+  onLeavingAtomChange,
+}: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
 
@@ -84,10 +93,13 @@ const ReadonlyAttachmentPoint = ({ name, leavingAtomLabel, editor }: Props) => {
     <AttachmentPointControls
       data={selectsData}
       onNameChange={() => null}
-      onLeavingAtomChange={() => null}
+      onLeavingAtomChange={(newLeavingAtomLabel) =>
+        onLeavingAtomChange?.(name, newLeavingAtomLabel)
+      }
       className={styles.selects}
       highlight={highlight}
-      disabled
+      disabledName
+      disabled={!onLeavingAtomChange}
       ref={containerRef}
     />
   );

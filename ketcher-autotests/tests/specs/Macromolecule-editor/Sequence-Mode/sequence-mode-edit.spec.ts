@@ -198,6 +198,7 @@ test.describe('Sequence edit mode', () => {
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -215,6 +216,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -1424,6 +1426,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1492,6 +1495,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1529,6 +1533,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {

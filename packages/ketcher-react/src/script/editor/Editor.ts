@@ -1560,16 +1560,13 @@ class Editor implements KetcherEditor {
 
     const structFromWizard = this.struct();
 
-    // Manually perform wizard close steps in a specific order so that
-    // loading the original struct uses ignoreHistory (wizard still "active").
-    this.unsubscribeFromChangeEventInMonomerCreationWizard();
-    this.historyStack = this.originalHistoryStack;
-    this.historyPtr = this.originalHistoryPointer;
-    // Load original struct while wizard is still "active" (ignoreHistory).
-    this.struct(this.originalStruct, false);
-    // Now fully close the wizard.
-    this.monomerCreationState = null;
-    this.tool('select');
+    this.closeMonomerCreationWizard();
+    const loadOriginalAction = fromNewCanvas(
+      this.render.ctab,
+      this.originalStruct,
+    );
+    this.update(loadOriginalAction, true);
+    this.event.change.dispatch();
 
     // this.struct() defers render via setTimeout, so wait for that.
     setTimeout(() => {

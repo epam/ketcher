@@ -118,12 +118,12 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isClipboardAPIAvailable()) {
+          event.preventDefault();
           this.props.onCopy().then((data) => {
             if (!data) {
               return;
             }
             copy(data).then(() => {
-              event.preventDefault();
               notifyCopyCut();
             });
           });
@@ -161,11 +161,11 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isClipboardAPIAvailable()) {
+          event.preventDefault();
           (async () => {
             const data = await this.props.onCut();
             if (!data) return;
             await copy(data);
-            event.preventDefault();
             notifyCopyCut();
           })();
         } else {
@@ -181,12 +181,12 @@ class ClipArea extends Component<ClipAreaProps> {
           return;
         }
         if (isClipboardAPIAvailable()) {
+          event.preventDefault();
           navigator.clipboard.read().then((data: ClipboardItem[]) => {
             if (!data) {
               return;
             }
             this.props.onPaste(data).then(() => {
-              event.preventDefault();
               notifyRequestCompleted();
             });
           });

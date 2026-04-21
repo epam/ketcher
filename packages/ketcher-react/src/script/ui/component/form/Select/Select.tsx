@@ -22,6 +22,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 export interface Option {
   value: string;
@@ -61,10 +62,9 @@ const Select = ({
   error,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
-  const isFullscreen = !!document.fullscreenElement;
-  const portalContainer = isFullscreen
-    ? document.querySelector('#root')
-    : undefined;
+  const portalContainer =
+    document.querySelector<HTMLElement>(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+    undefined;
 
   useEffect(() => {
     let option;

@@ -318,7 +318,7 @@ export function isMonomerBeginningOfChain(
 }
 
 export function isValidNucleotide(
-  sugar: Sugar | AmbiguousMonomerEntity,
+  sugar: Sugar | BaseMonomer,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
@@ -335,7 +335,7 @@ export function isValidNucleotide(
 }
 
 export function isValidNucleoside(
-  sugar: Sugar | AmbiguousMonomerEntity,
+  sugar: Sugar | BaseMonomer,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {

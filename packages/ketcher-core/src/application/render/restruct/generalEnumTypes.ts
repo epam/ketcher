@@ -45,3 +45,8 @@ export enum StereLabelStyleType {
   On = 'On',
   Off = 'Off',
 }
+
+// Backward compatibility for existing package builds that still import
+// StereoLabelStyleType from ketcher-core.
+export const StereoLabelStyleType = StereLabelStyleType;
+export type StereoLabelStyleType = StereLabelStyleType;

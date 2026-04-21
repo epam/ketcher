@@ -20,6 +20,7 @@ import {
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { KetMonomerClass } from 'application/formatters';
 
 let id = 0;
 export class Chain {
@@ -76,6 +77,35 @@ export class Chain {
     }
   }
 
+  private tryAddAsNucleosideOrNucleotide(
+    sugar: Sugar | AmbiguousMonomer,
+  ): boolean {
+    if (isValidNucleoside(sugar, this.firstMonomer)) {
+      this.lastSubChain.add(Nucleoside.fromSugar(sugar, false));
+      return true;
+    }
+    if (isValidNucleotide(sugar, this.firstMonomer)) {
+      this.lastSubChain.add(Nucleotide.fromSugar(sugar, false));
+      return true;
+    }
+    return false;
+  }
+
+  private addAmbiguousMonomer(monomer: AmbiguousMonomer) {
+    if (monomer.monomerClass === KetMonomerClass.Sugar) {
+      if (this.tryAddAsNucleosideOrNucleotide(monomer)) {
+        return;
+      }
+    }
+    // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
+    // connected to other linker-valid monomers), add it as a LinkerSequenceNode
+    if (LinkerSequenceNode.isPartOfLinker(monomer)) {
+      this.lastSubChain.add(new LinkerSequenceNode(monomer));
+    } else {
+      this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
+    }
+  }
+
   public add(monomer: BaseMonomer) {
     this.nodesChanged = true;
     this.createSubChainIfNeed(monomer);
@@ -90,23 +120,12 @@ export class Chain {
     }
 
     if (monomer instanceof AmbiguousMonomer) {
-      // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
-      // connected to other linker-valid monomers), add it as a LinkerSequenceNode
-      if (LinkerSequenceNode.isPartOfLinker(monomer)) {
-        this.lastSubChain.add(new LinkerSequenceNode(monomer));
-      } else {
-        this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
-      }
+      this.addAmbiguousMonomer(monomer);
       return;
     }
 
     if (monomer instanceof Sugar) {
-      if (isValidNucleoside(monomer, this.firstMonomer)) {
-        this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
-        return;
-      }
-      if (isValidNucleotide(monomer, this.firstMonomer)) {
-        this.lastSubChain.add(Nucleotide.fromSugar(monomer, false));
+      if (this.tryAddAsNucleosideOrNucleotide(monomer)) {
         return;
       }
     }

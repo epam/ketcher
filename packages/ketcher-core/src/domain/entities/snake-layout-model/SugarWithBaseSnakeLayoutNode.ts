@@ -4,7 +4,10 @@ import { Sugar } from 'domain/entities/Sugar';
 import { ISnakeLayoutMonomersNode } from './types';
 
 export class SugarWithBaseSnakeLayoutNode implements ISnakeLayoutMonomersNode {
-  constructor(public sugar: Sugar, public base: RNABase | AmbiguousMonomer) {}
+  constructor(
+    public sugar: Sugar | AmbiguousMonomer,
+    public base: RNABase | AmbiguousMonomer,
+  ) {}
 
   public get monomers() {
     return [this.sugar, this.base];

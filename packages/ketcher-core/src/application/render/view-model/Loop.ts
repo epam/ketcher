@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond } from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
 
 export class Loop {
   public doubleBondsAmount = 0;

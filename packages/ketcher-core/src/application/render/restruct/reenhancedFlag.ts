@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Fragment, StereoFlag } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Fragment, StereoFlag } from 'domain/entities/fragment';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';

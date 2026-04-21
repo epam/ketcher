@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -53,7 +54,7 @@ class SelectRectangle extends SelectBase {
   }
 
   protected onSelectionMove(isShiftPressed: boolean) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
     requestAnimationFrame(() => {

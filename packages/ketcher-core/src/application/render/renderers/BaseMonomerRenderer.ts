@@ -1,5 +1,6 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectBase } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
@@ -70,7 +71,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -414,7 +415,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
+    if (this.editor.selectedTool?.name === 'select-tool') cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)

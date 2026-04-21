@@ -9,6 +9,7 @@ export enum ErrorMessage {
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
   invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  invalidPresetCode = 'invalidPresetCode',
 }
 
 export enum InfoMessage {

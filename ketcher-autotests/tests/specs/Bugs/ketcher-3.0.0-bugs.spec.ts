@@ -66,7 +66,7 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';

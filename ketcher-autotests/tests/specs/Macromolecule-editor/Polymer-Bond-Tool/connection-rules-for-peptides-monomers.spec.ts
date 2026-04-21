@@ -1189,9 +1189,7 @@ test.describe('Connection rules for peptides: ', () => {
             page,
             leftPeptide,
             rightMolecule,
-            (Object.values(leftPeptide.attachmentPoints) as AttachmentPoint[])[
-              atomIndex
-            ],
+            Object.values(leftPeptide.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

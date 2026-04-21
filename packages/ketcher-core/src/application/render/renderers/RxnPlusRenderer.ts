@@ -1,8 +1,9 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Coordinates, provideEditorSettings } from 'application/editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 
 export class RxnPlusRenderer extends BaseRenderer {

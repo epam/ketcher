@@ -14,13 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  MonomerMicromolecule,
-  RGroup,
-  SGroupAttachmentPoint,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { RGroup } from 'domain/entities/rgroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import {
   AtomAdd,
   AtomAttr,
@@ -37,10 +35,10 @@ import {
 } from '../operations';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
+import { fromBondStereoUpdate } from './bond';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
-import { fromBondStereoUpdate } from './bond';
 import { without } from 'lodash/fp';
 import ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';

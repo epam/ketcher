@@ -1,27 +1,23 @@
-import {
-  Chem,
-  Peptide,
-  Phosphate,
-  Vec2,
-  Nucleotide,
-  Nucleoside,
-  EmptySequenceNode,
-  LinkerSequenceNode,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
-import {
-  PeptideSequenceItemRenderer,
-  ChemSequenceItemRenderer,
-  PhosphateSequenceItemRenderer,
-  NucleotideSequenceItemRenderer,
-  EmptySequenceItemRenderer,
-  BaseMonomerRenderer,
-  BaseSequenceItemRenderer,
-  NucleosideSequenceItemRenderer,
-  UnresolvedMonomerSequenceItemRenderer,
-  UnsplitNucleotideSequenceItemRenderer,
-} from 'application/render';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Vec2 } from 'domain/entities/vec2';
+import { PeptideSequenceItemRenderer } from './PeptideSequenceItemRenderer';
+import { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
+import { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
+import { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
+import { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
+import { BaseMonomerRenderer } from '../BaseMonomerRenderer';
+import { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
+import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
+import { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
+import { UnsplitNucleotideSequenceItemRenderer } from './UnsplitNucleotideSequenceItemRenderer';
 import { SequenceNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';

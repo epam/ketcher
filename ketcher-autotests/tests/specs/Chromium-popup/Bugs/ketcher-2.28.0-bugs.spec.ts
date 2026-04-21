@@ -55,7 +55,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 declare global {
   interface Window {

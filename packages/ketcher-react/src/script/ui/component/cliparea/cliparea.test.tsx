@@ -50,7 +50,7 @@ describe('ClipArea clipboard handling', () => {
   });
 
   it('prevents the native copy action before async clipboard writes complete', async () => {
-    let resolveCopy: (data: { 'text/plain': string }) => void;
+    let resolveCopy: ((data: { 'text/plain': string }) => void) | undefined;
 
     render(
       <ClipArea
@@ -82,6 +82,47 @@ describe('ClipArea clipboard handling', () => {
 
     if (resolveCopy) {
       resolveCopy({ 'text/plain': 'copied structure' });
+    }
+
+    await waitFor(() =>
+      expect(window.navigator.clipboard.write).toHaveBeenCalledTimes(1),
+    );
+    expect(mockNotifyCopyCut).toHaveBeenCalledTimes(1);
+  });
+
+  it('prevents the native cut action before async clipboard writes complete', async () => {
+    let resolveCut: ((data: { 'text/plain': string }) => void) | undefined;
+
+    render(
+      <ClipArea
+        target={target}
+        formats={[]}
+        focused={() => true}
+        onCopy={jest.fn()}
+        onCut={() =>
+          new Promise((resolve) => {
+            resolveCut = resolve;
+          })
+        }
+        onPaste={jest.fn()}
+        onLegacyCut={jest.fn()}
+        onLegacyPaste={jest.fn()}
+      />,
+    );
+
+    const event = new Event('cut', {
+      bubbles: true,
+      cancelable: true,
+    }) as ClipboardEvent;
+
+    target.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+
+    expect(resolveCut).toBeDefined();
+
+    if (resolveCut) {
+      resolveCut({ 'text/plain': 'cut structure' });
     }
 
     await waitFor(() =>

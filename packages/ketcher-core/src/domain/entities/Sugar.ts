@@ -7,11 +7,10 @@ import {
   isPhosphateOrAmbiguousPhosphate,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
-import { IVariantMonomer } from 'domain/entities/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class Sugar extends BaseMonomer {
-  public getValidSourcePoint(secondMonomer?: BaseMonomer & IVariantMonomer) {
+  public getValidSourcePoint(secondMonomer?: BaseMonomer) {
     if (!secondMonomer) {
       return this.firstFreeAttachmentPoint;
     }
@@ -23,7 +22,7 @@ export class Sugar extends BaseMonomer {
     );
   }
 
-  public getValidTargetPoint(firstMonomer: BaseMonomer & IVariantMonomer) {
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
     if (!firstMonomer) {
       return this.firstFreeAttachmentPoint;
     }
@@ -38,7 +37,7 @@ export class Sugar extends BaseMonomer {
 
   private static getValidPoint(
     self: BaseMonomer,
-    otherMonomer: BaseMonomer & IVariantMonomer,
+    otherMonomer: BaseMonomer,
     potentialPointOnOther: string | null,
   ) {
     // If we chose specific start AP on this monomer, return it

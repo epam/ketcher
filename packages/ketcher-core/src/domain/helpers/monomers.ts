@@ -23,11 +23,7 @@ import type { Phosphate } from 'domain/entities/Phosphate';
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
  * and creating extra dependency edges in core entity/helper graph.
  */
-type AmbiguousMonomerEntity = BaseMonomer &
-  IVariantMonomer & {
-    isAmbiguous: true;
-    monomerClass: KetMonomerClass;
-  };
+type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
 type AmbiguousMonomerLike = {
   monomerItem?: { isAmbiguous?: boolean };
@@ -318,7 +314,7 @@ export function isMonomerBeginningOfChain(
 }
 
 export function isValidNucleotide(
-  sugar: Sugar | AmbiguousMonomer,
+  sugar: Sugar | AmbiguousMonomerEntity,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
@@ -335,7 +331,7 @@ export function isValidNucleotide(
 }
 
 export function isValidNucleoside(
-  sugar: Sugar | AmbiguousMonomer,
+  sugar: Sugar | AmbiguousMonomerEntity,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {

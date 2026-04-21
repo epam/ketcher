@@ -24,7 +24,33 @@ import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { setSelectedTabIndex } from 'state/library';
-import { LIBRARY_TAB_INDEX, MONOMER_TYPES } from 'src/constants';
+import {
+  LIBRARY_TAB_INDEX,
+  MONOMER_TYPES,
+  SEQUENCE_TYPE_KEY,
+} from 'src/constants';
+import { localStorageWrapper } from 'helpers/localStorage';
+
+const VALID_SEQUENCE_TYPES: SequenceType[] = [
+  SequenceType.RNA,
+  SequenceType.DNA,
+  SequenceType.PEPTIDE,
+];
+
+const getCachedSequenceType = (): SequenceType => {
+  try {
+    const cached = localStorageWrapper.getItem(SEQUENCE_TYPE_KEY);
+    if (
+      typeof cached === 'string' &&
+      VALID_SEQUENCE_TYPES.includes(cached as SequenceType)
+    ) {
+      return cached as SequenceType;
+    }
+  } catch {
+    // Ignore invalid cache (e.g., corrupted JSON) and fall back to default.
+  }
+  return SequenceType.RNA;
+};
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -97,8 +123,11 @@ export const SequenceTypeGroupButton = () => {
         ),
       );
       setActiveSequenceType(mode);
+      if (VALID_SEQUENCE_TYPES.includes(mode)) {
+        localStorageWrapper.setItem(SEQUENCE_TYPE_KEY, mode);
+      }
     });
-    editor?.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
+    editor?.events.changeSequenceTypeEnterMode.dispatch(getCachedSequenceType());
 
     return () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);

@@ -20,7 +20,6 @@ import {
   MonomerName,
   StyledStructRender,
 } from './MonomerPreview.styles';
-import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
 import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
@@ -74,14 +73,14 @@ const MonomerPreview = ({ className }: Props) => {
     (monomer.struct || isUnresolved) && (
       <Container
         className={className}
-        isLongName={!!monomerName && monomerName.length > LONG_NAME_THRESHOLD}
+        isLongName={monomerName.length > LONG_NAME_THRESHOLD}
         data-testid="polymer-library-preview"
         data-idtaliases={idtAliasesText ?? undefined}
         data-axolabs={axoLabsAlias ?? undefined}
         data-helm={aliasHelm ?? undefined}
         data-modificationtype={getModificationTypeAttribute(modificationTypes)}
       >
-        {monomerName && (
+        {monomerName.length > 0 && (
           <MonomerName
             data-testid="preview-tooltip-title"
             isLongName={monomerName.length > 100}
@@ -124,7 +123,5 @@ const MonomerPreview = ({ className }: Props) => {
   );
 };
 
-const StyledPreview = styled(MonomerPreview)``;
-
-export default StyledPreview;
+export default MonomerPreview;
 export { MonomerPreview };

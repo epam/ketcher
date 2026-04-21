@@ -73,6 +73,41 @@ export const getValidations = (
     baseValidations.push('DISABLED');
   }
 
+  // Chain-continuation constraints (requirement 4.2 in #9120):
+  // When a monomer in the preset lacks an attachment point, the partner monomer
+  // must have the complementary point to keep the RNA chain viable in that direction.
+  // E.g. sugar without R1 → phosphate needs R2 so the chain can continue
+  // via phosphate.R2 → next-sugar.R1; and vice-versa.
+  if (newPreset?.sugar?.props?.MonomerCaps) {
+    if (
+      !hasCap(newPreset.sugar, 'R1') &&
+      !phosphateValidations.includes('R2')
+    ) {
+      phosphateValidations.push('R2');
+    }
+    if (
+      !hasCap(newPreset.sugar, 'R2') &&
+      !phosphateValidations.includes('R1')
+    ) {
+      phosphateValidations.push('R1');
+    }
+  }
+
+  if (newPreset?.phosphate?.props?.MonomerCaps) {
+    if (
+      !hasCap(newPreset.phosphate, 'R1') &&
+      !sugarValidations.includes('R2')
+    ) {
+      sugarValidations.push('R2');
+    }
+    if (
+      !hasCap(newPreset.phosphate, 'R2') &&
+      !sugarValidations.includes('R1')
+    ) {
+      sugarValidations.push('R1');
+    }
+  }
+
   return {
     sugarValidations,
     phosphateValidations,

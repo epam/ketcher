@@ -86,7 +86,10 @@ describe('rnaValidations', () => {
       true,
     );
 
+    // R1 required for the viable 3' bond (sugar.R2 ↔ phosphate.R1).
+    // R2 also required: sugar has no R1, so the chain can only continue via
+    // phosphate.R2 → next-sugar.R1 (chain-continuation constraint, req. 4.2).
     expect(phosphateValidations).toContain('R1');
-    expect(phosphateValidations).not.toContain('R2');
+    expect(phosphateValidations).toContain('R2');
   });
 });

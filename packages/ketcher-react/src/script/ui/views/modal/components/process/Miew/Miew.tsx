@@ -48,6 +48,11 @@ type MiewDialogCallProps = {
 };
 type Props = MiewDialogProps & MiewDialogCallProps;
 
+type FormatterStructExport = {
+  getStructureFromStructAsync?: (struct: Struct) => Promise<string>;
+  getStringFromStructureAsync?: (struct: Struct) => Promise<string>;
+};
+
 /* OPTIONS for MIEW */
 const BACKGROUND_COLOR = {
   dark: '0x202020',
@@ -139,10 +144,22 @@ const MiewDialog = ({
     (miew: MiewAsType) => {
       miewRef.current = miew;
       const factory = new FormatterFactory(server);
-      const service = factory.create(SupportedFormat.cml);
+      const service = factory.create(
+        SupportedFormat.cml,
+      ) as FormatterStructExport;
+      const exportMethod =
+        service.getStructureFromStructAsync ??
+        service.getStringFromStructureAsync;
 
-      service
-        .getStructureFromStructAsync(struct)
+      if (!exportMethod) {
+        KetcherLogger.error(
+          'Miew.tsx::MiewDialog::onMiewInit',
+          new Error('Formatter does not support structure export'),
+        );
+        return;
+      }
+
+      exportMethod(struct)
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )

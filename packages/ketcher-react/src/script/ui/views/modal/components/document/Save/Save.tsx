@@ -154,6 +154,19 @@ interface SaveDialogState {
   imageSrc?: string;
 }
 
+type FormatterStructExport = {
+  getStructureFromStructAsync?: (
+    struct: Struct,
+    drawingEntitiesManager?: unknown,
+    selection?: unknown,
+  ) => Promise<string>;
+  getStringFromStructureAsync?: (
+    struct: Struct,
+    drawingEntitiesManager?: unknown,
+    selection?: unknown,
+  ) => Promise<string>;
+};
+
 interface AppState {
   options: {
     app: {
@@ -309,6 +322,22 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return !!getPropertiesByImgFormat(format);
   };
 
+  getStructureString = (
+    formatter: FormatterStructExport,
+    struct: Struct,
+    selection?: unknown,
+  ): Promise<string> => {
+    const exportMethod =
+      formatter.getStructureFromStructAsync ??
+      formatter.getStringFromStructureAsync;
+
+    if (!exportMethod) {
+      throw new Error('Formatter does not support structure export');
+    }
+
+    return exportMethod(struct, undefined, selection);
+  };
+
   isBinaryCdxFormat = (format: string): format is SupportedFormat.binaryCdx => {
     return format === SupportedFormat.binaryCdx;
   };
@@ -383,7 +412,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         type,
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
-      );
+      ) as FormatterStructExport;
       const getStructFromStringByType = () => {
         if (type === SupportedFormat.ket) {
           const selection = this.props.editor.selection();
@@ -392,13 +421,13 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
               return !Atom.isSuperatomLeavingGroupAtom(struct, selectedAtomId);
             });
           }
-          return service.getStructureFromStructAsync(
+          return this.getStructureString(
+            service,
             struct,
-            undefined,
             selection || undefined,
           );
         }
-        return service.getStructureFromStructAsync(struct);
+        return this.getStructureString(service, struct);
       };
       return getStructFromStringByType()
         .then(

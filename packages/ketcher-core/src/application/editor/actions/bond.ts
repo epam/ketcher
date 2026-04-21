@@ -30,17 +30,13 @@ import {
   FragmentStereoFlag,
 } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
-import {
-  fromAtomMerge,
-  fromStereoAtomAttrs,
-  mergeFragmentsIfNeeded,
-  mergeSgroups,
-} from './atom';
+import { mergeFragmentsIfNeeded, mergeSgroups } from './atom';
+import { fromAtomMerge } from './atomMerge';
+import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import { ReSGroup, ReStruct } from '../../render';
 import utils from '../shared/utils';
-import { getStereoAtomsMap } from 'application/editor/actions/helpers';
 import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 
 export function fromBondAddition(
@@ -272,44 +268,7 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   return action;
 }
 
-export function fromBondStereoUpdate(
-  restruct: ReStruct,
-  bond: Bond,
-  withReverse?: boolean,
-): Action {
-  const action = new Action();
-  const struct = restruct.molecule;
-
-  const beginFrId = struct.atoms.get(bond?.begin)?.fragment;
-  const endFrId = struct.atoms.get(bond?.end)?.fragment;
-
-  const fragmentStereoBonds: Array<Bond> = [];
-
-  struct.bonds.forEach((bond) => {
-    if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
-      fragmentStereoBonds.push(bond);
-    }
-
-    if (
-      beginFrId !== endFrId &&
-      struct.atoms.get(bond.begin)?.fragment === endFrId
-    ) {
-      fragmentStereoBonds.push(bond);
-    }
-  });
-
-  const stereoAtomsMap = getStereoAtomsMap(struct, fragmentStereoBonds, bond);
-
-  stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
-      action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse),
-      );
-    }
-  });
-
-  return action;
-}
+export { fromBondStereoUpdate };
 
 const plainBondTypes = [
   Bond.PATTERN.TYPE.SINGLE,

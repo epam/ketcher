@@ -33,6 +33,7 @@ import {
   RnaPresetComponentType,
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import {
   getLeavingAtomForAttachmentPoint,
   PhosphatePosition,
@@ -421,22 +422,47 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   <Icon name="about" />
                 </span>
               </div>
-              {presetAttachmentPoints.size > 0 && (
-                <div className={monomerCreationWizardStyles.attachmentPoints}>
-                  {Array.from(presetAttachmentPoints.entries()).map(
-                    ([name, atomPair]) => (
-                      <AttachmentPoint
-                        name={name}
-                        editor={editor}
-                        onNameChange={handleAttachmentPointNameChange}
-                        onLeavingAtomChange={handleLeavingAtomChange}
-                        onRemove={handleAttachmentPointRemove}
-                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
-                      />
-                    ),
-                  )}
-                </div>
-              )}
+              {(() => {
+                // Aggregate readonly (inter-component connection) attachment points
+                // from all RNA components so they are visible on the Preset tab.
+                const allReadonlyAttachmentPoints = RNA_COMPONENT_KEYS.flatMap(
+                  (key) => readonlyComponentAttachmentPoints[key],
+                );
+                const hasAnyAPs =
+                  presetAttachmentPoints.size > 0 ||
+                  allReadonlyAttachmentPoints.length > 0;
+                return (
+                  hasAnyAPs && (
+                    <div
+                      className={monomerCreationWizardStyles.attachmentPoints}
+                    >
+                      {Array.from(presetAttachmentPoints.entries()).map(
+                        ([name, atomPair]) => (
+                          <AttachmentPoint
+                            name={name}
+                            editor={editor}
+                            onNameChange={handleAttachmentPointNameChange}
+                            onLeavingAtomChange={handleLeavingAtomChange}
+                            onRemove={handleAttachmentPointRemove}
+                            key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                          />
+                        ),
+                      )}
+                      {allReadonlyAttachmentPoints.map(
+                        ({ name: apName, leavingAtomLabel }) => (
+                          <ReadonlyAttachmentPoint
+                            key={`readonly-preset-${apName}`}
+                            name={apName}
+                            leavingAtomLabel={leavingAtomLabel}
+                            editor={editor}
+                            onLeavingAtomChange={onConnectionLeavingAtomChange}
+                          />
+                        ),
+                      )}
+                    </div>
+                  )
+                );
+              })()}
             </div>
           </>
         )}

@@ -269,8 +269,26 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   useEffect(() => {
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
     if (!activeComponentKey) {
-      // Preset tab: no connection APs to show
-      editor.setConnectionAttachmentPoints(new Map());
+      // Preset tab: aggregate connection APs from all RNA components so that
+      // hovering readonly attachment points on the Preset tab highlights the
+      // corresponding atoms on the canvas.
+      const allConnectionAtomIds = new Map<
+        AttachmentPointName,
+        [number, number]
+      >();
+      RNA_COMPONENT_KEYS.forEach((componentKey) => {
+        const componentConnectionAtomIds =
+          getConnectionAttachmentPointAtomIdsForComponent(
+            wizardState,
+            struct,
+            componentKey,
+            phosphatePosition as PhosphatePosition | undefined,
+          );
+        componentConnectionAtomIds.forEach((atomPair, apName) => {
+          allConnectionAtomIds.set(apName, atomPair);
+        });
+      });
+      editor.setConnectionAttachmentPoints(allConnectionAtomIds);
       return;
     }
 

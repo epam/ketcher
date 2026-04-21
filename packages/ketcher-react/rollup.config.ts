@@ -14,7 +14,8 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import { license } from '../../license';
+// @ts-expect-error Rollup/Vite loads this TS module directly, but package tsc rejects .ts specifiers.
+import { license } from '../../license.ts';
 import { string } from 'rollup-plugin-string';
 import type { RollupOptions } from 'rollup';
 

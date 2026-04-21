@@ -1270,7 +1270,11 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
-  await takeEditorScreenshot(page);
+  await takeElementScreenshot(
+    page,
+    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
+    { padding: 50 },
+  );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Phosphate.Phosphate);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();

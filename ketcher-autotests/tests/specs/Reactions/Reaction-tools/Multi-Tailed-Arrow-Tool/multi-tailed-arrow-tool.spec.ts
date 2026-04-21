@@ -1136,11 +1136,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-spine-0.69.ket',
     );
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
   });
 
   test('Load from KET Multi-Tailed Arrow with two tails and spine length = 0.7, verify that only one tail to the middle can be added using "Add new tail"', async () => {
@@ -1159,11 +1159,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MultiTailedArrowOption.AddNewTail,
     );
     await takeEditorScreenshot(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-0.7-expected.ket',
@@ -1187,11 +1187,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       MultiTailedArrowOption.AddNewTail,
     );
     await takeEditorScreenshot(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-1.39-expected.ket',
@@ -1218,11 +1218,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     }
     await takeEditorScreenshot(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-1.4-expected.ket',
@@ -1244,18 +1244,20 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTails(page, 6);
     await takeEditorScreenshot(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await addTailToArrow(page, 0);
     await addTailToArrow(page, 2);
     await addTailToArrow(page, 2);
     await hoverOverArrowSpine(page, 2, 'right');
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1278,18 +1280,20 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTails(page, 6);
     await takeEditorScreenshot(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
-    await ContextMenu(page, middleOfTheScreen).open();
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
-    await takeEditorScreenshot(page);
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await addTailToArrow(page, 0);
     await addTailToArrow(page, 2);
     await addTailToArrow(page, 2);
     await hoverOverArrowSpine(page, 2, 'right');
-    await expect(
-      page.getByTestId(MultiTailedArrowOption.AddNewTail),
-    ).toBeDisabled();
+    expect(
+      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+        MultiTailedArrowOption.AddNewTail,
+      ),
+    ).toBeFalsy();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(

@@ -509,6 +509,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
@@ -545,6 +549,8 @@ function showValue(
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
+  text.node?.setAttribute('data-testid', 's-group-label');
+  text.node?.setAttribute('data-label-text', sgroup.data.fieldValue);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,

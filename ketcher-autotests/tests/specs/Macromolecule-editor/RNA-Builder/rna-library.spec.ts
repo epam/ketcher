@@ -492,7 +492,9 @@ test.describe('RNA Library', () => {
       Phosphate.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Base.baA);
@@ -524,7 +526,9 @@ test.describe('RNA Library', () => {
       Phosphate.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(
       LibraryPresetOption.DuplicateAndEdit,
     );
@@ -532,8 +536,8 @@ test.describe('RNA Library', () => {
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await Library(page).rnaBuilder.collapse();
-    const customPresetCopy = page.getByTestId(
-      '25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph',
+    const customPresetCopy = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph_Copy,
     );
     await ContextMenu(page, customPresetCopy).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectPhosphateSlot();
@@ -554,7 +558,7 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await Library(page).rnaBuilder.expand();
-    const resetA = page.getByTestId(Preset.A.testId);
+    const resetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
     await ContextMenu(page, resetA).click(LibraryPresetOption.DuplicateAndEdit);
     await Library(page).rnaBuilder.cancel();
     // To avoid unstable test execution
@@ -583,7 +587,9 @@ test.describe('RNA Library', () => {
         Phosphate.Test_6_Ph,
       ]);
       await Library(page).rnaBuilder.addToPresets();
-      const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+      const customPreset = Library(page).getMonomerLibraryCardLocator(
+        Preset._25R_A_Test_6_Ph,
+      );
       await ContextMenu(page, customPreset).click(
         LibraryPresetOption.DeletePreset,
       );
@@ -603,10 +609,11 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(baA)bP_baA_25R_bP');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_baA_bP,
+    );
     await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
-    await page.getByPlaceholder('Name your structure').click();
-    await page.getByPlaceholder('Name your structure').fill('TestMonomers');
+    await Library(page).rnaBuilder.setCustomPresetName('TestMonomers');
     await Library(page).rnaBuilder.save();
     await takePresetsScreenshot(page);
   });
@@ -650,8 +657,7 @@ test.describe('RNA Library', () => {
     await Library(page).selectMonomer(Base.A);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphate.Test_6_Ph);
-    await page.getByPlaceholder('Name your structure').click();
-    await page.getByPlaceholder('Name your structure').fill('cTest');
+    await Library(page).rnaBuilder.setCustomPresetName('cTest');
     await Library(page).rnaBuilder.addToPresets();
     await takeRNABuilderScreenshot(page);
   });
@@ -936,7 +942,6 @@ test.describe('RNA Library', () => {
     */
       const anyPointX = 300;
       const anyPointY = 500;
-      await page.getByTestId(`summary-${molecule.type}`).click();
       await Library(page).dragMonomerOnCanvas(molecule.description, {
         x: -10,
         y: -10,
@@ -1356,7 +1361,9 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).rnaBuilder.collapse();
 
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(
       LibraryPresetOption.DeletePreset,
     );
@@ -1399,11 +1406,11 @@ test.describe('RNA Library', () => {
      *  Case 20:
      *    Select all entered text in RNA Builder and delete
      */
-    const rnaNameEditBox = page.getByPlaceholder('Name your structure');
+    const rnaNameEditBox = Library(page).rnaBuilder.nameYourStructureEditbox;
     const rnaName = 'Random Text';
 
-    await Library(page).rnaBuilder.expand();
-    await rnaNameEditBox.fill(rnaName);
+    // await Library(page).rnaBuilder.expand();
+    await Library(page).rnaBuilder.setCustomPresetName(rnaName);
     await takeRNABuilderScreenshot(page);
 
     for (const _ of rnaName) {
@@ -1462,10 +1469,14 @@ test.describe('RNA Library', () => {
 
     // Case 23
     await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await takeElementScreenshot(page, page.getByTestId(Chem.Test_6_Ch.testId), {
-      maxDiffPixelRatio: 0.03,
-      hideMonomerPreview: true,
-    });
+    await takeElementScreenshot(
+      page,
+      Library(page).getMonomerLibraryCardLocator(Chem.Test_6_Ch),
+      {
+        maxDiffPixelRatio: 0.03,
+        hideMonomerPreview: true,
+      },
+    );
     await moveMouseAway(page);
 
     // Case 24

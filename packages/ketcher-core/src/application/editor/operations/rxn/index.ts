@@ -15,7 +15,8 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';

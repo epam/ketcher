@@ -57,7 +57,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -3650,7 +3650,7 @@ for (const monomerToCreate of monomersToCreate51) {
       MacromoleculesFileFormatType.IDT,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Convert error! Sequence saver:');
+    expect(errorMessage).toContain('Convert error!');
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

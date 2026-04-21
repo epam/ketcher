@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@fixtures';
 import { openFileAndAddToCanvas, takeElementScreenshot } from '@utils';
@@ -18,6 +19,7 @@ test.describe('Copolymer S-Group type', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
@@ -129,7 +131,7 @@ test.describe('Copolymer S-Group type', () => {
     ).toBeVisible();
   });
 
-  test.fail('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
+  test('Verify that Subtype drop-down menu contain options Random, Alternating and Block', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9695
      * Description: Verify that Subtype drop-down menu contain options Random, Alternating and Block

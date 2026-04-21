@@ -10,10 +10,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
-import {
-  IKetAttachmentPoint,
-  KetMonomerClass,
-} from 'application/formatters/types/ket';
+import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
@@ -23,6 +20,10 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import {
+  isMonomerItemPhosphate,
+  isMonomerItemSugar,
+} from 'domain/helpers/monomerItem';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
@@ -370,7 +371,11 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isPhosphate() {
-    return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Phosphate;
+    return isMonomerItemPhosphate(this.monomerItem);
+  }
+
+  public get isSugar() {
+    return isMonomerItemSugar(this.monomerItem);
   }
 
   public get usedAttachmentPointsNamesList() {

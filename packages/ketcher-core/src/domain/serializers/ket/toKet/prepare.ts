@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { KetFileNode } from '../../serializers.types';
 
 export function prepareStructForKet(struct: Struct) {

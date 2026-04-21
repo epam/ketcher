@@ -1,6 +1,6 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
-import { CoreEditor } from 'application/editor';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';
@@ -23,7 +23,7 @@ export class NewSequenceButton {
   }
 
   public show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const chain =
       SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =

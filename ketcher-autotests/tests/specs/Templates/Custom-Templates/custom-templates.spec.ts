@@ -184,7 +184,7 @@ test.describe('Open Ketcher', () => {
       AromaticsTemplate.Azulene,
     );
     await TemplateEditDialog(page).setMoleculeName(inputText);
-    await page.getByTestId('name-input').hover();
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
     await takeEditorScreenshot(page);
   });
 

@@ -865,12 +865,11 @@ test(`1. Check that amino acid modifications are not present in list if they are
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await ContextMenu(page, randomPeptide).open();
-
-  const modifyAminoAcidsOption = page
-    .getByTestId(MonomerOption.ModifyAminoAcids)
-    .first();
-  await expect(modifyAminoAcidsOption).toHaveCount(0);
+  expect(
+    await ContextMenu(page, randomPeptide).isOptionVisible(
+      MonomerOption.ModifyAminoAcids,
+    ),
+  ).toBe(false);
 });
 
 test('2. Check that phosphorylation modifies only eligable monomers', async () => {

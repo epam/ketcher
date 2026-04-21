@@ -67,7 +67,6 @@ export class PeptideRenderer extends BaseMonomerRenderer {
 
     const peptideColorsMap: { [key: string]: string } = {
       D: DARK_COLOR,
-      'D*': LIGHT_COLOR,
       E: LIGHT_COLOR,
       K: DARK_COLOR,
       H: LIGHT_COLOR,
@@ -92,12 +91,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     };
 
     const monomerCode = this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
-    const monomerLabel = this.monomer.monomerItem.label;
-    // Check label first for special variants like D*
-    let baseColor =
-      peptideColorsMap[monomerLabel] ??
-      peptideColorsMap[monomerCode] ??
-      super.textColor;
+    let baseColor = peptideColorsMap[monomerCode] ?? super.textColor;
 
     if (this.monomer.isModification) {
       baseColor = baseColor === LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;

@@ -69,7 +69,15 @@ const getMonomerClass = (
 const isMonomerOfClass = (
   monomer: BaseMonomer | undefined,
   monomerClass: KetMonomerClass,
-): boolean => getMonomerClass(monomer) === monomerClass;
+): boolean => {
+  if (getMonomerClass(monomer) === monomerClass) return true;
+  // Fallback for monomers without an explicit MonomerClass, identified only
+  // by naturalAnalogShort (e.g. classHELM: RNA + naturalAnalogShort: P/R).
+  if (monomerClass === KetMonomerClass.Sugar) return Boolean(monomer?.isSugar);
+  if (monomerClass === KetMonomerClass.Phosphate)
+    return Boolean(monomer?.isPhosphate);
+  return false;
+};
 
 /**
  * Maps ambiguous monomer class metadata to chain constructor types used in chain checks.

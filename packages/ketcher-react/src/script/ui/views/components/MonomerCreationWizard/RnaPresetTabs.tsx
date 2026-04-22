@@ -51,9 +51,13 @@ interface IRnaPresetTabsProps {
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
   phosphatePosition: '3' | '5' | undefined;
   onPhosphatePositionChange: (position: '3' | '5') => void;
+  /** User-overridden leaving atom labels for connection APs, keyed by
+   * "<componentKey>:<apName>". Persists across tab switches. */
+  connectionLeavingAtoms?: Map<string, AtomLabel>;
   onConnectionLeavingAtomChange?: (
     apName: AttachmentPointName,
     newLeavingAtomLabel: AtomLabel,
+    componentKey: RnaPresetComponentKey,
   ) => void;
 }
 
@@ -78,6 +82,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     phosphatePosition,
     onPhosphatePositionChange,
     onConnectionLeavingAtomChange,
+    connectionLeavingAtoms,
   } = props;
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
@@ -128,24 +133,21 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const readonlyComponentAttachmentPoints = {
     base: componentConnectionAttachmentPoints.base.map((name) => ({
       name,
-      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-        KetMonomerClass.Base,
-        name,
-      ),
+      leavingAtomLabel:
+        connectionLeavingAtoms?.get(`base:${name}`) ??
+        getLeavingAtomForAttachmentPoint(KetMonomerClass.Base, name),
     })),
     sugar: componentConnectionAttachmentPoints.sugar.map((name) => ({
       name,
-      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-        KetMonomerClass.Sugar,
-        name,
-      ),
+      leavingAtomLabel:
+        connectionLeavingAtoms?.get(`sugar:${name}`) ??
+        getLeavingAtomForAttachmentPoint(KetMonomerClass.Sugar, name),
     })),
     phosphate: componentConnectionAttachmentPoints.phosphate.map((name) => ({
       name,
-      leavingAtomLabel: getLeavingAtomForAttachmentPoint(
-        KetMonomerClass.Phosphate,
-        name,
-      ),
+      leavingAtomLabel:
+        connectionLeavingAtoms?.get(`phosphate:${name}`) ??
+        getLeavingAtomForAttachmentPoint(KetMonomerClass.Phosphate, name),
     })),
   };
 
@@ -518,6 +520,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                               atomId={atomPair?.[0]}
                               onLeavingAtomChange={
                                 onConnectionLeavingAtomChange
+                                  ? (name, newLabel) =>
+                                      onConnectionLeavingAtomChange(
+                                        name,
+                                        newLabel,
+                                        componentKey,
+                                      )
+                                  : undefined
                               }
                             />
                           );
@@ -623,7 +632,16 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   ) => {
                     handleFieldChange(fieldId, value, rnaComponentKey);
                   }}
-                  onReadonlyLeavingAtomChange={onConnectionLeavingAtomChange}
+                  onReadonlyLeavingAtomChange={
+                    onConnectionLeavingAtomChange
+                      ? (apName, newLabel) =>
+                          onConnectionLeavingAtomChange(
+                            apName,
+                            newLabel,
+                            rnaComponentKey,
+                          )
+                      : undefined
+                  }
                   wizardState={wizardState[rnaComponentKey]}
                 />
               </Fragment>

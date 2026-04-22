@@ -18,6 +18,7 @@ import {
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
   provideEditorInstance,
+  RnaPresetComponentKey,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -717,18 +718,22 @@ const MonomerCreationWizard = () => {
   >();
   /**
    * Stores user-overridden leaving atom labels for connection (readonly)
-   * attachment points, keyed by attachment point name.
-   * These override the defaults from getLeavingAtomForAttachmentPoint on save.
+   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
+   * where two components share the same AP name (e.g. base R1 / phosphate R1).
    */
   const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
-    Map<AttachmentPointName, AtomLabel>
+    Map<string, AtomLabel>
   >(new Map());
 
   const handleConnectionLeavingAtomChange = useCallback(
-    (apName: AttachmentPointName, newLeavingAtomLabel: AtomLabel) => {
+    (
+      apName: AttachmentPointName,
+      newLeavingAtomLabel: AtomLabel,
+      componentKey: RnaPresetComponentKey,
+    ) => {
       setConnectionLeavingAtoms((prev) => {
         const next = new Map(prev);
-        next.set(apName, newLeavingAtomLabel);
+        next.set(`${componentKey}:${apName}`, newLeavingAtomLabel);
         return next;
       });
     },
@@ -1489,12 +1494,27 @@ const MonomerCreationWizard = () => {
             : AttachmentPointName.R1;
 
         // Helper: returns user override if set, otherwise falls back to default.
+        // Composite key "<componentKey>:<apName>" disambiguates components that
+        // share the same AP name (e.g. base:R1 vs phosphate:R1 at position 3').
+        const monomerClassToComponentKey: Partial<
+          Record<KetMonomerClass, RnaPresetComponentKey>
+        > = {
+          [KetMonomerClass.Base]: 'base',
+          [KetMonomerClass.Sugar]: 'sugar',
+          [KetMonomerClass.Phosphate]: 'phosphate',
+        };
         const getConnectionLeavingAtom = (
           componentType: KetMonomerClass,
           apName: AttachmentPointName,
-        ): AtomLabel =>
-          connectionLeavingAtoms.get(apName) ??
-          getLeavingAtomForAttachmentPoint(componentType, apName);
+        ): AtomLabel => {
+          const componentKey = monomerClassToComponentKey[componentType];
+          const override = componentKey
+            ? connectionLeavingAtoms.get(`${componentKey}:${apName}`)
+            : undefined;
+          return (
+            override ?? getLeavingAtomForAttachmentPoint(componentType, apName)
+          );
+        };
 
         if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
           const sugarAtoms = sugarStructure.atoms || [];
@@ -1745,6 +1765,7 @@ const MonomerCreationWizard = () => {
                 editor={editor}
                 phosphatePosition={phosphatePosition}
                 onPhosphatePositionChange={handlePhosphatePositionChange}
+                connectionLeavingAtoms={connectionLeavingAtoms}
                 onConnectionLeavingAtomChange={
                   handleConnectionLeavingAtomChange
                 }

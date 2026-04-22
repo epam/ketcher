@@ -69,12 +69,15 @@ import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
-const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
+const getInitialWizardState = (
+  type = KetMonomerClass.CHEM,
+  naturalAnalogue = '',
+): WizardState => ({
   values: {
     type,
     symbol: '',
     name: '',
-    naturalAnalogue: '',
+    naturalAnalogue,
     aliasHELM: '',
   },
   errors: {},
@@ -84,14 +87,8 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
 
 const initialWizardState: WizardState = getInitialWizardState();
 
-const getInitialRnaBaseWizardState = (): WizardState => {
-  const state = getInitialWizardState(KetMonomerClass.Base);
-  state.values.naturalAnalogue = NO_NATURAL_ANALOGUE;
-  return state;
-};
-
 const initialRnaPresetWizardState: RnaPresetWizardState = {
-  base: getInitialRnaBaseWizardState(),
+  base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {
@@ -1027,6 +1024,7 @@ const MonomerCreationWizard = () => {
     handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
     isRnaPresetType,
+    monomerCreationState,
     monomerCreationState?.assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,

@@ -1,0 +1,101 @@
+name: Suggest Autotest Scenarios as Comment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  suggest-autotests:
+    if: contains(github.event.comment.body, '@claude suggest autotests')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Generate test scenarios and post as comment
+        uses: actions/github-script@v7
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const isPR = !!issue.pull_request;
+
+            // Acknowledge the request with a reaction
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+            let featureTitle = issue.title;
+            let featureDescription = issue.body?.trim() || '(none)';
+
+            if (isPR) {
+              // Fetch full PR details and try to resolve linked issue
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: issue.number,
+              });
+
+              featureTitle = pr.title;
+              featureDescription = pr.body?.trim() || '(none)';
+
+              const issueNumberFromTitle = pr.title.match(/^#(\d+)/)?.[1];
+              const issueNumberFromBody = pr.body?.match(/(?:closes|fixes|resolves)\s+#(\d+)/i)?.[1];
+              const linkedIssueNumber = issueNumberFromTitle ?? issueNumberFromBody;
+
+              if (linkedIssueNumber) {
+                try {
+                  const { data: linkedIssue } = await github.rest.issues.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: Number(linkedIssueNumber),
+                  });
+                  featureTitle = linkedIssue.title;
+                  featureDescription = linkedIssue.body?.trim() || '(none)';
+                } catch (_) {
+                  // linked issue not found — fall back to PR content
+                }
+              }
+            }
+
+            const prompt = `You are a QA engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
+            Generate a concise checklist of test scenarios that automated tests should cover — include the happy path and the most important edge cases.
+
+            Feature title: ${featureTitle}
+            Feature description:
+            ${featureDescription}
+
+            Rules:
+            - Output a markdown checklist only (lines starting with "- [ ]"), no headings or prose.
+            - Each item is one testable scenario in plain language.
+            - Be specific to Ketcher's domain (molecules, bonds, atoms, reactions, monomers) where relevant.
+            - Maximum 15 items.`;
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+              method: 'POST',
+              headers: {
+                'x-api-key': process.env.ANTHROPIC_API_KEY,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'claude-sonnet-4-6',
+                max_tokens: 1024,
+                messages: [{ role: 'user', content: prompt }],
+              }),
+            });
+
+            const json = await response.json();
+            const testScenarios = json.content?.[0]?.text?.trim()
+              ?? '_Could not generate test scenarios — fill in manually._';
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `### Suggested autotest scenarios\n\n${testScenarios}`,
+            });

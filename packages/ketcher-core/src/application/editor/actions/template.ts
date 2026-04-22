@@ -22,7 +22,8 @@ import { Vec2 } from 'domain/entities/vec2';
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
 import { fromAtomsAttrs, mergeSgroups } from './atom';
-import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond';
+import { fromBondsAttrs, fromBondAddition } from './bond';
+import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import closest from '../shared/closest';

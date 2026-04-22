@@ -2021,6 +2021,7 @@ export class SequenceMode extends BaseMode {
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
         monomerItem.attachmentPoints,
       );
+    // Side chains
     const oldMonomerBonds: [string, PolymerBond | MonomerToAtomBond | null][] =
       sideChainConnections
         ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
@@ -2036,6 +2037,7 @@ export class SequenceMode extends BaseMode {
               selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2!,
             ],
           ];
+    // Backbone
     return oldMonomerBonds.every(([key, bond]) => {
       if (
         !bond ||

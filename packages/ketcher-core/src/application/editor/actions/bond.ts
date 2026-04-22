@@ -268,8 +268,6 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   return action;
 }
 
-export { fromBondStereoUpdate };
-
 const plainBondTypes = [
   Bond.PATTERN.TYPE.SINGLE,
   Bond.PATTERN.TYPE.DOUBLE,

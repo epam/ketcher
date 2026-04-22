@@ -30,14 +30,8 @@ import { mergeFragmentsIfNeeded } from './atom';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { fromBondStereoUpdate } from './bondStereo';
 import { Action } from './action';
-import ReStruct from 'application/render/restruct/restruct';
+import type ReStruct from 'application/render/restruct/restruct';
 
-/**
- * @param restruct { ReStruct }
- * @param srcId { number }
- * @param dstId { number }
- * @return { Action }
- */
 export function fromAtomMerge(
   restruct: ReStruct,
   srcId: number,
@@ -50,9 +44,10 @@ export function fromAtomMerge(
 
   const action = new Action();
 
-  const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId)!;
+  const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId) ?? [];
   atomNeighbors.forEach((nei) => {
-    const bond = restruct.molecule.bonds.get(nei.bid)!;
+    const bond = restruct.molecule.bonds.get(nei.bid);
+    if (!bond) return;
 
     if (dstId === bond.begin || dstId === bond.end) {
       // src & dst have one nei
@@ -78,7 +73,11 @@ export function fromAtomMerge(
     action.addOp(new BondDelete(nei.bid));
   });
 
-  const attrs = Atom.getAttrHash(restruct.molecule.atoms.get(srcId)!);
+  const srcAtom = restruct.molecule.atoms.get(srcId);
+  if (!srcAtom) {
+    return action.perform(restruct).mergeWith(fragAction);
+  }
+  const attrs = Atom.getAttrHash(srcAtom);
 
   if (atomGetDegree(restruct, srcId) === 1 && attrs.label === '*') {
     attrs.label = 'C';
@@ -96,7 +95,8 @@ export function fromAtomMerge(
 
   const sgroups = atomGetSGroups(restruct, srcId);
   sgroups.forEach((sgroupId: number) => {
-    const sgroup = restruct.sgroups.get(sgroupId)!.item!;
+    const sgroup = restruct.sgroups.get(sgroupId)?.item;
+    if (!sgroup) return;
     for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       if (attachmentPoint.atomId === srcId) {
         action.addOp(
@@ -111,13 +111,13 @@ export function fromAtomMerge(
   });
 
   action.addOp(new AtomDelete(srcId));
-  const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId)!;
+  const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId) ?? [];
   const bond = restruct.molecule.bonds.get(
     dstAtomNeighbors[0]?.bid ?? atomNeighbors[0]?.bid,
   );
 
-  return action
-    .perform(restruct)
-    .mergeWith(fragAction)
-    .mergeWith(fromBondStereoUpdate(restruct, bond!));
+  const stereoAction = bond
+    ? fromBondStereoUpdate(restruct, bond)
+    : new Action();
+  return action.perform(restruct).mergeWith(fragAction).mergeWith(stereoAction);
 }

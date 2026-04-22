@@ -49,26 +49,29 @@ const atomPropertiesForSubMenu: {
   {
     title: ringBondCount.title,
     key: 'ringBondCount',
-    buttons: ringBondCount.enumNames.map((label, id) => ({
-      label,
-      value: ringBondCount.enum[id],
-    })),
+    buttons:
+      ringBondCount.enumNames?.map((label, id) => ({
+        label,
+        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: hCount.title,
     key: 'hCount',
-    buttons: hCount.enumNames.map((label, id) => ({
-      label,
-      value: hCount.enum[id],
-    })),
+    buttons:
+      hCount.enumNames?.map((label, id) => ({
+        label,
+        value: hCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: substitutionCount.title,
     key: 'substitutionCount',
-    buttons: substitutionCount.enumNames.map((label, id) => ({
-      label,
-      value: substitutionCount.enum[id],
-    })),
+    buttons:
+      substitutionCount.enumNames?.map((label, id) => ({
+        label,
+        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: unsaturatedAtom.title,
@@ -81,20 +84,20 @@ const atomPropertiesForSubMenu: {
   {
     title: implicitHCount.title,
     key: 'implicitHCount',
-    buttons: implicitHCount.enumNames.map((label, id) => ({
-      label,
-      value: implicitHCount.enum[id],
-    })),
+    buttons:
+      implicitHCount.enumNames?.map((label, id) => ({
+        label,
+        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   ...properties.map((name) => ({
     title: atom.properties[name].title,
     key: name,
-    buttons: atom.properties[name].enumNames.map(
-      (label: string, id: number) => ({
+    buttons:
+      atom.properties[name].enumNames?.map((label: string, id: number) => ({
         label,
-        value: atom.properties[name].enum[id],
-      }),
-    ),
+        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   })),
 ];
 

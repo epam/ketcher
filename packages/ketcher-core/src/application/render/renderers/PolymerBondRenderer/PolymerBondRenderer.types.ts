@@ -1,4 +1,4 @@
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export type PolymerBondRendererStartAndEndPositions = {
   readonly endPosition: Vec2;

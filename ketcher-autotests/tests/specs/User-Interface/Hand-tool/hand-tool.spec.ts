@@ -21,16 +21,14 @@ test.describe('Hand tool', () => {
 
   test('Hand tool icon tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-4240
-    const icon = {
+    const handToolButton = {
       testId: 'hand',
       title: 'Hand tool (Ctrl+Alt+H)',
     };
-    const iconButton = page
-      .getByTestId(icon.testId)
-      .filter({ has: page.locator(':visible') });
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    const button = CommonLeftToolbar(page).handToolButton;
+    await expect(button).toHaveAttribute('title', handToolButton.title);
+    await button.hover();
+    expect(handToolButton.title).toBeTruthy();
   });
 
   test('Moving canvas', async ({ page }) => {

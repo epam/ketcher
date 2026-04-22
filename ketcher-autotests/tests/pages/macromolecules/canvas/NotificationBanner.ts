@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 
-type ErrorTooltipLocators = {
+type NotificationBannerLocators = {
   message: Locator;
   closeButton: Locator;
 };
 
-export const ErrorTooltip = (page: Page) => {
-  const locators: ErrorTooltipLocators = {
+export const NotificationBanner = (page: Page) => {
+  const locators: NotificationBannerLocators = {
     message: page.getByTestId('error-tooltip').first(),
     closeButton: page.locator('#error-tooltip').getByRole('button').first(),
   };
@@ -34,11 +34,13 @@ export const ErrorTooltip = (page: Page) => {
       await locators.closeButton.click();
     },
 
-    async getErrorText() {
+    async getNotificationText() {
       await this.waitForBecomeVisible();
       return await locators.message.textContent();
     },
   };
 };
 
-export type ErrorTooltipLocatorsType = ReturnType<typeof ErrorTooltip>;
+export type NotificationBannerLocatorsType = ReturnType<
+  typeof NotificationBanner
+>;

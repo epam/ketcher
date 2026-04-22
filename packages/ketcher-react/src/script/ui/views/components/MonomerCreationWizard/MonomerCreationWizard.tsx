@@ -7,7 +7,6 @@ import {
   AttachmentPointName,
   BaseMonomer,
   ComponentStructureUpdateData,
-  CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
@@ -18,6 +17,7 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
+  provideEditorInstance,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -457,7 +457,7 @@ const autoAssignPropertiesForHiddenMonomer = (
 };
 
 const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const optionalFields = new Set(['aliasHELM', 'name']);
@@ -629,7 +629,7 @@ const validateModificationTypes = (
   modificationTypes: string[],
   naturalAnalogue: string,
 ) => {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
   const modificationTypesGroupedByNaturalAnalogue =
@@ -1268,7 +1268,7 @@ const MonomerCreationWizard = () => {
         });
       } else {
         // Validate preset code uniqueness (only if format is valid)
-        const coreEditor = CoreEditor.provideEditorInstance();
+        const coreEditor = provideEditorInstance();
         if (coreEditor.checkIfPresetCodeExists(presetCode)) {
           needSaveMonomers = false;
           rnaPresetWizardStateDispatch({

@@ -651,6 +651,19 @@ class Editor implements KetcherEditor {
     this.render.ctab.setSelection({ atoms: [atomPair[0]] });
   }
 
+  /**
+   * Highlights a specific atom by its ID on the canvas (for use when the
+   * AP name alone is ambiguous, e.g. two components sharing the same AP name).
+   * Pass null to clear the highlight.
+   */
+  public highlightAtomById(atomId: number | null) {
+    if (atomId === null) {
+      this.render.ctab.setSelection(null);
+      return;
+    }
+    this.render.ctab.setSelection({ atoms: [atomId] });
+  }
+
   public get isMonomerCreationWizardActive() {
     return Boolean(this.monomerCreationState);
   }

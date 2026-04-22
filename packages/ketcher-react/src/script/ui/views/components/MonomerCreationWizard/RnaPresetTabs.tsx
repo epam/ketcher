@@ -272,6 +272,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       // Preset tab: aggregate connection APs from all RNA components so that
       // hovering readonly attachment points on the Preset tab highlights the
       // corresponding atoms on the canvas.
+      // Use a composite key "<componentKey>:<apName>" to prevent entries from
+      // different components that share the same AP name (e.g. base R1 and
+      // phosphate R1 when position is 3') from overwriting each other in the
+      // map. The canvas renderer only checks map values (atom IDs), so the key
+      // format does not affect circle rendering.
       const allConnectionAtomIds = new Map<
         AttachmentPointName,
         [number, number]
@@ -285,7 +290,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
             phosphatePosition as PhosphatePosition | undefined,
           );
         componentConnectionAtomIds.forEach((atomPair, apName) => {
-          allConnectionAtomIds.set(apName, atomPair);
+          const uniqueKey = `${componentKey}:${apName}` as AttachmentPointName;
+          allConnectionAtomIds.set(uniqueKey, atomPair);
         });
       });
       editor.setConnectionAttachmentPoints(allConnectionAtomIds);
@@ -441,10 +447,41 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 </span>
               </div>
               {(() => {
+                // Build per-component connection atom ID maps so that each
+                // readonly AP can highlight its own atom, even when two components
+                // share the same AP name (e.g. base R1 and phosphate R1 when
+                // phosphate position is 3').
+                const componentConnectionAtomIdMaps = {
+                  base: getConnectionAttachmentPointAtomIdsForComponent(
+                    wizardState,
+                    struct,
+                    'base',
+                    phosphatePosition as PhosphatePosition | undefined,
+                  ),
+                  sugar: getConnectionAttachmentPointAtomIdsForComponent(
+                    wizardState,
+                    struct,
+                    'sugar',
+                    phosphatePosition as PhosphatePosition | undefined,
+                  ),
+                  phosphate: getConnectionAttachmentPointAtomIdsForComponent(
+                    wizardState,
+                    struct,
+                    'phosphate',
+                    phosphatePosition as PhosphatePosition | undefined,
+                  ),
+                };
+
                 // Aggregate readonly (inter-component connection) attachment points
-                // from all RNA components so they are visible on the Preset tab.
+                // from all RNA components, tagging each with its component key so
+                // we can look up the correct atom ID when multiple components share
+                // the same AP name.
                 const allReadonlyAttachmentPoints = RNA_COMPONENT_KEYS.flatMap(
-                  (key) => readonlyComponentAttachmentPoints[key],
+                  (key) =>
+                    readonlyComponentAttachmentPoints[key].map((ap) => ({
+                      ...ap,
+                      componentKey: key,
+                    })),
                 );
                 const hasAnyAPs =
                   presetAttachmentPoints.size > 0 ||
@@ -467,15 +504,24 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                         ),
                       )}
                       {allReadonlyAttachmentPoints.map(
-                        ({ name: apName, leavingAtomLabel }) => (
-                          <ReadonlyAttachmentPoint
-                            key={`readonly-preset-${apName}`}
-                            name={apName}
-                            leavingAtomLabel={leavingAtomLabel}
-                            editor={editor}
-                            onLeavingAtomChange={onConnectionLeavingAtomChange}
-                          />
-                        ),
+                        ({ name: apName, leavingAtomLabel, componentKey }) => {
+                          const atomPair =
+                            componentConnectionAtomIdMaps[componentKey].get(
+                              apName,
+                            );
+                          return (
+                            <ReadonlyAttachmentPoint
+                              key={`readonly-preset-${componentKey}-${apName}`}
+                              name={apName}
+                              leavingAtomLabel={leavingAtomLabel}
+                              editor={editor}
+                              atomId={atomPair?.[0]}
+                              onLeavingAtomChange={
+                                onConnectionLeavingAtomChange
+                              }
+                            />
+                          );
+                        },
                       )}
                     </div>
                   )

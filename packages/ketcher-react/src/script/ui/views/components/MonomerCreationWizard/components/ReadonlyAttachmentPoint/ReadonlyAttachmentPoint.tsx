@@ -9,6 +9,10 @@ type Props = {
   name: AttachmentPointName;
   leavingAtomLabel: AtomLabel;
   editor: Editor;
+  /** When provided, hover highlights this specific atom instead of using the
+   * name-keyed connection map. Use this when multiple components share the
+   * same AP name (e.g. base R1 and phosphate R1). */
+  atomId?: number;
   onLeavingAtomChange?: (
     apName: AttachmentPointName,
     newLeavingAtomLabel: AtomLabel,
@@ -24,6 +28,7 @@ const ReadonlyAttachmentPoint = ({
   name,
   leavingAtomLabel,
   editor,
+  atomId,
   onLeavingAtomChange,
 }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,10 +48,19 @@ const ReadonlyAttachmentPoint = ({
     if (!element) return;
 
     const mouseOverHandler = () => {
-      editor.highlightConnectionAttachmentPoint(name);
+      if (atomId !== undefined) {
+        // Use atom-specific highlighting to avoid AP name collisions between components.
+        editor.highlightAtomById(atomId);
+      } else {
+        editor.highlightConnectionAttachmentPoint(name);
+      }
     };
     const mouseLeaveHandler = () => {
-      editor.highlightConnectionAttachmentPoint(null);
+      if (atomId !== undefined) {
+        editor.highlightAtomById(null);
+      } else {
+        editor.highlightConnectionAttachmentPoint(null);
+      }
     };
 
     element.addEventListener('mouseover', mouseOverHandler);
@@ -56,7 +70,7 @@ const ReadonlyAttachmentPoint = ({
       element.removeEventListener('mouseover', mouseOverHandler);
       element.removeEventListener('mouseleave', mouseLeaveHandler);
     };
-  }, [editor, name]);
+  }, [editor, name, atomId]);
 
   // Canvas hover → panel highlight
   useEffect(() => {

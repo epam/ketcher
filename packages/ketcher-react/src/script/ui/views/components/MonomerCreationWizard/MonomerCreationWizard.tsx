@@ -406,6 +406,28 @@ const rnaPresetWizardReducer = (
 };
 
 /**
+ * Checks if all mandatory properties required for a non-hidden monomer are filled.
+ * Note: 'name' is not mandatory and will be auto-generated from symbol if empty.
+ * @param values - The wizard form values to check
+ * @returns true if Code (symbol) is filled and Natural analogue is filled (when required)
+ */
+const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
+  const { type, symbol, naturalAnalogue } = values;
+
+  // Check if Code/symbol is filled
+  if (!symbol?.trim()) {
+    return false;
+  }
+
+  // Check if Natural analogue is filled (only required for certain types)
+  if (isNaturalAnalogueRequired(type) && !naturalAnalogue?.trim()) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
  * Gets the appropriate leaving atom for a specific attachment point based on component type.
  * Per requirement 2.3.2.2:
  * - Base R1: H
@@ -456,7 +478,11 @@ const autoAssignPropertiesForHiddenMonomer = (
   };
 };
 
-const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
+const validateInputs = (
+  values: WizardValues,
+  skipUniquenessChecks = false,
+  skipMandatoryCheck = false,
+) => {
   const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
@@ -465,6 +491,7 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
+        !skipMandatoryCheck &&
         !optionalFields.has(key) &&
         (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
@@ -1321,16 +1348,15 @@ const MonomerCreationWizard = () => {
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
 
-      // Simulate auto-assignment to validate the final values that would be saved.
-      // This ensures format validation runs even when some mandatory fields are empty
-      // (they will be auto-filled), catching invalid characters in user-entered fields.
-      const valuesToValidate = presetCode
-        ? autoAssignPropertiesForHiddenMonomer(valuesToSave, presetCode)
-        : valuesToSave;
+      // Check if all mandatory properties are filled.
+      // If not, skip mandatory-emptiness errors (properties will be auto-assigned),
+      // but still validate format/characters of any user-entered values.
+      const hasMandatoryProperties =
+        hasAllMandatoryPropertiesFilled(valuesToSave);
 
       // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
       const { errors: inputsErrors, notifications: inputsNotifications } =
-        validateInputs(valuesToValidate, true);
+        validateInputs(valuesToSave, true, !hasMandatoryProperties);
       if (Object.keys(inputsErrors).length > 0) {
         needSaveMonomers = false;
         rnaPresetWizardStateDispatch({

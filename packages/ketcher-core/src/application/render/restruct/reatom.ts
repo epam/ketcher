@@ -701,10 +701,14 @@ class ReAtom extends ReObject {
 
     if (render.monomerCreationState) {
       const {
-        assignedAttachmentPoints,
+        assignedAttachmentPoints: allAssignedAttachmentPoints,
+        visibleAssignedAttachmentPoints,
         problematicAttachmentPoints,
         connectionAttachmentPoints,
       } = render.monomerCreationState;
+      // Use the restricted set when a component tab is active, otherwise show all.
+      const assignedAttachmentPoints =
+        visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);

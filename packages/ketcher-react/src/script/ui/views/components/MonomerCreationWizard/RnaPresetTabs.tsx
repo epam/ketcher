@@ -271,14 +271,16 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   useEffect(() => {
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
     if (!activeComponentKey) {
-      // Preset tab: aggregate connection APs from all RNA components so that
-      // hovering readonly attachment points on the Preset tab highlights the
-      // corresponding atoms on the canvas.
+      // Preset tab: show all assigned APs and aggregate connection APs from all
+      // RNA components so that hovering readonly attachment points on the Preset
+      // tab highlights the corresponding atoms on the canvas.
       // Use a composite key "<componentKey>:<apName>" to prevent entries from
       // different components that share the same AP name (e.g. base R1 and
       // phosphate R1 when position is 3') from overwriting each other in the
       // map. The canvas renderer only checks map values (atom IDs), so the key
       // format does not affect circle rendering.
+      editor.setVisibleAssignedAttachmentPoints(undefined);
+
       const allConnectionAtomIds = new Map<
         AttachmentPointName,
         [number, number]
@@ -300,6 +302,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       return;
     }
 
+    // Component tab: restrict visible assigned APs to those belonging to this
+    // component only, so APs from other components are hidden on the canvas.
+    editor.setVisibleAssignedAttachmentPoints(
+      componentAttachmentPoints[activeComponentKey],
+    );
+
     const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
       struct,
@@ -307,7 +315,14 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       phosphatePosition as PhosphatePosition | undefined,
     );
     editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
+  }, [
+    editor,
+    selectedTab,
+    struct,
+    wizardState,
+    phosphatePosition,
+    componentAttachmentPoints,
+  ]);
 
   useEffect(() => {
     return () => {

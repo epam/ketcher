@@ -43,10 +43,6 @@ export const WarningMessageDialog = (page: Page) => {
     async getWarningMessage() {
       return await locators.warningMessageBody.textContent();
     },
-
-    async getTitle() {
-      return await locators.title.textContent();
-    },
   };
 };
 

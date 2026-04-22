@@ -72,6 +72,14 @@ export abstract class BaseMode {
   }
 
   async onKeyDown(event: KeyboardEvent) {
+    if (!this.checkIfTargetIsInput(event)) {
+      const hotKeys = initHotKeys(this.keyboardEventHandlers);
+      const shortcutKey = keyNorm.lookup(hotKeys, event);
+
+      if (this.keyboardEventHandlers[shortcutKey]) {
+        event.stopImmediatePropagation();
+      }
+    }
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         const editor = provideEditorInstance();

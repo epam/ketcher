@@ -280,19 +280,19 @@ test(`5. Check warning messages on Sugar monomer if R3 attachment point with a l
   await createMonomerDialog.discard();
 });
 
-test(`6. Check warning messages on Base monomer if R1 attachment point with a leaving group is not equal OH`, async () => {
+test(`6. Check warning message on Base monomer when R1 attachment point leaving group is H`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/8587
-   * Description: Check warning messages on Base monomer if R1 attachment point with a leaving group is not equal OH
+   * Test task: https://github.com/epam/ketcher/issues/9837
+   * Description: Check warning message on Base monomer when R1 attachment point leaving group is H
    *
    * Case:
    *      1. Open Molecules canvas
    *      2. Load molecule on canvas (R1 = H)
    *      3. Press Create Monomer button
-   *      4. Set mandatory fields in Create Monomer dialog for amino acid monomer
+   *      4. Set mandatory fields in Create Monomer dialog for base monomer
    *      5. Press Submit button
    *      6. Verify that warning message dialog is opened
-   *      7. Verify that the correct warning message is displayed in the dialog
+   *      7. Verify that the correct title, buttons, and warning message are displayed in the dialog
    *
    * Version 3.10
    */
@@ -314,12 +314,16 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
 
   await createMonomerDialog.submit();
 
-  await expect(WarningMessageDialog(page).window).toBeVisible();
-  expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
+  const warningDialog = WarningMessageDialog(page);
+  await expect(warningDialog.window).toBeVisible();
+  await expect(warningDialog.title).toHaveText('Non-typical attachment points');
+  await expect(warningDialog.cancelButton).toHaveValue('Cancel');
+  await expect(warningDialog.okButton).toHaveValue('Yes');
+  expect(await warningDialog.getWarningMessage()).toContain(
     'Base monomers typically have a hydroxyl as the leaving group for R1. Do you wish to proceed with the current attachment points?',
   );
 
-  await WarningMessageDialog(page).cancel();
+  await warningDialog.cancel();
   await createMonomerDialog.discard();
 });
 

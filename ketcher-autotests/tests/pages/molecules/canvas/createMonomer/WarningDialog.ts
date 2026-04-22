@@ -2,6 +2,7 @@ import { Page, Locator } from '@playwright/test';
 
 type WarningMessageDialogLocators = {
   window: Locator;
+  title: Locator;
   closeWindowButton: Locator;
   warningMessageBody: Locator;
   okButton: Locator;
@@ -11,6 +12,7 @@ type WarningMessageDialogLocators = {
 export const WarningMessageDialog = (page: Page) => {
   const locators: WarningMessageDialogLocators = {
     window: page.getByTestId('info-modal-window'),
+    title: page.getByTestId('info-modal-window').locator('header span'),
     closeWindowButton: page.getByTestId('close-window-button'),
     warningMessageBody: page.getByTestId('info-modal-body'),
     okButton: page.getByTestId('OK'),
@@ -40,6 +42,10 @@ export const WarningMessageDialog = (page: Page) => {
 
     async getWarningMessage() {
       return await locators.warningMessageBody.textContent();
+    },
+
+    async getTitle() {
+      return await locators.title.textContent();
     },
   };
 };

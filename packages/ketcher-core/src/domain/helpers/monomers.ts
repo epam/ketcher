@@ -2,7 +2,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
+import type { Sugar } from 'domain/entities/Sugar';
 import {
   AttachmentPointName,
   MonomerItemType,
@@ -17,18 +17,13 @@ import {
 } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { Phosphate } from 'domain/entities/Phosphate';
+import type { Phosphate } from 'domain/entities/Phosphate';
 
 /**
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
  * and creating extra dependency edges in core entity/helper graph.
  */
-type AmbiguousMonomerEntity = BaseMonomer &
-  IVariantMonomer & {
-    isAmbiguous: true;
-    monomerClass: KetMonomerClass;
-  };
+type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
 type AmbiguousMonomerLike = {
   monomerItem?: { isAmbiguous?: boolean };
@@ -70,7 +65,15 @@ const getMonomerClass = (
 const isMonomerOfClass = (
   monomer: BaseMonomer | undefined,
   monomerClass: KetMonomerClass,
-): boolean => getMonomerClass(monomer) === monomerClass;
+): boolean => {
+  if (getMonomerClass(monomer) === monomerClass) return true;
+  // Fallback for monomers without an explicit MonomerClass, identified only
+  // by naturalAnalogShort (e.g. classHELM: RNA + naturalAnalogShort: P/R).
+  if (monomerClass === KetMonomerClass.Sugar) return Boolean(monomer?.isSugar);
+  if (monomerClass === KetMonomerClass.Phosphate)
+    return Boolean(monomer?.isPhosphate);
+  return false;
+};
 
 /**
  * Maps ambiguous monomer class metadata to chain constructor types used in chain checks.
@@ -311,7 +314,7 @@ export function isMonomerBeginningOfChain(
 }
 
 export function isValidNucleotide(
-  sugar: Sugar,
+  sugar: Sugar | AmbiguousMonomerEntity,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
@@ -328,7 +331,7 @@ export function isValidNucleotide(
 }
 
 export function isValidNucleoside(
-  sugar: Sugar,
+  sugar: Sugar | AmbiguousMonomerEntity,
   firstMonomerInCyclicChain?: BaseMonomer,
 ): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
@@ -404,20 +407,20 @@ export function isRnaBaseOrAmbiguousRnaBase(
 
 export function isPhosphateOrAmbiguousPhosphate(
   monomer?: BaseMonomer,
-): monomer is Phosphate | AmbiguousMonomer {
+): monomer is Phosphate | AmbiguousMonomerEntity {
   return (
-    monomer instanceof Phosphate ||
-    (monomer instanceof AmbiguousMonomer &&
+    isMonomerOfClass(monomer, KetMonomerClass.Phosphate) ||
+    (isAmbiguousMonomerEntity(monomer) &&
       monomer.monomerClass === KetMonomerClass.Phosphate)
   );
 }
 
 export function isSugarOrAmbiguousSugar(
   monomer?: BaseMonomer,
-): monomer is Sugar | AmbiguousMonomer {
+): monomer is Sugar | AmbiguousMonomerEntity {
   return (
-    monomer instanceof Sugar ||
-    (monomer instanceof AmbiguousMonomer &&
+    isMonomerOfClass(monomer, KetMonomerClass.Sugar) ||
+    (isAmbiguousMonomerEntity(monomer) &&
       monomer.monomerClass === KetMonomerClass.Sugar)
   );
 }

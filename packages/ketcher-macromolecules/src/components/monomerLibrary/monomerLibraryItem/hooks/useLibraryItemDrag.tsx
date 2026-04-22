@@ -1,14 +1,15 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
-import { selectEditor } from 'state/common';
+import { selectEditor, setIsDragging } from 'state/common';
 import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const useLibraryItemDrag = (
   item: IRnaPreset | MonomerOrAmbiguousType,
   itemRef: RefObject<HTMLElement>,
 ) => {
   const editor = useSelector(selectEditor);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!editor || !itemRef.current) {
@@ -30,6 +31,8 @@ export const useLibraryItemDrag = (
         if (editor.isLibraryItemDragCancelled) {
           return;
         }
+
+        dispatch(setIsDragging(true));
 
         const { clientX: x, clientY: y } = event.sourceEvent;
         editor.events.setLibraryItemDragState.dispatch({
@@ -66,6 +69,7 @@ export const useLibraryItemDrag = (
         editor.events.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
         document.body.style.cursor = '';
+        dispatch(setIsDragging(false));
       });
 
     itemElement.call(dragBehavior);
@@ -73,5 +77,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, item, itemRef]);
+  }, [editor, item, itemRef, dispatch]);
 };

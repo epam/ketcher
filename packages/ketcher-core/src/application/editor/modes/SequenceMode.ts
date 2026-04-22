@@ -1304,7 +1304,12 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Escape'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          this.turnOffEditMode();
+          if (this.isEditMode) {
+            this.turnOffEditMode();
+          } else {
+            const editor = provideEditorInstance();
+            editor.events.selectSelectionTool.dispatch();
+          }
         },
       },
       'start-new-sequence': {

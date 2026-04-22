@@ -28,7 +28,6 @@
     "cross-env": "^7.0.3"
   },
   "overrides": {
-    "immutable@<4": "3.8.3",
     "minimatch@<4": "3.1.5",
     "minimatch@>=5 <6": "5.1.9",
     "minimatch@>=9 <10": "9.0.9"

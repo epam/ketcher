@@ -71,10 +71,8 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import {
-  IKetTemplateConnection,
-  KetMonomerClass,
-} from 'application/formatters';
+import { IKetTemplateConnection } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {

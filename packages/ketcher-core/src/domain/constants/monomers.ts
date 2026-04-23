@@ -115,3 +115,21 @@ export const MonomerSize = 0.75;
 // Approximately equal to 15px on the screen and widely used as a measure of checking whether two vectors are in proximity
 export const HalfMonomerSize = MonomerSize / 2;
 export const StandardBondLength = MonomerSize * 2;
+
+/**
+ * Classifies monomer library items by chemical role.  Defined here (domain
+ * layer) so that domain entities and helpers can use it without importing from
+ * the application/formatters layer, which would create circular dependencies.
+ */
+export enum KetMonomerClass {
+  AminoAcid = 'AminoAcid',
+  Sugar = 'Sugar',
+  Phosphate = 'Phosphate',
+  Base = 'Base',
+  Terminator = 'Terminator',
+  Linker = 'Linker',
+  Unknown = 'Unknown',
+  CHEM = 'CHEM',
+  RNA = 'RNA',
+  DNA = 'DNA',
+}

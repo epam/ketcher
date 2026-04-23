@@ -1,5 +1,5 @@
 import { MonomerItemType } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 
 export function isMonomerItemSugar(monomer: MonomerItemType): boolean {

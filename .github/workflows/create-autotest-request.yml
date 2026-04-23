@@ -1,4 +1,4 @@
-name: Suggest Autotest Scenarios as Comment
+name: Create Autotest Request
 
 on:
   issue_comment:
@@ -6,13 +6,13 @@ on:
 
 jobs:
   suggest-autotests:
-    if: contains(github.event.comment.body, '@claude suggest autotests')
+    if: contains(github.event.comment.body, '@claude suggest Autotest Request')
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: read
     steps:
-      - name: Generate test scenarios and post as comment
+      - name: Generate test scenarios and create Autotest Request
         uses: actions/github-script@v7
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -93,9 +93,18 @@ jobs:
             const testScenarios = json.content?.[0]?.text?.trim()
               ?? '_Could not generate test scenarios — fill in manually._';
 
+            const { data: createdIssue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Autotests: ${featureTitle}`,
+              body: `**Source task(s):**\n - ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
+              labels: ['Autotests'],
+            });
+
+            // Reply in the PR comment thread with a link to the created issue
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: `### Suggested autotest scenarios\n\n${testScenarios}`,
+              body: `Autotest request created: ${createdIssue.html_url}`,
             });

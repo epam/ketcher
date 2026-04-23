@@ -478,7 +478,11 @@ const autoAssignPropertiesForHiddenMonomer = (
   };
 };
 
-const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
+const validateInputs = (
+  values: WizardValues,
+  skipUniquenessChecks = false,
+  skipMandatoryCheck = false,
+) => {
   const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
@@ -487,6 +491,7 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
+        !skipMandatoryCheck &&
         !optionalFields.has(key) &&
         (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
@@ -520,6 +525,19 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
           type: 'error',
           message: NotificationMessages.symbolExists,
         });
+      }
+    }
+
+    if (key === 'name') {
+      const nameRegex = /^[a-zA-Z0-9-_* ]*$/;
+      if (!nameRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidName', {
+          type: 'error',
+          message: NotificationMessages.invalidName,
+        });
+
+        return;
       }
     }
 
@@ -1330,34 +1348,31 @@ const MonomerCreationWizard = () => {
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
 
-      // Check if all mandatory properties are filled
-      // If not, we'll auto-assign properties instead of validating
+      // Check if all mandatory properties are filled.
+      // If not, skip mandatory-emptiness errors (properties will be auto-assigned),
+      // but still validate format/characters of any user-entered values.
       const hasMandatoryProperties =
         hasAllMandatoryPropertiesFilled(valuesToSave);
 
-      if (hasMandatoryProperties) {
-        // User has filled properties - validate them
-        // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
-        const { errors: inputsErrors, notifications: inputsNotifications } =
-          validateInputs(valuesToSave, true);
-        if (Object.keys(inputsErrors).length > 0) {
-          needSaveMonomers = false;
-          rnaPresetWizardStateDispatch({
-            type: 'SetErrors',
-            errors: inputsErrors,
-            rnaComponentKey,
-            editor,
-          });
-          rnaPresetWizardStateDispatch({
-            type: 'SetNotifications',
-            notifications: inputsNotifications,
-            rnaComponentKey,
-            editor,
-          });
-          return;
-        }
+      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToSave, true, !hasMandatoryProperties);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: inputsErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
       }
-      // If no mandatory properties filled, skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {

@@ -37,6 +37,7 @@ interface IMonomerCreationWizardFieldsProps {
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
+  disabled?: boolean;
 }
 
 interface ModificationTypeItem {
@@ -56,6 +57,7 @@ const MonomerCreationWizardFields = (
     onChangeModificationTypes,
     onFieldChange,
     attachmentPointsExtra,
+    disabled: fieldsDisabled,
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
@@ -150,11 +152,11 @@ const MonomerCreationWizardFields = (
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 onFieldChange('symbol', event.target.value)
               }
-              disabled={!type}
+              disabled={!type || fieldsDisabled}
             />
           }
           required
-          disabled={!type}
+          disabled={!type || fieldsDisabled}
         />
         <AttributeField
           title="Name"
@@ -168,10 +170,10 @@ const MonomerCreationWizardFields = (
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 onFieldChange('name', event.target.value)
               }
-              disabled={!type}
+              disabled={!type || fieldsDisabled}
             />
           }
-          disabled={!type}
+          disabled={!type || fieldsDisabled}
         />
         {props.showNaturalAnalogue !== false && (
           <AttributeField
@@ -186,7 +188,7 @@ const MonomerCreationWizardFields = (
                 error={errors.naturalAnalogue}
               />
             }
-            disabled={!isNaturalAnalogueRequired(type)}
+            disabled={!isNaturalAnalogueRequired(type) || fieldsDisabled}
             required
           />
         )}

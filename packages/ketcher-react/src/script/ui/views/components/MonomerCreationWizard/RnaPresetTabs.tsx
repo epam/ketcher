@@ -47,6 +47,24 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const structureSelection = useSelector(selectionSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
   const { wizardState, wizardStateDispatch, editor } = props;
+  const isSelectionContinuous = (() => {
+    if (!hasSelectedAtoms) {
+      return true;
+    }
+    const struct = editor.struct();
+    const selectedAtomIds = new Set(structureSelection?.atoms ?? []);
+    const bondIds = Array.from(struct.bonds.keys()).filter((bondId) => {
+      const bond = struct.bonds.get(bondId);
+      return (
+        bond && selectedAtomIds.has(bond.begin) && selectedAtomIds.has(bond.end)
+      );
+    });
+    return Editor.isStructureContinuous(struct, {
+      atoms: structureSelection?.atoms ?? [],
+      bonds: bondIds,
+    });
+  })();
+  const isFieldsDisabled = hasSelectedAtoms && !isSelectionContinuous;
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
   const { phosphatePosition, onPhosphatePositionChange } = props;
 
@@ -256,6 +274,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   handleFieldChange('name', event.target.value, 'preset')
                 }
+                disabled={isFieldsDisabled}
               />
             }
             required
@@ -273,7 +292,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                       monomerCreationWizardStyles.buttonSubmit,
                       styles.createComponentButton,
                     )}
-                    disabled={!hasSelectedAtoms}
+                    disabled={!hasSelectedAtoms || isFieldsDisabled}
                     onClick={() => handleClickCreateComponent(rnaComponentKey)}
                   >
                     Mark as {rnaComponentKey}
@@ -282,6 +301,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                 <MonomerCreationWizardFields
                   assignedAttachmentPoints={new Map()}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
+                  disabled={isFieldsDisabled}
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (
                       <AttributeField

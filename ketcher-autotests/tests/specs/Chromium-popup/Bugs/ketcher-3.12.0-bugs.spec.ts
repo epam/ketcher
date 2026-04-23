@@ -16,7 +16,9 @@ import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPoi
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
+  Arrows,
   copyToClipboardByKeyboard,
+  getCoordinatesOfTheMiddleOfTheScreen,
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
@@ -36,6 +38,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   AttachmentPoint,
@@ -633,5 +637,64 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     });
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
+  });
+
+  test('Case 19 — Undo/redo moves arrow after position change in Macro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8954
+     * Bug: https://github.com/epam/ketcher/issues/8954
+     
+     * Description: Arrow should return to its original position after Undo and then move back after Redo.
+     * Scenario:
+     * 1. Open Molecules canvas
+     * 2. Select Open Angle Arrow tool
+     * 3. Place arrow in the middle of the screen
+     * 4. Switch to Macromolecules mode
+     * 5. Move the arrow to a new position
+     * 6. Press Undo
+     * 7. Press Redo
+     *
+     * Version 3.12.0
+     */
+
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    const screenCenter = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(screenCenter.x, screenCenter.y);
+    await dragMouseTo(page, screenCenter.x + 100, screenCenter.y + 20);
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonLeftToolbar(page).areaSelectionTool();
+
+    const arrow = getArrowLocator(page, {
+      arrowType: Arrows.OpenAngle,
+    }).first();
+    await arrow.waitFor({ state: 'visible' });
+    const arrowInitialBox = await arrow.boundingBox();
+    expect(arrowInitialBox).not.toBeNull();
+
+    const arrowInitialX = (arrowInitialBox!.x +
+      arrowInitialBox!.width / 2) as number;
+    const arrowInitialY = (arrowInitialBox!.y +
+      arrowInitialBox!.height / 2) as number;
+
+    await page.mouse.move(arrowInitialX, arrowInitialY);
+    await dragMouseTo(page, arrowInitialX + 120, arrowInitialY + 70);
+
+    const arrowMovedBox = await arrow.boundingBox();
+    expect(arrowMovedBox).not.toBeNull();
+    const arrowMovedX = arrowMovedBox!.x + arrowMovedBox!.width / 2;
+    expect(arrowMovedX).toBeGreaterThan(arrowInitialX + 40);
+
+    await CommonTopLeftToolbar(page).undo();
+    const arrowAfterUndoBox = await arrow.boundingBox();
+    expect(arrowAfterUndoBox).not.toBeNull();
+    const arrowAfterUndoX = arrowAfterUndoBox!.x + arrowAfterUndoBox!.width / 2;
+    expect(Math.abs(arrowAfterUndoX - arrowInitialX)).toBeLessThan(10);
+
+    await CommonTopLeftToolbar(page).redo();
+    const arrowAfterRedoBox = await arrow.boundingBox();
+    expect(arrowAfterRedoBox).not.toBeNull();
+    const arrowAfterRedoX = arrowAfterRedoBox!.x + arrowAfterRedoBox!.width / 2;
+    expect(Math.abs(arrowAfterRedoX - arrowMovedX)).toBeLessThan(10);
   });
 });

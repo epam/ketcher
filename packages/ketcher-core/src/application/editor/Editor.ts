@@ -378,7 +378,8 @@ export class CoreEditor {
       return (
         firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
         firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
-        firstMonomer.props.hidden === secondMonomer.props.hidden
+        // firstMonomer.props.hidden === secondMonomer.props.hidden &&
+        firstMonomer.props.Name === secondMonomer.props.Name
       );
     };
     const formatAliasDetails = (monomer: MonomerItemType) =>
@@ -459,7 +460,8 @@ export class CoreEditor {
           return (
             monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
             monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-            monomer?.props.hidden === newMonomer.props?.hidden
+            // monomer?.props.hidden === newMonomer.props?.hidden
+            monomer?.props?.Name === newMonomer?.props?.Name
           );
         },
       );

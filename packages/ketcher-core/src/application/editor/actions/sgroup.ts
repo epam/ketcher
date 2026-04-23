@@ -734,7 +734,7 @@ export function fromSgroupAddition(
   // eslint-disable-line
   let action = new Action();
 
-  sgid = typeof sgid === 'number' ? sgid : restruct.molecule.sgroups.newId();
+  sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
 
   if (type === 'SUP') {
     action.addOp(

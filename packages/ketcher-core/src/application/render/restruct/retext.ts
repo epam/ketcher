@@ -21,7 +21,7 @@ import { flatten } from 'lodash/fp';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
 

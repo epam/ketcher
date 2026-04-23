@@ -596,13 +596,11 @@ function propSchema(
 ) {
   const validator = new Validator();
   const schemaCopy = cloneDeep(schema);
-  const customFormats: Record<string, (value: string) => boolean> = {};
-
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       // jsonschema format functions must return boolean.
       // AJV allowed truthy strings (treated as valid); preserve that behaviour.
-      customFormats[formatName] = (value: string) =>
+      validator.customFormats[formatName] = (value: string) =>
         formatValidator(value) !== false;
 
       if (!schemaCopy.properties) return;
@@ -623,9 +621,7 @@ function propSchema(
   return {
     key: schema.key || '',
     serialize: (inst: Record<string, unknown>) => {
-      const result = validator.validate(inst, schemaCopy as Schema, {
-        customFormats,
-      });
+      const result = validator.validate(inst, schemaCopy as Schema);
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),

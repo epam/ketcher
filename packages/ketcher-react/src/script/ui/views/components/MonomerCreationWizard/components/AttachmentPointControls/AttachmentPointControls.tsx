@@ -16,6 +16,8 @@ type Props = {
   disabled?: boolean;
   /** Disable only the name select, leaving the leaving-atom select editable */
   disabledName?: boolean;
+  /** Tooltip shown on the name select when it is disabled */
+  nameTooltip?: string;
 };
 
 const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
@@ -30,6 +32,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
       isPopup,
       disabled,
       disabledName,
+      nameTooltip,
     },
     ref,
   ) => {
@@ -58,18 +61,20 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
         ref={ref}
         data-testid={`attachment-point-controls-${currentNameOption?.label}`}
       >
-        <Select
-          className={styles.nameSelect}
-          options={nameOptions}
-          value={currentNameOption?.value}
-          onChange={handleNameChange}
-          disabled={disabled || disabledName}
-          data-testid={
-            isPopup
-              ? `attachment-point-name-select`
-              : `attachment-point-name-select-${currentNameOption?.label}`
-          }
-        />
+        <span title={disabledName ? nameTooltip : undefined}>
+          <Select
+            className={styles.nameSelect}
+            options={nameOptions}
+            value={currentNameOption?.value}
+            onChange={handleNameChange}
+            disabled={disabled || disabledName}
+            data-testid={
+              isPopup
+                ? `attachment-point-name-select`
+                : `attachment-point-name-select-${currentNameOption?.label}`
+            }
+          />
+        </span>
         <Select
           className={styles.leavingAtomSelect}
           options={leavingAtomOptions}

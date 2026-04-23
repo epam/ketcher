@@ -124,6 +124,7 @@ const ReadonlyAttachmentPoint = ({
       className={styles.selects}
       highlight={highlight}
       disabledName
+      nameTooltip="Attachment point numbers of internal attachment points determined by the phosphate position switcher."
       disabled={!onLeavingAtomChange}
       ref={containerRef}
     />

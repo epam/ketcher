@@ -1,12 +1,14 @@
 import { FC } from 'react';
 
-export type TabPanelData = {
+export type TabPanelData<
+  P extends Record<string, unknown> = Record<string, unknown>,
+> = {
   caption: string;
   tooltip?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: FC<any>;
+  component: FC<P>;
   testId: string;
-  props?: Record<string, unknown>;
+  props?: P;
 };
 
-export type TabsData = TabPanelData[];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TabsData = TabPanelData<any>[];

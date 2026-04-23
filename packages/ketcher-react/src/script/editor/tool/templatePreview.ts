@@ -196,8 +196,7 @@ class TemplatePreview {
         shouldFlip,
         true,
         true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as Promise<any>;
+      ) as Promise<[Action, unknown]>;
 
       promise.then(([action, pasteItems]) => {
         if (!this.isModeFunctionalGroup) {

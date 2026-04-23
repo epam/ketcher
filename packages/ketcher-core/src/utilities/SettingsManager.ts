@@ -32,9 +32,13 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+interface SelectionTool {
+  tool: string;
+  opts: string;
+}
+
 interface SavedSettings {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectionTool?: any;
+  selectionTool?: SelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];

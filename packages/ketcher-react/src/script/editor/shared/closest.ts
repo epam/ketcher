@@ -614,9 +614,8 @@ function findCloseMerge(
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
       });
     } else {
-      result[map] = Array.from(pos[map].keys()).reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: Map<any, any>, srcId) => {
+      result[map] = (Array.from(pos[map].keys()) as number[]).reduce(
+        (res: Map<number, number>, srcId: number) => {
           const skip = { map, id: srcId };
           const item = findMaps[map](
             restruct,
@@ -632,7 +631,7 @@ function findCloseMerge(
 
           return res;
         },
-        new Map(),
+        new Map<number, number>(),
       );
     }
   });

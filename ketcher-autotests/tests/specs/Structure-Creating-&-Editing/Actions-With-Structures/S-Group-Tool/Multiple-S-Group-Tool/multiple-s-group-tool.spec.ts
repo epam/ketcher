@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -219,7 +219,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

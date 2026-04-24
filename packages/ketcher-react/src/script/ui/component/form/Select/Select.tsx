@@ -27,6 +27,7 @@ export interface Option {
   value: string;
   label: string;
   children?: ReactNode;
+  disabled?: boolean;
 }
 
 interface Props {
@@ -115,6 +116,7 @@ const Select = ({
             value={option.value}
             key={option.value}
             disableRipple={true}
+            disabled={option.disabled}
             className={clsx({
               [`dropdown-${formName}_${name}`]: formName,
             })}

@@ -41,6 +41,13 @@ type Props = BondProps &
     isMonomerCreationWizardActive?: boolean;
   };
 
+const MONOMER_WIZARD_DISALLOWED_BOND_TYPES = [
+  'any',
+  'singledouble',
+  'singlearomatic',
+  'doublearomatic',
+];
+
 const Bond = (props: Props) => {
   const { formState, isMonomerCreationWizardActive = false, ...rest } = props;
   const bondProps = bondSchema.properties;
@@ -51,6 +58,16 @@ const Bond = (props: Props) => {
     center: 0,
     customQuery: '',
   });
+  const bondTypeOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(bondProps.type).map((option) => ({
+        ...option,
+        disabled:
+          isMonomerCreationWizardActive &&
+          MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
+      })),
+    [bondProps.type, isMonomerCreationWizardActive],
+  );
   const customValid = useMemo(
     () => ({
       customQuery: (customQuery: string) =>
@@ -110,7 +127,7 @@ const Bond = (props: Props) => {
         <Field
           name="type"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.type)}
+          options={bondTypeOptions}
           disabled={isCustomQuery}
           formName="bond-properties"
           data-testid="type"

@@ -29,6 +29,13 @@ export const queryBondNames = [
   'bond-doublearomatic',
 ];
 
+export const monomerWizardDisallowedBondNames = [
+  'bond-any',
+  'bond-singledouble',
+  'bond-singlearomatic',
+  'bond-doublearomatic',
+];
+
 /**
  * Get bond names except for query bonds
  *

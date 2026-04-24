@@ -2,7 +2,7 @@ import { Page, test } from '@fixtures';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -21,7 +21,7 @@ test.describe('Selection and hover for simple objects', () => {
     await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, ellipseCoordinates.x, ellipseCoordinates.y);
     return ellipseCoordinates;
   };
@@ -30,7 +30,7 @@ test.describe('Selection and hover for simple objects', () => {
     page,
   }) => {
     await setupEllipse(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -38,7 +38,7 @@ test.describe('Selection and hover for simple objects', () => {
     page,
   }) => {
     const ellipseCoordinates = await setupEllipse(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(ellipseCoordinates.x, ellipseCoordinates.y);
     await takeEditorScreenshot(page);
   });

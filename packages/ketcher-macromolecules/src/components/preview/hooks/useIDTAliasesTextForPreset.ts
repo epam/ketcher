@@ -37,7 +37,7 @@ const useIDTAliasesTextForPreset = ({
             endpoint3,
           ].every((alias) => alias.includes(base));
           if (isAllPositionsHaveSameBase) {
-            return removeSlashesFromIdtAlias(base);
+            return base;
           }
           return `${endpoint5}, ${internal}`;
         }

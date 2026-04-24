@@ -30,8 +30,17 @@ const useIDTAliasesTextForPreset = ({
         removeSlashesFromIdtAlias(modifications?.endpoint3) ?? `3${base}`;
 
       switch (position) {
-        case PresetPosition.Library:
+        case PresetPosition.Library: {
+          const isAllPositionsHaveSameBase = [
+            endpoint5,
+            internal,
+            endpoint3,
+          ].every((alias) => alias.includes(base));
+          if (isAllPositionsHaveSameBase) {
+            return removeSlashesFromIdtAlias(base);
+          }
           return `${endpoint5}, ${internal}`;
+        }
         case PresetPosition.ChainStart:
           return endpoint5;
         case PresetPosition.ChainMiddle:

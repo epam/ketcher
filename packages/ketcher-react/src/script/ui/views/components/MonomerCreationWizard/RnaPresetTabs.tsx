@@ -108,22 +108,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   const handleClickCreateComponent = useCallback(
     (rnaComponentKey: RnaPresetComponentKey) => {
-      // Get the current selection from the editor
       const selection = editor.explicitSelected();
       const atomIds = selection?.atoms || [];
       const bondIds = selection?.bonds || [];
 
-      // Update the wizard state
-      wizardStateDispatch({
-        type: 'SetRnaPresetComponentStructure',
-        rnaComponentKey,
-        editor,
-      });
-
-      // Sync the component atoms with the Editor for auto-assignment tracking
-      editor.setRnaComponentAtoms(rnaComponentKey, atomIds, bondIds);
+      editor.markAsRnaComponent(rnaComponentKey, atomIds, bondIds);
     },
-    [editor, wizardStateDispatch],
+    [editor],
   );
 
   const handlePhosphatePositionChange = (position: '3' | '5') => {

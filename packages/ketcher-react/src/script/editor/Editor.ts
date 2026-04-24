@@ -66,6 +66,7 @@ import {
   OperationType,
   CoordinateTransformation,
   AssignLeavingGroupAtomOperation,
+  MarkAsRnaComponentOperation,
   RemoveAttachmentPointOperation,
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
@@ -185,11 +186,6 @@ export interface Selection {
   rgroupAttachmentPoints?: Array<number>;
   [MULTITAIL_ARROW_KEY]?: Array<number>;
 }
-
-type RnaComponentAtomsMap = Map<
-  RnaPresetComponentKey,
-  { atoms: number[]; bonds: number[] }
->;
 
 class Editor implements KetcherEditor {
   ketcherId: string;
@@ -611,121 +607,34 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
-  public setRnaComponentAtoms(
+  public markAsRnaComponent(
     componentKey: RnaPresetComponentKey,
     atomIds: number[],
     bondIds: number[],
   ) {
-    const currentState = this.render.monomerCreationState;
-    if (!currentState) return;
+    const state = this.monomerCreationState;
+    if (!state) return;
 
-    const rnaComponentAtoms = this.cloneRnaComponentAtoms(
-      currentState.rnaComponentAtoms,
-    );
-    rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
+    if (!state.rnaComponentAtoms) {
+      state.rnaComponentAtoms = new Map();
+    }
 
-    this.render.monomerCreationState = {
-      ...currentState,
-      rnaComponentAtoms,
-    };
+    const prevComponentData = state.rnaComponentAtoms.get(componentKey);
+    const prevAtomIds = prevComponentData?.atoms ?? [];
+    const prevBondIds = prevComponentData?.bonds ?? [];
 
-    this.hasPendingRnaComponentUndo = true;
-    this.rnaComponentRedoState = null;
-    this.event.change.dispatch();
-  }
-
-  private cloneRnaComponentAtoms(
-    rnaComponentAtoms?: RnaComponentAtomsMap | null,
-  ): RnaComponentAtomsMap {
-    return new Map(
-      Array.from(rnaComponentAtoms ?? []).map(
-        ([componentKey, componentData]) => [
-          componentKey,
-          {
-            atoms: [...componentData.atoms],
-            bonds: [...componentData.bonds],
-          },
-        ],
+    const action = new Action([
+      new MarkAsRnaComponentOperation(
+        state,
+        componentKey,
+        atomIds,
+        bondIds,
+        prevAtomIds,
+        prevBondIds,
       ),
-    );
-  }
+    ]).perform(this.render.ctab);
 
-  private hasRnaComponentAssignments(
-    rnaComponentAtoms?: RnaComponentAtomsMap | null,
-  ) {
-    return Array.from(rnaComponentAtoms?.values() ?? []).some(
-      ({ atoms, bonds }) => atoms.length > 0 || bonds.length > 0,
-    );
-  }
-
-  private syncRnaComponentMarks(
-    rnaComponentAtoms: RnaComponentAtomsMap,
-    shouldClearSelection = false,
-  ) {
-    const currentState = this.render.monomerCreationState;
-    if (!currentState) return;
-
-    this.render.monomerCreationState = {
-      ...currentState,
-      rnaComponentAtoms: this.cloneRnaComponentAtoms(rnaComponentAtoms),
-    };
-
-    if (shouldClearSelection) {
-      this.selection(null);
-    }
-
-    const componentKeys: RnaPresetComponentKey[] = [
-      'base',
-      'sugar',
-      'phosphate',
-    ];
-
-    for (const key of componentKeys) {
-      const componentData = rnaComponentAtoms.get(key);
-      const eventData: ComponentStructureUpdateData = {
-        componentKey: key,
-        atomIds: componentData?.atoms ?? [],
-        bondIds: componentData?.bonds ?? [],
-      };
-
-      window.dispatchEvent(
-        new CustomEvent(MonomerCreationComponentStructureUpdateEvent, {
-          detail: eventData,
-        }),
-      );
-    }
-  }
-
-  private clearRnaComponentMarks() {
-    const currentState = this.render.monomerCreationState;
-    if (!currentState) return;
-
-    const rnaComponentAtoms = this.cloneRnaComponentAtoms(
-      currentState.rnaComponentAtoms,
-    );
-
-    this.rnaComponentRedoState = this.hasRnaComponentAssignments(
-      rnaComponentAtoms,
-    )
-      ? rnaComponentAtoms
-      : null;
-    this.hasPendingRnaComponentUndo = false;
-
-    this.syncRnaComponentMarks(new Map(), true);
-  }
-
-  private restoreRnaComponentMarks() {
-    if (!this.rnaComponentRedoState) {
-      return;
-    }
-
-    const rnaComponentAtoms = this.cloneRnaComponentAtoms(
-      this.rnaComponentRedoState,
-    );
-
-    this.syncRnaComponentMarks(rnaComponentAtoms);
-    this.hasPendingRnaComponentUndo = true;
-    this.rnaComponentRedoState = null;
+    this.update(action);
   }
 
   public get isMonomerCreationWizardActive() {
@@ -999,9 +908,6 @@ class Editor implements KetcherEditor {
   private originalSelection: Selection = {};
   private originalHistoryStack: Action[] = [];
   private originalHistoryPointer = 0;
-  private hasPendingRnaComponentUndo = false;
-  private rnaComponentRedoState: RnaComponentAtomsMap | null = null;
-
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
   private changeEventSubscriber: any = null;
@@ -1371,8 +1277,6 @@ class Editor implements KetcherEditor {
       this.struct(this.originalStruct, false);
     }
 
-    this.hasPendingRnaComponentUndo = false;
-    this.rnaComponentRedoState = null;
     this.monomerCreationState = null;
 
     this.tool('select');
@@ -2223,10 +2127,6 @@ class Editor implements KetcherEditor {
       bonds: updatedBonds,
     });
 
-    this.hasPendingRnaComponentUndo = this.hasRnaComponentAssignments(
-      this.monomerCreationState?.rnaComponentAtoms,
-    );
-
     // Fire an event so the wizard can update its state
     const eventData: ComponentStructureUpdateData = {
       componentKey,
@@ -2746,7 +2646,6 @@ class Editor implements KetcherEditor {
       this.render.update(true, null); // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
-        this.rnaComponentRedoState = null;
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
         if (this.historyStack.length > HISTORY_SIZE) {
           this.historyStack.shift();
@@ -2761,19 +2660,8 @@ class Editor implements KetcherEditor {
 
   historySize(): { readonly undo: number; readonly redo: number } {
     return {
-      undo:
-        this.historyPtr +
-        (this.monomerCreationState?.isRnaPresetMode &&
-        this.hasPendingRnaComponentUndo
-          ? 1
-          : 0),
-      redo:
-        this.historyStack.length -
-        this.historyPtr +
-        (this.monomerCreationState?.isRnaPresetMode &&
-        this.rnaComponentRedoState
-          ? 1
-          : 0),
+      undo: this.historyPtr,
+      redo: this.historyStack.length - this.historyPtr,
     };
   }
 
@@ -2787,17 +2675,6 @@ class Editor implements KetcherEditor {
     const ketcherChangeEvent = ketcherProvider.getKetcher(
       this.ketcherId,
     ).changeEvent;
-    if (
-      this.monomerCreationState?.isRnaPresetMode &&
-      this.hasPendingRnaComponentUndo
-    ) {
-      this.clearRnaComponentMarks();
-      this.event.change.dispatch();
-      ketcherChangeEvent.dispatch();
-
-      return;
-    }
-
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -2838,17 +2715,6 @@ class Editor implements KetcherEditor {
       this.ketcherId,
     ).changeEvent;
     if (this.historyPtr === this.historyStack.length) {
-      if (
-        this.monomerCreationState?.isRnaPresetMode &&
-        this.rnaComponentRedoState
-      ) {
-        this.restoreRnaComponentMarks();
-        this.event.change.dispatch();
-        ketcherChangeEvent.dispatch();
-
-        return;
-      }
-
       throw new Error('Redo stack is empty');
     }
 

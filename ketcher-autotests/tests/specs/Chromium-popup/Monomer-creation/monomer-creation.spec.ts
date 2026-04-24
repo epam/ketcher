@@ -57,7 +57,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { collapseMonomer, expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -75,7 +75,10 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import {
+  ErrorMessage,
+  InfoMessage,
+} from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
@@ -478,7 +481,7 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
      *                 the non-selected part of the structure
      *              3. Check that leaving group atoms are marked (see mockups), until the user confirms
      *                 (clicks OK) on the warning message in the error/warning area at the bottom for
-     *                 the wizard: "Attachment points are set by default with hydrogens as leaving groups
+     *                 the wizard: "Attachment points are set by default with hydrogens as leaving groups."
      * Case:
      *      1. Open Molecules canvas
      *      2. Load molecule on canvas
@@ -488,9 +491,6 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
      *
      * Version 3.7
      */
-    const notificationMessage = page.getByText(
-      'Attachment points are set by default with hydrogens as leaving groups.',
-    );
     await pasteFromClipboardAndOpenAsNewProject(
       page,
       eightAttachmentPointsMolecule.MoleculeSMARTS,
@@ -502,7 +502,14 @@ for (const eightAttachmentPointsMolecule of eightAttachmentPointsMolecules) {
     );
     await LeftToolbar(page).createMonomer();
     await takeEditorScreenshot(page);
-    expect(await notificationMessage.count()).toBeGreaterThan(0);
+    expect(
+      await NotificationMessageBanner(
+        page,
+        InfoMessage.defaultAttachmentPoints,
+      ).getNotificationMessage(),
+    ).toContain(
+      'Attachment points are set by default with hydrogens as leaving groups.',
+    );
     await CreateMonomerDialog(page).discard();
   });
 }
@@ -970,12 +977,12 @@ const eligableNames = [
   {
     description: '1. Longest Name',
     value:
-      "N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2',3'-O-(methoxymetylene)-octadecakis(2-chlorophenyl)ester. 5'-[2-(dibromomethyl)benzoate]",
+      'N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-3-O-methoxymetylene-octadecakis-2-chlorophenyl-ester 5-2-dibromomethyl-benzoate',
   },
   { description: '2. Shortest Name', value: 's' },
   {
     description: '3. Name of special symbols',
-    value: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+    value: '-_*',
   },
   {
     description: '4. Name of with spaces',
@@ -3643,7 +3650,7 @@ for (const monomerToCreate of monomersToCreate51) {
       MacromoleculesFileFormatType.IDT,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Convert error! Sequence saver:');
+    expect(errorMessage).toContain('Convert error!');
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

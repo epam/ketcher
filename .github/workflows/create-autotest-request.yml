@@ -1,0 +1,142 @@
+name: Create Autotest Request
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  suggest-autotests:
+    if: >
+      contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) &&
+      startsWith(github.event.comment.body, '@claude suggest Autotest Request')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Generate test scenarios and create Autotest Request
+        uses: actions/github-script@v7
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const commentBody = context.payload.comment.body.trim();
+            const isPR = !!issue.pull_request;
+            const apiKey = process.env.ANTHROPIC_API_KEY;
+
+            if (!apiKey) {
+              throw new Error('ANTHROPIC_API_KEY secret is not configured.');
+            }
+
+            if (!/^@claude suggest Autotest Request(?:\s|$)/.test(commentBody)) {
+              core.info('Comment does not match the Autotest Request command exactly. Skipping.');
+              return;
+            }
+
+            const sourceLink = issue.html_url;
+
+            // Acknowledge the request with a reaction
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'eyes',
+            });
+
+            let featureTitle = issue.title;
+            let featureDescription = issue.body?.trim() || '(none)';
+
+            if (isPR) {
+              // Fetch full PR details and try to resolve linked issue
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: issue.number,
+              });
+
+              featureTitle = pr.title;
+              featureDescription = pr.body?.trim() || '(none)';
+
+              const issueNumberFromTitle = pr.title.match(/^#(\d+)/)?.[1];
+              const issueNumberFromBody = pr.body?.match(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)/i)?.[1];
+              const linkedIssueNumber = issueNumberFromTitle ?? issueNumberFromBody;
+
+              if (linkedIssueNumber) {
+                try {
+                  const { data: linkedIssue } = await github.rest.issues.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: Number(linkedIssueNumber),
+                  });
+                  featureTitle = linkedIssue.title;
+                  featureDescription = linkedIssue.body?.trim() || '(none)';
+                } catch (_) {
+                  // Linked issue not found; fall back to PR content.
+                }
+              }
+            }
+
+            const prompt = `You are a QA engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
+            Generate a concise checklist of test scenarios that automated tests should cover - include the happy path and the most important edge cases.
+
+            Feature title: ${featureTitle}
+            Feature description:
+            ${featureDescription}
+
+            Rules:
+            - Output a markdown checklist only (lines starting with "- [ ]"), no headings or prose.
+            - Each item is one testable scenario in plain language.
+            - Be specific to Ketcher's domain (molecules, bonds, atoms, reactions, monomers) where relevant.
+            - Maximum 15 items.`;
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+              method: 'POST',
+              headers: {
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'claude-sonnet-4-6',
+                max_tokens: 1024,
+                messages: [{ role: 'user', content: prompt }],
+              }),
+            });
+
+            const responseText = await response.text();
+            if (!response.ok) {
+              throw new Error(`Anthropic request failed (${response.status}): ${responseText}`);
+            }
+
+            let json;
+            try {
+              json = JSON.parse(responseText);
+            } catch (error) {
+              throw new Error(`Anthropic returned invalid JSON: ${error.message}`);
+            }
+
+            const generatedText = json.content?.find((item) => item.type === 'text')?.text?.trim();
+            if (!generatedText) {
+              throw new Error('Anthropic response did not include generated test scenarios.');
+            }
+
+            const testScenarios = generatedText
+              .replace(/^```(?:markdown|md)?\s*/i, '')
+              .replace(/\s*```$/, '');
+
+            const { data: createdIssue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Autotests: ${featureTitle}`,
+              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
+              labels: ['Autotests'],
+            });
+
+            // Reply in the source thread with a link to the created issue.
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `Autotest request created: ${createdIssue.html_url}`,
+            });

@@ -1,4 +1,4 @@
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 export const UNRESOLVED_MONOMER_COLOR = '#585858';
 

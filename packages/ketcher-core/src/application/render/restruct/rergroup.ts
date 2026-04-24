@@ -16,57 +16,60 @@
 
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
+import { RGroup } from 'domain/entities/rgroup';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
+import type ReStruct from './restruct';
+import { Render } from '../raphaelRender';
+import { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Render } from '../raphaelRender';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
+
 class ReRGroup extends ReObject {
-  constructor(/* RGroup */ rgroup) {
+  public labelBox: Box2Abs | null;
+  public item: RGroup;
+
+  constructor(rgroup: RGroup) {
     super('rgroup');
     this.labelBox = null;
     this.item = rgroup;
   }
 
-  static isSelectable() {
+  static isSelectable(): boolean {
     return false;
   }
 
-  getAtoms(render) {
-    let ret = [];
+  getAtoms(render: Render): number[] {
+    let ret: number[] = [];
     this.item.frags.forEach((fid) => {
-      ret = ret.concat(
-        render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid),
-      );
+      const frag = render.ctab.frags.get(fid);
+      if (frag) {
+        ret = ret.concat(frag.fragGetAtoms(render.ctab, fid));
+      }
     });
     return ret;
   }
 
-  getBonds(render) {
-    let ret = [];
+  getBonds(render: Render): number[] {
+    let ret: number[] = [];
     this.item.frags.forEach((fid) => {
-      ret = ret.concat(
-        render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid),
-      );
+      const frag = render.ctab.frags.get(fid);
+      if (frag) {
+        ret = ret.concat(frag.fragGetBonds(render.ctab, fid));
+      }
     });
     return ret;
   }
 
-  /**
-   * @param {Render} render
-   */
-  calcBBox(render) {
-    /** @type {Box2Abs | null} */
-    let rGroupBoundingBox = null;
+  calcBBox(render: Render): Box2Abs | null {
+    let rGroupBoundingBox: Box2Abs | null = null;
     this.item.frags.forEach((fid) => {
-      const fragBox = render.ctab.frags
-        .get(fid)
-        .calcBBox(render.ctab, fid, render);
+      const frag = render.ctab.frags.get(fid);
+      const fragBox = frag?.calcBBox(render.ctab, fid, render);
       if (fragBox) {
         rGroupBoundingBox = rGroupBoundingBox
           ? Box2Abs.union(rGroupBoundingBox, fragBox)
@@ -90,22 +93,20 @@ class ReRGroup extends ReObject {
     return rGroupBoundingBox;
   }
 
-  // TODO need to review parameter list
-  draw(render, options) {
-    // eslint-disable-line max-statements
+  draw(render: Render, options: RenderOptions): { data: unknown[] } {
     let bb = this.calcBBox(render);
 
     if (!bb) {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools',
       );
-      return {};
+      return { data: [] };
     } else {
       // add a little space between the attachment points and brackets
       bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
-    const ret = { data: [] };
+    const ret: { data: unknown[] } = { data: [] };
     const p0 = Scale.modelToCanvas(bb.p0, options);
     const p1 = Scale.modelToCanvas(bb.p1, options);
     const brackets = render.paper.set();
@@ -159,13 +160,17 @@ class ReRGroup extends ReObject {
     return ret;
   }
 
-  // TODO need to review parameter list
-  _draw(render, rgid, attrs) {
+  _draw(render: Render, _rgid: number, attrs: Record<string, unknown>) {
     // eslint-disable-line no-underscore-dangle
-    if (!this.getVBoxObj(render)) return null;
-    const bb = this.getVBoxObj(render).extend(BORDER_EXT, BORDER_EXT); // eslint-disable-line no-underscore-dangle
+    const vbox = this.getVBoxObj(render);
+    if (!vbox) {
+      return null;
+    }
+    const bb = vbox.extend(BORDER_EXT, BORDER_EXT);
 
-    if (!bb) return null;
+    if (!bb) {
+      return null;
+    }
 
     const p0 = Scale.modelToCanvas(bb.p0, render.options);
     const p1 = Scale.modelToCanvas(bb.p1, render.options);
@@ -174,7 +179,7 @@ class ReRGroup extends ReObject {
       .attr(attrs);
   }
 
-  drawHover(render) {
+  drawHover(render: Render) {
     const rgid = render.ctab.rgroups.keyOf(this);
 
     if (!rgid) {
@@ -184,48 +189,49 @@ class ReRGroup extends ReObject {
       return null;
     }
 
-    const ret = this._draw(
-      render,
-      rgid,
-      render.options.hoverStyle /* { 'fill' : 'red' } */,
-    ); // eslint-disable-line no-underscore-dangle
+    const ret = this._draw(render, rgid, render.options.hoverStyle); // eslint-disable-line no-underscore-dangle
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
 
-    this.item.frags.forEach((fnum, fid) => {
-      render.ctab.frags.get(fid).drawHover(render);
+    this.item.frags.forEach((_fnum, fid) => {
+      render.ctab.frags.get(fid)?.drawHover(render);
     });
 
     return ret;
   }
 
-  show(restruct, id, options) {
+  show(restruct: ReStruct, _id: number, options: RenderOptions): void {
     const drawing = this.draw(restruct.render, options);
 
     Object.keys(drawing).forEach((group) => {
-      while (drawing[group].length > 0) {
+      const items = drawing[group as keyof typeof drawing] as unknown[];
+      while (items.length > 0) {
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,
-          drawing[group].shift(),
+          items.shift(),
           null,
           true,
         );
       }
     });
-    // TODO rgroup selection & highlighting
   }
 }
 
-function rGroupdrawBrackets(set, render, bb, d) {
-  d = Scale.modelToCanvas(d || new Vec2(1, 0), render.options);
+function rGroupdrawBrackets(
+  set: { push: (...args: unknown[]) => void },
+  render: Render,
+  bb: Box2Abs,
+  d?: Vec2,
+): void {
+  const direction = Scale.modelToCanvas(d ?? new Vec2(1, 0), render.options);
   const bracketWidth = Math.min(0.25, bb.sz().x * 0.3);
   const bracketHeight = bb.p1.y - bb.p0.y;
   const cy = 0.5 * (bb.p1.y + bb.p0.y);
 
   const leftBracket = draw.bracket(
     render.paper,
-    d.negated(),
-    d.negated().rotateSC(1, 0),
+    direction.negated(),
+    direction.negated().rotateSC(1, 0),
     Scale.modelToCanvas(new Vec2(bb.p0.x, cy), render.options),
     bracketWidth,
     bracketHeight,
@@ -234,18 +240,18 @@ function rGroupdrawBrackets(set, render, bb, d) {
 
   const rightBracket = draw.bracket(
     render.paper,
-    d,
-    d.rotateSC(1, 0),
+    direction,
+    direction.rotateSC(1, 0),
     Scale.modelToCanvas(new Vec2(bb.p1.x, cy), render.options),
     bracketWidth,
     bracketHeight,
     render.options,
   );
 
-  return set.push(leftBracket, rightBracket);
+  set.push(leftBracket, rightBracket);
 }
 
-function rLogicToString(id, rLogic) {
+function rLogicToString(id: number | null, rLogic: RGroup): string {
   const ifThen = rLogic.ifthen > 0 ? 'IF ' : '';
 
   const rangeExists =
@@ -253,15 +259,17 @@ function rLogicToString(id, rLogic) {
     rLogic.range.startsWith('<') ||
     rLogic.range.startsWith('=');
 
-  let range = null;
+  let range: string;
   if (rLogic.range.length > 0) {
     range = rangeExists ? rLogic.range : '=' + rLogic.range;
-  } else range = '>0';
+  } else {
+    range = '>0';
+  }
 
   const restH = rLogic.resth ? ' (RestH)' : '';
   const nextRg = rLogic.ifthen > 0 ? '\nTHEN R' + rLogic.ifthen.toString() : '';
 
-  return `${ifThen}R${id.toString()}${range}${restH}${nextRg}`;
+  return `${ifThen}R${String(id)}${range}${restH}${nextRg}`;
 }
 
 export default ReRGroup;

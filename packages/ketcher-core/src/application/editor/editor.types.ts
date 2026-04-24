@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions';
-import { MonomerCreationState, Render } from 'application/render';
-import { Struct } from 'domain/entities';
+import type { Action } from './actions/action';
+import type { MonomerCreationState, Render } from 'application/render';
+import type { Struct } from 'domain/entities/struct';
 import { selectionKeys } from './shared/constants';
-import { PipelineSubscription, Subscription } from 'subscription';
-import { IRnaPreset } from 'application/editor/tools';
+import type { PipelineSubscription, Subscription } from 'subscription';
+import type { IRnaPreset } from './tools/Tool';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];

@@ -73,13 +73,13 @@ import {
   getKetRef,
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
-  fromFragmentDeletion,
   MonomerCreationComponentStructureUpdateEvent,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
   LayerMap,
   Visel,
   paperPathFromSVGElement,
+  fromFragmentDeletion,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1488,8 +1488,6 @@ class Editor implements KetcherEditor {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
 
-    this.closeMonomerCreationWizard();
-
     const libraryItems = monomersData.map((monomerData) => {
       const {
         monomer,
@@ -1635,9 +1633,8 @@ class Editor implements KetcherEditor {
       needDispatchLibraryUpdateEvent: true,
     });
 
-    // store external bonds
+    // Collect external bonds (bonds crossing the selection boundary)
     const externalBonds: Bond[] = [];
-
     this.originalStruct.bonds.forEach((bond) => {
       if (
         this.originalSelection.atoms?.includes(bond.begin) &&
@@ -1653,11 +1650,7 @@ class Editor implements KetcherEditor {
       }
     });
 
-    // rerendering the original structure to clean up any leftover atoms/bonds from the wizard
-    const newAction = new Action();
-    const structFromWizard = this.struct();
-
-    // Store positions only for atoms that were selected (wizard participants)
+    // Store original positions for selected atoms (wizard participants)
     const originalAtomPositions = new Map<number, Vec2>();
     this.selectedToOriginalAtomsIdMap.forEach((originalAtomId) => {
       const atom = this.originalStruct.atoms.get(originalAtomId);
@@ -1666,19 +1659,35 @@ class Editor implements KetcherEditor {
       }
     });
 
-    this.struct(this.originalStruct, false);
+    // Build reverse mapping: original atom ID → wizard atom ID
+    const originalToSelectedAtomsIdMap = new Map<number, number>();
+    this.selectedToOriginalAtomsIdMap.forEach(
+      (originalAtomId, selectedAtomId) => {
+        originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
+      },
+    );
 
-    // this.struct(struct) uses setTimeout to defer some calculations,
-    // so we need to wait until they are done before applying further changes
+    const structFromWizard = this.struct();
+
+    this.closeMonomerCreationWizard();
+    const loadOriginalAction = fromNewCanvas(
+      this.render.ctab,
+      this.originalStruct,
+    );
+    this.update(loadOriginalAction, true);
+    this.event.change.dispatch();
+
+    // this.struct() defers render via setTimeout, so wait for that.
     setTimeout(() => {
+      // Delete selected atoms (ignoreHistory — intermediate step).
+      const newAction = new Action();
       newAction.mergeWith(
         fromFragmentDeletion(this.render.ctab, this.originalSelection),
       );
+      this.update(newAction, true);
 
-      this.update(newAction);
-
+      // Merge wizard struct (with SGroups) into the canvas molecule.
       const atomIdMap = new Map<number, number>();
-
       structFromWizard.mergeInto(
         this.struct(),
         undefined,
@@ -1695,19 +1704,13 @@ class Editor implements KetcherEditor {
         true,
       );
 
-      // Restore original atom positions after merge
+      // Restore original positions for selected atoms (now part of monomer).
       const struct = this.struct();
 
-      const originalToSelectedAtomsIdMap = new Map<number, number>();
-
-      // Restore positions for selected atoms (now part of monomer)
       this.selectedToOriginalAtomsIdMap.forEach(
         (originalAtomId, selectedAtomId) => {
-          originalToSelectedAtomsIdMap.set(originalAtomId, selectedAtomId);
-
-          // Restore position using the atomIdMap
-          const originalPosition = originalAtomPositions.get(originalAtomId);
           const newAtomId = atomIdMap.get(selectedAtomId);
+          const originalPosition = originalAtomPositions.get(originalAtomId);
           if (originalPosition && isNumber(newAtomId)) {
             const atom = struct.atoms.get(newAtomId);
             if (atom) {
@@ -1717,41 +1720,38 @@ class Editor implements KetcherEditor {
         },
       );
 
+      // Re-add external bonds (crossing the selection boundary).
       externalBonds.forEach((bond) => {
-        const beginIdInWizard = originalToSelectedAtomsIdMap.get(bond.begin);
-        const endIdInWizard = originalToSelectedAtomsIdMap.get(bond.end);
-        const newBegin =
-          isNumber(beginIdInWizard) && atomIdMap.get(beginIdInWizard);
-        const newEnd = isNumber(endIdInWizard) && atomIdMap.get(endIdInWizard);
+        const isBeginSelected = this.originalSelection.atoms?.includes(
+          bond.begin,
+        );
+        const isEndSelected = this.originalSelection.atoms?.includes(bond.end);
 
-        if (
-          this.originalSelection.atoms?.includes(bond.begin) &&
-          !this.originalSelection.atoms?.includes(bond.end) &&
-          isNumber(beginIdInWizard) &&
-          isNumber(newBegin)
-        ) {
-          const newBond = bond.clone();
-
-          newBond.begin = newBegin;
-
-          struct.bonds.add(newBond);
+        if (isBeginSelected && !isEndSelected) {
+          const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
+          const newBegin = isNumber(wizardId)
+            ? atomIdMap.get(wizardId)
+            : undefined;
+          if (isNumber(newBegin)) {
+            const newBond = bond.clone();
+            newBond.begin = newBegin;
+            struct.bonds.add(newBond);
+          }
         }
-        if (
-          this.originalSelection.atoms?.includes(bond.end) &&
-          !this.originalSelection.atoms?.includes(bond.begin) &&
-          isNumber(endIdInWizard) &&
-          isNumber(newEnd)
-        ) {
-          const newBond = bond.clone();
-
-          newBond.end = newEnd;
-
-          struct.bonds.add(newBond);
+        if (isEndSelected && !isBeginSelected) {
+          const wizardId = originalToSelectedAtomsIdMap.get(bond.end);
+          const newEnd = isNumber(wizardId)
+            ? atomIdMap.get(wizardId)
+            : undefined;
+          if (isNumber(newEnd)) {
+            const newBond = bond.clone();
+            newBond.end = newEnd;
+            struct.bonds.add(newBond);
+          }
         }
       });
 
-      // fill beginSuperatomAttachmentPointNumber and endSuperatomAttachmentPointNumber for bonds
-      // between monomers created in wizard together
+      // Fix attachment point numbers on inter-monomer bonds.
       struct.bonds.forEach((bond) => {
         const fromSgroup = struct.getGroupFromAtomId(bond.begin);
         const toSgroup = struct.getGroupFromAtomId(bond.end);
@@ -1777,7 +1777,9 @@ class Editor implements KetcherEditor {
         }
       });
 
-      // fully recreate canvas
+      // The CanvasLoad swaps the canvas from the current (post-mutation)
+      // state to a clean clone. Undo reverses the swap, restoring the
+      // pre-mutation originalStruct.
       this.struct(
         this.struct().clone(
           undefined,

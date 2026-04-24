@@ -1,12 +1,12 @@
 import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { UnsplitNucleotide } from 'domain/entities';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { D3SvgElementSelection } from 'application/render/types';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;

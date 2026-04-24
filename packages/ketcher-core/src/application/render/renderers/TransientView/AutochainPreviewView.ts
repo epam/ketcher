@@ -1,11 +1,7 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import {
-  Coordinates,
-  CoreEditor,
-  IRnaPreset,
-  monomerFactory,
-} from 'application/editor';
+import { Coordinates, IRnaPreset, monomerFactory } from 'application/editor';
 import { MonomerItemType } from 'domain/types';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { SnakeLayoutCellWidth } from 'domain/constants';
@@ -28,7 +24,7 @@ export class AutochainPreviewView extends TransientView {
     monomerOrRnaItem: MonomerItemType,
     scaledPosition: Vec2,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const [Monomer, MonomerRenderer] = monomerFactory(monomerOrRnaItem);
     const monomerInstance = new Monomer(monomerOrRnaItem);
     const monomerRenderer = new MonomerRenderer(monomerInstance);

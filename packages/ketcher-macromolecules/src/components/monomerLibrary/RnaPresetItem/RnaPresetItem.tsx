@@ -28,7 +28,11 @@ import {
   AutochainIcon,
   AutochainIconWrapper,
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
-import { selectEditor, selectIsSequenceMode } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceMode,
+  selectIsDragging,
+} from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
 import { AUTOCHAIN_ELEMENT_CLASSNAME } from 'components/monomerLibrary/monomerLibraryItem';
@@ -44,6 +48,7 @@ const RnaPresetItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const isDragging = useAppSelector(selectIsDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -106,6 +111,7 @@ const RnaPresetItem = ({
         onAutochainIconMouseOut();
       }}
       selected={isSelected}
+      isDragging={isDragging}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
       ref={cardRef}

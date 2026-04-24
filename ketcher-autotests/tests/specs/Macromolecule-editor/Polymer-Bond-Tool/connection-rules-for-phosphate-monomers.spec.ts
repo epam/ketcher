@@ -1114,9 +1114,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            (Object.values(leftMonomer.attachmentPoints) as AttachmentPoint[])[
-              atomIndex
-            ],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

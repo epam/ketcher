@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Text, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Text } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
 import { flatten } from 'lodash/fp';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Scale } from 'domain/helpers';
 import { RaphaelBaseElement } from 'raphael';
 

@@ -32,7 +32,7 @@ import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { selectionDelete } from '../../Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Multiple S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -164,7 +164,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();

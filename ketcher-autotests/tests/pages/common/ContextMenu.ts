@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   ClickTarget,
   ContextMenuOption,
@@ -37,6 +37,19 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       for (const optionId of options) {
         const option = getOption(optionId).first();
         await option.waitFor({ state: 'visible' });
+        // Extra robust: wait for visible and enabled before clicking
+        if (typeof expect !== 'undefined') {
+          await expect(option).toBeVisible();
+          await expect(option).toBeEnabled();
+        } else {
+          // fallback for non-test context
+          if (!(await option.isVisible())) {
+            throw new Error('Option not visible');
+          }
+          if (!(await option.isEnabled())) {
+            throw new Error('Option not enabled');
+          }
+        }
         await option.click();
       }
       try {

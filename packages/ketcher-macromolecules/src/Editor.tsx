@@ -34,6 +34,7 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  DeepPartial,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -65,7 +66,6 @@ import {
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
-import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {

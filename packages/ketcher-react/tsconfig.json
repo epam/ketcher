@@ -7,7 +7,8 @@
       "domain/*": ["../ketcher-core/src/domain/*"],
       "infrastructure/*": ["../ketcher-core/src/infrastructure/*"],
       "application/*": ["../ketcher-core/src/application/*"],
-      "utilities": ["../ketcher-core/src/utilities"]
+      "utilities": ["../ketcher-core/src/utilities"],
+      "types": ["../ketcher-core/src/types"]
     },
     "rootDir": "../.."
   },

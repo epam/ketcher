@@ -5,7 +5,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -221,7 +221,7 @@ test.describe('Floating windows', () => {
       'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

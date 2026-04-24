@@ -23,6 +23,7 @@ import { WarningMessageDialog } from './createMonomer/WarningDialog';
 import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { InfoMessageDialog } from './InfoMessageDialog';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -534,6 +535,14 @@ export async function createMonomer(
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
   await createMonomerDialog.submit({ ignoreWarning });
+  await page.waitForTimeout(150);
+  const infoDlg = InfoMessageDialog(page);
+  if (await infoDlg.isVisible()) {
+    const bodyText = (await infoDlg.getInfoMessage()) || '';
+    if (bodyText.includes('successfully added to the library')) {
+      await infoDlg.ok();
+    }
+  }
 }
 
 export async function deselectAtomAndBonds(

@@ -17,6 +17,7 @@
 import { Atom } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
 import { Bond } from 'domain/entities/bond';
+import { Fragment } from 'domain/entities/fragment';
 import { RGroup } from 'domain/entities/rgroup';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
@@ -26,11 +27,11 @@ import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';
 import utils from './utils';
 
-function parseAtomLineV3000(line) {
+function parseAtomLineV3000(line: string): Atom {
   /* reader */
   let subsplit, key, value, i;
   const split = spacebarsplit(line);
-  const params = {
+  const params: Record<string, unknown> = {
     pp: new Vec2(
       parseFloat(split[2]),
       -parseFloat(split[3]),
@@ -45,7 +46,7 @@ function parseAtomLineV3000(line) {
   if (label.charAt(label.length - 1) === ']') {
     // assume atom list
     label = label.slice(0, -1); // remove ']'
-    const atomListParams = {};
+    const atomListParams: Record<string, unknown> = {};
     atomListParams.notList = false;
     const matchNotListInfo = label.match(/NOT ?\[/);
     if (matchNotListInfo) {
@@ -58,7 +59,9 @@ function parseAtomLineV3000(line) {
       label = label.slice(1); // remove '['
     }
     atomListParams.ids = labelsListToIds(label.split(','));
-    params.atomList = new AtomList(atomListParams);
+    params.atomList = new AtomList(
+      atomListParams as { notList: boolean; ids: number[] },
+    );
     params.label = 'L#';
   } else {
     params.label = label;
@@ -80,21 +83,22 @@ function parseAtomLineV3000(line) {
       const rgrsplit = value.split(' ').slice(1);
       params.rglabel = 0;
       for (const rgrValue of rgrsplit) {
-        params.rglabel |= 1 << (rgrValue - 1);
+        params.rglabel =
+          (params.rglabel as number) | (1 << (Number(rgrValue) - 1));
       }
     } else if (key === 'ATTCHPT') {
       params.attpnt = value.trim() - 0;
     }
   }
 
-  return new Atom(params);
+  return new Atom(params as unknown as ConstructorParameters<typeof Atom>[0]);
 }
 
-function parseBondLineV3000(line) {
+function parseBondLineV3000(line: string): Bond {
   /* reader */
   let subsplit, key, value, i;
   const split = spacebarsplit(line);
-  const params = {
+  const params: Record<string, unknown> = {
     begin: utils.parseDecimalInt(split[2]) - 1,
     end: utils.parseDecimalInt(split[3]) - 1,
     type: utils.fmtInfo.bondTypeMap[utils.parseDecimalInt(split[1])],
@@ -122,10 +126,14 @@ function parseBondLineV3000(line) {
       params.stereoCare = utils.parseDecimalInt(value);
     }
   }
-  return new Bond(params);
+  return new Bond(params as unknown as ConstructorParameters<typeof Bond>[0]);
 }
 
-function v3000parseCollection(ctab, ctabLines, shift) {
+function v3000parseCollection(
+  _ctab: Struct,
+  ctabLines: string[],
+  shift: number,
+): number {
   /* reader */
   shift++;
   while (ctabLines[shift].trim() !== 'M  V30 END COLLECTION') shift++;
@@ -133,7 +141,13 @@ function v3000parseCollection(ctab, ctabLines, shift) {
   return shift;
 }
 
-function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
+function v3000parseSGroup(
+  ctab: Struct,
+  ctabLines: string[],
+  sgroups: Record<number, SGroup>,
+  atomMap: Record<number, number>,
+  shift: number,
+): number {
   // eslint-disable-line max-params, max-statements
   /* reader */
   let line = '';
@@ -146,12 +160,12 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     }
     const split = splitSGroupDef(line);
     const type = split[1];
-    const sg = new SGroup(type);
-    sg.number = split[0] - 0;
+    const sg = new SGroup(type) as SGroup & Record<string, unknown>;
+    sg.number = Number(split[0]);
     sg.type = type;
-    sg.label = split[2] - 0;
-    sgroups[sg.number] = sg;
-    const props = {};
+    sg.label = Number(split[2]);
+    sgroups[sg.number as number] = sg;
+    const props: Record<string, string[]> = {};
     for (const splitItem of split.slice(3)) {
       const subsplit = splitonce(splitItem, '=');
       if (subsplit.length !== 2) {
@@ -174,10 +188,12 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     sg.brkxyz = [];
     if (brkxyzStrs) {
       for (const brkxyzStr of brkxyzStrs) {
-        sg.brkxyz.push(parseBracedNumberList(brkxyzStr));
+        (sg.brkxyz as unknown[]).push(parseBracedNumberList(brkxyzStr));
       }
     }
-    if (props.MULT) sg.data.subscript = props.MULT[0] - 0;
+    if (props.MULT) {
+      sg.data.subscript = Number(props.MULT[0]);
+    }
     if (props.LABEL) sg.data.subscript = props.LABEL[0].trim();
     if (props.CONNECT) {
       sg.data.connectivity = props.CONNECT[0].toLowerCase();
@@ -196,12 +212,17 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
     }
     if (props.QUERYOP) sGroup.applyDataSGroupQueryOp(sg, props.QUERYOP[0]);
     sGroup.loadSGroup(ctab, sg, atomMap);
-    if (props.ESTATE) sGroup.applyDataSGroupExpand(sg, props.ESTATE[0]);
+    if (props.ESTATE) {
+      sGroup.applyDataSGroupExpand(sg, props.ESTATE[0] === 'E');
+    }
   }
   throw new Error('S-group declaration incomplete.');
 }
 
-function parseCTabV3000(ctabLines, norgroups) {
+function parseCTabV3000(
+  ctabLines: string[],
+  norgroups?: boolean | string[],
+): Struct {
   // eslint-disable-line max-statements
   /* reader */
   const ctab = new Struct();
@@ -242,8 +263,12 @@ function parseCTabV3000(ctabLines, norgroups) {
           ).trim();
         }
         const bond = parseBondLineV3000(line);
-        if (bond.stereo && isAbs)
-          ctab.atoms.get(bond.begin).stereoLabel = 'abs';
+        if (bond.stereo && isAbs) {
+          const beginAtom = ctab.atoms.get(bond.begin);
+          if (beginAtom) {
+            beginAtom.stereoLabel = 'abs';
+          }
+        }
         ctab.bonds.add(bond);
       }
     }
@@ -270,17 +295,17 @@ function parseCTabV3000(ctabLines, norgroups) {
   return ctab;
 }
 
-function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
+function readRGroups3000(ctab: Struct, ctabLines: string[]): void {
   // eslint-disable-line max-statements
   /* reader */
-  const rfrags = {};
-  const rLogic = {};
+  const rfrags: Record<string, Struct[]> = {};
+  const rLogic: Record<string, Record<string, unknown>> = {};
   let shift = 0;
   while (
     shift < ctabLines.length &&
     ctabLines[shift].search('M  V30 BEGIN RGROUP') === 0
   ) {
-    const id = ctabLines[shift++].split(' ').pop();
+    const id = ctabLines[shift++].split(' ').pop() as string;
     rfrags[id] = [];
     rLogic[id] = {};
     while (true) {
@@ -292,8 +317,10 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
         const iii = utils.parseDecimalInt(rlsplit[0]);
         const hhh = utils.parseDecimalInt(rlsplit[1]);
         const ooo = rlsplit.slice(2).join(' ');
-        const logic = {};
-        if (iii > 0) logic.ifthen = iii;
+        const logic: Record<string, unknown> = {};
+        if (iii > 0) {
+          logic.ifthen = iii;
+        }
         logic.resth = hhh === 1;
         logic.range = ooo;
         rLogic[id] = logic;
@@ -318,9 +345,10 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
 
   Object.keys(rfrags).forEach((rgid) => {
     rfrags[rgid].forEach((rg) => {
-      rg.rgroups.set(rgid, new RGroup(rLogic[rgid]));
-      const frid = rg.frags.add({});
-      rg.rgroups.get(rgid).frags.add(frid);
+      const rgidNum = Number(rgid);
+      rg.rgroups.set(rgidNum, new RGroup(rLogic[rgid]));
+      const frid = rg.frags.add(new Fragment());
+      rg.rgroups.get(rgidNum)?.frags.add(frid);
       rg.atoms.forEach((atom) => {
         atom.fragment = frid;
       });
@@ -330,37 +358,42 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
 }
 
 function parseRxn3000(
-  /* string[] */ ctabLines,
-  shouldReactionRelayout,
-) /* Struct */ {
+  ctabLines: string[],
+  shouldReactionRelayout?: boolean,
+): Struct {
   // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
   const countsSplit = ctabLines[0].split(/\s+/g).slice(3);
-  const nReactants = countsSplit[0] - 0;
-  const nProducts = countsSplit[1] - 0;
-  const nAgents = countsSplit.length > 2 ? countsSplit[2] - 0 : 0;
+  const nReactants = Number(countsSplit[0]);
+  const nProducts = Number(countsSplit[1]);
+  const nAgents = countsSplit.length > 2 ? Number(countsSplit[2]) : 0;
 
-  function findCtabEnd(i) {
+  function findCtabEnd(i: number): number {
     for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() === 'M  V30 END CTAB') return j;
+      if (ctabLines[j].trim() === 'M  V30 END CTAB') {
+        return j;
+      }
     }
-
-    return console.error('CTab format invalid');
+    console.error('CTab format invalid');
+    return i;
   }
 
-  function findRGroupEnd(i) {
+  function findRGroupEnd(i: number): number {
     for (let j = i; j < ctabLines.length; ++j) {
-      if (ctabLines[j].trim() === 'M  V30 END RGROUP') return j;
+      if (ctabLines[j].trim() === 'M  V30 END RGROUP') {
+        return j;
+      }
     }
-    return console.error('CTab format invalid');
+    console.error('CTab format invalid');
+    return i;
   }
 
-  const molLinesReactants = [];
-  const molLinesProducts = [];
-  const molLinesAgents = [];
-  let current = null;
-  const rGroups = [];
+  const molLinesReactants: string[][] = [];
+  const molLinesProducts: string[][] = [];
+  const molLinesAgents: string[][] = [];
+  let current: string[][] | null = null;
+  const rGroups: string[][] = [];
   let i = 0;
   while (i < ctabLines.length) {
     const line = ctabLines[i].trim();
@@ -388,7 +421,7 @@ function parseRxn3000(
       continue;
     } else if (line === 'M  V30 BEGIN CTAB') {
       const j = findCtabEnd(i);
-      current.push(ctabLines.slice(i, j + 1));
+      current?.push(ctabLines.slice(i, j + 1));
       i = j + 1;
       continue;
     } else {
@@ -396,7 +429,7 @@ function parseRxn3000(
     }
     i++;
   }
-  const mols = [];
+  const mols: Struct[] = [];
   const molLines = molLinesReactants
     .concat(molLinesProducts)
     .concat(molLinesAgents);
@@ -414,9 +447,11 @@ function parseRxn3000(
 
   readRGroups3000(
     ctab,
-    (function (array) {
-      let res = [];
-      for (const item of array) res = res.concat(item);
+    (function (array: string[][]) {
+      let res: string[] = [];
+      for (const item of array) {
+        res = res.concat(item);
+      }
       return res;
     })(rGroups),
   );
@@ -425,10 +460,10 @@ function parseRxn3000(
 }
 
 // split a line by spaces outside parentheses
-function spacebarsplit(line) {
+function spacebarsplit(line: string): string[] {
   // eslint-disable-line max-statements
   /* reader */
-  const split = [];
+  const split: string[] = [];
   let bracketEquality = 0;
   let currentIndex = 0;
   let firstSliceIndex = -1;
@@ -459,23 +494,23 @@ function spacebarsplit(line) {
 }
 
 // utils
-function stripQuotes(str) {
+function stripQuotes(str: string): string {
   if (str[0] === '"' && str[str.length - 1] === '"') {
     return str.slice(1, -1);
   }
   return str;
 }
 
-function splitonce(line, delim) {
+function splitonce(line: string, delim: string): [string, string] {
   /* reader */
   const p = line.indexOf(delim);
   return [line.slice(0, p), line.slice(p + 1)];
 }
 
-function splitSGroupDef(line) {
+function splitSGroupDef(line: string): string[] {
   // eslint-disable-line max-statements
   /* reader */
-  const split = [];
+  const split: string[] = [];
   let braceBalance = 0;
   let quoted = false;
   let i = 0;
@@ -504,10 +539,10 @@ function splitSGroupDef(line) {
   return split;
 }
 
-function parseBracedNumberList(line, shift) {
+function parseBracedNumberList(line: string, shift?: number): number[] | null {
   /* reader */
   if (!line) return null;
-  const list = [];
+  const list: number[] = [];
   line = line.trim();
   line = line.slice(1, -1);
   const split = line.split(' ');
@@ -524,15 +559,15 @@ function parseBracedNumberList(line, shift) {
   return list;
 }
 
-function stripV30(line) {
+function stripV30(line: string): string {
   /* reader */
   if (line.slice(0, 7) !== 'M  V30 ') throw new Error('Prefix invalid');
   return line.slice(7);
 }
 
-function labelsListToIds(labels) {
+function labelsListToIds(labels: string[]): number[] {
   /* reader */
-  const ids = [];
+  const ids: number[] = [];
   for (const label of labels) {
     const element = Elements.get(label.trim());
     if (element) {

@@ -47,8 +47,10 @@ type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
+type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
+
 export class RenderersManager {
-  private readonly theme: DeepPartial<EditorTheme>;
+  private readonly theme: ThemeType;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -63,7 +65,7 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
-  constructor({ theme }: { theme: DeepPartial<EditorTheme> }) {
+  constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;
   }
 

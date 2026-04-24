@@ -1,6 +1,5 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';

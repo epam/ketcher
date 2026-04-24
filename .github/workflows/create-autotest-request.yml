@@ -11,6 +11,7 @@ jobs:
       startsWith(github.event.comment.body, '@claude suggest Autotest Request')
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       issues: write
       pull-requests: read
     steps:
@@ -131,6 +132,20 @@ jobs:
               title: `Autotests: ${featureTitle}`,
               body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
               labels: ['Autotests'],
+            });
+
+            await github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'autotest_request_created',
+              client_payload: {
+                issue: {
+                  number: createdIssue.number,
+                  title: createdIssue.title,
+                  body: createdIssue.body,
+                  labels: createdIssue.labels,
+                },
+              },
             });
 
             // Reply in the source thread with a link to the created issue.

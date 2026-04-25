@@ -328,6 +328,12 @@ export class ReMultitailArrow extends ReObject {
     const header = reStruct.render.paper.path(headPathBuilder.build());
     path.node?.setAttribute('data-testid', RXN_ARROW_TEST_ID);
     path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      path.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
     path.attr(renderOptions.lineattr);
     header.attr({
       ...renderOptions.lineattr,

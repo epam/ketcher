@@ -57,6 +57,10 @@ export type StructProperty = {
   value: string;
 };
 
+type ArrowWithId = {
+  arrowId?: number;
+};
+
 function arrayAddIfMissing(array, item) {
   for (const arrayItem of array) {
     if (arrayItem === item) return false;
@@ -86,6 +90,7 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  private nextArrowId = 0;
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -106,6 +111,41 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+  }
+
+  private syncNextArrowId(arrowId: number): void {
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+  }
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.syncNextArrowId(arrowId);
+
+    return arrow;
+  }
+
+  addRxnArrow(item: RxnArrow): number {
+    this.ensureArrowId(item);
+
+    return this.rxnArrows.add(item);
+  }
+
+  setRxnArrow(id: number, item: RxnArrow): void {
+    this.ensureArrowId(item);
+    this.rxnArrows.set(id, item);
+  }
+
+  addMultitailArrow(item: MultitailArrow): number {
+    this.ensureArrowId(item);
+
+    return this.multitailArrows.add(item);
+  }
+
+  setMultitailArrow(id: number, item: MultitailArrow): void {
+    this.ensureArrowId(item);
+    this.multitailArrows.set(id, item);
   }
 
   hasRxnProps(): boolean {
@@ -377,7 +417,7 @@ export class Struct {
     });
 
     multitailArrows.forEach((id) => {
-      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
+      cp.addMultitailArrow(this.multitailArrows.get(id)!.clone());
     });
 
     rgroupAttachmentPoints.forEach((id) => {
@@ -389,7 +429,7 @@ export class Struct {
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
-        cp.rxnArrows.add(item.clone());
+        cp.addRxnArrow(item.clone());
       });
       this.rxnPluses.forEach((item) => {
         cp.rxnPluses.add(item.clone());

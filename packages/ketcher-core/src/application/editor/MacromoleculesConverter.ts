@@ -321,15 +321,17 @@ export class MacromoleculesConverter {
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
         initiallySelected: rxnArrow.initiallySelected,
+        arrowId: rxnArrow.arrowId,
       });
-      const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
+      const arrowId = struct.addRxnArrow(micromoleculeRxnArrow);
       reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
     });
 
     drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
       const micromoleculeMultitailArrow =
         MicromoleculesMultitailArrow.fromKetNode(multitailArrow.toKetNode());
-      const arrowId = struct.multitailArrows.add(micromoleculeMultitailArrow);
+      micromoleculeMultitailArrow.arrowId = multitailArrow.arrowId;
+      const arrowId = struct.addMultitailArrow(micromoleculeMultitailArrow);
       reStruct?.multitailArrows.set(
         arrowId,
         new ReMultitailArrow(micromoleculeMultitailArrow),
@@ -733,6 +735,7 @@ export class MacromoleculesConverter {
         rxnArrow.pos as [Vec2, Vec2],
         rxnArrow.height,
         rxnArrow.initiallySelected,
+        rxnArrow.arrowId,
       );
       command.merge(arrowAddCommand);
     });
@@ -740,6 +743,7 @@ export class MacromoleculesConverter {
     struct.multitailArrows.forEach((multitailArrow) => {
       const arrowAddCommand = drawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
+        multitailArrow.arrowId,
       );
 
       command.merge(arrowAddCommand);

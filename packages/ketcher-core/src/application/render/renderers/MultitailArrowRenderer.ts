@@ -169,9 +169,13 @@ export class MultitailArrowRenderer extends BaseRenderer {
         MULTITAIL_ARROW_TEST_ID,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
+    if (typeof this.arrow.arrowId === 'number') {
+      this.rootElement.attr('data-arrow-id', String(this.arrow.arrowId));
+    }
+
     const arrowPaths = this.getArrowPaths();
 
-    this.rootElement
+    const bodyPath = this.rootElement
       .append('path')
       .attr('data-testid', RXN_ARROW_TEST_ID)
       .attr('data-arrowtype', MULTITAIL_ARROW_TEST_ID)
@@ -179,6 +183,10 @@ export class MultitailArrowRenderer extends BaseRenderer {
       .attr('stroke-width', ARROW_STROKE_WIDTH)
       .attr('fill', 'none')
       .attr('d', arrowPaths.arrowBody);
+
+    if (typeof this.arrow.arrowId === 'number') {
+      bodyPath.attr('data-arrow-id', String(this.arrow.arrowId));
+    }
 
     this.rootElement
       .append('path')

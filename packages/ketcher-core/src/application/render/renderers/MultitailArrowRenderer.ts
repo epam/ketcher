@@ -161,6 +161,11 @@ export class MultitailArrowRenderer extends BaseRenderer {
   }
 
   public show() {
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
@@ -169,8 +174,8 @@ export class MultitailArrowRenderer extends BaseRenderer {
         MULTITAIL_ARROW_TEST_ID,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
-    if (typeof this.arrow.arrowId === 'number') {
-      this.rootElement.attr('data-arrow-id', String(this.arrow.arrowId));
+    if (arrowId) {
+      this.rootElement.attr('data-arrow-id', arrowId);
     }
 
     const arrowPaths = this.getArrowPaths();
@@ -184,16 +189,20 @@ export class MultitailArrowRenderer extends BaseRenderer {
       .attr('fill', 'none')
       .attr('d', arrowPaths.arrowBody);
 
-    if (typeof this.arrow.arrowId === 'number') {
-      bodyPath.attr('data-arrow-id', String(this.arrow.arrowId));
+    if (arrowId) {
+      bodyPath.attr('data-arrow-id', arrowId);
     }
 
-    this.rootElement
+    const headPath = this.rootElement
       .append('path')
       .attr('d', arrowPaths.arrowHead)
       .attr('stroke', '#000')
       .attr('stroke-width', ARROW_STROKE_WIDTH)
       .attr('fill', '#000');
+
+    if (arrowId) {
+      headPath.attr('data-arrow-id', arrowId);
+    }
 
     this.appendHoverAreaElement();
     this.drawSelection();
@@ -201,6 +210,10 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
 
     this.hoverElement = this.rootElement
       ?.insert('path', ':first-child')
@@ -209,10 +222,18 @@ export class MultitailArrowRenderer extends BaseRenderer {
       .attr('stroke', '#0097A8')
       .attr('stroke-width', 1.2)
       .attr('class', 'dynamic-element');
+
+    if (arrowId) {
+      this.hoverElement?.attr('data-arrow-id', arrowId);
+    }
   }
 
   protected appendHoverAreaElement(): void {
     const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
 
     this.hoverAreaElement = this.rootElement
       ?.append('path')
@@ -221,6 +242,10 @@ export class MultitailArrowRenderer extends BaseRenderer {
       .attr('stroke', 'none')
       .attr('pointer-events', 'all')
       .attr('class', 'dynamic-element');
+
+    if (arrowId) {
+      this.hoverAreaElement?.attr('data-arrow-id', arrowId);
+    }
 
     this.hoverAreaElement
       ?.on('mouseover', () => {
@@ -246,12 +271,20 @@ export class MultitailArrowRenderer extends BaseRenderer {
 
   public appendSelection(): void {
     const selectionPathDAttr = this.getSelectionContour();
+    const arrowId =
+      typeof this.arrow.arrowId === 'number'
+        ? String(this.arrow.arrowId)
+        : undefined;
 
     this.selectionElement = this.canvas
       ?.insert('path', ':first-child')
       .attr('stroke', SELECTION_COLOR)
       .attr('fill', SELECTION_COLOR)
       .attr('d', selectionPathDAttr);
+
+    if (arrowId) {
+      this.selectionElement?.attr('data-arrow-id', arrowId);
+    }
   }
 
   public removeSelection() {

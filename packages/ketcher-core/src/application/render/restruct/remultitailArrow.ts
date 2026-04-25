@@ -199,6 +199,13 @@ export class ReMultitailArrow extends ReObject {
       .path(path)
       .attr({ ...render.options.hoverStyle });
 
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      paths.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
+
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths);
 
     return paths;
@@ -269,6 +276,12 @@ export class ReMultitailArrow extends ReObject {
       });
       if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
+        if (typeof this.multitailArrow.arrowId === 'number') {
+          element.node.setAttribute(
+            'data-arrow-id',
+            String(this.multitailArrow.arrowId),
+          );
+        }
       }
       selectionPointSet.push(element);
     });
@@ -290,6 +303,13 @@ export class ReMultitailArrow extends ReObject {
     const paths = reStruct.render.paper
       .path(path)
       .attr({ ...options.selectionStyle });
+
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      paths.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
 
     selectionSet.push(paths);
     return selectionSet;
@@ -330,6 +350,10 @@ export class ReMultitailArrow extends ReObject {
     path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
     if (typeof this.multitailArrow.arrowId === 'number') {
       path.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+      header.node?.setAttribute(
         'data-arrow-id',
         String(this.multitailArrow.arrowId),
       );

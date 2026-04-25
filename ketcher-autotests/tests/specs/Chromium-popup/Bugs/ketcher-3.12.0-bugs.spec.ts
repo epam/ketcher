@@ -31,6 +31,7 @@ import {
   dragMouseTo,
   clickInTheMiddleOfTheCanvas,
   takeTopToolbarScreenshot,
+  setMolecule,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -696,5 +697,106 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(arrowAfterRedoBox).not.toBeNull();
     const arrowAfterRedoX = arrowAfterRedoBox!.x + arrowAfterRedoBox!.width / 2;
     expect(Math.abs(arrowAfterRedoX - arrowMovedX)).toBeLessThan(10);
+  });
+
+  test('Case 20: setMolecule and addFragment API should preserve selections from KET files', async ({
+    page,
+  }) => {
+    /**
+     * Test for: https://github.com/epam/ketcher/issues/8898
+     *
+     * Description: When calling setMolecule or addFragment API with a KET file
+     * containing selected atoms and bonds, they are not selected on the canvas.
+     *
+     * Steps:
+     * 1. Create a KET string with selected atoms
+     * 2. Call setMolecule with the KET string
+     * 3. Check that atoms are selected in the editor
+     * 4. Call addFragment with another KET string containing selected atoms
+     * 5. Check that atoms are selected after addFragment
+     *
+     * Version 3.12.0
+     */
+
+    const ketWithSelectedAtom = JSON.stringify({
+      ket_version: '2.0.0',
+      root: {
+        nodes: [
+          {
+            $ref: 'mol0',
+          },
+        ],
+        connections: [],
+        templates: [],
+      },
+      mol0: {
+        type: 'molecule',
+        atoms: [
+          {
+            label: 'C',
+            location: [0, 0, 0],
+            selected: true,
+          },
+          {
+            label: 'O',
+            location: [1.5, 0, 0],
+            selected: true,
+          },
+        ],
+        bonds: [
+          {
+            type: 1,
+            atoms: [0, 1],
+            selected: true,
+          },
+        ],
+      },
+    });
+
+    // Test setMolecule preserves selections
+    await setMolecule(page, ketWithSelectedAtom);
+
+    const selectionAfterSetMolecule = await page.evaluate(() => {
+      return window.ketcher.editor.selection();
+    });
+
+    expect(selectionAfterSetMolecule).toBeDefined();
+    expect(selectionAfterSetMolecule?.atoms).toEqual([0, 1]);
+    expect(selectionAfterSetMolecule?.bonds).toEqual([0]);
+
+    // Test addFragment preserves selections
+    const ketWithSelectedFragment = JSON.stringify({
+      ket_version: '2.0.0',
+      root: {
+        nodes: [
+          {
+            $ref: 'mol1',
+          },
+        ],
+        connections: [],
+        templates: [],
+      },
+      mol1: {
+        type: 'molecule',
+        atoms: [
+          {
+            label: 'N',
+            location: [3, 0, 0],
+            selected: true,
+          },
+        ],
+      },
+    });
+
+    await page.evaluate((ketString) => {
+      return window.ketcher.addFragment(ketString);
+    }, ketWithSelectedFragment);
+
+    const selectionAfterAddFragment = await page.evaluate(() => {
+      return window.ketcher.editor.selection();
+    });
+
+    expect(selectionAfterAddFragment).toBeDefined();
+    expect(selectionAfterAddFragment?.atoms).toContain(2);
   });
 });

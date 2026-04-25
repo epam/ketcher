@@ -15,7 +15,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -42,7 +42,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await dragMouseTo(page, x - shiftForHydrogen, y);
   await CommonLeftToolbar(page).areaSelectionTool();
 
-  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+  await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
   await CommonLeftToolbar(page).areaSelectionTool();
 

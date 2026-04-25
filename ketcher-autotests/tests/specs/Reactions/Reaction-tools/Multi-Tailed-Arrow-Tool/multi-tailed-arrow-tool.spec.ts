@@ -25,7 +25,7 @@ import {
   copyContentToClipboard,
   getCachedBodyCenter,
   deleteByKeyboard,
-  CanvasArrowType,
+  ArrowType,
 } from '@utils';
 import {
   copyAndPaste,
@@ -46,7 +46,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -160,7 +160,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
      * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
     await verifyFileExport(
@@ -445,7 +445,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -500,7 +500,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -535,7 +535,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button and Undo/Redo.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -569,7 +569,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" deleted using "Clear Canvas" (or Ctrl+Delete)
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -612,7 +612,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool"
      * deleted using "Erase" (or Delete, Backspace buttons)
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -736,7 +736,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) added to selected places on Canvas
      * using "Multi-Tailed Arrow Tool" and saved to .ket file with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
 
     await verifyFileExport(
@@ -752,7 +752,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas
      * one by one using "Multi-Tailed Arrow Tool" and saved together to .ket file with the correct coordinates of spines, tails and heads.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
@@ -774,7 +774,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/three-benzene-rings.ket',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
@@ -837,7 +837,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -858,7 +858,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -884,7 +884,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const saveStructureTextarea =
       SaveStructureDialog(page).saveStructureTextarea;
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveToTemplatesButton).toBeDisabled();
@@ -930,10 +930,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     added tails, add/remove tails, deletion of arrow/element.
     */
     test.slow();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     const multiTailedArrow = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
@@ -1009,7 +1009,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Canvas one by one using "Multi-Tailed Arrow Tool" button and selected and moved to another places on Canvas with correct sizes 
     and positions of spines, tails and heads.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 600, { from: 'pageTopLeft' });
@@ -1042,7 +1042,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Canvas (with previously added elements) one by one using "Multi-Tailed Arrow Tool" button and they selected and moved together with 
     elements and separately to other places on Canvas with correct sizes and positions.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
@@ -1114,7 +1114,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/4898
     Description: Movement actions Undo/Redo for added by Tool Multi-Tailed Arrows on Canvas with other elements.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 800, 300, { from: 'pageTopLeft' });
@@ -1589,18 +1589,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second
      * and 3 to the third, verify that these 3 Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).nth(0);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     const multiTailedArrow2 = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).nth(1);
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
     const multiTailedArrow3 = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).nth(2);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1655,14 +1655,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * remove 1 middle tail for the first and 2 tails for the second, verify that these 2 Multi-Tailed Arrows saved to KET
      * with the correct coordinates of spines, tails and heads.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     const multiTailedArrow1 = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).nth(0);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     const multiTailedArrow2 = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).nth(1);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1724,7 +1724,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      *  remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails added using "Add new tail", after that changed Multi-Tailed Arrow
      *  with 6 tails saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1758,7 +1758,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
      * A bug has been logged: https://github.com/epam/ketcher/issues/5548
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1792,7 +1792,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * A bug has been logged: https://github.com/epam/ketcher/issues/5548
      */
     test.slow();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
@@ -1831,7 +1831,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
      * after adding of tails and removing of tails with correct quantity of tails.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1858,7 +1858,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
      * after adding of tails and removing of tails with correct quantity of tails.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1913,7 +1913,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Added by Tool Multi-Tailed Arrow after adding/removing of tails selected and moved
      * with correct size and position of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await ContextMenu(page, middleOfTheScreen).click(
@@ -2028,7 +2028,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved up to 0.15 from the edge,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2048,7 +2048,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved down up to 0.15 from the edge,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2068,7 +2068,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2088,7 +2088,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow increased to right,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2146,7 +2146,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     and its size can be changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
     */
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
@@ -2336,7 +2336,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5058
      * Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2361,7 +2361,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of heads.
     */
     test.slow();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
@@ -2404,7 +2404,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
     */
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
@@ -2443,7 +2443,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
     */
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
@@ -2481,7 +2481,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Added by Tool Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
     */
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
     await takeEditorScreenshot(page);
@@ -2596,7 +2596,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail moved up and
      * bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -2622,7 +2622,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add default Multi-Tailed Arrow by button, verify that top tail moved down up to 0.15 from head arrow and bottom
      * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2645,7 +2645,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of two tails reduced to
      * right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2704,7 +2704,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrows, verify that that top and bottom tails moved 
     and its size changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
@@ -2910,7 +2910,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow with two tails after moving/changing size of top and bottom tails.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -2942,7 +2942,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of top and bottom tails.
     */
     test.slow();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
@@ -2985,7 +2985,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
@@ -3023,7 +3023,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
@@ -3061,7 +3061,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Added by Tool Multi-Tailed Arrow after moving/changing size of top and bottom tails selected and moved with correct size and position of spine, tails and head.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3164,7 +3164,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     tails increased to left, reduced to right (minimal size is 0.4) by middle tail, after that changed Multi-Tailed Arrow saved to KET 
     with the correct coordinates of spine, tails and head.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
@@ -3197,7 +3197,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     medium tail to the second/fourth, it's automatically returned to the nearest available place, after that 
     changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
@@ -3232,7 +3232,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     more tail and move it down up to 0.35 from the fourth, add one more tail, verify that can't add more tails, after that changed Multi-Tailed Arrow 
     saved to KET with the correct coordinates of spine, tails and head.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
@@ -3288,7 +3288,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/Indigo/issues/2129
      * Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await verifySVGExport(page);
@@ -3380,7 +3380,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Multi-Tailed Arrows with elements saved to KET format with the correct coordinates of spines, tails and heads and 
     elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
     */
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 600, 400, { from: 'pageTopLeft' });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });

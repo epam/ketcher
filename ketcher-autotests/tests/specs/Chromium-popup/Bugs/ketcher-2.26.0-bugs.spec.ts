@@ -32,7 +32,7 @@ import {
   MolFileFormat,
   zoomOutByKeyboard,
 } from '@utils';
-import { CanvasArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
+import { ArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -61,7 +61,7 @@ import {
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -707,9 +707,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Undo
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     const multiTailedArrow = getArrowLocator(page, {
-      arrowType: CanvasArrowType.MultiTailedArrow,
+      arrowType: ArrowType.MultiTailedArrow,
     }).first();
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {

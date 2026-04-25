@@ -23,7 +23,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   BondsSetting,
@@ -86,7 +86,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     });
     await RGroupDialog(page).setRGroupLabels(RGroup.R7);
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledBow);
     await clickOnCanvas(page, 40, 0, { from: 'pageCenter' });
     await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
@@ -169,7 +169,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       yCoordinatesWithShift,
       { from: 'pageTopLeft' },
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledBow);
     const yArrowStart = y + 20;
     const yArrowEnd = yArrowStart + 20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
@@ -177,7 +177,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page, true);
 
     await CommonTopLeftToolbar(page).clearCanvas();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(page, xCoordinatesWithShiftHalf, yArrowEnd);
     await savedFileInfoStartsWithRxn(page, true);
@@ -193,7 +193,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledBow);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 50, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
@@ -345,7 +345,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 900, 100);
 
@@ -374,7 +374,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 900, 100);
 
@@ -403,7 +403,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 700, 100);
 
@@ -432,7 +432,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 900, 100);
     await verifyFileExport(
@@ -460,7 +460,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 900, 100);
 
@@ -489,7 +489,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
     );
     await CommonLeftToolbar(page).erase();
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(page, 900, 100);
 

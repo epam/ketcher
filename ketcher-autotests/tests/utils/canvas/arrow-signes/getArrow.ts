@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { CanvasArrowType } from '..';
+import { ArrowType } from '..';
 
 export function getArrowLocator(
   page: Page,
-  options: { arrowType?: CanvasArrowType; arrowId?: string | number } = {},
+  options: { arrowType?: ArrowType; arrowId?: string | number } = {},
 ) {
   const attributes: Record<string, string> = {};
 

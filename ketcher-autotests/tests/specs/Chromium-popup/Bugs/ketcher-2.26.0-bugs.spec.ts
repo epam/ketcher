@@ -26,14 +26,13 @@ import {
   readFileContent,
   pasteFromClipboardAndOpenAsNewProject,
   moveMouseAway,
-  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
   zoomOutByKeyboard,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { CanvasArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -100,16 +99,8 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 
 let page: Page;
 
@@ -501,7 +492,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
       ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
       await takeEditorScreenshot(page);
-      await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).hover([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.SubstitutionCount,
+      ]);
       await takeEditorScreenshot(page);
     },
   );
@@ -711,10 +708,12 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    const multiTailedArrow = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).first();
     await clickInTheMiddleOfTheScreen(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
-      await ContextMenu(page, middleOfTheScreen).click(
+      await ContextMenu(page, multiTailedArrow).click(
         MultiTailedArrowOption.AddNewTail,
       );
     });
@@ -722,10 +721,20 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await (
+      await MultiTailedArrow(page, multiTailedArrow)
+    ).bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-    await removeTail(page, 'tails-0-move');
+
+    await waitForRender(page, async () => {
+      await ContextMenu(
+        page,
+        await (
+          await MultiTailedArrow(page, multiTailedArrow)
+        ).getTailsMoveHandler(0),
+      ).click(MultiTailedArrowOption.RemoveTail);
+    });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

@@ -28,7 +28,7 @@ import {
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
-import { Arrows, selectAllStructuresOnCanvas } from '@utils/canvas';
+import { CanvasArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -99,16 +99,6 @@ import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/Attac
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
-
-async function removeTail(page: Page, tailName: string, index?: number) {
-  const tailElement = page.getByTestId(tailName);
-  const n = index ?? 0;
-  await waitForRender(page, async () => {
-    await ContextMenu(page, tailElement.nth(n)).click(
-      MultiTailedArrowOption.RemoveTail,
-    );
-  });
-}
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -506,7 +496,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
-    await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.SubstitutionCount,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -546,7 +542,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 2 });
+    const point = getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -570,7 +566,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 1 });
+    const point = getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -706,7 +702,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     const multiTailedArrow = getArrowLocator(page, {
-      arrowType: Arrows.MultiTailedArrow,
+      arrowType: CanvasArrowType.MultiTailedArrow,
     }).first();
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {

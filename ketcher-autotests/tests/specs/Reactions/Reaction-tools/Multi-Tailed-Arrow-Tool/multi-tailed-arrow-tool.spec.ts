@@ -25,6 +25,7 @@ import {
   copyContentToClipboard,
   getCachedBodyCenter,
   deleteByKeyboard,
+  CanvasArrowType,
 } from '@utils';
 import {
   copyAndPaste,
@@ -59,6 +60,7 @@ import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDi
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -498,7 +500,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
-    await page.getByTestId(ArrowType.MultiTailedArrow).click();
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await takeLeftToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -930,12 +932,20 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+    const multiTailedArrow = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTail(page, 500, 600);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(page, 200, 600);
@@ -943,10 +953,19 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(page, 500, 500);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await addTail(page, 500, 600);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await addTail(page, 500, 600);
+
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
     await CommonLeftToolbar(page).erase();
@@ -1572,20 +1591,55 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
+    const multiTailedArrow1 = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).nth(0);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+    const multiTailedArrow2 = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).nth(1);
     await clickOnCanvas(page, 700, 500, { from: 'pageTopLeft' });
+    const multiTailedArrow3 = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).nth(2);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await addTail(page, 300, 400);
 
-    await addTail(page, 500, 600);
-    await addTail(page, 500, 600);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow1).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
 
-    await addTail(page, 700, 500);
-    await addTail(page, 700, 500);
-    await addTail(page, 700, 500);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow2).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow2).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow3).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow3).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow3).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1603,18 +1657,49 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
+    const multiTailedArrow1 = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).nth(0);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+    const multiTailedArrow2 = getArrowLocator(page, {
+      arrowType: CanvasArrowType.MultiTailedArrow,
+    }).nth(1);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await addTail(page, 300, 400);
-    await addTail(page, 300, 400);
-    await addTail(page, 300, 400);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow1).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow1).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow1).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
 
-    await addTail(page, 500, 600);
-    await addTail(page, 500, 600);
-    await addTail(page, 500, 600);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow2).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow2).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+    await waitForRender(page, async () => {
+      await ContextMenu(page, multiTailedArrow2).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
+
     await takeEditorScreenshot(page);
 
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });

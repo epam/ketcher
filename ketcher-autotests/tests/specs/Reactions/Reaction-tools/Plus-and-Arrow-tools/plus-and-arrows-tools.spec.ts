@@ -15,7 +15,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   resetZoomLevelToDefault,
-  Arrows,
+  CanvasArrowType,
 } from '@utils';
 import {
   copyAndPaste,
@@ -440,7 +440,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       const arrow = getArrowLocator(page, {
-        arrowType: Arrows.EquilibriumFilledHalfBow,
+        arrowType: CanvasArrowType.EquilibriumFilledHalfBow,
       });
       await arrow.hover({ force: true });
       await arrow.click({ force: true });
@@ -809,7 +809,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
   });
 
-  for (const arrow of Object.values(ArrowType)) {
+  for (const arrow of Object.values(CanvasArrowType)) {
     test(`${arrow} should have correct naming`, async ({ page }) => {
       /**
        * Test case: Test case: EPMLSOPKET - 16947

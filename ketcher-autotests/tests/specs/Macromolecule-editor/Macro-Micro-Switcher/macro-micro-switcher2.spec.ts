@@ -22,7 +22,7 @@ import {
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
-  Arrows,
+  CanvasArrowType,
   takeElementScreenshot,
   getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
@@ -274,7 +274,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/three-different-multi-tail-arrows.ket',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(CanvasArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1168,24 +1168,28 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
-      force: true,
-    });
+    await getArrowLocator(page, { arrowType: CanvasArrowType.OpenAngle }).hover(
+      {
+        force: true,
+      },
+    );
     await dragMouseTo(page, 200, 200);
-    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
-      force: true,
-    });
+    await getArrowLocator(page, { arrowType: CanvasArrowType.FilledBow }).hover(
+      {
+        force: true,
+      },
+    );
     await dragMouseTo(page, 200, 300);
     await getArrowLocator(page, {
-      arrowType: Arrows.BothEndsFilledTriangle,
+      arrowType: CanvasArrowType.BothEndsFilledTriangle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 350);
     await getArrowLocator(page, {
-      arrowType: Arrows.UnbalancedOpenHalfAngle,
+      arrowType: CanvasArrowType.UnbalancedOpenHalfAngle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 400);
     await getArrowLocator(page, {
-      arrowType: Arrows.EllipticalArcFilledTriangle,
+      arrowType: CanvasArrowType.EllipticalArcFilledTriangle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
@@ -1328,16 +1332,18 @@ test.describe('Macro-Micro-Switcher2', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     const shiftElement = 250;
     const newX = x + shiftElement;
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(CanvasArrowType.ArrowOpenAngle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
-      force: true,
-    });
+    await getArrowLocator(page, { arrowType: CanvasArrowType.OpenAngle }).hover(
+      {
+        force: true,
+      },
+    );
     await dragMouseTo(page, newX, y);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

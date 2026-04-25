@@ -1475,6 +1475,28 @@ export class SequenceMode extends BaseMode {
           this.unselectAllEntities();
         },
       },
+      'move-caret-to-row-start': {
+        shortcut: ['Home'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowStart();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
+          this.unselectAllEntities();
+        },
+      },
+      'move-caret-to-row-end': {
+        shortcut: ['End'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowEnd();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
+          this.unselectAllEntities();
+        },
+      },
       'add-sequence-item': {
         shortcut: [
           ...naturalAnalogues,

@@ -14,6 +14,9 @@ import { Vec2 } from 'domain/entities/vec2';
 import util from 'application/render/util';
 import { RaphaelPaper } from 'raphael';
 
+const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
+const RXN_ARROW_TEST_ID = 'rxn-arrow';
+
 export enum MultitailArrowRefName {
   HEAD = 'head',
   TAILS = 'tails',
@@ -323,6 +326,8 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
+    path.node?.setAttribute('data-testid', RXN_ARROW_TEST_ID);
+    path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
     path.attr(renderOptions.lineattr);
     header.attr({
       ...renderOptions.lineattr,

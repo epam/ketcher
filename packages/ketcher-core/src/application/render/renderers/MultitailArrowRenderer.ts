@@ -11,6 +11,8 @@ import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
 import { ReMultitailArrow } from 'application/render';
 
 const ARROW_STROKE_WIDTH = 2;
+const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
+const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
 export class MultitailArrowRenderer extends BaseRenderer {
   private selectionElement:
@@ -162,15 +164,17 @@ export class MultitailArrowRenderer extends BaseRenderer {
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
-      .attr('data-testid', 'multitail-arrow') as never as D3SvgElementSelection<
-      SVGGElement,
-      void
-    >;
+      .attr(
+        'data-testid',
+        MULTITAIL_ARROW_TEST_ID,
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     const arrowPaths = this.getArrowPaths();
 
     this.rootElement
       .append('path')
+      .attr('data-testid', RXN_ARROW_TEST_ID)
+      .attr('data-arrowtype', MULTITAIL_ARROW_TEST_ID)
       .attr('stroke', '#000')
       .attr('stroke-width', ARROW_STROKE_WIDTH)
       .attr('fill', 'none')

@@ -6,6 +6,7 @@ import { waitForRender } from '@utils/common/loaders/waitForRender';
 
 type MultiTailedArrowLocators = {
   self: Locator;
+  spineMoveHandler: Locator;
   topTailMoveHandler: Locator;
   topTailResizeHandler: Locator;
   bottomTailMoveHandler: Locator;
@@ -18,7 +19,11 @@ type MultiTailedArrowHelpers = MultiTailedArrowLocators & {
   getTailsCount(): Promise<number>;
   getTailsMoveHandler(options: { tailIndex: number }): Locator;
   getTailsResizeHandler(options: { tailIndex: number }): Locator;
+  getSpineMoveHandler(): Locator;
+  getHeadMoveHandler(): Locator;
+  getHeadResizeHandler(): Locator;
   addTail(): Promise<void>;
+  removeTail(options: { tailIndex: number }): Promise<void>;
 };
 
 export type MultiTailedArrowLocator = Locator & MultiTailedArrowHelpers;
@@ -38,6 +43,9 @@ export const MultiTailedArrow = async (
 
   const locators: MultiTailedArrowLocators = {
     self: arrow,
+    spineMoveHandler: page.locator(
+      `[data-testid="spine-move"][data-arrow-id="${arrowId}"]`,
+    ),
     topTailMoveHandler: page.locator(
       `[data-testid="topTail-move"][data-arrow-id="${arrowId}"]`,
     ),
@@ -58,7 +66,7 @@ export const MultiTailedArrow = async (
     ),
   };
 
-  const multiTailedArrow = arrow as MultiTailedArrowLocator;
+  const multiTailedArrow = locators.spineMoveHandler as MultiTailedArrowLocator;
 
   Object.assign(multiTailedArrow, {
     ...locators,
@@ -99,8 +107,30 @@ export const MultiTailedArrow = async (
 
     async addTail() {
       await waitForRender(page, async () => {
-        await ContextMenu(page, arrow).click(MultiTailedArrowOption.AddNewTail);
+        await ContextMenu(page, this.getSpineMoveHandler()).click(
+          MultiTailedArrowOption.AddNewTail,
+        );
       });
+    },
+
+    async removeTail(options: { tailIndex: number }) {
+      await waitForRender(page, async () => {
+        await ContextMenu(page, this.getTailsMoveHandler(options)).click(
+          MultiTailedArrowOption.RemoveTail,
+        );
+      });
+    },
+
+    getHeadMoveHandler() {
+      return this.headMoveHandler;
+    },
+
+    getSpineMoveHandler() {
+      return this.spineMoveHandler;
+    },
+
+    getHeadResizeHandler() {
+      return this.headResizeHandler;
     },
   });
 

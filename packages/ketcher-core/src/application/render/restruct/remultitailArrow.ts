@@ -14,6 +14,8 @@ import { Vec2 } from 'domain/entities/vec2';
 import util from 'application/render/util';
 import { RaphaelPaper } from 'raphael';
 
+type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
+
 const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
 const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
@@ -40,6 +42,10 @@ export class ReMultitailArrow extends ReObject {
   static readonly CUBIC_BEZIER_OFFSET = 6;
   static readonly FRAME_OFFSET = 0.175;
   static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
+  static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
+  static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
+
+  private testSelectionPoints: TestSelectionPoint[] = [];
 
   static isSelectable(): boolean {
     return true;
@@ -236,8 +242,12 @@ export class ReMultitailArrow extends ReObject {
     const OFFSET = this.getSelectionPointOffset(renderOptions);
     const { topTail, bottomTail, tails, head, topSpine } =
       this.getReferencePositions(renderOptions);
+    const spineMovePoint = new Vec2(topSpine.x, head.y);
     const selectionPointSet = paper.set();
+    const selectionPoints: TestSelectionPoint[] = [];
+    const selectionPointRadius = 1;
     const points: Record<string, Vec2> = {
+      'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
         topTail,
         topSpine,
@@ -270,10 +280,15 @@ export class ReMultitailArrow extends ReObject {
       ),
     };
     Object.entries(points).forEach(([key, point]) => {
-      const element = paper.circle(point.x, point.y, 1).attr({
-        fill: 'none',
-        stroke: 'none',
-      });
+      const element = paper
+        .circle(point.x, point.y, selectionPointRadius)
+        .attr({
+          fill: '#000',
+          stroke: '#000',
+          'stroke-width': 0,
+          opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
+          'pointer-events': 'all',
+        });
       if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
         if (typeof this.multitailArrow.arrowId === 'number') {
@@ -283,10 +298,12 @@ export class ReMultitailArrow extends ReObject {
           );
         }
       }
+      selectionPoints.push(element);
       selectionPointSet.push(element);
     });
+    this.testSelectionPoints = selectionPoints;
     reStruct.addReObjectPath(
-      LayerMap.selectionPlate,
+      LayerMap.selectionPoints,
       this.visel,
       selectionPointSet,
     );
@@ -297,7 +314,6 @@ export class ReMultitailArrow extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ) {
-    this.addTestSelectionPoints(reStruct, paper, options);
     const path = this.buildFrame(options);
     const selectionSet = paper.set();
     const paths = reStruct.render.paper
@@ -317,6 +333,7 @@ export class ReMultitailArrow extends ReObject {
 
   show(reStruct: ReStruct, renderOptions: RenderOptions) {
     reStruct.clearVisel(this.visel);
+    this.testSelectionPoints = [];
     const pathBuilder = new PathBuilder();
     const headPathBuilder = new PathBuilder();
     const { topTail, topSpine, bottomSpine, head, tails } =
@@ -363,8 +380,30 @@ export class ReMultitailArrow extends ReObject {
       ...renderOptions.lineattr,
       fill: '#000',
     });
+    const offset = renderOptions.offset;
+    if (offset != null) {
+      path.translateAbs(offset.x, offset.y);
+      header.translateAbs(offset.x, offset.y);
+    }
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
     this.visel.add(header, Box2Abs.fromRelBox(util.relBox(header.getBBox())));
+    this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);
+  }
+
+  showPoints() {
+    this.testSelectionPoints.forEach((point) => {
+      point.attr({
+        opacity: ReMultitailArrow.VISIBLE_SELECTION_POINT_OPACITY,
+      });
+    });
+  }
+
+  hidePoints() {
+    this.testSelectionPoints.forEach((point) => {
+      point.attr({
+        opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
+      });
+    });
   }
 
   private getClosestArrowPartPosition(

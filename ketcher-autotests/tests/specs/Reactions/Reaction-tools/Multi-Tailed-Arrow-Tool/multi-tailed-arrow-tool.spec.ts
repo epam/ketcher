@@ -61,6 +61,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
+import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -932,32 +933,35 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    const multiTailedArrow = getArrowLocator(page, {
-      arrowType: ArrowType.MultiTailedArrow,
-    });
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 400, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await addTail(page, 500, 600);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, multiTailedArrow).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
-    await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await page.getByTestId('tails-0-resize').hover({ force: true });
+    await multiTailedArrow.addTail();
+
+    // await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+    await multiTailedArrow.click();
+    // await page.getByTestId('tails-0-resize').hover({ force: true });
+    await multiTailedArrow
+      .getTailsResizeHandler({ tailIndex: 0 })
+      .hover({ force: true });
     await dragMouseTo(page, 200, 600);
-    await page.getByTestId('tails-0-move').hover({ force: true });
+    await multiTailedArrow
+      .getTailsMoveHandler({ tailIndex: 0 })
+      .hover({ force: true });
     await dragMouseTo(page, 500, 500);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
-    await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
-    await waitForRender(page, async () => {
-      await ContextMenu(page, multiTailedArrow).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    // await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
+    await multiTailedArrow.click();
+    await multiTailedArrow.addTail();
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
     await clickOnCanvas(page, 500, 600, { from: 'pageTopLeft' });
 

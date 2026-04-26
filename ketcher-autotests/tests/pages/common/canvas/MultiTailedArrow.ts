@@ -1,5 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
+import { ContextMenu } from '../ContextMenu';
+import { MultiTailedArrowOption } from '@tests/pages/constants/contextMenu/Constants';
+import { waitForRender } from '@utils/common/loaders/waitForRender';
 
 type MultiTailedArrowLocators = {
   self: Locator;
@@ -11,7 +14,19 @@ type MultiTailedArrowLocators = {
   headResizeHandler: Locator;
 };
 
-export const MultiTailedArrow = async (page: Page, arrow: Locator) => {
+type MultiTailedArrowHelpers = MultiTailedArrowLocators & {
+  getTailsCount(): Promise<number>;
+  getTailsMoveHandler(options: { tailIndex: number }): Locator;
+  getTailsResizeHandler(options: { tailIndex: number }): Locator;
+  addTail(): Promise<void>;
+};
+
+export type MultiTailedArrowLocator = Locator & MultiTailedArrowHelpers;
+
+export const MultiTailedArrow = async (
+  page: Page,
+  arrow: Locator,
+): Promise<MultiTailedArrowLocator> => {
   const arrowId = await arrow.getAttribute('data-arrow-id');
 
   const tailResizeHandlers =
@@ -43,7 +58,9 @@ export const MultiTailedArrow = async (page: Page, arrow: Locator) => {
     ),
   };
 
-  return {
+  const multiTailedArrow = arrow as MultiTailedArrowLocator;
+
+  Object.assign(multiTailedArrow, {
     ...locators,
 
     async getTailsCount() {
@@ -54,7 +71,8 @@ export const MultiTailedArrow = async (page: Page, arrow: Locator) => {
       return await tailResizeHandlers.count();
     },
 
-    async getTailsMoveHandler(tailIndex: number) {
+    getTailsMoveHandler(options: { tailIndex: number }) {
+      const { tailIndex } = options;
       if (arrowId === null) {
         return page.locator(
           '[data-testid="__missing-multi-tailed-tail-index__"]',
@@ -66,7 +84,8 @@ export const MultiTailedArrow = async (page: Page, arrow: Locator) => {
       );
     },
 
-    async getTailsResizeHandler(tailIndex: number) {
+    getTailsResizeHandler(options: { tailIndex: number }) {
+      const { tailIndex } = options;
       if (arrowId === null) {
         return page.locator(
           '[data-testid="__missing-multi-tailed-tail-index__"]',
@@ -77,7 +96,15 @@ export const MultiTailedArrow = async (page: Page, arrow: Locator) => {
         `[data-testid="tails-${tailIndex}-resize"][data-arrow-id="${arrowId}"]`,
       );
     },
-  };
+
+    async addTail() {
+      await waitForRender(page, async () => {
+        await ContextMenu(page, arrow).click(MultiTailedArrowOption.AddNewTail);
+      });
+    },
+  });
+
+  return multiTailedArrow;
 };
 
 export type MultiTailedArrowType = ReturnType<typeof MultiTailedArrow>;

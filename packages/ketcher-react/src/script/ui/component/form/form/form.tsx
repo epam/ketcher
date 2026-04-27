@@ -621,7 +621,15 @@ function propSchema(
   return {
     key: schema.key || '',
     serialize: (inst: Record<string, unknown>) => {
-      const result = validator.validate(inst, schemaCopy as Schema);
+      // Pass an explicit base URI so jsonschema's resolveUrl() always receives
+      // a valid absolute URL as `from`.  Without this, it calls
+      // resolveUrl(undefined, ...) → new URL(undefined, 'resolve://'), which
+      // throws "Invalid URL" in Chromium <130 (Playwright ≤1.44) because that
+      // engine parses the base 'resolve://' (empty host) before inspecting the
+      // first argument.
+      const result = validator.validate(inst, schemaCopy as Schema, {
+        base: 'https://ketcher.local/',
+      });
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),

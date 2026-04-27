@@ -324,6 +324,7 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     removeEditorHandlers(this.editor, this.props);
     this.editorRef.current?.removeEventListener('wheel', this.handleWheel);
     this.editor.render.unobserveCanvasResize();
+    this.editor.hoverIcon.destroy();
   }
 
   render() {

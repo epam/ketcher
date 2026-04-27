@@ -412,6 +412,13 @@ const bondCuts = {
 
 const typeSchema = bondSchema.properties.type;
 
+const monomerWizardDisallowedBondTypes = new Set([
+  'any',
+  'singledouble',
+  'singlearomatic',
+  'doublearomatic',
+]);
+
 export default typeSchema.enum.reduce((res, type, i) => {
   res[`bond-${type}`] = {
     title: `${typeSchema.enumNames[i]} Bond`,
@@ -421,6 +428,9 @@ export default typeSchema.enum.reduce((res, type, i) => {
       opts: toBondType(type),
     },
     hidden: (options) => isHidden(options, `bond-${type}`),
+    ...(monomerWizardDisallowedBondTypes.has(type) && {
+      disabled: (editor) => editor.isMonomerCreationWizardActive,
+    }),
   };
   return res;
 }, toolActions);

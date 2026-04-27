@@ -1387,20 +1387,34 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
-    await addTails(page, 6);
+    const largeMultiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 3,
+      }),
+    );
+    const smallMultiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 1,
+      }),
+    );
+    for (let i = 0; i < 6; i++) {
+      await largeMultiTailedArrow.addTail();
+    }
     await takeEditorScreenshot(page);
-    const middleOfTheScreen = await getCachedBodyCenter(page);
     expect(
-      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+      await ContextMenu(page, largeMultiTailedArrow).isOptionEnabled(
         MultiTailedArrowOption.AddNewTail,
       ),
     ).toBeFalsy();
-    await addTailToArrow(page, 0);
-    await addTailToArrow(page, 2);
-    await addTailToArrow(page, 2);
-    await hoverOverArrowSpine(page, 2, 'right');
+    await smallMultiTailedArrow.addTail();
+    await smallMultiTailedArrow.addTail();
+    await smallMultiTailedArrow.addTail();
     expect(
-      await ContextMenu(page, middleOfTheScreen).isOptionEnabled(
+      await ContextMenu(page, smallMultiTailedArrow).isOptionEnabled(
         MultiTailedArrowOption.AddNewTail,
       ),
     ).toBeFalsy();
@@ -1425,17 +1439,20 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-3-tails-spine-0.7.ket',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page
-      .getByTestId('bottomTail-resize')
-      .click({ force: true, button: 'right' });
+    const multiTailedArrow1 = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await multiTailedArrow1.bottomTailMoveHandler.click();
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await page
-      .getByTestId('topTail-resize')
-      .click({ force: true, button: 'right' });
+    await multiTailedArrow1.topTailMoveHandler.click();
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await removeTail(page, 'tails-0-move');
+    await multiTailedArrow1.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1451,27 +1468,33 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     middle tails removed using "Remove tail" option in menu after right-click on each tail, after that changed Multi-Tailed Arrow 
     saved to KET with the correct coordinates of spine, tails and head.
     */
-    const tailIds = ['tails-0-move', 'tails-1-move', 'tails-2-move'];
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page
-      .getByTestId('bottomTail-resize')
-      .click({ force: true, button: 'right' });
-    await takeEditorScreenshot(page);
-    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await page
-      .getByTestId('topTail-resize')
-      .click({ force: true, button: 'right' });
-    await takeEditorScreenshot(page);
-    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await clickInTheMiddleOfTheScreen(page);
-    for (const tailId of tailIds) {
-      await clickInTheMiddleOfTheScreen(page);
-      await removeTail(page, tailId);
-    }
+    const multiTailedArrow1 = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    expect(
+      await ContextMenu(
+        page,
+        multiTailedArrow1.bottomTailMoveHandler,
+      ).isOptionEnabled(MultiTailedArrowOption.AddNewTail),
+    ).toBeFalsy();
+    expect(
+      await ContextMenu(
+        page,
+        multiTailedArrow1.topTailMoveHandler,
+      ).isOptionEnabled(MultiTailedArrowOption.AddNewTail),
+    ).toBeFalsy();
+    await multiTailedArrow1.removeTail({ tailIndex: 0 });
+    await multiTailedArrow1.removeTail({ tailIndex: 1 });
+    await multiTailedArrow1.removeTail({ tailIndex: 2 });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1492,11 +1515,32 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3.ket',
     );
+    const largeMultiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 2,
+      }),
+    );
+    const mediumMultiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 1,
+      }),
+    );
+    const smallMultiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await removeTail(page, 'tails-0-resize');
+    await mediumMultiTailedArrow.removeTail({ tailIndex: 0 });
     await selectPartOfMolecules(page);
-    await removeTail(page, 'tails-0-resize');
+    await largeMultiTailedArrow.removeTail({ tailIndex: 0 });
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-1-resize');
     await takeEditorScreenshot(page);

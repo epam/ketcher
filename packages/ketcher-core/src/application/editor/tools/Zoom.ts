@@ -158,17 +158,7 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBars(forceHide = false) {
-    const canvasNode = this.canvas.node();
-    if (canvasNode && this.canvasWrapper.node()) {
-      if (!canvasNode.hasChildNodes()) {
-        this.scrollBars?.horizontal?.bar?.remove();
-        this.scrollBars?.vertical?.bar?.remove();
-        if (this.scrollBars) {
-          this.scrollBars.horizontal.bar = undefined;
-          this.scrollBars.vertical.bar = undefined;
-        }
-        return;
-      }
+    if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
       this.renderScrollBar(this.scrollBars.horizontal, forceHide);
       this.renderScrollBar(this.scrollBars.vertical, forceHide);

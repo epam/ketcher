@@ -522,14 +522,19 @@ export class SGroup {
 
     atoms.forEach((aid) => {
       const atom = getAtom(aid);
+      if (!atom) return;
+
       let position;
-      let structBoundingBox;
+      let structBoundingBox: Box2Abs | null = null;
       if ('getVBoxObj' in atom && render) {
         structBoundingBox = atom.getVBoxObj(render);
-      } else {
+      } else if (atom.pp) {
         position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
+
+      if (!structBoundingBox) return;
+
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {

@@ -8,10 +8,8 @@ import { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
-import { Box2Abs } from 'domain/entities/box2Abs';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
-import util from 'application/render/util';
 import { RaphaelPaper } from 'raphael';
 
 type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
@@ -42,6 +40,8 @@ export class ReMultitailArrow extends ReObject {
   static readonly CUBIC_BEZIER_OFFSET = 6;
   static readonly FRAME_OFFSET = 0.175;
   static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
+  static readonly HEAD_LINE_START_OFFSET = 1;
+  static readonly SELECTION_POINT_RADIUS = 1;
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
   static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
 
@@ -245,7 +245,7 @@ export class ReMultitailArrow extends ReObject {
     const spineMovePoint = new Vec2(topSpine.x, head.y);
     const selectionPointSet = paper.set();
     const selectionPoints: TestSelectionPoint[] = [];
-    const selectionPointRadius = 1;
+    let spineMoveSelectionPoint: TestSelectionPoint | null = null;
     const points: Record<string, Vec2> = {
       'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
@@ -280,17 +280,27 @@ export class ReMultitailArrow extends ReObject {
       ),
     };
     Object.entries(points).forEach(([key, point]) => {
+      const isSpineMovePoint = key === 'spine-move';
+      const selectionPointRadius = isSpineMovePoint
+        ? ReMultitailArrow.SELECTION_POINT_RADIUS
+        : ReMultitailArrow.SELECTION_POINT_RADIUS;
       const element = paper
         .circle(point.x, point.y, selectionPointRadius)
         .attr({
           fill: '#000',
           stroke: '#000',
           'stroke-width': 0,
+          'fill-opacity': isSpineMovePoint ? 0 : 1,
+          'stroke-opacity': isSpineMovePoint ? 0 : 1,
           opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
           'pointer-events': 'all',
         });
+      if (isSpineMovePoint) {
+        spineMoveSelectionPoint = element;
+      }
       if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
+        element.node.setAttribute('pointer-events', 'all');
         if (typeof this.multitailArrow.arrowId === 'number') {
           element.node.setAttribute(
             'data-arrow-id',
@@ -302,11 +312,10 @@ export class ReMultitailArrow extends ReObject {
       selectionPointSet.push(element);
     });
     this.testSelectionPoints = selectionPoints;
-    reStruct.addReObjectPath(
-      LayerMap.selectionPoints,
-      this.visel,
-      selectionPointSet,
-    );
+    reStruct.addReObjectPath(LayerMap.indices, this.visel, selectionPointSet);
+    if (spineMoveSelectionPoint) {
+      reStruct.movePathOnTopOfLayer(spineMoveSelectionPoint, LayerMap.indices);
+    }
   }
 
   makeSelectionPlate(
@@ -339,7 +348,11 @@ export class ReMultitailArrow extends ReObject {
     const { topTail, topSpine, bottomSpine, head, tails } =
       this.getReferencePositions(renderOptions);
     const topTailOffsetX = topSpine.sub(topTail).x;
-    const arrowStart = new Vec2(topSpine.x, head.y);
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const arrowStart = new Vec2(topSpine.x + headLineStartOffset, head.y);
     const arrowLength = head.x - arrowStart.x;
 
     const { arrowHeadLength, arrowHeadWidth } =
@@ -380,13 +393,13 @@ export class ReMultitailArrow extends ReObject {
       ...renderOptions.lineattr,
       fill: '#000',
     });
-    const offset = renderOptions.offset;
-    if (offset != null) {
-      path.translateAbs(offset.x, offset.y);
-      header.translateAbs(offset.x, offset.y);
-    }
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-    this.visel.add(header, Box2Abs.fromRelBox(util.relBox(header.getBBox())));
+    reStruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      [path, header],
+      null,
+      true,
+    );
     this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);
   }
 

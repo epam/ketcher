@@ -59,7 +59,11 @@ export class MultitailArrowRenderer extends BaseRenderer {
     const { topTail, topSpine, bottomSpine, head, tails } =
       this.getReferencePositions();
     const topTailOffsetX = topSpine.sub(topTail).x;
-    const arrowStart = new Vec2(topSpine.x, head.y);
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const arrowStart = new Vec2(topSpine.x + headLineStartOffset, head.y);
     const arrowLength = head.x - arrowStart.x;
     const arrowHeadLength = ARROW_HEAD_LENGHT * macroModeScale;
     const arrowHeadWidth = ARROW_HEAD_WIDTH * macroModeScale;

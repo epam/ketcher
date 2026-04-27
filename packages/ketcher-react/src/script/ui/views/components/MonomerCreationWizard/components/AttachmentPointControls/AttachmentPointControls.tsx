@@ -61,20 +61,19 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
         ref={ref}
         data-testid={`attachment-point-controls-${currentNameOption?.label}`}
       >
-        <span title={disabledName ? nameTooltip : undefined}>
-          <Select
-            className={styles.nameSelect}
-            options={nameOptions}
-            value={currentNameOption?.value}
-            onChange={handleNameChange}
-            disabled={disabled || disabledName}
-            data-testid={
-              isPopup
-                ? `attachment-point-name-select`
-                : `attachment-point-name-select-${currentNameOption?.label}`
-            }
-          />
-        </span>
+        <Select
+          className={styles.nameSelect}
+          options={nameOptions}
+          value={currentNameOption?.value}
+          onChange={handleNameChange}
+          disabled={disabled || disabledName}
+          title={disabledName ? nameTooltip : undefined}
+          data-testid={
+            isPopup
+              ? `attachment-point-name-select`
+              : `attachment-point-name-select-${currentNameOption?.label}`
+          }
+        />
         <Select
           className={styles.leavingAtomSelect}
           options={leavingAtomOptions}

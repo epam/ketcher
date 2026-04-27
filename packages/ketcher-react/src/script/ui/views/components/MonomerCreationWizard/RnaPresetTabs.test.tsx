@@ -119,6 +119,8 @@ const createMockEditor = () => {
       },
     },
     update: jest.fn(),
+    setVisibleAssignedAttachmentPoints: jest.fn(),
+    setConnectionAttachmentPoints: jest.fn(),
   } as any;
 };
 

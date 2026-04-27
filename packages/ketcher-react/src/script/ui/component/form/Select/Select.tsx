@@ -42,6 +42,7 @@ interface Props {
   placeholder?: string;
   'data-testid'?: string;
   error?: boolean;
+  title?: string;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -60,6 +61,7 @@ const Select = ({
   placeholder,
   'data-testid': testId,
   error,
+  title,
 }: Props) => {
   const currentValue = options?.find((option) => option.value === value);
   const isFullscreen = !!document.fullscreenElement;
@@ -75,6 +77,7 @@ const Select = ({
     <MuiSelect
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
+      title={title}
       onChange={handleChange}
       renderValue={(selected: string) =>
         (currentValue?.children ??

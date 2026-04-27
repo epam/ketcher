@@ -157,11 +157,9 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
       baseAtoms,
     );
     if (bond) {
-      // eslint-disable-next-line prettier/prettier
       const sugarAtomId = sugarAtoms.includes(bond.begin)
         ? bond.begin
         : bond.end;
-      // eslint-disable-next-line prettier/prettier
       const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
 
       if (componentKey === 'sugar') {
@@ -180,11 +178,9 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
       phosphateAtoms,
     );
     if (bond) {
-      // eslint-disable-next-line prettier/prettier
       const sugarAtomId = sugarAtoms.includes(bond.begin)
         ? bond.begin
         : bond.end;
-      // eslint-disable-next-line prettier/prettier
       const phosphateAtomId = phosphateAtoms.includes(bond.begin)
         ? bond.begin
         : bond.end;

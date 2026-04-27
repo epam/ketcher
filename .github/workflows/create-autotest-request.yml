@@ -1,14 +1,19 @@
 name: Create Autotest Request
 
 on:
-  issue_comment:
-    types: [created]
+  issues:
+    types: [labeled]
 
 jobs:
-  suggest-autotests:
+  create-autotest-request:
     if: >
-      contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) &&
-      startsWith(github.event.comment.body, '@claude suggest Autotest Request')
+      github.event.label.name == 'Run TA creation workflow' &&
+      (
+        github.event.issue.issue_type.name == 'Feature' ||
+        github.event.issue.type.name == 'Feature' ||
+        github.event.issue.issue_type == 'Feature' ||
+        github.event.issue.type == 'Feature'
+      )
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,61 +27,16 @@ jobs:
         with:
           script: |
             const issue = context.payload.issue;
-            const commentBody = context.payload.comment.body.trim();
-            const isPR = !!issue.pull_request;
             const apiKey = process.env.ANTHROPIC_API_KEY;
 
             if (!apiKey) {
               throw new Error('ANTHROPIC_API_KEY secret is not configured.');
             }
 
-            if (!/^@claude suggest Autotest Request(?:\s|$)/.test(commentBody)) {
-              core.info('Comment does not match the Autotest Request command exactly. Skipping.');
-              return;
-            }
-
             const sourceLink = issue.html_url;
-
-            // Acknowledge the request with a reaction
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'eyes',
-            });
 
             let featureTitle = issue.title;
             let featureDescription = issue.body?.trim() || '(none)';
-
-            if (isPR) {
-              // Fetch full PR details and try to resolve linked issue
-              const { data: pr } = await github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: issue.number,
-              });
-
-              featureTitle = pr.title;
-              featureDescription = pr.body?.trim() || '(none)';
-
-              const issueNumberFromTitle = pr.title.match(/^#(\d+)/)?.[1];
-              const issueNumberFromBody = pr.body?.match(/(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)/i)?.[1];
-              const linkedIssueNumber = issueNumberFromTitle ?? issueNumberFromBody;
-
-              if (linkedIssueNumber) {
-                try {
-                  const { data: linkedIssue } = await github.rest.issues.get({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: Number(linkedIssueNumber),
-                  });
-                  featureTitle = linkedIssue.title;
-                  featureDescription = linkedIssue.body?.trim() || '(none)';
-                } catch (_) {
-                  // Linked issue not found; fall back to PR content.
-                }
-              }
-            }
 
             const prompt = `You are a QA engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
             Generate a concise checklist of test scenarios that automated tests should cover - include the happy path and the most important edge cases.
@@ -126,32 +86,24 @@ jobs:
               .replace(/^```(?:markdown|md)?\s*/i, '')
               .replace(/\s*```$/, '');
 
+            const checklistMatches = testScenarios.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            if (checklistMatches.length === 0) {
+              throw new Error('Anthropic response did not include any markdown checklist items.');
+            }
+
             const { data: createdIssue } = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Autotests: ${featureTitle}`,
               body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
               labels: ['Autotests'],
+              type: 'Task',
             });
 
-            await github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'autotest_request_created',
-              client_payload: {
-                issue: {
-                  number: createdIssue.number,
-                  title: createdIssue.title,
-                  body: createdIssue.body,
-                  labels: createdIssue.labels,
-                },
-              },
-            });
-
-            // Reply in the source thread with a link to the created issue.
+            // Reply in the source issue with a link to the created issue.
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: `Autotest request created: ${createdIssue.html_url}`,
+              body: `Autotest request created: ${createdIssue.html_url}\n\nAdd the \`Run TA creation workflow\` label to that issue when the automation checklist is ready for PR generation.`,
             });

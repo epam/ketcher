@@ -400,8 +400,7 @@ export class KetSerializer implements Serializer<Struct> {
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
     if (template.idtAliases && template.aliasAxoLabs) return;
 
-    const library =
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson;
+    const library = provideEditorInstance()?.monomersLibraryParsedJson;
     if (!library) return;
 
     const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as

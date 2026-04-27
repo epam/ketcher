@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures';
 import { AbbreviationLookup } from '@tests/pages/molecules/canvas/AbbreviationLookupDialog';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -18,7 +18,7 @@ test.describe('Lookup Abbreviations window', () => {
     browser,
     page,
   }) => {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('mer');
     const newPage = await browser.newPage();
     await newPage.goto('', { waitUntil: 'domcontentloaded' });
@@ -28,7 +28,7 @@ test.describe('Lookup Abbreviations window', () => {
   });
 
   test('is shown, when entering some text', async ({ page }) => {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('mek');
     expect(await AbbreviationLookup(page).window.isVisible()).toBe(true);
     await takeEditorScreenshot(page);
@@ -38,7 +38,7 @@ test.describe('Lookup Abbreviations window', () => {
     page,
   }) => {
     // EPMLSOPKET-16922, EPMLSOPKET-16923
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('1');
     await page.keyboard.type('1');
     await page.keyboard.type('1');
@@ -49,7 +49,7 @@ test.describe('Lookup Abbreviations window', () => {
     page,
   }) => {
     // EPMLSOPKET-16924
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.type('t');
     await page.keyboard.type('t');
     await page.keyboard.type('t');

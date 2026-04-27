@@ -75,9 +75,9 @@ const PresetPreview = ({ className }: Props) => {
       data-axolabs={axoLabsText ?? undefined}
     >
       <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
-      {monomers.map((monomer) =>
+      {monomers.map((monomer, index) =>
         monomer ? (
-          <PresetMonomerRow key={monomer.props.id}>
+          <PresetMonomerRow key={monomer.props.id ?? index}>
             <PresetIcon name={getIconNameForMonomer(monomer)} />
             <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
             <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>

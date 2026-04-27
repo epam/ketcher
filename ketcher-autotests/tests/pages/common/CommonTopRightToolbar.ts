@@ -23,9 +23,7 @@ type ZoomDropdownLocators = {
 
 export const CommonTopRightToolbar = (page: Page) => {
   const locators: CommonTopRightToolbarLocators = {
-    ketcherModeSwitcherCombobox: page
-      .getByTestId('polymer-toggler')
-      .filter({ has: page.locator(':visible') }),
+    ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler').first(), // Use first() instead of filter with :visible
     fullScreenButton: page
       .getByTestId('fullscreen-mode-button')
       .filter({ has: page.locator(':visible') }),
@@ -162,11 +160,20 @@ export const CommonTopRightToolbar = (page: Page) => {
       const moleculesCanvas = page.getByTestId('canvas');
 
       if (!(await moleculesCanvas.isVisible())) {
-        await switcher.waitFor({ state: 'visible' });
-        await switcher.click();
+        // Add explicit visibility wait with timeout
+        await switcher.waitFor({ state: 'visible', timeout: 10000 });
+        try {
+          await switcher.click({ timeout: 5000 });
+        } catch (error) {
+          // Fallback: try without the filter
+          const fallbackSwitcher = page.getByTestId('polymer-toggler');
+          await fallbackSwitcher.waitFor({ state: 'visible', timeout: 10000 });
+          await fallbackSwitcher.click();
+        }
 
-        await microOption.waitFor({ state: 'visible' });
+        await microOption.waitFor({ state: 'visible', timeout: 10000 });
         await microOption.click();
+        await moleculesCanvas.waitFor({ state: 'visible', timeout: 10000 });
       }
     },
   };

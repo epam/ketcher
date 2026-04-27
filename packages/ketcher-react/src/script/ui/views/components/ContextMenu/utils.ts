@@ -29,12 +29,15 @@ export const queryBondNames = [
   'bond-doublearomatic',
 ];
 
-export const monomerWizardDisallowedBondNames = [
-  'bond-any',
-  'bond-singledouble',
-  'bond-singlearomatic',
-  'bond-doublearomatic',
+export const MONOMER_WIZARD_DISALLOWED_BOND_TYPES = [
+  'any',
+  'singledouble',
+  'singlearomatic',
+  'doublearomatic',
 ];
+
+export const monomerWizardDisallowedBondNames =
+  MONOMER_WIZARD_DISALLOWED_BOND_TYPES.map((type) => `bond-${type}`);
 
 /**
  * Get bond names except for query bonds

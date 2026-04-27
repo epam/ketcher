@@ -27,6 +27,7 @@ import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
 import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
 
 interface BondSettings {
   type: string;
@@ -40,13 +41,6 @@ type Props = BondProps &
   BaseCallProps & {
     isMonomerCreationWizardActive?: boolean;
   };
-
-const MONOMER_WIZARD_DISALLOWED_BOND_TYPES = [
-  'any',
-  'singledouble',
-  'singlearomatic',
-  'doublearomatic',
-];
 
 const Bond = (props: Props) => {
   const { formState, isMonomerCreationWizardActive = false, ...rest } = props;

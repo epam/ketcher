@@ -27,6 +27,7 @@ import { bond as bondSchema } from '../data/schema/struct-schema';
 import isHidden from './isHidden';
 import { toBondType } from '../data/convert/structconv';
 import { isFlipDisabled } from './flips';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
 
 const toolActions = {
   hand: {
@@ -412,12 +413,9 @@ const bondCuts = {
 
 const typeSchema = bondSchema.properties.type;
 
-const monomerWizardDisallowedBondTypes = new Set([
-  'any',
-  'singledouble',
-  'singlearomatic',
-  'doublearomatic',
-]);
+const monomerWizardDisallowedBondTypes = new Set(
+  MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
+);
 
 export default typeSchema.enum.reduce((res, type, i) => {
   res[`bond-${type}`] = {

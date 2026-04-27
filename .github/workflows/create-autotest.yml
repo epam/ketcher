@@ -96,7 +96,7 @@ jobs:
               - Autotest title should consist of serial number, and check list item text
               Example:
               <example>
-              test(`1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)`, async ({
+              test('1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)', async ({
                   SnakeCanvas: _,
                 }) => {
                   /*
@@ -230,8 +230,9 @@ jobs:
             fs.writeFileSync(filePath, generatedFiles.spec.trim(), 'utf8');
 
             for (const file of additionalFiles) {
-              fs.mkdirSync(path.dirname(file.path), { recursive: true });
-              fs.writeFileSync(file.path, file.content.trim(), 'utf8');
+              const resolvedFilePath = path.resolve(workspaceRoot, file.path);
+              fs.mkdirSync(path.dirname(resolvedFilePath), { recursive: true });
+              fs.writeFileSync(resolvedFilePath, file.content.trim(), 'utf8');
             }
 
             core.setOutput('branch_name', branchName);

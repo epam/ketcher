@@ -25,7 +25,6 @@ import type { Phosphate } from 'domain/entities/Phosphate';
  */
 type AmbiguousMonomerEntity = BaseMonomer &
   IVariantMonomer & {
-    isAmbiguous: true;
     monomerClass: KetMonomerClass;
   };
 

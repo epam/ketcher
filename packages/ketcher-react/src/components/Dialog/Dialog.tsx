@@ -86,18 +86,39 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
 
   useLayoutEffect(() => {
     const dialogElement = dialogRef.current;
+
+    // Use document.querySelector rather than dialogElement.closest() because
+    // in popup mode the native <dialog> lives inside a MUI portal appended to
+    // document.body — outside the .Ketcher-root subtree — so closest() returns
+    // null and clipArea would be undefined.
+    const clipArea = document.querySelector(
+      `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${CLIP_AREA_BASE_CLASS}`,
+    ) as HTMLElement | null;
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     if (focusable && dialogElement) {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         (dialogElement as HTMLElement).focus();
       }, 0);
     }
 
     return () => {
-      (
-        dialogElement
-          ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
-          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
-      ).focus();
+      // Cancel the pending focus-on-open timeout so it cannot fire after
+      // unmount and focus a detached element.
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      // Defer focus restoration so the browser can first move focus to
+      // document.body naturally (when the <dialog> DOM node is removed).
+      // That fires a native focusin on body which triggers MUI FocusTrap's
+      // contain() with activeElement outside the trap, causing it to clear its
+      // reactFocusEventTarget ref. If we focused clipArea synchronously here,
+      // contain() would see focus is still inside the trap and short-circuit —
+      // leaving reactFocusEventTarget pointing at the detached close button
+      // (memory leak in popup mode).
+      setTimeout(() => {
+        clipArea?.focus();
+      }, 0);
     };
   }, [focusable]);
 

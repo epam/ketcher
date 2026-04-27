@@ -96,7 +96,7 @@ jobs:
               - Autotest title should consist of serial number, and check list item text
               Example:
               <example>
-              test(`1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)`, async ({
+              test('1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)', async ({
                   SnakeCanvas: _,
                 }) => {
                   /*
@@ -187,9 +187,14 @@ jobs:
               throw new Error('Anthropic response did not include generated output.');
             }
 
+            const normalizedGeneratedText = generatedText
+              .replace(/^```(?:json)?\s*/i, '')
+              .replace(/\s*```$/i, '')
+              .trim();
+
             let generatedFiles;
             try {
-              generatedFiles = JSON.parse(generatedText);
+              generatedFiles = JSON.parse(normalizedGeneratedText);
             } catch (error) {
               throw new Error(`Anthropic returned invalid generation JSON: ${error.message}`);
             }
@@ -230,8 +235,9 @@ jobs:
             fs.writeFileSync(filePath, generatedFiles.spec.trim(), 'utf8');
 
             for (const file of additionalFiles) {
-              fs.mkdirSync(path.dirname(file.path), { recursive: true });
-              fs.writeFileSync(file.path, file.content.trim(), 'utf8');
+              const resolvedFilePath = path.resolve(workspaceRoot, file.path);
+              fs.mkdirSync(path.dirname(resolvedFilePath), { recursive: true });
+              fs.writeFileSync(resolvedFilePath, file.content.trim(), 'utf8');
             }
 
             core.setOutput('branch_name', branchName);

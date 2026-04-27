@@ -1513,7 +1513,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
     await openFileAndAddToCanvasAsNewProject(
       page,
-      'KET/multi-tailed-arrows-3.ket',
+      'KET/multi-tailed-arrows-3(corrected).ket',
     );
     const largeMultiTailedArrow = await MultiTailedArrow(
       page,
@@ -1529,20 +1529,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         arrowId: 1,
       }),
     );
-    const smallMultiTailedArrow = await MultiTailedArrow(
-      page,
-      getArrowLocator(page, {
-        arrowType: ArrowType.MultiTailedArrow,
-        arrowId: 0,
-      }),
-    );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
     await mediumMultiTailedArrow.removeTail({ tailIndex: 0 });
-    await selectPartOfMolecules(page);
+    await mediumMultiTailedArrow.removeTail({ tailIndex: 1 });
     await largeMultiTailedArrow.removeTail({ tailIndex: 0 });
-    await selectPartOfMolecules(page);
-    await removeTail(page, 'tails-1-resize');
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

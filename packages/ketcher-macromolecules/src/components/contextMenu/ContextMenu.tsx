@@ -138,11 +138,6 @@ export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
         e.stopPropagation();
         return;
       }
-      const canvas = document.getElementById('polymer-editor-canvas');
-      const isClickOnCanvas = canvas?.contains(e.target);
-      if (isClickOnCanvas && e.type === 'contextmenu') {
-        return;
-      }
       dispatch(setContextMenuActive(false));
     };
     document.addEventListener('click', handleContextMenuClose);

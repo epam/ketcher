@@ -274,45 +274,20 @@ function getConnectingBond(
   return null;
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
-  // TODO: refactor function !!
-  const action = new Action();
-
-  const tmpl = template.molecule;
-  const struct = restruct.molecule;
-
-  const bond = struct.bonds.get(bid);
-  const tmplBond = tmpl.bonds.get(template.bid);
-
-  const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
-
-  const atomsMap = new Map([
-    [tmplBond.begin, flip ? bond.end : bond.begin],
-    [tmplBond.end, flip ? bond.begin : bond.end],
-  ]);
-
-  // calc angle
-  const bondAtoms = {
-    begin: flip ? tmplBond.end : tmplBond.begin,
-    end: flip ? tmplBond.begin : tmplBond.end,
-  };
-  const { angle, scale } = utils.mergeBondsParams(
-    struct,
-    bond,
-    tmpl,
-    bondAtoms,
-  );
-
-  const frid = struct.getBondFragment(bid);
-
-  /* For merge */
-  const pasteItems: any = {
-    // only atoms and bonds now
-    atoms: [],
-    bonds: [],
-  };
-  /* ----- */
-
+function placeTemplateAtoms(
+  restruct,
+  tmpl,
+  struct,
+  tmplBond,
+  tmplBegin,
+  bond,
+  atomsMap,
+  frid,
+  angle,
+  scale,
+  action,
+  pasteItems,
+) {
   tmpl.atoms.forEach((atom, id) => {
     const attrs: any = Atom.getAttrHash(atom);
     attrs.fragment = frid;
@@ -340,12 +315,21 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
     }
   });
   mergeSgroups(action, restruct, pasteItems.atoms, bond.begin);
+}
 
-  // When a template of "Benzene" molecule is attached it
-  // uses specific fusing rules when attaching to a bond
-  // that is connected exactly to one bond on each side.
-  // For more info please refer to: https://github.com/epam/ketcher/issues/1855
-  const fusingBondType = getConnectingBond(tmpl, struct, bid, bond);
+function placeTemplateBonds(
+  restruct,
+  tmpl,
+  struct,
+  tmplBond,
+  bond,
+  bid,
+  atomsMap,
+  fusingBondType,
+  isPreview,
+  action,
+  pasteItems,
+) {
   const isFusingBenzeneBySpecialRules = fusingBondType !== null;
 
   tmpl.bonds.forEach((tBond, tBondIndex) => {
@@ -412,7 +396,9 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
       new BondAttr(previewBondId, 'isPreview', isPreview).perform(restruct),
     );
   });
+}
 
+function applyTemplatePostProcessing(restruct, bond, pasteItems, action) {
   if (pasteItems.atoms.length) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
@@ -429,6 +415,78 @@ function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
       ),
     );
   }
+}
+
+function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
+  const action = new Action();
+
+  const tmpl = template.molecule;
+  const struct = restruct.molecule;
+
+  const bond = struct.bonds.get(bid);
+  const tmplBond = tmpl.bonds.get(template.bid);
+
+  const tmplBegin = tmpl.atoms.get(flip ? tmplBond.end : tmplBond.begin);
+
+  const atomsMap = new Map([
+    [tmplBond.begin, flip ? bond.end : bond.begin],
+    [tmplBond.end, flip ? bond.begin : bond.end],
+  ]);
+
+  const bondAtoms = {
+    begin: flip ? tmplBond.end : tmplBond.begin,
+    end: flip ? tmplBond.begin : tmplBond.end,
+  };
+  const { angle, scale } = utils.mergeBondsParams(
+    struct,
+    bond,
+    tmpl,
+    bondAtoms,
+  );
+
+  const frid = struct.getBondFragment(bid);
+
+  const pasteItems: any = {
+    atoms: [],
+    bonds: [],
+  };
+
+  placeTemplateAtoms(
+    restruct,
+    tmpl,
+    struct,
+    tmplBond,
+    tmplBegin,
+    bond,
+    atomsMap,
+    frid,
+    angle,
+    scale,
+    action,
+    pasteItems,
+  );
+
+  // When a template of "Benzene" molecule is attached it
+  // uses specific fusing rules when attaching to a bond
+  // that is connected exactly to one bond on each side.
+  // For more info please refer to: https://github.com/epam/ketcher/issues/1855
+  const fusingBondType = getConnectingBond(tmpl, struct, bid, bond);
+
+  placeTemplateBonds(
+    restruct,
+    tmpl,
+    struct,
+    tmplBond,
+    bond,
+    bid,
+    atomsMap,
+    fusingBondType,
+    isPreview,
+    action,
+    pasteItems,
+  );
+
+  applyTemplatePostProcessing(restruct, bond, pasteItems, action);
 
   action.operations.reverse();
 

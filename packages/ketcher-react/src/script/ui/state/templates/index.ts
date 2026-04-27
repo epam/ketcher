@@ -86,9 +86,13 @@ export function editTmpl(tmpl) {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
         (formData) => {
-          tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name;
-          tmpl.props = formData
-            ? { ...(tmpl.props || {}), ...(formData.attach || {}) }
+          const data = formData as {
+            name: string;
+            attach?: Record<string, unknown>;
+          };
+          tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
+          tmpl.props = data
+            ? { ...(tmpl.props || {}), ...(data.attach || {}) }
             : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
@@ -128,7 +132,11 @@ export function saveUserTmpl(struct) {
 
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
-      .then(({ name, attach }) => {
+      .then((result) => {
+        const { name, attach } = result as {
+          name: string;
+          attach?: Record<string, unknown>;
+        };
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 

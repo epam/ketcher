@@ -25,7 +25,8 @@ const AtomElement = ({ formState }: BaseProps) => {
     onChange: ChangeFunction,
   ) => {
     openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
-      (el) => {
+      (result) => {
+        const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);
       },
       () => null, // onCancel handler

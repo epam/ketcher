@@ -33,7 +33,6 @@ import {
   RnaPresetComponentType,
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
-import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import {
   getLeavingAtomForAttachmentPoint,
   PhosphatePosition,
@@ -271,34 +270,11 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   useEffect(() => {
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
     if (!activeComponentKey) {
-      // Preset tab: show all assigned APs and aggregate connection APs from all
-      // RNA components so that hovering readonly attachment points on the Preset
-      // tab highlights the corresponding atoms on the canvas.
-      // Use a composite key "<componentKey>:<apName>" to prevent entries from
-      // different components that share the same AP name (e.g. base R1 and
-      // phosphate R1 when position is 3') from overwriting each other in the
-      // map. The canvas renderer only checks map values (atom IDs), so the key
-      // format does not affect circle rendering.
+      // Preset tab: show only user-assigned APs (the ones not occupied by
+      // default inter-component connections). Connection APs are not rendered
+      // on the Preset tab, so clear them from the canvas as well.
       editor.setVisibleAssignedAttachmentPoints(undefined);
-
-      const allConnectionAtomIds = new Map<
-        AttachmentPointName,
-        [number, number]
-      >();
-      RNA_COMPONENT_KEYS.forEach((componentKey) => {
-        const componentConnectionAtomIds =
-          getConnectionAttachmentPointAtomIdsForComponent(
-            wizardState,
-            struct,
-            componentKey,
-            phosphatePosition as PhosphatePosition | undefined,
-          );
-        componentConnectionAtomIds.forEach((atomPair, apName) => {
-          const uniqueKey = `${componentKey}:${apName}` as AttachmentPointName;
-          allConnectionAtomIds.set(uniqueKey, atomPair);
-        });
-      });
-      editor.setConnectionAttachmentPoints(allConnectionAtomIds);
+      editor.setConnectionAttachmentPoints(new Map());
       return;
     }
 
@@ -463,94 +439,22 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   <Icon name="about" />
                 </span>
               </div>
-              {(() => {
-                // Build per-component connection atom ID maps so that each
-                // readonly AP can highlight its own atom, even when two components
-                // share the same AP name (e.g. base R1 and phosphate R1 when
-                // phosphate position is 3').
-                const componentConnectionAtomIdMaps = {
-                  base: getConnectionAttachmentPointAtomIdsForComponent(
-                    wizardState,
-                    struct,
-                    'base',
-                    phosphatePosition as PhosphatePosition | undefined,
-                  ),
-                  sugar: getConnectionAttachmentPointAtomIdsForComponent(
-                    wizardState,
-                    struct,
-                    'sugar',
-                    phosphatePosition as PhosphatePosition | undefined,
-                  ),
-                  phosphate: getConnectionAttachmentPointAtomIdsForComponent(
-                    wizardState,
-                    struct,
-                    'phosphate',
-                    phosphatePosition as PhosphatePosition | undefined,
-                  ),
-                };
-
-                // Aggregate readonly (inter-component connection) attachment points
-                // from all RNA components, tagging each with its component key so
-                // we can look up the correct atom ID when multiple components share
-                // the same AP name.
-                const allReadonlyAttachmentPoints = RNA_COMPONENT_KEYS.flatMap(
-                  (key) =>
-                    readonlyComponentAttachmentPoints[key].map((ap) => ({
-                      ...ap,
-                      componentKey: key,
-                    })),
-                );
-                const hasAnyAPs =
-                  presetAttachmentPoints.size > 0 ||
-                  allReadonlyAttachmentPoints.length > 0;
-                return (
-                  hasAnyAPs && (
-                    <div
-                      className={monomerCreationWizardStyles.attachmentPoints}
-                    >
-                      {Array.from(presetAttachmentPoints.entries()).map(
-                        ([name, atomPair]) => (
-                          <AttachmentPoint
-                            name={name}
-                            editor={editor}
-                            onNameChange={handleAttachmentPointNameChange}
-                            onLeavingAtomChange={handleLeavingAtomChange}
-                            onRemove={handleAttachmentPointRemove}
-                            key={`${name}-${atomPair[0]}-${atomPair[1]}`}
-                          />
-                        ),
-                      )}
-                      {allReadonlyAttachmentPoints.map(
-                        ({ name: apName, leavingAtomLabel, componentKey }) => {
-                          const atomPair =
-                            componentConnectionAtomIdMaps[componentKey].get(
-                              apName,
-                            );
-                          return (
-                            <ReadonlyAttachmentPoint
-                              key={`readonly-preset-${componentKey}-${apName}`}
-                              name={apName}
-                              leavingAtomLabel={leavingAtomLabel}
-                              editor={editor}
-                              atomId={atomPair?.[0]}
-                              onLeavingAtomChange={
-                                onConnectionLeavingAtomChange
-                                  ? (name, newLabel) =>
-                                      onConnectionLeavingAtomChange(
-                                        name,
-                                        newLabel,
-                                        componentKey,
-                                      )
-                                  : undefined
-                              }
-                            />
-                          );
-                        },
-                      )}
-                    </div>
-                  )
-                );
-              })()}
+              {presetAttachmentPoints.size > 0 && (
+                <div className={monomerCreationWizardStyles.attachmentPoints}>
+                  {Array.from(presetAttachmentPoints.entries()).map(
+                    ([name, atomPair]) => (
+                      <AttachmentPoint
+                        name={name}
+                        editor={editor}
+                        onNameChange={handleAttachmentPointNameChange}
+                        onLeavingAtomChange={handleLeavingAtomChange}
+                        onRemove={handleAttachmentPointRemove}
+                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                      />
+                    ),
+                  )}
+                </div>
+              )}
             </div>
           </>
         )}

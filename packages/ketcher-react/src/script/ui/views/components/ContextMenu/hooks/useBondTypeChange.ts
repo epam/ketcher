@@ -2,6 +2,7 @@ import {
   fromBondsAttrs,
   ketcherProvider,
   bondChangingAction,
+  Bond,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
@@ -11,6 +12,14 @@ import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
+type BondProps = {
+  type?: number;
+  stereo?: number;
+  topology?: number | null;
+  reactingCenterStatus?: number | null;
+  customQuery?: string | null;
+};
+
 const useBondTypeChange = () => {
   const { ketcherId } = useAppContext();
   const handler = useCallback(
@@ -18,8 +27,12 @@ const useBondTypeChange = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds ?? [];
-      // @ts-expect-error tools[id].action.opts is a bond-type object from toBondType()
-      const bondProps = { ...tools[id].action.opts };
+      const opts = id != null ? tools[String(id)]?.action?.opts : undefined;
+      const bondProps: BondProps = {
+        ...(typeof opts === 'object' && opts !== null
+          ? (opts as BondProps)
+          : null),
+      };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {
         bondProps.customQuery = null;
@@ -43,7 +56,9 @@ const useBondTypeChange = () => {
       }
 
       // For multiple bonds, use fromBondsAttrs
-      editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
+      editor.update(
+        fromBondsAttrs(molecule, bondIds, bondProps as Partial<Bond>),
+      );
     },
     [ketcherId],
   );

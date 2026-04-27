@@ -56,7 +56,7 @@ import { TextEditorDialog } from '@tests/pages/molecules/canvas/TextEditorDialog
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   clickOnCanvas,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -76,7 +76,7 @@ import {
   zoomOutByKeyboard,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -158,7 +158,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
      * Version 3.9
      */
     await BottomToolbar(page).benzene();
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
@@ -241,7 +241,13 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       page,
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).open();
-    await takeElementScreenshot(page, page.getByTestId(MicroBondOption.Delete));
+    await takeElementScreenshot(
+      page,
+      ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).getOptionLocator(MicroBondOption.Delete),
+    );
   });
 
   test('Case 5: Line between Paste option and Create RNA antisense strand option is missing in the context menu', async ({
@@ -267,9 +273,16 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await ContextMenu(page, getMonomerLocator(page, Base.A).first()).open();
     await page.waitForTimeout(0.2 * 1000);
-    await takeElementScreenshot(page, page.getByTestId(MonomerOption.Paste), {
-      padding: 10,
-    });
+    await takeElementScreenshot(
+      page,
+      ContextMenu(
+        page,
+        getMonomerLocator(page, Base.A).first(),
+      ).getOptionLocator(MonomerOption.Paste),
+      {
+        padding: 10,
+      },
+    );
   });
 
   test('Case 6: Missing separator line above "Delete" in context menu', async ({
@@ -301,7 +314,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
-      page.getByTestId(SequenceSymbolOption.Delete),
+      ContextMenu(
+        page,
+        getSymbolLocator(page, { symbolAlias: 'A' }),
+      ).getOptionLocator(SequenceSymbolOption.Delete),
       {
         padding: 20,
       },
@@ -385,7 +401,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
-      page.getByTestId(RingBondCountOption.Six),
+      ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).getOptionLocator(RingBondCountOption.Six),
       { padding: 80 },
     );
   });
@@ -471,8 +490,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
         { x: atomBoundingBox.x + 40, y: atomBoundingBox.y + 40 },
       );
     }
-    await ContextMenu(page, phosphateAtom).open();
-    expect(page.getByTestId(MicroAtomOption.CreateAMonomer)).toBeEnabled();
+    expect(
+      await ContextMenu(page, phosphateAtom).isOptionEnabled(
+        MicroAtomOption.CreateAMonomer,
+      ),
+    ).toBeTruthy();
   });
 
   test('Case 14: IDT alias of CHEM 5TAMRA is displayed wrong', async ({
@@ -852,10 +874,9 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CC*');
     const bond = getBondLocator(page, {}).first();
-    await ContextMenu(page, bond).open();
-    await expect(
-      page.getByTestId(MicroBondOption.EditSGroup),
-    ).not.toBeVisible();
+    expect(
+      await ContextMenu(page, bond).isOptionVisible(MicroBondOption.EditSGroup),
+    ).toBeFalsy();
   });
 
   test('Case 27: System loads invdC monomer as unresolved monomer from AxoLabs', async ({

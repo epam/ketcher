@@ -1,11 +1,12 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
-import { Box2Abs, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
@@ -26,6 +27,10 @@ import {
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
 const BOND_WIDTH = 2;
 // Use same scale factor as Molecules mode (microModeScale = 40)
@@ -212,13 +217,13 @@ export class BondRenderer extends BaseRenderer {
       this.selectionElement = this.canvas
         ?.insert('path', ':first-child')
         .attr('d', pathShape)
-        .attr('fill', '#57ff8f')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#57ff8f');
+      ?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -251,6 +256,24 @@ export class BondRenderer extends BaseRenderer {
   public removeHover() {
     this.hoverElement?.remove();
     this.hoverElement = undefined;
+  }
+
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
+    } else {
+      this.removeHover();
+      this.hoverElement = undefined;
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
+    }
   }
 
   public drawSelection() {
@@ -295,7 +318,7 @@ export class BondRenderer extends BaseRenderer {
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
@@ -508,7 +531,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private get halfEdges() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
@@ -548,7 +571,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
     this.rootElement = this.rootElement || this.appendRootElement();
@@ -716,7 +739,7 @@ export class BondRenderer extends BaseRenderer {
 
     // Adjust position based on double bond shift
     const doubleBondShift = this.getDoubleBondShift(
-      CoreEditor.provideEditorInstance().viewModel,
+      provideEditorInstance().viewModel,
       firstHalfEdge,
       secondHalfEdge,
     );

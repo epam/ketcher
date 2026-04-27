@@ -2,10 +2,10 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
-  CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
+  isSugarOrAmbiguousSugar,
   KetAmbiguousMonomerTemplateSubType,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
@@ -15,6 +15,7 @@ import {
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
   MonomerToAtomBond,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -128,7 +129,8 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
     return (
       (selectedMonomer instanceof RNABase &&
         getSugarFromRnaBase(selectedMonomer)) ||
-      (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
+      (isSugarOrAmbiguousSugar(selectedMonomer) &&
+        getRnaBaseFromSugar(selectedMonomer))
     );
   });
 };
@@ -142,7 +144,7 @@ export const getModifyAminoAcidsMenuItems = (
   const modificationsForSelection = new Set<string>();
   const modificationTypesDisabledByAttachmentPoints = new Set<string>();
   const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =
@@ -178,24 +180,26 @@ export const getModifyAminoAcidsMenuItems = (
     }
 
     modificationTypes.forEach((modificationType) => {
-      // If modification does not have R1 or R2 attachment points to persist connection
-      if (
-        monomersWithSameNaturalAnalogCode.some(
-          (monomer: BaseMonomer) =>
-            monomer.label !== monomerLibraryItem.label &&
-            !canModifyAminoAcid(monomer, monomerLibraryItem),
-        )
-      ) {
-        modificationTypesDisabledByAttachmentPoints.add(modificationType);
-
-        return;
-      }
-
+      // Check if all monomers in this group already have this modification
       if (
         monomersWithSameNaturalAnalogCode.every(
           (monomer) => monomer.label === monomerLibraryItem.label,
         )
       ) {
+        return;
+      }
+
+      // Check if at least one monomer in this group can be modified
+      const hasAtLeastOneEligibleMonomer =
+        monomersWithSameNaturalAnalogCode.some(
+          (monomer: BaseMonomer) =>
+            monomer.label !== monomerLibraryItem.label &&
+            canModifyAminoAcid(monomer, monomerLibraryItem),
+        );
+
+      // If NO monomer is eligible, disable this modification
+      if (!hasAtLeastOneEligibleMonomer) {
+        modificationTypesDisabledByAttachmentPoints.add(modificationType);
         return;
       }
 

@@ -56,7 +56,7 @@ export function removeMouseListeners(element) {
     }
 
     if (mouseDownListener) {
-      element.addEventListener('mousedown', mouseDownListener, true);
+      element.removeEventListener('mousedown', mouseDownListener, true);
     }
   };
 }

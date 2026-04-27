@@ -19,6 +19,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 
 import {
+  AttachmentPoint,
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -41,26 +42,17 @@ import {
   HighlightOption,
   MicroBondOption,
 } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import {
+  AttachmentPointType,
+  getAtomAttachmentPointLocator,
+} from '@utils/canvas/r-groups/getAtomAttachmentPointLocator';
 
 let page: Page;
 
@@ -141,8 +133,12 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -280,11 +276,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       MicroBondOption.Highlight,
       HighlightOption.Red,
     ]);
-    const primaryAattachmentPoint = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .locator('path')
-      .nth(8);
+    const primaryAattachmentPoint = getAtomAttachmentPointLocator(page, {
+      primaryOrSecondary: AttachmentPointType.Primary,
+    }).first();
     await ContextMenu(page, primaryAattachmentPoint).click([
       MicroBondOption.Highlight,
       HighlightOption.Blue,

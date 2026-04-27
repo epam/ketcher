@@ -14,24 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  Vec2,
-  MonomerMicromolecule,
-  SUPERATOM_CLASS,
-} from 'domain/entities';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup, SUPERATOM_CLASS } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
 import { RaphaelPaper } from 'raphael';
 import { RenderOptions } from '../render.types';
@@ -265,14 +262,14 @@ class ReSGroup extends ReObject {
         sGroupItem.hovering = paper
           .path(
             'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
-            tfx(a0.x),
-            tfx(a0.y),
-            tfx(a1.x),
-            tfx(a1.y),
-            tfx(b1.x),
-            tfx(b1.y),
-            tfx(b0.x),
-            tfx(b0.y),
+            toFixed(a0.x),
+            toFixed(a0.y),
+            toFixed(a1.x),
+            toFixed(a1.y),
+            toFixed(b1.x),
+            toFixed(b1.y),
+            toFixed(b0.x),
+            toFixed(b0.y),
           )
           .attr(options.hoverStyle);
         otherHovers.push(sGroupItem.hovering);
@@ -512,6 +509,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
@@ -548,6 +549,8 @@ function showValue(
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
+  text.node?.setAttribute('data-testid', 's-group-label');
+  text.node?.setAttribute('data-label-text', sgroup.data.fieldValue);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,

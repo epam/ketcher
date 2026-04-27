@@ -1,4 +1,4 @@
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { AttachmentPointName } from 'domain/types';
 
 export function getAttachmentPointTooltip(

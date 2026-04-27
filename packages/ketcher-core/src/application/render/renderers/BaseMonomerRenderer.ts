@@ -1,7 +1,9 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectBase } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -20,11 +22,14 @@ import {
 import { BaseRenderer } from './BaseRenderer';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import {
+  getMonomerSize,
+  setMonomerSize,
+} from 'application/render/renderers/monomerSizeState';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
-let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editorEvents: typeof editorEvents;
@@ -69,7 +74,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -84,7 +89,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
       ),
     };
-    monomerSize = this.monomerSize;
+    setMonomerSize(this.monomerSize);
   }
 
   // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -101,7 +106,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public static get monomerSize() {
-    return monomerSize;
+    return getMonomerSize();
   }
 
   public get center() {
@@ -413,7 +418,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectBase) cursor = 'move';
+    if (this.editor.selectedTool?.name === 'select-tool') cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)
@@ -464,7 +469,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
   }

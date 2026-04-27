@@ -42,6 +42,7 @@ import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -306,9 +307,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }
@@ -429,9 +438,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }

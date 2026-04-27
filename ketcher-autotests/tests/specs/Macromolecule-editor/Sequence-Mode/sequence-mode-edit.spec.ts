@@ -9,6 +9,7 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -76,21 +77,28 @@ test.describe('Sequence edit mode', () => {
     Description: When right ckick on canvas for new sequence: 'Start new sequence'
     For clicking on existed: 'Edit sequence' and 'Start new sequence'.
     */
-    await ContextMenu(page, { x: 100, y: 100 }).open();
     expect(
-      page.getByTestId(SequenceSymbolOption.StartNewSequence),
-    ).toBeVisible();
+      await ContextMenu(page, { x: 100, y: 100 }).isOptionVisible(
+        SequenceSymbolOption.StartNewSequence,
+      ),
+    ).toBeTruthy();
     await page.keyboard.press('Escape');
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
     });
-    await ContextMenu(page, symbolG).open();
-    expect(page.getByTestId(SequenceSymbolOption.EditSequence)).toBeVisible();
     expect(
-      page.getByTestId(SequenceSymbolOption.StartNewSequence),
-    ).toBeVisible();
+      await ContextMenu(page, symbolG).isOptionVisible(
+        SequenceSymbolOption.EditSequence,
+      ),
+    ).toBeTruthy();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, symbolG).isOptionVisible(
+        SequenceSymbolOption.StartNewSequence,
+      ),
+    ).toBeTruthy();
   });
 
   test('Add/edit sequence', async () => {
@@ -190,6 +198,7 @@ test.describe('Sequence edit mode', () => {
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -207,6 +216,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -1416,6 +1426,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1484,6 +1495,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1521,6 +1533,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {

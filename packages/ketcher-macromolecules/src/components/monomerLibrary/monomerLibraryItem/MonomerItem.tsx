@@ -30,7 +30,12 @@ import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { selectEditor, selectIsSequenceMode, showPreview } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceMode,
+  selectIsDragging,
+  showPreview,
+} from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
   cardMouseOverHandler,
@@ -51,6 +56,7 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const isDragging = useAppSelector(selectIsDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -139,6 +145,7 @@ const MonomerItem = ({
     <Card
       selected={isSelected}
       disabled={isDisabled}
+      isDragging={isDragging}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
       item={monomerItem}

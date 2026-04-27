@@ -17,7 +17,7 @@
 import { AlignDescriptors, CanvasLoad } from '../operations';
 
 import { Action } from './action';
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { ReStruct } from 'application/render';
 
 /** Get action applied {@link struct} to {@link restruct}. */

@@ -16,7 +16,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { ReRxnPlus, ReStruct } from '../../../../render';
-import { RxnPlus, Vec2 } from 'domain/entities';
+import { RxnPlus } from 'domain/entities/rxnPlus';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
@@ -49,6 +50,7 @@ class RxnPlusAdd extends BaseOperation {
     const { pos, plid } = this.data;
 
     const structRxn = struct.rxnPluses.get(plid);
+    if (!structRxn) return;
     // notifyRxnPlusAdded
     restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 

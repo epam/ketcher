@@ -1,16 +1,21 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor, editorEvents } from 'application/editor';
+import { editorEvents } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, StereoLabel, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import { StereoLabel } from 'domain/entities/atom';
 import util from '../util';
 import assert from 'assert';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 
 export class AtomRenderer extends BaseRenderer {
@@ -40,7 +45,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const { hydrogenAmount } = this.atom.calculateValence();
     const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
@@ -175,7 +180,7 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', '#CCFFDD')
+        .attr('fill', 'none')
         .attr('opacity', '0')
         .attr('class', 'dynamic-element')
     );
@@ -194,9 +199,15 @@ export class AtomRenderer extends BaseRenderer {
       if (hoverElement) {
         this.hoverElement = hoverElement;
       }
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
       this.showHover();
     } else {
       this.hideHover();
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
     }
   }
 
@@ -209,7 +220,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
-    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     if (atomHaldEdges?.length === 0) {
@@ -236,7 +247,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get isAtomTerminal() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -246,7 +257,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get isLabelVisible() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
@@ -437,7 +448,7 @@ export class AtomRenderer extends BaseRenderer {
       const selectionContourElement = this.appendSelectionContour();
 
       this.selectionElement = selectionContourElement
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         // selectionContourElement is union type here. For some reason for union selection types
         // ts shows error that first call of attr can return string.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -445,7 +456,7 @@ export class AtomRenderer extends BaseRenderer {
         .attr('class', 'dynamic-element');
     }
 
-    this.cipLabelElement?.select('rect')?.attr('fill', '#57FF8F');
+    this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -686,7 +697,7 @@ export class AtomRenderer extends BaseRenderer {
 
   private bisectLargestSector(): Vec2 {
     const { neighborAngle, largestAngle } =
-      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
+      provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
         this.atom,
       );
 

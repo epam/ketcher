@@ -148,12 +148,8 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (
-      item.sgroup.pp.x > x0 &&
-      item.sgroup.pp.x < x1 &&
-      item.sgroup.pp.y > y0 &&
-      item.sgroup.pp.y < y1
-    ) {
+    const pp = item.sgroup.pp;
+    if (pp && pp.x > x0 && pp.x < x1 && pp.y > y0 && pp.y < y1) {
       sgroupDataList.push(id);
     }
   });
@@ -337,7 +333,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (isPointInPolygon(r, item.sgroup.pp)) {
+    if (item.sgroup.pp && isPointInPolygon(r, item.sgroup.pp)) {
       sgroupDataList.push(id);
     }
   });

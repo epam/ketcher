@@ -1,6 +1,6 @@
 import { SnakeMode } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor } from 'application/editor/internal';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
@@ -19,6 +19,10 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
@@ -108,7 +112,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
     const startCellDirection = cells?.[0].connections?.find(
@@ -166,7 +170,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
@@ -890,7 +894,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', SELECTION_COLOR)
           .attr('x1', this.scaledPosition.startPosition.x)
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
@@ -1027,7 +1031,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public appendHover(): void {
     assert(this.bodyElement);
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
@@ -1047,7 +1051,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -1056,7 +1060,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     if (this.polymerBond.isSideChainConnection) {
       const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
@@ -1088,7 +1092,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', 'stroke');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

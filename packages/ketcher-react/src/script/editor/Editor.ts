@@ -66,6 +66,7 @@ import {
   OperationType,
   CoordinateTransformation,
   AssignLeavingGroupAtomOperation,
+  MarkAsRnaComponentOperation,
   RemoveAttachmentPointOperation,
   ReassignAttachmentPointOperation,
   ReassignLeavingAtomOperation,
@@ -606,21 +607,34 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
-  public setRnaComponentAtoms(
+  public markAsRnaComponent(
     componentKey: RnaPresetComponentKey,
     atomIds: number[],
     bondIds: number[],
   ) {
-    const currentState = this.render.monomerCreationState;
-    if (!currentState) return;
+    const state = this.monomerCreationState;
+    if (!state) return;
 
-    const rnaComponentAtoms = currentState.rnaComponentAtoms ?? new Map();
-    rnaComponentAtoms.set(componentKey, { atoms: atomIds, bonds: bondIds });
+    if (!state.rnaComponentAtoms) {
+      state.rnaComponentAtoms = new Map();
+    }
 
-    this.render.monomerCreationState = {
-      ...currentState,
-      rnaComponentAtoms,
-    };
+    const prevComponentData = state.rnaComponentAtoms.get(componentKey);
+    const prevAtomIds = prevComponentData?.atoms ?? [];
+    const prevBondIds = prevComponentData?.bonds ?? [];
+
+    const action = new Action([
+      new MarkAsRnaComponentOperation(
+        state,
+        componentKey,
+        atomIds,
+        bondIds,
+        prevAtomIds,
+        prevBondIds,
+      ),
+    ]).perform(this.render.ctab);
+
+    this.update(action);
   }
 
   public get isMonomerCreationWizardActive() {
@@ -894,7 +908,6 @@ class Editor implements KetcherEditor {
   private originalSelection: Selection = {};
   private originalHistoryStack: Action[] = [];
   private originalHistoryPointer = 0;
-
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
 
   private changeEventSubscriber: any = null;

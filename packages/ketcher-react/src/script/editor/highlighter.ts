@@ -83,12 +83,12 @@ export class Highlighter {
       this.editor.render.ctab,
       createdHighlights,
     );
-    this.editor.update(action);
+    this.editor.update(action, true);
   }
 
   clear() {
     const action = fromHighlightClear(this.editor.render.ctab);
-    this.editor.update(action);
+    this.editor.update(action, true);
   }
 
   /*

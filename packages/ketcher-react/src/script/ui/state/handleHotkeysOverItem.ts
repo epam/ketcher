@@ -24,8 +24,20 @@ import TemplateTool from '../../editor/tool/template';
 type TNewAction = {
   tool?: string;
   dialog?: string;
-  opts?: any;
+  opts?: unknown;
 };
+
+function asObjectOptions(value: unknown): Record<string, unknown> {
+  if (value && typeof value === 'object') {
+    return value as Record<string, unknown>;
+  }
+
+  return {};
+}
+
+function asNumericOption(value: unknown): number {
+  return typeof value === 'number' ? value : 0;
+}
 
 type HandlersProps = {
   hoveredItemId: number;
@@ -151,8 +163,13 @@ function handleAtomPropsDialog({
   } else {
     const atomFromStruct = restruct.atoms.get(hoveredItemId);
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
+    const dialogName = newAction.dialog;
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal)
+    if (!dialogName) {
+      return;
+    }
+
+    openDialog(dispatch, dialogName, convertedAtomForModal)
       .then((res) => {
         const updatedAtom = fromAtomsAttrs(
           restruct,
@@ -181,8 +198,13 @@ function handleBondPropsDialog({
   const restruct = editor.render.ctab;
   const bondFromStruct = restruct.bonds.get(hoveredItemId);
   const convertedBondForModal = fromBond(bondFromStruct?.b);
+  const dialogName = newAction.dialog;
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal)
+  if (!dialogName) {
+    return;
+  }
+
+  openDialog(dispatch, dialogName, convertedBondForModal)
     .then((res) => {
       const convertedBond = toBond(res);
       if (!convertedBond) return;
@@ -266,7 +288,7 @@ function getToolHandler(itemType: string, toolName = '') {
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
+  const atomProps = asObjectOptions(newAction.opts);
   const updatedAtoms = fromAtomsAttrs(
     editor.render.ctab,
     hoveredItemId,
@@ -281,7 +303,7 @@ function handleSgroupsTool({
   newAction,
   editor,
 }: HandlersProps) {
-  const atomProps = { ...newAction.opts };
+  const atomProps = asObjectOptions(newAction.opts);
   const action = new Action();
   const ctab = editor.render.ctab;
   const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
@@ -301,9 +323,10 @@ function handleSgroupsTool({
 }
 
 function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
+  const bondProps = asObjectOptions(newAction.opts);
   const newBond = fromBondAddition(
     editor.render.ctab,
-    newAction.opts,
+    bondProps,
     hoveredItemId,
     { label: 'C' },
   )[0];
@@ -312,12 +335,16 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
   const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
+  const chargeDelta = asNumericOption(newAction.opts);
+
   if (existingAtom) {
+    const currentCharge = existingAtom.charge ?? 0;
+
     const updatedAtom = fromAtomsAttrs(
       editor.render.ctab,
       hoveredItemId,
       {
-        charge: existingAtom.charge + newAction.opts,
+        charge: currentCharge + chargeDelta,
       },
       null,
     );

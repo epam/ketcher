@@ -14,6 +14,10 @@ import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
+type AtomElementDialogResult = {
+  values?: string[];
+  label?: string;
+};
 
 const AtomElement = ({ formState }: BaseProps) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
@@ -24,9 +28,12 @@ const AtomElement = ({ formState }: BaseProps) => {
     props: object,
     onChange: ChangeFunction,
   ) => {
-    openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
+    openDialog<AtomElementDialogResult>(dispatch, modalName, {
+      ...props,
+      isNestedModal: true,
+    }).then(
       (el) => {
-        onChange(el.values?.join(',') || el.label);
+        onChange(el.values?.join(',') || el.label || '');
       },
       () => null, // onCancel handler
     );

@@ -173,9 +173,49 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   };
 }
 
-export async function clickOnMiddleOfCanvas(page: Page) {
+export async function clickInTheMiddleOfTheCanvas(
+  page: Page,
+  button: MouseButton = 'left',
+  options: {
+    waitForMergeInitialization?: boolean;
+    waitForRenderTimeOut?: number;
+  } = {},
+) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await clickOnCanvas(page, x, y);
+
+  if (options.waitForMergeInitialization) {
+    const canvas = page
+      .getByTestId(KETCHER_CANVAS)
+      .filter({ has: page.locator(':visible') });
+    await canvas.waitFor({
+      state: 'attached',
+      timeout: 10000,
+    });
+    const box = await canvas.boundingBox();
+    if (!box) {
+      throw new Error('Unable to get boundingBox for canvas');
+    }
+
+    await waitForRender(
+      page,
+      async () => {
+        await clickAfterItemsToMergeInitialization(
+          page,
+          box.x + x,
+          box.y + y,
+          button,
+        );
+      },
+      options.waitForRenderTimeOut,
+    );
+
+    return;
+  }
+
+  await clickOnCanvas(page, x, y, {
+    button,
+    waitForRenderTimeOut: options.waitForRenderTimeOut,
+  });
 }
 
 export async function moveMouseToTheMiddleOfTheScreen(page: Page) {

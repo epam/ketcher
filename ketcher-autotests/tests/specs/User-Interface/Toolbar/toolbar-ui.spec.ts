@@ -3,7 +3,7 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeRightToolbarScreenshot,
   waitForIndigoToLoad,
@@ -57,12 +57,12 @@ test.describe('Open Ketcher', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeTopToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeTopToolbarScreenshot(page);
   });
 

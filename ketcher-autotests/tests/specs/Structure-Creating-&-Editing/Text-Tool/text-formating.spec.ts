@@ -3,7 +3,7 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   clickOnCanvas,
   readFileContent,
@@ -138,7 +138,7 @@ test.describe('Text tools test cases', () => {
     const fileContent = await readFileContent('KET/ketfile01.ket');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await getTextLabelLocator(page, { text: 'TEST321' }).dblclick();
     await TextEditorDialog(page).clickTextEditor();
@@ -168,7 +168,7 @@ test.describe('Text tools test cases', () => {
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
@@ -198,7 +198,7 @@ test.describe('Text tools test cases', () => {
     const fileContent = await readFileContent('KET/utf-8-svg-png.ket');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

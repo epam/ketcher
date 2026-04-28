@@ -8,6 +8,8 @@
       "infrastructure/*": ["../ketcher-core/src/infrastructure/*"],
       "application/*": ["../ketcher-core/src/application/*"],
       "utilities": ["../ketcher-core/src/utilities"]
-    }
-  }
+    },
+    "rootDir": "../.."
+  },
+  "include": ["src", "rollup.config.ts", "rollup-plugin-shims.d.ts"]
 }

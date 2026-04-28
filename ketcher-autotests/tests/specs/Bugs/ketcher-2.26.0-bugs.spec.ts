@@ -7,7 +7,7 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
@@ -91,7 +91,7 @@ import {
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
@@ -188,7 +188,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     const applyButton = MiewDialog(page).applyButton;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({
       waitForApplyButtonIsEnabled: false,
@@ -704,7 +704,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
       await ContextMenu(page, middleOfTheScreen).click(

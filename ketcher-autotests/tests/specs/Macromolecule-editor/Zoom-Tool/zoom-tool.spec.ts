@@ -4,7 +4,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -128,14 +128,14 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -177,7 +177,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
     await page.mouse.up();
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -185,7 +185,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.up();
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -241,7 +241,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectRectangleArea(
       page,
       selectionStart.x,
@@ -253,7 +253,7 @@ test.describe('Zoom Tool', () => {
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectRectangleArea(
       page,
       selectionStart.x,

@@ -270,6 +270,9 @@ export function getSymbolLocator(
   if (Object.hasOwn(options, 'symbolId')) {
     attributes['data-symbol-id'] = String(symbolId);
   }
+  if (Object.hasOwn(options, 'symbolAlias')) {
+    attributes['data-symbol-alias'] = String(symbolAlias);
+  }
   if (Object.hasOwn(options, 'chainId')) {
     attributes['data-chain-id'] = String(chainId);
   }

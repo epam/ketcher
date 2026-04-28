@@ -2,7 +2,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -35,14 +35,13 @@ import {
   expandAbbreviation,
   removeAbbreviation,
 } from '@utils/sgroup/helpers';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   FunctionalGroupsTabItems,
   SaltsAndSolventsTabItems,
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
@@ -126,7 +125,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -157,7 +156,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-groups-expanded.mol',
     );
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -187,7 +186,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-contracted.mol',
     );
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -201,7 +200,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -221,7 +220,7 @@ test.describe('Functional Groups', () => {
       TemplateLibraryTab.UserTemplate,
       'My Template',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -256,7 +255,7 @@ test.describe('Functional Groups', () => {
       'KET/expanded-and-contracted-fg.ket',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -475,7 +474,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.SO3H,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await expandAbbreviation(page, middleOfTheScreen);
@@ -491,7 +490,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.PO4H2,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await expandAbbreviation(page, middleOfTheScreen);
@@ -507,12 +506,12 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.PhCOOH,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -525,12 +524,12 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -543,17 +542,14 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('me')
-      .first()
-      .hover();
+    await getAbbreviationLocator(page, {
+      name: SaltsAndSolventsTabItems.MethaneSulphonicAcid,
+    }).hover();
     await takeEditorScreenshot(page);
   });
 
@@ -583,7 +579,7 @@ test.describe('Functional Groups', () => {
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await expandAbbreviation(page, middleOfTheScreen);
 
@@ -635,7 +631,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -655,7 +651,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -675,7 +671,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -695,7 +691,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.MethaneSulphonicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -718,7 +714,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -747,7 +743,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectFunctionalGroup(
@@ -785,7 +781,7 @@ test.describe('Functional Groups', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Boc,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool();
     await expandAbbreviation(

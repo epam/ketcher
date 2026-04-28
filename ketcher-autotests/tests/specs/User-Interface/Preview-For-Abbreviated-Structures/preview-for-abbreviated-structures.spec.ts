@@ -7,7 +7,7 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseToTheMiddleOfTheScreen,
   waitForPageInit,
 } from '@utils';
@@ -23,7 +23,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await waitForPageInit(page);
     // place a benzene ring in the middle of the screen
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Should show a preview of a functional group when hovering over atom', async ({

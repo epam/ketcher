@@ -1,6 +1,6 @@
 import { getPeptideLibraryItem, getRnaPartLibraryItem } from '../rna';
 import { CoreEditor } from 'application/editor/internal';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 describe('RNA/Peptide Helper Functions', () => {
   let mockEditor: CoreEditor;

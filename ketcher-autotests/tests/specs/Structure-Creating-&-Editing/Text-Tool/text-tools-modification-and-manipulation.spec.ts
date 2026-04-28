@@ -4,7 +4,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   waitForRender,
   clickOnCanvas,
@@ -120,7 +120,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).cancel();
     await LeftToolbar(page).text();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -133,7 +133,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText('&&&');
     await TextEditorDialog(page).cancel();
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('+++');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
@@ -212,12 +212,9 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await page
-      .getByTestId('erase')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonLeftToolbar(page).erase();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();

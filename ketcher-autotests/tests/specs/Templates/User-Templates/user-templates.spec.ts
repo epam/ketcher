@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
@@ -52,7 +52,7 @@ test.describe('Click User Templates on canvas', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -71,9 +71,9 @@ test.describe('Click User Templates on canvas', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
@@ -99,7 +99,7 @@ test.describe('Click User Templates on canvas', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
@@ -207,7 +207,7 @@ test.describe('Create and Save Templates', () => {
       page,
       'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -216,7 +216,7 @@ test.describe('Create and Save Templates', () => {
       TemplateLibraryTab.UserTemplate,
       'My Template',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -233,9 +233,9 @@ test.describe('Create and Save Templates', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
@@ -290,7 +290,7 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await getEditorScreenshot(page);
@@ -306,7 +306,7 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
 
@@ -327,7 +327,7 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).clickMoleculeName();
@@ -348,7 +348,7 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);

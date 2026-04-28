@@ -17,7 +17,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -34,7 +34,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -175,7 +175,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Click on the arrow button of any monomer without R1 in the right panel
      */
     await Library(page).clickMonomerAutochain(Peptide.Me_);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await Library(page).clickMonomerAutochain(Peptide.Me_);
     await takeMonomerLibraryScreenshot(page, {

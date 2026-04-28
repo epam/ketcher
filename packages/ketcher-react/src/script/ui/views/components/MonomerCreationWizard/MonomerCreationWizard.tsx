@@ -7,7 +7,6 @@ import {
   AttachmentPointName,
   BaseMonomer,
   ComponentStructureUpdateData,
-  CoreEditor,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
@@ -18,6 +17,8 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
+  provideEditorInstance,
+  RnaPresetComponentKey,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -63,7 +64,10 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { inferPhosphatePosition } from './PhosphatePositionInference';
-import { hasPhosphatePositionAttachmentPointConflict } from './RnaPresetAttachmentPointValidation';
+import {
+  getLeavingAtomForAttachmentPoint,
+  hasPhosphatePositionAttachmentPointConflict,
+} from './RnaPresetAttachmentPointValidation';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
@@ -427,35 +431,6 @@ const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   return true;
 };
 
-/**
- * Gets the appropriate leaving atom for a specific attachment point based on component type.
- * Per requirement 2.3.2.2:
- * - Base R1: H
- * - Sugar R2: H, R3: O (representing OH)
- * - Phosphate R1: O (representing OH)
- * @param componentType - The monomer class (Base, Sugar, or Phosphate)
- * @param attachmentPointName - The attachment point name (R1, R2, R3)
- * @returns The atom label to use for the leaving group
- */
-const getLeavingAtomForAttachmentPoint = (
-  componentType: KetMonomerClass,
-  attachmentPointName: AttachmentPointName,
-): AtomLabel => {
-  switch (componentType) {
-    case KetMonomerClass.Base:
-      return AtomLabel.H;
-    case KetMonomerClass.Sugar:
-      if (attachmentPointName === AttachmentPointName.R3) {
-        return AtomLabel.O; // OH group for base connection
-      }
-      return AtomLabel.H; // H for R2 (phosphate connection) and R1
-    case KetMonomerClass.Phosphate:
-      return AtomLabel.O;
-    default:
-      return AtomLabel.H;
-  }
-};
-
 const autoAssignPropertiesForHiddenMonomer = (
   values: WizardValues,
   presetCode: string,
@@ -478,8 +453,12 @@ const autoAssignPropertiesForHiddenMonomer = (
   };
 };
 
-const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
-  const editor = CoreEditor.provideEditorInstance();
+const validateInputs = (
+  values: WizardValues,
+  skipUniquenessChecks = false,
+  skipMandatoryCheck = false,
+) => {
+  const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const optionalFields = new Set(['aliasHELM', 'name']);
@@ -487,6 +466,7 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
       if (
+        !skipMandatoryCheck &&
         !optionalFields.has(key) &&
         (key !== 'naturalAnalogue' || isNaturalAnalogueRequired(values.type))
       ) {
@@ -520,6 +500,19 @@ const validateInputs = (values: WizardValues, skipUniquenessChecks = false) => {
           type: 'error',
           message: NotificationMessages.symbolExists,
         });
+      }
+    }
+
+    if (key === 'name') {
+      const nameRegex = /^[a-zA-Z0-9-_* ]*$/;
+      if (!nameRegex.test(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidName', {
+          type: 'error',
+          message: NotificationMessages.invalidName,
+        });
+
+        return;
       }
     }
 
@@ -638,7 +631,7 @@ const validateModificationTypes = (
   modificationTypes: string[],
   naturalAnalogue: string,
 ) => {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const notifications = new Map<WizardNotificationId, WizardNotification>();
   const errors: Record<string, boolean> = {};
   const modificationTypesGroupedByNaturalAnalogue =
@@ -723,6 +716,29 @@ const MonomerCreationWizard = () => {
   const [phosphatePosition, setPhosphatePosition] = useState<
     '3' | '5' | undefined
   >();
+  /**
+   * Stores user-overridden leaving atom labels for connection (readonly)
+   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
+   * where two components share the same AP name (e.g. base R1 / phosphate R1).
+   */
+  const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
+    Map<string, AtomLabel>
+  >(new Map());
+
+  const handleConnectionLeavingAtomChange = useCallback(
+    (
+      apName: AttachmentPointName,
+      newLeavingAtomLabel: AtomLabel,
+      componentKey: RnaPresetComponentKey,
+    ) => {
+      setConnectionLeavingAtoms((prev) => {
+        const next = new Map(prev);
+        next.set(`${componentKey}:${apName}`, newLeavingAtomLabel);
+        return next;
+      });
+    },
+    [],
+  );
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -1277,7 +1293,7 @@ const MonomerCreationWizard = () => {
         });
       } else {
         // Validate preset code uniqueness (only if format is valid)
-        const coreEditor = CoreEditor.provideEditorInstance();
+        const coreEditor = provideEditorInstance();
         if (coreEditor.checkIfPresetCodeExists(presetCode)) {
           needSaveMonomers = false;
           rnaPresetWizardStateDispatch({
@@ -1330,34 +1346,31 @@ const MonomerCreationWizard = () => {
       const structure = editor.structSelected(wizardState.structure);
       const { values: valuesToSave } = wizardState;
 
-      // Check if all mandatory properties are filled
-      // If not, we'll auto-assign properties instead of validating
+      // Check if all mandatory properties are filled.
+      // If not, skip mandatory-emptiness errors (properties will be auto-assigned),
+      // but still validate format/characters of any user-entered values.
       const hasMandatoryProperties =
         hasAllMandatoryPropertiesFilled(valuesToSave);
 
-      if (hasMandatoryProperties) {
-        // User has filled properties - validate them
-        // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
-        const { errors: inputsErrors, notifications: inputsNotifications } =
-          validateInputs(valuesToSave, true);
-        if (Object.keys(inputsErrors).length > 0) {
-          needSaveMonomers = false;
-          rnaPresetWizardStateDispatch({
-            type: 'SetErrors',
-            errors: inputsErrors,
-            rnaComponentKey,
-            editor,
-          });
-          rnaPresetWizardStateDispatch({
-            type: 'SetNotifications',
-            notifications: inputsNotifications,
-            rnaComponentKey,
-            editor,
-          });
-          return;
-        }
+      // Skip uniqueness checks for RNA preset components - they are saved as hidden monomers
+      const { errors: inputsErrors, notifications: inputsNotifications } =
+        validateInputs(valuesToSave, true, !hasMandatoryProperties);
+      if (Object.keys(inputsErrors).length > 0) {
+        needSaveMonomers = false;
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: inputsErrors,
+          rnaComponentKey,
+          editor,
+        });
+        rnaPresetWizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: inputsNotifications,
+          rnaComponentKey,
+          editor,
+        });
+        return;
       }
-      // If no mandatory properties filled, skip validation - properties will be auto-assigned
 
       const structureNotifications = validateStructure(structure, editor);
       if (structureNotifications.size > 0) {
@@ -1480,6 +1493,29 @@ const MonomerCreationWizard = () => {
             ? AttachmentPointName.R2
             : AttachmentPointName.R1;
 
+        // Helper: returns user override if set, otherwise falls back to default.
+        // Composite key "<componentKey>:<apName>" disambiguates components that
+        // share the same AP name (e.g. base:R1 vs phosphate:R1 at position 3').
+        const monomerClassToComponentKey: Partial<
+          Record<KetMonomerClass, RnaPresetComponentKey>
+        > = {
+          [KetMonomerClass.Base]: 'base',
+          [KetMonomerClass.Sugar]: 'sugar',
+          [KetMonomerClass.Phosphate]: 'phosphate',
+        };
+        const getConnectionLeavingAtom = (
+          componentType: KetMonomerClass,
+          apName: AttachmentPointName,
+        ): AtomLabel => {
+          const componentKey = monomerClassToComponentKey[componentType];
+          const override = componentKey
+            ? connectionLeavingAtoms.get(`${componentKey}:${apName}`)
+            : undefined;
+          return (
+            override ?? getLeavingAtomForAttachmentPoint(componentType, apName)
+          );
+        };
+
         if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
           const sugarAtoms = sugarStructure.atoms || [];
           const baseAtoms = baseStructure.atoms || [];
@@ -1506,7 +1542,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
             rnaPresetWizardState.base.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Base,
               AttachmentPointName.R1,
             ),
@@ -1518,7 +1554,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               AttachmentPointName.R3,
             ),
@@ -1556,7 +1592,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               sugarPhosphateAttachmentPointName,
             ),
@@ -1570,7 +1606,7 @@ const MonomerCreationWizard = () => {
             ),
             rnaPresetWizardState.phosphate.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Phosphate,
               phosphateSugarAttachmentPointName,
             ),
@@ -1729,6 +1765,10 @@ const MonomerCreationWizard = () => {
                 editor={editor}
                 phosphatePosition={phosphatePosition}
                 onPhosphatePositionChange={handlePhosphatePositionChange}
+                connectionLeavingAtoms={connectionLeavingAtoms}
+                onConnectionLeavingAtomChange={
+                  handleConnectionLeavingAtomChange
+                }
               />
             ) : (
               <MonomerCreationWizardFields

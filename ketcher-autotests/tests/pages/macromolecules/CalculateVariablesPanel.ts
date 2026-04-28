@@ -146,8 +146,6 @@ export const CalculateVariablesPanel = (page: Page) => {
       await waitForCalculateProperties(page, async () => {
         await page.getByTestId(value).click();
       });
-      // to avoid render problems on quick changing of few unit selectors in row
-      // await delay(0.5);
     },
 
     async getOligonucleotidesValue() {
@@ -168,8 +166,6 @@ export const CalculateVariablesPanel = (page: Page) => {
       await waitForCalculateProperties(page, async () => {
         await page.getByTestId(value).click();
       });
-      // to avoid render problems on quick changing of few unit selectors in row
-      // await delay(0.5);
     },
 
     async getNaturalAnalogCount(

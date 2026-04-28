@@ -1,4 +1,4 @@
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger } from './KetcherLogger';
 
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 const ADDITIONAL_TOP_MARGIN = 54;

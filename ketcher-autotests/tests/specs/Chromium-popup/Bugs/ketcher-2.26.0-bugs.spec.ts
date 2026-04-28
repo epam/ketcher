@@ -8,7 +8,7 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
@@ -99,7 +99,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -184,7 +184,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     const applyButton = MiewDialog(page).applyButton;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({
       waitForApplyButtonIsEnabled: false,
@@ -711,7 +711,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
       await ContextMenu(page, middleOfTheScreen).click(

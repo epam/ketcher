@@ -12,7 +12,7 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -57,10 +57,8 @@ import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
-  COORDINATES_TO_PERFORM_ROTATION,
   horizontalFlipByKeyboard,
   verticalFlipByKeyboard,
-  rotateToCoordinates,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   getArrowLocator,
@@ -72,6 +70,7 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { pageReloadMicro } from '@utils/common/helpers';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 test.beforeAll(async ({ initFlexCanvas }) => {
@@ -276,7 +275,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -313,7 +312,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
       */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -330,7 +329,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -348,14 +347,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -370,7 +369,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -843,26 +842,21 @@ test.describe('Macro-Micro-Switcher2', () => {
   });
 
   test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async () => {
-    /* 
-      Test case: https://github.com/epam/ketcher/issues/5995
-      Description: Switching the typing type using hotkeys updates the library tab accordingly
-      Case:
-      1. Open macromolecules mode
-      2. Press Ctrl+Alt+D for DNA
-      3. Press Ctrl+Alt+P for Peptides
-      4. Press Ctrl+Alt+R for RNA
-      */
-    await pageReloadMicro(page);
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5995
+     * Description: Switching the typing type using hotkeys updates the library tab accordingly
+     * Case:
+     * 1. Open macromolecules mode
+     * 2. Press Ctrl+Alt+D for DNA
+     * 3. Press Ctrl+Alt+P for Peptides
+     * 4. Press Ctrl+Alt+R for RNA
+     */
+    // await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
 
-    // waiting appearance of empty seqeunce in edit mode appearence
-    // (otherwise - keyboard shortcuts doesn't work)
-    await page.getByTestId(`sequence-item`).first().waitFor({
-      state: 'attached',
-    });
     await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
     await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+P');
@@ -1046,7 +1040,10 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -1332,7 +1329,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     const shiftElement = 250;
     const newX = x + shiftElement;
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

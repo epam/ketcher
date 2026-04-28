@@ -1,6 +1,6 @@
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -83,7 +83,7 @@ test.describe('Reagents SMARTS format', () => {
       page,
       '[#6]-[#6]1-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]-[#6]1-[#6](-,:[#35])=[#6]-[#6](-[#8])=[#6](-,:[#53])-[#6]=1',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

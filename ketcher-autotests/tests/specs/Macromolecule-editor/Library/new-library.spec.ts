@@ -573,7 +573,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -624,7 +626,9 @@ for (const monomer of monomerToDrag2) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();

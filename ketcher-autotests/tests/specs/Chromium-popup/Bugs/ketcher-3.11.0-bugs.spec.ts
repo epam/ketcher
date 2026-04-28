@@ -57,7 +57,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
@@ -132,7 +132,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
       padding: 250,
@@ -182,7 +182,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, 200, 200);
@@ -302,7 +302,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await RightToolbar(page).clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     const contextMenu = ContextMenu(page, getAtomLocator(page, { atomId: 0 }));
 
@@ -754,7 +754,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).chargePlusButton.click();
     const starAtom = getAtomLocator(page, { atomId: 6 });
     await starAtom.click({ force: true });

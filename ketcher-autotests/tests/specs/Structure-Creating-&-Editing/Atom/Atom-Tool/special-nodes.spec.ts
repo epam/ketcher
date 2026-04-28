@@ -10,7 +10,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -33,7 +33,7 @@ test.describe('Special nodes', () => {
       // Description: verify Calculated values for atoms
       // results of this test are not fully correct. when calculte values function is fixed - update scrshots
       await selectExtendedTableElement(page, atom);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await IndigoFunctionsToolbar(page).calculatedValues();
       await takeEditorScreenshot(page);
     });
@@ -55,7 +55,7 @@ test.describe('Special nodes', () => {
     test(`${atom} is present on canvas`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
       await selectExtendedTableElement(page, atom);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -98,7 +98,7 @@ test.describe('Special node', () => {
     test(`${atom} recognition`, async ({ page }) => {
       // Test case: EPMLSOPKET-1470, 1472, 1480, 1482, 1484
       await selectExtendedTableElement(page, atom);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await IndigoFunctionsToolbar(page).checkStructure();
       await takeEditorScreenshot(page, {
         mask: [StructureCheckDialog(page).lastCheckInfo],

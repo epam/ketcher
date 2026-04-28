@@ -2,7 +2,7 @@
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
   waitForRender,
@@ -51,7 +51,7 @@ test.describe('R-Group Label Tool', () => {
       Description: R-group label dialog appears
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -64,7 +64,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +74,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -88,7 +88,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -102,7 +102,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -123,7 +123,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -145,7 +145,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -168,7 +168,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -185,7 +185,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -211,7 +211,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -234,7 +234,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -253,7 +253,7 @@ test.describe('R-Group Label Tool', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();

@@ -76,7 +76,9 @@ const baseConfig = {
       comments: 'none',
     }),
     replace({
-      'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
+      'process.env.SEPARATE_INDIGO_RENDER': JSON.stringify(
+        process.env.SEPARATE_INDIGO_RENDER || '',
+      ),
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],

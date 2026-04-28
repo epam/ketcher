@@ -48,23 +48,11 @@ describe('SequenceRenderer', () => {
     SequenceRenderer.show(chainsCollection);
   };
 
-  beforeEach(() => {
-    canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({
-      theme: polymerEditorTheme,
-      canvas,
-      renderersContainer: createRenderersManager(polymerEditorTheme),
-      mode: new SequenceMode(),
-    });
-  });
-
-  afterEach(() => {
-    SequenceRenderer.clear();
-    document.body.innerHTML = '';
-    jest.clearAllMocks();
-  });
-
-  it('removes sequence bond renderers created before starting a new sequence when clearing canvas', () => {
+  // Adds two peptide monomers connected by two R2->R1 polymer bonds (forming a
+  // cycle) and renders them in sequence layout. This reproduces the minimal
+  // structural shape from the original bug report (a cyclic chain that draws
+  // a single sequence-level bond path above the row).
+  const setupCyclicTwoPeptideStructure = () => {
     const addFirstMonomerCommand = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
       new Vec2(0, 0),
@@ -91,7 +79,9 @@ describe('SequenceRenderer', () => {
     );
     editor.renderersContainer.update(
       editor.drawingEntitiesManager.createPolymerBond(
-        secondMonomer,
+        // The argument order is intentionally swapped relative to the call
+        // above: this second bond closes the cycle (second -> first).
+        secondMonomer, // NOSONAR
         firstMonomer,
         AttachmentPointName.R2,
         AttachmentPointName.R1,
@@ -100,16 +90,51 @@ describe('SequenceRenderer', () => {
     );
 
     showCurrentMonomersInSequenceLayout();
+  };
+
+  beforeEach(() => {
+    canvas = createPolymerEditorCanvas();
+    editor = new CoreEditor({
+      theme: polymerEditorTheme,
+      canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+      mode: new SequenceMode(),
+    });
+  });
+
+  afterEach(() => {
+    SequenceRenderer.clear();
+    document.body.innerHTML = '';
+    jest.clearAllMocks();
+  });
+
+  it('does not duplicate sequence bond paths when re-rendering via startNewSequence', () => {
+    setupCyclicTwoPeptideStructure();
 
     expect(getSequenceBondPaths()).toHaveLength(1);
 
+    // Regression check: previously each call to SequenceRenderer.show() built
+    // a fresh local Set of bond renderers, so the path drawn by the first
+    // render was orphaned in the DOM when startNewSequence triggered another
+    // render. After the fix the tracked Set is shared, so the count stays 1.
+    SequenceRenderer.startNewSequence(0);
+
+    expect(getSequenceBondPaths()).toHaveLength(1);
+  });
+
+  it('removes sequence bond paths created across multiple renders when ClearTool runs', () => {
+    setupCyclicTwoPeptideStructure();
     SequenceRenderer.startNewSequence(0);
 
     expect(getSequenceBondPaths()).toHaveLength(1);
 
-    const clearTool = new ClearTool(editor);
+    // ClearTool performs all of its work in the constructor as a side effect.
+    // Instantiating it is how the tool is "run",
+    // so the constructed instance is intentionally discarded.
+    // eslint-disable-next-line no-new
+    // @ts-expect-error TS6133.
+    const _ = new ClearTool(editor);
 
-    expect(clearTool).toBeInstanceOf(ClearTool);
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
     expect(getSequenceBondPaths()).toHaveLength(0);
   });

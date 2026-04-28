@@ -552,6 +552,7 @@ class ReBond extends ReObject {
   public drawFragmentSelectionPreview(
     render: Render,
     atomIdToDrawArrows: number,
+    isGray = false,
   ) {
     this.hovering?.node?.remove();
 
@@ -606,6 +607,9 @@ class ReBond extends ReObject {
     );
     backgroundRect.rotate(this.b.angle, atom1Position.x, atom1Position.y);
 
+    // Use gray color for blocked directions, blue for available directions
+    const strokeColor = isGray ? '#9ab5b8' : '#365CFF';
+
     const contour = render.paper
       .rect(
         atom1Position.x,
@@ -614,7 +618,7 @@ class ReBond extends ReObject {
         contourSize.y,
         contourBorderRadius,
       )
-      .attr({ fill: 'none', stroke: '#365CFF', 'stroke-width': 0.7 });
+      .attr({ fill: 'none', stroke: strokeColor, 'stroke-width': 0.7 });
 
     render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, contour);
     // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
@@ -660,7 +664,7 @@ class ReBond extends ReObject {
             }`,
         )
         .attr({
-          stroke: '#365CFF',
+          stroke: strokeColor,
           'stroke-width': 2,
         });
 

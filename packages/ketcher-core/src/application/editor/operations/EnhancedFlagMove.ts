@@ -27,9 +27,9 @@ export class EnhancedFlagMove extends BaseOperation {
     p: Vec2;
   };
 
-  constructor(fragmentId?: number, p?: Vec2) {
+  constructor(fragmentId: number, p: Vec2) {
     super(OperationType.ENHANCED_FLAG_MOVE);
-    this.data = { frid: fragmentId!, p: p! };
+    this.data = { frid: fragmentId, p };
   }
 
   execute(restruct: ReStruct) {
@@ -50,9 +50,7 @@ export class EnhancedFlagMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new EnhancedFlagMove();
-    inverted.data = this.data;
-    return inverted;
+    return new EnhancedFlagMove(this.data.frid, this.data.p);
   }
 
   isDummy() {

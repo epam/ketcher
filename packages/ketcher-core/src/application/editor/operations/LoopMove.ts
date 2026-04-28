@@ -26,9 +26,9 @@ export class LoopMove extends BaseOperation {
     d: Vec2;
   };
 
-  constructor(id?: number, d?: Vec2) {
+  constructor(id: number, d: Vec2) {
     super(OperationType.LOOP_MOVE);
-    this.data = { id: id!, d: d! };
+    this.data = { id, d };
   }
 
   execute(restruct: ReStruct) {
@@ -46,9 +46,7 @@ export class LoopMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new LoopMove();
-    inverted.data = this.data;
-    return inverted;
+    return new LoopMove(this.data.id, this.data.d);
   }
 
   isDummy() {

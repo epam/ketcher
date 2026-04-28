@@ -25,9 +25,9 @@ export class SGroupDataMove extends BaseOperation {
     d: Vec2;
   };
 
-  constructor(id?: number, d?: Vec2) {
+  constructor(id: number, d: Vec2) {
     super(OperationType.S_GROUP_DATA_MOVE);
-    this.data = { id: id!, d: d! };
+    this.data = { id, d };
   }
 
   execute(restruct: ReStruct) {
@@ -42,9 +42,7 @@ export class SGroupDataMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new SGroupDataMove();
-    inverted.data = this.data;
-    return inverted;
+    return new SGroupDataMove(this.data.id, this.data.d);
   }
 
   isDummy() {

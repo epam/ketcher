@@ -27,9 +27,9 @@ export class RxnPlusMove extends BaseOperation {
     noinvalidate: boolean | undefined;
   };
 
-  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_PLUS_MOVE);
-    this.data = { id: id!, d: d!, noinvalidate };
+    this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: ReStruct) {
@@ -50,9 +50,7 @@ export class RxnPlusMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new RxnPlusMove();
-    inverted.data = this.data;
-    return inverted;
+    return new RxnPlusMove(this.data.id, this.data.d, this.data.noinvalidate);
   }
 
   isDummy() {

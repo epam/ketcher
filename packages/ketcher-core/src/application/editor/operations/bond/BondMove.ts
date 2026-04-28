@@ -26,9 +26,9 @@ export class BondMove extends BaseOperation {
     d: Vec2;
   };
 
-  constructor(bondId?: number, d?: Vec2) {
+  constructor(bondId: number, d: Vec2) {
     super(OperationType.BOND_MOVE, OperationPriority.BOND_MOVE);
-    this.data = { bid: bondId!, d: d! };
+    this.data = { bid: bondId, d };
   }
 
   execute(restruct: ReStruct) {
@@ -43,9 +43,7 @@ export class BondMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new BondMove();
-    inverted.data = this.data;
-    return inverted;
+    return new BondMove(this.data.bid, this.data.d);
   }
 
   isDummy() {

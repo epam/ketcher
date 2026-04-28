@@ -29,9 +29,9 @@ interface RxnArrowMoveData {
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
-    this.data = { id: id!, d: d!, noinvalidate: noinvalidate! };
+    this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: any): void {
@@ -50,13 +50,7 @@ export class RxnArrowMove extends Base {
   }
 
   invert() {
-    const move = new RxnArrowMove(
-      this.data.id,
-      this.data.d,
-      this.data.noinvalidate,
-    );
-    move.data = this.data;
-    return move;
+    return new RxnArrowMove(this.data.id, this.data.d, this.data.noinvalidate);
   }
 
   isDummy() {

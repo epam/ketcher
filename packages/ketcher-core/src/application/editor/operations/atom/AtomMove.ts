@@ -27,9 +27,9 @@ export class AtomMove extends BaseOperation {
     noinvalidate: boolean | undefined;
   };
 
-  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
+  constructor(atomId: number, d: Vec2, noinvalidate?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
-    this.data = { aid: atomId!, d: d!, noinvalidate };
+    this.data = { aid: atomId, d, noinvalidate };
   }
 
   execute(restruct: ReStruct) {
@@ -52,9 +52,7 @@ export class AtomMove extends BaseOperation {
   }
 
   invert() {
-    const inverted = new AtomMove();
-    inverted.data = this.data;
-    return inverted;
+    return new AtomMove(this.data.aid, this.data.d, this.data.noinvalidate);
   }
 
   isDummy() {

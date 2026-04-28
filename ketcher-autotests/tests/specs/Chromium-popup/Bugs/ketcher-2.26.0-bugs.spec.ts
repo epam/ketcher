@@ -33,7 +33,6 @@ import {
   zoomOutByKeyboard,
 } from '@utils';
 import { ArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
 
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -87,7 +86,6 @@ import {
   MacroBondOption,
   MicroAtomOption,
   MicroBondOption,
-  MultiTailedArrowOption,
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
@@ -708,33 +706,24 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
-    const multiTailedArrow = getArrowLocator(page, {
-      arrowType: ArrowType.MultiTailedArrow,
-    }).first();
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await ContextMenu(page, multiTailedArrow).click(
-        MultiTailedArrowOption.AddNewTail,
-      );
-    });
+    const multiTailedArrow = await MultiTailedArrow(
+      page,
+      getArrowLocator(page, {
+        arrowType: ArrowType.MultiTailedArrow,
+        arrowId: 0,
+      }),
+    );
+    await multiTailedArrow.addTail();
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await (
-      await MultiTailedArrow(page, multiTailedArrow)
-    ).bottomTailMoveHandler.hover({ force: true });
+    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await ContextMenu(
-        page,
-        await (
-          await MultiTailedArrow(page, multiTailedArrow)
-        ).getTailsMoveHandler(0),
-      ).click(MultiTailedArrowOption.RemoveTail);
-    });
+    await multiTailedArrow.removeTail({ tailIndex: 0 });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

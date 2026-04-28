@@ -54,6 +54,10 @@ type BaseNodeSelection = {
   hasR1Connection?: boolean;
 };
 
+type SequenceBondRenderer =
+  | PolymerBondSequenceRenderer
+  | MonomerToAtomBondSequenceRenderer;
+
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
   twoStrandedNode?: ITwoStrandedChainItem;
@@ -73,6 +77,8 @@ export class SequenceRenderer {
   private static lastChainStartPositionValue: Vec2;
   private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
+  private static readonly sequenceBondRenderers =
+    new Set<SequenceBondRenderer>();
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -339,7 +345,7 @@ export class SequenceRenderer {
                   polymerBond,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledHydrogenBonds.add(polymerBond);
 
@@ -357,7 +363,7 @@ export class SequenceRenderer {
                   node,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledAttachmentPoints.add(attachmentPointName);
 
@@ -407,7 +413,7 @@ export class SequenceRenderer {
               } else {
                 bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
               }
-              bondRenderer.show();
+              this.showBondRenderer(bondRenderer);
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
 
@@ -439,10 +445,15 @@ export class SequenceRenderer {
           chain.firstNode,
           chain.lastNonEmptyNode,
         );
-        bondRenderer.show();
+        this.showBondRenderer(bondRenderer);
         polymerBond.setRenderer(bondRenderer);
       }
     });
+  }
+
+  private static showBondRenderer(bondRenderer: SequenceBondRenderer) {
+    bondRenderer.show();
+    this.sequenceBondRenderers.add(bondRenderer);
   }
 
   public static setCaretPosition(caretPosition: number) {
@@ -1247,6 +1258,8 @@ export class SequenceRenderer {
   }
 
   public static clear() {
+    this.sequenceBondRenderers.forEach((bondRenderer) => bondRenderer.remove());
+    this.sequenceBondRenderers.clear();
     this.sequenceViewModel?.forEachNode(({ twoStrandedNode }) => {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();

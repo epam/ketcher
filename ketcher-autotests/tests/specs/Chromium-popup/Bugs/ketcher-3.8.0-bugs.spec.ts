@@ -51,7 +51,7 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -568,7 +568,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       'RNA1{[SGNA](A)P.[SGNA](A)P}|RNA2{[SGNA](A)}|RNA3{[SGNA]}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await expandMonomer(
       page,
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(0),

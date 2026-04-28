@@ -22,21 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate Playwright test via Claude
+      - name: Prepare generation context
         id: generate
         uses: actions/github-script@v7
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         with:
           script: |
-            const fs = require('fs');
-            const path = require('path');
             const issue = context.payload.issue;
-            const apiKey = process.env.ANTHROPIC_API_KEY;
-
-            if (!apiKey) {
-              throw new Error('ANTHROPIC_API_KEY secret is not configured.');
-            }
 
             const hasAutotestLabel = issue.labels?.some((label) => {
               if (typeof label === 'string') {
@@ -73,134 +64,54 @@ jobs:
             const fileName = `${slug}-${issue.number}.spec.ts`;
             const filePath = `ketcher-autotests/tests/specs/Chromium-popup/Features/${featureDirectory}/${fileName}`;
 
-            const prompt = `You are a QA automation engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
+            core.setOutput('branch_name', branchName);
+            core.setOutput('file_path', filePath);
+            core.setOutput('feature_title', featureTitle);
+            core.setOutput('feature_description', featureDescription);
+            core.setOutput('issue_number', String(issue.number));
+            core.setOutput('issue_title', issue.title);
+            core.setOutput('issue_url', issue.html_url);
+
+      - name: Generate Playwright test via Claude
+        id: generate-test
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are a QA automation engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
             Generate a Playwright autotest for the feature described below.
 
-            Feature title: ${featureTitle}
+            Feature title: ${{ steps.generate.outputs.feature_title }}
             Feature description:
-            ${featureDescription}
+            ${{ steps.generate.outputs.feature_description }}
 
-            Follow these Ketcher test conventions exactly:
-            - Imports come from '@fixtures', '@utils', and page-object modules like '@tests/pages/molecules/LeftToolbar', '@tests/pages/molecules/canvas/AtomPropertiesDialog', etc.
-            - Generated autotests must be based on existing page objects from 'ketcher-autotests/tests/pages' and helper functions from 'ketcher-autotests/tests/utils' whenever possible.
-            - If a required page object or helper function does not exist, create it as a new file under 'ketcher-autotests/tests/pages'(page objects) or 'ketcher-autotests/tests/utils'(helper funtions) instead of inlining raw selectors or duplicated logic in the spec.
-            - Always call 'await waitForPageInit(page)' at the start of each test or in beforeEach.
-            - Use 'test.describe()' to group related tests and 'test.beforeEach()' for shared setup.
-            - Interact with the canvas via helper functions (e.g. 'drawBenzeneRing(page)', 'getAtomLocator(page, {...})', 'selectAllStructuresOnCanvas(page)').
-            - Use dialog page-objects for property dialogs (e.g. 'AtomPropertiesDialog(page).setOptions({...})').
-            - Assert with standard Playwright 'expect()' - check visibility, values, or canvas state.
-            - Each 'test()' name must be a plain English sentence describing the expected outcome.
-            - Autotests should contain (in addition to test code it self) following sections:
-              - Commented out section with link to test request issue, test description, test scenario steps and expected results section above test body
-              - Milestone version that feature belongs to
-              - Autotest title should consist of serial number, and check list item text
-              Example:
-              <example>
-              test('1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)', async ({
-                  SnakeCanvas: _,
-                }) => {
-                  /*
-                  * Test task: https://github.com/epam/ketcher/issues/8553
-                  * Description: Check that additional monomer properties should be added to the monomer preview on canvas (in snake)
-                  *
-                  * Scenario:
-                  *      1. Open Macromolecules canvas - Snake mode
-                  *      2. Load custom peptide structure from KET file to the canvas
-                  *      3. Hover the monomer and open the tooltip
-                  *      4. Verify that the IDT alias is displayed in the tooltip
-                  *      5. Verify that the AxoLabs alias is displayed in the tooltip
-                  *      6. Verify that the HELM alias is displayed in the tooltip
-                  *      7. Verify that the modification types are displayed in the tooltip
-                  *
-                  * Version 3.10
-                  */
-                  await openFileAndAddToCanvasAsNewProjectMacro(
-                  page,
-                  'KET/Chromium-popup/Monomer-preview/monomer-preview.ket',
-                  );
-                
-                const monomer = getMonomerLocator(page, { monomerAlias: 'test' });
-                  await monomer.hover();
-                
-                  const monomerPreviewTooltip = MonomerPreviewTooltip(page);
-                  await monomerPreviewTooltip.waitForBecomeVisible();
-                
-                  expect.soft(await monomerPreviewTooltip.getIDTAliases()).toEqual('test_IDT');
-                  expect
-                  .soft(await monomerPreviewTooltip.getAxoLabsAlias())
-                  .toEqual('test_AxoLabs');
-                  expect.soft(await monomerPreviewTooltip.getHELMAlias()).toEqual('test_HELM');
-                  expect
-                  .soft(await monomerPreviewTooltip.getModificationTypes())
-                  .toEqual(
-                  'Natural amino acid, Inversion, N-methylation, Side chain acetylation, Custom modidication',
-                  );
-                });
-              </example>
-            Rules:
-            - Output only valid JSON, with no markdown fences and no prose.
-            - Return an object with this exact shape:
-              {
-                "spec": "TypeScript test code as a string",
-                "additionalFiles": [
-                  {
-                    "path": "ketcher-autotests/tests/pages/... or ketcher-autotests/tests/utils/...",
-                    "content": "TypeScript code as a string"
-                  }
-                ]
-              }
-            - Put the main test code only in "spec".
-            - Use "additionalFiles" only for genuinely missing reusable page objects/helpers needed by the spec.
-            - Every "additionalFiles[].path" must start with 'ketcher-autotests/tests/pages/' or 'ketcher-autotests/tests/utils/'.
-            - Include all necessary imports at the top of each generated TypeScript file.
-            - Cover the happy path and the 2-3 most important edge cases.
-            - Maximum 80 lines.`;
+            Test request issue: ${{ steps.generate.outputs.issue_url }}
 
-            const response = await fetch('https://api.anthropic.com/v1/messages', {
-              method: 'POST',
-              headers: {
-                'x-api-key': apiKey,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json',
-              },
-              body: JSON.stringify({
-                model: 'claude-sonnet-4-6',
-                max_tokens: 2048,
-                messages: [{ role: 'user', content: prompt }],
-              }),
-            });
+            Exactly follow "Ketcher Test Conventions" section from CLAUDE.md file.
+            Return only the structured result requested by the schema.
 
-            const responseText = await response.text();
-            if (!response.ok) {
-              throw new Error(`Anthropic request failed (${response.status}): ${responseText}`);
-            }
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --json-schema {"type":"object","properties":{"spec":{"type":"string"},"additionalFiles":{"type":"array","items":{"type":"object","properties":{"path":{"type":"string","pattern":"^ketcher-autotests/tests/(pages|utils)/.+$"},"content":{"type":"string"}},"required":["path","content"],"additionalProperties":false}}},"required":["spec","additionalFiles"],"additionalProperties":false}
 
-            let json;
-            try {
-              json = JSON.parse(responseText);
-            } catch (error) {
-              throw new Error(`Anthropic returned invalid JSON: ${error.message}`);
-            }
+      - name: Write generated files
+        if: ${{ steps.generate.outputs.branch_name != '' && steps.generate.outputs.file_path != '' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
 
-            const generatedText = json.content?.find((item) => item.type === 'text')?.text?.trim();
-            if (!generatedText) {
-              throw new Error('Anthropic response did not include generated output.');
-            }
-
-            const normalizedGeneratedText = generatedText
-              .replace(/^```(?:json)?\s*/i, '')
-              .replace(/\s*```$/i, '')
-              .trim();
-
+            const filePath = `${{ toJSON(steps.generate.outputs.file_path) }}`;
             let generatedFiles;
             try {
-              generatedFiles = JSON.parse(normalizedGeneratedText);
+              generatedFiles = JSON.parse(`${{ toJSON(steps.generate-test.outputs.structured_output) }}`);
             } catch (error) {
-              throw new Error(`Anthropic returned invalid generation JSON: ${error.message}`);
+              throw new Error(`Claude Code Action returned invalid structured output: ${error.message}`);
             }
 
             if (typeof generatedFiles.spec !== 'string' || !generatedFiles.spec.trim()) {
-              throw new Error('Anthropic response did not include a valid "spec" string.');
+              throw new Error('Claude Code Action did not include a valid "spec" string.');
             }
 
             const additionalFiles = Array.isArray(generatedFiles.additionalFiles)
@@ -227,7 +138,7 @@ jobs:
                 typeof file.content !== 'string' ||
                 !isAllowedPath
               ) {
-                throw new Error('Anthropic response included an invalid additional file definition.');
+                throw new Error('Claude Code Action response included an invalid additional file definition.');
               }
             }
 
@@ -239,12 +150,6 @@ jobs:
               fs.mkdirSync(path.dirname(resolvedFilePath), { recursive: true });
               fs.writeFileSync(resolvedFilePath, file.content.trim(), 'utf8');
             }
-
-            core.setOutput('branch_name', branchName);
-            core.setOutput('file_path', filePath);
-            core.setOutput('feature_title', featureTitle);
-            core.setOutput('issue_number', String(issue.number));
-            core.setOutput('issue_title', issue.title);
 
       - name: Commit and push branch
         if: ${{ steps.generate.outputs.branch_name != '' && steps.generate.outputs.file_path != '' }}

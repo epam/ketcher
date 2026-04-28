@@ -22,7 +22,6 @@ import {
   FormContext,
   FormContextValue,
   FormSchema,
-  FormStateStore,
   SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
@@ -132,46 +131,10 @@ type AjvErrorWithInvalidMessage = ErrorObject & {
   parentSchema?: { invalidMessage?: string | ((data: unknown) => string) };
 };
 
-class FormStateStoreImpl implements FormStateStore {
-  constructor(private readonly form: Form) {}
-
-  get props() {
-    return this.form.props as {
-      result: Record<string, unknown>;
-      errors?: Record<string, string>;
-    };
-  }
-
-  field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
-    const { result, errors } = this.form.props;
-    const value = result[name];
-    const extraValue = extraName ? result[extraName] : null;
-
-    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
-      const newState = { ...this.form.props.result, [fieldName]: fieldValue };
-      this.form.updateState(newState);
-      if (onChange) onChange(fieldValue);
-    };
-
-    return {
-      dataError: errors?.[name],
-      value,
-      extraValue,
-      onChange: (val: unknown) => handleOnChange(name, val),
-      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
-    };
-  }
-
-  updateState(newState: Record<string, unknown>) {
-    this.form.updateState(newState);
-  }
-}
-
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
-  private _stateStore: FormStateStoreImpl;
   constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
@@ -187,8 +150,7 @@ class Form extends Component<FormProps> {
     this.updateState = this.updateState.bind(this);
 
     this._cachedSchema = schema;
-    this._stateStore = new FormStateStoreImpl(this);
-    this._contextValue = { schema, stateStore: this._stateStore };
+    this._contextValue = { schema, stateStore: this };
   }
 
   componentDidUpdate(prevProps: FormProps) {
@@ -211,13 +173,33 @@ class Form extends Component<FormProps> {
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
+  field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
+    const { result, errors } = this.props;
+    const value = result[name];
+    const extraValue = extraName ? result[extraName] : null;
+
+    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
+      const newState = { ...this.props.result, [fieldName]: fieldValue };
+      this.updateState(newState);
+      if (onChange) onChange(fieldValue);
+    };
+
+    return {
+      dataError: errors?.[name],
+      value,
+      extraValue,
+      onChange: (val: unknown) => handleOnChange(name, val),
+      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
+    };
+  }
+
   render() {
     const { schema, children } = this.props;
 
     // Update the cached context value only if schema has changed
     if (this._cachedSchema !== schema) {
       this._cachedSchema = schema;
-      this._contextValue = { schema, stateStore: this._stateStore };
+      this._contextValue = { schema, stateStore: this };
     }
 
     return (

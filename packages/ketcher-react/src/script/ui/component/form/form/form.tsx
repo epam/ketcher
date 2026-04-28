@@ -598,12 +598,13 @@ function propSchema(
   const schemaCopy = cloneDeep(schema);
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      // jsonschema format functions must return boolean.
-      // AJV allowed truthy strings (treated as valid); preserve that behaviour.
       validator.customFormats[formatName] = (value: string) =>
-        formatValidator(value) !== false;
+        Boolean(formatValidator(value));
 
-      if (!schemaCopy.properties) return;
+      if (!schemaCopy.properties) {
+        return;
+      }
+
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
         'maxLength',

@@ -56,4 +56,9 @@ export class RxnArrowMove extends Base {
     move.data = this.data;
     return move;
   }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
+  }
 }

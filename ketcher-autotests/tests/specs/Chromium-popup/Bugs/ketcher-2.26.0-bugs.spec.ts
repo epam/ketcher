@@ -99,7 +99,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);

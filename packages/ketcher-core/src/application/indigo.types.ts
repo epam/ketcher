@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 
 export type StructOrString = Struct | string;

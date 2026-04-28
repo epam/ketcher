@@ -1,4 +1,4 @@
-import { Nucleotide } from 'domain/entities';
+import { Nucleotide } from 'domain/entities/Nucleotide';
 import { D3SvgElementSelection } from 'application/render/types';
 
 import { RNASequenceItemRenderer } from './RNASequenceItemRenderer';

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerMicromolecule, Pile, SGroup } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Pile } from 'domain/entities/pile';
+import { SGroup } from 'domain/entities/sgroup';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { Struct } from 'domain/entities/struct';
 
+import { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 import v3000 from './v3000';
 
+interface SGroupSavingError extends Error {
+  id: number;
+  'error-type': string;
+}
+
+function getAtom(mol: Struct, id: number): Atom {
+  const atom = mol.atoms.get(id);
+  if (!atom) {
+    throw new Error(`Atom ${id} not found`);
+  }
+  return atom;
+}
+
 const loadRGroupFragments = true; // TODO: set to load the fragments
 
 /* Parse Mol */
-function parseMol(
-  /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
-  /* reader */
+function parseMol(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   if (ctabLines[0].search('\\$MDL') === 0) {
     const struct = v2000.parseRg2000(ctabLines, ignoreChiralFlag);
     struct.name = ctabLines[3].trim();
@@ -38,11 +53,7 @@ function parseMol(
   return struct;
 }
 
-function parseCTab(
-  /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
-  /* reader */
+function parseCTab(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   const countsSplit = partitionLine(
     ctabLines[0],
     utils.fmtInfo.countsLinePartition,
@@ -61,11 +72,10 @@ function parseCTab(
 
 /* Parse Rxn */
 function parseRxn(
-  /* string[] */ ctabLines,
-  /* boolean */ shouldReactionRelayout,
-  /* boolean */ ignoreChiralFlag,
-) /* Struct */ {
-  /* reader */
+  ctabLines: string[],
+  shouldReactionRelayout?: boolean,
+  ignoreChiralFlag?: boolean,
+): Struct {
   const split = ctabLines[0].trim().split(' ');
   if (split.length > 1 && split[1] === 'V3000') {
     return v3000.parseRxn3000(ctabLines, shouldReactionRelayout);
@@ -81,21 +91,22 @@ function parseRxn(
 }
 
 /* Prepare For Saving */
-const prepareForSaving = {
-  MUL: SGroup.prepareMulForSaving,
-  SRU: prepareSruForSaving,
-  SUP: prepareSupForSaving,
-  DAT: prepareDatForSaving,
-  GEN: prepareGenForSaving,
-  COP: prepareCopForSaving,
-  queryComponent: prepareQueryComponentForSaving,
-};
+const prepareForSaving: Record<string, (sgroup: SGroup, mol: Struct) => void> =
+  {
+    MUL: SGroup.prepareMulForSaving,
+    SRU: prepareSruForSaving,
+    SUP: prepareSupForSaving,
+    DAT: prepareDatForSaving,
+    GEN: prepareGenForSaving,
+    COP: prepareCopForSaving,
+    queryComponent: prepareQueryComponentForSaving,
+  };
 
-function prepareSruForSaving(sgroup, mol) {
-  const xBonds = [];
+function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
+  const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin);
-    const a2 = mol.atoms.get(bond.end);
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
@@ -104,9 +115,11 @@ function prepareSruForSaving(sgroup, mol) {
       /* eslint-enable no-mixed-operators */
       xBonds.push(bid);
     }
-  }, sgroup);
+  });
   if (xBonds.length !== 0 && xBonds.length !== 2) {
-    const error = new Error('Unsupported cross-bonds number');
+    const error = new Error(
+      'Unsupported cross-bonds number',
+    ) as SGroupSavingError;
     error.id = sgroup.id;
     error['error-type'] = 'cross-bond-number';
     throw error;
@@ -114,20 +127,22 @@ function prepareSruForSaving(sgroup, mol) {
   sgroup.bonds = xBonds;
 }
 
-function prepareCopForSaving(sgroup, mol) {
-  const xBonds = [];
+function prepareCopForSaving(sgroup: SGroup, mol: Struct): void {
+  const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin);
-    const a2 = mol.atoms.get(bond.end);
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
       (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
     ) {
       xBonds.push(bid);
     }
-  }, sgroup);
+  });
   if (xBonds.length !== 0 && xBonds.length !== 2) {
-    const error = new Error('Unsupported cross-bonds number');
+    const error = new Error(
+      'Unsupported cross-bonds number',
+    ) as SGroupSavingError;
     error.id = sgroup.id;
     error['error-type'] = 'cross-bond-number';
     throw error;
@@ -135,13 +150,13 @@ function prepareCopForSaving(sgroup, mol) {
   sgroup.bonds = xBonds;
 }
 
-function prepareSupForSaving(sgroup, mol) {
+function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
   // This code is also used for GroupSru and should be moved into a separate common method
   // It seems that such code should be used for any sgroup by this this should be checked
-  const xBonds = [];
+  const xBonds: number[] = [];
   mol.bonds.forEach((bond, bid) => {
-    const a1 = mol.atoms.get(bond.begin);
-    const a2 = mol.atoms.get(bond.end);
+    const a1 = getAtom(mol, bond.begin);
+    const a2 = getAtom(mol, bond.end);
     /* eslint-disable no-mixed-operators */
     if (
       (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
@@ -150,24 +165,33 @@ function prepareSupForSaving(sgroup, mol) {
       /* eslint-enable no-mixed-operators */
       xBonds.push(bid);
     }
-  }, sgroup);
+  });
   sgroup.bonds = xBonds;
 }
 
-function prepareGenForSaving(_sgroup, _mol) {
-  // eslint-disable-line no-unused-vars
+function prepareGenForSaving(_sgroup: SGroup, _mol: Struct): void {
+  // no-op
 }
 
-function prepareQueryComponentForSaving(_sgroup, _mol) {
-  // eslint-disable-line no-unused-vars
+function prepareQueryComponentForSaving(_sgroup: SGroup, _mol: Struct): void {
+  // no-op
 }
 
-function prepareDatForSaving(sgroup, mol) {
+function prepareDatForSaving(sgroup: SGroup, mol: Struct): void {
   sgroup.atoms = SGroup.getAtoms(mol, sgroup);
 }
 
 /* Save To Molfile */
-const saveToMolfile = {
+const saveToMolfile: Record<
+  string,
+  (
+    sgroup: SGroup,
+    mol: Struct,
+    sgMap: Mapping,
+    atomMap: Mapping,
+    bondMap: Mapping,
+  ) => string
+> = {
   MUL: saveMulToMolfile,
   SRU: saveSruToMolfile,
   COP: saveCopToMolfile,
@@ -176,11 +200,16 @@ const saveToMolfile = {
   GEN: saveGenToMolfile,
 };
 
-function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
-  // eslint-disable-line max-params
+function saveMulToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(
     makeAtomBondLines(
       'SAL',
@@ -204,37 +233,52 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   return lines.join('\n');
 }
 
-function saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
-  // eslint-disable-line max-params
+function saveSruToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
   lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
   return lines.join('\n');
 }
 
-function saveCopToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
-  // eslint-disable-line max-params
+function saveCopToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
   lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
   return lines.join('\n');
 }
 
-function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
-  // eslint-disable-line max-params
+function saveSupToMolfile(
+  sgroup: SGroup,
+  _mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
 
-  let sgroupName;
+  let sgroupName: string | undefined;
 
   if (sgroup instanceof MonomerMicromolecule) {
     sgroupName = sgroup.monomer.label;
@@ -253,13 +297,21 @@ function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   return lines.join('\n');
 }
 
-function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
+function saveDatToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
   const data = sgroup.data;
+  if (!sgroup.pp) {
+    throw new Error('SGroup pp is not set');
+  }
   let pp = sgroup.pp;
   if (!data.absolute) pp = pp.sub(SGroup.getMassCentre(mol, sgroup.atoms));
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   let sdtLine =
     'M  SDT ' +
@@ -308,20 +360,30 @@ function saveDatToMolfile(sgroup, mol, sgMap, atomMap) {
   return lines.join('\n');
 }
 
-function saveGenToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
-  // eslint-disable-line max-params
+function saveGenToMolfile(
+  sgroup: SGroup,
+  mol: Struct,
+  sgMap: Mapping,
+  atomMap: Mapping,
+  bondMap: Mapping,
+): string {
   const idstr = (sgMap[sgroup.id] + '').padStart(3);
 
-  let lines = [];
+  let lines: string[] = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
   lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
   return lines.join('\n');
 }
 
-function makeAtomBondLines(prefix, idstr, ids, map) {
+function makeAtomBondLines(
+  prefix: string,
+  idstr: string,
+  ids: number[] | undefined,
+  map: Mapping,
+): string[] {
   if (!ids) return [];
-  const lines = [];
+  const lines: string[] = [];
   for (let i = 0; i < Math.floor((ids.length + 14) / 15); ++i) {
     const rem = Math.min(ids.length - 15 * i, 15); // eslint-disable-line no-mixed-operators
     let salLine = 'M  ' + prefix + ' ' + idstr + ' ' + utils.paddedNum(rem, 2);
@@ -333,9 +395,8 @@ function makeAtomBondLines(prefix, idstr, ids, map) {
   return lines;
 }
 
-function bracketsToMolfile(mol, sg, idstr) {
-  // eslint-disable-line max-statements
-  const atomSet = new Pile(sg.atoms);
+function bracketsToMolfile(mol: Struct, sg: SGroup, idstr: string): string[] {
+  const atomSet = new Pile<number>(sg.atoms);
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
   SGroup.bracketPos(sg, mol);
   const bb = sg.bracketBox;
@@ -343,16 +404,16 @@ function bracketsToMolfile(mol, sg, idstr) {
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,
-    crossBonds,
+    crossBonds as unknown as { [key: number]: Array<Bond> },
     atomSet,
     bb,
     d,
     n,
   );
-  const lines = [];
+  const lines: string[] = [];
   for (const bracket of brackets) {
-    const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement();
-    const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement();
+    const a0 = bracket.c.addScaled(bracket.n, -0.5 * bracket.h).yComplement(0);
+    const a1 = bracket.c.addScaled(bracket.n, 0.5 * bracket.h).yComplement(0);
     let line = 'M  SDI ' + idstr + utils.paddedNum(4, 3);
     const coord = [a0.x, a0.y, a1.x, a1.y];
     for (const coordValue of coord) {
@@ -367,17 +428,16 @@ function bracketsToMolfile(mol, sg, idstr) {
 // nlRe = /\r\n|[\n\v\f\r\x85\u2028\u2029]/g;
 // http://www.unicode.org/reports/tr18/#Line_Boundaries
 const nlRe = /\r\n|[\n\r]/g;
-function normalizeNewlines(str) {
+function normalizeNewlines(str: string): string {
   return str.replace(nlRe, '\n');
 }
 
 function partitionLine(
-  /* string */ str,
-  /* array of int */ parts,
-  /* bool */ withspace,
-) {
-  /* reader */
-  const res = [];
+  str: string,
+  parts: number[],
+  withspace?: boolean,
+): string[] {
+  const res: string[] = [];
   for (let i = 0, shift = 0; i < parts.length; ++i) {
     res.push(str.slice(shift, shift + parts[i]));
     if (withspace) shift++;

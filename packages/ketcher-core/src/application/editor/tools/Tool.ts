@@ -6,7 +6,7 @@ import {
 import {
   IKetMonomerGroupTemplate,
   IKetTemplateConnection,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -54,6 +54,8 @@ interface ToolEventHandler {
   rightClickSequence?(event: Event): void;
 
   rightClickCanvas?(event: Event): void;
+
+  rightClickCanvasSequence?(event: Event): void;
 
   rightClickPolymerBond?(event: Event): void;
 
@@ -133,6 +135,8 @@ export interface Tool extends ToolEventHandler {
   isSelectionRunning?(): boolean;
 
   isNotActiveTool?: boolean;
+
+  readonly name?: string;
 }
 
 export interface BaseTool extends Tool {

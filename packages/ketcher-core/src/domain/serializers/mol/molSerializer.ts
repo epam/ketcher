@@ -17,9 +17,9 @@
 import { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
 import { Serializer } from '../serializers.types';
-import { Struct } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
-import { KetSerializer } from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 export class MolSerializer implements Serializer<Struct> {
   static readonly DefaultOptions: MolSerializerOptions = {

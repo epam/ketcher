@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
@@ -6,7 +7,6 @@ import {
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -15,7 +15,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -125,23 +124,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -152,7 +147,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(

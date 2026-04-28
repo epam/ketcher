@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
@@ -26,7 +27,7 @@ import {
   takeElementScreenshot,
   takeEditorScreenshot,
   dragMouseTo,
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
   takeTopToolbarScreenshot,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
@@ -37,6 +38,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
+  AttachmentPoint,
   createRNAAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -53,7 +55,7 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 let page: Page;
@@ -85,8 +87,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await ContextMenu(page, targetAtom).open();
-    await expect(page.getByTestId(MonomerOption.Copy)).toBeEnabled();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionEnabled(MonomerOption.Copy),
+    ).toBeTruthy();
   });
 
   test('Case 2 — Ketcher wrongly considers R3-R1 connection between unknown sugar and/or unknown base as side chain connection', async ({
@@ -107,7 +110,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       MacroFileType.HELM,
       'RNA1{[Unknown sugar](A)P.R([Unknown base])P.[Unknown sugar]([Unknown base])P.[Unknown sugar]C.(A)[Unknown phosphate].R([Unknown base])[Unknown phosphate].[Unknown sugar]([Unknown base])[Unknown phosphate].[Unknown sugar](A)}|RNA2{R([Unknown base])}|RNA3{[Unknown sugar]([Unknown base])}$RNA1,RNA2,19:R2-1:R1|RNA2,RNA3,1:R2-1:R1$$$V2.0',
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerAlias: 'C' }),
@@ -249,7 +252,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     });
   });
 
-  test('Case 8 — Bonds overlap atoms after clearing the canvas and using Undo in Macro mode', async ({}) => {
+  test('Case 8 — Bonds overlap atoms after clearing the canvas and using Undo in Macro mode', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6027
      * Bug: https://github.com/epam/ketcher/issues/6238
@@ -277,7 +280,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     );
   });
 
-  test('Case 9 — Cycled aromatic bond looks wrong on Macro canvas', async ({}) => {
+  test('Case 9 — Cycled aromatic bond looks wrong on Macro canvas', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6028
      * Bug: https://github.com/epam/ketcher/issues/6236
@@ -290,7 +293,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
     await pasteFromClipboardAndAddToCanvas(page, 'c1ccccc1.C1=CC=CC=C1');
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeElementScreenshot(
       page,
@@ -299,7 +302,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     );
   });
 
-  test('Case 10 — It is possible to connect all APs to same atom', async ({}) => {
+  test('Case 10 — It is possible to connect all APs to same atom', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5359
      * Bug: https://github.com/epam/ketcher/issues/5701
@@ -325,7 +328,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
         page,
         getMonomerLocator(page, Chem.Test_6_Ch),
         getAtomLocator(page, { atomId: 0 }),
-        'R' + i,
+        (Object.values(AttachmentPoint) as AttachmentPoint[])[i - 1],
       );
     }
     await getMonomerLocator(page, { monomerAlias: 'Test-6-Ch' }).hover({
@@ -337,7 +340,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     );
   });
 
-  test('Case 11 — Bond properties are not implemented', async ({}) => {
+  test('Case 11 — Bond properties are not implemented', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5359
      * Bug: https://github.com/epam/ketcher/issues/5656
@@ -358,7 +361,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 12 — "Process is not defined" error is displayed in console after Clearing Canvas', async ({}) => {
+  test('Case 12 — "Process is not defined" error is displayed in console after Clearing Canvas', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/4897
      * Bug: https://github.com/epam/ketcher/issues/5170
@@ -389,7 +392,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Case 13 — After copying and pasting, structure under cursor causes Uncaught TypeErrors', async ({}) => {
+  test('Case 13 — After copying and pasting, structure under cursor causes Uncaught TypeErrors', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5359
      * Bug: https://github.com/epam/ketcher/issues/5656
@@ -423,7 +426,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await page.mouse.move(950, 650, { steps: 30 });
   });
 
-  test('Case 14 — Inconsistent display of hotkeys next to the “Zoom out” button in the Micro and Macro modes', async ({}) => {
+  test('Case 14 — Inconsistent display of hotkeys next to the “Zoom out” button in the Micro and Macro modes', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/4701
      * Bug: https://github.com/epam/ketcher/issues/4959
@@ -443,7 +446,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
       'Ctrl+Minus',
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).zoomSelector.click();
     await CommonTopRightToolbar(page).zoomOutButton.waitFor({
@@ -452,7 +455,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(CommonTopRightToolbar(page).zoomOutButton).toContainText(
       'Ctrl+Minus',
     );
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Case 15 — After clicking the "Clear Canvas" button multiple times, a user has to click the "Undo" button multiple times to return the structure', async ({
@@ -504,7 +507,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const changeEventTriggered = await page.evaluate(() => {
       return new Promise<boolean>((resolve) => {
         let eventFired = false;
-        window['ketcher'].editor.subscribe('change', () => {
+        window.ketcher.editor.subscribe('change', () => {
           console.log('in change event');
           eventFired = true;
         });
@@ -528,7 +531,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(eventFired).toBeTruthy();
   });
 
-  test('Case 17 — CIP labels are not added correctly when loading from a cdxml file with no CIP labels', async ({}) => {
+  test('Case 17 — CIP labels are not added correctly when loading from a cdxml file with no CIP labels', async () => {
     /*
      * Test case: https://github.com/epam/Indigo/issues/3360
      * Bug: https://github.com/epam/Indigo/issues/3360
@@ -552,7 +555,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     );
   });
 
-  test('Case 18 — Leaving group atom position is incorrect for nucleotides created in monomer wizard', async ({}) => {
+  test('Case 18 — Leaving group atom position is incorrect for nucleotides created in monomer wizard', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/9047
      * Bug: https://github.com/epam/ketcher/issues/9047
@@ -616,14 +619,14 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await getAbbreviationLocator(page, { name: 'Base' }).hover({ force: true });
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await getAbbreviationLocator(page, { name: 'Sugar' }).hover({
       force: true,
     });
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await getAbbreviationLocator(page, { name: 'Phosphate' }).hover({
       force: true,

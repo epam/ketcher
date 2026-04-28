@@ -12,6 +12,7 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   clearCanvasByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Clear canvas', () => {
@@ -77,7 +78,7 @@ test.describe('Clear canvas', () => {
     await TextEditorDialog(page).setText('one two three');
     await TextEditorDialog(page).apply();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await page.getByTestId('canvas').click({ position: { x, y } });
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
     await clearCanvasByKeyboard(page);
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/ketcher.mol');

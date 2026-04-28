@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Pool,
-  SGroup,
-  Struct,
-  Vec2,
-  SGroupAttachmentPoint,
-} from 'domain/entities';
+import { Pool } from 'domain/entities/pool';
+import { SGroup } from 'domain/entities/sgroup';
+import { Vec2 } from 'domain/entities/vec2';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Struct } from 'domain/entities/struct';
 
 import { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';

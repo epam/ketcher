@@ -14,15 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Bond,
-  Vec2,
-  AtomAttributes,
-  BondAttributes,
-  FunctionalGroup,
-  SGroupAttachmentPoint,
-  SGroup,
-} from 'domain/entities';
+import { AtomAttributes } from 'domain/entities/atom';
+import { Bond, BondAttributes } from 'domain/entities/bond';
+import { Vec2 } from 'domain/entities/vec2';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroup } from 'domain/entities/sgroup';
 import {
   AtomAdd,
   BondAdd,
@@ -33,18 +30,14 @@ import {
   FragmentStereoFlag,
 } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
-import {
-  fromAtomMerge,
-  fromStereoAtomAttrs,
-  mergeFragmentsIfNeeded,
-  mergeSgroups,
-} from './atom';
+import { mergeFragmentsIfNeeded, mergeSgroups } from './atom';
+import { fromAtomMerge } from './atomMerge';
+import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import { ReSGroup, ReStruct } from '../../render';
 import utils from '../shared/utils';
-import { fromSgroupAttachmentPointRemove } from 'application/editor';
-import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 
 export function fromBondAddition(
   reStruct: ReStruct,
@@ -204,7 +197,7 @@ export function fromBondAddition(
 export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
-  attrs: Bond,
+  attrs: Partial<Bond>,
   reset?: boolean,
 ): Action {
   const struct = restruct.molecule;
@@ -271,45 +264,6 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   }
 
   // todo: swap atoms stereoLabels and stereoAtoms in fragment
-
-  return action;
-}
-
-export function fromBondStereoUpdate(
-  restruct: ReStruct,
-  bond: Bond,
-  withReverse?: boolean,
-): Action {
-  const action = new Action();
-  const struct = restruct.molecule;
-
-  const beginFrId = struct.atoms.get(bond?.begin)?.fragment;
-  const endFrId = struct.atoms.get(bond?.end)?.fragment;
-
-  const fragmentStereoBonds: Array<Bond> = [];
-
-  struct.bonds.forEach((bond) => {
-    if (struct.atoms.get(bond.begin)?.fragment === beginFrId) {
-      fragmentStereoBonds.push(bond);
-    }
-
-    if (
-      beginFrId !== endFrId &&
-      struct.atoms.get(bond.begin)?.fragment === endFrId
-    ) {
-      fragmentStereoBonds.push(bond);
-    }
-  });
-
-  const stereoAtomsMap = getStereoAtomsMap(struct, fragmentStereoBonds, bond);
-
-  stereoAtomsMap.forEach((stereoProp, aId) => {
-    if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
-      action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse),
-      );
-    }
-  });
 
   return action;
 }

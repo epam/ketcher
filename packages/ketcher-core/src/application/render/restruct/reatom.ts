@@ -14,26 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  StereoFlag,
-  StereoLabel,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom, StereoLabel } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { StereoFlag } from 'domain/entities/fragment';
+import { Vec2 } from 'domain/entities/vec2';
 import { ElementColor, Elements } from 'domain/constants';
 import {
   LayerMap,
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
 } from './generalEnumTypes';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
@@ -51,6 +48,7 @@ import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import { ShowHydrogenLabels } from './showHydrogenLabels';
 
 interface ElemAttr {
   text: string;
@@ -60,14 +58,6 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
-
-export enum ShowHydrogenLabels {
-  Off = 'off',
-  Hetero = 'Hetero',
-  Terminal = 'Terminal',
-  TerminalAndHetero = 'Terminal and Hetero',
-  On = 'all',
-}
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
@@ -507,6 +497,8 @@ class ReAtom extends ReObject {
             'font-family': fontFamily,
           });
 
+        path.node?.setAttribute('data-testid', 's-group-label');
+        path.node?.setAttribute('data-label-text', sGroupName);
         path.node?.setAttribute('data-sgroup-id', sgroup.id);
         path.node?.setAttribute('data-sgroup-name', sGroupName);
         path.node?.setAttribute('data-sgroup-type', sgroup.type);
@@ -1287,15 +1279,15 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereLabelStyleType.Off:
+    case StereoLabelStyleType.Off:
       return false;
-    case StereLabelStyleType.On:
+    case StereoLabelStyleType.On:
       return true;
-    case StereLabelStyleType.Classic:
+    case StereoLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereLabelStyleType.IUPAC:
+    case StereoLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );

@@ -21,11 +21,15 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
 
   test('Should add RNA presets to Favorites', async ({ page }) => {
     await Library(page).switchToFavoritesTab();
-    await expect(page.getByTestId(Preset.A.testId)).not.toBeVisible();
+    await expect(
+      Library(page).getMonomerLibraryCardLocator(Preset.A),
+    ).not.toBeVisible();
 
     await Library(page).switchToRNATab();
     await Library(page).addMonomerToFavorites(Preset.A);
     await Library(page).switchToFavoritesTab();
-    await expect(page.getByTestId(Preset.A.testId)).toBeVisible();
+    await expect(
+      Library(page).getMonomerLibraryCardLocator(Preset.A),
+    ).toBeVisible();
   });
 });

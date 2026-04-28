@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   AmbiguousMonomerType,
   AttachmentPointName,
@@ -49,7 +50,7 @@ import {
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
@@ -63,21 +64,14 @@ import {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import {
-  MACROMOLECULES_BOND_TYPES,
-  provideEditorSettings,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import {
-  IKetTemplateConnection,
-  KetMonomerClass,
-} from 'application/formatters';
+import { IKetTemplateConnection } from 'application/formatters';
 import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
@@ -101,6 +95,7 @@ import {
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
+  KetMonomerClass,
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
@@ -324,7 +319,7 @@ export class DrawingEntitiesManager {
   }
 
   public addMonomerChangeModel(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -370,7 +365,7 @@ export class DrawingEntitiesManager {
   }
 
   public addMonomer(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -473,7 +468,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
     );
@@ -499,7 +494,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
     );
@@ -980,9 +975,9 @@ export class DrawingEntitiesManager {
       );
 
       let isValueChanged;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -1024,9 +1019,9 @@ export class DrawingEntitiesManager {
       );
 
       let isValueChanged;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -1259,7 +1254,7 @@ export class DrawingEntitiesManager {
     bondType = MACROMOLECULES_BOND_TYPES.SINGLE,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     const firstMonomer = polymerBond.firstMonomer;
     this.polymerBonds.delete(polymerBond.id);
@@ -1278,7 +1273,7 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
-    if (editor.mode instanceof SnakeMode) {
+    if (editor.mode.modeName === 'snake-layout-mode') {
       command.merge(this.recalculateCanvasMatrix());
     }
 
@@ -1989,7 +1984,7 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       const editorSettings = provideEditorSettings();
       const canvasWidth = editor.canvas.width.baseVal.value;
       const cellWidthInAngstroms =
@@ -2269,7 +2264,7 @@ export class DrawingEntitiesManager {
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const atomToNewAtom = new Map<Atom, Atom>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
     this.monomers.forEach((monomer) => {
@@ -2527,7 +2522,7 @@ export class DrawingEntitiesManager {
   }
 
   public getCurrentCenterPointOfCanvas() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const originalCenterPointOfCanvas = new Vec2(
       editor.canvasOffset.width / 2,
       editor.canvasOffset.height / 2,
@@ -2557,7 +2552,7 @@ export class DrawingEntitiesManager {
   }
 
   public rerenderMolecules() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     this.atoms.forEach((atom) => {
       editor.renderersContainer.deleteAtom(atom);
@@ -2598,7 +2593,7 @@ export class DrawingEntitiesManager {
   }
 
   public clearCanvas() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     // TODO rewrite to work with base class (drawingEntity)
 
@@ -2638,7 +2633,7 @@ export class DrawingEntitiesManager {
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const command = new Command();
 
     if (needRedrawBonds) {
@@ -2668,9 +2663,9 @@ export class DrawingEntitiesManager {
   }
 
   public rerenderBondsOverlappedByMonomers() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
-    if (editor.mode instanceof SequenceMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -2700,7 +2695,7 @@ export class DrawingEntitiesManager {
 
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
     drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
@@ -2734,9 +2729,9 @@ export class DrawingEntitiesManager {
     drawingEntity.turnOnSelection();
     let drawingEntities: DrawingEntity[] = [drawingEntity];
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     if (
-      !(editor.mode instanceof SequenceMode) ||
+      editor.mode.modeName !== 'sequence-layout-mode' ||
       drawingEntity instanceof PolymerBond
     ) {
       return { command, drawingEntities };
@@ -2778,6 +2773,13 @@ export class DrawingEntitiesManager {
   }
 
   public validateIfApplicableForFasta() {
+    if (
+      this.monomers.size === 0 &&
+      this.micromoleculesHiddenEntities.atoms.size > 0
+    ) {
+      return false;
+    }
+
     const monomerTypes = new Set();
     let isValid = true;
 
@@ -3495,7 +3497,7 @@ export class DrawingEntitiesManager {
   }
 
   public createAntisenseChain(isDnaAntisense: boolean) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const command = new Command();
     const selectedMonomers = this.selectedEntities
       .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
@@ -3681,12 +3683,22 @@ export class DrawingEntitiesManager {
 
             const isModifiedPhosphate =
               monomer instanceof Phosphate && monomer.isModification;
-            const antisenseMonomerItem = isModifiedPhosphate
-              ? getRnaPartLibraryItem(
-                  editor,
-                  RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
-                ) ?? monomer.monomerItem
-              : monomer.monomerItem;
+            const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            let antisenseMonomerItem: MonomerOrAmbiguousType =
+              monomer.monomerItem;
+
+            if (isModifiedPhosphate || isAmbiguousMonomer) {
+              const nonModifiedPhosphateItem = getRnaPartLibraryItem(
+                editor,
+                RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+              );
+
+              if (nonModifiedPhosphateItem) {
+                antisenseMonomerItem = nonModifiedPhosphateItem;
+              } else if (isAmbiguousMonomer) {
+                antisenseMonomerItem = monomer.variantMonomerItem;
+              }
+            }
             const monomerAddCommand = this.addMonomer(
               antisenseMonomerItem,
               monomer.position.add(new Vec2(0, 4.25)),
@@ -3718,7 +3730,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.applySnakeLayout(true, true));
 
-    if (editor.mode instanceof SequenceMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       command.addOperation(new ReinitializeModeOperation());
     }
 
@@ -3748,8 +3760,8 @@ export class DrawingEntitiesManager {
     polymerBond: PolymerBond,
     monomers?: BaseMonomer[],
   ) {
-    const editor = CoreEditor.provideEditorInstance();
-    if (!editor || editor.mode instanceof SequenceMode) {
+    const editor = provideEditorInstance();
+    if (!editor || editor.mode.modeName === 'sequence-layout-mode') {
       return false;
     }
 

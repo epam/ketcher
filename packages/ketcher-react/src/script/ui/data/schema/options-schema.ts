@@ -469,7 +469,9 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
-  const result = new Validator().validate(settings, optionsSchema as Schema);
+  const result = new Validator().validate(settings, optionsSchema as Schema, {
+    base: 'https://ketcher.local/',
+  });
   const errorsProps = result.errors.map((e) =>
     e.property.replace(/^instance\./, ''),
   );

@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { useCallback, MouseEvent, useRef, useState } from 'react';
+import { useCallback, useEffect, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
@@ -34,6 +34,7 @@ import {
   selectEditor,
   selectIsSequenceMode,
   selectIsDragging,
+  showPreview,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
@@ -76,6 +77,12 @@ const MonomerItem = ({
   const monomerItem = isAmbiguousMonomerLibraryItem(item)
     ? undefined
     : (item as MonomerItemType);
+
+  useEffect(() => {
+    return () => {
+      dispatch(showPreview(undefined));
+    };
+  }, [dispatch]);
 
   const addFavorite = useCallback(
     (event: MouseEvent) => {

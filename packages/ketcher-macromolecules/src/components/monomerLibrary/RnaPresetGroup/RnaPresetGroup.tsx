@@ -123,16 +123,16 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatchShowPreview],
   );
 
-  const handleItemMouseLeave = (): void => {
+  const closeLibraryPreview = useCallback((): void => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, [debouncedShowPreview, dispatch]);
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
     e: React.MouseEvent,
   ): void => {
-    handleItemMouseLeave();
+    closeLibraryPreview();
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
@@ -203,7 +203,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
               onMouseMove={(e) => handleItemMouseMove(preset, e)}
-              onMouseLeave={handleItemMouseLeave}
+              onMouseLeave={closeLibraryPreview}
             />
           );
         })}

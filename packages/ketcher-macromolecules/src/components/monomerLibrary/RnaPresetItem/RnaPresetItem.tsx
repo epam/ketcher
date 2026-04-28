@@ -17,7 +17,14 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import { memo, MouseEvent, useCallback, useRef, useState } from 'react';
+import {
+  memo,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
@@ -32,6 +39,7 @@ import {
   selectEditor,
   selectIsSequenceMode,
   selectIsDragging,
+  showPreview,
 } from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import { cardMouseOverHandler } from 'components/monomerLibrary/monomerLibraryItem/shared';
@@ -53,6 +61,12 @@ const RnaPresetItem = ({
     useState<string>('');
 
   const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      dispatch(showPreview(undefined));
+    };
+  }, [dispatch]);
 
   const addFavorite = useCallback(
     (event: MouseEvent): void => {

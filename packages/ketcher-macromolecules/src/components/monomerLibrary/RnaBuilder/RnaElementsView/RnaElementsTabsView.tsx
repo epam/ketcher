@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import {
   RnaTabContent,
   DetailsContainer,
@@ -6,9 +6,12 @@ import {
   RnaTab,
   RnaTabsContainer,
   RnaTabWrapper,
-  StyledButton,
+  NewPresetButton,
+  PresetToolbar,
+  FilterIconButton,
   CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
+import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -47,6 +50,9 @@ const RnaElementsTabsView = ({
     selectIsActivePresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
+  // Local UI state for the phosphate-position filter popup. Kept here (rather
+  // than in Redux) because it's purely a transient UI concern.
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
     <>
@@ -94,12 +100,31 @@ const RnaElementsTabsView = ({
         const details =
           groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer compact>
-              <StyledButton
-                onClick={onNewPresetClick}
-                data-testid="new-preset-button"
-              >
-                New Preset
-              </StyledButton>
+              <PresetToolbar>
+                <NewPresetButton
+                  onClick={onNewPresetClick}
+                  data-testid="new-preset-button"
+                >
+                  New Preset
+                </NewPresetButton>
+                <FilterIconButton
+                  type="button"
+                  active={isFilterOpen}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsFilterOpen((prev) => !prev);
+                  }}
+                  aria-label="Filter presets by phosphate position"
+                  data-testid="preset-filter-button"
+                >
+                  <Icon name="filter" />
+                </FilterIconButton>
+                {isFilterOpen && (
+                  <PresetPhosphateFilterPopup
+                    onClose={() => setIsFilterOpen(false)}
+                  />
+                )}
+              </PresetToolbar>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}

@@ -21,7 +21,7 @@ import {
   isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
 import { debounce } from 'lodash';
-import React, { ReactElement, useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -33,7 +33,6 @@ import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
 import {
   GroupContainerColumn,
-  GroupTitle,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import { selectEditor, selectShowPreview, showPreview } from 'state/common';
@@ -62,36 +61,6 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const dispatch = useDispatch();
   const resolvePhosphatePosition = (preset: IRnaPreset) =>
     preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
-
-  const groupedPresets = useMemo(
-    () =>
-      [
-        {
-          key: 'five-prime-phosphate',
-          title: "Presets with phosphate on the 5' end",
-          presets: presets.filter(
-            (preset) =>
-              Boolean(preset.phosphate) &&
-              resolvePhosphatePosition(preset) === 'left',
-          ),
-        },
-        {
-          key: 'three-prime-phosphate',
-          title: "Presets with phosphate on the 3' end",
-          presets: presets.filter(
-            (preset) =>
-              Boolean(preset.phosphate) &&
-              resolvePhosphatePosition(preset) !== 'left',
-          ),
-        },
-        {
-          key: 'without-phosphate',
-          title: 'Presets without phosphate',
-          presets: presets.filter((preset) => !preset.phosphate),
-        },
-      ].filter(({ presets }) => presets.length),
-    [presets],
-  );
 
   const validatePreset = (preset: IRnaPreset) => {
     let isBaseValid = true;
@@ -231,26 +200,21 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   return (
     <GroupContainerColumn data-testid="rna-preset-group">
-      {groupedPresets.map(({ key, title, presets }) => (
-        <GroupContainerColumn key={key} data-testid={`rna-preset-group-${key}`}>
-          <GroupTitle>{title}</GroupTitle>
-          <ItemsContainer>
-            {presets.map((preset: IRnaPreset, index: number): ReactElement => {
-              return (
-                <RnaPresetItem
-                  isSelected={activePreset?.name === preset.name}
-                  key={`${preset.name}${index}`}
-                  preset={preset}
-                  onClick={selectPreset(preset)}
-                  onContextMenu={handleContextMenu(preset)}
-                  onMouseMove={(e) => handleItemMouseMove(preset, e)}
-                  onMouseLeave={handleItemMouseLeave}
-                />
-              );
-            })}
-          </ItemsContainer>
-        </GroupContainerColumn>
-      ))}
+      <ItemsContainer>
+        {presets.map((preset: IRnaPreset, index: number): ReactElement => {
+          return (
+            <RnaPresetItem
+              isSelected={activePreset?.name === preset.name}
+              key={`${preset.name}${index}`}
+              preset={preset}
+              onClick={selectPreset(preset)}
+              onContextMenu={handleContextMenu(preset)}
+              onMouseMove={(e) => handleItemMouseMove(preset, e)}
+              onMouseLeave={handleItemMouseLeave}
+            />
+          );
+        })}
+      </ItemsContainer>
       <RNAContextMenu />
     </GroupContainerColumn>
   );

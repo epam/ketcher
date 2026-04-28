@@ -49,6 +49,15 @@ export type RnaBuilderItem =
   | MonomerGroups
   | RnaBuilderNucleotidesItem;
 
+// Filter applied to RNA presets in the library based on the position of the
+// phosphate group in the preset. Each flag enables one of three buckets:
+// presets with phosphate on the 5' end, on the 3' end, or without phosphate.
+export interface PresetPhosphateFilter {
+  fivePrime: boolean;
+  threePrime: boolean;
+  noPhosphate: boolean;
+}
+
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
   sequenceSelection: LabeledNodesWithPositionInSequence[] | undefined;
@@ -71,6 +80,7 @@ interface IRnaBuilderState {
   uniqueNameError: string;
   invalidPresetError: string;
   activePresetForContextMenu: IRnaPreset | null;
+  presetPhosphateFilter: PresetPhosphateFilter;
 }
 
 const initialState: IRnaBuilderState = {
@@ -92,6 +102,11 @@ const initialState: IRnaBuilderState = {
   uniqueNameError: '',
   invalidPresetError: '',
   activePresetForContextMenu: null,
+  presetPhosphateFilter: {
+    fivePrime: true,
+    threePrime: true,
+    noPhosphate: true,
+  },
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
@@ -138,6 +153,12 @@ export const rnaBuilderSlice = createSlice({
       action: PayloadAction<IRnaPreset>,
     ) => {
       state.activePresetForContextMenu = action.payload;
+    },
+    setPresetPhosphateFilter: (
+      state,
+      action: PayloadAction<PresetPhosphateFilter>,
+    ) => {
+      state.presetPhosphateFilter = action.payload;
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
@@ -429,6 +450,10 @@ export const selectActivePresetForContextMenu = (state: RootState) => {
   return state.rnaBuilder.activePresetForContextMenu;
 };
 
+export const selectPresetPhosphateFilter = (
+  state: RootState,
+): PresetPhosphateFilter => state.rnaBuilder.presetPhosphateFilter;
+
 export const selectPresetsInFavorites = (items: IRnaPreset[]) =>
   items.filter((item) => item.favorite);
 
@@ -448,83 +473,101 @@ export const selectFilteredPresets = createSelector(
   selectAllPresets,
   selectSearchFilter,
   selectAxoLabsAliasesByPresetName,
+  selectPresetPhosphateFilter,
   (
     presetsAll,
     searchFilter,
     axoLabsAliasesByPresetName,
+    phosphateFilter,
   ): Array<IRnaPreset & { favorite?: boolean }> => {
     const searchText = searchFilter.toLowerCase();
 
-    return presetsAll.filter((item: IRnaPreset) => {
-      const name = item.name?.toLowerCase();
-      const sugarName = item.sugar?.label?.toLowerCase();
-      const phosphateName = item.phosphate?.label?.toLowerCase();
-      const baseName = item.base?.label?.toLowerCase();
-      const idtName = item.idtAliases?.base?.toLowerCase();
-      const axoLabsAlias =
-        item.aliasAxoLabs?.toLowerCase() ??
-        (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
-        '';
-      const modifications = item.idtAliases?.modifications;
-      let transformedIdtText = idtName;
+    return presetsAll
+      .filter((item: IRnaPreset) => {
+        const name = item.name?.toLowerCase();
+        const sugarName = item.sugar?.label?.toLowerCase();
+        const phosphateName = item.phosphate?.label?.toLowerCase();
+        const baseName = item.base?.label?.toLowerCase();
+        const idtName = item.idtAliases?.base?.toLowerCase();
+        const axoLabsAlias =
+          item.aliasAxoLabs?.toLowerCase() ??
+          (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
+          '';
+        const modifications = item.idtAliases?.modifications;
+        let transformedIdtText = idtName;
 
-      if (idtName && item.name?.includes('MOE')) {
-        const base = idtName;
-        const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-        const internal = modifications?.internal ?? `i${base}`;
-        transformedIdtText = `${endpoint5}, ${internal}`;
-      }
-      const slashCount = (searchText.match(/\//g) ?? []).length;
-      const parts = searchText.split('/');
+        if (idtName && item.name?.includes('MOE')) {
+          const base = idtName;
+          const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
+          const internal = modifications?.internal ?? `i${base}`;
+          transformedIdtText = `${endpoint5}, ${internal}`;
+        }
+        const slashCount = (searchText.match(/\//g) ?? []).length;
+        const parts = searchText.split('/');
 
-      if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {
-        return false;
-      }
+        if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {
+          return false;
+        }
 
-      if (searchText.startsWith('/') && searchText.length > 1) {
-        const aliasRest = searchText.slice(1);
+        if (searchText.startsWith('/') && searchText.length > 1) {
+          const aliasRest = searchText.slice(1);
+          return (
+            transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
+            idtName?.startsWith(aliasRest) ||
+            (modifications &&
+              Object.values(modifications).some((mod) =>
+                mod?.toLowerCase().startsWith(aliasRest),
+              ))
+          );
+        }
+
+        if (searchText.endsWith('/') && searchText.length > 1) {
+          const aliasRest = searchText.slice(0, -1);
+          const aliasLastSymbol = searchText[searchText.length - 2];
+
+          return (
+            (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
+              transformedIdtText[transformedIdtText.length - 1] ===
+                aliasLastSymbol) ||
+            (idtName?.endsWith(aliasRest) &&
+              idtName[idtName.length - 1] === aliasLastSymbol) ||
+            (modifications &&
+              Object.values(modifications).some(
+                (mod) =>
+                  mod?.toLowerCase().endsWith(aliasRest) &&
+                  mod[mod.length - 1] === aliasLastSymbol,
+              ))
+          );
+        }
+
+        if (searchText === '/') {
+          return !!item.idtAliases;
+        }
+
         return (
-          transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
-          idtName?.startsWith(aliasRest) ||
-          (modifications &&
-            Object.values(modifications).some((mod) =>
-              mod?.toLowerCase().startsWith(aliasRest),
-            ))
+          name?.includes(searchText) ||
+          sugarName?.includes(searchText) ||
+          phosphateName?.includes(searchText) ||
+          baseName?.includes(searchText) ||
+          transformedIdtText?.toLowerCase().includes(searchText) ||
+          axoLabsAlias.includes(searchText)
         );
-      }
-
-      if (searchText.endsWith('/') && searchText.length > 1) {
-        const aliasRest = searchText.slice(0, -1);
-        const aliasLastSymbol = searchText[searchText.length - 2];
-
-        return (
-          (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
-            transformedIdtText[transformedIdtText.length - 1] ===
-              aliasLastSymbol) ||
-          (idtName?.endsWith(aliasRest) &&
-            idtName[idtName.length - 1] === aliasLastSymbol) ||
-          (modifications &&
-            Object.values(modifications).some(
-              (mod) =>
-                mod?.toLowerCase().endsWith(aliasRest) &&
-                mod[mod.length - 1] === aliasLastSymbol,
-            ))
-        );
-      }
-
-      if (searchText === '/') {
-        return !!item.idtAliases;
-      }
-
-      return (
-        name?.includes(searchText) ||
-        sugarName?.includes(searchText) ||
-        phosphateName?.includes(searchText) ||
-        baseName?.includes(searchText) ||
-        transformedIdtText?.toLowerCase().includes(searchText) ||
-        axoLabsAlias.includes(searchText)
-      );
-    });
+      })
+      .filter((item: IRnaPreset) => {
+        // Apply the phosphate-position filter selected via the preset toolbar.
+        // If all flags are enabled, every preset passes; if all flags are
+        // disabled, the user has explicitly hidden every bucket and we return
+        // an empty list.
+        const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
+        if (fivePrime && threePrime && noPhosphate) {
+          return true;
+        }
+        if (!item.phosphate) {
+          return noPhosphate;
+        }
+        const position = getRnaPresetPhosphatePosition(item);
+        return position === 'left' ? fivePrime : threePrime;
+      });
   },
 );
 
@@ -547,6 +590,7 @@ export const {
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,
+  setPresetPhosphateFilter,
   togglePresetFavorites,
   setFavoritePresetsFromLocalStorage,
   clearFavorites,

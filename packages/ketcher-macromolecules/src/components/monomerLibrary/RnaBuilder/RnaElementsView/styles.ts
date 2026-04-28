@@ -76,6 +76,107 @@ export const StyledButton = styled(Button)`
   border-color: ${({ theme }) => theme.ketcher.color.text.light};
 `;
 
+// Toolbar containing the "New Preset" button and the filter icon button.
+export const PresetToolbar = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+`;
+
+// "New Preset" button takes 1/3 of the library (toolbar) width and is
+// left-aligned within the toolbar.
+export const NewPresetButton = styled(StyledButton)`
+  flex: 0 0 33.3333%;
+  width: 33.3333%;
+`;
+
+export const FilterIconButton = styled.button<{ active?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin-left: auto;
+  background-color: ${({ active, theme }) =>
+    active ? theme.ketcher.color.button.secondary.hover : 'transparent'};
+  border: 1px solid ${({ theme }) => theme.ketcher.color.text.light};
+  border-radius: 4px;
+  cursor: pointer;
+  color: ${({ theme }) => theme.ketcher.color.text.light};
+
+  &:hover {
+    background-color: ${({ theme }) =>
+      theme.ketcher.color.button.secondary.hover};
+  }
+
+  > svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+export const FilterPopup = styled.div`
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+  padding: 10px 12px;
+  background-color: #ffffff;
+  border: 1px solid ${({ theme }) => theme.ketcher.color.divider};
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  color: ${({ theme }) => theme.ketcher.color.text.primary};
+`;
+
+export const FilterPopupOption = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+
+  input[type='checkbox'] {
+    margin: 0;
+    cursor: pointer;
+  }
+`;
+
+export const FilterPopupActions = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+`;
+
+export const FilterPopupButton = styled.button<{ primary?: boolean }>`
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid ${({ theme }) => theme.ketcher.color.text.light};
+  background-color: ${({ primary, theme }) =>
+    primary ? theme.ketcher.color.button.primary.active : 'transparent'};
+  color: ${({ primary, theme }) =>
+    primary
+      ? theme.ketcher.color.text.light
+      : theme.ketcher.color.text.primary};
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
 export const DisabledArea = styled.div`
   width: 100%;
   height: 100%;

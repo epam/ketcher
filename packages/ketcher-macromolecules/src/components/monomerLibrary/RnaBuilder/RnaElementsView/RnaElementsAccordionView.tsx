@@ -4,7 +4,7 @@ import {
 } from 'state/library';
 import { MonomerGroups } from '../../../../constants';
 import { Summary } from './Summary';
-import { IconName } from 'ketcher-react';
+import { Icon, IconName } from 'ketcher-react';
 import {
   recalculateRnaBuilderValidations,
   RnaBuilderItem,
@@ -19,8 +19,11 @@ import {
   DisabledArea,
   StyledAccordion,
   StyledAccordionWrapper,
-  StyledButton,
+  NewPresetButton,
+  PresetToolbar,
+  FilterIconButton,
 } from './styles';
+import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { memo, useEffect, useState } from 'react';
@@ -54,6 +57,7 @@ const RnaElementsAccordionView = ({
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
@@ -93,12 +97,31 @@ const RnaElementsAccordionView = ({
         const details =
           groupData.groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer>
-              <StyledButton
-                onClick={onNewPresetClick}
-                data-testid="new-preset-button"
-              >
-                New Preset
-              </StyledButton>
+              <PresetToolbar>
+                <NewPresetButton
+                  onClick={onNewPresetClick}
+                  data-testid="new-preset-button"
+                >
+                  New Preset
+                </NewPresetButton>
+                <FilterIconButton
+                  type="button"
+                  active={isFilterOpen}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsFilterOpen((prev) => !prev);
+                  }}
+                  aria-label="Filter presets by phosphate position"
+                  data-testid="preset-filter-button"
+                >
+                  <Icon name="filter" />
+                </FilterIconButton>
+                {isFilterOpen && (
+                  <PresetPhosphateFilterPopup
+                    onClose={() => setIsFilterOpen(false)}
+                  />
+                )}
+              </PresetToolbar>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}

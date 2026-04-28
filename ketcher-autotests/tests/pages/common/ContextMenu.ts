@@ -36,28 +36,19 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
 
       for (const optionId of options) {
         const option = getOption(optionId).first();
-        await option.waitFor({ state: 'visible', timeout: 10000 });
-        // Wait for enabled state with retry logic
-        let enabled = false;
-        for (let i = 0; i < 5; ++i) {
-          if (typeof expect !== 'undefined') {
-            try {
-              await expect(option).toBeEnabled({ timeout: 2000 });
-              enabled = true;
-              break;
-            } catch {
-              await page.waitForTimeout(400);
-            }
-          } else {
-            if (await option.isEnabled()) {
-              enabled = true;
-              break;
-            }
-            await page.waitForTimeout(400);
+        await option.waitFor({ state: 'visible' });
+        // Extra robust: wait for visible and enabled before clicking
+        if (typeof expect !== 'undefined') {
+          await expect(option).toBeVisible();
+          await expect(option).toBeEnabled();
+        } else {
+          // fallback for non-test context
+          if (!(await option.isVisible())) {
+            throw new Error('Option not visible');
           }
-        }
-        if (!enabled) {
-          throw new Error('Option not enabled after retries');
+          if (!(await option.isEnabled())) {
+            throw new Error('Option not enabled');
+          }
         }
         await option.click();
       }

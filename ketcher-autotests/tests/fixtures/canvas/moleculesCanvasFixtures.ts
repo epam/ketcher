@@ -29,7 +29,6 @@ export const test = mergeTests(utils, pageObjects).extend<
       await ErrorMessageDialog(page).close();
     }
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.waitForLoadState('networkidle'); // Ensure page fully loads
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
     await CommonTopLeftToolbar(page).clearCanvas();

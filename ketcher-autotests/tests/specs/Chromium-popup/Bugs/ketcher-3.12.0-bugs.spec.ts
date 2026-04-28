@@ -57,6 +57,7 @@ import {
   NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
@@ -69,6 +70,7 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
+import { updateMonomersLibrary } from '@utils/library/updateLibrary';
 
 let page: Page;
 
@@ -931,6 +933,72 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(CreateMonomerDialog(page).r3AtomCombobox).toBeVisible();
     await expect(CreateMonomerDialog(page).r3DeleteButton).toBeVisible();
 
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test('Case 24: System should reject library upload for CHEM monomer with idtAliases but no base alias defined', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8205
+     * Bug: https://github.com/epam/ketcher/issues/8205
+     *
+     * Description: Upload a CHEM monomer without a base IDT alias
+     * Scenario:
+     * 1. Open Macromolecules - Flex mode
+     * 2. Execute console command to add a CHEM monomer with idtAliases defined but no base alias
+     * 3. Verify the system throws an error
+     * 4. Verify the monomer is not added to the library
+     *
+     * Version 3.9
+     */
+
+    const sdfFile =
+      '\n  -INDIGO-10092513342D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _CHEM1 10.1551 -9.35993 0.0 0 CLASS=LINKER\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 LINKER/_CHEM1/_CHEM1\nM  V30 BEGIN CTAB\nM  V30 COUNTS 17 16 5 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -4.33 0.31 0.0 0\nM  V30 2 C -3.464 -0.19 0.0 0\nM  V30 3 P -2.598 0.31 0.0 0\nM  V30 4 P -1.732 -0.19 0.0 0\nM  V30 5 C -0.866 0.31 0.0 0\nM  V30 6 C 0.0 -0.19 0.0 0\nM  V30 7 C 0.866 0.31 0.0 0\nM  V30 8 C 1.732 -0.19 0.0 0\nM  V30 9 C 2.598 0.31 0.0 0\nM  V30 10 C 3.464 -0.19 0.0 0\nM  V30 11 H 4.33 0.31 0.0 0\nM  V30 12 C 1.573 1.017 0.0 0\nM  V30 13 C 1.314 1.983 0.0 0\nM  V30 14 H 2.021 2.69 0.0 0\nM  V30 15 C -1.732 -1.19 0.0 0\nM  V30 16 C -0.866 -1.69 0.0 0\nM  V30 17 H -0.866 -2.69 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 7 12\nM  V30 12 1 12 13\nM  V30 13 1 13 14\nM  V30 14 1 4 15\nM  V30 15 1 15 16\nM  V30 16 1 16 17\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 11) XBONDS=(1 10) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 -0.353500 -0.353500 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 4 SUP 4 ATOMS=(1 17) XBONDS=(1 16) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(13 2 3 4 5 6 7 8 9 10 12 13 15 16) XBONDS=(4 1 10 13 16-\nM  V30 ) BRKXYZ=(9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000000 0.0000-\nM  V30 00 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.433000 0.250000 0-\nM  V30 .000000 0.000000 0.000000 0.000000) LABEL=_CHEM1 CLASS=LINKER SAP=(3 2 1 Al) SAP=(3 10 11 Br) SAP=(3 13 14 Cx) SAP=(3 16 17 Dx)\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <modificationTypes>\nConvert to _CHEM1;\n\n>  <idtAliases>\nmodification=/CHEM1_mod/\n\n$$$$\n';
+
+    const error = await updateMonomersLibrary(page, sdfFile);
+    expect(error).not.toBeNull();
+    expect(error).toContain(
+      'Base IDT alias is required when idtAliases is defined',
+    );
+    expect(await Library(page).isMonomerExist(Chem._CHEM1)).toBeFalsy();
+  });
+
+  test('Case 25: Edit connection point context menu option should open popup when attachment atom was not selected before Create Monomer', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/7823
+     * Bug: https://github.com/epam/ketcher/issues/7823
+     *
+     * Description: Edit connection point option should work when the attachment atom
+     * is not selected before pressing Create Monomer.
+     * Scenario:
+     * 1. Open Molecules mode
+     * 2. Load the structure from clipboard using Open > Paste from Clipboard > Add to canvas
+     * 3. Select the whole structure with Ctrl+A
+     * 4. Press Create monomer button on the left toolbar
+     * 5. Right-click the left H attachment atom
+     * 6. Click Edit connection point in the context menu
+     * 7. Verify the Edit connection point popup opens
+     *
+     * Version 3.12.0
+     */
+
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).createMonomer();
+
+    await expect(CreateMonomerDialog(page).window).toBeVisible();
+
+    const attachmentAtom = getAtomLocator(page, { atomLabel: 'H' }).first();
+    await ContextMenu(page, attachmentAtom).click(
+      ConnectionPointOption.EditConnectionPoint,
+    );
+
+    await expect(EditConnectionPointPopup(page).isVisible()).toBeTruthy();
+    await EditConnectionPointPopup(page).close();
     await CreateMonomerDialog(page).discard();
   });
 });

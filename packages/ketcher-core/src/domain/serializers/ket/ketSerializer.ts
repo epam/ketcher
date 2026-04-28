@@ -1072,8 +1072,23 @@ export class KetSerializer implements Serializer<Struct> {
     };
   }
 
-  public static removeLeavingGroupsFromConnectedAtoms(_struct: Struct) {
-    const struct = _struct.clone();
+  public static removeLeavingGroupsFromConnectedAtoms(
+    _struct: Struct,
+    atomIdsMap?: Map<number, number>,
+    bondIdsMap?: Map<number, number>,
+  ) {
+    const struct = _struct.clone(
+      undefined,
+      undefined,
+      undefined,
+      atomIdsMap,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      bondIdsMap,
+    );
 
     struct.atoms.forEach((_atom, atomId) => {
       if (Atom.isHiddenLeavingGroupAtom(struct, atomId, false, true)) {
@@ -1134,11 +1149,32 @@ export class KetSerializer implements Serializer<Struct> {
     isBeautified = true, // TODO make false by default
     needSetSelectionToMacromolecules = false,
   ) {
-    const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+    const atomIdsMap = new Map<number, number>();
+    const bondIdsMap = new Map<number, number>();
+    const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(
+      _struct,
+      atomIdsMap,
+      bondIdsMap,
+    );
+    const remappedSelection = selection
+      ? {
+          ...selection,
+          ...(selection.atoms && {
+            atoms: selection.atoms
+              .map((atomId) => atomIdsMap.get(atomId))
+              .filter(isNumber),
+          }),
+          ...(selection.bonds && {
+            bonds: selection.bonds
+              .map((bondId) => bondIdsMap.get(bondId))
+              .filter(isNumber),
+          }),
+        }
+      : undefined;
     struct.enableInitiallySelected();
     const populatedStruct = populateStructWithSelection(
       struct,
-      selection,
+      remappedSelection,
       true,
     );
     MacromoleculesConverter.convertStructToDrawingEntities(

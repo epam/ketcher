@@ -18,16 +18,17 @@ import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class LoopMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
+    id: number;
+    d: Vec2;
   };
 
-  constructor(id?: any, d?: any) {
+  constructor(id?: number, d?: Vec2) {
     super(OperationType.LOOP_MOVE);
-    this.data = { id, d };
+    this.data = { id: id!, d: d! };
   }
 
   execute(restruct: ReStruct) {

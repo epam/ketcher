@@ -18,17 +18,18 @@ import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
 import { ReStruct } from '../../../../render';
 import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class RxnPlusMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
-    noinvalidate: any;
+    id: number;
+    d: Vec2;
+    noinvalidate: boolean | undefined;
   };
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_PLUS_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id: id!, d: d!, noinvalidate };
   }
 
   execute(restruct: ReStruct) {

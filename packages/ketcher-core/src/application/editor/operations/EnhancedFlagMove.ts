@@ -23,13 +23,13 @@ import { ReStruct } from '../../render';
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
-    frid: any;
-    p: any;
+    frid: number;
+    p: Vec2;
   };
 
-  constructor(fragmentId?: any, p?: any) {
+  constructor(fragmentId?: number, p?: Vec2) {
     super(OperationType.ENHANCED_FLAG_MOVE);
-    this.data = { frid: fragmentId, p };
+    this.data = { frid: fragmentId!, p: p! };
   }
 
   execute(restruct: ReStruct) {

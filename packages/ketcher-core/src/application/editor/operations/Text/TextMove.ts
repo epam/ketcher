@@ -18,17 +18,18 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities/vec2';
 
 interface TextMoveData {
-  id: any;
-  d: any;
+  id: number;
+  d: Vec2;
   noinvalidate?: boolean;
 }
 
 export class TextMove extends BaseOperation {
   data: TextMoveData;
 
-  constructor(id: any, d: any, noinvalidate?: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate?: boolean) {
     super(OperationType.TEXT_MOVE);
     this.data = { id, d, noinvalidate };
   }

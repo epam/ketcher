@@ -18,18 +18,20 @@ import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { Scale } from 'domain/helpers';
 
+import { Vec2 } from 'domain/entities/vec2';
+
 interface RxnArrowMoveData {
   id: number;
-  d: any;
+  d: Vec2;
   noinvalidate: boolean;
 }
 
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
-    this.data = { id, d, noinvalidate };
+    this.data = { id: id!, d: d!, noinvalidate: noinvalidate! };
   }
 
   execute(restruct: any): void {

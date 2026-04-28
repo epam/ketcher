@@ -18,16 +18,17 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class BondMove extends BaseOperation {
   data: {
-    bid: any;
-    d: any;
+    bid: number;
+    d: Vec2;
   };
 
-  constructor(bondId?: any, d?: any) {
+  constructor(bondId?: number, d?: Vec2) {
     super(OperationType.BOND_MOVE, OperationPriority.BOND_MOVE);
-    this.data = { bid: bondId, d };
+    this.data = { bid: bondId!, d: d! };
   }
 
   execute(restruct: ReStruct) {

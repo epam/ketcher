@@ -18,17 +18,18 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class AtomMove extends BaseOperation {
   data: {
-    aid: any;
-    d: any;
-    noinvalidate: any;
+    aid: number;
+    d: Vec2;
+    noinvalidate: boolean | undefined;
   };
 
-  constructor(atomId?: any, d?: any, noinvalidate?: any) {
+  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
-    this.data = { aid: atomId, d, noinvalidate };
+    this.data = { aid: atomId!, d: d!, noinvalidate };
   }
 
   execute(restruct: ReStruct) {

@@ -21,7 +21,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';

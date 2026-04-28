@@ -70,7 +70,7 @@ export async function safelyGetMimeType(
 ) {
   try {
     const result = await clipboardItem.getType(mimeType);
-    return result;
+    return result?.size > 0 ? result : '';
   } catch {
     return '';
   }

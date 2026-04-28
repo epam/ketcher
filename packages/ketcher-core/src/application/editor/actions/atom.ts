@@ -15,17 +15,11 @@
  ***************************************************************************/
 
 import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { RGroup } from 'domain/entities/rgroup';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import {
   AtomAdd,
   AtomAttr,
-  AtomDelete,
-  BondAdd,
-  BondAttr,
-  BondDelete,
   CalcImplicitH,
   FragmentAdd,
   FragmentAddStereoAtom,
@@ -33,16 +27,14 @@ import {
   FragmentDeleteStereoAtom,
   SGroupAtomAdd,
 } from '../operations';
-import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
+import { atomGetAttr, atomGetSGroups } from './utils';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
-import { fromBondStereoUpdate } from './bond';
-import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
+import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import { without } from 'lodash/fp';
 import ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
-import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = { ...(atom || {}) };
@@ -122,33 +114,7 @@ export function fromAtomsAttrs(
   return action;
 }
 
-export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
-  const action = new Action();
-  const atom = restruct.molecule.atoms.get(aid);
-  const sgroup = restruct.molecule.getGroupFromAtomId(aid);
-  if (atom && !(sgroup instanceof MonomerMicromolecule)) {
-    const frid = atom.fragment;
-
-    if ('stereoParity' in attrs) {
-      action.addOp(
-        new AtomAttr(aid, 'stereoParity', attrs.stereoParity).perform(restruct),
-      );
-    }
-    if ('stereoLabel' in attrs) {
-      action.addOp(
-        new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct),
-      );
-      if (attrs.stereoLabel === null) {
-        action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct));
-      } else {
-        action.addOp(new FragmentAddStereoAtom(frid, aid).perform(restruct));
-      }
-    }
-    if (withReverse) action.operations.reverse();
-  }
-
-  return action;
-}
+export { fromStereoAtomAttrs } from './bondStereo';
 
 export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
   const action = new Action();
@@ -171,92 +137,6 @@ export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
   });
 
   return action.perform(restruct);
-}
-
-/**
- * @param restruct { ReStruct }
- * @param srcId { number }
- * @param dstId { number }
- * @return { Action }
- */
-export function fromAtomMerge(restruct, srcId, dstId) {
-  if (srcId === dstId) return new Action();
-
-  const fragAction = new Action();
-  mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
-
-  const action = new Action();
-
-  const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId);
-  atomNeighbors.forEach((nei) => {
-    const bond = restruct.molecule.bonds.get(nei.bid);
-
-    if (dstId === bond.begin || dstId === bond.end) {
-      // src & dst have one nei
-      action.addOp(new BondDelete(nei.bid));
-      return;
-    }
-
-    const begin = bond.begin === nei.aid ? nei.aid : dstId;
-    const end = bond.begin === nei.aid ? dstId : nei.aid;
-
-    const mergeBondId = restruct.molecule.findBondId(begin, end);
-
-    if (mergeBondId === null) {
-      action.addOp(new BondAdd(begin, end, bond));
-    } else {
-      // replace old bond with new bond
-      const attrs = Bond.getAttrHash(bond);
-      Object.keys(attrs).forEach((key) => {
-        action.addOp(new BondAttr(mergeBondId, key, attrs[key]));
-      });
-    }
-
-    action.addOp(new BondDelete(nei.bid));
-  });
-
-  const attrs = Atom.getAttrHash(restruct.molecule.atoms.get(srcId));
-
-  if (atomGetDegree(restruct, srcId) === 1 && attrs.label === '*') {
-    attrs.label = 'C';
-  }
-
-  Object.keys(attrs).forEach((key) => {
-    if (key !== 'stereoLabel' && key !== 'stereoParity') {
-      action.addOp(new AtomAttr(dstId, key, attrs[key]));
-    }
-  });
-
-  const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
-
-  if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId]);
-
-  const sgroups = atomGetSGroups(restruct, srcId);
-  sgroups.forEach((sgroupId: number) => {
-    const sgroup = restruct.sgroups.get(sgroupId).item;
-    for (const attachmentPoint of sgroup.attachmentPoints) {
-      if (attachmentPoint.atomId === srcId) {
-        action.addOp(
-          new SGroupAttachmentPointRemove(
-            sgroupId,
-            new SGroupAttachmentPoint(srcId, undefined, undefined),
-          ),
-        );
-        return;
-      }
-    }
-  });
-
-  action.addOp(new AtomDelete(srcId));
-  const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId);
-  const bond = restruct.molecule.bonds.get(
-    dstAtomNeighbors[0]?.bid ?? atomNeighbors[0]?.bid,
-  );
-
-  return action
-    .perform(restruct)
-    .mergeWith(fragAction)
-    .mergeWith(fromBondStereoUpdate(restruct, bond));
 }
 
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {

@@ -19,7 +19,7 @@ export function getStructure(
     new DrawingEntitiesManager(),
   );
 
-  return formatter.getStructureFromStructAsync(
+  return formatter.getStringFromStructureAsync(
     struct,
     drawingEntitiesManagerCloningResult?.mergedDrawingEntities,
     selection,

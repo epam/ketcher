@@ -163,7 +163,7 @@ export class KetSerializer implements Serializer<Struct> {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
     });
-    resultingStruct.name = ket.header?.moleculeName ?? null;
+    resultingStruct.name = ket.header?.moleculeName ?? '';
 
     return resultingStruct;
   }
@@ -397,6 +397,26 @@ export class KetSerializer implements Serializer<Struct> {
       : attachmentPoints;
   }
 
+  private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
+    if (template.idtAliases && template.aliasAxoLabs) return;
+
+    const library = provideEditorInstance()?.monomersLibraryParsedJson;
+    if (!library) return;
+
+    const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as
+      | IKetMonomerTemplate
+      | undefined;
+
+    if (!libraryTemplate) return;
+
+    if (!template.idtAliases && libraryTemplate.idtAliases) {
+      template.idtAliases = libraryTemplate.idtAliases;
+    }
+    if (!template.aliasAxoLabs && libraryTemplate.aliasAxoLabs) {
+      template.aliasAxoLabs = libraryTemplate.aliasAxoLabs;
+    }
+  }
+
   public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
     const attachmentPoints =
       KetSerializer.getTemplateAttachmentPoints(template) ?? [];
@@ -512,6 +532,7 @@ export class KetSerializer implements Serializer<Struct> {
             setMonomerTemplatePrefix(nodeDefinition.templateId)
           ] as IKetMonomerTemplate;
           assert(template);
+          KetSerializer.enrichTemplateWithLibraryData(template);
           const struct = KetSerializer.convertMonomerTemplateToStruct(template);
           const monomerAdditionCommand = monomerToDrawingEntity(
             nodeDefinition,

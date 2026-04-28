@@ -447,7 +447,8 @@ export class ZoomTool implements BaseTool {
   destroy() {
     this.scrollBars?.horizontal?.bar?.remove();
     this.scrollBars?.vertical?.bar?.remove();
-    this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.zoom = null;
     this.zoomEventHandlers = [];
   }

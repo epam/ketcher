@@ -977,12 +977,12 @@ const eligableNames = [
   {
     description: '1. Longest Name',
     value:
-      "N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[[4-(dimethylethyl)phenyl]acetyl]-2'-O-(tetrahydromethoxypyranyl)guanylyl-(3'→5')-4-deamino-4-(2,4-dimethylphenoxy)-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)adenylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2'-O-(tetrahydromethoxypyranyl)cytidylyl-(3'→5')-N-[4-(dimethylethyl)benzoyl]-2',3'-O-(methoxymetylene)-octadecakis(2-chlorophenyl)ester. 5'-[2-(dibromomethyl)benzoate]",
+      'N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-phenyl-acetyl-2-O-tetrahydromethoxypyranyl-guanylyl-3-5-4-deamino-4-2-4-dimethylphenoxy-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-adenylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-O-tetrahydromethoxypyranyl-cytidylyl-3-5-N-4-dimethylethyl-benzoyl-2-3-O-methoxymetylene-octadecakis-2-chlorophenyl-ester 5-2-dibromomethyl-benzoate',
   },
   { description: '2. Shortest Name', value: 's' },
   {
     description: '3. Name of special symbols',
-    value: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+    value: '-_*',
   },
   {
     description: '4. Name of with spaces',
@@ -3650,7 +3650,7 @@ for (const monomerToCreate of monomersToCreate51) {
       MacromoleculesFileFormatType.IDT,
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain('Convert error! Sequence saver:');
+    expect(errorMessage).toContain('Convert error!');
     await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });

@@ -63,7 +63,10 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
-import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  ConnectionPointOption,
+  MonomerOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
@@ -873,5 +876,61 @@ test.describe('Bugs: ketcher-3.12.0', () => {
 
     expect(hoverColorMacro).toEqual(hoverColorMicro);
     await takeElementScreenshot(page, atomMacro, { padding: 80 });
+  });
+
+  test('Case 23 — Attachment point dialog shows selected connection point controls', async ({
+    page,
+  }) => {
+    /**
+     * Test task: https://github.com/epam/ketcher/issues/8437
+     * Bug: https://github.com/epam/ketcher/issues/8437
+     *
+     * Description: Attachment points should appear in the Create Monomer dialog
+     * after a connection point is marked on the canvas.
+     *
+     * Steps:
+     * 1. Open Molecules canvas
+     * 2. Paste a molecule with R-groups
+     * 5. Press Create a monomer button (or Ctrl+M) having no selection on the canvas
+     * 6. Mark atom 0 as a connection point
+     * 7. Verify the R1 attachment point controls are visible in the dialog
+     *
+     * Version 3.12.0
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+    );
+    await clickOnCanvas(page, 0, 0);
+
+    // Ensure no selection on canvas
+    const selection = await page.evaluate(() => {
+      return window.ketcher.editor.selection();
+    });
+    expect(selection?.atoms).toBeUndefined();
+    expect(selection?.bonds).toBeUndefined();
+
+    await LeftToolbar(page).createMonomer();
+
+    const attachmentAtom = getAtomLocator(page, { atomId: 0 });
+    await ContextMenu(page, attachmentAtom).click(
+      ConnectionPointOption.MarkAsConnectionPoint,
+    );
+
+    await expect(CreateMonomerDialog(page).r1ControlGroup).toBeVisible();
+    await expect(CreateMonomerDialog(page).r1NameCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r1AtomCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r1DeleteButton).toBeVisible();
+    await expect(CreateMonomerDialog(page).r2ControlGroup).toBeVisible();
+    await expect(CreateMonomerDialog(page).r2NameCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r2AtomCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r2DeleteButton).toBeVisible();
+    await expect(CreateMonomerDialog(page).r3ControlGroup).toBeVisible();
+    await expect(CreateMonomerDialog(page).r3NameCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r3AtomCombobox).toBeVisible();
+    await expect(CreateMonomerDialog(page).r3DeleteButton).toBeVisible();
+
+    await CreateMonomerDialog(page).discard();
   });
 });

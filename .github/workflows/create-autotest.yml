@@ -87,7 +87,7 @@ jobs:
 
             Test request issue: ${{ steps.generate.outputs.issue_url }}
 
-            Exactly follow "Ketcher Test Conventions" section from CLAUDE.md file.
+            Exactly follow "Ketcher Test Conventions" section from @CLAUDE.md file, don't scan the project files.
             Return only the structured result requested by the schema.
 
           claude_args: |

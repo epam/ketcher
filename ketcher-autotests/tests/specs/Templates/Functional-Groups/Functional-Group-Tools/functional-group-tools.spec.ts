@@ -732,7 +732,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 
-    await leftToolbar.selectArrowTool(ArrowType.ArrowOpenAngle);
+    await leftToolbar.selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 

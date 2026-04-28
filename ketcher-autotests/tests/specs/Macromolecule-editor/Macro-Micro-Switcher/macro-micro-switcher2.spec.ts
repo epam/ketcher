@@ -274,7 +274,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/three-different-multi-tail-arrows.ket',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1328,7 +1328,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     const shiftElement = 250;
     const newX = x + shiftElement;
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

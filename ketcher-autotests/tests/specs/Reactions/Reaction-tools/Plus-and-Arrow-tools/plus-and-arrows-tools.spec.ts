@@ -841,7 +841,7 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Copy/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 300, 300, {
@@ -859,7 +859,7 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Cut/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, 300, 300, {

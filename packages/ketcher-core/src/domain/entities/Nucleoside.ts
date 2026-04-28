@@ -16,10 +16,12 @@ import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { SugarRenderer } from 'application/render';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { KetMonomerClass } from 'application/formatters';
+import {
+  KetMonomerClass,
+  RNA_DNA_NON_MODIFIED_PART,
+} from 'domain/constants/monomers';
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleoside {
   private readonly monomersCache: BaseMonomer[] = [];
@@ -70,7 +72,7 @@ export class Nucleoside {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + getMonomerSize().height),
       ),
     );
     const modelChanges = new Command();

@@ -3,7 +3,7 @@ import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   clickOnCanvas,
   takeElementScreenshot,
@@ -63,7 +63,7 @@ test.describe('Atom Settings', () => {
     await selectExtendedTableElement(page, ExtendedTableButton.D);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await selectExtendedTableElement(page, ExtendedTableButton.T);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -95,7 +95,7 @@ test.describe('Atom Settings', () => {
     page,
   }) => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     // await page.keyboard.press('Escape');
     const point = getAtomLocator(page, { atomLabel: 'C', atomId: 10 });
 

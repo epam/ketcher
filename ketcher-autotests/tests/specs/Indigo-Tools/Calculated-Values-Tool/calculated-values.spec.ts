@@ -8,7 +8,7 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -196,7 +196,7 @@ test.describe('Calculated Values Tools', () => {
     */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
 
     await expect(
@@ -290,7 +290,7 @@ test.describe('Calculated Values Tools', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,

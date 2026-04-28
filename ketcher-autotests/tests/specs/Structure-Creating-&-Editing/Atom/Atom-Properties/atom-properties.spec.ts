@@ -4,7 +4,7 @@ import { Page, test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForRender,
   clickOnCanvas,
   MolFileFormat,
@@ -212,7 +212,7 @@ test.describe('Atom Properties', () => {
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).dblclick({
@@ -295,7 +295,7 @@ test.describe('Atom Properties', () => {
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await selectAllStructuresOnCanvas(page);
@@ -1479,10 +1479,10 @@ test.describe('Atom Properties', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1667,7 +1667,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.Mo,
       PeriodicTableElement.W,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1683,7 +1683,7 @@ test.describe('Atom Properties', () => {
       PeriodicTableElement.Mo,
       PeriodicTableElement.W,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1695,7 +1695,7 @@ test.describe('Atom Properties', () => {
       Description: The Generic Group symbol is present on the canvas.
     */
     await selectExtendedTableElement(page, ExtendedTableButton.G);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await CommonLeftToolbar(page).eraseButton.click();
     await takeEditorScreenshot(page);
@@ -1707,7 +1707,7 @@ test.describe('Atom Properties', () => {
       Description: The Generic Group symbol is present in Atom Properties modal.
     */
     await selectExtendedTableElement(page, ExtendedTableButton.GH_STAR);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

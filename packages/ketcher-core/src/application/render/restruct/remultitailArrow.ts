@@ -40,6 +40,7 @@ export class ReMultitailArrow extends ReObject {
   static readonly CUBIC_BEZIER_OFFSET = 6;
   static readonly FRAME_OFFSET = 0.175;
   static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
+  static readonly SPINE_MOVE_POINT_X_OFFSET = -1;
   static readonly HEAD_LINE_START_OFFSET = 1;
   static readonly SELECTION_POINT_RADIUS = 1;
   static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
@@ -242,7 +243,19 @@ export class ReMultitailArrow extends ReObject {
     const OFFSET = this.getSelectionPointOffset(renderOptions);
     const { topTail, bottomTail, tails, head, topSpine } =
       this.getReferencePositions(renderOptions);
-    const spineMovePoint = new Vec2(topSpine.x, head.y);
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const headLineStartX = topSpine.x + headLineStartOffset;
+    const spineMovePoint = new Vec2(
+      topSpine.x + ReMultitailArrow.SPINE_MOVE_POINT_X_OFFSET,
+      head.y,
+    );
+    const headMovePoint = new Vec2(
+      headLineStartX + (head.x - headLineStartX) / 2,
+      head.y,
+    );
     const selectionPointSet = paper.set();
     const selectionPoints: TestSelectionPoint[] = [];
     let spineMoveSelectionPoint: TestSelectionPoint | null = null;
@@ -279,6 +292,7 @@ export class ReMultitailArrow extends ReObject {
         {},
       ),
     };
+    points['head-move'] = headMovePoint;
     Object.entries(points).forEach(([key, point]) => {
       const isSpineMovePoint = key === 'spine-move';
       const selectionPointRadius = isSpineMovePoint

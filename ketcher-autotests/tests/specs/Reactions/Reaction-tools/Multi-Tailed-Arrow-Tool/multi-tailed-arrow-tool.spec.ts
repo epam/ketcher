@@ -988,11 +988,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await multiTailedArrow1.getSpineMoveHandler().hover();
+    await multiTailedArrow1.hover();
     await dragMouseTo(page, 400, 200);
-    await multiTailedArrow2.getSpineMoveHandler().hover();
+    await multiTailedArrow2.hover();
     await dragMouseTo(page, 600, 400);
-    await multiTailedArrow3.getSpineMoveHandler().hover();
+    await multiTailedArrow3.hover();
     await dragMouseTo(page, 800, 600);
     await takeEditorScreenshot(page);
   });

@@ -10,7 +10,7 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
@@ -144,7 +144,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -172,7 +172,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page, {
@@ -803,7 +803,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -835,7 +835,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

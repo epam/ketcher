@@ -113,10 +113,6 @@ describe('SequenceRenderer', () => {
 
     expect(getSequenceBondPaths()).toHaveLength(1);
 
-    // Regression check: previously each call to SequenceRenderer.show() built
-    // a fresh local Set of bond renderers, so the path drawn by the first
-    // render was orphaned in the DOM when startNewSequence triggered another
-    // render. After the fix the tracked Set is shared, so the count stays 1.
     SequenceRenderer.startNewSequence(0);
 
     expect(getSequenceBondPaths()).toHaveLength(1);

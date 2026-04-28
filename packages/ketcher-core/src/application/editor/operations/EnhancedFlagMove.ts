@@ -54,4 +54,9 @@ export class EnhancedFlagMove extends BaseOperation {
     inverted.data = this.data;
     return inverted;
   }
+
+  isDummy() {
+    const { p } = this.data;
+    return p.x === 0 && p.y === 0;
+  }
 }

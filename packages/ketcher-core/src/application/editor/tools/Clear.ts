@@ -17,6 +17,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { ZoomTool } from 'application/editor/tools/Zoom';
 
 class ClearTool implements BaseTool {
   constructor(private readonly editor: CoreEditor) {
@@ -39,6 +40,7 @@ class ClearTool implements BaseTool {
     this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
+    ZoomTool.instance.resetZoom();
   }
 
   destroy() {

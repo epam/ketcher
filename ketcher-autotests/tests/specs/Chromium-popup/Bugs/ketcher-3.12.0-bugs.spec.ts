@@ -809,4 +809,69 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       .getAttribute('stroke');
     expect(strokeAfterSwitch?.toLowerCase()).toBe('#f00');
   });
+
+  test('Case 22 — Hover on a selected atom differs in micro mode and in macro mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8800
+     * Bug: https://github.com/epam/ketcher/issues/8800
+     *
+     * Description: The hover on a selected atom has different color in Molecules mode
+     * and in Macromolecules mode.
+     *
+     * Scenario:
+     * 1. Go to Macro mode - Flex
+     * 2. Load from file: carbon-label-doesnt-appear-in-180-degree-angle-on-macro-mode.ket
+     * 3. Click and hover mouse over any atom
+     *
+     * Version 3.12.0
+     */
+
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/carbon-label-doesnt-appear-in-180-degree-angle-on-macro-mode.ket',
+    );
+
+    const atom = getAtomLocator(page, { atomLabel: 'C' }).first();
+    await atom.waitFor({ state: 'visible' });
+    await atom.hover();
+
+    const hoverColorMicro = await atom.evaluate((element) => {
+      const target = (element as Element).querySelector(
+        'text, path, circle, ellipse, line, polyline, polygon',
+      ) as Element | null;
+      const node = target || element;
+      const style = window.getComputedStyle(node as Element);
+      return {
+        stroke: style.stroke,
+        fill: style.fill,
+        color: style.color,
+      };
+    });
+
+    await takeElementScreenshot(page, atom, { padding: 80 });
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+
+    const atomMacro = getAtomLocator(page, { atomLabel: 'C' }).first();
+    await atomMacro.waitFor({ state: 'visible' });
+    await atomMacro.hover();
+
+    const hoverColorMacro = await atomMacro.evaluate((element) => {
+      const target = (element as Element).querySelector(
+        'text, path, circle, ellipse, line, polyline, polygon',
+      ) as Element | null;
+      const node = target || element;
+      const style = window.getComputedStyle(node as Element);
+      return {
+        stroke: style.stroke,
+        fill: style.fill,
+        color: style.color,
+      };
+    });
+
+    expect(hoverColorMacro).toEqual(hoverColorMicro);
+    await takeElementScreenshot(page, atomMacro, { padding: 80 });
+  });
 });

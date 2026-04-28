@@ -7,7 +7,7 @@ import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas/helpers';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
@@ -22,7 +22,7 @@ const setupRectangle = async (page: Page) => {
     x: x + rectangleWidth,
     y: y + rectangleHeight,
   };
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await dragMouseTo(page, rectangleCoordinates.x, rectangleCoordinates.y);
   return rectangleCoordinates;
 };
@@ -53,7 +53,7 @@ async function resizeRectangle(page: Page) {
   await dragMouseTo(page, point3.x, point3.y);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await dragMouseTo(page, point5.x, point5.y);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
 }
 
 async function separetingAndMovingRecatngles(page: Page) {
@@ -68,7 +68,7 @@ async function separetingAndMovingRecatngles(page: Page) {
   await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
   await dragMouseTo(page, point3.x, point3.y);
   await takeEditorScreenshot(page);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
@@ -87,7 +87,7 @@ test.describe('Draw Rectangle', () => {
     // Test case: EPMLSOPKET-1972
 
     const rectangleCoordinates = await setupRectangle(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(rectangleCoordinates.x, rectangleCoordinates.y);
     await takeEditorScreenshot(page);
   });
@@ -99,7 +99,7 @@ test.describe('Draw Rectangle', () => {
     const point = { x: 645, y: 367 };
     const point1 = { x: 759, y: 183 };
     await setupRectangle(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
     await dragMouseTo(page, point1.x, point1.y);

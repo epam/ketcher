@@ -1,33 +1,18 @@
-name: Generate Playwright Test for Autotest Request Issue
+name: Create Playwright Test for Autotest Request Issue
 
 on:
   issues:
-    types: [opened, labeled]
-  repository_dispatch:
-    types: [autotest_request_created]
+    types: [labeled]
 
 jobs:
-  generate-test-script:
+  create-autotest-script:
     if: >
+      github.event.label.name == 'Run TA creation workflow' &&
       (
-        github.event_name == 'repository_dispatch' ||
-        (
-          contains(github.event.issue.labels.*.name, 'Autotests') &&
-          (github.event.action != 'labeled' || github.event.label.name == 'Autotests')
-        )
-      ) &&
-      (
-        (
-          github.event_name == 'repository_dispatch'
-        ) ||
-        (
-          github.event.action == 'opened' &&
-          contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.issue.author_association)
-        ) ||
-        (
-          github.event.action == 'labeled' &&
-          contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.sender.association)
-        )
+        github.event.issue.issue_type.name == 'Task' ||
+        github.event.issue.type.name == 'Task' ||
+        github.event.issue.issue_type == 'Task' ||
+        github.event.issue.type == 'Task'
       )
     runs-on: ubuntu-latest
     permissions:
@@ -46,18 +31,38 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
-            const issue = context.eventName === 'repository_dispatch'
-              ? context.payload.client_payload.issue
-              : context.payload.issue;
+            const issue = context.payload.issue;
             const apiKey = process.env.ANTHROPIC_API_KEY;
 
             if (!apiKey) {
               throw new Error('ANTHROPIC_API_KEY secret is not configured.');
             }
 
+            const hasAutotestLabel = issue.labels?.some((label) => {
+              if (typeof label === 'string') {
+                return label === 'Autotests';
+              }
+
+              return label?.name === 'Autotests';
+            });
+
+            if (!hasAutotestLabel) {
+              throw new Error('Autotest Request issue must have the "Autotests" label before PR generation can start.');
+            }
+
+            const checklistMatches = issue.body?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            if (checklistMatches.length === 0) {
+              throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
+            }
+
             const featureTitle = issue.title.replace(/^Autotests:\s*/i, '').trim();
             const featureDescription = issue.body?.trim() || '(none)';
-            const featureDirectory = `#${issue.number} - ${featureTitle.replace(/[\\/]/g, '-')}`;
+            const sanitizedFeatureDirectoryName = featureTitle
+              .replace(/[<>:"/\\|?*\x00-\x1F]/g, '-')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .replace(/[. ]+$/g, '') || `issue-${issue.number}`;
+            const featureDirectory = `#${issue.number} - ${sanitizedFeatureDirectoryName}`;
 
             const slug = featureTitle
               .toLowerCase()
@@ -78,14 +83,60 @@ jobs:
             Follow these Ketcher test conventions exactly:
             - Imports come from '@fixtures', '@utils', and page-object modules like '@tests/pages/molecules/LeftToolbar', '@tests/pages/molecules/canvas/AtomPropertiesDialog', etc.
             - Generated autotests must be based on existing page objects from 'ketcher-autotests/tests/pages' and helper functions from 'ketcher-autotests/tests/utils' whenever possible.
-            - If a required page object or helper function does not exist, create it as a new file under 'ketcher-autotests/tests/pages' or 'ketcher-autotests/tests/utils' instead of inlining raw selectors or duplicated logic in the spec.
+            - If a required page object or helper function does not exist, create it as a new file under 'ketcher-autotests/tests/pages'(page objects) or 'ketcher-autotests/tests/utils'(helper funtions) instead of inlining raw selectors or duplicated logic in the spec.
             - Always call 'await waitForPageInit(page)' at the start of each test or in beforeEach.
             - Use 'test.describe()' to group related tests and 'test.beforeEach()' for shared setup.
             - Interact with the canvas via helper functions (e.g. 'drawBenzeneRing(page)', 'getAtomLocator(page, {...})', 'selectAllStructuresOnCanvas(page)').
             - Use dialog page-objects for property dialogs (e.g. 'AtomPropertiesDialog(page).setOptions({...})').
             - Assert with standard Playwright 'expect()' - check visibility, values, or canvas state.
             - Each 'test()' name must be a plain English sentence describing the expected outcome.
-
+            - Autotests should contain (in addition to test code it self) following sections:
+              - Commented out section with link to test request issue, test description, test scenario steps and expected results section above test body
+              - Milestone version that feature belongs to
+              - Autotest title should consist of serial number, and check list item text
+              Example:
+              <example>
+              test('1. Check that additional monomer properties should be added to the monomer preview on canvas (in snake)', async ({
+                  SnakeCanvas: _,
+                }) => {
+                  /*
+                  * Test task: https://github.com/epam/ketcher/issues/8553
+                  * Description: Check that additional monomer properties should be added to the monomer preview on canvas (in snake)
+                  *
+                  * Scenario:
+                  *      1. Open Macromolecules canvas - Snake mode
+                  *      2. Load custom peptide structure from KET file to the canvas
+                  *      3. Hover the monomer and open the tooltip
+                  *      4. Verify that the IDT alias is displayed in the tooltip
+                  *      5. Verify that the AxoLabs alias is displayed in the tooltip
+                  *      6. Verify that the HELM alias is displayed in the tooltip
+                  *      7. Verify that the modification types are displayed in the tooltip
+                  *
+                  * Version 3.10
+                  */
+                  await openFileAndAddToCanvasAsNewProjectMacro(
+                  page,
+                  'KET/Chromium-popup/Monomer-preview/monomer-preview.ket',
+                  );
+                
+                const monomer = getMonomerLocator(page, { monomerAlias: 'test' });
+                  await monomer.hover();
+                
+                  const monomerPreviewTooltip = MonomerPreviewTooltip(page);
+                  await monomerPreviewTooltip.waitForBecomeVisible();
+                
+                  expect.soft(await monomerPreviewTooltip.getIDTAliases()).toEqual('test_IDT');
+                  expect
+                  .soft(await monomerPreviewTooltip.getAxoLabsAlias())
+                  .toEqual('test_AxoLabs');
+                  expect.soft(await monomerPreviewTooltip.getHELMAlias()).toEqual('test_HELM');
+                  expect
+                  .soft(await monomerPreviewTooltip.getModificationTypes())
+                  .toEqual(
+                  'Natural amino acid, Inversion, N-methylation, Side chain acetylation, Custom modidication',
+                  );
+                });
+              </example>
             Rules:
             - Output only valid JSON, with no markdown fences and no prose.
             - Return an object with this exact shape:
@@ -136,9 +187,14 @@ jobs:
               throw new Error('Anthropic response did not include generated output.');
             }
 
+            const normalizedGeneratedText = generatedText
+              .replace(/^```(?:json)?\s*/i, '')
+              .replace(/\s*```$/i, '')
+              .trim();
+
             let generatedFiles;
             try {
-              generatedFiles = JSON.parse(generatedText);
+              generatedFiles = JSON.parse(normalizedGeneratedText);
             } catch (error) {
               throw new Error(`Anthropic returned invalid generation JSON: ${error.message}`);
             }
@@ -179,8 +235,9 @@ jobs:
             fs.writeFileSync(filePath, generatedFiles.spec.trim(), 'utf8');
 
             for (const file of additionalFiles) {
-              fs.mkdirSync(path.dirname(file.path), { recursive: true });
-              fs.writeFileSync(file.path, file.content.trim(), 'utf8');
+              const resolvedFilePath = path.resolve(workspaceRoot, file.path);
+              fs.mkdirSync(path.dirname(resolvedFilePath), { recursive: true });
+              fs.writeFileSync(resolvedFilePath, file.content.trim(), 'utf8');
             }
 
             core.setOutput('branch_name', branchName);
@@ -190,6 +247,7 @@ jobs:
             core.setOutput('issue_title', issue.title);
 
       - name: Commit and push branch
+        if: ${{ steps.generate.outputs.branch_name != '' && steps.generate.outputs.file_path != '' }}
         env:
           BRANCH_NAME: ${{ steps.generate.outputs.branch_name }}
           FILE_PATH: ${{ steps.generate.outputs.file_path }}
@@ -204,6 +262,7 @@ jobs:
           git push origin "$BRANCH_NAME"
 
       - name: Create Pull Request and link to issue
+        if: ${{ steps.generate.outputs.branch_name != '' && steps.generate.outputs.issue_number != '' && steps.generate.outputs.issue_title != '' }}
         uses: actions/github-script@v7
         env:
           BRANCH_NAME: ${{ steps.generate.outputs.branch_name }}

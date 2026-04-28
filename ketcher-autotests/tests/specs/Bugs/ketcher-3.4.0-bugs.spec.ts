@@ -14,7 +14,7 @@ import {
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -514,7 +514,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/two-monomers-connected.ket',
     );
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
     await RotationTool(page).moveRotationHandleTo({
@@ -633,7 +633,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await RotationTool(page).moveRotationHandleTo({
       x: 20,
@@ -693,7 +693,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await RotationTool(page).moveRotationHandleTo({
       x: 20,
@@ -1090,7 +1090,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await RotationTool(page).flipVertically();
     await verifySVGExport(page);

@@ -1,4 +1,4 @@
-export enum ArrowTool {
+export enum ArrowType {
   ArrowOpenAngle = 'reaction-arrow-open-angle',
   ArrowFilledTriangle = 'reaction-arrow-filled-triangle',
   ArrowFilledBow = 'reaction-arrow-filled-bow',

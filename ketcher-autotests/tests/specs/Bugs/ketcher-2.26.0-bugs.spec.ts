@@ -7,7 +7,7 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
@@ -23,12 +23,14 @@ import {
   pasteFromClipboardByKeyboard,
   cutToClipboardByKeyboard,
   moveMouseAway,
+  getCachedBodyCenter,
   RxnFileFormat,
   SdfFileFormat,
   RdfFileFormat,
   MolFileFormat,
 } from '@utils';
-import { ArrowType, selectAllStructuresOnCanvas } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -57,7 +59,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -95,8 +97,16 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
-import { MultiTailedArrow } from '@tests/pages/common/canvas/MultiTailedArrow';
+
+async function removeTail(page: Page, tailName: string, index?: number) {
+  const tailElement = page.getByTestId(tailName);
+  const n = index ?? 0;
+  await waitForRender(page, async () => {
+    await ContextMenu(page, tailElement.nth(n)).click(
+      MultiTailedArrowOption.RemoveTail,
+    );
+  });
+}
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -177,7 +187,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     const applyButton = MiewDialog(page).applyButton;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({
       waitForApplyButtonIsEnabled: false,
@@ -698,25 +708,22 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Undo
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
-    const multiTailedArrow = await MultiTailedArrow(
-      page,
-      getArrowLocator(page, {
-        arrowType: ArrowType.MultiTailedArrow,
-        arrowId: 0,
-      }),
-    );
-    await multiTailedArrow.addTail();
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickInTheMiddleOfTheCanvas(page);
+    const middleOfTheScreen = await getCachedBodyCenter(page);
+    await waitForRender(page, async () => {
+      await ContextMenu(page, middleOfTheScreen).click(
+        MultiTailedArrowOption.AddNewTail,
+      );
+    });
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await multiTailedArrow.bottomTailMoveHandler.hover({ force: true });
+    await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
-
-    await multiTailedArrow.removeTail({ tailIndex: 0 });
+    await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

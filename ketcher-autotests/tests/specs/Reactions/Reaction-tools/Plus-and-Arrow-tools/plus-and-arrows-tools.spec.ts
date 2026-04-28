@@ -2,7 +2,7 @@
 import { test, expect, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -506,7 +506,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Save plus sign and arrow
      */
     await LeftToolbar(page).reactionPlusTool();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).cancel();
     await takeEditorScreenshot(page);
@@ -708,12 +708,12 @@ test.describe('Plus and Arrows tools ', () => {
     await LeftToolbar(page).selectArrowTool(
       ArrowTool.ArrowEquilibriumOpenAngle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
@@ -821,7 +821,7 @@ test.describe('Plus and Arrows tools ', () => {
       );
       await expect(button).toHaveAttribute('title', idToTitle[arrow]);
       await button.click();
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
     });
   }
 
@@ -841,8 +841,8 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Copy/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await clickInTheMiddleOfTheCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
@@ -859,8 +859,8 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Cut/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await clickInTheMiddleOfTheCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',

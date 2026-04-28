@@ -9,7 +9,7 @@ import {
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   clearCanvasByKeyboard,
   clickOnCanvas,
@@ -40,10 +40,10 @@ test.describe('Clear canvas', () => {
   test('Clear Canvas - Undo/Redo', async ({ page }) => {
     // Test case: EPMLSOPKET-1704
     await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-dif-prop.rxn');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -55,7 +55,7 @@ test.describe('Clear canvas', () => {
   }) => {
     // Test case:EPMLSOPKET-1705
     await openFileAndAddToCanvas(page, 'KET/ketcher.ket');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +74,7 @@ test.describe('Clear canvas', () => {
     const x = 500;
     const y = 250;
     await addTextBoxToCanvas(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('one two three');
     await TextEditorDialog(page).apply();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
@@ -92,7 +92,7 @@ test.describe('Clear canvas', () => {
   }) => {
     // Test case: EPMLSOPKET-1706
     await openFileAndAddToCanvas(page, 'SMILES/chain-with-r-group.smi');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).clearCanvas();

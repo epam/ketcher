@@ -12,7 +12,7 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -274,8 +274,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/three-different-multi-tail-arrows.ket',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -312,7 +312,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
       */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -329,7 +329,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -347,14 +347,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -369,7 +369,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await pageReloadMicro(page);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -1328,8 +1328,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     const shiftElement = 250;
     const newX = x + shiftElement;
-    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

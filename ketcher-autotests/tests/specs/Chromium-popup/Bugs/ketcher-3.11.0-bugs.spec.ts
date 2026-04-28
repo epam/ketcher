@@ -1061,6 +1061,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       HELMAlias: 'SugAlias',
     });
 
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
     await presetSection.setupPhosphate({
       atomIds: [8, 9, 10, 11, 12],
       bondIds: [8, 9, 10, 11],

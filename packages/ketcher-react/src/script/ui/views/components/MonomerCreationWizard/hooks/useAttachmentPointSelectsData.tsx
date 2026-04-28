@@ -35,6 +35,67 @@ const getAtomTypeDisplayLabel = (
   return label;
 };
 
+const getLeavingAtomOption = (
+  label: string,
+  implicitH = label === AtomLabel.O ? 1 : 0,
+): Option => ({
+  value: label,
+  label,
+  children: <>{getAtomTypeDisplayLabel(label, implicitH)}</>,
+});
+
+/**
+ * Builds the leaving-atom option list shared by both regular and readonly
+ * attachment points:
+ * - H and OH are always present (in that order)
+ * - If the current leaving atom differs from both, it is appended as a third option
+ */
+const buildLeavingAtomOptions = (
+  currentLabel: string,
+  currentImplicitH = currentLabel === AtomLabel.O ? 1 : 0,
+): { options: Option[]; currentOption: Option } => {
+  const isCurrentH = currentLabel === AtomLabel.H;
+  const isCurrentOH = currentLabel === AtomLabel.O && currentImplicitH === 1;
+
+  const options: Option[] = [
+    getLeavingAtomOption(AtomLabel.H, 0),
+    getLeavingAtomOption(AtomLabel.O),
+  ];
+
+  if (!isCurrentH && !isCurrentOH) {
+    options.push(getLeavingAtomOption(currentLabel, currentImplicitH));
+  }
+
+  const currentOption = options.find((opt) => {
+    if (opt.value === AtomLabel.H) return isCurrentH;
+    if (opt.value === AtomLabel.O) return isCurrentOH;
+    return opt.value === currentLabel;
+  }) as Option;
+
+  return { options, currentOption };
+};
+
+export const createReadonlyAttachmentPointSelectData = (
+  attachmentPointName: AttachmentPointName,
+  leavingAtomLabel: AtomLabel,
+): AttachmentPointSelectData => {
+  const currentNameOption = {
+    value: attachmentPointName,
+    label: attachmentPointName,
+  };
+  const {
+    options: leavingAtomOptions,
+    currentOption: currentLeavingAtomOption,
+  } = buildLeavingAtomOptions(leavingAtomLabel);
+
+  return {
+    nameOptions: [currentNameOption],
+    leavingAtomOptions,
+    currentNameOption,
+    currentLeavingAtomOption,
+  };
+};
+
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
@@ -77,65 +138,20 @@ export const useAttachmentPointSelectsData = (
   }));
 
   // Build atom type options for leaving group
-  // According to requirements:
-  // - H and OH should always be shown (in that order)
-  // - If current LGA is different from H and OH, add it as third option
   const currentLeavingAtomLabel = leavingAtom.label;
   const currentLeavingAtomImplicitH = leavingAtom.implicitH;
 
-  const isCurrentH = currentLeavingAtomLabel === AtomLabel.H;
-  const isCurrentOH =
-    currentLeavingAtomLabel === AtomLabel.O &&
-    currentLeavingAtomImplicitH === 1;
-
-  const leavingAtomOptions: Option[] = [
-    {
-      value: AtomLabel.H,
-      label: AtomLabel.H,
-      children: <>{AtomLabel.H}</>,
-    },
-    {
-      value: AtomLabel.O,
-      label: AtomLabel.O,
-      children: (
-        <>
-          {AtomLabel.O}
-          {AtomLabel.H}
-        </>
-      ),
-    },
-  ];
-
-  // Add current atom type as third option if it's different from H and OH
-  if (!isCurrentH && !isCurrentOH) {
-    leavingAtomOptions.push({
-      value: currentLeavingAtomLabel,
-      label: currentLeavingAtomLabel,
-      children: (
-        <>
-          {getAtomTypeDisplayLabel(
-            currentLeavingAtomLabel,
-            currentLeavingAtomImplicitH,
-          )}
-        </>
-      ),
-    });
-  }
+  const {
+    options: leavingAtomOptions,
+    currentOption: currentLeavingAtomOption,
+  } = buildLeavingAtomOptions(
+    currentLeavingAtomLabel,
+    currentLeavingAtomImplicitH,
+  );
 
   const currentNameOption = nameOptions.find(
     (option) => option.value === attachmentPointName,
   );
-
-  // Find current leaving atom option - match by label
-  const currentLeavingAtomOption = leavingAtomOptions.find((option) => {
-    if (option.value === AtomLabel.H) {
-      return isCurrentH;
-    }
-    if (option.value === AtomLabel.O) {
-      return isCurrentOH;
-    }
-    return option.value === currentLeavingAtomLabel;
-  });
 
   return {
     nameOptions,

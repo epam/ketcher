@@ -18,21 +18,27 @@ describe('Multiple repeating S-groups limitations should be in [1, 200]', () => 
     const { input } = setup();
     fireEvent.change(input, { target: { value: '201' } });
     fireEvent.mouseEnter(input);
-    expect(screen.getByText('must be <= 200')).toBeInTheDocument();
+    expect(
+      screen.getByText('must be less than or equal to 200'),
+    ).toBeInTheDocument();
   });
 
   it('should trigger error when Repeat count < 1', () => {
     const { input } = setup();
     fireEvent.change(input, { target: { value: '0' } });
     fireEvent.mouseEnter(input);
-    expect(screen.getByText('must be >= 1')).toBeInTheDocument();
+    expect(
+      screen.getByText('must be greater than or equal to 1'),
+    ).toBeInTheDocument();
   });
 
   it('should not trigger error when Repeat count = 1', () => {
     const { input } = setup();
     fireEvent.change(input, { target: { value: '1' } });
     fireEvent.mouseEnter(input);
-    expect(screen.queryByText('must be >= 1')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('must be greater than or equal to 1'),
+    ).not.toBeInTheDocument();
   });
 });
 

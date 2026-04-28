@@ -8,6 +8,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
@@ -262,6 +263,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Submit monomer creation
     await dialog.submit();
+
+    await clickOnCanvas(page, 0, 0);
 
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
@@ -538,6 +541,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 5: Submit wizard
     await dialog.submit();
 
+    await clickOnCanvas(page, 0, 0);
+
     // Visual verification: take a screenshot where bad valence (if present) is visible.
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
       paddingWidth: 180,
@@ -676,6 +681,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();
+
+    await clickOnCanvas(page, 0, 0);
 
     await takeEditorScreenshot(page);
   });

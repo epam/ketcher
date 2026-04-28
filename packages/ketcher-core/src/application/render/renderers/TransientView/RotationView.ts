@@ -30,6 +30,10 @@ export type RotationViewParams = {
   rotationAngle?: number;
   isRotating?: boolean;
   cursor?: Vec2;
+  // Direction (in radians, measured the same way as Math.atan2) from the
+  // rotation center to the rotation handle at the moment rotation started.
+  // The protractor uses this as its 0°. Defaults to straight up (-π/2).
+  startAngle?: number;
 };
 
 type RotationHandleEvent = {
@@ -137,6 +141,7 @@ export class RotationView extends TransientView {
       rotationAngle = 0,
       isRotating = false,
       cursor,
+      startAngle: startAngleParam,
     } = params;
 
     if (!isRotating || !RotationView.wasRotating) {
@@ -354,8 +359,11 @@ export class RotationView extends TransientView {
           .attr('stroke-dasharray', '4,4')
           .attr('style', 'pointer-events: none');
 
-        // Draw protractor degree ticks and labels (as in rotate-controller)
-        const startAngle = -Math.PI / 2;
+        // Draw protractor degree ticks and labels (as in rotate-controller).
+        // Use the click direction from the rotation tool so the 0° label,
+        // dashed handle line, and handle stay aligned even after the rotation
+        // center has been moved.
+        const startAngle = startAngleParam ?? -Math.PI / 2;
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const predefinedDegrees = [
           0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60,

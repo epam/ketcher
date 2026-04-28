@@ -2131,7 +2131,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       }),
     );
     await takeEditorScreenshot(page);
-    await multiTailedArrow1.getHeadMoveHandler().hover();
+    await multiTailedArrow1.getHeadResizeHandler().hover();
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2159,7 +2159,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       }),
     );
     await takeEditorScreenshot(page);
-    await multiTailedArrow1.getHeadMoveHandler().hover();
+    await multiTailedArrow1.getHeadResizeHandler().hover();
     await dragMouseTo(page, 800, 500);
     await takeEditorScreenshot(page);
     await verifyFileExport(

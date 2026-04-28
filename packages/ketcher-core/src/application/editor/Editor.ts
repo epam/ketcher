@@ -637,8 +637,16 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      let isPropagationStopped = false;
+      const originalStopPropagation = event.stopPropagation.bind(event);
+      event.stopPropagation = () => {
+        isPropagationStopped = true;
+        originalStopPropagation();
+      };
+
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) {
+
+      if (!isPropagationStopped) {
         this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });

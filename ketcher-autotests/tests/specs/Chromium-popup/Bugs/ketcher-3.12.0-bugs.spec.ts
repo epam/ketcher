@@ -716,7 +716,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    const ketWithSelectedAtom = await readFileContent('KET/example.ket');
+    const ketWithSelectedAtom = await readFileContent('KET/selected-atoms.ket');
 
     // Test setMolecule preserves selections
     await setMolecule(page, ketWithSelectedAtom);

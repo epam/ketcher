@@ -25,6 +25,7 @@ export type EditorTheme = {
       canvas: string;
       primary: string;
       secondary: string;
+      bondAttachmentPoint: string;
       overlay: string;
     };
     border: {

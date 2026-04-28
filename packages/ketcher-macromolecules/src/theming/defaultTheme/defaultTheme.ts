@@ -68,6 +68,7 @@ export const defaultTheme: EditorTheme = {
       canvas: '#F5F5F5',
       primary: '#FFFFFF',
       secondary: '#F8FEFF',
+      bondAttachmentPoint: '#CDF1FD',
       overlay: 'rgba(94,94,94,.8)',
     },
     border: {

@@ -29,12 +29,12 @@ export const AttachmentPointName = styled.p<AttachmentPointNameProps>(
     lineHeight: '12px',
     borderRadius: '4px',
     color: inBond
-      ? theme.ketcher.color.button.text.primary
+      ? theme.ketcher.color.text.primary
       : connected
       ? '#B4B9D6'
       : theme.ketcher.color.text.primary,
     backgroundColor: inBond
-      ? theme.ketcher.color.button.primary.active
+      ? theme.ketcher.color.background.bondAttachmentPoint
       : 'transparent',
   }),
 );

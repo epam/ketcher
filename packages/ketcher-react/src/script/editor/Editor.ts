@@ -1335,7 +1335,6 @@ class Editor implements KetcherEditor {
       naturalAnalogShort: naturalAnalogueToUse,
       modificationTypes,
       aliasHELM,
-      // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
       attachmentPoints,
@@ -1357,11 +1356,38 @@ class Editor implements KetcherEditor {
     const monomerItem =
       ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
     const [Monomer] = monomerFactory(monomerItem);
-    const monomerBBox = data.structure.getCoordBoundingBoxObj();
-    const monomerPosition = new Vec2(
-      (monomerBBox.min.x + monomerBBox.max.x) / 2,
-      (monomerBBox.min.y + monomerBBox.max.y) / 2,
-    );
+
+    // Compute sgroup.pp as the average of attachment-point atom positions so
+    // that collapsing the monomer keeps the connecting bond at the same
+    // geometric location (direction and length unchanged).
+    // Using the bounding-box centre caused the bond to visually jump because
+    // the attachment atom is typically off-centre inside the selection.
+    const attachmentAtomPositions: Vec2[] = [];
+    sortedAttachmentPointsData.forEach(([attachmentAtomId]) => {
+      const atom = data.structure.atoms.get(attachmentAtomId);
+      if (atom?.pp) {
+        attachmentAtomPositions.push(atom.pp);
+      }
+    });
+
+    let monomerPosition: Vec2;
+    if (attachmentAtomPositions.length > 0) {
+      const sum = attachmentAtomPositions.reduce(
+        (acc, pos) => new Vec2(acc.x + pos.x, acc.y + pos.y),
+        new Vec2(0, 0),
+      );
+      monomerPosition = new Vec2(
+        sum.x / attachmentAtomPositions.length,
+        sum.y / attachmentAtomPositions.length,
+      );
+    } else {
+      const monomerBBox = data.structure.getCoordBoundingBoxObj();
+      monomerPosition = new Vec2(
+        (monomerBBox.min.x + monomerBBox.max.x) / 2,
+        (monomerBBox.min.y + monomerBBox.max.y) / 2,
+      );
+    }
+
     const monomer = new Monomer(monomerItem, monomerPosition);
 
     return {

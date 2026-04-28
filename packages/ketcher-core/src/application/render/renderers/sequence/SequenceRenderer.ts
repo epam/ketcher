@@ -1257,9 +1257,13 @@ export class SequenceRenderer {
     );
   }
 
-  public static clear() {
+  private static clearBondRenderers() {
     this.sequenceBondRenderers.forEach((bondRenderer) => bondRenderer.remove());
     this.sequenceBondRenderers.clear();
+  }
+
+  public static clear() {
+    this.clearBondRenderers();
     this.sequenceViewModel?.forEachNode(({ twoStrandedNode }) => {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();

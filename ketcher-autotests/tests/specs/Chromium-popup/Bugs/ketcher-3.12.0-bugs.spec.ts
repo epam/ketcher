@@ -33,6 +33,10 @@ import {
   takeTopToolbarScreenshot,
   setMolecule,
 } from '@utils';
+import {
+  pasteFromClipboardAndOpenAsNewProject,
+  readFileContent,
+} from '@utils/files/readFile';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -670,27 +674,20 @@ test.describe('Bugs: ketcher-3.12.0', () => {
       arrowType: Arrows.OpenAngle,
     }).first();
     await arrow.waitFor({ state: 'visible' });
-    const arrowInitialBox = await arrow.boundingBox();
-    expect(arrowInitialBox).not.toBeNull();
 
-    const arrowInitialX = (arrowInitialBox!.x +
-      arrowInitialBox!.width / 2) as number;
-    const arrowInitialY = (arrowInitialBox!.y +
-      arrowInitialBox!.height / 2) as number;
-
-    await page.mouse.move(arrowInitialX, arrowInitialY);
-    await dragMouseTo(page, arrowInitialX + 120, arrowInitialY + 70);
+    await page.mouse.move(screenCenter.x, screenCenter.y);
+    await dragMouseTo(page, screenCenter.x + 120, screenCenter.y + 70);
 
     const arrowMovedBox = await arrow.boundingBox();
     expect(arrowMovedBox).not.toBeNull();
     const arrowMovedX = arrowMovedBox!.x + arrowMovedBox!.width / 2;
-    expect(arrowMovedX).toBeGreaterThan(arrowInitialX + 40);
+    expect(arrowMovedX).toBeGreaterThan(screenCenter.x + 40);
 
     await CommonTopLeftToolbar(page).undo();
     const arrowAfterUndoBox = await arrow.boundingBox();
     expect(arrowAfterUndoBox).not.toBeNull();
     const arrowAfterUndoX = arrowAfterUndoBox!.x + arrowAfterUndoBox!.width / 2;
-    expect(Math.abs(arrowAfterUndoX - arrowInitialX)).toBeLessThan(10);
+    expect(Math.abs(arrowAfterUndoX - screenCenter.x)).toBeLessThan(10);
 
     await CommonTopLeftToolbar(page).redo();
     const arrowAfterRedoBox = await arrow.boundingBox();
@@ -703,7 +700,8 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     page,
   }) => {
     /**
-     * Test for: https://github.com/epam/ketcher/issues/8898
+     * Test case: https://github.com/epam/ketcher/issues/8898
+     * Bug: https://github.com/epam/ketcher/issues/8898
      *
      * Description: When calling setMolecule or addFragment API with a KET file
      * containing selected atoms and bonds, they are not selected on the canvas.
@@ -718,40 +716,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    const ketWithSelectedAtom = JSON.stringify({
-      ket_version: '2.0.0',
-      root: {
-        nodes: [
-          {
-            $ref: 'mol0',
-          },
-        ],
-        connections: [],
-        templates: [],
-      },
-      mol0: {
-        type: 'molecule',
-        atoms: [
-          {
-            label: 'C',
-            location: [0, 0, 0],
-            selected: true,
-          },
-          {
-            label: 'O',
-            location: [1.5, 0, 0],
-            selected: true,
-          },
-        ],
-        bonds: [
-          {
-            type: 1,
-            atoms: [0, 1],
-            selected: true,
-          },
-        ],
-      },
-    });
+    const ketWithSelectedAtom = await readFileContent('KET/example.ket');
 
     // Test setMolecule preserves selections
     await setMolecule(page, ketWithSelectedAtom);
@@ -798,5 +763,50 @@ test.describe('Bugs: ketcher-3.12.0', () => {
 
     expect(selectionAfterAddFragment).toBeDefined();
     expect(selectionAfterAddFragment?.atoms).toContain(2);
+  });
+
+  test('Case 21 — Pt bad valence indication is preserved on Macromolecules canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/8837
+     * Bug: https://github.com/epam/ketcher/issues/8837
+     *
+     * Description: Pt bad valence underline must be shown in Macromolecules mode
+     * as it is shown in Molecules mode.
+     *
+     * Steps:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Paste SMILES: [Pt](C)(C)(C)(C)C
+     * 3. Verify bad valence underline is shown on the Pt atom
+     * 4. Switch to Macromolecules mode
+     * 5. Verify the bad valence underline is still shown on the Pt atom
+     *
+     * Version 3.12.0
+     */
+
+    await pasteFromClipboardAndOpenAsNewProject(page, '[Pt](C)(C)(C)(C)C');
+
+    const ptAtom = getAtomLocator(page, { atomLabel: 'Pt' }).first();
+    await ptAtom.waitFor({ state: 'visible' });
+
+    const ptBadValenceLine = ptAtom.locator('line');
+    await expect(ptBadValenceLine).toHaveCount(1);
+    const strokeBeforeSwitch = await ptBadValenceLine
+      .first()
+      .getAttribute('stroke');
+    expect(strokeBeforeSwitch?.toLowerCase()).toBe('#f00');
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    const ptAtomMacro = getAtomLocator(page, { atomLabel: 'Pt' }).first();
+    await ptAtomMacro.waitFor({ state: 'visible' });
+
+    const ptBadValenceLineMacro = ptAtomMacro.locator('line');
+    await expect(ptBadValenceLineMacro).toHaveCount(1);
+    const strokeAfterSwitch = await ptBadValenceLineMacro
+      .first()
+      .getAttribute('stroke');
+    expect(strokeAfterSwitch?.toLowerCase()).toBe('#f00');
   });
 });

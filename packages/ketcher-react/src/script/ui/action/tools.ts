@@ -17,6 +17,7 @@
 import {
   RxnArrowMode,
   SimpleObjectMode,
+  Struct,
   findStereoAtoms,
   IMAGE_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
@@ -29,7 +30,19 @@ import { toBondType } from '../data/convert/structconv';
 import { isFlipDisabled } from './flips';
 import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
 
-const toolActions = {
+export interface ToolAction {
+  title?: string;
+  shortcut?: string | string[];
+  enabledInViewOnly?: boolean;
+  action?: {
+    tool: string;
+    opts?: string | number | Record<string, unknown>;
+  };
+  disabled?: (editor: Record<string, unknown>) => unknown;
+  hidden?: (options: Record<string, unknown>) => boolean;
+}
+
+const toolActions: Record<string, ToolAction> = {
   hand: {
     title: 'Hand tool',
     enabledInViewOnly: true,
@@ -77,12 +90,16 @@ const toolActions = {
     shortcut: 'Alt+e',
     title: 'Stereochemistry',
     action: { tool: 'enhancedStereo' },
-    disabled: (editor) =>
-      editor.isMonomerCreationWizardActive ||
-      findStereoAtoms(
-        editor?.struct(),
-        Array.from(editor?.struct().atoms.keys()),
-      ).length === 0,
+    disabled: (editor) => {
+      const editorStruct = (editor.struct as () => Struct)?.();
+      return (
+        editor.isMonomerCreationWizardActive ||
+        findStereoAtoms(
+          editorStruct,
+          Array.from(editorStruct?.atoms.keys() ?? []),
+        ).length === 0
+      );
+    },
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {
@@ -399,7 +416,7 @@ const toolActions = {
   },
 };
 
-const bondCuts = {
+const bondCuts: Record<string, string> = {
   single: '1',
   double: '2',
   triple: '3',
@@ -411,24 +428,32 @@ const bondCuts = {
   aromatic: '4',
 };
 
-const typeSchema = bondSchema.properties.type;
+const typeSchema = bondSchema.properties.type as {
+  enum: string[];
+  enumNames: string[];
+};
 
-const monomerWizardDisallowedBondTypes = new Set(
+const monomerWizardDisallowedBondTypes = new Set<string>(
   MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
 );
 
-export default typeSchema.enum.reduce((res, type, i) => {
-  res[`bond-${type}`] = {
-    title: `${typeSchema.enumNames[i]} Bond`,
-    shortcut: bondCuts[type],
-    action: {
-      tool: 'bond',
-      opts: toBondType(type),
-    },
-    hidden: (options) => isHidden(options, `bond-${type}`),
-    ...(monomerWizardDisallowedBondTypes.has(type) && {
-      disabled: (editor) => editor.isMonomerCreationWizardActive,
-    }),
-  };
-  return res;
-}, toolActions);
+export default typeSchema.enum.reduce(
+  (res: Record<string, ToolAction>, type: string, i: number) => {
+    res[`bond-${type}`] = {
+      title: `${typeSchema.enumNames[i]} Bond`,
+      shortcut: bondCuts[type],
+      action: {
+        tool: 'bond',
+        opts: toBondType(type),
+      },
+      hidden: (options: Record<string, unknown>) =>
+        isHidden(options, `bond-${type}`),
+      ...(monomerWizardDisallowedBondTypes.has(type) && {
+        disabled: (editor: Record<string, unknown>) =>
+          editor.isMonomerCreationWizardActive,
+      }),
+    };
+    return res;
+  },
+  toolActions,
+);

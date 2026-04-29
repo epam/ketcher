@@ -53,4 +53,9 @@ export class RxnPlusMove extends BaseOperation {
     inverted.data = this.data;
     return inverted;
   }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
+  }
 }

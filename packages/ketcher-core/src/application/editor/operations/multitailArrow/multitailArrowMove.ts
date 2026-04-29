@@ -28,4 +28,8 @@ export class MultitailArrowMove extends BaseOperation {
   invert() {
     return new MultitailArrowMove(this.id, this.offset.negated());
   }
+
+  isDummy() {
+    return this.offset.x === 0 && this.offset.y === 0;
+  }
 }

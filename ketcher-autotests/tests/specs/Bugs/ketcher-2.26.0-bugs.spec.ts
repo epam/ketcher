@@ -85,6 +85,7 @@ import {
   MacroBondOption,
   MicroAtomOption,
   MicroBondOption,
+  MultiTailedArrowOption,
   QueryAtomOption,
 } from '@tests/pages/constants/contextMenu/Constants';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';

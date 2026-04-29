@@ -21,18 +21,18 @@ import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 import { SUPERATOM_CLASS } from 'ketcher-core';
 import { AnyAction } from 'redux';
 
-type ModalFormErrors = Record<string, unknown>;
+export type ModalFormErrors = Record<string, unknown>;
 
-type MoleculeErrors = Record<string, string>;
+export type MoleculeErrors = Record<string, string>;
 
-interface ModalFormState<TResult = Record<string, unknown>> {
+export interface ModalFormState<TResult = Record<string, unknown>> {
   errors: ModalFormErrors;
   valid?: boolean;
   result?: TResult;
   moleculeErrors?: MoleculeErrors;
 }
 
-type ModalFormsState = Record<string, ModalFormState>;
+export type ModalFormsState = Record<string, ModalFormState>;
 
 interface UpdateFormAction<TData = Partial<ModalFormState>> extends AnyAction {
   type: 'UPDATE_FORM';

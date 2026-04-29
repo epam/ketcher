@@ -20,6 +20,8 @@ import {
   PresetIcon,
   PresetContainer,
   PresetName,
+  PhosphatePositionIcon,
+  PhosphatePositionIconWrapper,
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
@@ -62,16 +64,23 @@ const PresetPreview = ({ className }: Props) => {
   });
 
   const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
-  const phosphatePositionText =
+  // Resolve the phosphate-position icon (matches the icon used in the RNA
+  // Builder's phosphate position selector). `left` => 5'-end (icon with the
+  // colored phosphate on the left), `right` => 3'-end.
+  const phosphatePositionIconName =
     preview.phosphatePosition === 'left'
-      ? "5'"
+      ? 'preset-left-phosphate'
       : preview.phosphatePosition === 'right'
-      ? "3'"
+      ? 'preset-right-phosphate'
       : undefined;
-  const getMonomerNameText = (monomer: MonomerItemType, index: number) =>
-    index === PHOSPHATE_INDEX && phosphatePositionText
-      ? `(${monomer.props.Name}, ${phosphatePositionText})`
-      : `(${monomer.props.Name})`;
+  const phosphatePositionTooltip =
+    preview.phosphatePosition === 'left'
+      ? "Phosphate on the left (5')"
+      : preview.phosphatePosition === 'right'
+      ? "Phosphate on the right (3')"
+      : undefined;
+  const getMonomerNameText = (monomer: MonomerItemType) =>
+    `(${monomer.props.Name})`;
 
   return (
     <PresetContainer
@@ -87,9 +96,16 @@ const PresetPreview = ({ className }: Props) => {
           <PresetMonomerRow key={monomer.props.id}>
             <PresetIcon name={isChemChain ? 'chem' : icons[index]} />
             <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-            <PresetMonomerName>
-              {getMonomerNameText(monomer, index)}
-            </PresetMonomerName>
+            <PresetMonomerName>{getMonomerNameText(monomer)}</PresetMonomerName>
+            {index === PHOSPHATE_INDEX && phosphatePositionIconName && (
+              <PhosphatePositionIconWrapper
+                title={phosphatePositionTooltip}
+                data-testid="preset-preview-phosphate-position-icon"
+                data-phosphate-position={preview.phosphatePosition}
+              >
+                <PhosphatePositionIcon name={phosphatePositionIconName} />
+              </PhosphatePositionIconWrapper>
+            )}
           </PresetMonomerRow>
         ) : null,
       )}

@@ -42,7 +42,14 @@ describe('PresetPreview', () => {
     expect(preview).toHaveAttribute('data-axolabs', 'A');
     expect(screen.getByText('AxoLabs:')).toBeInTheDocument();
     expect(screen.getByText('A')).toBeInTheDocument();
-    expect(screen.getByText("(Phosphate, 3')")).toBeInTheDocument();
+    expect(screen.getByText('(Phosphate)')).toBeInTheDocument();
+    const phosphatePositionIcon = screen.getByTestId(
+      'preset-preview-phosphate-position-icon',
+    );
+    expect(phosphatePositionIcon).toHaveAttribute(
+      'data-phosphate-position',
+      'right',
+    );
   });
 
   it("shows the 5' phosphate position in library previews", () => {
@@ -74,6 +81,13 @@ describe('PresetPreview', () => {
       <Provider store={store}>{withThemeProvider(<PresetPreview />)}</Provider>,
     );
 
-    expect(screen.getByText("(Phosphate, 5')")).toBeInTheDocument();
+    expect(screen.getByText('(Phosphate)')).toBeInTheDocument();
+    const phosphatePositionIcon = screen.getByTestId(
+      'preset-preview-phosphate-position-icon',
+    );
+    expect(phosphatePositionIcon).toHaveAttribute(
+      'data-phosphate-position',
+      'left',
+    );
   });
 });

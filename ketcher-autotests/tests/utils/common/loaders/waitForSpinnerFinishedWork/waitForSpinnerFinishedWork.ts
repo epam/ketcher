@@ -5,12 +5,12 @@ import { waitForRender } from '../waitForRender';
 
 export const waitForSpinnerFinishedWork = async (
   page: Page,
-  callback: VoidFunction,
+  callback: () => Promise<void>,
   timeout = 250,
 ) => {
   const loadingSpinner = page.getByTestId('loading-spinner');
 
-  callback();
+  await callback();
   do {
     await page.waitForTimeout(200);
     await loadingSpinner.first().waitFor({ state: 'detached' });

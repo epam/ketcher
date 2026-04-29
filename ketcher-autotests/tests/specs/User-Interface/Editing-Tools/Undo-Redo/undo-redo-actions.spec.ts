@@ -3,7 +3,7 @@
 import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
   copyToClipboardByKeyboard,
@@ -77,7 +77,7 @@ test.describe('Undo/Redo Actions', () => {
     after Redo it is deleted again.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).erase();
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -102,7 +102,7 @@ test.describe('Undo/Redo Actions', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Chlorine);
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -125,7 +125,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the property mark is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -155,7 +155,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the property mark is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -183,7 +183,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -206,7 +206,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
@@ -228,7 +228,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Triple bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
@@ -250,7 +250,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Chain is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).chain();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
@@ -274,7 +274,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Up stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -297,7 +297,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Down stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
     await getAtomLocator(page, { atomLabel: 'C' }).first().click({
@@ -320,7 +320,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Up/Down stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -343,7 +343,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double Cis/Trans stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -366,7 +366,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Any Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -389,7 +389,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -412,7 +412,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single/Double Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -435,7 +435,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single/Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -458,7 +458,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double/Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -593,7 +593,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the R-Group Label tool is restored;
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -614,7 +614,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the R-Group Fragment tool is restored;
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -818,7 +818,7 @@ test.describe('Undo/Redo Actions', () => {
     becomes enabled and the Undo button becomes disabled.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
@@ -834,7 +834,7 @@ test.describe('Undo/Redo Actions', () => {
     Hover mouse cursor over of 'Benzene' and press CTRL+Z (Undo)
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
@@ -860,7 +860,7 @@ test.describe('Undo/Redo Actions', () => {
       ResetToSelectToolOption.Off,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

@@ -700,8 +700,15 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints, problematicAttachmentPoints } =
-        render.monomerCreationState;
+      const {
+        assignedAttachmentPoints: allAssignedAttachmentPoints,
+        visibleAssignedAttachmentPoints,
+        problematicAttachmentPoints,
+        connectionAttachmentPoints,
+      } = render.monomerCreationState;
+      // Use the restricted set when a component tab is active, otherwise show all.
+      const assignedAttachmentPoints =
+        visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -910,6 +917,78 @@ class ReAtom extends ReObject {
             ps,
             false,
           );
+        }
+
+        // Render connection (readonly) attachment points — blue circle around
+        // the connection atom, same visual style as regular attachment atoms
+        // but without an R-label. Hover syncs with the panel row.
+        if (connectionAttachmentPoints) {
+          const isConnectionAtom = Array.from(
+            connectionAttachmentPoints.values(),
+          ).some(([connectionAtomId]) => connectionAtomId === aid);
+
+          if (isConnectionAtom) {
+            // Draw the same blue outline ring used for regular attachment atoms
+            const ringPath = this.makeHighlightePlate(
+              restruct,
+              {
+                fill: 'none',
+                stroke: '#4da3f8',
+                'stroke-width': '2px',
+              },
+              -4,
+            );
+            restruct.addReObjectPath(LayerMap.atom, this.visel, ringPath);
+
+            // Invisible hit-area circle for hover detection, centred on the
+            // atom's screen-space position (ps is already computed above)
+            const hitArea = render.paper.circle(ps.x, ps.y, 10).attr({
+              fill: '#4da3f8',
+              stroke: 'none',
+              opacity: 0,
+              cursor: 'pointer',
+            });
+
+            // Find the AP name(s) for this connection atom to drive panel sync
+            const connectionApNames = Array.from(
+              connectionAttachmentPoints.entries(),
+            )
+              .filter(([, [caid]]) => caid === aid)
+              .map(([apName]) => apName);
+
+            hitArea.hover(
+              () => {
+                hitArea.attr({ opacity: 0.15 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'highlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
+              },
+              () => {
+                hitArea.attr({ opacity: 0 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'resetHighlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
+              },
+            );
+
+            restruct.addReObjectPath(
+              LayerMap.data,
+              this.visel,
+              hitArea,
+              ps,
+              false,
+            );
+          }
         }
       }
     }

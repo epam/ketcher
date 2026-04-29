@@ -2,7 +2,7 @@
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   waitForPageInit,
   clickOnCanvas,
@@ -41,7 +41,7 @@ test.describe('Open Ketcher', () => {
      * Description:  R-Fragment-Group dialog opening
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -54,7 +54,7 @@ test.describe('Open Ketcher', () => {
      * Description: R-Fragment-Group UI Verification
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -66,7 +66,7 @@ test.describe('Open Ketcher', () => {
      * Description:  R-Fragment-Group dialog cancelling
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -80,7 +80,7 @@ test.describe('Open Ketcher', () => {
      * Description: Create Single R-Fragment-Group member
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -95,7 +95,7 @@ test.describe('Open Ketcher', () => {
      * Description: Change R-Group definition for single R-Group member
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -111,7 +111,7 @@ test.describe('Open Ketcher', () => {
      * Description: Change R-Group definition for single R-Group member
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
@@ -163,7 +163,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/R-fragment-structure.mol',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'R#' }).click({
       force: true,
@@ -182,7 +182,7 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/R-fragment-structure.mol',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'R#' }).click({
       force: true,
@@ -222,7 +222,7 @@ test.describe('Open Ketcher', () => {
      * Description: Define a structure with attachment points as R-Group member
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await setAttachmentPoints(
       page,

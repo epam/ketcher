@@ -2,7 +2,7 @@
 import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   waitForPageInit,
   mapTwoAtoms,
@@ -73,7 +73,7 @@ test.describe('Mapping Tools', () => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-rection-benz.rxn');
     await CommonLeftToolbar(page).erase();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Click atoms to map atoms of reactants or products', async ({
@@ -98,7 +98,7 @@ test.describe('Mapping Tools', () => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
@@ -111,7 +111,7 @@ test.describe('Mapping Tools', () => {
   test.describe('Mapping reactions', () => {
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/mapped-reaction.rxn');
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
     });
 
     test('Remove the reaction components', async ({ page }) => {

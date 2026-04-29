@@ -41,6 +41,10 @@ export type RnaComponentAtoms = Map<
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
+  // display to the active RNA component tab). When undefined, all assigned
+  // attachment points are displayed.
+  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
@@ -50,6 +54,8 @@ export type MonomerCreationState = {
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
   isRnaPresetMode?: boolean;
+  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
 } | null;
 
 export class Render {

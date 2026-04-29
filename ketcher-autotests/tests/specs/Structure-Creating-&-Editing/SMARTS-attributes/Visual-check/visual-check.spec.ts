@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -30,7 +30,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await BottomToolbar(page).cyclooctane();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
     await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).dblclick({
       force: true,
@@ -101,7 +101,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
       force: true,
@@ -232,7 +232,7 @@ test.describe('Checking if atoms are displayed correctly', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
   });
 

@@ -27,10 +27,13 @@ type Props = {
   onClose: () => void;
 };
 
-const ALL_ENABLED: PresetPhosphateFilter = {
-  fivePrime: true,
-  threePrime: true,
-  noPhosphate: true,
+// "Reset all" returns the filter to its default state. Per spec 7.3 the
+// default is "all options off"; per spec 7.4 this is equivalent to "all on"
+// (both mean no filtering is applied).
+const DEFAULT_FILTER: PresetPhosphateFilter = {
+  fivePrime: false,
+  threePrime: false,
+  noPhosphate: false,
 };
 
 export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
@@ -69,7 +72,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   };
 
   const handleResetAll = () => {
-    setDraftFilter(ALL_ENABLED);
+    setDraftFilter(DEFAULT_FILTER);
   };
 
   const handleSet = () => {

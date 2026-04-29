@@ -25,7 +25,11 @@ import {
   RnaPhosphatePosition,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
-import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
+import {
+  FAVORITE_ITEMS_UNIQUE_KEYS,
+  MonomerGroups,
+  PRESET_PHOSPHATE_FILTER_STORAGE_KEY,
+} from 'src/constants';
 import {
   deleteCachedCustomRnaPreset,
   setCachedCustomRnaPreset,
@@ -52,11 +56,31 @@ export type RnaBuilderItem =
 // Filter applied to RNA presets in the library based on the position of the
 // phosphate group in the preset. Each flag enables one of three buckets:
 // presets with phosphate on the 5' end, on the 3' end, or without phosphate.
+// Per spec: the "all on" and "all off" states are semantically equivalent
+// (both display every preset); the default state is "all off".
 export interface PresetPhosphateFilter {
   fivePrime: boolean;
   threePrime: boolean;
   noPhosphate: boolean;
 }
+
+// Read the persisted filter (if any) from localStorage. Falls back to the
+// default "all off" state defined by the spec.
+const readPersistedPresetPhosphateFilter = (): PresetPhosphateFilter => {
+  const stored: unknown = localStorageWrapper.getItem(
+    PRESET_PHOSPHATE_FILTER_STORAGE_KEY,
+  );
+  if (
+    stored &&
+    typeof stored === 'object' &&
+    typeof (stored as PresetPhosphateFilter).fivePrime === 'boolean' &&
+    typeof (stored as PresetPhosphateFilter).threePrime === 'boolean' &&
+    typeof (stored as PresetPhosphateFilter).noPhosphate === 'boolean'
+  ) {
+    return stored as PresetPhosphateFilter;
+  }
+  return { fivePrime: false, threePrime: false, noPhosphate: false };
+};
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
@@ -102,11 +126,7 @@ const initialState: IRnaBuilderState = {
   uniqueNameError: '',
   invalidPresetError: '',
   activePresetForContextMenu: null,
-  presetPhosphateFilter: {
-    fivePrime: true,
-    threePrime: true,
-    noPhosphate: true,
-  },
+  presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
@@ -159,6 +179,12 @@ export const rnaBuilderSlice = createSlice({
       action: PayloadAction<PresetPhosphateFilter>,
     ) => {
       state.presetPhosphateFilter = action.payload;
+      // Persist the filter to localStorage so the user's choice survives
+      // page reloads (spec 7.5).
+      localStorageWrapper.setItem(
+        PRESET_PHOSPHATE_FILTER_STORAGE_KEY,
+        action.payload,
+      );
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
@@ -555,11 +581,12 @@ export const selectFilteredPresets = createSelector(
       })
       .filter((item: IRnaPreset) => {
         // Apply the phosphate-position filter selected via the preset toolbar.
-        // If all flags are enabled, every preset passes; if all flags are
-        // disabled, the user has explicitly hidden every bucket and we return
-        // an empty list.
+        // Per spec 7.4, "all on" and "all off" are equivalent: both states
+        // mean "no filtering", so every preset passes.
         const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
-        if (fivePrime && threePrime && noPhosphate) {
+        const allOn = fivePrime && threePrime && noPhosphate;
+        const allOff = !fivePrime && !threePrime && !noPhosphate;
+        if (allOn || allOff) {
           return true;
         }
         if (!item.phosphate) {

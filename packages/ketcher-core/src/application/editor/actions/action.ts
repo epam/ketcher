@@ -55,9 +55,8 @@ export class Action {
 
   isDummy(restruct?: ReStruct) {
     return (
-      this.operations.find(
-        // TODO [RB] the condition is always true for op.* operations
-        (operation) => (restruct ? !operation.isDummy(restruct) : true),
+      this.operations.find((operation) =>
+        restruct ? !operation.isDummy(restruct) : true,
       ) === undefined
     );
   }

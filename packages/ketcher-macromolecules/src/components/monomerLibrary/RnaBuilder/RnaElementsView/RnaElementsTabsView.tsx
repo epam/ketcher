@@ -25,6 +25,7 @@ import {
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
+  selectPresetPhosphateFilter,
   setActiveRnaBuilderItem,
 } from 'state/rna-builder';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
@@ -50,6 +51,13 @@ const RnaElementsTabsView = ({
     selectIsActivePresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
+  const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
+  // The filter icon shows a small indicator dot whenever the current filter
+  // state differs from the default ("all options off"), per spec.
+  const isFilterActive =
+    presetPhosphateFilter.fivePrime ||
+    presetPhosphateFilter.threePrime ||
+    presetPhosphateFilter.noPhosphate;
   // Local UI state for the phosphate-position filter popup. Kept here (rather
   // than in Redux) because it's purely a transient UI concern.
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -105,11 +113,12 @@ const RnaElementsTabsView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  New Preset
+                  Add new
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
                   active={isFilterOpen}
+                  hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);

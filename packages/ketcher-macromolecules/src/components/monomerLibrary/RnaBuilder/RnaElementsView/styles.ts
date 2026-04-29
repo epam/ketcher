@@ -17,6 +17,7 @@
 import styled from '@emotion/styled';
 import { Accordion, Button } from 'ketcher-react';
 import { Tab } from '@mui/material';
+import { ActionButton } from 'components/shared/actionButton';
 
 export const RnaAccordionContainer = styled.div`
   display: flex;
@@ -90,34 +91,52 @@ export const PresetToolbar = styled.div`
 // "New Preset" button takes 1/3 of the library (toolbar) width and is
 // left-aligned within the toolbar.
 export const NewPresetButton = styled(StyledButton)`
-  flex: 0 0 33.3333%;
-  width: 33.3333%;
+  height: 24px;
+  border-radius: 4px;
+  font-size: 12px;
 `;
 
-export const FilterIconButton = styled.button<{ active?: boolean }>`
+export const FilterIconButton = styled.button<{
+  active?: boolean;
+  hasIndicator?: boolean;
+}>`
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   margin-left: auto;
-  background-color: ${({ active, theme }) =>
-    active ? theme.ketcher.color.button.secondary.hover : 'transparent'};
-  border: 1px solid ${({ theme }) => theme.ketcher.color.text.light};
+  background-color: transparent;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  color: ${({ theme }) => theme.ketcher.color.text.light};
-
-  &:hover {
-    background-color: ${({ theme }) =>
-      theme.ketcher.color.button.secondary.hover};
-  }
+  color: #333333;
 
   > svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
+
+  /* Indicator dot shown in the top-right corner of the filter icon when the
+   * current filter state differs from the default (all options off). */
+  ${({ hasIndicator, theme }) =>
+    hasIndicator
+      ? `
+    &::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      border: 1px solid #E1E5EA;
+      background-color: ${theme.ketcher.color.button.primary.active};
+    }
+  `
+      : ''}
 `;
 
 export const FilterPopup = styled.div`
@@ -127,11 +146,10 @@ export const FilterPopup = styled.div`
   z-index: 10;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 180px;
-  padding: 10px 12px;
+  min-width: 160px;
+  padding: 4px;
   background-color: #ffffff;
-  border: 1px solid ${({ theme }) => theme.ketcher.color.divider};
+  border: 1px solid #cad3dd;
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   font-size: 12px;
@@ -141,14 +159,51 @@ export const FilterPopup = styled.div`
 export const FilterPopupOption = styled.label`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   cursor: pointer;
   user-select: none;
+  margin-left: 6px;
+  margin-top: 10px;
+`;
 
-  input[type='checkbox'] {
-    margin: 0;
-    cursor: pointer;
+// Styled checkbox matching the project's default checkbox appearance
+// (mirrors packages/ketcher-react/src/script/ui/component/form/Input/Input.module.less).
+// The native input is visually hidden, and the adjacent span renders the SVG.
+// TODO move checkbox to separate component
+export const StyledCheckboxInput = styled.input`
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+
+  & + span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0.5' y='0.5' width='15' height='15' rx='3.5' fill='white' stroke='%23B4B9D6'/%3E%3C/svg%3E%0A");
+    background-repeat: no-repeat;
+    background-size: 100%;
   }
+
+  &:checked + span {
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' rx='4' fill='%23167782'/%3E%3Cpath d='M6.33711 11.8079L2.42578 7.63124L3.39911 6.71991L6.36845 9.89124L12.6171 3.64258L13.5598 4.58524L6.33711 11.8079Z' fill='white'/%3E%3C/svg%3E%0A");
+  }
+`;
+
+export const FilterPopupTitle = styled.div`
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.4px;
+  margin: 5px 0 5px 2px;
+  color: ${({ theme }) => theme.ketcher.color.text.primary};
+`;
+
+export const FilterPopupSeparator = styled.hr`
+  width: 100%;
+  height: 1px;
+  margin: 8px 0 4px;
+  border: none;
+  background-color: #e1e5ea;
 `;
 
 export const FilterPopupActions = styled.div`
@@ -159,21 +214,29 @@ export const FilterPopupActions = styled.div`
   margin-top: 4px;
 `;
 
-export const FilterPopupButton = styled.button<{ primary?: boolean }>`
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid ${({ theme }) => theme.ketcher.color.text.light};
-  background-color: ${({ primary, theme }) =>
-    primary ? theme.ketcher.color.button.primary.active : 'transparent'};
-  color: ${({ primary, theme }) =>
-    primary
-      ? theme.ketcher.color.text.light
-      : theme.ketcher.color.text.primary};
+// Width-by-content overrides for the filter popup action buttons.
+// ActionButton hard-codes a fixed width (62/72px); we widen the auto-sizing
+// rule with min-width: unset so the button hugs its label + horizontal padding.
+export const FilterPopupActionButton = styled(ActionButton)`
+  &.MuiButtonBase-root {
+    width: auto;
+    min-width: unset;
+    padding-left: 7px;
+    padding-right: 7px;
+    border-radius: 4px;
+  }
+`;
 
-  &:hover {
-    opacity: 0.85;
+// Secondary variant of the filter popup action button without a border
+// (per design spec for the "Reset all" button). Pushed to the far left of the
+// actions row so the primary "Set" button sits at the right.
+export const FilterPopupResetButton = styled(FilterPopupActionButton)`
+  &.MuiButtonBase-root {
+    border: none;
+    margin-right: auto;
+    padding-left: 0;
+    margin-left: 6px;
+    color: #167782;
   }
 `;
 

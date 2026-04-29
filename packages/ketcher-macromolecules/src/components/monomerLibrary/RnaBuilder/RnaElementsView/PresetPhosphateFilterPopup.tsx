@@ -19,8 +19,12 @@ import {
 import {
   FilterPopup,
   FilterPopupActions,
-  FilterPopupButton,
+  FilterPopupActionButton,
   FilterPopupOption,
+  FilterPopupResetButton,
+  FilterPopupSeparator,
+  FilterPopupTitle,
+  StyledCheckboxInput,
 } from './styles';
 
 type Props = {
@@ -72,7 +76,11 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   };
 
   const handleResetAll = () => {
+    // Reset returns the filter to its default state and applies it immediately
+    // (per spec) so the user sees the unfiltered presets without having to
+    // click "Set" afterwards.
     setDraftFilter(DEFAULT_FILTER);
+    dispatch(setPresetPhosphateFilter(DEFAULT_FILTER));
   };
 
   const handleSet = () => {
@@ -86,49 +94,50 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
       data-testid="preset-phosphate-filter-popup"
       onClick={(event) => event.stopPropagation()}
     >
+      <FilterPopupTitle>Filter</FilterPopupTitle>
       <FilterPopupOption>
-        <input
+        <StyledCheckboxInput
           type="checkbox"
           checked={draftFilter.fivePrime}
           onChange={toggle('fivePrime')}
           data-testid="preset-filter-5-phosphate"
         />
+        <span />
         5&apos;-phosphate
       </FilterPopupOption>
       <FilterPopupOption>
-        <input
+        <StyledCheckboxInput
           type="checkbox"
           checked={draftFilter.threePrime}
           onChange={toggle('threePrime')}
           data-testid="preset-filter-3-phosphate"
         />
+        <span />
         3&apos;-phosphate
       </FilterPopupOption>
       <FilterPopupOption>
-        <input
+        <StyledCheckboxInput
           type="checkbox"
           checked={draftFilter.noPhosphate}
           onChange={toggle('noPhosphate')}
           data-testid="preset-filter-no-phosphate"
         />
+        <span />
         No phosphate group
       </FilterPopupOption>
+      <FilterPopupSeparator />
       <FilterPopupActions>
-        <FilterPopupButton
-          type="button"
-          onClick={handleResetAll}
+        <FilterPopupResetButton
+          styleType="secondary"
+          label="Reset all"
+          clickHandler={handleResetAll}
           data-testid="preset-filter-reset"
-        >
-          Reset all
-        </FilterPopupButton>
-        <FilterPopupButton
-          type="button"
-          primary
-          onClick={handleSet}
+        />
+        <FilterPopupActionButton
+          label="Set"
+          clickHandler={handleSet}
           data-testid="preset-filter-set"
-        >
-          Set
-        </FilterPopupButton>
+        />
       </FilterPopupActions>
     </FilterPopup>
   );

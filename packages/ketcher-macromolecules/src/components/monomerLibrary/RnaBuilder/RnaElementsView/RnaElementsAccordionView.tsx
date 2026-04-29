@@ -13,6 +13,7 @@ import {
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
+  selectPresetPhosphateFilter,
 } from 'state/rna-builder';
 import {
   DetailsContainer,
@@ -54,6 +55,13 @@ const RnaElementsAccordionView = ({
     selectIsActivePresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
+  const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
+  // The filter icon shows a small indicator dot whenever the current filter
+  // state differs from the default ("all options off"), per spec.
+  const isFilterActive =
+    presetPhosphateFilter.fivePrime ||
+    presetPhosphateFilter.threePrime ||
+    presetPhosphateFilter.noPhosphate;
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
@@ -102,11 +110,12 @@ const RnaElementsAccordionView = ({
                   onClick={onNewPresetClick}
                   data-testid="new-preset-button"
                 >
-                  New Preset
+                  Add new
                 </NewPresetButton>
                 <FilterIconButton
                   type="button"
                   active={isFilterOpen}
+                  hasIndicator={isFilterActive}
                   onClick={(event) => {
                     event.stopPropagation();
                     setIsFilterOpen((prev) => !prev);

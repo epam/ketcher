@@ -15,18 +15,7 @@ export type AttachmentPointSelectData = {
 
 // Unicode subscript digits — used instead of <sub> so the subscript renders
 // correctly inside the MUI Select dropdown regardless of dropdown styling.
-const SUBSCRIPT_DIGITS = [
-  '₀',
-  '₁',
-  '₂',
-  '₃',
-  '₄',
-  '₅',
-  '₆',
-  '₇',
-  '₈',
-  '₉',
-];
+const SUBSCRIPT_DIGITS = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
 export const toSubscript = (n: number): string =>
   String(n)

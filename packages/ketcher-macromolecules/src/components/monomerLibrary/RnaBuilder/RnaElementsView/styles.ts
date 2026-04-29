@@ -33,7 +33,47 @@ export const StyledAccordion = styled(Accordion)`
 
 export const StyledAccordionWrapper = styled.div`
   flex-grow: 2;
-  min-height: 32px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  /*
+   * The phosphate filter popup is positioned absolutely relative to the
+   * preset toolbar. The Accordion library wraps content in a container with
+   * \`overflow: hidden\` and a details container with \`overflow-y: auto\`,
+   * which clip the popup vertically when only a few presets match (so the
+   * details container is short).
+   *
+   * Override these so the popup can escape vertically. Vertical scrolling for
+   * long preset lists is moved to PresetsScrollArea below, which sits
+   * **after** the toolbar — the toolbar (and its popup) is therefore outside
+   * the scroll area and never clipped.
+   */
+  > div {
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+
+    /* Accordion's inner details container (sibling of the summary). */
+    > div + div {
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+  }
+`;
+
+// Scrollable area for the presets list inside the accordion's Presets
+// section. Placed after the toolbar so the filter popup can extend beyond
+// the visible area without being clipped.
+export const PresetsScrollArea = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const DetailsContainer = styled.div<{ compact?: boolean }>`
@@ -44,6 +84,10 @@ export const DetailsContainer = styled.div<{ compact?: boolean }>`
   gap: 8px;
   justify-content: start;
   padding: ${({ compact }) => (compact ? '4px' : '8px')};
+  /* Fill the accordion's details container so PresetsScrollArea can take
+   * the remaining vertical space. The tabs view uses \`compact\` and is
+   * sized by its own ancestors. */
+  ${({ compact }) => (compact ? '' : 'flex: 1 1 auto; min-height: 0;')}
 `;
 
 export const RnaTabContent = styled.div`

@@ -22,6 +22,7 @@ import {
   StyledAccordionWrapper,
   NewPresetButton,
   PresetToolbar,
+  PresetsScrollArea,
   FilterIconButton,
 } from './styles';
 import { PresetPhosphateFilterPopup } from './PresetPhosphateFilterPopup';
@@ -131,11 +132,13 @@ const RnaElementsAccordionView = ({
                   />
                 )}
               </PresetToolbar>
-              <RnaPresetGroup
-                duplicatePreset={duplicatePreset}
-                editPreset={editPreset}
-                presets={presets}
-              />
+              <PresetsScrollArea>
+                <RnaPresetGroup
+                  duplicatePreset={duplicatePreset}
+                  editPreset={editPreset}
+                  presets={presets}
+                />
+              </PresetsScrollArea>
               {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (

@@ -84,9 +84,9 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   };
 
   const handleResetAll = () => {
-    // Reset returns the filter to its default state and applies it immediately
+    // Reset returns the filter to its default state, applies it immediately
     // (per spec) so the user sees the unfiltered presets without having to
-    // click "Set" afterwards. The popup is closed as well.
+    // click "Set" afterwards, and closes the popup.
     setDraftFilter(DEFAULT_FILTER);
     dispatch(setPresetPhosphateFilter(DEFAULT_FILTER));
     onClose();

@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
@@ -110,7 +110,7 @@ test.describe('Templates - Template Library', () => {
     await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.FMOC,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

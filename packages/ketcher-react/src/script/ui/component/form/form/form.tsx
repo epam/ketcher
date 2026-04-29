@@ -16,7 +16,7 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import Ajv, { ErrorObject } from 'ajv';
+import { Validator, ValidationError, Schema } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
 import {
   FormContext,
@@ -127,8 +127,12 @@ export interface CustomQueryFieldProps extends FieldProps {
   ) => void;
 }
 
-type AjvErrorWithInvalidMessage = ErrorObject & {
-  parentSchema?: { invalidMessage?: string | ((data: unknown) => string) };
+interface KetcherSchema extends Schema {
+  invalidMessage?: string | ((data: unknown) => string);
+}
+
+type FormValidationError = ValidationError & {
+  schema: KetcherSchema;
 };
 
 class Form extends Component<FormProps> {
@@ -143,7 +147,7 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+      const errs = getErrorsObj(errors as FormValidationError[]);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
@@ -169,7 +173,7 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+    const errs = getErrorsObj(errors as FormValidationError[]);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
@@ -590,14 +594,17 @@ function propSchema(
     deserialize?: Record<string, string>;
   },
 ) {
-  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
+  const validator = new Validator();
   const schemaCopy = cloneDeep(schema);
-
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator as (data: string) => boolean);
+      validator.customFormats[formatName] = (value: string) =>
+        Boolean(formatValidator(value));
 
-      if (!schemaCopy.properties) return;
+      if (!schemaCopy.properties) {
+        return;
+      }
+
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
         'maxLength',
@@ -612,18 +619,23 @@ function propSchema(
     });
   }
 
-  const validate = ajv.compile(schemaCopy);
-
   return {
     key: schema.key || '',
     serialize: (inst: Record<string, unknown>) => {
-      const isValid = validate(inst);
-      const errors = validate.errors || [];
+      // Pass an explicit base URI so jsonschema's resolveUrl() always receives
+      // a valid absolute URL as `from`.  Without this, it calls
+      // resolveUrl(undefined, ...) → new URL(undefined, 'resolve://'), which
+      // throws "Invalid URL" in Chromium <130 (Playwright ≤1.44) because that
+      // engine parses the base 'resolve://' (empty host) before inspecting the
+      // first argument.
+      const result = validator.validate(inst, schemaCopy as Schema, {
+        base: 'https://ketcher.local/',
+      });
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
-        valid: isValid,
-        errors,
+        valid: result.valid,
+        errors: result.errors as unknown as FormValidationError[],
       };
     },
     deserialize: (inst: Record<string, unknown>) => {
@@ -658,20 +670,19 @@ function deserializeRewrite(
   return instance;
 }
 
-function getInvalidMessage(item: AjvErrorWithInvalidMessage): string {
-  if (!item.parentSchema?.invalidMessage) return item.message ?? '';
-  return typeof item.parentSchema.invalidMessage === 'function'
-    ? item.parentSchema.invalidMessage(item.data)
-    : item.parentSchema.invalidMessage;
+function getInvalidMessage(item: FormValidationError): string {
+  if (!item.schema?.invalidMessage) return item.message ?? '';
+  return typeof item.schema.invalidMessage === 'function'
+    ? item.schema.invalidMessage(item.instance)
+    : item.schema.invalidMessage;
 }
 
-function getErrorsObj(
-  errors: AjvErrorWithInvalidMessage[],
-): Record<string, string> {
+function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   const errs: Record<string, string> = {};
 
   errors.forEach((item) => {
-    const field = item.instancePath.slice(1);
+    // jsonschema uses "instance.fieldName"; strip the "instance." prefix
+    const field = item.property.replace(/^instance\./, '');
     if (!errs[field]) errs[field] = getInvalidMessage(item);
   });
 

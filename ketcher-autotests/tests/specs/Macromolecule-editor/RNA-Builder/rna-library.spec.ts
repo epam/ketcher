@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -15,7 +15,6 @@ import {
   takeTopToolbarScreenshot,
   clickOnCanvas,
   Monomer,
-  clickInTheMiddleOfTheCanvas,
   PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
@@ -402,7 +401,7 @@ test.describe('RNA Library', () => {
     await Library(page).selectMonomers([Sugar._3A6, Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -692,7 +691,7 @@ test.describe('RNA Library', () => {
         .getByTestId(`rna-accordion-details-${monomer.groupName}`)
         .hover();
       await page.mouse.wheel(0, 0);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeMonomerLibraryScreenshot(page, { maxDiffPixelRatio: 0.03 });
     }
   });
@@ -950,7 +949,7 @@ test.describe('RNA Library', () => {
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await dragMouseTo(page, anyPointX, anyPointY);
       await takeEditorScreenshot(page);
     });

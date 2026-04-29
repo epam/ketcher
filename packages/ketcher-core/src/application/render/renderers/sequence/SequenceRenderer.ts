@@ -1251,6 +1251,20 @@ export class SequenceRenderer {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
+
+    if (this.chainsCollection) {
+      const handledBonds = new Set();
+      this.chainsCollection.chains.forEach((chain) => {
+        chain.monomers.forEach((monomer) => {
+          monomer.forEachBond((bond) => {
+            if (!handledBonds.has(bond)) {
+              handledBonds.add(bond);
+              bond.renderer?.remove();
+            }
+          });
+        });
+      });
+    }
     this.removeNewSequenceButtons();
     this.removeDelegatedEvents();
   }

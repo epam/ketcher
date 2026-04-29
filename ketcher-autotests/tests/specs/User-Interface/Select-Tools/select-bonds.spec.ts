@@ -4,7 +4,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -25,7 +25,7 @@ test.describe('Bonds plus atoms selection ', () => {
   for (const bond of BondTypeId) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
       await CommonLeftToolbar(page).bondTool(bond);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
 
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,

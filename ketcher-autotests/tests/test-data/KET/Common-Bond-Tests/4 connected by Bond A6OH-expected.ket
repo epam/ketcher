@@ -206,6 +206,7 @@
         "id": "A6OH___6-amino-hexanol",
         "fullName": "6-amino-hexanol",
         "alias": "A6OH",
+        "aliasAxoLabs": "(NHC6)",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,

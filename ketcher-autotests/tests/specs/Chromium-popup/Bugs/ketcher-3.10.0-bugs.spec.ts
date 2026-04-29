@@ -56,7 +56,7 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
@@ -640,7 +640,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

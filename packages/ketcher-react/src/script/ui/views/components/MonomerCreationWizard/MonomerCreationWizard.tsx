@@ -18,6 +18,7 @@ import {
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
   provideEditorInstance,
+  RnaPresetComponentKey,
   Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
@@ -63,7 +64,10 @@ import tools from '../../../action/tools';
 import MonomerCreationWizardFields from './MonomerCreationWizardFields';
 import { RnaPresetTabs } from './RnaPresetTabs';
 import { inferPhosphatePosition } from './PhosphatePositionInference';
-import { hasPhosphatePositionAttachmentPointConflict } from './RnaPresetAttachmentPointValidation';
+import {
+  getLeavingAtomForAttachmentPoint,
+  hasPhosphatePositionAttachmentPointConflict,
+} from './RnaPresetAttachmentPointValidation';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 
@@ -426,35 +430,6 @@ const hasAllMandatoryPropertiesFilled = (values: WizardValues): boolean => {
   return true;
 };
 
-/**
- * Gets the appropriate leaving atom for a specific attachment point based on component type.
- * Per requirement 2.3.2.2:
- * - Base R1: H
- * - Sugar R2: H, R3: O (representing OH)
- * - Phosphate R1: O (representing OH)
- * @param componentType - The monomer class (Base, Sugar, or Phosphate)
- * @param attachmentPointName - The attachment point name (R1, R2, R3)
- * @returns The atom label to use for the leaving group
- */
-const getLeavingAtomForAttachmentPoint = (
-  componentType: KetMonomerClass,
-  attachmentPointName: AttachmentPointName,
-): AtomLabel => {
-  switch (componentType) {
-    case KetMonomerClass.Base:
-      return AtomLabel.H;
-    case KetMonomerClass.Sugar:
-      if (attachmentPointName === AttachmentPointName.R3) {
-        return AtomLabel.O; // OH group for base connection
-      }
-      return AtomLabel.H; // H for R2 (phosphate connection) and R1
-    case KetMonomerClass.Phosphate:
-      return AtomLabel.O;
-    default:
-      return AtomLabel.H;
-  }
-};
-
 const autoAssignPropertiesForHiddenMonomer = (
   values: WizardValues,
   presetCode: string,
@@ -740,6 +715,29 @@ const MonomerCreationWizard = () => {
   const [phosphatePosition, setPhosphatePosition] = useState<
     '3' | '5' | undefined
   >();
+  /**
+   * Stores user-overridden leaving atom labels for connection (readonly)
+   * attachment points, keyed by "<componentKey>:<apName>" to handle cases
+   * where two components share the same AP name (e.g. base R1 / phosphate R1).
+   */
+  const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
+    Map<string, AtomLabel>
+  >(new Map());
+
+  const handleConnectionLeavingAtomChange = useCallback(
+    (
+      apName: AttachmentPointName,
+      newLeavingAtomLabel: AtomLabel,
+      componentKey: RnaPresetComponentKey,
+    ) => {
+      setConnectionLeavingAtoms((prev) => {
+        const next = new Map(prev);
+        next.set(`${componentKey}:${apName}`, newLeavingAtomLabel);
+        return next;
+      });
+    },
+    [],
+  );
   const isRnaPresetType = type === 'rnaPreset';
   const notifications = isRnaPresetType
     ? new Map([
@@ -1494,6 +1492,29 @@ const MonomerCreationWizard = () => {
             ? AttachmentPointName.R2
             : AttachmentPointName.R1;
 
+        // Helper: returns user override if set, otherwise falls back to default.
+        // Composite key "<componentKey>:<apName>" disambiguates components that
+        // share the same AP name (e.g. base:R1 vs phosphate:R1 at position 3').
+        const monomerClassToComponentKey: Partial<
+          Record<KetMonomerClass, RnaPresetComponentKey>
+        > = {
+          [KetMonomerClass.Base]: 'base',
+          [KetMonomerClass.Sugar]: 'sugar',
+          [KetMonomerClass.Phosphate]: 'phosphate',
+        };
+        const getConnectionLeavingAtom = (
+          componentType: KetMonomerClass,
+          apName: AttachmentPointName,
+        ): AtomLabel => {
+          const componentKey = monomerClassToComponentKey[componentType];
+          const override = componentKey
+            ? connectionLeavingAtoms.get(`${componentKey}:${apName}`)
+            : undefined;
+          return (
+            override ?? getLeavingAtomForAttachmentPoint(componentType, apName)
+          );
+        };
+
         if (bondBetweenSugarAndBase && sugarStructure && baseStructure) {
           const sugarAtoms = sugarStructure.atoms || [];
           const baseAtoms = baseStructure.atoms || [];
@@ -1520,7 +1541,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.base),
             rnaPresetWizardState.base.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Base,
               AttachmentPointName.R1,
             ),
@@ -1532,7 +1553,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               AttachmentPointName.R3,
             ),
@@ -1570,7 +1591,7 @@ const MonomerCreationWizard = () => {
             assignedAttachmentPointsByMonomer.get(rnaPresetWizardState.sugar),
             rnaPresetWizardState.sugar.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Sugar,
               sugarPhosphateAttachmentPointName,
             ),
@@ -1584,7 +1605,7 @@ const MonomerCreationWizard = () => {
             ),
             rnaPresetWizardState.phosphate.structure,
             true,
-            getLeavingAtomForAttachmentPoint(
+            getConnectionLeavingAtom(
               KetMonomerClass.Phosphate,
               phosphateSugarAttachmentPointName,
             ),
@@ -1745,6 +1766,10 @@ const MonomerCreationWizard = () => {
                 editor={editor}
                 phosphatePosition={phosphatePosition}
                 onPhosphatePositionChange={handlePhosphatePositionChange}
+                connectionLeavingAtoms={connectionLeavingAtoms}
+                onConnectionLeavingAtomChange={
+                  handleConnectionLeavingAtomChange
+                }
               />
             ) : (
               <MonomerCreationWizardFields

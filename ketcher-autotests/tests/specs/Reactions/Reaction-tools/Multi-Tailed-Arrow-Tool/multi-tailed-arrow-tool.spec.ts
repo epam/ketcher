@@ -3,7 +3,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
@@ -159,7 +159,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await verifyFileExport(
       page,
@@ -396,7 +396,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -409,7 +409,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -424,7 +424,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -444,7 +444,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -518,13 +518,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomInTool(19);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -534,7 +534,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button and Undo/Redo.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -568,7 +568,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
@@ -611,7 +611,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * deleted using "Erase" (or Delete, Backspace buttons)
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
@@ -917,7 +917,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       TemplateLibraryTab.UserTemplate,
       'multi_tail_arrows_with_elements',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1314,7 +1314,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-3-tails-spine-0.7.ket',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page
       .getByTestId('bottomTail-resize')
       .click({ force: true, button: 'right' });
@@ -1346,7 +1346,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page
       .getByTestId('bottomTail-resize')
       .click({ force: true, button: 'right' });
@@ -1357,9 +1357,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       .click({ force: true, button: 'right' });
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     for (const tailId of tailIds) {
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await removeTail(page, tailId);
     }
     await takeEditorScreenshot(page);
@@ -1383,7 +1383,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-resize');
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-0-resize');
@@ -1409,7 +1409,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-resize');
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-0-move');
@@ -1435,14 +1435,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-5-tails-spine-2.1.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'left', {
+      await clickInTheMiddleOfTheCanvas(page, 'left', {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
@@ -1469,14 +1469,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'left', {
+      await clickInTheMiddleOfTheCanvas(page, 'left', {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
       await page.getByTestId(MultiTailedArrowOption.AddNewTail).click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await removeTail(page, 'tails-0-move');
@@ -1502,7 +1502,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-resize');
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-0-move');
@@ -1530,7 +1530,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-resize');
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-0-resize');
@@ -1553,7 +1553,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-resize');
     await selectPartOfMolecules(page);
     await removeTail(page, 'tails-0-resize');
@@ -1817,7 +1817,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
   });
@@ -1829,7 +1829,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * with correct size and position of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await ContextMenu(page, middleOfTheScreen).click(
       MultiTailedArrowOption.AddNewTail,
@@ -1839,11 +1839,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await hoverOverArrowSpine(page, 0);
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
@@ -1860,7 +1860,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 300);
     await takeEditorScreenshot(page);
@@ -1882,7 +1882,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -1904,7 +1904,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
@@ -1926,7 +1926,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(page, 800, 500);
     await takeEditorScreenshot(page);
@@ -1944,9 +1944,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
@@ -1964,9 +1964,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -1984,9 +1984,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
@@ -2004,9 +2004,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(page, 800, 500);
     await takeEditorScreenshot(page);
@@ -2029,7 +2029,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2062,12 +2062,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
 
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2104,7 +2104,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2132,7 +2132,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2171,7 +2171,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2203,7 +2203,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2233,7 +2233,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2252,9 +2252,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2277,12 +2277,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
 
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2320,12 +2320,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
 
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2359,12 +2359,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 300, 400, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 500, { from: 'pageTopLeft' });
 
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2397,10 +2397,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
 
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('head-resize').hover({ force: true });
@@ -2422,10 +2422,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -2447,10 +2447,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
@@ -2472,7 +2472,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-2-tails-1.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(page, 700, 100);
     await takeEditorScreenshot(page);
@@ -2494,7 +2494,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
@@ -2512,15 +2512,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -2538,12 +2538,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await takeEditorScreenshot(page);
@@ -2561,9 +2561,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(page, 200, 500);
     await takeEditorScreenshot(page);
@@ -2588,7 +2588,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2620,7 +2620,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     and its size changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -2628,7 +2628,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2664,7 +2664,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2698,7 +2698,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2737,7 +2737,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2769,7 +2769,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrows-3.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2802,7 +2802,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2826,10 +2826,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow with two tails after moving/changing size of top and bottom tails.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2858,7 +2858,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -2866,7 +2866,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2901,7 +2901,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -2909,7 +2909,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2939,7 +2939,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await clickOnCanvas(page, 500, 300, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 600, 450, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -2947,7 +2947,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 500, 200);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -2977,10 +2977,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Added by Tool Multi-Tailed Arrow after moving/changing size of top and bottom tails selected and moved with correct size and position of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(page, 400, 400);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
@@ -3014,7 +3014,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(page, 500, 300);
     await takeEditorScreenshot(page);
@@ -3036,7 +3036,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -3058,7 +3058,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-3-tails-default.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(page, 400, 500);
     await takeEditorScreenshot(page);
@@ -3080,7 +3080,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -3088,7 +3088,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-0-resize').hover({ force: true });
@@ -3113,7 +3113,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -3121,7 +3121,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-2-move').hover({ force: true });
@@ -3148,7 +3148,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -3156,7 +3156,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'left', {
+    await clickInTheMiddleOfTheCanvas(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-2-move').hover({ force: true });
@@ -3204,7 +3204,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
      */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await verifySVGExport(page);
     await verifyPNGExport(page);

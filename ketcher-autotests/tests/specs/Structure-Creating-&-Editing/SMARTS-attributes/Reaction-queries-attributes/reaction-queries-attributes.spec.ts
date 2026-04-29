@@ -1,6 +1,6 @@
 import { Page, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseAway,
@@ -35,7 +35,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   const atomToolbar = RightToolbar(page);
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).areaSelectionTool();
 
   await moveMouseToTheMiddleOfTheScreen(page);
@@ -43,7 +43,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await CommonLeftToolbar(page).areaSelectionTool();
 
   await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).areaSelectionTool();
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
@@ -68,7 +68,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
     await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
 
     await LeftToolbar(page).selectReactionMappingTool(
@@ -91,7 +91,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      */
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -111,7 +111,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).clickRing(RingButton.Cyclopropane);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
@@ -138,7 +138,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnCanvas(page, x + shiftValue, y, { from: 'pageTopLeft' });
     await page.keyboard.press('Escape');

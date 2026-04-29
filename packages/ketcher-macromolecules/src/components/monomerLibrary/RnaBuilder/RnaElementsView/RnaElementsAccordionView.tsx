@@ -59,10 +59,11 @@ const RnaElementsAccordionView = ({
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
   // The filter icon shows a small indicator dot whenever the current filter
   // state differs from the default ("all options off"), per spec.
-  const isFilterActive =
-    presetPhosphateFilter.fivePrime ||
-    presetPhosphateFilter.threePrime ||
-    presetPhosphateFilter.noPhosphate;
+  const isFilterActive = Boolean(
+    presetPhosphateFilter?.fivePrime ||
+      presetPhosphateFilter?.threePrime ||
+      presetPhosphateFilter?.noPhosphate,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);

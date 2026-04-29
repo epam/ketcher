@@ -54,10 +54,11 @@ const RnaElementsTabsView = ({
   const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
   // The filter icon shows a small indicator dot whenever the current filter
   // state differs from the default ("all options off"), per spec.
-  const isFilterActive =
-    presetPhosphateFilter.fivePrime ||
-    presetPhosphateFilter.threePrime ||
-    presetPhosphateFilter.noPhosphate;
+  const isFilterActive = Boolean(
+    presetPhosphateFilter?.fivePrime ||
+      presetPhosphateFilter?.threePrime ||
+      presetPhosphateFilter?.noPhosphate,
+  );
   // Local UI state for the phosphate-position filter popup. Kept here (rather
   // than in Redux) because it's purely a transient UI concern.
   const [isFilterOpen, setIsFilterOpen] = useState(false);

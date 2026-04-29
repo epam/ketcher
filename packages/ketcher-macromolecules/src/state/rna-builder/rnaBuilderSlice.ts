@@ -582,7 +582,12 @@ export const selectFilteredPresets = createSelector(
       .filter((item: IRnaPreset) => {
         // Apply the phosphate-position filter selected via the preset toolbar.
         // Per spec 7.4, "all on" and "all off" are equivalent: both states
-        // mean "no filtering", so every preset passes.
+        // mean "no filtering", so every preset passes. If the filter is not
+        // present in the store (e.g. in tests with a partial initial state),
+        // treat it as "no filtering" as well.
+        if (!phosphateFilter) {
+          return true;
+        }
         const { fivePrime, threePrime, noPhosphate } = phosphateFilter;
         const allOn = fivePrime && threePrime && noPhosphate;
         const allOff = !fivePrime && !threePrime && !noPhosphate;

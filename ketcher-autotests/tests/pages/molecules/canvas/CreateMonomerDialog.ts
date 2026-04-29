@@ -485,10 +485,17 @@ export const CreateMonomerDialog = (page: Page) => {
     async submit({ ignoreWarning = false } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
-        if ((await WarningMessageDialog(page).isVisible()) && ignoreWarning) {
-          await WarningMessageDialog(page).ok();
-        }
       });
+
+      // Only handle warning if it's there and we want to ignore it
+      if (ignoreWarning) {
+        const warningDlg = WarningMessageDialog(page);
+        // Check if the warning OK button is visible (not just the window)
+        // to distinguish from InfoMessageDialog which shares the same window testId
+        if (await warningDlg.okButton.isVisible()) {
+          await warningDlg.ok();
+        }
+      }
     },
 
     async discard() {
@@ -535,13 +542,14 @@ export async function createMonomer(
     await createMonomerDialog.setHELMAlias(options.HELMAlias);
   }
   await createMonomerDialog.submit({ ignoreWarning });
-  await page.waitForTimeout(150);
+
   const infoDlg = InfoMessageDialog(page);
-  if (await infoDlg.isVisible()) {
-    const bodyText = (await infoDlg.getInfoMessage()) || '';
-    if (bodyText.includes('successfully added to the library')) {
-      await infoDlg.ok();
-    }
+  try {
+    await infoDlg.infoModalOk.waitFor({ state: 'visible', timeout: 2000 });
+    await infoDlg.ok();
+    await infoDlg.infoModalWindow.waitFor({ state: 'hidden', timeout: 2000 });
+  } catch (e) {
+    console.log('Success confirmation modal did not appear, skipping.');
   }
 }
 

@@ -102,6 +102,13 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
       HELMAlias: 'PhosAlias',
     });
     await dialog.submit();
+    const infoDlg = InfoMessageDialog(page);
+    await infoDlg.infoModalWindow
+      .waitFor({ state: 'visible', timeout: 3000 })
+      .catch(() => {});
+    if (await infoDlg.infoModalOk.isVisible()) {
+      await infoDlg.ok();
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();
@@ -155,6 +162,13 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
       bondIds: [4],
     });
     await dialog.submit();
+    const infoDlg = InfoMessageDialog(page);
+    await infoDlg.infoModalWindow
+      .waitFor({ state: 'visible', timeout: 3000 })
+      .catch(() => {});
+    if (await infoDlg.infoModalOk.isVisible()) {
+      await infoDlg.ok();
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
     await Library(page).dragMonomerOnCanvas(presetData, {
@@ -216,6 +230,13 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
       bondIds: [4],
     });
     await dialog.submit();
+    const infoDlg = InfoMessageDialog(page);
+    await infoDlg.infoModalWindow
+      .waitFor({ state: 'visible', timeout: 3000 })
+      .catch(() => {});
+    if (await infoDlg.infoModalOk.isVisible()) {
+      await infoDlg.ok();
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     const sugarLocator = getMonomerLocator(page, {
@@ -280,6 +301,13 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     });
 
     await dialog.submit();
+    const infoDlg = InfoMessageDialog(page);
+    await infoDlg.infoModalWindow
+      .waitFor({ state: 'visible', timeout: 3000 })
+      .catch(() => {});
+    if (await infoDlg.infoModalOk.isVisible()) {
+      await infoDlg.ok();
+    }
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     expect(

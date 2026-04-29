@@ -23,6 +23,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { WarningMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/WarningDialog';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -552,6 +553,13 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {
@@ -779,6 +787,13 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   });
 
   await dialog.submit();
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();

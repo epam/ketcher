@@ -12,7 +12,9 @@ export const InfoMessageDialog = (page: Page) => {
     infoModalBody: page
       .getByTestId('info-modal-window')
       .getByTestId('info-modal-body'),
-    infoModalOk: page.getByTestId('info-modal-close'),
+    infoModalOk: page
+      .getByTestId('info-modal-close')
+      .or(page.getByTestId('OK')),
   };
 
   return {

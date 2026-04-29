@@ -35,6 +35,7 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -373,6 +374,13 @@ test(`6. Check that if the user changes the monomer type after they've entered a
   expect(createMonomerDialog.modificationSection).not.toBeVisible();
 
   await createMonomerDialog.submit({ ignoreWarning: true });
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -1004,6 +1012,13 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.submit({ ignoreWarning: true });
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -1061,6 +1076,13 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
   const createMonomerDialog = CreateMonomerDialog(page);
   await createMonomerDialog.clearHELMAlias();
   await createMonomerDialog.submit({ ignoreWarning: true });
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

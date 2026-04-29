@@ -6,8 +6,8 @@ import { difference } from 'lodash';
  * @example
  * formatTitle('Single Bond') === 'Single'
  */
-export const formatTitle = (title: string) => {
-  return title.slice(0, -5);
+export const formatTitle = (title?: string) => {
+  return title?.slice(0, -5) ?? '';
 };
 
 /**

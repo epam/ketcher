@@ -18,6 +18,7 @@ const useBondTypeChange = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds ?? [];
+      // @ts-expect-error tools[id].action.opts is a bond-type object from toBondType()
       const bondProps = { ...tools[id].action.opts };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {

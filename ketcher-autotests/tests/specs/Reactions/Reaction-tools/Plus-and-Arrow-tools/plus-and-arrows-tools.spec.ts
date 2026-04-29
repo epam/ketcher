@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
@@ -8,7 +9,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   Point,
-  waitForPageInit,
   waitForRender,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
@@ -89,11 +89,16 @@ const formatsForSave = [
 
 const OFFSET_FROM_ARROW = 15;
 
-test.describe('Plus and Arrows tools ', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
+test.describe('Plus and Arrows tools ', () => {
   test.describe('Create reactions', () => {
     /**
      * Test case: EPMLSOPKET-1783
@@ -101,7 +106,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let counter = 1;
     for (const tool of Object.values(ArrowType)) {
-      test(` ${counter}. ${tool} check`, async ({ page }) => {
+      test(` ${counter}. ${tool} check`, async () => {
         await openFileAndAddToCanvas(
           page,
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -116,7 +121,7 @@ test.describe('Plus and Arrows tools ', () => {
     }
   });
 
-  test('Resizing arrow', async ({ page }) => {
+  test('Resizing arrow', async () => {
     /**
      * Test case: EPMLSOPKET-1784
      * Description: Arrow is resized correctly
@@ -134,7 +139,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Copy/paste, cut/paste arrow', async ({ page }) => {
+  test('Copy/paste, cut/paste arrow', async () => {
     /**
      * Test case: EPMLSOPKET-2872
      * Description: Copy/cut/paste reaction tools
@@ -160,7 +165,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify reaction is registered in undo/redo chain', async ({ page }) => {
+  test('Verify reaction is registered in undo/redo chain', async () => {
     /**
      * Test case: EPMLSOPKET-1790
      * Description: Verify reaction is registered in undo/redo chain
@@ -202,7 +207,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Plus sign - Manipulations with different Tools
      */
     let point: Point;
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ MoleculesCanvas: _ }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
@@ -210,16 +215,14 @@ test.describe('Plus and Arrows tools ', () => {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
-    test('Select the plus sign and move it', async ({ page }) => {
+    test('Select the plus sign and move it', async () => {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x - 150, point.y - 10);
         await dragMouseTo(page, point.x - 150, point.y - 40);
       });
     });
 
-    test('Select the plus sign with any reaction component(s) and move them', async ({
-      page,
-    }) => {
+    test('Select the plus sign with any reaction component(s) and move them', async () => {
       await waitForRender(page, async () => {
         await page.mouse.move(point.x - 300, point.y - 100);
         await dragMouseTo(page, point.x - 140, point.y + 100);
@@ -231,7 +234,7 @@ test.describe('Plus and Arrows tools ', () => {
       });
     });
 
-    test('Select the whole reaction and move it', async ({ page }) => {
+    test('Select the whole reaction and move it', async () => {
       await waitForRender(page, async () => {
         await selectAllStructuresOnCanvas(page);
         await page.mouse.move(point.x - 20, point.y - 20);
@@ -245,7 +248,7 @@ test.describe('Plus and Arrows tools ', () => {
       {
         tag: ['@FlackyTest'],
       },
-      async ({ page }) => {
+      async () => {
         await clickOnCanvas(page, point.x - 200, point.y + 15, {
           from: 'pageTopLeft',
         });
@@ -263,11 +266,9 @@ test.describe('Plus and Arrows tools ', () => {
       },
     );
 
-    test.skip('Select plus sign, copy and paste it onto the canvas', async ({
+    test.skip('Select plus sign, copy and paste it onto the canvas', async () => {
       // Consider refactoring of this test since it doesn't work
       // Selection of plus sign doesn't happen and the rest of the scrips works wrong
-      page,
-    }) => {
       await clickOnCanvas(page, point.x - 150, point.y - 10, {
         from: 'pageTopLeft',
       });
@@ -277,9 +278,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
-    test('Select the whole reaction and move it, Undo, Erase tool', async ({
-      page,
-    }) => {
+    test('Select the whole reaction and move it, Undo, Erase tool', async () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
@@ -298,7 +297,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Reaction Arrow - Manipulations with different Tools
      */
     let point: Point;
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ MoleculesCanvas: _ }) => {
       await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
@@ -306,29 +305,25 @@ test.describe('Plus and Arrows tools ', () => {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
-    test('Select the reaction arrow and move it', async ({ page }) => {
+    test('Select the reaction arrow and move it', async () => {
       await page.mouse.move(point.x + 60, point.y);
       await dragMouseTo(page, point.x + 60, point.y - 40);
     });
 
-    test('Select the reaction arrow with any reaction component(s) and move them', async ({
-      page,
-    }) => {
+    test('Select the reaction arrow with any reaction component(s) and move them', async () => {
       await page.mouse.move(point.x + 50, point.y - 300);
       await dragMouseTo(page, point.x + 400, point.y + 100);
       await page.mouse.move(point.x + 70, point.y);
       await dragMouseTo(page, point.x + 300, point.y - 100);
     });
 
-    test('Select the whole reaction and move it', async ({ page }) => {
+    test('Select the whole reaction and move it', async () => {
       await selectAllStructuresOnCanvas(page);
       await page.mouse.move(point.x - 20, point.y - 20);
       await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
-    test('Select reaction arrow, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
+    test('Select reaction arrow, cut and paste it onto the canvas', async () => {
       await clickOnCanvas(page, point.x + 60, point.y, { from: 'pageTopLeft' });
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
@@ -341,7 +336,7 @@ test.describe('Plus and Arrows tools ', () => {
       {
         tag: ['@FlakyTest'],
       },
-      async ({ page }) => {
+      async () => {
         await clickOnCanvas(page, point.x + 60, point.y, {
           from: 'pageTopLeft',
         });
@@ -352,9 +347,7 @@ test.describe('Plus and Arrows tools ', () => {
       },
     );
 
-    test('Select the whole reaction and move it, Undo, Erase tool', async ({
-      page,
-    }) => {
+    test('Select the whole reaction and move it, Undo, Erase tool', async () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100, {
         from: 'pageTopLeft',
@@ -373,11 +366,11 @@ test.describe('Plus and Arrows tools ', () => {
      *Description: Non-default Reaction Arrow Tool - Manipulations with different tools
      */
     let point: Point;
-    test.beforeEach(async ({ page }) => {
-      await configureInitialState(page);
+    test.beforeEach(async ({ MoleculesCanvas: _ }) => {
+      await configureInitialState();
     });
 
-    async function configureInitialState(page: Page) {
+    async function configureInitialState() {
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -393,29 +386,25 @@ test.describe('Plus and Arrows tools ', () => {
       );
     }
 
-    test('Select the reaction arrow and move it', async ({ page }) => {
+    test('Select the reaction arrow and move it', async () => {
       await page.mouse.move(point.x + OFFSET_FROM_ARROW, point.y);
       await dragMouseTo(page, point.x + OFFSET_FROM_ARROW, point.y - 40);
     });
 
-    test('Select the reaction arrow with any reaction component(s) and move them', async ({
-      page,
-    }) => {
+    test('Select the reaction arrow with any reaction component(s) and move them', async () => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(page, point.x + 400, point.y + 100);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(page, point.x + 300, point.y - 100);
     });
 
-    test('Select the whole reaction and move it', async ({ page }) => {
+    test('Select the whole reaction and move it', async () => {
       await selectAllStructuresOnCanvas(page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(page, point.x - 100, point.y - 100);
     });
 
-    test('Select reaction arrow, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
+    test('Select reaction arrow, cut and paste it onto the canvas', async () => {
       await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y, {
         from: 'pageTopLeft',
       });
@@ -424,9 +413,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
-    test('Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.', async ({
-      page,
-    }) => {
+    test('Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.', async () => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(page, point.x + 400, point.y + 100);
 
@@ -436,9 +423,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnCanvas(page, 0, -100, { from: 'pageCenter' });
     });
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
-      page,
-    }) => {
+    test('Select reaction arrow, copy and paste it onto the canvas', async () => {
       const arrow = getArrowLocator(page, {
         arrowType: Arrows.EquilibriumFilledHalfBow,
       });
@@ -457,9 +442,7 @@ test.describe('Plus and Arrows tools ', () => {
       });
     });
 
-    test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
-      page,
-    }) => {
+    test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async () => {
       await CommonLeftToolbar(page).erase();
       await clickOnCanvas(page, -OFFSET_FROM_ARROW, 0, { from: 'pageCenter' });
       await takeEditorScreenshot(page);
@@ -478,9 +461,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
   });
 
-  test('Actions on the reaction with non-default reaction arrows', async ({
-    page,
-  }) => {
+  test('Actions on the reaction with non-default reaction arrows', async () => {
     /**
      * Test case: EPMLSOPKET-2881
      * Description: Actions on the reaction with non-default reaction arrows
@@ -500,7 +481,7 @@ test.describe('Plus and Arrows tools ', () => {
     await IndigoFunctionsToolbar(page).cleanUp();
   });
 
-  test('Save plus sign and arrow', async ({ page }) => {
+  test('Save plus sign and arrow', async () => {
     /**
      * Test case: EPMLSOPKET-1793
      * Description: Save plus sign and arrow
@@ -522,7 +503,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2251
      * Description: Save/Open structure with non-default reaction in KET file
      */
-    test('add default arrow and save in KET file', async ({ page }) => {
+    test('add default arrow and save in KET file', async () => {
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -536,7 +517,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
-    test('open file', async ({ page }) => {
+    test('open file', async () => {
       await openFileAndAddToCanvas(
         page,
         'KET/default-reaction-arrow-tool-saving.ket',
@@ -549,7 +530,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2252
      * Description: Save/Open structure with non-default reaction in KET file
      */
-    test('add non default arrow and save in KET file', async ({ page }) => {
+    test('add non default arrow and save in KET file', async () => {
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -565,7 +546,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
-    test('open file', async ({ page }) => {
+    test('open file', async () => {
       await openFileAndAddToCanvas(
         page,
         'KET/non-default-reaction-arrow-tool-saving.ket',
@@ -578,7 +559,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2867
      * Description: Save/Open structure with non-default reaction in RXN file
      */
-    test('add non default arrow and save in RXN file', async ({ page }) => {
+    test('add non default arrow and save in RXN file', async () => {
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -590,7 +571,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page);
     });
 
-    test('open file', async ({ page }) => {
+    test('open file', async () => {
       await openFileAndAddToCanvas(
         page,
         'Other-Files/non-default-reaction-arrow-tool-saving.rxn',
@@ -604,7 +585,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description:  Save multiple reaction arrows - All formats
      */
     for (const { name, fileExtension } of formatsForSave) {
-      test(`save in ${fileExtension} file`, async ({ page }) => {
+      test(`save in ${fileExtension} file`, async () => {
         await openFileAndAddToCanvas(
           page,
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -619,7 +600,7 @@ test.describe('Plus and Arrows tools ', () => {
         await saveStructureWithReaction(page, name);
       });
 
-      test(`open ${fileExtension} file`, async ({ page }) => {
+      test(`open ${fileExtension} file`, async () => {
         await openFileAndAddToCanvas(
           page,
           `Other-Files/default-reaction-arrow-tool-saving.${fileExtension}`,
@@ -634,7 +615,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description:  Save non-default reaction arrows - All formats
      */
     for (const { name, fileExtension } of formatsForSave) {
-      test(`save in ${fileExtension} file`, async ({ page }) => {
+      test(`save in ${fileExtension} file`, async () => {
         await openFileAndAddToCanvas(
           page,
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -646,7 +627,7 @@ test.describe('Plus and Arrows tools ', () => {
         await saveStructureWithReaction(page, name);
       });
 
-      test(`open ${fileExtension} file`, async ({ page }) => {
+      test(`open ${fileExtension} file`, async () => {
         await openFileAndAddToCanvas(
           page,
           `Other-Files/non-default-reaction-arrow-tool-saving.${fileExtension}`,
@@ -660,7 +641,7 @@ test.describe('Plus and Arrows tools ', () => {
      *  Test case: EPMLSOPKET-2869
      * Description: Resizing reaction arrow - Saving
      */
-    test('Resize and save', async ({ page }) => {
+    test('Resize and save', async () => {
       await openFileAndAddToCanvas(
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
@@ -674,7 +655,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
-    test('open files', async ({ page }) => {
+    test('open files', async () => {
       /*
        */
       await openFileAndAddToCanvas(
@@ -690,9 +671,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
   });
 
-  test('Check that pressing Clear Canvas with Reaction Arrow under mouse cursor does not cause errors in DevTool console', async ({
-    page,
-  }) => {
+  test('Check that pressing Clear Canvas with Reaction Arrow under mouse cursor does not cause errors in DevTool console', async () => {
     /**
      * Test case: EPMLSOPKET-12971
      * Description:  Check that pressing Clear Canvas with Reaction Arrow under mouse cursor doesn't cause errors in DevTool console
@@ -722,15 +701,13 @@ test.describe('Plus and Arrows tools ', () => {
 
   test.describe('Arrow snapping', () => {
     let point: Point;
-    test.beforeEach(async ({ page }) => {
+    test.beforeEach(async ({ MoleculesCanvas: _ }) => {
       await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledTriangle);
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
-    test('to Horizontal Position with Angle greater than 15 Degrees', async ({
-      page,
-    }) => {
+    test('to Horizontal Position with Angle greater than 15 Degrees', async () => {
       /**
        * Test case: Test case: EPMLSOPKET-15546
        * Description: Arrow Snapping to Horizontal Position with Angle greater than 15 Degrees
@@ -739,7 +716,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x + 100, point.y - 50);
     });
 
-    test('to Vertical Position greater than 15 Degrees', async ({ page }) => {
+    test('to Vertical Position greater than 15 Degrees', async () => {
       /**
        * Test case: Test case: EPMLSOPKET-15548
        * Description: Arrow Snapping to Vertical Position with Angle ≤ 15 Degrees
@@ -748,7 +725,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x + 100, point.y - 50);
     });
 
-    test('to Horizontal Position with Angle ≤ 5 Degrees', async ({ page }) => {
+    test('to Horizontal Position with Angle ≤ 5 Degrees', async () => {
       /**
        * Original Test case: Test case: EPMLSOPKET-15548
        * Current behavior defined by https://github.com/epam/ketcher/issues/5568
@@ -760,7 +737,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.up();
     });
 
-    test('to Vertical Position with Angle ≤ 5 Degrees', async ({ page }) => {
+    test('to Vertical Position with Angle ≤ 5 Degrees', async () => {
       /**
        * Original Test case: Test case: EPMLSOPKET-15549
        * Current behavior defined by https://github.com/epam/ketcher/issues/5568
@@ -772,7 +749,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.up();
     });
 
-    test('to Horizontal Position with Ctrl Key Pressed', async ({ page }) => {
+    test('to Horizontal Position with Ctrl Key Pressed', async () => {
       /**
        * Test case: Test case: EPMLSOPKET-15550
        * Description: Arrow Snapping to Horizontal Position with Ctrl Key Pressed
@@ -790,7 +767,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.up();
     });
 
-    test('to Vertical Position with Ctrl Key Pressed', async ({ page }) => {
+    test('to Vertical Position with Ctrl Key Pressed', async () => {
       /**
        * Test case: Test case: EPMLSOPKET-15551
        * Description: Arrow Snapping to Vertical Position with Ctrl Key Pressed
@@ -810,7 +787,7 @@ test.describe('Plus and Arrows tools ', () => {
   });
 
   for (const arrow of Object.values(ArrowType)) {
-    test(`${arrow} should have correct naming`, async ({ page }) => {
+    test(`${arrow} should have correct naming`, async () => {
       /**
        * Test case: Test case: EPMLSOPKET - 16947
        * Description:  All Arrows should have correct tooltip
@@ -825,7 +802,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
   }
 
-  test('Resizing retrosynthetic arrow', async ({ page }) => {
+  test('Resizing retrosynthetic arrow', async () => {
     /**
      * Test case: #4985
      * Description: Retrosynthetic Arrow is resized correctly
@@ -836,7 +813,7 @@ test.describe('Plus and Arrows tools ', () => {
     await dragMouseTo(page, x + 200, y + 200);
   });
 
-  test('Copy/paste retrosynthetic arrow', async ({ page }) => {
+  test('Copy/paste retrosynthetic arrow', async () => {
     /**
     Test case: #4985
     Description: Retrosynthetic Arrow Copy/paste
@@ -854,7 +831,7 @@ test.describe('Plus and Arrows tools ', () => {
     await CommonTopLeftToolbar(page).redo();
   });
 
-  test('Cut/paste retrosynthetic arrow', async ({ page }) => {
+  test('Cut/paste retrosynthetic arrow', async () => {
     /**
     Test case: #4985
     Description: Retrosynthetic Arrow Cut/paste

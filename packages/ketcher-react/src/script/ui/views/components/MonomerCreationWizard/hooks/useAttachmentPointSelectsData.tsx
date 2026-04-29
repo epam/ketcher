@@ -28,7 +28,7 @@ const SUBSCRIPT_DIGITS = [
   '₉',
 ];
 
-const toSubscript = (n: number): string =>
+export const toSubscript = (n: number): string =>
   String(n)
     .split('')
     .map((digit) => SUBSCRIPT_DIGITS[Number(digit)] ?? digit)

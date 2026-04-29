@@ -23,13 +23,13 @@ import { Vec2 } from 'domain/entities/vec2';
 interface RxnArrowMoveData {
   id: number;
   d: Vec2;
-  noinvalidate: boolean;
+  noinvalidate?: boolean;
 }
 
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id: number, d: Vec2, noinvalidate: boolean) {
+  constructor(id: number, d: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
     this.data = { id, d, noinvalidate };
   }

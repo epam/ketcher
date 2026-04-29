@@ -78,7 +78,7 @@ const toolActions: Record<string, ToolAction> = {
   erase: {
     title: 'Erase',
     shortcut: ['Delete', 'Backspace'],
-    action: { tool: 'eraser', opts: 1 }, // TODO last selector mode is better
+    action: { tool: 'eraser', opts: 1 },
     hidden: (options) => isHidden(options, 'erase'),
   },
   chain: {

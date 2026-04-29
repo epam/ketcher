@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-jest.mock('./isHidden', () => jest.fn((_options, name) => name === 'hidden-tool'));
+jest.mock('./isHidden', () =>
+  jest.fn((_options, name) => name === 'hidden-tool'),
+);
 jest.mock('./flips', () => ({ isFlipDisabled: jest.fn(() => false) }));
 jest.mock('../data/convert/structconv', () => ({
   toBondType: jest.fn((type: string) => ({ type, stereo: 0 })),
@@ -38,7 +40,11 @@ describe('tools', () => {
     const enhancedStereo = tools['enhanced-stereo'];
 
     it('disables when monomer creation wizard is active', () => {
-      expect(enhancedStereo.disabled?.(makeEditor({ isMonomerCreationWizardActive: true }))).toBe(true);
+      expect(
+        enhancedStereo.disabled?.(
+          makeEditor({ isMonomerCreationWizardActive: true }),
+        ),
+      ).toBe(true);
     });
 
     it('disables when no stereo atoms exist', () => {
@@ -63,8 +69,16 @@ describe('tools', () => {
     it('attaches a wizard-aware disabled fn to monomer-wizard-disallowed bonds', () => {
       expect(tools['bond-any'].disabled).toBeDefined();
       expect(tools['bond-singledouble'].disabled).toBeDefined();
-      expect(tools['bond-any'].disabled?.(makeEditor({ isMonomerCreationWizardActive: true }))).toBe(true);
-      expect(tools['bond-any'].disabled?.(makeEditor({ isMonomerCreationWizardActive: false }))).toBe(false);
+      expect(
+        tools['bond-any'].disabled?.(
+          makeEditor({ isMonomerCreationWizardActive: true }),
+        ),
+      ).toBe(true);
+      expect(
+        tools['bond-any'].disabled?.(
+          makeEditor({ isMonomerCreationWizardActive: false }),
+        ),
+      ).toBe(false);
     });
 
     it('does not add a disabled fn to allowed bond types', () => {

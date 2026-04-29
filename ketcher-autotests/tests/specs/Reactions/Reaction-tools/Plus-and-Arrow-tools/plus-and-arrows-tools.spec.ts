@@ -702,7 +702,7 @@ test.describe('Plus and Arrows tools ', () => {
   test.describe('Arrow snapping', () => {
     let point: Point;
     test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledTriangle);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledTriangle);
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });

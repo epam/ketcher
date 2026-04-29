@@ -890,6 +890,40 @@ class Editor implements KetcherEditor {
     );
   }
 
+  /**
+   * Computes the position used as `sgroup.pp` for a newly created monomer.
+   *
+   * Preference: average of all attachment-point atom positions.
+   * This keeps the connecting bond visually stable when the monomer is
+   * collapsed, because `sgroup.pp` is used directly as the bond endpoint
+   * and the attachment atom is typically off-centre relative to the bbox.
+   *
+   * Fallback: bounding-box centre (used when no attachment points exist).
+   */
+  private static resolveMonomerPosition(
+    structure: Struct,
+    attachmentPointsData: Map<string, [number, number]>,
+  ): Vec2 {
+    const attachmentAtomPositions = [...attachmentPointsData.values()]
+      .map(([attachmentAtomId]) => structure.atoms.get(attachmentAtomId)?.pp)
+      .filter((pp): pp is Vec2 => pp != null);
+
+    if (attachmentAtomPositions.length > 0) {
+      const count = attachmentAtomPositions.length;
+      const sum = attachmentAtomPositions.reduce(
+        (acc, pos) => new Vec2(acc.x + pos.x, acc.y + pos.y),
+        new Vec2(0, 0),
+      );
+      return new Vec2(sum.x / count, sum.y / count);
+    }
+
+    const bbox = structure.getCoordBoundingBoxObj();
+    return new Vec2(
+      (bbox.min.x + bbox.max.x) / 2,
+      (bbox.min.y + bbox.max.y) / 2,
+    );
+  }
+
   private originalStruct: Struct = new Struct();
   private originalSelection: Selection = {};
   private originalHistoryStack: Action[] = [];
@@ -1356,38 +1390,10 @@ class Editor implements KetcherEditor {
     const monomerItem =
       ketSerializer.convertMonomerTemplateToLibraryItem(monomerTemplate);
     const [Monomer] = monomerFactory(monomerItem);
-
-    // Compute sgroup.pp as the average of attachment-point atom positions so
-    // that collapsing the monomer keeps the connecting bond at the same
-    // geometric location (direction and length unchanged).
-    // Using the bounding-box centre caused the bond to visually jump because
-    // the attachment atom is typically off-centre inside the selection.
-    const attachmentAtomPositions: Vec2[] = [];
-    sortedAttachmentPointsData.forEach(([attachmentAtomId]) => {
-      const atom = data.structure.atoms.get(attachmentAtomId);
-      if (atom?.pp) {
-        attachmentAtomPositions.push(atom.pp);
-      }
-    });
-
-    let monomerPosition: Vec2;
-    if (attachmentAtomPositions.length > 0) {
-      const sum = attachmentAtomPositions.reduce(
-        (acc, pos) => new Vec2(acc.x + pos.x, acc.y + pos.y),
-        new Vec2(0, 0),
-      );
-      monomerPosition = new Vec2(
-        sum.x / attachmentAtomPositions.length,
-        sum.y / attachmentAtomPositions.length,
-      );
-    } else {
-      const monomerBBox = data.structure.getCoordBoundingBoxObj();
-      monomerPosition = new Vec2(
-        (monomerBBox.min.x + monomerBBox.max.x) / 2,
-        (monomerBBox.min.y + monomerBBox.max.y) / 2,
-      );
-    }
-
+    const monomerPosition = Editor.resolveMonomerPosition(
+      data.structure,
+      sortedAttachmentPointsData,
+    );
     const monomer = new Monomer(monomerItem, monomerPosition);
 
     return {

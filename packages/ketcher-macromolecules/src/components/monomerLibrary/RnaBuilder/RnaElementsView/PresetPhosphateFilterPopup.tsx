@@ -51,12 +51,20 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   // codebase without introducing new dependencies.
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        onClose();
+      const target = event.target as Node | null;
+      if (popupRef.current && target && popupRef.current.contains(target)) {
+        return;
       }
+      // Ignore clicks on the trigger button so its own onClick can toggle the
+      // popup closed; otherwise this handler would close it first and the
+      // subsequent click would immediately reopen it.
+      if (
+        target instanceof Element &&
+        target.closest('[data-testid="preset-filter-button"]')
+      ) {
+        return;
+      }
+      onClose();
     };
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -78,9 +86,10 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
   const handleResetAll = () => {
     // Reset returns the filter to its default state and applies it immediately
     // (per spec) so the user sees the unfiltered presets without having to
-    // click "Set" afterwards.
+    // click "Set" afterwards. The popup is closed as well.
     setDraftFilter(DEFAULT_FILTER);
     dispatch(setPresetPhosphateFilter(DEFAULT_FILTER));
+    onClose();
   };
 
   const handleSet = () => {

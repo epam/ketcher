@@ -1001,4 +1001,68 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await EditConnectionPointPopup(page).close();
     await CreateMonomerDialog(page).discard();
   });
+
+  test('Case 26 — Underline colour for X base counter in Calculate Properties is the same in RNA/DNA and Peptides tabs', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7797
+     * Bug: https://github.com/epam/ketcher/issues/7797
+     *
+     * Description: Underline colour for the X base counter in the Calculate Properties window
+     *  should be the same in RNA/DNA and Peptides tabs.
+     * Scenario:
+     * 1. Switch to Macromolecules mode - Flex canvas (clear canvas)
+     * 2. Load from HELM: RNA1{r([cl6pur])}|PEPTIDE1{[am]}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0
+     * 3. Click Calculate Properties button
+     * 4. Check underline colour for the X base counter in RNA/DNA tab
+     * 5. Switch to Peptides tab
+     * 6. Check underline colour for the X base counter in Peptides tab
+     * Expected behavior: Colours are the same
+     *
+     * Version 3.12.0
+     */
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{r([cl6pur])}|PEPTIDE1{[am]}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0',
+    );
+
+    await MacromoleculesTopToolbar(page).calculateProperties();
+
+    const panel = CalculateVariablesPanel(page);
+    await panel.rnaTab.click();
+    const rnaXCounter = panel.rnaTab.getByTestId(
+      NucleotideNaturalAnalogCount.Other,
+    );
+    await expect(rnaXCounter).toBeVisible();
+    const rnaUnderlineColor = await rnaXCounter.evaluate((element) => {
+      const style = window.getComputedStyle(element as Element);
+      return (
+        style.getPropertyValue('text-decoration-color') ||
+        style.getPropertyValue('border-bottom-color') ||
+        style.getPropertyValue('color')
+      );
+    });
+
+    await panel.peptidesTab.click();
+    const peptideXCounter = panel.peptidesTab.getByTestId(
+      PeptideNaturalAnalogCount.Other,
+    );
+    await expect(peptideXCounter).toBeVisible();
+    const peptideUnderlineColor = await peptideXCounter.evaluate((element) => {
+      const style = window.getComputedStyle(element as Element);
+      return (
+        style.getPropertyValue('text-decoration-color') ||
+        style.getPropertyValue('border-bottom-color') ||
+        style.getPropertyValue('color')
+      );
+    });
+
+    expect(rnaUnderlineColor).toBe(peptideUnderlineColor);
+  });
 });

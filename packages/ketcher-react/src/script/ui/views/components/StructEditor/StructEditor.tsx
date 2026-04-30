@@ -35,6 +35,7 @@ import { KetcherLogger, Struct, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
 import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';
+import MonomerCreationWizardBackdrop from '../MonomerCreationWizard/MonomerCreationWizardBackdrop';
 import { Tooltip } from '../Tooltip';
 
 interface StructEditorProps {
@@ -388,6 +389,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"
       >
+        <MonomerCreationWizardBackdrop />
+
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}

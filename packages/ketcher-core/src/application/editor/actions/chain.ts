@@ -28,7 +28,13 @@ export const removeInfoLabelFromAtoms = (restruct: ReStruct) => {
   });
 };
 
-export function fromChain(restruct, p0, v, nSect, atomId) {
+export function fromChain(
+  restruct: ReStruct,
+  p0: Vec2,
+  v: number,
+  nSect: number,
+  atomId: number | null,
+) {
   // eslint-disable-line max-params
   const dx = Math.cos(Math.PI / 6);
   const dy = Math.sin(Math.PI / 6);
@@ -37,24 +43,25 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
 
   const frid =
     atomId !== null
-      ? atomGetAttr(restruct, atomId, 'fragment')
-      : (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid;
+      ? (atomGetAttr(restruct, atomId, 'fragment') as number)
+      : ((action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd)
+          .frid as number);
 
-  const chainItems: any = {
+  const chainItems: { atoms: number[]; bonds: number[] } = {
     atoms: [],
     bonds: [],
   };
 
   let addedAtoms = atomId ? -1 : 0;
 
-  let id0 =
+  let id0: number =
     atomId !== null
       ? atomId
-      : (
+      : ((
           action.addOp(
             new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
           ) as AtomAdd
-        ).data.aid;
+        ).data.aid as number);
 
   chainItems.atoms.push(id0);
   action.operations.reverse();
@@ -71,16 +78,18 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
       pos,
     );
     action = ret[0].mergeWith(action);
-    id0 = ret[2];
-    chainItems.bonds.push(ret[3]);
+    id0 = ret[2] as number;
+    chainItems.bonds.push(ret[3] as number);
     chainItems.atoms.push(id0);
   }
 
   addedAtoms += chainItems.atoms.length;
 
   const lastAtomInChain = restruct.atoms.get(id0);
-  lastAtomInChain.showInfoLabel = true;
-  lastAtomInChain.infoLabel = addedAtoms;
+  if (lastAtomInChain) {
+    lastAtomInChain.showInfoLabel = true;
+    lastAtomInChain.infoLabel = String(addedAtoms);
+  }
 
   return [action, chainItems];
 }

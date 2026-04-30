@@ -76,7 +76,7 @@ function extraBondAction(restruct, aid, angle) {
     additionalAtom = actionRes[2];
   } else {
     const operation = new AtomAdd(
-      { label: 'C', fragment: frid },
+      { label: 'C', fragment: frid as number },
       new Vec2(1, 0)
         .rotate(angle)
         .add(restruct.molecule.atoms.get(aid).pp)
@@ -157,8 +157,8 @@ export function fromTemplateOnAtom(
         restruct,
       ) as AtomAdd;
       action.addOp(operation);
-      map.set(id, operation.data.aid);
-      pasteItems.atoms.push(operation.data.aid);
+      map.set(id, operation.data.aid as number);
+      pasteItems.atoms.push(operation.data.aid as number);
     }
   });
 

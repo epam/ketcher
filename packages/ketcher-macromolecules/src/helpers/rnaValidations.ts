@@ -9,6 +9,23 @@ const hasCap = (
     presetPart?.props?.MonomerCaps && cap in presetPart.props.MonomerCaps,
   );
 
+// Pushes `requiredCap` into `validations` when `monomer` has MonomerCaps
+// but is missing `missingCap` and the requirement isn't already recorded.
+const requireCapWhenMissing = (
+  monomer: MonomerItemType | undefined,
+  missingCap: 'R1' | 'R2',
+  validations: string[],
+  requiredCap: 'R1' | 'R2',
+): void => {
+  const hasMonomerCaps = Boolean(monomer?.props?.MonomerCaps);
+  const isMissingCap = !hasCap(monomer, missingCap);
+  const isNotAlreadyRequired = !validations.includes(requiredCap);
+
+  if (hasMonomerCaps && isMissingCap && isNotAlreadyRequired) {
+    validations.push(requiredCap);
+  }
+};
+
 export const getPhosphatePositionAvailability = (newPreset: IRnaPreset) => {
   const is3PrimeAvailable =
     (!newPreset?.sugar || hasCap(newPreset.sugar, 'R2')) &&
@@ -72,6 +89,14 @@ export const getValidations = (
   if (newPreset?.sugar?.props?.MonomerCaps && !hasCap(newPreset.sugar, 'R3')) {
     baseValidations.push('DISABLED');
   }
+
+  // Chain-continuation constraints (requirement 4.2 in #9120):
+  // If a monomer lacks an AP on one side, the partner must carry the
+  // complementary AP so the chain remains viable in that direction.
+  requireCapWhenMissing(newPreset.sugar, 'R1', phosphateValidations, 'R2');
+  requireCapWhenMissing(newPreset.sugar, 'R2', phosphateValidations, 'R1');
+  requireCapWhenMissing(newPreset.phosphate, 'R1', sugarValidations, 'R2');
+  requireCapWhenMissing(newPreset.phosphate, 'R2', sugarValidations, 'R1');
 
   return {
     sugarValidations,

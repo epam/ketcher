@@ -266,6 +266,10 @@ export class RxnArrowRenderer extends BaseRenderer {
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round');
 
+      if (typeof this.arrow.arrowId === 'number') {
+        path?.attr('data-arrow-id', String(this.arrow.arrowId));
+      }
+
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
       });

@@ -1,13 +1,19 @@
 import { Page } from '@playwright/test';
-import { Arrows } from '..';
+import { ArrowType } from '..';
 
-export function getArrowLocator(page: Page, options: { arrowType?: Arrows }) {
+export function getArrowLocator(
+  page: Page,
+  options: { arrowType?: ArrowType; arrowId?: string | number } = {},
+) {
   const attributes: Record<string, string> = {};
 
   attributes['data-testid'] = 'rxn-arrow';
 
   if (options.arrowType !== undefined) {
     attributes['data-arrowtype'] = String(options.arrowType);
+  }
+  if (options.arrowId !== undefined) {
+    attributes['data-arrow-id'] = String(options.arrowId);
   }
 
   const attributeSelectors = Object.entries(attributes)

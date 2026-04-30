@@ -7,6 +7,7 @@ import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 export class RxnArrow extends DrawingEntity {
   public renderer?: RxnArrowRenderer = undefined;
+  public arrowId?: number;
 
   constructor(
     public type: RxnArrowMode,

@@ -15,7 +15,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   resetZoomLevelToDefault,
-  Arrows,
+  ArrowType,
 } from '@utils';
 import {
   copyAndPaste,
@@ -33,7 +33,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { INPUT_DELAY } from '@utils/globals';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
 
@@ -105,7 +105,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Create Reactions
      */
     let counter = 1;
-    for (const tool of Object.values(ArrowType)) {
+    for (const tool of Object.values(ArrowTool)) {
       test(` ${counter}. ${tool} check`, async () => {
         await openFileAndAddToCanvas(
           page,
@@ -126,7 +126,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-1784
      * Description: Arrow is resized correctly
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 100, y + 100);
@@ -144,7 +144,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2872
      * Description: Copy/cut/paste reaction tools
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 100, y + 100);
@@ -178,7 +178,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnCanvas(page, xOffsetFromCenter2, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickOnCanvas(page, -80, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 
@@ -186,7 +186,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnCanvas(page, -60, 0, { from: 'pageCenter' });
     await takeEditorScreenshot(page);
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickOnCanvas(page, xOffsetFromCenter1, -100, { from: 'pageCenter' });
     await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xOffsetFromCenter2, -100, { from: 'pageCenter' });
@@ -377,7 +377,7 @@ test.describe('Plus and Arrows tools ', () => {
       );
       await resetZoomLevelToDefault(page);
       await LeftToolbar(page).selectArrowTool(
-        ArrowType.ArrowEquilibriumFilledHalfBow,
+        ArrowTool.ArrowEquilibriumFilledHalfBow,
       );
       await clickOnCanvas(page, -40, 0, { from: 'pageCenter' });
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -425,7 +425,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select reaction arrow, copy and paste it onto the canvas', async () => {
       const arrow = getArrowLocator(page, {
-        arrowType: Arrows.EquilibriumFilledHalfBow,
+        arrowType: ArrowType.EquilibriumFilledHalfBow,
       });
       await arrow.hover({ force: true });
       await arrow.click({ force: true });
@@ -470,7 +470,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
       'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.FailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.FailedArrow);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - 30, point.y);
     await dragMouseTo(page, point.x + 20, point.y + 50);
@@ -491,7 +491,7 @@ test.describe('Plus and Arrows tools ', () => {
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).cancel();
     await takeEditorScreenshot(page);
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     const offsetFromCenter = -35;
     await clickOnCanvas(page, offsetFromCenter, 0, { from: 'pageCenter' });
     await CommonTopLeftToolbar(page).saveFile();
@@ -508,7 +508,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
       const offsetFromCenter = -35;
       await clickOnCanvas(page, offsetFromCenter, 0, { from: 'pageCenter' });
       await clickOnCanvas(page, offsetFromCenter, offsetFromCenter, {
@@ -536,7 +536,7 @@ test.describe('Plus and Arrows tools ', () => {
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(
-        ArrowType.ArrowEquilibriumFilledHalfBow,
+        ArrowTool.ArrowEquilibriumFilledHalfBow,
       );
       const offsetFromCenter = -35;
       await clickOnCanvas(page, offsetFromCenter, 0, { from: 'pageCenter' });
@@ -565,7 +565,7 @@ test.describe('Plus and Arrows tools ', () => {
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
       await LeftToolbar(page).selectArrowTool(
-        ArrowType.ArrowEquilibriumFilledHalfBow,
+        ArrowTool.ArrowEquilibriumFilledHalfBow,
       );
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       await saveStructureWithReaction(page);
@@ -590,7 +590,7 @@ test.describe('Plus and Arrows tools ', () => {
           page,
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         );
-        await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+        await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
         await clickOnCanvas(page, xOffsetFromCenter, 15, {
           from: 'pageCenter',
         });
@@ -621,7 +621,7 @@ test.describe('Plus and Arrows tools ', () => {
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         );
         await LeftToolbar(page).selectArrowTool(
-          ArrowType.ArrowEquilibriumOpenAngle,
+          ArrowTool.ArrowEquilibriumOpenAngle,
         );
         await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
         await saveStructureWithReaction(page, name);
@@ -646,7 +646,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       );
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledBow);
       await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await page.mouse.move(x - 35, y - 1);
@@ -685,7 +685,7 @@ test.describe('Plus and Arrows tools ', () => {
       }
     });
     await LeftToolbar(page).selectArrowTool(
-      ArrowType.ArrowEquilibriumOpenAngle,
+      ArrowTool.ArrowEquilibriumOpenAngle,
     );
     await clickInTheMiddleOfTheCanvas(page);
 
@@ -702,7 +702,7 @@ test.describe('Plus and Arrows tools ', () => {
   test.describe('Arrow snapping', () => {
     let point: Point;
     test.beforeEach(async ({ MoleculesCanvas: _ }) => {
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledTriangle);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowFilledTriangle);
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
@@ -807,7 +807,7 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: #4985
      * Description: Retrosynthetic Arrow is resized correctly
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickOnCanvas(page, xOffsetFromCenter, 0, { from: 'pageCenter' });
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 200, y + 200);
@@ -818,7 +818,7 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Copy/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 300, 300, {
@@ -836,7 +836,7 @@ test.describe('Plus and Arrows tools ', () => {
     Test case: #4985
     Description: Retrosynthetic Arrow Cut/paste
      */
-    await LeftToolbar(page).selectArrowTool(ArrowType.RetrosyntheticArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.RetrosyntheticArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, 300, 300, {

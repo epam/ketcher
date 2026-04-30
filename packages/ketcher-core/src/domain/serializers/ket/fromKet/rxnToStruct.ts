@@ -23,7 +23,7 @@ export function rxnToStruct(ketItem: any, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
     const arrow = new RxnArrow(getNodeWithInvertedYCoord(ketItem.data));
     arrow.setInitiallySelected(ketItem.selected);
-    struct.rxnArrows.add(arrow);
+    struct.addRxnArrow(arrow);
   } else {
     const plus = new RxnPlus({
       pp: {

@@ -7,17 +7,23 @@ import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 interface MultitailArrowUpsertData {
   id?: number;
+  arrowId?: number;
 }
 
 interface MultitailArrowDeleteData {
   id: number;
+  arrowId?: number;
 }
 
 export class MultitailArrowUpsert extends BaseOperation {
   readonly data: MultitailArrowUpsertData;
-  constructor(private readonly multitailArrow: MultitailArrow, id?: number) {
+  constructor(
+    private readonly multitailArrow: MultitailArrow,
+    id?: number,
+    arrowId?: number,
+  ) {
     super(OperationType.MULTITAIL_ARROW_UPSERT);
-    this.data = { id };
+    this.data = { id, arrowId };
   }
 
   execute(reStruct: ReStruct) {
@@ -28,7 +34,9 @@ export class MultitailArrowUpsert extends BaseOperation {
     }
     const id = this.data.id;
     const item = this.multitailArrow.clone();
-    struct.multitailArrows.set(id, item);
+    item.arrowId = this.data.arrowId;
+    struct.setMultitailArrow(id, item);
+    this.data.arrowId = item.arrowId;
     reStruct.multitailArrows.set(id, new ReMultitailArrow(item));
 
     BaseOperation.invalidateItem(reStruct, MULTITAIL_ARROW_KEY, id, 1);
@@ -55,6 +63,7 @@ export class MultitailArrowDelete extends BaseOperation {
     }
 
     this.multitailArrow = reMultitailArrow.multitailArrow.clone();
+    this.data.arrowId = reMultitailArrow.multitailArrow.arrowId;
     reStruct.clearVisel(reMultitailArrow.visel);
     reStruct.markItemRemoved();
     reStruct.multitailArrows.delete(this.data.id);
@@ -62,6 +71,10 @@ export class MultitailArrowDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new MultitailArrowUpsert(this.multitailArrow!, this.data.id);
+    return new MultitailArrowUpsert(
+      this.multitailArrow!,
+      this.data.id,
+      this.data.arrowId,
+    );
   }
 }

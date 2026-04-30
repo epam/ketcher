@@ -5,7 +5,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -211,7 +211,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addArrowSymbol() {
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
       await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool();
     }

@@ -227,16 +227,26 @@ export class MacromoleculesConverter {
       assert(polymerBond.secondMonomer);
 
       if (polymerBond instanceof HydrogenBond) {
+        const beginAtom = monomerToAtomIdMap
+          .get(polymerBond.firstMonomer)
+          ?.values()
+          .next().value;
+        const endAtom = monomerToAtomIdMap
+          .get(polymerBond.secondMonomer)
+          ?.values()
+          .next().value;
+
+        if (!isNumber(beginAtom) || !isNumber(endAtom)) {
+          conversionErrorMessage =
+            'There is no atom for provided attachment point. Bond between monomers was not created.';
+
+          return;
+        }
+
         const bond = new Bond({
           type: Bond.PATTERN.TYPE.HYDROGEN,
-          begin: monomerToAtomIdMap
-            .get(polymerBond.firstMonomer)
-            ?.values()
-            .next().value,
-          end: monomerToAtomIdMap
-            .get(polymerBond.secondMonomer)
-            ?.values()
-            .next().value,
+          begin: beginAtom,
+          end: endAtom,
         });
         const bondId = struct.bonds.add(bond);
 
@@ -321,15 +331,17 @@ export class MacromoleculesConverter {
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
         initiallySelected: rxnArrow.initiallySelected,
+        arrowId: rxnArrow.arrowId,
       });
-      const arrowId = struct.rxnArrows.add(micromoleculeRxnArrow);
+      const arrowId = struct.addRxnArrow(micromoleculeRxnArrow);
       reStruct?.rxnArrows.set(arrowId, new ReRxnArrow(micromoleculeRxnArrow));
     });
 
     drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
       const micromoleculeMultitailArrow =
         MicromoleculesMultitailArrow.fromKetNode(multitailArrow.toKetNode());
-      const arrowId = struct.multitailArrows.add(micromoleculeMultitailArrow);
+      micromoleculeMultitailArrow.arrowId = multitailArrow.arrowId;
+      const arrowId = struct.addMultitailArrow(micromoleculeMultitailArrow);
       reStruct?.multitailArrows.set(
         arrowId,
         new ReMultitailArrow(micromoleculeMultitailArrow),
@@ -733,6 +745,7 @@ export class MacromoleculesConverter {
         rxnArrow.pos as [Vec2, Vec2],
         rxnArrow.height,
         rxnArrow.initiallySelected,
+        rxnArrow.arrowId,
       );
       command.merge(arrowAddCommand);
     });
@@ -740,6 +753,7 @@ export class MacromoleculesConverter {
     struct.multitailArrows.forEach((multitailArrow) => {
       const arrowAddCommand = drawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
+        multitailArrow.arrowId,
       );
 
       command.merge(arrowAddCommand);

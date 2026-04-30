@@ -159,6 +159,10 @@ interface MonomerConnectedToSelection {
   bond: PolymerBond;
 }
 
+type ArrowWithId = {
+  arrowId?: number;
+};
+
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
@@ -174,6 +178,20 @@ export class DrawingEntitiesManager {
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
   public antisenseMonomerToSenseChain: Map<BaseMonomer, Chain> = new Map();
+  private nextArrowId = 0;
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+
+    return arrow;
+  }
+
+  private resetArrowIdCounter(): void {
+    this.nextArrowId = 0;
+  }
 
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
@@ -315,6 +333,7 @@ export class DrawingEntitiesManager {
       mergedCommand.merge(command);
     });
     this.clearMicromoleculesHiddenEntities();
+    this.resetArrowIdCounter();
     return mergedCommand;
   }
 
@@ -2381,6 +2400,8 @@ export class DrawingEntitiesManager {
         rxnArrow.type,
         rxnArrow.startEndPosition,
         rxnArrow.height,
+        rxnArrow.initiallySelected,
+        rxnArrow.arrowId,
       );
 
       const addedRxnArrow = rxnArrowAddCommand.operations[0]
@@ -2393,6 +2414,7 @@ export class DrawingEntitiesManager {
     this.multitailArrows.forEach((multitailArrow) => {
       const arrowAddCommand = targetDrawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
+        multitailArrow.arrowId,
       );
 
       const addedArrow = arrowAddCommand.operations[0]
@@ -2490,11 +2512,13 @@ export class DrawingEntitiesManager {
           entity.startEndPosition,
           entity.height,
           entity.initiallySelected,
+          undefined,
           entity,
         );
       } else if (entity instanceof MultitailArrow) {
         filteredDrawingEntitiesManager.addMultitailArrowArrowModelChange(
           entity.toKetNode(),
+          undefined,
           entity,
         );
       } else if (entity instanceof RxnPlus) {
@@ -3831,15 +3855,19 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.rxnArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
     const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
+    rxnArrow.arrowId = arrowId;
+    this.ensureArrowId(rxnArrow);
 
     this.rxnArrows.set(rxnArrow.id, rxnArrow);
 
@@ -3851,16 +3879,19 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new RxnArrowAddOperation(
-      this.addRxnArrowModelChange.bind(
-        this,
-        type,
-        position,
-        height,
-        initiallySelected,
-      ),
+      (arrow?: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          type,
+          position,
+          height,
+          initiallySelected,
+          arrowId,
+          arrow,
+        ),
       this.deleteRxnArrowModelChange.bind(this),
     );
 
@@ -3874,13 +3905,15 @@ export class DrawingEntitiesManager {
     const operation = new RxnArrowDeleteOperation(
       rxnArrow,
       this.deleteRxnArrowModelChange.bind(this),
-      this.addRxnArrowModelChange.bind(
-        this,
-        rxnArrow.type,
-        rxnArrow.startEndPosition,
-        rxnArrow.height,
-        rxnArrow.initiallySelected,
-      ),
+      (arrow: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          rxnArrow.type,
+          rxnArrow.startEndPosition,
+          rxnArrow.height,
+          rxnArrow.initiallySelected,
+          rxnArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);
@@ -3894,15 +3927,19 @@ export class DrawingEntitiesManager {
 
   private addMultitailArrowArrowModelChange(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
     _arrow?: MultitailArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.multitailArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
     const multitailArrow = MultitailArrow.fromKet(multitailArrowKetNode);
+    multitailArrow.arrowId = arrowId;
+    this.ensureArrowId(multitailArrow);
 
     this.multitailArrows.set(multitailArrow.id, multitailArrow);
 
@@ -3911,10 +3948,16 @@ export class DrawingEntitiesManager {
 
   public addMultitailArrow(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new MultitailArrowAddOperation(
-      this.addMultitailArrowArrowModelChange.bind(this, multitailArrowKetNode),
+      (arrow?: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrowKetNode,
+          arrowId,
+          arrow,
+        ),
       this.deleteMultitailArrowModelChange.bind(this),
     );
 
@@ -3928,10 +3971,12 @@ export class DrawingEntitiesManager {
     const operation = new MultitailArrowDeleteOperation(
       multitailArrow,
       this.deleteMultitailArrowModelChange.bind(this),
-      this.addMultitailArrowArrowModelChange.bind(
-        this,
-        multitailArrow.toKetNode(),
-      ),
+      (arrow: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrow.toKetNode(),
+          multitailArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);

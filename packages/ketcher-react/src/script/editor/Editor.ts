@@ -705,6 +705,11 @@ class Editor implements KetcherEditor {
   }
 
   public get isMonomerCreationWizardEnabled() {
+    // Reset stale state so openMonomerCreationWizard won't use outdated atom IDs
+    this.terminalRGroupAtoms = [];
+    this.potentialLeavingAtomsForAutoAssignment = [];
+    this.potentialLeavingAtomsForManualAssignment = [];
+
     if (this.isMonomerCreationWizardActive) {
       return false;
     }

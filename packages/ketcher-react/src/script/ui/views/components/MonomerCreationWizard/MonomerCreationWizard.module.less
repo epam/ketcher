@@ -1,20 +1,37 @@
 @import '../../../../../style/variables.less';
 
-.monomerCreationWizard {
+// Geometry shared by the wizard panel and its backdrop. The wizard panel
+// itself is transparent; the white backdrop is rendered by
+// <MonomerCreationWizardBackdrop /> earlier in the canvas DOM so the canvas
+// SVG paints above the white panel but below the wizard's interactive controls.
+// The border and padding are part of the mixin so both elements have the
+// exact same outer box size under default content-box sizing.
+.wizardBox() {
   position: absolute;
   top: 0;
   left: 0;
   height: calc(100% - 66px);
   width: calc(100% - 62px);
+  margin: 16px 11px;
+  padding: 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.monomerCreationWizard {
+  .wizardBox();
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin: 16px 11px;
-  padding: 16px;
-  border: 1px solid #F3F5F7;
-  border-radius: 4px;
+  border-color: #F3F5F7;
   pointer-events: none;
   font-family: @Inter;
+  background-color: transparent;
+}
+
+.monomerCreationWizardBackdrop {
+  .wizardBox();
+  pointer-events: none;
   background-color: #ffffff;
   box-shadow: 0px 2px 5px 0px #67688426;
 }

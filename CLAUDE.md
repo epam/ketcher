@@ -1,161 +1,106 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (`claude.ai/code`) when working with code in this repository.
 
 ## What is Ketcher
 
 Ketcher is an open-source **chemical structure editor** built with TypeScript and React. It renders molecules, reactions, macromolecules, and monomers using a custom MVC architecture over SVG.
 
-## Monorepo Structure
+## Ketcher Test Conventions
 
-npm workspaces monorepo (Node >= 24.14.1, npm >= 7):
+- Imports should come from aliases defined in `ketcher-autotests/tsconfig.json`: `@fixtures`, `@utils`, and `@tests/...`. Do not use deep relative imports.
+- The default test entrypoint is `import { Page, test, expect } from '@fixtures';`. `@fixtures` already merges molecules, flex, snake, and sequence canvas fixtures.
+- Generated autotests must reuse existing page objects from `ketcher-autotests/tests/pages` and helpers from `ketcher-autotests/tests/utils` whenever possible.
+- If a required page object or helper does not exist, create a reusable file under `ketcher-autotests/tests/pages/...` or `ketcher-autotests/tests/utils/...`. Do not inline long selector chains or duplicate behavior in the spec.
 
-- **packages/ketcher-core** — domain logic, rendering engine, file format parsers, chemistry algorithms
-- **packages/ketcher-react** — React component library (`<Editor />`)
-- **packages/ketcher-standalone** — standalone mode (no Indigo backend needed)
-- **packages/ketcher-macromolecules** — macromolecule/polymer editor UI
-- **example** — reference app; uses Vite for dev, react-app-rewired (Webpack) for production builds
-- **example-ssr** — Next.js SSR example
-- **example-separate-editors** — example with multiple editor instances
-- **demo** — Create React App demo
-- **ketcher-autotests** — Playwright E2E test suite
+### Test structure
 
-## Build & Development Commands
+- Prefer one `test.describe()` block per file.
+- Prefer `let page: Page;` at file scope plus `test.beforeAll(async ({ initMoleculesCanvas | initFlexCanvas | initSnakeCanvas | initSequenceCanvas }) => { page = await ...(); })`.
+- Close the browser page in `test.afterAll(async ({ closePage }) => { await closePage(); })`.
+- Use `initMoleculesCanvas` for micro-mode tests, `initFlexCanvas` for macro flex tests, `initSnakeCanvas` for snake mode, and `initSequenceCanvas` for sequence mode.
+- Do not call `waitForPageInit(page)` in tests that already use `init*Canvas` fixtures. Those fixtures create the page, open the app, and apply the canvas mode setup for you.
+- Use direct `page` fixture plus `waitForPageInit(page)` mainly for API tests and low-level cases that should not use the canvas presets.
 
-```bash
-# Install (always from root)
-npm install
+### Canvas and mode setup
 
-# Build everything
-npm run build
+- Use `CommonTopRightToolbar(page).turnOnMacromoleculesEditor()` and `turnOnMicromoleculesEditor()` instead of raw mode-switcher clicks.
+- Use `MacromoleculesTopToolbar(page)` for layout and polymer switching. Existing helpers include `selectLayoutModeTool(LayoutMode.Flex | Snake | Sequence)`, `rna()`, `dna()`, and `peptides()`.
+- For reload/state-persistence tests, prefer existing helpers such as `pageReload(page)`, `pageReloadMicro(page)`, and `clearLocalStorage(page)` from `@utils/common/helpers`.
 
-# Build only the packages (ketcher-core → ketcher-standalone+ketcher-react → ketcher-macromolecules)
-npm run build:packages
+### Preferred interaction helpers
 
-# Build individual packages
-npm run build:core
-npm run build:react
-npm run build:standalone
-npm run build:macromolecules
-```
+- For loading structures, prefer helpers from `@utils` such as `openFileAndAddToCanvasAsNewProject`, `openFileAndAddToCanvasAsNewProjectMacro`, `pasteFromClipboardAndAddToCanvas`, and `pasteFromClipboardAndAddToMacromoleculesCanvas`.
+- For canvas selection and keyboard operations, prefer `selectAllStructuresOnCanvas`, `copyToClipboardByKeyboard`, `pasteFromClipboardByKeyboard`, `undoByKeyboard`, and related helpers.
+- For locating rendered objects, prefer repo helpers such as `getAtomLocator(...)`, `getMonomerLocator(...)`, `getAbbreviationLocator(...)`, and existing page objects.
+- For dialogs, toolbars, context menus, and library interactions, use page objects under `tests/pages/...` rather than ad hoc locators.
+- Use direct `page.evaluate(...)` only for Ketcher API calls, localStorage checks, or browser APIs that are not already wrapped by helpers.
 
-### Development server
+### Assertions and snapshots
 
-```bash
-cd example
-npm run dev:standalone   # Vite dev server, standalone mode
-npm run dev:remote       # Vite dev server, remote mode (requires Indigo service)
-```
+- Use standard Playwright assertions for state and text: `toBeVisible`, `toContainText`, `toHaveAttribute`, `toBeTruthy`, `toEqual`, and similar.
+- Use screenshot helpers from `@utils` when the expected result is visual: `takeElementScreenshot`, `takeEditorScreenshot`, `takeTopToolbarScreenshot`, `takePageScreenshot`, and related helpers.
+- Prefer state assertions over screenshots when the behavior can be checked reliably through DOM state, attributes, text, or API output.
+- When using screenshots in macro mode, existing helpers already handle common details like padding, masking, hidden preview popups, and hidden scrollbars.
 
-**Important**: Vite is used for development, but `react-app-rewired` (Webpack) is used for production builds. Always verify behavior with react-app-rewired before creating a PR:
+### Naming and comment block
 
-```bash
-# Start packages in watch mode (each in its own terminal)
-cd packages/ketcher-core && npm start
-cd packages/ketcher-react && npm start
-cd packages/ketcher-standalone && npm start
+- Each `test()` title must be a plain English sentence that starts with the serial number from the checklist item, for example `Case 1 - ...` or `1. ...`, matching the local style of the target file.
+- Every generated autotest must include a comment block above the test body with:
+    - link to the test request issue
+    - description
+    - scenario steps
+    - milestone version
 
-# Then start the example app
-cd example && npm run start:standalone   # or start:remote
-```
+### What to avoid
 
-### Serve production builds
+- Do not introduce new libraries.
+- Do not duplicate selectors that already exist in page objects or utils.
+- Do not hardcode sleeps when an existing wait helper or UI state check can be used.
+- Do not create new helpers for one-off behavior unless the behavior is genuinely reusable across tests.
 
-```bash
-npm run serve:standalone   # http://127.0.0.1:4002
-npm run serve:remote       # http://127.0.0.1:4001
-npm run serve              # both in parallel
-```
+Example:
 
-## Testing
+```ts
+import { Page, test, expect } from '@fixtures';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { selectAllStructuresOnCanvas } from '@utils';
 
-### Unit tests
+let page: Page;
 
-```bash
-# Run all unit tests across all packages (from root)
-npm test
+test.describe('Autotests: generated example', () => {
+  test.beforeAll(async ({ initMoleculesCanvas }) => {
+    page = await initMoleculesCanvas();
+  });
 
-# Run unit tests in a single package
-cd packages/ketcher-core
-npm run test:unit                    # run all
-npm run test:unit -- <pattern>       # run matching file/test name
-npm run test:unit -- --watch         # watch mode
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
 
-# Type checking
-npm run test:types
-```
+  test('Case 1 - Copy action stays enabled for selected microstructure after switching to Macro mode', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9999
+     * Description: Copy action stays enabled for selected microstructure after switching to Macro mode
+     * Scenario:
+     * 1. Draw a benzene ring in Molecules mode
+     * 2. Switch to Macro mode
+     * 3. Select the structure on the canvas
+     * 4. Verify that Copy is enabled in the context menu
+     *
+     * Version 3.12.0
+     */
+    await drawBenzeneRing(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectAllStructuresOnCanvas(page);
 
-### E2E tests (Playwright)
-
-```bash
-cd ketcher-autotests
-npm install
-npx playwright install chromium
-
-npm t                                        # run all tests
-npm run test -- canvas                       # run tests matching "canvas"
-npm run test:debug                           # run with Playwright debug UI
-npm run test -- --update-snapshots           # update screenshots
-
-# Docker-based tests (for Linux-consistent snapshots — required for CI)
-npm run docker:build
-npm run docker:test
-npm run docker:test file_name                # specific file
-npm run docker:test file_name:N              # specific test at line N
-npm run docker:update file_name:N            # update snapshot for specific test
-```
-
-Playwright snapshots for Linux are committed; macOS/Windows snapshots are gitignored.
-
-## Linting & Formatting
-
-```bash
-npm run prettier:write          # format all files (all workspaces)
-npm run stylelint:fix           # fix CSS/LESS
-npm run test:eslint             # check ESLint
-npm run test:eslint:fix         # fix ESLint issues
-```
-
-Pre-commit hook runs `lint-staged` + `prettier:write`. Pre-push hook runs `npm test` + `npm run test:types`.
-
-## Architecture
-
-### ketcher-core layers
-
-Uses domain-driven design:
-- **domain/** — chemical objects: `Atom`, `Bond`, `Struct`, `SGroup`, monomers, stereo labels, reactions
-- **application/** — services and business logic: structure providers, file parsers, layout algorithms, `Render` class
-- **infrastructure/** — low-level utilities
-
-TypeScript path aliases (`domain/*`, `application/*`, `infrastructure/*`) are configured in tsconfig.
-
-### MVC rendering model
-
-- **Model**: chemical objects with coordinates in Angstrom-like units and Ketcher internal IDs
-- **View**: SVG rendering via Paper.js and Raphael; `ReStruct` (render-side struct) mirrors `Struct` for render state
-- **Controller**: editor tools, user interaction, Redux actions
-
-### State management (ketcher-react)
-
-Redux + Redux Toolkit. Never mutate Redux state directly — use slices and actions. Use `reselect` for memoized selectors.
-
-### Indigo service
-
-Server-side operations (aromatization, layout, format conversion) require the Indigo Service backend. Pass it via the `apiPath` prop on `<Editor>` or the `api_path` query param. Standalone mode uses a WASM build instead.
-
-## Code Standards
-
-- **TypeScript strict mode** — no `any`, no unjustified non-null assertions
-- **React functional components only** — no class components
-- **Pure functions** for calculations and coordinate transforms
-- **Immutable model objects** — only modify through Redux actions/reducers
-- **No new libraries** — do not introduce MobX, RxJS, jQuery, or anything not already in the project
-- Magic numbers in chemistry logic must have explanatory comments
-- Do not simplify stereochemistry, valence validation, or CFG parsing logic without full understanding
-
-## Windows-specific note
-
-If you encounter "file name too long" errors in Git, run:
-```bash
-git config --global core.longpaths true
+    const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
+    await expect(
+      ContextMenu(page, targetAtom).isOptionEnabled(MonomerOption.Copy),
+    ).resolves.toBeTruthy();
+  });
+});
 ```

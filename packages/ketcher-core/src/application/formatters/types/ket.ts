@@ -213,6 +213,7 @@ export interface IKetMacromoleculesContentRootProperty {
     nodes: IKetNodeRef[];
     connections: IKetConnection[];
     templates: IKetMonomerTemplateRef[];
+    type?: undefined;
   };
 }
 
@@ -221,7 +222,8 @@ export interface IKetMacromoleculesContentOtherProperties {
     | KetNode
     | IKetMonomerTemplate
     | IKetMonomerGroupTemplate
-    | IKetAmbiguousMonomerTemplate;
+    | IKetAmbiguousMonomerTemplate
+    | IKetMacromoleculesContentRootProperty['root'];
 }
 
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &

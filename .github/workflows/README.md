@@ -1,101 +1,66 @@
-# Autotest Automation Workflows
+# Autotest Workflows
 
-This directory contains two GitHub Actions that support AI-assisted Playwright test generation for Ketcher:
+This repository has two GitHub Actions workflows that automate the autotest lifecycle for feature work.
 
-- `create-autotest-request.yml`
-- `create-autotest.yml`
+## 1. `create-autotest-request.yml`
 
-They are both triggered by the same issue label:
+This workflow creates a follow-up issue for autotest implementation.
 
-- `Run TA creation workflow`
-
-The label does different work depending on the issue type:
-
-- `Feature` issue -> create an Autotest Request issue
-- `Task` issue with the `Autotests` label -> generate test files and open a pull request
-
-## What the workflows do
-
-### 1. Create an Autotest Request from a feature issue
-
-Workflow: `create-autotest-request.yml`
-
-This workflow runs when:
-
-- the label `Run TA creation workflow` is added to an issue
-- the issue type is `Feature`
+How it starts:
+- It runs when an issue gets a label.
+- It only continues if the added label is `Run TA creation workflow`.
+- It also checks that the labeled issue is a `Feature` issue.
 
 What it does:
+- Reads the source feature issue title, description, and link.
+- Sends that information to Anthropic with a prompt asking for a concise markdown checklist of test scenarios.
+- Validates that the response actually contains checklist items in `- [ ] ...` format.
+- Creates a new issue:
+  - title: `Autotests: <feature title>`
+  - label: `Autotests`
+  - type: `Task`
+  - body: source issue link plus the generated checklist
+- Posts a comment back to the original feature issue with a link to the created autotest request.
 
-1. Reads the feature issue title and body.
-2. Sends that content to Anthropic.
-3. Asks for a markdown checklist of suggested automation scenarios.
-4. Creates a new GitHub issue with:
-   - title `Autotests: <feature title>`
-   - type `Task`
-   - label `Autotests`
-5. Adds the following body structure to the created issue:
-   - `Source task(s):` with a link to the original feature issue
-   - `Suggested test scenarios:` with AI-generated checklist items
-6. Posts a comment back on the source feature issue with a link to the created Autotest Request.
+Result:
+- A feature issue is converted into a dedicated autotest request issue that contains suggested scenarios for automation.
 
-### 2. Generate Playwright autotests from an Autotest Request
+## 2. `implement-autotest.yml`
 
-Workflow: `create-autotest.yml`
+This workflow turns an autotest request issue into Playwright test code and opens a pull request.
 
-This workflow runs when:
-
-- the label `Run TA creation workflow` is added to an issue
-- the issue type is `Task`
-
-Before generation starts, the workflow validates that the issue:
-
-- has the `Autotests` label
-- contains at least one markdown checklist item like `- [ ] Scenario`
+How it starts:
+- It runs when a new comment is added to an issue.
+- It only continues if all of the following are true:
+  - the commenter is a `COLLABORATOR`, `MEMBER`, or `OWNER`
+  - the issue has the `Autotests` label
+  - the comment contains `@claude implement autotest`
+- It also checks that the labeled issue is a `Task` issue.
 
 What it does:
+- Checks out the repository.
+- Reads the autotest issue and validates that its body contains at least one markdown checklist item.
+- Derives a feature-specific target folder from the issue title:
+  - `Autotests: Some Feature` becomes a directory under
+    `ketcher-autotests/tests/specs/Chromium-popup/Features/<Feature-Name>`
+- Invokes Claude Code with instructions to:
+  - implement all checklist scenarios as Playwright autotests
+  - create the target directory if needed
+  - place the generated spec file inside that directory
+- Reads the current git branch name.
+- Creates a pull request against `master`.
+- Adds a comment to the autotest issue with the generated PR link.
 
-1. Reads the Autotest Request issue title and body.
-2. Uses the issue content as the prompt for Anthropic.
-3. Requests a JSON response with:
-   - one Playwright spec file
-   - optional reusable helper/page-object files
-4. Writes the generated spec under:
+Result:
+- An `Autotests` issue is translated into Playwright test implementation and a PR that references and closes that issue.
 
-```text
-ketcher-autotests/tests/specs/Chromium-popup/Features/#<issue number> - <feature title>/<slug>-<issue number>.spec.ts
-```
+## End-to-end flow
 
-5. Writes any additional generated files only under:
-   - `ketcher-autotests/tests/pages/`
-   - `ketcher-autotests/tests/utils/`
-6. Creates a branch named:
+1. A product or engineering task is created as a `Feature` issue.
+2. Someone adds the `Run TA creation workflow` label.
+3. GitHub Action generates an `Autotests: ...` issue with a checklist of scenarios.
+4. The checklist can be reviewed or adjusted in that issue.
+5. An authorized contributor comments `@claude implement autotest`.
+6. GitHub Action generates the Playwright test implementation and opens a PR.
 
-```text
-autotest/issue-<issue number>-<slug>
-```
-
-7. Commits the generated files.
-8. Pushes the branch to `origin`.
-9. Opens a pull request against the repository default branch with title:
-
-```text
-#<issue number> - <issue title>
-```
-
-10. Posts the PR link back to the Autotest Request issue.
-
-## Required repository setup
-
-The workflows depend on the following repository configuration:
-
-- Secret `ANTHROPIC_API_KEY` must exist.
-- GitHub Issues must support issue types, because the workflows check for `Feature` and `Task`.
-- The repository should have these issue labels available:
-  - `Run TA creation workflow`
-  - `Autotests`
-- GitHub Actions must be allowed to:
-  - create issues
-  - comment on issues
-  - push branches
-  - create pull requests
+In short, the first workflow creates the autotest request, and the second workflow implements it.

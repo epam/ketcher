@@ -1,0 +1,122 @@
+name: Implement Autotest
+
+# Trigger: comment "@claude implement autotest" on an issue with 'Autotests' label
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+  actions: read
+
+jobs:
+  implement-autotests:
+    # Only run on issue comments where the issue has the 'Autotests' label
+    if: |
+      contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) &&
+      contains(github.event.issue.labels.*.name, 'Autotests') &&
+      contains(github.event.comment.body, '@claude implement autotest') &&
+      (
+        github.event.issue.issue_type.name == 'Task' ||
+        github.event.issue.type.name == 'Task' ||
+        github.event.issue.issue_type == 'Task' ||
+        github.event.issue.type == 'Task'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract and check data
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            
+            if (!issue) {
+              throw new Error('No issue found in context');
+            }
+            
+            const checklistMatches = issue.body?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            if (checklistMatches.length === 0) {
+              throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
+            }
+            
+            const title = issue.title;
+            const featureTitle = title.replace(/^Autotests:\s*/i, '').trim();
+            const featureTokens = featureTitle
+              .normalize('NFKD')
+              .replace(/[^\w\s-]+/g, ' ')
+              .split(/[\s_-]+/)
+              .map((token) => token.trim())
+              .filter(Boolean);
+            const featureDir =
+              featureTokens
+                .map((token) =>
+                  /^[A-Z0-9]+$/.test(token)
+                    ? token
+                    : `${token.charAt(0).toUpperCase()}${token.slice(1).toLowerCase()}`,
+                )
+                .join('-') || 'Generated-Feature';
+            const targetDir = `ketcher-autotests/tests/specs/Chromium-popup/Features/${featureDir}`;
+            
+            core.setOutput('title', title);
+            core.setOutput('feature_dir', featureDir);
+            core.setOutput('target_dir', targetDir);
+
+      - name: Implement autotests with Claude
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are implementing Playwright autotests for Ketcher.
+
+            Autotest request issue: #${{ github.event.issue.number }} — ${{ steps.issue.outputs.title }}
+
+            Issue details:
+            $(cat autotest_issue.json)
+            
+            TARGET_DIR: ${{ steps.issue.outputs.target_dir }}
+
+            ## Your task
+
+            Implement all test scenarios from the autotest request.
+            Place the generated spec file under TARGET_DIR.
+            If TARGET_DIR does not exist, create it.
+            You may choose the spec filename yourself, but do not place it outside TARGET_DIR.
+
+          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current branch name
+        id: vars
+        run: |
+          BRANCH=$(git branch --show-current)
+          echo "Branch name: $BRANCH"
+          echo "branch_name=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        id: create_pr
+        run: |
+          PR_URL=$(gh pr create \
+            --title " #${{ github.event.issue.number }} - ${{ steps.issue.outputs.title }}" \
+            --body "Closes #${{ github.event.issue.number }}" \
+            --head "${{ steps.vars.outputs.branch_name }}" \
+            --base master)
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on issue
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "Generated Playwright test: ${{ steps.create_pr.outputs.pr_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

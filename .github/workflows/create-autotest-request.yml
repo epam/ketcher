@@ -105,5 +105,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: `Autotest request created: ${createdIssue.html_url}\n\nAdd the \`Run TA creation workflow\` label to that issue when the automation checklist is ready for PR generation.`,
+              body: `Autotest request created: ${createdIssue.html_url}\n\nWhen the automation checklist is ready for implementation, add the comment \`@claude implement autotest\` to that issue to generate the autotests PR.`,
             });

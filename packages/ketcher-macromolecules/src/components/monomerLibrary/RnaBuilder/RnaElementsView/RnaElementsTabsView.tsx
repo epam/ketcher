@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import {
   RnaTabContent,
   DetailsContainer,
@@ -6,9 +6,12 @@ import {
   RnaTab,
   RnaTabsContainer,
   RnaTabWrapper,
-  StyledButton,
+  NewPresetButton,
+  PresetToolbar,
+  FilterIconButton,
   CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
+import { PresetPhosphateFilterPopup } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/PresetPhosphateFilterPopup';
 import {
   selectAmbiguousMonomersInCategory,
   selectFilteredMonomers,
@@ -22,6 +25,7 @@ import {
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
+  selectPresetPhosphateFilter,
   setActiveRnaBuilderItem,
 } from 'state/rna-builder';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
@@ -47,6 +51,17 @@ const RnaElementsTabsView = ({
     selectIsActivePresetNewAndEmpty,
   );
   const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
+  const presetPhosphateFilter = useAppSelector(selectPresetPhosphateFilter);
+  // The filter icon shows a small indicator dot whenever the current filter
+  // state differs from the default ("all options off"), per spec.
+  const isFilterActive = Boolean(
+    presetPhosphateFilter?.fivePrime ||
+      presetPhosphateFilter?.threePrime ||
+      presetPhosphateFilter?.noPhosphate,
+  );
+  // Local UI state for the phosphate-position filter popup. Kept here (rather
+  // than in Redux) because it's purely a transient UI concern.
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   return (
     <>
@@ -94,12 +109,32 @@ const RnaElementsTabsView = ({
         const details =
           groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer compact>
-              <StyledButton
-                onClick={onNewPresetClick}
-                data-testid="new-preset-button"
-              >
-                New Preset
-              </StyledButton>
+              <PresetToolbar>
+                <NewPresetButton
+                  onClick={onNewPresetClick}
+                  data-testid="new-preset-button"
+                >
+                  Add new
+                </NewPresetButton>
+                <FilterIconButton
+                  type="button"
+                  active={isFilterOpen}
+                  hasIndicator={isFilterActive}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setIsFilterOpen((prev) => !prev);
+                  }}
+                  aria-label="Filter presets by phosphate position"
+                  data-testid="preset-filter-button"
+                >
+                  <Icon name="filter" />
+                </FilterIconButton>
+                {isFilterOpen && (
+                  <PresetPhosphateFilterPopup
+                    onClose={() => setIsFilterOpen(false)}
+                  />
+                )}
+              </PresetToolbar>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}

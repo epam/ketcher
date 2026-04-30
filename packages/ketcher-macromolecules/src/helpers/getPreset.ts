@@ -8,6 +8,7 @@ import {
   setMonomerTemplatePrefix,
   KetMonomerClass,
   IRnaLabeledPreset,
+  getRnaPresetPhosphatePosition,
   isAmbiguousMonomerLibraryItem,
   setAmbiguousMonomerTemplatePrefix,
 } from 'ketcher-core';
@@ -73,20 +74,27 @@ export const getPresets = (
         KetMonomerClass.Phosphate,
       ) as MonomerItemType;
 
+      const connections =
+        rnaPresetsTemplate.connections ??
+        buildRnaPresetConnections({
+          base: rnaBase,
+          sugar: ribose,
+          phosphate,
+        });
+
       const result: IRnaPreset = {
         base: rnaBase ? { ...rnaBase, label: rnaBase.label } : undefined,
         name: rnaPresetsTemplate.name,
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
-        connections:
-          rnaPresetsTemplate.connections ??
-          buildRnaPresetConnections({
-            base: rnaBase,
-            sugar: ribose,
-            phosphate,
-          }),
+        connections,
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
+        phosphatePosition: getRnaPresetPhosphatePosition({
+          sugar: ribose,
+          phosphate,
+          connections,
+        }),
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };

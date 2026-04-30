@@ -127,5 +127,6 @@ describe('getPreset function', () => {
     )[0];
 
     expect(getRnaPresetPhosphatePosition(leftPreset)).toBe('left');
+    expect(leftPreset.phosphatePosition).toBe('left');
   });
 });

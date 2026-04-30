@@ -572,13 +572,15 @@ To create a preset either click on the downwards pointing arrow to open RNA Buil
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will open appropriate sections of the library where monomers can be picked. Library search is also available while RNA builder is active. 
 
-<img src=images/Create-Preset-2-3.8..png width = "200"/>
+<img src=images/Create-Preset-3-3.15..png width = "200"/>
+
+When a phosphate is selected, the user can pick the position for that phosphate (5' (default) or 3') :
+
+<img src=images/Create-Preset-4-3.15..png width = "200"/>
 
 Name of the preset can be changed from the default form that is made up from symbols of the components in the format sugar(base)phosphate.
 
-Clicking on _Add to Presets_ will save the preset and add it to the Presets section on the library:
-
-<img src=images/Create-Preset-3-3.0..png width = "200"/>
+Clicking on _Add to Presets_ will save the preset and add it to the Presets section on the library.
 
 #### Modifying Nucleotides in Sequence Mode
 
@@ -612,7 +614,8 @@ Using the `Attributes` panel, the user is able to define following monomer prope
 - Monomer name (appears on monomer preview);
 - Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides);
 - Monomer modification type (optional property used for modifying amino acids);
-- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids).
+- Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids);
+- Phosphate position (5' or 3'; only when defining presets).
 
 <img src=images/Monomer-Creation-Wizard-3-3.11..png width = "450"/>
 

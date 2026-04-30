@@ -150,11 +150,14 @@ export function fromPaste(
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
-    pasteItems.bonds.push(operation.data.bid);
-    items.bonds.push(operation.data.bid);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview, false).perform(
-      restruct,
-    );
+    pasteItems.bonds.push(operation.data.bid as number);
+    items.bonds.push(operation.data.bid as number);
+    new BondAttr(
+      operation.data.bid as number,
+      'isPreview',
+      isPreview,
+      false,
+    ).perform(restruct);
   });
 
   pstruct.sgroups.forEach((sg: SGroup) => {

@@ -728,9 +728,7 @@ export function fromSgroupAddition(
   // eslint-disable-line
   let action = new Action();
 
-  // TODO: shoud the id be generated when OpSGroupCreate is executed?
-  //      if yes, how to pass it to the following operations?
-  sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
+  sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
 
   if (type === 'SUP') {
     action.addOp(

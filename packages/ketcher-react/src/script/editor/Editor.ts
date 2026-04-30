@@ -1583,17 +1583,18 @@ class Editor implements KetcherEditor {
     });
 
     // Collect external bonds (bonds crossing the selection boundary)
+    const selectedOriginalAtoms = new Set(this.originalSelection.atoms ?? []);
     const externalBonds: Bond[] = [];
     this.originalStruct.bonds.forEach((bond) => {
       if (
-        this.originalSelection.atoms?.includes(bond.begin) &&
-        !this.originalSelection.atoms?.includes(bond.end)
+        selectedOriginalAtoms.has(bond.begin) &&
+        !selectedOriginalAtoms.has(bond.end)
       ) {
         externalBonds.push(bond);
       }
       if (
-        this.originalSelection.atoms?.includes(bond.end) &&
-        !this.originalSelection.atoms?.includes(bond.begin)
+        selectedOriginalAtoms.has(bond.end) &&
+        !selectedOriginalAtoms.has(bond.begin)
       ) {
         externalBonds.push(bond);
       }
@@ -1637,6 +1638,7 @@ class Editor implements KetcherEditor {
 
       // Merge wizard struct (with SGroups) into the canvas molecule.
       const atomIdMap = new Map<number, number>();
+      const bondIdMap = new Map<number, number>();
       structFromWizard.mergeInto(
         this.struct(),
         undefined,
@@ -1649,7 +1651,7 @@ class Editor implements KetcherEditor {
         undefined,
         undefined,
         undefined,
-        undefined,
+        bondIdMap,
         true,
       );
 
@@ -1671,10 +1673,8 @@ class Editor implements KetcherEditor {
 
       // Re-add external bonds (crossing the selection boundary).
       externalBonds.forEach((bond) => {
-        const isBeginSelected = this.originalSelection.atoms?.includes(
-          bond.begin,
-        );
-        const isEndSelected = this.originalSelection.atoms?.includes(bond.end);
+        const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
+        const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
         if (isBeginSelected && !isEndSelected) {
           const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
@@ -1729,21 +1729,70 @@ class Editor implements KetcherEditor {
       // The CanvasLoad swaps the canvas from the current (post-mutation)
       // state to a clean clone. Undo reverses the swap, restoring the
       // pre-mutation originalStruct.
+      // cloneAidMap tracks: merged-struct atom ID → clone atom ID (clone
+      // uses cp.atoms.add() which assigns fresh sequential IDs).
+      const cloneAidMap = new Map<number, number>();
+      const cloneBidMap = new Map<number, number>();
       this.struct(
         this.struct().clone(
           undefined,
           undefined,
           undefined,
+          cloneAidMap,
           undefined,
           undefined,
           undefined,
           undefined,
           undefined,
-          undefined,
-          undefined,
+          cloneBidMap,
           true,
         ),
       );
+
+      const finalAtomIds = new Set<number>();
+      const finalBondIds = new Set<number>();
+
+      const collectCloneIds = (
+        wizardIds: number[] | undefined,
+        wizardToMergedIdMap: Map<number, number>,
+        mergedToCloneIdMap: Map<number, number>,
+        target: Set<number>,
+      ) => {
+        wizardIds?.forEach((wizardId) => {
+          const mergedId = wizardToMergedIdMap.get(wizardId);
+          if (!isNumber(mergedId)) {
+            return;
+          }
+
+          const cloneId = mergedToCloneIdMap.get(mergedId);
+          if (isNumber(cloneId)) {
+            target.add(cloneId);
+          }
+        });
+      };
+
+      monomersData.forEach((monomerData) => {
+        collectCloneIds(
+          monomerData.monomerStructureInWizard?.atoms,
+          atomIdMap,
+          cloneAidMap,
+          finalAtomIds,
+        );
+
+        collectCloneIds(
+          monomerData.monomerStructureInWizard?.bonds,
+          bondIdMap,
+          cloneBidMap,
+          finalBondIds,
+        );
+      });
+
+      if (finalAtomIds.size > 0 || finalBondIds.size > 0) {
+        this.selection({
+          atoms: Array.from(finalAtomIds),
+          bonds: Array.from(finalBondIds),
+        });
+      }
     }, 0);
   }
 

@@ -15,6 +15,7 @@ import {
   takeEditorScreenshot,
   takeElementScreenshot,
 } from '@utils/canvas';
+import { clickOnCanvas } from '@utils/clicks';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   bondTwoMonomers,
@@ -3874,11 +3875,12 @@ for (const monomerToCreate of monomersToCreate54) {
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with given attributes
-     *      5. Collapse created monomer
-     *      6. Verify that monomer is present on canvas
-     *      7. Select Erase tool
-     *      8. Delete monomer by clicking on it
-     *      9. Verify that monomer is deleted from canvas
+     *      5. Deselect created monomer (testing explicitly deleting by clicking on monomer)
+     *      6. Collapse created monomer
+     *      7. Verify that monomer is present on canvas
+     *      8. Select Erase tool
+     *      9. Delete monomer by clicking on it
+     *      10. Verify that monomer is deleted from canvas
      *
      * Version 3.7
      */
@@ -3888,7 +3890,7 @@ for (const monomerToCreate of monomersToCreate54) {
     await createMonomer(page, {
       ...monomerToCreate,
     });
-
+    await clickOnCanvas(page, 0, 0);
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     const monomerOnMicro = getAbbreviationLocator(page, {
       name: monomerToCreate.symbol,

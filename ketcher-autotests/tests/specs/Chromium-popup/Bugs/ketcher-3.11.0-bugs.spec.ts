@@ -1226,6 +1226,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await dialog.submit();
 
+    await clickOnCanvas(page, 0, 0);
     await page.waitForTimeout(1000);
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 5 }), {
       padding: 240,

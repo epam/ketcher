@@ -72,12 +72,15 @@ import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
-const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
+const getInitialWizardState = (
+  type = KetMonomerClass.CHEM,
+  defaultNaturalAnalogue = '',
+): WizardState => ({
   values: {
     type,
     symbol: '',
     name: '',
-    naturalAnalogue: '',
+    naturalAnalogue: defaultNaturalAnalogue,
     aliasHELM: '',
   },
   errors: {},
@@ -88,7 +91,9 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
 const initialWizardState: WizardState = getInitialWizardState();
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
-  base: getInitialWizardState(KetMonomerClass.Base),
+  // Default the Base's natural analogue to 'X' so the field is pre-filled in
+  // the preset wizard (per #9103). The user can still change it.
+  base: getInitialWizardState(KetMonomerClass.Base, 'X'),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {

@@ -260,10 +260,18 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
   // TODO: find better way to avoid problem with bond.begin = 0
   if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
-    action.addOp(new BondAdd(bond?.end, bond?.begin, bond).perform(restruct));
-  }
+    const bondAddOp = new BondAdd(bond?.end, bond?.begin, bond).perform(
+      restruct,
+    );
+    action.addOp(bondAddOp);
 
-  // todo: swap atoms stereoLabels and stereoAtoms in fragment
+    const newBond = restruct.molecule.bonds.get(
+      (bondAddOp as BondAdd).data.bid,
+    );
+    if (newBond) {
+      action.mergeWith(fromBondStereoUpdate(restruct, newBond));
+    }
+  }
 
   return action;
 }

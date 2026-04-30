@@ -4,7 +4,7 @@ import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
@@ -99,7 +99,7 @@ test.describe('Atom Tool', () => {
     After pressing 'Add' button Si element added to canvas.
     */
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -111,14 +111,14 @@ test.describe('Atom Tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Sulfur);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(page, coordinatesWithShift, y);
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -133,7 +133,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.In,
       PeriodicTableElement.Am,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -168,7 +168,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.V,
       PeriodicTableElement.Cs,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -458,7 +458,7 @@ test.describe('Atom Tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -604,7 +604,7 @@ test.describe('Atom Tool', () => {
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
       });
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);
     }

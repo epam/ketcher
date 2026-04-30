@@ -106,7 +106,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let counter = 1;
     for (const tool of Object.values(ArrowTool)) {
-      test(` ${counter}. ${tool} check`, async ({ page }) => {
+      test(` ${counter}. ${tool} check`, async () => {
         await openFileAndAddToCanvas(
           page,
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',

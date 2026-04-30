@@ -624,7 +624,7 @@ class ReStruct {
       this.markBond(bid, 1);
     });
     ret.newLoops.forEach((loopId) => {
-      this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
+      this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)!));
     });
   }
 

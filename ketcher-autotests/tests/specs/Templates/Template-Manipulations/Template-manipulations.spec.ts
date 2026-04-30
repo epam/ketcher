@@ -272,6 +272,7 @@ test.describe('Template Manupulations', () => {
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).openTab(TabSection.TemplateLibrary);
     await takeEditorScreenshot(page);
+    await StructureLibraryDialog(page).closeWindow();
   });
 
   test('Templates - Atom symbol editing', async () => {

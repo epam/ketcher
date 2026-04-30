@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { findStereoAtoms } from 'ketcher-core';
+import tools from './tools';
+
 jest.mock('./isHidden', () =>
   jest.fn((_options, name) => name === 'hidden-tool'),
 );
@@ -25,9 +28,6 @@ jest.mock('ketcher-core', () => ({
   MULTITAIL_ARROW_TOOL_NAME: 'multitail-arrow',
   CREATE_MONOMER_TOOL_NAME: 'create-monomer',
 }));
-
-import tools from './tools';
-import { findStereoAtoms } from 'ketcher-core';
 
 const makeEditor = (overrides: Record<string, unknown> = {}) => ({
   isMonomerCreationWizardActive: false,

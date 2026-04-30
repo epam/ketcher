@@ -70,11 +70,14 @@
   },
   "overrides": {
     "nth-check": "^2.1.1",
-    "@isaacs/brace-expansion": "5.0.1"
+    "@isaacs/brace-expansion": "5.0.1",
+    "minimatch@<4": "3.1.5",
+    "minimatch@>=5 <6": "5.1.9",
+    "minimatch@>=9 <10": "9.0.9"
   },
   "dependencies": {
     "@playwright/test": "^1.44.1",
-    "minimatch": "^10.2.4",
+    "minimatch": "^10.2.5",
     "playwright": "^1.44.1",
     "playwright-core": "^1.44.1",
     "react-router": "^7.13.0",

@@ -26,5 +26,10 @@
     "eslint": "^9.17.0",
     "eslint-config-next": "16.1.4",
     "cross-env": "^7.0.3"
+  },
+  "overrides": {
+    "minimatch@<4": "3.1.5",
+    "minimatch@>=5 <6": "5.1.9",
+    "minimatch@>=9 <10": "9.0.9"
   }
 }

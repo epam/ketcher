@@ -211,6 +211,7 @@ logger.warn = (msg, options) => {
 export default defineConfig({
   server: {
     open: true,
+    port: 4002,
   },
   css: {
     devSourcemap: true,

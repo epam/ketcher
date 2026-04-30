@@ -9,6 +9,23 @@ const hasCap = (
     presetPart?.props?.MonomerCaps && cap in presetPart.props.MonomerCaps,
   );
 
+// Pushes `requiredCap` into `validations` when `monomer` has MonomerCaps
+// but is missing `missingCap` and the requirement isn't already recorded.
+const requireCapWhenMissing = (
+  monomer: MonomerItemType | undefined,
+  missingCap: 'R1' | 'R2',
+  validations: string[],
+  requiredCap: 'R1' | 'R2',
+): void => {
+  const hasMonomerCaps = Boolean(monomer?.props?.MonomerCaps);
+  const isMissingCap = !hasCap(monomer, missingCap);
+  const isNotAlreadyRequired = !validations.includes(requiredCap);
+
+  if (hasMonomerCaps && isMissingCap && isNotAlreadyRequired) {
+    validations.push(requiredCap);
+  }
+};
+
 export const getPhosphatePositionAvailability = (newPreset: IRnaPreset) => {
   const is3PrimeAvailable =
     (!newPreset?.sugar || hasCap(newPreset.sugar, 'R2')) &&
@@ -74,39 +91,12 @@ export const getValidations = (
   }
 
   // Chain-continuation constraints (requirement 4.2 in #9120):
-  // When a monomer in the preset lacks an attachment point, the partner monomer
-  // must have the complementary point to keep the RNA chain viable in that direction.
-  // E.g. sugar without R1 → phosphate needs R2 so the chain can continue
-  // via phosphate.R2 → next-sugar.R1; and vice-versa.
-  if (newPreset?.sugar?.props?.MonomerCaps) {
-    if (
-      !hasCap(newPreset.sugar, 'R1') &&
-      !phosphateValidations.includes('R2')
-    ) {
-      phosphateValidations.push('R2');
-    }
-    if (
-      !hasCap(newPreset.sugar, 'R2') &&
-      !phosphateValidations.includes('R1')
-    ) {
-      phosphateValidations.push('R1');
-    }
-  }
-
-  if (newPreset?.phosphate?.props?.MonomerCaps) {
-    if (
-      !hasCap(newPreset.phosphate, 'R1') &&
-      !sugarValidations.includes('R2')
-    ) {
-      sugarValidations.push('R2');
-    }
-    if (
-      !hasCap(newPreset.phosphate, 'R2') &&
-      !sugarValidations.includes('R1')
-    ) {
-      sugarValidations.push('R1');
-    }
-  }
+  // If a monomer lacks an AP on one side, the partner must carry the
+  // complementary AP so the chain remains viable in that direction.
+  requireCapWhenMissing(newPreset.sugar, 'R1', phosphateValidations, 'R2');
+  requireCapWhenMissing(newPreset.sugar, 'R2', phosphateValidations, 'R1');
+  requireCapWhenMissing(newPreset.phosphate, 'R1', sugarValidations, 'R2');
+  requireCapWhenMissing(newPreset.phosphate, 'R2', sugarValidations, 'R1');
 
   return {
     sugarValidations,

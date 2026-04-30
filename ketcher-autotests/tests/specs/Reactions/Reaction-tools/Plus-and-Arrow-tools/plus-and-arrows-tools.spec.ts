@@ -41,34 +41,34 @@ const xOffsetFromCenter = -35;
 const idToTitle: {
   [key: string]: string;
 } = {
-  'reaction-arrow-open-angle': 'Arrow Open Angle Tool',
-  'reaction-arrow-filled-triangle': 'Arrow Filled Triangle Tool',
-  'reaction-arrow-filled-bow': 'Arrow Filled Bow Tool',
-  'reaction-arrow-dashed-open-angle': 'Arrow Dashed Open Angle Tool',
-  'reaction-arrow-failed': 'Failed Arrow Tool',
-  'reaction-arrow-retrosynthetic': 'Retrosynthetic Arrow Tool',
-  'reaction-arrow-both-ends-filled-triangle':
+  [ArrowTool.ArrowOpenAngle]: 'Arrow Open Angle Tool',
+  [ArrowTool.ArrowFilledTriangle]: 'Arrow Filled Triangle Tool',
+  [ArrowTool.ArrowFilledBow]: 'Arrow Filled Bow Tool',
+  [ArrowTool.ArrowDashedOpenAngle]: 'Arrow Dashed Open Angle Tool',
+  [ArrowTool.FailedArrow]: 'Failed Arrow Tool',
+  [ArrowTool.RetrosyntheticArrow]: 'Retrosynthetic Arrow Tool',
+  [ArrowTool.ArrowBothEndsFilledTriangle]:
     'Arrow Both Ends Filled Triangle Tool',
-  'reaction-arrow-equilibrium-filled-half-bow':
+  [ArrowTool.ArrowEquilibriumFilledHalfBow]:
     'Arrow Equilibrium Filled Half Bow Tool',
-  'reaction-arrow-equilibrium-filled-triangle':
+  [ArrowTool.ArrowEquilibriumFilledTriangle]:
     'Arrow Equilibrium Filled Triangle Tool',
-  'reaction-arrow-equilibrium-open-angle': 'Arrow Equilibrium Open Angle Tool',
-  'reaction-arrow-unbalanced-equilibrium-filled-half-bow':
+  [ArrowTool.ArrowEquilibriumOpenAngle]: 'Arrow Equilibrium Open Angle Tool',
+  [ArrowTool.ArrowUnbalancedEquilibriumFilledHalfBow]:
     'Arrow Unbalanced Equilibrium Filled Half Bow Tool',
-  'reaction-arrow-unbalanced-equilibrium-open-half-angle':
+  [ArrowTool.ArrowUnbalancedEquilibriumOpenHalfAngle]:
     'Arrow Unbalanced Equilibrium Open Half Angle Tool',
-  'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow':
+  [ArrowTool.ArrowUnbalancedEquilibriumLargeFilledHalfBow]:
     'Arrow Unbalanced Equilibrium Large Filled Half Bow Tool',
-  'reaction-arrow-unbalanced-equilibrium-filled-half-triangle':
+  [ArrowTool.ArrowUnbalancedEquilibriumFilledHalfTriangle]:
     'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
-  'reaction-arrow-elliptical-arc-arrow-filled-bow':
+  [ArrowTool.ArrowEllipticalArcFilledBow]:
     'Arrow Elliptical Arc Filled Bow Tool',
-  'reaction-arrow-elliptical-arc-arrow-filled-triangle':
+  [ArrowTool.ArrowEllipticalArcFilledTriangle]:
     'Arrow Elliptical Arc Filled Triangle Tool',
-  'reaction-arrow-elliptical-arc-arrow-open-angle':
+  [ArrowTool.ArrowEllipticalArcOpenAngle]:
     'Arrow Elliptical Arc Open Angle Tool',
-  'reaction-arrow-elliptical-arc-arrow-open-half-angle':
+  [ArrowTool.ArrowEllipticalArcOpenHalfAngle]:
     'Arrow Elliptical Arc Open Half Angle Tool',
 };
 
@@ -786,17 +786,18 @@ test.describe('Plus and Arrows tools ', () => {
     });
   });
 
-  for (const arrow of Object.values(ArrowType)) {
-    test(`${arrow} should have correct naming`, async () => {
+  for (const arrowButtonDataTestId of Object.values(ArrowTool)) {
+    test(`${arrowButtonDataTestId} should have correct naming`, async () => {
       /**
        * Test case: Test case: EPMLSOPKET - 16947
        * Description:  All Arrows should have correct tooltip
        */
       await LeftToolbar(page).expandArrowToolsDropdown();
-      const button = page.locator(
-        `.default-multitool-dropdown [data-testid="${arrow}"]`,
+      const button = page.getByTestId(arrowButtonDataTestId).first();
+      await expect(button).toHaveAttribute(
+        'title',
+        idToTitle[arrowButtonDataTestId],
       );
-      await expect(button).toHaveAttribute('title', idToTitle[arrow]);
       await button.click();
       await clickInTheMiddleOfTheCanvas(page);
     });

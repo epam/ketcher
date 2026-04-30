@@ -8,11 +8,14 @@ import { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
-import { Box2Abs } from 'domain/entities/box2Abs';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
-import util from 'application/render/util';
 import { RaphaelPaper } from 'raphael';
+
+type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
+
+const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';
+const RXN_ARROW_TEST_ID = 'rxn-arrow';
 
 export enum MultitailArrowRefName {
   HEAD = 'head',
@@ -37,6 +40,13 @@ export class ReMultitailArrow extends ReObject {
   static readonly CUBIC_BEZIER_OFFSET = 6;
   static readonly FRAME_OFFSET = 0.175;
   static readonly SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
+  static readonly SPINE_MOVE_POINT_X_OFFSET = -1;
+  static readonly HEAD_LINE_START_OFFSET = 1;
+  static readonly SELECTION_POINT_RADIUS = 1;
+  static readonly HIDDEN_SELECTION_POINT_OPACITY = 0;
+  static readonly VISIBLE_SELECTION_POINT_OPACITY = 1;
+
+  private testSelectionPoints: TestSelectionPoint[] = [];
 
   static isSelectable(): boolean {
     return true;
@@ -196,6 +206,13 @@ export class ReMultitailArrow extends ReObject {
       .path(path)
       .attr({ ...render.options.hoverStyle });
 
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      paths.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
+
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths);
 
     return paths;
@@ -226,8 +243,24 @@ export class ReMultitailArrow extends ReObject {
     const OFFSET = this.getSelectionPointOffset(renderOptions);
     const { topTail, bottomTail, tails, head, topSpine } =
       this.getReferencePositions(renderOptions);
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const headLineStartX = topSpine.x + headLineStartOffset;
+    const spineMovePoint = new Vec2(
+      topSpine.x + ReMultitailArrow.SPINE_MOVE_POINT_X_OFFSET,
+      head.y,
+    );
+    const headMovePoint = new Vec2(
+      headLineStartX + (head.x - headLineStartX) / 2,
+      head.y,
+    );
     const selectionPointSet = paper.set();
+    const selectionPoints: TestSelectionPoint[] = [];
+    let spineMoveSelectionPoint: TestSelectionPoint | null = null;
     const points: Record<string, Vec2> = {
+      'spine-move': spineMovePoint,
       ...this.getSelectionPointsFromReferencePoint(
         topTail,
         topSpine,
@@ -259,21 +292,44 @@ export class ReMultitailArrow extends ReObject {
         {},
       ),
     };
+    points['head-move'] = headMovePoint;
     Object.entries(points).forEach(([key, point]) => {
-      const element = paper.circle(point.x, point.y, 1).attr({
-        fill: 'none',
-        stroke: 'none',
-      });
+      const isSpineMovePoint = key === 'spine-move';
+      const selectionPointRadius = isSpineMovePoint
+        ? ReMultitailArrow.SELECTION_POINT_RADIUS
+        : ReMultitailArrow.SELECTION_POINT_RADIUS;
+      const element = paper
+        .circle(point.x, point.y, selectionPointRadius)
+        .attr({
+          fill: '#000',
+          stroke: '#000',
+          'stroke-width': 0,
+          'fill-opacity': isSpineMovePoint ? 0 : 1,
+          'stroke-opacity': isSpineMovePoint ? 0 : 1,
+          opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
+          'pointer-events': 'all',
+        });
+      if (isSpineMovePoint) {
+        spineMoveSelectionPoint = element;
+      }
       if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', key);
+        element.node.setAttribute('pointer-events', 'all');
+        if (typeof this.multitailArrow.arrowId === 'number') {
+          element.node.setAttribute(
+            'data-arrow-id',
+            String(this.multitailArrow.arrowId),
+          );
+        }
       }
+      selectionPoints.push(element);
       selectionPointSet.push(element);
     });
-    reStruct.addReObjectPath(
-      LayerMap.selectionPlate,
-      this.visel,
-      selectionPointSet,
-    );
+    this.testSelectionPoints = selectionPoints;
+    reStruct.addReObjectPath(LayerMap.indices, this.visel, selectionPointSet);
+    if (spineMoveSelectionPoint) {
+      reStruct.movePathOnTopOfLayer(spineMoveSelectionPoint, LayerMap.indices);
+    }
   }
 
   makeSelectionPlate(
@@ -281,12 +337,18 @@ export class ReMultitailArrow extends ReObject {
     paper: RaphaelPaper,
     options: RenderOptions,
   ) {
-    this.addTestSelectionPoints(reStruct, paper, options);
     const path = this.buildFrame(options);
     const selectionSet = paper.set();
     const paths = reStruct.render.paper
       .path(path)
       .attr({ ...options.selectionStyle });
+
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      paths.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
 
     selectionSet.push(paths);
     return selectionSet;
@@ -294,12 +356,17 @@ export class ReMultitailArrow extends ReObject {
 
   show(reStruct: ReStruct, renderOptions: RenderOptions) {
     reStruct.clearVisel(this.visel);
+    this.testSelectionPoints = [];
     const pathBuilder = new PathBuilder();
     const headPathBuilder = new PathBuilder();
     const { topTail, topSpine, bottomSpine, head, tails } =
       this.getReferencePositions(renderOptions);
     const topTailOffsetX = topSpine.sub(topTail).x;
-    const arrowStart = new Vec2(topSpine.x, head.y);
+    const headLineStartOffset = Math.min(
+      ReMultitailArrow.HEAD_LINE_START_OFFSET,
+      Math.max(0, head.x - topSpine.x),
+    );
+    const arrowStart = new Vec2(topSpine.x + headLineStartOffset, head.y);
     const arrowLength = head.x - arrowStart.x;
 
     const { arrowHeadLength, arrowHeadWidth } =
@@ -323,13 +390,47 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
+    path.node?.setAttribute('data-testid', RXN_ARROW_TEST_ID);
+    path.node?.setAttribute('data-arrowtype', MULTITAIL_ARROW_TEST_ID);
+    if (typeof this.multitailArrow.arrowId === 'number') {
+      path.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+      header.node?.setAttribute(
+        'data-arrow-id',
+        String(this.multitailArrow.arrowId),
+      );
+    }
     path.attr(renderOptions.lineattr);
     header.attr({
       ...renderOptions.lineattr,
       fill: '#000',
     });
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-    this.visel.add(header, Box2Abs.fromRelBox(util.relBox(header.getBBox())));
+    reStruct.addReObjectPath(
+      LayerMap.data,
+      this.visel,
+      [path, header],
+      null,
+      true,
+    );
+    this.addTestSelectionPoints(reStruct, reStruct.render.paper, renderOptions);
+  }
+
+  showPoints() {
+    this.testSelectionPoints.forEach((point) => {
+      point.attr({
+        opacity: ReMultitailArrow.VISIBLE_SELECTION_POINT_OPACITY,
+      });
+    });
+  }
+
+  hidePoints() {
+    this.testSelectionPoints.forEach((point) => {
+      point.attr({
+        opacity: ReMultitailArrow.HIDDEN_SELECTION_POINT_OPACITY,
+      });
+    });
   }
 
   private getClosestArrowPartPosition(

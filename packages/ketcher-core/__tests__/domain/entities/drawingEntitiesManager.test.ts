@@ -23,6 +23,10 @@ import {
   createRenderersManager,
 } from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Struct } from 'domain/entities/struct';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -178,5 +182,40 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should normalize invalid selection flags for reaction entities', () => {
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+
+    drawingEntitiesManager.addRxnArrow(
+      RxnArrowMode.OpenAngle,
+      [new Vec2(0, 0), new Vec2(10, 0)],
+      undefined,
+      INVALID,
+    );
+    drawingEntitiesManager.addRxnPlus(new Vec2(5, 5), INVALID);
+
+    expect(
+      Array.from(drawingEntitiesManager.rxnArrows.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+    expect(
+      Array.from(drawingEntitiesManager.rxnPluses.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+
+    const struct = new Struct();
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
+      drawingEntitiesManager,
+      struct,
+    );
+
+    const rxnArrow = Array.from(struct.rxnArrows.values())[0];
+    const rxnPlus = Array.from(struct.rxnPluses.values())[0];
+
+    expect(rxnArrow.getInitiallySelected()).toBeUndefined();
+    expect(rxnPlus.getInitiallySelected()).toBeUndefined();
   });
 });

@@ -56,7 +56,7 @@ export function fromBondAddition(
   ) => {
     const newFragmentId = (
       action.addOp(new FragmentAdd().perform(reStruct)) as FragmentAdd
-    ).frid;
+    ).frid as number;
 
     const newBeginAtomId: number = (
       action.addOp(
@@ -278,7 +278,7 @@ export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
   bond: Bond,
-  bondProps: any,
+  bondProps: Partial<BondAttributes>,
 ): Action {
   const action = new Action();
   let newItemId = itemID;
@@ -294,7 +294,10 @@ export function bondChangingAction(
   }
   // if bondTool is stereo and equal to bond for change
 
-  const loop = plainBondTypes.includes(bondProps.type) ? plainBondTypes : null;
+  const loop =
+    bondProps.type !== undefined && plainBondTypes.includes(bondProps.type)
+      ? plainBondTypes
+      : null;
   if (
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&

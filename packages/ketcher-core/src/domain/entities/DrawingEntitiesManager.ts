@@ -193,6 +193,14 @@ export class DrawingEntitiesManager {
     this.nextArrowId = 0;
   }
 
+  private static normalizeInitiallySelected(
+    initiallySelected?: initiallySelectedType,
+  ): boolean | undefined {
+    return typeof initiallySelected === 'boolean'
+      ? initiallySelected
+      : undefined;
+  }
+
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -3865,7 +3873,12 @@ export class DrawingEntitiesManager {
       return _arrow;
     }
 
-    const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
+    const rxnArrow = new RxnArrow(
+      type,
+      position,
+      height,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
     rxnArrow.arrowId = arrowId;
     this.ensureArrowId(rxnArrow);
 
@@ -3999,7 +4012,10 @@ export class DrawingEntitiesManager {
       return _rxnPlus;
     }
 
-    const rxnPlus = new RxnPlus(position, initiallySelected);
+    const rxnPlus = new RxnPlus(
+      position,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
 
     this.rxnPluses.set(rxnPlus.id, rxnPlus);
 

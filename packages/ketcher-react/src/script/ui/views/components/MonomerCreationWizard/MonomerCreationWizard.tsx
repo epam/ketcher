@@ -32,7 +32,7 @@ import {
 } from './RnaPresetStructureValidation';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
-import { onAction } from '../../../state/shared';
+import { onAction, openSuccessModal } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
@@ -70,7 +70,6 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
-import { showSnackbarNotification } from '../../../state/notifications';
 
 const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
   values: {
@@ -1686,10 +1685,12 @@ const MonomerCreationWizard = () => {
       dispatch(onAction(selectRectangleAction));
       resetWizard();
       dispatch(
-        showSnackbarNotification(
+        openSuccessModal(
+          'All Set!',
           isRnaPresetType
             ? NotificationMessages.creationRNASuccessful
             : NotificationMessages.creationSuccessful,
+          'OK',
         ),
       );
     }
@@ -1894,6 +1895,13 @@ const MonomerCreationWizard = () => {
 
                   dispatch(onAction(selectRectangleAction));
                   resetWizard();
+                  dispatch(
+                    openSuccessModal(
+                      'All Set!',
+                      NotificationMessages.creationSuccessful,
+                      'OK',
+                    ),
+                  );
                 },
                 onCancel: () => setLeavingGroupDialogMessage(''),
               }}

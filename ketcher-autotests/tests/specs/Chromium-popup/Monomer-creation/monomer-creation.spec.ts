@@ -75,6 +75,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   ErrorMessage,
   InfoMessage,
@@ -638,6 +639,13 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
     AminoAcidNaturalAnalogue.A,
   );
   await CreateMonomerDialog(page).submit();
+  const infoDlg = InfoMessageDialog(page);
+  await infoDlg.infoModalWindow
+    .waitFor({ state: 'visible', timeout: 3000 })
+    .catch(() => {});
+  if (await infoDlg.infoModalOk.isVisible()) {
+    await infoDlg.ok();
+  }
 
   // Verify monomer was created successfully by switching to macromolecules mode
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

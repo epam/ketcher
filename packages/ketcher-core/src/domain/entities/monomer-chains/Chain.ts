@@ -20,7 +20,7 @@ import {
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 let id = 0;
 export class Chain {

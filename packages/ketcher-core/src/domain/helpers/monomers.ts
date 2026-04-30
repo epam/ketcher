@@ -23,10 +23,7 @@ import type { Phosphate } from 'domain/entities/Phosphate';
  * Structural equivalent of AmbiguousMonomer used locally to avoid importing the class
  * and creating extra dependency edges in core entity/helper graph.
  */
-type AmbiguousMonomerEntity = BaseMonomer &
-  IVariantMonomer & {
-    monomerClass: KetMonomerClass;
-  };
+type AmbiguousMonomerEntity = BaseMonomer & IVariantMonomer;
 
 type AmbiguousMonomerLike = {
   monomerItem?: { isAmbiguous?: boolean };

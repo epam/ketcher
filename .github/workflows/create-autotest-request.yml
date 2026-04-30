@@ -1,0 +1,109 @@
+name: Create Autotest Request
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  create-autotest-request:
+    if: >
+      github.event.label.name == 'Run TA creation workflow' &&
+      (
+        github.event.issue.issue_type.name == 'Feature' ||
+        github.event.issue.type.name == 'Feature' ||
+        github.event.issue.issue_type == 'Feature' ||
+        github.event.issue.type == 'Feature'
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Generate test scenarios and create Autotest Request
+        uses: actions/github-script@v7
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const apiKey = process.env.ANTHROPIC_API_KEY;
+
+            if (!apiKey) {
+              throw new Error('ANTHROPIC_API_KEY secret is not configured.');
+            }
+
+            const sourceLink = issue.html_url;
+
+            let featureTitle = issue.title;
+            let featureDescription = issue.body?.trim() || '(none)';
+
+            const prompt = `You are a QA engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
+            Generate a concise checklist of test scenarios that automated tests should cover - include the happy path and the most important edge cases.
+
+            Feature title: ${featureTitle}
+            Feature description:
+            ${featureDescription}
+
+            Rules:
+            - Output a markdown checklist only (lines starting with "- [ ]"), no headings or prose.
+            - Each item is one testable scenario in plain language.
+            - Be specific to Ketcher's domain (molecules, bonds, atoms, reactions, monomers) where relevant.
+            - Maximum 15 items.`;
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+              method: 'POST',
+              headers: {
+                'x-api-key': apiKey,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: 'claude-sonnet-4-6',
+                max_tokens: 1024,
+                messages: [{ role: 'user', content: prompt }],
+              }),
+            });
+
+            const responseText = await response.text();
+            if (!response.ok) {
+              throw new Error(`Anthropic request failed (${response.status}): ${responseText}`);
+            }
+
+            let json;
+            try {
+              json = JSON.parse(responseText);
+            } catch (error) {
+              throw new Error(`Anthropic returned invalid JSON: ${error.message}`);
+            }
+
+            const generatedText = json.content?.find((item) => item.type === 'text')?.text?.trim();
+            if (!generatedText) {
+              throw new Error('Anthropic response did not include generated test scenarios.');
+            }
+
+            const testScenarios = generatedText
+              .replace(/^```(?:markdown|md)?\s*/i, '')
+              .replace(/\s*```$/, '');
+
+            const checklistMatches = testScenarios.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            if (checklistMatches.length === 0) {
+              throw new Error('Anthropic response did not include any markdown checklist items.');
+            }
+
+            const { data: createdIssue } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Autotests: ${featureTitle}`,
+              body: `**Source task(s):**\n- ${sourceLink}\n\n**Suggested test scenarios:**\n${testScenarios}`,
+              labels: ['Autotests'],
+              type: 'Task',
+            });
+
+            // Reply in the source issue with a link to the created issue.
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `Autotest request created: ${createdIssue.html_url}\n\nAdd the \`Run TA creation workflow\` label to that issue when the automation checklist is ready for PR generation.`,
+            });

@@ -626,8 +626,18 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
+    const isClipArea = event.target?.hasAttribute?.('data-cliparea');
+    if (isClipArea) {
+      if (keySettings[shortcutKey]?.handler) {
+        keySettings[shortcutKey].handler(this);
+        event.preventDefault();
+      }
+      return;
+    }
     const isInput =
-      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
+      event.target.nodeName === 'INPUT' ||
+      event.target.nodeName === 'TEXTAREA' ||
+      event.target.isContentEditable;
 
     if (keySettings[shortcutKey]?.handler && !isInput) {
       keySettings[shortcutKey].handler(this);

@@ -32,6 +32,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 import { Dialog } from '../../../components';
 import { DialogParams } from '../../../../../../components/Dialog/Dialog';
@@ -226,6 +227,7 @@ const TextEditorInner = (props: {
         }
         ErrorBoundary={LexicalErrorBoundary}
       />
+      <HistoryPlugin />
       <EnterKeyPlugin />
       <EditorRefPlugin editorRef={editorRef} />
       <AutoFocusPlugin />

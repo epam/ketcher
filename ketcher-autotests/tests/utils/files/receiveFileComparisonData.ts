@@ -78,7 +78,13 @@ async function getFileContent(
   }
 
   // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
-  return fileFormat ? handler(page, fileFormat) : handler(page);
+  const fileContent = fileFormat
+    ? await (
+        handler as (page: Page, fileFormat: FileFormat) => Promise<string>
+      )(page, fileFormat)
+    : await (handler as (page: Page) => Promise<string>)(page);
+
+  return fileContent;
 }
 
 export async function verifyFileExport(

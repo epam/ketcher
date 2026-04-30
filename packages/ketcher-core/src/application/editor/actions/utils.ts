@@ -125,10 +125,145 @@ export function formatSelection(selection): any {
   }, {});
 }
 
+const TWO_PI = 2 * Math.PI;
+
+function normalizeAngle(angle: number): number {
+  let normalized = angle % TWO_PI;
+  if (normalized < 0) {
+    normalized += TWO_PI;
+  }
+  return normalized;
+}
+
+function shortestAngularDistance(from: number, to: number): number {
+  const diff = Math.abs(normalizeAngle(from) - normalizeAngle(to));
+  return Math.min(diff, TWO_PI - diff);
+}
+
+function pointToSegmentDistance(point: Vec2, start: Vec2, end: Vec2): number {
+  const segment = Vec2.diff(end, start);
+  const segmentLengthSq = segment.x * segment.x + segment.y * segment.y;
+
+  if (segmentLengthSq < 1e-8) {
+    return Vec2.dist(point, start);
+  }
+
+  const toPoint = Vec2.diff(point, start);
+  const projection =
+    (toPoint.x * segment.x + toPoint.y * segment.y) / segmentLengthSq;
+  const clampedProjection = Math.max(0, Math.min(1, projection));
+  const closest = new Vec2(
+    start.x + segment.x * clampedProjection,
+    start.y + segment.y * clampedProjection,
+  );
+
+  return Vec2.dist(point, closest);
+}
+
+function getSpatialPenalty(
+  origin: Vec2,
+  candidateAngle: number,
+  nearbyAtoms: Vec2[],
+  nearbyBonds: Array<{ begin: Vec2; end: Vec2 }>,
+): number {
+  const candidatePos = new Vec2(
+    Math.cos(candidateAngle),
+    Math.sin(candidateAngle),
+  );
+  candidatePos.add_(origin); // eslint-disable-line no-underscore-dangle
+
+  const atomCollisionThreshold = 0.9;
+  const atomPenalty = nearbyAtoms.reduce((score, atomPos) => {
+    const distance = Vec2.dist(candidatePos, atomPos);
+    if (distance >= atomCollisionThreshold) {
+      return score;
+    }
+
+    const overlap =
+      (atomCollisionThreshold - distance) / atomCollisionThreshold;
+    return score + overlap * overlap;
+  }, 0);
+
+  const bondCollisionThreshold = 0.35;
+  const bondPenalty = nearbyBonds.reduce((score, bondSegment) => {
+    const distance = pointToSegmentDistance(
+      candidatePos,
+      bondSegment.begin,
+      bondSegment.end,
+    );
+    if (distance >= bondCollisionThreshold) {
+      return score;
+    }
+
+    const overlap =
+      (bondCollisionThreshold - distance) / bondCollisionThreshold;
+    return score + overlap * overlap;
+  }, 0);
+
+  return atomPenalty * 6 + bondPenalty * 4;
+}
+
+function optimizeDirectionAngle(
+  origin: Vec2,
+  preferredAngle: number,
+  blockedAngles: number[],
+  nearbyAtoms: Vec2[],
+  nearbyBonds: Array<{ begin: Vec2; end: Vec2 }>,
+): number {
+  if (
+    blockedAngles.length === 0 &&
+    nearbyAtoms.length === 0 &&
+    nearbyBonds.length === 0
+  ) {
+    return preferredAngle;
+  }
+
+  const halfBlockedSector = Math.PI / 8;
+  const searchStep = Math.PI / 36;
+  const searchSpan = Math.PI;
+  const steps = Math.round((2 * searchSpan) / searchStep);
+  let bestAngle = preferredAngle;
+  let bestScore = Number.POSITIVE_INFINITY;
+
+  for (let stepIndex = 0; stepIndex <= steps; stepIndex++) {
+    const offset = -searchSpan + stepIndex * searchStep;
+    const candidate = preferredAngle + offset;
+    const overlapPenalty = blockedAngles.reduce((score, blockedAngle) => {
+      const distance = shortestAngularDistance(candidate, blockedAngle);
+      if (distance >= halfBlockedSector) {
+        return score;
+      }
+      const overlapFactor = (halfBlockedSector - distance) / halfBlockedSector;
+      return score + overlapFactor * overlapFactor;
+    }, 0);
+
+    const deviationPenalty =
+      shortestAngularDistance(candidate, preferredAngle) / Math.PI;
+    const spatialPenalty = getSpatialPenalty(
+      origin,
+      candidate,
+      nearbyAtoms,
+      nearbyBonds,
+    );
+    const totalScore =
+      overlapPenalty * 100 + spatialPenalty * 20 + deviationPenalty;
+
+    if (totalScore < bestScore) {
+      bestScore = totalScore;
+      bestAngle = candidate;
+    }
+  }
+
+  return bestAngle;
+}
+
 // Get new atom id/label and pos for bond being added to existing atom
 export function atomForNewBond(restruct, id, bond?) {
   // eslint-disable-line max-statements
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
+  const blockedAngles: number[] = [];
+  const nearbyAtoms: Vec2[] = [];
+  const nearbyBonds: Array<{ begin: Vec2; end: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = restruct.molecule.atomGetNeighbors(id);
 
@@ -149,7 +284,60 @@ export function atomForNewBond(restruct, id, bond?) {
 
     if (Vec2.dist(pos, neiPos) < 0.1) return;
 
-    neighbours.push({ id: nei.aid, v: Vec2.diff(neiPos, pos) });
+    const neiDirection = Vec2.diff(neiPos, pos);
+    neighbours.push({ id: nei.aid, v: neiDirection });
+    blockedAngles.push(Math.atan2(neiDirection.y, neiDirection.x));
+
+    restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
+      if (neiNei.aid === id) {
+        return;
+      }
+
+      const neiNeiPos = atomGetPos(restruct, neiNei.aid);
+      if (Vec2.dist(pos, neiNeiPos) < 0.1) {
+        return;
+      }
+
+      const nearbyDirection = Vec2.diff(neiNeiPos, pos);
+      blockedAngles.push(Math.atan2(nearbyDirection.y, nearbyDirection.x));
+    });
+  });
+
+  const environmentRadius = 2.5;
+  restruct.molecule.atoms.forEach((atom, aid) => {
+    if (aid === id) {
+      return;
+    }
+
+    const atomPos = atom.pp;
+    const distance = Vec2.dist(pos, atomPos);
+    if (distance > environmentRadius || distance < 0.1) {
+      return;
+    }
+
+    nearbyAtoms.push(atomPos);
+    blockedAngles.push(Math.atan2(atomPos.y - pos.y, atomPos.x - pos.x));
+  });
+
+  restruct.molecule.bonds.forEach((bondItem) => {
+    if (bondItem.begin === id || bondItem.end === id) {
+      return;
+    }
+
+    const beginPos = atomGetPos(restruct, bondItem.begin);
+    const endPos = atomGetPos(restruct, bondItem.end);
+    if (!beginPos || !endPos) {
+      return;
+    }
+
+    if (
+      Vec2.dist(pos, beginPos) > environmentRadius &&
+      Vec2.dist(pos, endPos) > environmentRadius
+    ) {
+      return;
+    }
+
+    nearbyBonds.push({ begin: beginPos, end: endPos });
   });
 
   neighbours.sort(
@@ -161,8 +349,6 @@ export function atomForNewBond(restruct, id, bond?) {
   let maxI = 0;
   let angle;
   let maxAngle = 0;
-
-  // TODO: impove layout: tree, ...
 
   for (i = 0; i < neighbours.length; i++) {
     angle = Vec2.angle(
@@ -180,67 +366,76 @@ export function atomForNewBond(restruct, id, bond?) {
 
   let v = new Vec2(1, 0);
 
-  if (neighbours.length > 0) {
-    if (neighbours.length === 1) {
-      maxAngle = -((4 * Math.PI) / 3);
+  if (neighbours.length === 1) {
+    maxAngle = -((4 * Math.PI) / 3);
 
-      // zig-zag
-      const nei = restruct.molecule.atomGetNeighbors(id)[0];
-      if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours: Array<any> = [];
-        const neiPos = atomGetPos(restruct, nei.aid);
-        const neiV = Vec2.diff(pos, neiPos);
-        const neiAngle = Math.atan2(neiV.y, neiV.x);
+    // zig-zag
+    const nei = restruct.molecule.atomGetNeighbors(id)[0];
+    if (atomGetDegree(restruct, nei.aid) > 1) {
+      const neiNeighbours: Array<any> = [];
+      const neiPos = atomGetPos(restruct, nei.aid);
+      const neiV = Vec2.diff(pos, neiPos);
+      const neiAngle = Math.atan2(neiV.y, neiV.x);
 
-        restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
-          const neiNeiPos = atomGetPos(restruct, neiNei.aid);
+      restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
+        const neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
-          if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
-            return;
-          }
-
-          const vDiff = Vec2.diff(neiNeiPos, neiPos);
-          let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle;
-
-          if (ang < 0) ang += 2 * Math.PI;
-
-          neiNeighbours.push(ang);
-        });
-        neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
-
-        if (
-          neiNeighbours[0] <= Math.PI * 1.01 &&
-          neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
-        ) {
-          maxAngle *= -1;
+        if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
+          return;
         }
+
+        const vDiff = Vec2.diff(neiNeiPos, neiPos);
+        let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle;
+
+        if (ang < 0) ang += 2 * Math.PI;
+
+        neiNeighbours.push(ang);
+      });
+      neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
+
+      if (
+        neiNeighbours[0] <= Math.PI * 1.01 &&
+        neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
+      ) {
+        maxAngle *= -1;
       }
     }
+  }
 
-    const shallBe180DegToPrevBond =
-      (neighbours.length === 1 &&
-        prevBondType === bond?.type &&
-        (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
-          bond?.type === Bond.PATTERN.TYPE.TRIPLE)) ||
+  const shallBe180DegToPrevBond =
+    neighbours.length > 0 &&
+    ((neighbours.length === 1 &&
+      prevBondType === bond?.type &&
+      (bond?.type === Bond.PATTERN.TYPE.DOUBLE ||
+        bond?.type === Bond.PATTERN.TYPE.TRIPLE)) ||
       (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
         bond?.type === Bond.PATTERN.TYPE.TRIPLE) ||
       (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
-        bond?.type === Bond.PATTERN.TYPE.SINGLE);
+        bond?.type === Bond.PATTERN.TYPE.SINGLE));
 
-    if (shallBe180DegToPrevBond) {
-      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle;
-      if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
-        angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
-      } else {
-        angle = (prevBondAngle * Math.PI) / 180;
-      }
+  if (shallBe180DegToPrevBond) {
+    const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle;
+    if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
+      angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
     } else {
-      angle =
+      angle = (prevBondAngle * Math.PI) / 180;
+    }
+  } else {
+    let preferredAngle = 0;
+    if (neighbours.length > 0) {
+      preferredAngle =
         maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x);
     }
-
-    v = v.rotate(angle);
+    angle = optimizeDirectionAngle(
+      pos,
+      preferredAngle,
+      blockedAngles,
+      nearbyAtoms,
+      nearbyBonds,
+    );
   }
+
+  v = v.rotate(angle);
 
   v.add_(pos); // eslint-disable-line no-underscore-dangle
 

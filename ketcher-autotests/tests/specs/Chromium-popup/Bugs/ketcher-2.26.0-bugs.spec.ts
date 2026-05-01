@@ -62,7 +62,7 @@ import {
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -501,7 +501,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
       ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
       await takeEditorScreenshot(page);
-      await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).hover([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.SubstitutionCount,
+      ]);
       await takeEditorScreenshot(page);
     },
   );
@@ -710,7 +716,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Undo
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {

@@ -1,6 +1,6 @@
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -23,9 +23,9 @@ import {
 async function drawStructure(page: Page) {
   await waitForPageInit(page);
   await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.keyboard.press('Escape');
 }
 

@@ -8,7 +8,7 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
   moveMouseAway,
@@ -88,12 +88,12 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
@@ -129,10 +129,10 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //     });
 
 //     await selectFunctionalGroups(FunctionalGroups.CF3, page);
-//     await clickInTheMiddleOfTheScreen(page);
+//     await clickInTheMiddleOfTheCanvas(page);
 //     await atomToolbar.clickAtom(Atom.Bromine);
 
-//     await clickInTheMiddleOfTheScreen(page);
+//     await clickInTheMiddleOfTheCanvas(page);
 //     await takeEditorScreenshot(page, {
 //       hideMonomerPreview: true,
 //       hideMacromoleculeEditorScrollBars: true,
@@ -251,7 +251,7 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await takeEditorScreenshot(page, {

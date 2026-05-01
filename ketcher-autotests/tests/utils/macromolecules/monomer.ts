@@ -86,6 +86,11 @@ export enum AttachmentPoint {
   R8 = 'R8',
 }
 
+type AttachmentPointLocatorOptions = {
+  attachmentPointAlias?: AttachmentPoint;
+  parentMonomerId?: string | number;
+};
+
 /**
  * This function returns locator for monomer in the macromolecule editor.
  * It can be used to find monomers by their alias, type, or ID. It also allows for additional options such as number of attachment points, R values, and hydrogen connection number.
@@ -200,6 +205,35 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   const locator = page.locator(attributeSelectors);
 
   return locator;
+}
+
+export function getAttachmentPointLocator(
+  root: Page | Locator,
+  options: AttachmentPoint | AttachmentPointLocatorOptions = {},
+) {
+  const normalizedOptions =
+    typeof options === 'string' ? { attachmentPointAlias: options } : options;
+
+  const attributes: { [key: string]: string } = {
+    'data-testid': 'monomer-attachment-point',
+  };
+
+  if (normalizedOptions.attachmentPointAlias) {
+    attributes['data-attachment-point-alias'] =
+      normalizedOptions.attachmentPointAlias;
+  }
+
+  if (Object.hasOwn(normalizedOptions, 'parentMonomerId')) {
+    attributes['data-parent-monomer-id'] = String(
+      normalizedOptions.parentMonomerId,
+    );
+  }
+
+  return root.locator(
+    Object.entries(attributes)
+      .map(([key, value]) => `[${key}="${value}"]`)
+      .join(''),
+  );
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {

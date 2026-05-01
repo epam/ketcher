@@ -835,10 +835,13 @@ class ReAtom extends ReObject {
 
           labelGroup.forEach((element) => {
             element.node?.setAttribute(
-              'data-attachment-point-name',
+              'data-attachment-point-alias',
               attachmentPointName,
             );
-            element.node?.setAttribute('data-testid', attachmentPointName);
+            element.node?.setAttribute(
+              'data-testid',
+              'monomer-attachment-point',
+            );
           });
 
           // Add hover handlers

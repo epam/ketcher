@@ -148,7 +148,9 @@ export class AttachmentPoint {
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
-      .attr('data-testid', `${this.attachmentPointName}`)
+      .attr('data-testid', 'monomer-attachment-point')
+      .attr('data-attachment-point-alias', this.attachmentPointName)
+      .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
 

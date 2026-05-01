@@ -313,24 +313,7 @@ export async function bondTwoMonomersPointToPoint(
     const firstAttachmentPoint = firstMonomer.getByTestId(
       firstMonomerAttachmentPoint,
     );
-
-    const firstAttachmentPointBoundingBox =
-      await firstAttachmentPoint.boundingBox();
-
-    if (firstAttachmentPointBoundingBox) {
-      await page.mouse.move(
-        // if we click on the center of R5 connection point - it replace R5 connection point with R1
-        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        firstAttachmentPointBoundingBox.x +
-          firstAttachmentPointBoundingBox.width / 4,
-        firstAttachmentPointBoundingBox.y +
-          firstAttachmentPointBoundingBox.height / 4,
-      );
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+    await firstAttachmentPoint.hover({ force: true });
   }
   await page.mouse.down();
 
@@ -339,23 +322,7 @@ export async function bondTwoMonomersPointToPoint(
     const secondAttachmentPoint = secondMonomer.getByTestId(
       secondMonomerAttachmentPoint,
     );
-    const secondAttachmentPointBoundingBox =
-      await secondAttachmentPoint.boundingBox();
-
-    if (secondAttachmentPointBoundingBox) {
-      await page.mouse.move(
-        // if we click on the center of R5 connection point - it replace R5 connection point with R1
-        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        secondAttachmentPointBoundingBox.x +
-          secondAttachmentPointBoundingBox.width / 4,
-        secondAttachmentPointBoundingBox.y +
-          secondAttachmentPointBoundingBox.height / 4,
-      );
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+    await secondAttachmentPoint.hover({ force: true });
   }
   await page.mouse.up();
 

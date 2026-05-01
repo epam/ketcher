@@ -88,6 +88,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   AttachmentPoint,
+  getAttachmentPointLocator,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -752,7 +753,9 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
     const vinU = getMonomerLocator(page, Nucleotide.vinU);
     await vinU.hover();
-    await expect(vinU.getByTestId(AttachmentPoint.R2)).toBeVisible();
+    await expect(
+      getAttachmentPointLocator(vinU, AttachmentPoint.R2),
+    ).toBeVisible();
   });
 
   test('Case 23: Do not save added/updated monomer in local storage', async ({
@@ -1023,7 +1026,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await page.mouse.move(600, 200);
     await dragMouseTo(page, 600, 250);
 
-    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
     await ContextMenu(page, attachmentPointR1).click(
       ConnectionPointOption.EditConnectionPoint,
     );

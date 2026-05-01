@@ -30,6 +30,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   AttachmentPoint,
+  getAttachmentPointLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -1148,7 +1149,10 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await createMonomerDialog.selectType(MonomerType.Sugar);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1158,7 +1162,10 @@ test(`22. Check that hovering over R1 for sugars give 5' on the tooltip preview`
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1199,7 +1206,10 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await createMonomerDialog.selectType(MonomerType.Phosphate);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1209,7 +1219,10 @@ test(`23. Check that hovering over R1 for phosphates give 5' on the tooltip prev
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1250,7 +1263,10 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   // shifting canvas to make tooltip appear fully
   await shiftCanvas(page, -150, 50);
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',
@@ -1260,7 +1276,10 @@ test(`23. Check that hovering over R1 for nucleotides give 5' on the tooltip pre
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'hidden',
   });
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
   await attachmentPointR2.hover({ force: true });
   await createMonomerDialog.waitForTerminalIndicatorTooltip({
     state: 'visible',

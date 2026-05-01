@@ -8,7 +8,7 @@ import {
   MacroBondType,
   MicroBondDataIds,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { AttachmentPoint } from './monomer';
+import { AttachmentPoint, getAttachmentPointLocator } from './monomer';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
@@ -310,18 +310,22 @@ export async function bondTwoMonomersPointToPoint(
   await firstMonomer.hover({ force: true });
 
   if (firstMonomerAttachmentPoint) {
-    const firstAttachmentPoint = firstMonomer.getByTestId(
-      firstMonomerAttachmentPoint,
-    );
+    const firstAttachmentPoint = getAttachmentPointLocator(page, {
+      attachmentPointAlias: firstMonomerAttachmentPoint,
+      parentMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+    });
     await firstAttachmentPoint.hover({ force: true });
   }
   await page.mouse.down();
 
   await secondMonomer.hover({ force: true });
   if (secondMonomerAttachmentPoint) {
-    const secondAttachmentPoint = secondMonomer.getByTestId(
-      secondMonomerAttachmentPoint,
-    );
+    const secondAttachmentPoint = getAttachmentPointLocator(page, {
+      attachmentPointAlias: secondMonomerAttachmentPoint,
+      parentMonomerId:
+        (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+    });
     await secondAttachmentPoint.hover({ force: true });
   }
   await page.mouse.up();
@@ -383,39 +387,12 @@ export async function bondMonomerPointToMoleculeAtom(
   await monomer.hover({ force: true });
 
   if (monomerAttachmentPoint) {
-    const connectionPoint = page
-      .locator('g')
-      .filter({ hasText: new RegExp(`^${monomerAttachmentPoint}$`) })
-      .locator('circle');
-
-    const connectionPointBoundingBox = await connectionPoint.boundingBox();
-    const monomerBoundingBox = await monomer.boundingBox();
-
-    if (connectionPointBoundingBox && monomerBoundingBox) {
-      const multiplier = 1 / 5;
-      const connectionPointCenterX =
-        connectionPointBoundingBox.x + connectionPointBoundingBox.width / 2;
-      const connectionPointCenterY =
-        connectionPointBoundingBox.y + connectionPointBoundingBox.height / 2;
-
-      const monomerCenterX =
-        monomerBoundingBox.x + monomerBoundingBox.width / 2;
-      const monomerCenterY =
-        monomerBoundingBox.y + monomerBoundingBox.height / 2;
-
-      const x =
-        connectionPointCenterX +
-        (monomerCenterX - connectionPointCenterX) * multiplier;
-      const y =
-        connectionPointCenterY +
-        (monomerCenterY - connectionPointCenterY) * multiplier;
-
-      await page.mouse.move(x, y);
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+    const connectionPoint = getAttachmentPointLocator(page, {
+      attachmentPointAlias: monomerAttachmentPoint,
+      parentMonomerId:
+        (await monomer.getAttribute('data-monomerid')) || undefined,
+    });
+    await connectionPoint.hover({ force: true });
   }
   await page.mouse.down();
 

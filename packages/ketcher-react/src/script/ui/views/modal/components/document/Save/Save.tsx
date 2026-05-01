@@ -135,7 +135,6 @@ interface SaveDialogProps {
   formState: FormState;
   moleculeErrors?: Record<string, string>;
   checkState: CheckState;
-  bondThickness?: number;
   ignoreChiralFlag: boolean;
   editor: Editor;
   onCheck: (checkOptions: unknown) => void;
@@ -733,7 +732,6 @@ const mapStateToProps = (state: AppState) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
-  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
   editor: state.editor,
 });

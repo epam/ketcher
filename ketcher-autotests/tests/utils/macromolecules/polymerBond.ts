@@ -310,22 +310,20 @@ export async function bondTwoMonomersPointToPoint(
   await firstMonomer.hover({ force: true });
 
   if (firstMonomerAttachmentPoint) {
-    const firstAttachmentPoint = getAttachmentPointLocator(page, {
-      attachmentPointAlias: firstMonomerAttachmentPoint,
-      parentMonomerId:
-        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
-    });
+    const firstAttachmentPoint = getAttachmentPointLocator(
+      firstMonomer,
+      firstMonomerAttachmentPoint,
+    );
     await firstAttachmentPoint.hover({ force: true });
   }
   await page.mouse.down();
 
   await secondMonomer.hover({ force: true });
   if (secondMonomerAttachmentPoint) {
-    const secondAttachmentPoint = getAttachmentPointLocator(page, {
-      attachmentPointAlias: secondMonomerAttachmentPoint,
-      parentMonomerId:
-        (await secondMonomer.getAttribute('data-monomerid')) || undefined,
-    });
+    const secondAttachmentPoint = getAttachmentPointLocator(
+      secondMonomer,
+      secondMonomerAttachmentPoint,
+    );
     await secondAttachmentPoint.hover({ force: true });
   }
   await page.mouse.up();
@@ -374,7 +372,7 @@ export async function bondMonomerPointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,
-  monomerAttachmentPoint?: AttachmentPoint,
+  attachmentPoint?: AttachmentPoint,
   connectionPointShift?: { x: number; y: number },
   bondType?: MacroBondType,
 ) {
@@ -386,12 +384,8 @@ export async function bondMonomerPointToMoleculeAtom(
 
   await monomer.hover({ force: true });
 
-  if (monomerAttachmentPoint) {
-    const connectionPoint = getAttachmentPointLocator(page, {
-      attachmentPointAlias: monomerAttachmentPoint,
-      parentMonomerId:
-        (await monomer.getAttribute('data-monomerid')) || undefined,
-    });
+  if (attachmentPoint) {
+    const connectionPoint = getAttachmentPointLocator(monomer, attachmentPoint);
     await connectionPoint.hover({ force: true });
   }
   await page.mouse.down();

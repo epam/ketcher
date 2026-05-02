@@ -1,7 +1,7 @@
 import { test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheCanvas,
@@ -15,11 +15,11 @@ test.describe('Bonds plus atoms selection ', () => {
     await waitForPageInit(page);
   });
 
-  const BondTypeId: MicroBondType[] = [
-    MicroBondType.Single,
-    MicroBondType.Double,
-    MicroBondType.Triple,
-    MicroBondType.SingleDown,
+  const BondTypeId: MicroBondTool[] = [
+    MicroBondTool.Single,
+    MicroBondTool.Double,
+    MicroBondTool.Triple,
+    MicroBondTool.SingleDown,
   ];
 
   for (const bond of BondTypeId) {

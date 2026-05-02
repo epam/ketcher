@@ -4,8 +4,8 @@ import { dragMouseTo } from '../clicks';
 import { Monomer, MonomerType, SymbolType } from '../types';
 import { waitForRender } from '../common/loaders/waitForRender';
 import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -42,7 +42,7 @@ export async function moveMonomerOnMicro(
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
-  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
+  bondType: MacroBondTool | MicroBondTool = MacroBondTool.Single,
 ) {
   await CommonLeftToolbar(page).bondTool(bondType);
 

@@ -11,8 +11,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Valence } from '@tests/pages/constants/atomProperties/Constants';
 import {
-  MacroBondType,
-  MicroBondDataIds,
+  MacroBondTool,
+  MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   ConnectionPointOption,
@@ -169,10 +169,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await newSequenceButton.click();
 
     const singleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Single,
+      bondType: MicroBondType.Single,
     });
     const doubleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Double,
+      bondType: MicroBondType.Double,
     });
 
     expect(await singleBonds.count()).toBe(3);
@@ -750,7 +750,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       `5'-(vinu)-3'`,
     );
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const vinU = getMonomerLocator(page, Nucleotide.vinU);
     await vinU.hover();
     await expect(

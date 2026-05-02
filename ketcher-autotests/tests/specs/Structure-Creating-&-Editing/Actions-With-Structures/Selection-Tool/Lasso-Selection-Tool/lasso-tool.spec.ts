@@ -14,7 +14,7 @@ import {
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -184,7 +184,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const selectCoords = { x: 50, y: 50 };
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await clickOnCanvas(page, 670, 260, {
       from: 'pageTopLeft',
     });
@@ -330,7 +330,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 100;
     const xShift = 500;
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,

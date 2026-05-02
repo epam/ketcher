@@ -4,9 +4,9 @@ import { moveMouseAway } from '../moveMouseAway';
 import { MonomerType } from '../types';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
-  MacroBondDataIds,
   MacroBondType,
-  MicroBondDataIds,
+  MacroBondTool,
+  MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { AttachmentPoint, getAttachmentPointLocator } from './monomer';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
@@ -39,7 +39,7 @@ export async function bondTwoMonomers(
   secondMonomer: Locator,
   attachmentPoint1?: AttachmentPoint,
   attachmentPoint2?: AttachmentPoint,
-  bondType: MacroBondType = MacroBondType.Single,
+  bondType: MacroBondTool = MacroBondTool.Single,
 ) {
   await CommonLeftToolbar(page).bondTool(bondType);
   await firstMonomer.hover({ force: true });
@@ -297,14 +297,14 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomer: Locator,
   firstMonomerAttachmentPoint?: AttachmentPoint,
   secondMonomerAttachmentPoint?: AttachmentPoint,
-  bondType?: MacroBondType,
+  bondType?: MacroBondTool,
   // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
     await CommonLeftToolbar(page).bondTool(bondType);
   } else {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   }
 
   await firstMonomer.hover({ force: true });
@@ -374,12 +374,12 @@ export async function bondMonomerPointToMoleculeAtom(
   atom: Locator,
   attachmentPoint?: AttachmentPoint,
   connectionPointShift?: { x: number; y: number },
-  bondType?: MacroBondType,
+  bondType?: MacroBondTool,
 ) {
   if (bondType) {
     await CommonLeftToolbar(page).bondTool(bondType);
   } else {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   }
 
   await monomer.hover({ force: true });
@@ -425,7 +425,7 @@ export function getBondLocator(
     fromSGroupId,
     toSGroupId,
   }: {
-    bondType?: MacroBondDataIds | MicroBondDataIds | number;
+    bondType?: MacroBondType | MicroBondType | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
     topology?: string | number;

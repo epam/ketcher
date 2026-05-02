@@ -55,8 +55,8 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import {
-  MicroBondDataIds,
   MicroBondType,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
@@ -1911,12 +1911,12 @@ test(`38. Verify that in create monomer wizard: user can add bonds to molecule a
 
   const targetAtom = getAtomLocator(page, { atomLabel: 'Br' }).first();
   const targetSingleBond = getBondLocator(page, {
-    bondType: MicroBondDataIds.Single,
+    bondType: MicroBondType.Single,
   });
   const targetDoubleBond = getBondLocator(page, {
-    bondType: MicroBondDataIds.Double,
+    bondType: MicroBondType.Double,
   });
-  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
 
   await targetSingleBond.first().click({ force: true });
   await expect(targetDoubleBond.first()).toBeVisible();

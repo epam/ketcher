@@ -20,8 +20,8 @@ import {
 } from '@utils';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
-  MicroBondDataIds,
   MicroBondType,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -55,21 +55,21 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
 
-const buttonIdToTitle: Record<MicroBondType, string> = {
-  [MicroBondType.Single]: 'Single Bond (1)',
-  [MicroBondType.Double]: 'Double Bond (2)',
-  [MicroBondType.Triple]: 'Triple Bond (3)',
-  [MicroBondType.Any]: 'Any Bond (0)',
-  [MicroBondType.Aromatic]: 'Aromatic Bond (4)',
-  [MicroBondType.SingleDouble]: 'Single/Double Bond',
-  [MicroBondType.SingleAromatic]: 'Single/Aromatic Bond',
-  [MicroBondType.DoubleAromatic]: 'Double/Aromatic Bond',
-  [MicroBondType.Dative]: 'Dative Bond',
-  [MicroBondType.Hydrogen]: 'Hydrogen Bond',
-  [MicroBondType.SingleUp]: 'Single Up Bond (1)',
-  [MicroBondType.SingleDown]: 'Single Down Bond (1)',
-  [MicroBondType.SingleUpDown]: 'Single Up/Down Bond (1)',
-  [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
+const buttonIdToTitle: Record<MicroBondTool, string> = {
+  [MicroBondTool.Single]: 'Single Bond (1)',
+  [MicroBondTool.Double]: 'Double Bond (2)',
+  [MicroBondTool.Triple]: 'Triple Bond (3)',
+  [MicroBondTool.Any]: 'Any Bond (0)',
+  [MicroBondTool.Aromatic]: 'Aromatic Bond (4)',
+  [MicroBondTool.SingleDouble]: 'Single/Double Bond',
+  [MicroBondTool.SingleAromatic]: 'Single/Aromatic Bond',
+  [MicroBondTool.DoubleAromatic]: 'Double/Aromatic Bond',
+  [MicroBondTool.Dative]: 'Dative Bond',
+  [MicroBondTool.Hydrogen]: 'Hydrogen Bond',
+  [MicroBondTool.SingleUp]: 'Single Up Bond (1)',
+  [MicroBondTool.SingleDown]: 'Single Down Bond (1)',
+  [MicroBondTool.SingleUpDown]: 'Single Up/Down Bond (1)',
+  [MicroBondTool.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
 let page: Page;
@@ -91,10 +91,10 @@ test.afterAll(async ({ closePage }) => {
 test.describe(`Bond tool:`, () => {
   // Experimental number of retries to make test more stable
   test.describe.configure({ retries: 5 });
-  for (const bondType of Object.values(MicroBondType)) {
+  for (const bondType of Object.values(MicroBondTool)) {
     let point: { x: number; y: number };
 
-    const bondTypeName = Object.entries(MicroBondType).find(
+    const bondTypeName = Object.entries(MicroBondTool).find(
       ([, enumValue]) => enumValue === bondType,
     )?.[0];
 
@@ -180,12 +180,12 @@ test.describe(`Bond tool:`, () => {
 
       await CommonLeftToolbar(page).bondTool(bondType);
       const doubleBond = getBondLocator(page, {
-        bondType: MicroBondDataIds.Double,
+        bondType: MicroBondType.Double,
       }).first();
       await doubleBond.click({ force: true });
 
       const singleBond = getBondLocator(page, {
-        bondType: MicroBondDataIds.Single,
+        bondType: MicroBondType.Single,
       }).first();
       await singleBond.click({ force: true });
       await takeEditorScreenshot(page);
@@ -304,10 +304,10 @@ test.describe(`Bond tool:`, () => {
 });
 
 test.describe(`Bond tool (copy-paste):`, () => {
-  for (const bondType of Object.values(MicroBondType)) {
+  for (const bondType of Object.values(MicroBondTool)) {
     let point: { x: number; y: number };
 
-    const bondTypeName = Object.entries(MicroBondType).find(
+    const bondTypeName = Object.entries(MicroBondTool).find(
       ([, enumValue]) => enumValue === bondType,
     )?.[0];
 
@@ -392,10 +392,10 @@ test.describe(`Bond tool (copy-paste):`, () => {
 });
 
 test.describe('Bond Tool', () => {
-  const toolsForTest: MicroBondType[] = [
-    MicroBondType.Single,
-    MicroBondType.Double,
-    MicroBondType.Triple,
+  const toolsForTest: MicroBondTool[] = [
+    MicroBondTool.Single,
+    MicroBondTool.Double,
+    MicroBondTool.Triple,
   ];
 
   for (const tool of toolsForTest) {
@@ -482,7 +482,7 @@ test.describe('Bond Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
       force: true,
     });
@@ -497,7 +497,7 @@ test.describe('Bond Tool', () => {
       },
       200,
     );
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await takeEditorScreenshot(page);
 
     await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
@@ -531,7 +531,7 @@ test.describe('Bond Tool', () => {
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'N' }).first().hover({
       force: true,
     });
@@ -546,7 +546,7 @@ test.describe('Bond Tool', () => {
       },
       200,
     );
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
       force: true,
     });
@@ -603,7 +603,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-16888
      *Description: Bond Tool - Add new bonds to the same atom
      */
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await clickInTheMiddleOfTheCanvas(page);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
@@ -614,7 +614,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-16887
      *Description: Bond Tool - Change the type of bond by clicking on bond
      */
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await getBondLocator(page, { bondId: 0 }).click({ force: true });
@@ -675,11 +675,11 @@ test.describe('Bond Tool', () => {
   });
 });
 
-for (const bondType of Object.values(MicroBondType)) {
+for (const bondType of Object.values(MicroBondTool)) {
   /*
    *   Test cases: EPMLSOPKET-1367, 2271,
    */
-  const bondTypeName = Object.entries(MicroBondType).find(
+  const bondTypeName = Object.entries(MicroBondTool).find(
     ([, enumValue]) => enumValue === bondType,
   )?.[0];
 
@@ -699,7 +699,7 @@ test('Aromatic - Ring inside the cycle structure', async () => {
    */
   await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
   await clickInTheMiddleOfTheCanvas(page);
-  await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
+  await CommonLeftToolbar(page).bondTool(MicroBondTool.Aromatic);
   const bondIds = [11, 6, 7, 8, 9, 10];
   let i = 0;
   while (i < bondIds.length) {

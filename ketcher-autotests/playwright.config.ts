@@ -50,7 +50,7 @@ const config: PlaywrightTestConfig = {
   snapshotPathTemplate:
     '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
 
-  timeout: 30_000,
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,

@@ -35,7 +35,7 @@ import {
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -532,7 +532,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
+    bondType: MacroBondType.Hydrogen,
   }).first();
 
   await CommonLeftToolbar(page).erase();
@@ -619,7 +619,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
+    bondType: MacroBondType.Hydrogen,
   }).first();
 
   await CommonLeftToolbar(page).erase();

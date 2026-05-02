@@ -12,7 +12,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   BondReactingCenterOption,
@@ -22,7 +22,7 @@ import {
 
 async function drawStructure(page: Page) {
   await waitForPageInit(page);
-  await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
   await clickInTheMiddleOfTheCanvas(page);
   await clickInTheMiddleOfTheCanvas(page);
   await clickInTheMiddleOfTheCanvas(page);

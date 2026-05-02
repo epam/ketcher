@@ -29,6 +29,16 @@ export function getTestDataDirectory() {
   return resolvedFilePath;
 }
 
+function shouldGenerateData() {
+  return (
+    process.env.GENERATE_DATA === 'true' ||
+    process.argv.some(
+      (arg) =>
+        arg === '--update-snapshots' || arg.startsWith('--update-snapshots='),
+    )
+  );
+}
+
 export async function readFileContent(filePath: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filePath);
@@ -325,7 +335,7 @@ export async function receiveMolFileComparisonData(
 export async function saveToFile(filename: string, data: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
-  if (process.env.GENERATE_DATA === 'true') {
+  if (shouldGenerateData()) {
     await fs.promises.mkdir(path.dirname(resolvedFilePath), {
       recursive: true,
     });

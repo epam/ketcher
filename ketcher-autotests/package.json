@@ -7,7 +7,7 @@
     "report": "npx playwright show-report playwright-report/html",
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:update": "npx playwright test --update-snapshots",
+    "test:update": "npx playwright test --update-snapshots=changed",
     "test:trace": "npx playwright test --trace on",
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
@@ -20,8 +20,8 @@
     "docker:test-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup",
     "docker:trace": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --trace on",
     "docker:trace-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-popup --trace on",
-    "docker:update": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium --update-snapshots",
-    "docker:update-popup": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium-popup --update-snapshots"
+    "docker:update": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --update-snapshots=changed",
+    "docker:update-popup": "docker-compose run --rm -e GENERATE_DATA=true autotests bash /app/test_run.sh --project=chromium-popup --update-snapshots=changed"
   },
   "author": "Nitvex",
   "license": "ISC",

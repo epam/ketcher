@@ -315,6 +315,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoveredAttachmentPoint = attachmentPointName;
   }
 
+  protected raiseAttachmentPoints() {
+    this.attachmentPoints.forEach((attachmentPoint) => {
+      attachmentPoint.raise();
+    });
+  }
+
   protected appendRootElement(
     canvas:
       | D3SvgElementSelection<SVGSVGElement, void>
@@ -542,9 +548,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '500')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
+
+    this.raiseAttachmentPoints();
   }
 
   public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
@@ -579,6 +588,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '700')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(
@@ -586,6 +596,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
           : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
       );
+
+    this.raiseAttachmentPoints();
   }
 
   protected abstract get modificationConfig();

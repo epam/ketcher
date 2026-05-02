@@ -115,6 +115,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .attr('font-size', '6px')
       .attr('font-weight', 300)
       .text(this.monomer.monomers.length);
+
+    this.raiseAttachmentPoints();
   }
 
   public show(theme) {

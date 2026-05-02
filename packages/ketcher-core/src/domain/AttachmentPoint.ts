@@ -123,7 +123,7 @@ export class AttachmentPoint {
     const stroke = this.stroke;
 
     this.attachmentPoint = this.rootElement
-      .insert('g', ':first-child')
+      .append('g')
       .data([this])
       .style('pointer-events', 'none')
       .style('cursor', 'pointer')
@@ -319,6 +319,10 @@ export class AttachmentPoint {
     this.hoverableArea = hoverableArea;
 
     return attachmentPoint;
+  }
+
+  public raise() {
+    this.element?.raise();
   }
 
   public updateAttachmentPointStyleForHover() {

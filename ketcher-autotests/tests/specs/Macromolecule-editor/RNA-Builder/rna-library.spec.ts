@@ -1244,8 +1244,7 @@ test.describe('RNA Library', () => {
         y: 0,
         fromCenter: true,
       });
-      await page.keyboard.press('Escape');
-      await clickInTheMiddleOfTheCanvas(page);
+      await getMonomerLocator(page, monomer).hover({ force: true });
       await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

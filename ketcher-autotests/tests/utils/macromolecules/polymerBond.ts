@@ -307,7 +307,7 @@ export async function bondTwoMonomersPointToPoint(
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   }
 
-  await firstMonomer.hover({ force: true });
+  await firstMonomer.getByTestId('shape').hover({ force: true });
 
   if (firstMonomerAttachmentPoint) {
     const firstAttachmentPoint = getAttachmentPointLocator(
@@ -318,7 +318,7 @@ export async function bondTwoMonomersPointToPoint(
   }
   await page.mouse.down();
 
-  await secondMonomer.hover({ force: true });
+  await secondMonomer.getByTestId('shape').hover({ force: true });
   if (secondMonomerAttachmentPoint) {
     const secondAttachmentPoint = getAttachmentPointLocator(
       secondMonomer,
@@ -382,7 +382,7 @@ export async function bondMonomerPointToMoleculeAtom(
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   }
 
-  await monomer.hover({ force: true });
+  await monomer.getByTestId('shape').hover({ force: true });
 
   if (attachmentPoint) {
     const connectionPoint = getAttachmentPointLocator(monomer, attachmentPoint);

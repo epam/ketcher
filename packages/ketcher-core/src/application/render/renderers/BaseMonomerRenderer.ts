@@ -632,6 +632,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.rootElement ??
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendEvents();
     this.drawModification();
 

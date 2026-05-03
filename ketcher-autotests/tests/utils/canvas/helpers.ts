@@ -155,7 +155,7 @@ export async function takeEditorScreenshot(
     await page.keyboard.press(`ControlOrMeta+KeyB`);
     options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
-  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
+  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {

@@ -623,31 +623,27 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back',
-    async () => {
-      /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
-    We have a bug https://github.com/epam/Indigo/issues/2210
-    */
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back', async () => {
+    /*
+     * Test case: #2071
+     * Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+     */
 
-      await openFileAndAddToCanvas(
-        page,
-        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      );
-      await verifyFileExport(
-        page,
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        FileType.SMILES,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+    );
+    await verifyFileExport(
+      page,
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+      FileType.SMILES,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async () => {
     /*

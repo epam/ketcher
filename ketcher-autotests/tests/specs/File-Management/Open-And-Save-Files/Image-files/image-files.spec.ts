@@ -320,6 +320,7 @@ test.describe('Image files', () => {
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview', async () => {
@@ -2096,6 +2097,7 @@ test.describe('Image files', () => {
           page,
           PasteFromClipboardDialog(page).openStructureTextarea,
         );
+        await OpenStructureDialog(page).closeWindow();
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();

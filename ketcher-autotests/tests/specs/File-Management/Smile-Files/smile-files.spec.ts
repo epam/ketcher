@@ -288,34 +288,31 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'SmileString from reaction consists of two or more reaction arrows and structures',
-    async () => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
-       * Test case: EPMLSOPKET-8905
-       * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
-       * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
-       */
-      await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
-      await verifyFileExport(
-        page,
-        'SMILES/smiles-two-arrows-and-plus-expected.smi',
-        FileType.SMILES,
-      );
-      await verifySMILESExport(
-        page,
-        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-      );
-      await CommonTopLeftToolbar(page).clearCanvas();
-      await pasteFromClipboardAndAddToCanvas(
-        page,
-        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-      );
-      await clickInTheMiddleOfTheCanvas(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('SmileString from reaction consists of two or more reaction arrows and structures', async () => {
+    /*
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
+     * Test case: EPMLSOPKET-8905
+     * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
+     * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
+     */
+    await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
+    await verifyFileExport(
+      page,
+      'SMILES/smiles-two-arrows-and-plus-expected.smi',
+      FileType.SMILES,
+    );
+    await verifySMILESExport(
+      page,
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+    );
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Open Daylight SMILES file with reagent above arrow', async () => {
     /*

@@ -51,7 +51,7 @@ type FileTypeHandler =
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
-  [FileType.CDX]: getCdx, // This actually returns Base64 CDX content. А КАКОГО ХРЕНА!
+  [FileType.CDX]: getCdx, // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,

@@ -10,13 +10,9 @@ import {
 } from '../constants/library/Constants';
 import { RNABuilder } from './library/RNABuilder';
 import { ContextMenu } from '../common/ContextMenu';
-import {
-  dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheCanvas,
-} from '../../utils/clicks';
+import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
 import { waitForRender } from '../../utils/common/loaders/waitForRender';
 import { moveMouseAway } from '../../utils/moveMouseAway';
-import { KETCHER_CANVAS } from '../constants/canvas/Constants';
 import { Preset } from '../constants/monomers/Presets';
 import { getVisibleCanvas } from '@utils/canvas';
 

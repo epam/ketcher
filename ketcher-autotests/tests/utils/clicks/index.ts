@@ -6,7 +6,6 @@ import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

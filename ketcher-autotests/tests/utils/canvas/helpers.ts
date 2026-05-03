@@ -319,3 +319,15 @@ export async function selectCanvasArea(
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(page, secondCorner.x, secondCorner.y);
 }
+
+export async function getVisibleCanvas(page: Page): Promise<Locator> {
+  const canvas = page
+    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
+    .first();
+  await canvas.waitFor({
+    state: 'visible',
+    timeout: 10000,
+  });
+
+  return canvas;
+}

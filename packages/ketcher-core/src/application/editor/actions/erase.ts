@@ -37,6 +37,8 @@ import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
+import { fromSAPDelete } from './sap';
+import { SuperAPAtomsChange } from '../operations/sap';
 import { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
@@ -142,6 +144,27 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms = Array.from(new Set(selection.atoms));
   selection.bonds = Array.from(new Set(selection.bonds));
+
+  // Section I3: when a SAP member atom is being deleted, prune it from the
+  // SAP's membership. If the SAP drops below 2 members it gets cascaded
+  // (along with its incident haptic bonds) via fromSAPDelete.
+  const removedAtomSet = new Set(selection.atoms);
+  const sapsToHandle = new Map<number, number[]>();
+  struct.superAttachmentPoints.forEach((sap, sapId) => {
+    if (sap.atoms.some((aid) => removedAtomSet.has(aid))) {
+      sapsToHandle.set(
+        sapId,
+        sap.atoms.filter((aid) => !removedAtomSet.has(aid)),
+      );
+    }
+  });
+  sapsToHandle.forEach((newAtoms, sapId) => {
+    if (newAtoms.length < 2) {
+      action.mergeWith(fromSAPDelete(restruct, sapId));
+    } else {
+      action.addOp(new SuperAPAtomsChange(sapId, newAtoms).perform(restruct));
+    }
+  });
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);

@@ -697,6 +697,7 @@ function preventSaltAndSolventsMerge(
 function getMapsForClosestItem(selectFragment: boolean) {
   return [
     'sgroups',
+    'superAttachmentPoints',
     'functionalGroups',
     'sgroupData',
     'rgroups',

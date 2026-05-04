@@ -22,6 +22,7 @@ import {
   fromPlusDeletion,
   fromImageDeletion,
   fromRGroupAttachmentPointDeletion,
+  fromSAPDelete,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
@@ -57,6 +58,7 @@ class EraserTool implements Tool {
       'simpleObjects',
       'texts',
       'rgroupAttachmentPoints',
+      'superAttachmentPoints',
       IMAGE_KEY,
       MULTITAIL_ARROW_KEY,
     ];
@@ -379,6 +381,8 @@ class EraserTool implements Tool {
       this.editor.update(fromImageDeletion(restruct, ci.id));
     } else if (ci.map === MULTITAIL_ARROW_KEY) {
       this.editor.update(fromMultitailArrowDeletion(restruct, ci.id));
+    } else if (ci.map === 'superAttachmentPoints') {
+      this.editor.update(fromSAPDelete(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

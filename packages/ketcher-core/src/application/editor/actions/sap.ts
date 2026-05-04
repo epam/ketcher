@@ -2,6 +2,7 @@ import { Action } from './action';
 import { ReStruct } from '../../render';
 import {
   HapticBondAdd,
+  HapticBondDelete,
   SuperAPAdd,
   SuperAPAtomsChange,
   SuperAPDelete,
@@ -24,12 +25,28 @@ export function fromSAPAddition(
   return { action, sapId: op.sapId as number };
 }
 
-// Note: cascade-deleting incident haptic bonds is wired in the eraser path
-// (Section I1 of the plan) once the haptic-bond render mirror exists.
+// Eraser cascade (Section I1): deleting a SAP also deletes every haptic
+// bond that referenced it. The bond ops live in operations/sap.ts so they
+// don't go through halfBond machinery (haptic bonds have none — see
+// Section X).
 export function fromSAPDelete(reStruct: ReStruct, sapId: number): Action {
   const action = new Action();
   const struct = reStruct.molecule;
   if (!struct.superAttachmentPoints.get(sapId)) return action;
+
+  const incident: number[] = [];
+  struct.bonds.forEach((bond, bid) => {
+    if (
+      bond.type === Bond.PATTERN.TYPE.HAPTIC &&
+      (bond as HapticBond).sapId === sapId
+    ) {
+      incident.push(bid);
+    }
+  });
+  for (const bid of incident) {
+    action.addOp(new HapticBondDelete(bid).perform(reStruct));
+  }
+
   action.addOp(new SuperAPDelete(sapId).perform(reStruct));
   return action;
 }

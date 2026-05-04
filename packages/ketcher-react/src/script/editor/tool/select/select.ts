@@ -16,6 +16,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
+  Bond,
   CoordinateTransformation,
   fromImageResize,
   fromItemsFuse,
@@ -513,6 +514,12 @@ class SelectTool implements Tool {
         changeAtomPromise,
       });
     } else if (ci.map === 'bonds') {
+      // J2: haptic bonds suppress the Bond Properties dialog. Their
+      // configurable attributes (sapId) aren't user-editable inline.
+      const targetBond = molecule.bonds.get(ci.id);
+      if (targetBond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+        return true;
+      }
       const bonds = getSelectedBonds(selection, molecule);
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({

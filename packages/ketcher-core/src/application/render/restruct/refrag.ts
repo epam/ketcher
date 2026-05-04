@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Bond } from 'domain/entities/bond';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import { Fragment } from 'domain/entities/fragment';
@@ -46,6 +47,11 @@ class ReFrag extends ReObject {
       const bond = restruct.bonds.get(bid)?.b;
       if (!bond) {
         return false;
+      }
+      // Haptic bonds have `end = -1` and no second atom; their fragment
+      // membership is defined entirely by the metal-side atom.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) {
+        return restruct.atoms.get(bond.begin)?.a.fragment === fid;
       }
 
       const firstFrag = restruct.atoms.get(bond.begin)?.a.fragment;

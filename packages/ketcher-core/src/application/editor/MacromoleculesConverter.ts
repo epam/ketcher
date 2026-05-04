@@ -585,6 +585,9 @@ export class MacromoleculesConverter {
     >();
 
     struct.bonds.forEach((bond) => {
+      // Haptic bonds reference a SAP via `end = -1` and have no second atom;
+      // they don't participate in monomer↔molecule conversion.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
       const beginAtom = struct.atoms.get(bond.begin);
       const endAtom = struct.atoms.get(bond.end);
       const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
@@ -647,6 +650,7 @@ export class MacromoleculesConverter {
     });
 
     struct.bonds.forEach((bond) => {
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
       const beginAtom = struct.atoms.get(bond.begin);
       const endAtom = struct.atoms.get(bond.end);
 

@@ -526,6 +526,11 @@ export class Struct {
 
   bondInitHalfBonds(bid, bond?: Bond) {
     bond = bond ?? this.bonds.get(bid)!;
+    // Haptic bonds reference a SuperAttachmentPoint via `bond.end = -1`
+    // (Option B). They have no atom on the SAP side, so emitting halfBonds
+    // would create a HalfBond pointing at a non-existent atom and break
+    // ring/loop/neighbor traversals. Skip — Section X1 of the plan.
+    if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
     bond.hb1 = 2 * bid;
     bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));

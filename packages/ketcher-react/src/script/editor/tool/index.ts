@@ -19,6 +19,7 @@ import APointTool from './apoint';
 import AtomTool from './atom';
 import AttachTool from './attach';
 import BondTool from './bond';
+import HapticBondTool from './hapticBond';
 import ChainTool from './chain';
 import ChargeTool from './charge';
 import EnhancedStereoTool from './enhanced-stereo';
@@ -51,6 +52,7 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   eraser: EraserTool,
   atom: AtomTool,
   bond: BondTool,
+  hapticBond: HapticBondTool,
   chain: ChainTool,
   template: TemplateTool,
   charge: ChargeTool,

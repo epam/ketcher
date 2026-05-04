@@ -418,12 +418,16 @@ const monomerWizardDisallowedBondTypes = new Set(
 );
 
 export default typeSchema.enum.reduce((res, type, i) => {
+  // Haptic bond uses a dedicated tool because click-on-SAP semantics differ
+  // from BondTool (creates a CH instead of cycling bond type, validates that
+  // exactly one endpoint is a SuperAttachmentPoint).
+  const isHaptic = type === 'haptic';
   res[`bond-${type}`] = {
     title: `${typeSchema.enumNames[i]} Bond`,
     shortcut: bondCuts[type],
     action: {
-      tool: 'bond',
-      opts: toBondType(type),
+      tool: isHaptic ? 'hapticBond' : 'bond',
+      opts: isHaptic ? {} : toBondType(type),
     },
     hidden: (options) => isHidden(options, `bond-${type}`),
     ...(monomerWizardDisallowedBondTypes.has(type) && {

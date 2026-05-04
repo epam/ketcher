@@ -21,6 +21,10 @@ class ReSuperAttachmentPoint extends ReObject {
     this.sap = sap;
   }
 
+  static isSelectable() {
+    return true;
+  }
+
   static isHidden(sapId: number, restruct: ReStruct): boolean {
     const struct = restruct.molecule;
     for (const bond of struct.bonds.values()) {

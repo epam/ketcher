@@ -15,7 +15,7 @@ const MIN_ATTACHMENT_POINT_SIZE = 8;
 // Extra viewBox padding (in SVG user units) added around the molecule bounding
 // box in macro mode. Without it, bond strokes at the bounding-box edges are
 // half-clipped by the viewBox, making them appear thinner than inner bonds.
-const PREVIEW_AUTO_SCALE_MARGIN = 10;
+const PREVIEW_AUTO_SCALE_MARGIN = 4;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {

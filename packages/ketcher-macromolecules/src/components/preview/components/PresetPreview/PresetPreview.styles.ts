@@ -65,3 +65,19 @@ export const PresetIcon = styled(Icon)`
   color: ${({ theme }) => theme.ketcher.color.icon.grey};
   stroke: ${({ theme }) => theme.ketcher.color.icon.grey};
 `;
+
+// Small variant of the phosphate-position icon used in the RNA Builder's
+// phosphate position selector. Reuses the same SVG (`preset-left-phosphate` /
+// `preset-right-phosphate`) so the indicator on the preset preview is
+// visually consistent with the selector, just smaller.
+export const PhosphatePositionIcon = styled(Icon)`
+  height: 15px;
+  width: 15px;
+  flex-shrink: 0;
+`;
+
+export const PhosphatePositionIconWrapper = styled.span`
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+`;

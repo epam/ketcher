@@ -28,7 +28,7 @@ import {
 import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -618,7 +618,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         MacroFileType.MOLv3000,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
@@ -666,7 +666,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${monomer.fileName}.mol`,
         MacroFileType.MOLv3000,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
       await getMonomerLocator(page, {
         monomerAlias: monomer.monomerAlias,
       }).hover({

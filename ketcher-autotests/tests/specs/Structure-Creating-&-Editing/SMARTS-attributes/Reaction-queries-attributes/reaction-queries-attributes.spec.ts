@@ -11,11 +11,11 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -42,7 +42,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await dragMouseTo(page, x - shiftForHydrogen, y);
   await CommonLeftToolbar(page).areaSelectionTool();
 
-  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+  await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
   await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).areaSelectionTool();
 
@@ -67,7 +67,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
 

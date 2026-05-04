@@ -17,6 +17,7 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
+  NO_NATURAL_ANALOGUE,
   provideEditorInstance,
   RnaPresetComponentKey,
   Struct,
@@ -71,12 +72,15 @@ import {
 import { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 
-const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
+const getInitialWizardState = (
+  type = KetMonomerClass.CHEM,
+  naturalAnalogue = '',
+): WizardState => ({
   values: {
     type,
     symbol: '',
     name: '',
-    naturalAnalogue: '',
+    naturalAnalogue,
     aliasHELM: '',
   },
   errors: {},
@@ -87,7 +91,7 @@ const getInitialWizardState = (type = KetMonomerClass.CHEM): WizardState => ({
 const initialWizardState: WizardState = getInitialWizardState();
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
-  base: getInitialWizardState(KetMonomerClass.Base),
+  base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {
@@ -447,7 +451,7 @@ const autoAssignPropertiesForHiddenMonomer = (
     // For other types, clear whitespace-only values
     naturalAnalogue:
       values.type === KetMonomerClass.Base
-        ? values.naturalAnalogue?.trim() || 'X'
+        ? values.naturalAnalogue?.trim() || NO_NATURAL_ANALOGUE
         : values.naturalAnalogue?.trim() || '',
   };
 };

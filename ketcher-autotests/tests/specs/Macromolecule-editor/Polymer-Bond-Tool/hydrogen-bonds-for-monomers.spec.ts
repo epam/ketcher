@@ -21,8 +21,8 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  MacroBondDataIds,
   MacroBondType,
+  MacroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -229,12 +229,12 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       }).first();
       await bondLine.hover({ force: true });
       await ContextMenu(page, bondLine).open();
@@ -349,11 +349,11 @@ Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       });
 
       expect(await bondLine.count()).toEqual(1);
@@ -391,7 +391,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await bondTwoMonomers(
@@ -404,7 +404,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -466,7 +466,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Single,
+        MacroBondTool.Single,
       );
 
       await chooseAttachmentPointsInConnectionDialog(
@@ -491,7 +491,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       expect(await errorTooltip.getNotificationText()).toContain(
@@ -541,7 +541,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -693,7 +693,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -745,11 +745,11 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       });
 
       expect(await bondLine.count()).toEqual(1);
@@ -793,7 +793,7 @@ Object.values(monomers).forEach((leftMonomer) => {
             }).first(),
         undefined,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
 
       await selectAllStructuresOnCanvas(page);
@@ -848,11 +848,11 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
-  [MacroBondType.Single]: 'Single Bond (1)',
-  [MacroBondType.Hydrogen]: 'Hydrogen Bond (2)',
+  [MacroBondTool.Single]: 'Single Bond (1)',
+  [MacroBondTool.Hydrogen]: 'Hydrogen Bond (2)',
 };
 
-Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
+Object.entries(MacroBondTool).forEach(([key, dataTestId]) => {
   /*
    *  Test task: https://github.com/epam/ketcher/issues/5984
    *  Description: Verify that hydrogen bond option located and can be selected from the bond menu in the sidebar
@@ -946,7 +946,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         AttachmentPoint.R1,
       );
       const singleBondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Single,
+        bondType: MacroBondType.Single,
       }).first();
       expect(await singleBondLine.count()).toEqual(1);
 
@@ -958,10 +958,10 @@ Object.values(monomers).forEach((leftMonomer) => {
         getAtomLocator(page, {}).first(),
         AttachmentPoint.R1,
         undefined,
-        MacroBondType.Hydrogen,
+        MacroBondTool.Hydrogen,
       );
       const hydrogenBondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       }).first();
 
       expect(await hydrogenBondLine.count()).toEqual(0);

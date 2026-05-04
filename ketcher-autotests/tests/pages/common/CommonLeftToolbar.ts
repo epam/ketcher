@@ -3,8 +3,8 @@ import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
 import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '../constants/bondSelectionTool/Constants';
 
 type LeftToolbarLocators = {
@@ -89,7 +89,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async bondTool(bondType: MacroBondType | MicroBondType) {
+    async bondTool(bondType: MacroBondTool | MicroBondTool) {
       let attempts = 0;
       const maxAttempts = 5;
       const bondTypeButton = page

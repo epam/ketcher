@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -15,7 +15,6 @@ import {
   takeTopToolbarScreenshot,
   clickOnCanvas,
   Monomer,
-  clickInTheMiddleOfTheCanvas,
   PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
@@ -36,7 +35,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -74,7 +73,7 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
   const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
   await drawThreeMonomers(page);
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await sugar.hover();
   await page.mouse.down();
   await base.hover();
@@ -402,7 +401,7 @@ test.describe('RNA Library', () => {
     await Library(page).selectMonomers([Sugar._3A6, Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -692,7 +691,7 @@ test.describe('RNA Library', () => {
         .getByTestId(`rna-accordion-details-${monomer.groupName}`)
         .hover();
       await page.mouse.wheel(0, 0);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeMonomerLibraryScreenshot(page, { maxDiffPixelRatio: 0.03 });
     }
   });
@@ -916,7 +915,7 @@ test.describe('RNA Library', () => {
     const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
     await drawThreeMonomers(page);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await sugar.hover();
     await page.mouse.down();
     await base.hover();
@@ -950,7 +949,7 @@ test.describe('RNA Library', () => {
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await dragMouseTo(page, anyPointX, anyPointY);
       await takeEditorScreenshot(page);
     });
@@ -992,7 +991,7 @@ test.describe('RNA Library', () => {
         y: 0,
         fromCenter: true,
       });
-      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
       await getMonomerLocator(page, Sugar._25R).click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);
@@ -1245,8 +1244,7 @@ test.describe('RNA Library', () => {
         y: 0,
         fromCenter: true,
       });
-      await page.keyboard.press('Escape');
-      await clickInTheMiddleOfTheCanvas(page);
+      await getMonomerLocator(page, monomer).hover({ force: true });
       await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

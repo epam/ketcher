@@ -56,7 +56,7 @@ export function fromBondAddition(
   ) => {
     const newFragmentId = (
       action.addOp(new FragmentAdd().perform(reStruct)) as FragmentAdd
-    ).frid;
+    ).frid as number;
 
     const newBeginAtomId: number = (
       action.addOp(
@@ -65,7 +65,7 @@ export function fromBondAddition(
           beginAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const newEndAtomId: number = (
       action.addOp(
@@ -74,7 +74,7 @@ export function fromBondAddition(
           endAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     return [newBeginAtomId, newEndAtomId] as const;
   };
@@ -88,11 +88,11 @@ export function fromBondAddition(
     const newBeginAtomId: number = (
       action.addOp(
         new AtomAdd(
-          { ...beginAtomAttr, fragment: fragmentId },
+          { ...beginAtomAttr, fragment: fragmentId as number },
           beginAtomPos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const endAtom = struct.atoms.get(endAtomId);
     if (
@@ -119,12 +119,12 @@ export function fromBondAddition(
         new AtomAdd(
           {
             ...endAtomAttr,
-            fragment: fragmentId,
+            fragment: fragmentId as number,
           },
           endAtomPos ?? atomForNewBond(reStruct, begin, bond).pos,
         ).perform(reStruct),
       ) as AtomAdd
-    ).data.aid;
+    ).data.aid as number;
 
     const beginAtom = struct.atoms.get(beginAtomId);
     if (
@@ -168,7 +168,7 @@ export function fromBondAddition(
     action.addOp(
       new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct),
     ) as BondAdd
-  ).data.bid;
+  ).data.bid as number;
   const newBond = struct.bonds.get(newBondId);
   if (newBond) {
     action.addOp(
@@ -191,7 +191,7 @@ export function fromBondAddition(
     );
   }
 
-  return [action, beginAtomId, endAtomId, newBondId];
+  return [action, beginAtomId, endAtomId, newBondId as number];
 }
 
 export function fromBondsAttrs(
@@ -278,7 +278,7 @@ export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
   bond: Bond,
-  bondProps: any,
+  bondProps: Partial<BondAttributes>,
 ): Action {
   const action = new Action();
   let newItemId = itemID;
@@ -290,11 +290,14 @@ export function bondChangingAction(
     bond.stereo === bondProps.stereo
   ) {
     action.mergeWith(fromBondFlipping(restruct, itemID));
-    newItemId = (action.operations[1] as BondAdd).data.bid;
+    newItemId = (action.operations[1] as BondAdd).data.bid as number;
   }
   // if bondTool is stereo and equal to bond for change
 
-  const loop = plainBondTypes.includes(bondProps.type) ? plainBondTypes : null;
+  const loop =
+    bondProps.type !== undefined && plainBondTypes.includes(bondProps.type)
+      ? plainBondTypes
+      : null;
   if (
     bondProps.stereo === Bond.PATTERN.STEREO.NONE &&
     bondProps.type === Bond.PATTERN.TYPE.SINGLE &&

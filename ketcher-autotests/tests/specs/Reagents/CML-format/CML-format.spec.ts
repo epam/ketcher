@@ -3,7 +3,7 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseAway,
   readFileContent,
@@ -83,7 +83,7 @@ test.describe('Reagents CML format', () => {
       'CML/reagents-below-and-above-arrow.cml',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

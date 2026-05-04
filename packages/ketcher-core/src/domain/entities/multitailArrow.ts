@@ -77,6 +77,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   static readonly TOP_TAIL_NAME = 'topTail';
   static readonly BOTTOM_TAIL_NAME = 'bottomTail';
   static readonly TAILS_NAME = 'tails';
+  public arrowId?: number;
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return (
@@ -298,8 +299,10 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     private headOffsetY: FixedPrecisionCoordinates,
     private tailLength: FixedPrecisionCoordinates,
     private tailsYOffset: Pool<FixedPrecisionCoordinates>,
+    arrowId?: number,
   ) {
     super();
+    this.arrowId = arrowId;
   }
 
   static getReferencePositions(
@@ -471,6 +474,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       this.headOffsetY,
       this.tailLength,
       this.tailsYOffset,
+      this.arrowId,
     );
   }
 

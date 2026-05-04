@@ -124,9 +124,9 @@
         "idtAliases": {
             "base": "i2AmPr2",
             "modifications": {
-                "endpoint5": "i2AmPr2",
-                "internal": "i2AmPr2",
-                "endpoint3": "i2AmPr2"
+                "endpoint5": "/i2AmPr2/",
+                "internal": "/i2AmPr2/",
+                "endpoint3": "/i2AmPr2/"
             }
         },
         "unresolved": true

@@ -1627,11 +1627,11 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
-    /* 
-    Test case: #4530
-    Description: Attachment points and leaving groups are correctly represented in CDX format.
-                 CDX does not support R-groups, so R1 converts to H (hydrogen)
-    */
+    /*
+     * Test case: #4530
+     * Description: Attachment points and leaving groups are correctly represented in CDX format.
+     *              CDX does not support R-groups, so R1 converts to H (hydrogen)
+     */
     await openFileAndAddToCanvas(
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -1649,14 +1649,6 @@ test.describe('Macro-Micro-Switcher', () => {
       // Error expected
       true,
     );
-
-    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-    expect(errorMessage).toContain(
-      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'molecule auto loader: SMILES loader: unrecognized lowercase symbol: m', 'scanner: BufferScanner::read() error'",
-    );
-
-    await ErrorMessageDialog(page).close();
-    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {

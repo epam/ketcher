@@ -17,6 +17,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
@@ -278,21 +279,25 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       Phosphate.Test_6_Ph,
       Base.V,
     ]);
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectSugarSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectBaseSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectPhosphateSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

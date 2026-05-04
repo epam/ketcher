@@ -16,6 +16,7 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseAway,
   clickOnCanvas,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -31,6 +32,7 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -100,8 +102,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await getBondLocator(page, { bondId: 34 }).click({ force: true });
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/query-features.mol',
+    );
+    await getBondLocator(page, { bondType: MicroBondType.Triple }).click({
+      force: true,
+    });
     await MoleculesTopToolbar(page).cut();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {

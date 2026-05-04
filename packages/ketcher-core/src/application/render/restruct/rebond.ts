@@ -286,6 +286,10 @@ class ReBond extends ReObject {
       return null;
     }
 
+    if (this.b instanceof HapticBond) {
+      return this.makeHapticHoverPlate(render, drawOutline);
+    }
+
     const rect = this.getSelectionContour(render, false);
 
     return rect.attr(
@@ -293,6 +297,31 @@ class ReBond extends ReObject {
         ? { ...options.hoverStyle }
         : { fill: options.hoverStyle.fill, stroke: 'none' },
     );
+  }
+
+  makeHapticHoverPlate(render: Render, drawOutline = true) {
+    // Haptic bonds have no halfBonds (Section X). Draw a thicker line from
+    // the metal atom to the SAP centroid so the bond visibly responds to
+    // hover. The "outline participating atoms when hovering the SAP-side
+    // half" UX (D3) lives in polish — for now both halves trigger the same
+    // simple plate to keep behavior loud and obvious.
+    const haptic = this.b as HapticBond;
+    const struct = render.ctab.molecule;
+    const metal = struct.atoms.get(haptic.begin);
+    const sap = struct.superAttachmentPoints.get(haptic.sapId);
+    if (!metal || !sap) return null;
+    sap.recomputeCenter(struct);
+    const a = Scale.modelToCanvas(metal.pp, render.options);
+    const b = Scale.modelToCanvas(sap.pp, render.options);
+    const pad = render.options.bondThickness * 4;
+    const path = render.paper.path(`M${a.x},${a.y}L${b.x},${b.y}`).attr({
+      ...render.options.hoverStyle,
+      'stroke-width': pad,
+      fill: drawOutline
+        ? render.options.hoverStyle.fill
+        : render.options.hoverStyle.fill,
+    });
+    return path;
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {

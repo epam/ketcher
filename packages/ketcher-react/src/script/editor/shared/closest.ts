@@ -35,6 +35,7 @@ const findMaps = {
   enhancedFlags: findClosestEnhancedFlag,
   sgroupData: findClosestDataSGroupData,
   sgroups: findClosestSGroup,
+  superAttachmentPoints: findClosestSuperAttachmentPoint,
   functionalGroups: findClosestFG,
   rxnArrows: findClosestRxnArrow,
   rxnPluses: findClosestRxnPlus,
@@ -161,6 +162,21 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
     };
   }
 
+  return null;
+}
+
+function findClosestSuperAttachmentPoint(restruct: ReStruct, pos: Vec2) {
+  let closestId: null | number = null;
+  let minDist = SELECTION_DISTANCE_COEFFICIENT;
+  restruct.molecule.superAttachmentPoints.forEach((sap, id) => {
+    sap.recomputeCenter(restruct.molecule);
+    const dist = Vec2.dist(pos, sap.pp);
+    if (dist < minDist) {
+      closestId = id;
+      minDist = dist;
+    }
+  });
+  if (closestId !== null) return { id: closestId, dist: minDist };
   return null;
 }
 

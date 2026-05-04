@@ -1,6 +1,7 @@
 import {
   Action,
   CoordinateTransformation,
+  SGroup,
   Struct,
   Vec2,
   Visel,
@@ -417,6 +418,23 @@ export default class FragmentSelectionTool implements Tool {
       component.atoms?.forEach((atomId) => componentAtoms.add(atomId));
       component.bonds?.forEach((bondId) => componentBonds.add(bondId));
     });
+
+    if (!rnaComponentAtoms) {
+      struct.sgroups.forEach((sgroup) => {
+        if (SGroup.isSuperAtom(sgroup)) {
+          const sgroupAtomSet = new Set<number>(
+            SGroup.getAtoms(struct, sgroup),
+          );
+          for (const [bondId, bond] of struct.bonds.entries()) {
+            const beginInside = sgroupAtomSet.has(bond.begin);
+            const endInside = sgroupAtomSet.has(bond.end);
+            if (beginInside !== endInside) {
+              connectingBonds.add(bondId);
+            }
+          }
+        }
+      });
+    }
 
     if (componentAtoms.size) {
       for (const [bondId, bond] of struct.bonds.entries()) {

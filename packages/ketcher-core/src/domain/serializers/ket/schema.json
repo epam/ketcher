@@ -268,7 +268,6 @@
     },
     "bond": {
       "type": "object",
-      "required": ["atoms"],
       "properties": {
         "atoms": {
           "type": "array",
@@ -279,6 +278,14 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "atom": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sapId": {
+          "type": "integer",
+          "minimum": 0
         },
         "selected": {
           "type": "boolean"
@@ -294,7 +301,7 @@
       },
       "oneOf": [
         {
-          "required": ["type"],
+          "required": ["type", "atoms"],
           "properties": {
             "type": {
               "type": "integer",
@@ -315,14 +322,38 @@
           }
         },
         {
-          "required": ["customQuery"],
+          "required": ["customQuery", "atoms"],
           "properties": {
             "customQuery": {
               "type": "string"
             }
           }
+        },
+        {
+          "required": ["type", "atom", "sapId"],
+          "properties": {
+            "type": {
+              "type": "integer",
+              "const": 91
+            }
+          }
         }
       ]
+    },
+    "superAttachmentPoint": {
+      "type": "object",
+      "required": ["atoms"],
+      "properties": {
+        "atoms": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
     },
     "rgroup": {
       "type": "object",
@@ -445,6 +476,12 @@
         },
         "sgroups": {
           "$ref": "#/definitions/sgroups"
+        },
+        "superAttachmentPoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/superAttachmentPoint"
+          }
         }
       }
     },

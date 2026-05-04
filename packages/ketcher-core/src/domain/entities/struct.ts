@@ -306,6 +306,12 @@ export class Struct {
 
     bonds = bonds.filter((bid) => {
       const bond = this.bonds.get(bid)!;
+      // Haptic bonds (`end = -1`) are kept if their metal-side atom and
+      // their referenced SAP both survive the merge; the SAP filter is
+      // applied later when SAPs are merged.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) {
+        return atoms.has(bond.begin);
+      }
       return atoms.has(bond.begin) && atoms.has(bond.end);
     });
 
@@ -517,6 +523,9 @@ export class Struct {
     });
 
     this.bonds.forEach((bond) => {
+      // Haptic bonds (`end = -1`) don't produce halfBonds and don't
+      // contribute to neighbor lists — see Section X.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
       const a1 = this.atoms.get(bond.begin)!;
       const a2 = this.atoms.get(bond.end)!;
       a1.neighbors.push(bond.hb1!);

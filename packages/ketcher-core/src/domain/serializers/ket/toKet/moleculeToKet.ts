@@ -63,6 +63,12 @@ export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
     );
   }
 
+  if (struct.superAttachmentPoints.size !== 0) {
+    body.superAttachmentPoints = Array.from(
+      struct.superAttachmentPoints.values(),
+    ).map((sap) => ({ atoms: [...sap.atoms] }));
+  }
+
   const fragment = struct.frags.get(0);
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
@@ -158,6 +164,15 @@ function bondToKet(source) {
   if (source.customQuery) {
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
+  } else if (source.sapId !== undefined) {
+    // Haptic bond: bond.end is the -1 sentinel and the SAP reference lives
+    // in `sapId`. Serialize as `{ type, atom, sapId }` — the loader recreates
+    // the HapticBond instance from this shape.
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'atom', source.begin);
+    ifDef(result, 'sapId', source.sapId);
+    ifDef(result, 'selected', source.getInitiallySelected());
+    return result;
   } else {
     ifDef(result, 'type', source.type);
     ifDef(result, 'atoms', [source.begin, source.end]);

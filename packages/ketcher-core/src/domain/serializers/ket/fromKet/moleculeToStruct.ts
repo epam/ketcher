@@ -20,9 +20,11 @@ import {
   AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
+import { HapticBond } from 'domain/entities/HapticBond';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 
 import { Elements } from 'domain/constants';
@@ -71,6 +73,29 @@ export function moleculeToStruct(ketItem: any): Struct {
       const sgroup = sgroupToStruct(sgroupData);
       const id = struct.sgroups.add(sgroup);
       sgroup.id = id;
+    });
+  }
+
+  if (ketItem.superAttachmentPoints) {
+    // Y4: validate uniqueness — an atom may belong to at most one SAP. If a
+    // malformed payload contains an atom in two SAPs, the duplicate is
+    // silently dropped from the second SAP and a warning logged.
+    const seenAtoms = new Set<number>();
+    ketItem.superAttachmentPoints.forEach((sapData: { atoms: number[] }) => {
+      const atoms = (sapData.atoms ?? []).filter((aid) => {
+        if (seenAtoms.has(aid)) {
+          // eslint-disable-next-line no-console
+          console.warn(
+            `KET loader: atom ${aid} already in another SuperAttachmentPoint; dropping duplicate membership.`,
+          );
+          return false;
+        }
+        seenAtoms.add(aid);
+        return true;
+      });
+      if (atoms.length >= 2) {
+        struct.superAttachmentPoints.add(new SuperAttachmentPoint({ atoms }));
+      }
     });
   }
 
@@ -213,6 +238,18 @@ function addRGroupAttachmentPointsToStruct(
  * @returns newly created Bond
  */
 export function bondToStruct(source, atomOffset = 0) {
+  // Haptic bond shape — `{ type: 91, atom, sapId }` — has no `atoms[]` pair
+  // and references a SuperAttachmentPoint by id.
+  if (source.type === Bond.PATTERN.TYPE.HAPTIC && source.atom !== undefined) {
+    const newBond = new HapticBond({
+      begin: source.atom + atomOffset,
+      sapId: source.sapId,
+      initiallySelected: source.selected,
+    });
+    newBond.setInitiallySelected(source.selected);
+    return newBond;
+  }
+
   const params: any = {};
 
   ifDef(params, 'type', source.type);

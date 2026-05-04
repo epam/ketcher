@@ -35,7 +35,6 @@ import {
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
-import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';

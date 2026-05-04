@@ -97,7 +97,8 @@ describe('SAP action helpers', () => {
       const { struct, restruct, sapId, metalId } = makeRingWithMetal();
       const { result } = fromHapticBondAddition(restruct, metalId, sapId);
       expect(result.ok).toBe(true);
-      const bond = struct.bonds.get((result as { bondId: number }).bondId)!;
+      const bond = struct.bonds.get((result as { bondId: number }).bondId);
+      if (!bond) throw new Error('bond missing');
       expect(bond).toBeInstanceOf(HapticBond);
       expect(bond.begin).toBe(metalId);
       expect(bond.end).toBe(-1);

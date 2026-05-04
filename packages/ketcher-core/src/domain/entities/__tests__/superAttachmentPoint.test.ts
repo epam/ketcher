@@ -66,7 +66,9 @@ describe('SuperAttachmentPoint', () => {
       expect(sap.pp.x).toBe(1);
       expect(sap.pp.y).toBe(1);
 
-      struct.atoms.get(ids[1])!.pp = new Vec2(4, 4);
+      const movedAtom = struct.atoms.get(ids[1]);
+      if (!movedAtom) throw new Error('atom missing');
+      movedAtom.pp = new Vec2(4, 4);
       sap.recomputeCenter(struct);
       expect(sap.pp.x).toBe(2);
       expect(sap.pp.y).toBe(2);

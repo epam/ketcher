@@ -81,15 +81,15 @@ export function canCreateSAPFromSelection(
   for (const aid of atomIds) adj.set(aid, []);
   struct.bonds.forEach((bond) => {
     if (atomSet.has(bond.begin) && atomSet.has(bond.end)) {
-      adj.get(bond.begin)!.push(bond.end);
-      adj.get(bond.end)!.push(bond.begin);
+      adj.get(bond.begin)?.push(bond.end);
+      adj.get(bond.end)?.push(bond.begin);
     }
   });
   const visited = new Set<number>();
-  const stack = [atomIds[0]];
+  const stack: number[] = [atomIds[0]];
   while (stack.length) {
-    const cur = stack.pop()!;
-    if (visited.has(cur)) continue;
+    const cur = stack.pop();
+    if (cur === undefined || visited.has(cur)) continue;
     visited.add(cur);
     for (const next of adj.get(cur) ?? []) {
       if (!visited.has(next)) stack.push(next);

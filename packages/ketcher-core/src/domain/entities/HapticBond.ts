@@ -27,7 +27,8 @@ export class HapticBond extends Bond {
   clone(aidMap?: Map<number, number> | null): HapticBond {
     const cp = new HapticBond({ begin: this.begin, sapId: this.sapId });
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)!;
+      const remapped = aidMap.get(cp.begin);
+      if (remapped !== undefined) cp.begin = remapped;
     }
     return cp;
   }

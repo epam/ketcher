@@ -6,6 +6,7 @@ import { HapticBond } from 'domain/entities/HapticBond';
 import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 
 class SuperAPAdd extends BaseOperation {
+  static InverseConstructor: new (sapId: number) => BaseOperation;
   sapId: number | null;
   readonly atomIds: number[];
 
@@ -27,13 +28,18 @@ class SuperAPAdd extends BaseOperation {
   }
 
   invert() {
-    return new SuperAPDelete(this.sapId as number);
+    return new SuperAPAdd.InverseConstructor(this.sapId as number);
   }
 }
 
 class SuperAPDelete extends BaseOperation {
+  static InverseConstructor: new (
+    atomIds: number[],
+    sapId?: number,
+  ) => BaseOperation;
+
   readonly sapId: number;
-  private capturedAtoms: number[] | null = null;
+  capturedAtoms: number[] | null = null;
 
   constructor(sapId: number) {
     super(OperationType.SUPER_ATTACHMENT_POINT_DELETE, 100);
@@ -49,7 +55,10 @@ class SuperAPDelete extends BaseOperation {
   }
 
   invert() {
-    return new SuperAPAdd(this.capturedAtoms ?? [], this.sapId);
+    return new SuperAPDelete.InverseConstructor(
+      this.capturedAtoms ?? [],
+      this.sapId,
+    );
   }
 }
 
@@ -79,6 +88,7 @@ class SuperAPAtomsChange extends BaseOperation {
 }
 
 class HapticBondAdd extends BaseOperation {
+  static InverseConstructor: new (bondId: number) => BaseOperation;
   bondId: number | null;
   readonly atomId: number;
   readonly sapId: number;
@@ -101,14 +111,20 @@ class HapticBondAdd extends BaseOperation {
   }
 
   invert() {
-    return new HapticBondDelete(this.bondId as number);
+    return new HapticBondAdd.InverseConstructor(this.bondId as number);
   }
 }
 
 class HapticBondDelete extends BaseOperation {
+  static InverseConstructor: new (
+    atomId: number,
+    sapId: number,
+    bondId?: number,
+  ) => BaseOperation;
+
   readonly bondId: number;
-  private capturedAtomId: number | null = null;
-  private capturedSapId: number | null = null;
+  capturedAtomId: number | null = null;
+  capturedSapId: number | null = null;
 
   constructor(bondId: number) {
     super(OperationType.HAPTIC_BOND_DELETE, 100);
@@ -125,13 +141,18 @@ class HapticBondDelete extends BaseOperation {
   }
 
   invert() {
-    return new HapticBondAdd(
+    return new HapticBondDelete.InverseConstructor(
       this.capturedAtomId ?? -1,
       this.capturedSapId ?? -1,
       this.bondId,
     );
   }
 }
+
+SuperAPAdd.InverseConstructor = SuperAPDelete;
+SuperAPDelete.InverseConstructor = SuperAPAdd;
+HapticBondAdd.InverseConstructor = HapticBondDelete;
+HapticBondDelete.InverseConstructor = HapticBondAdd;
 
 export {
   SuperAPAdd,

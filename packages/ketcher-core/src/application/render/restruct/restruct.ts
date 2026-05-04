@@ -37,6 +37,7 @@ import ReRxnArrow from './rerxnarrow';
 import ReRxnPlus from './rerxnplus';
 import ReSGroup from './resgroup';
 import ReSimpleObject from './resimpleObject';
+import ReSuperAttachmentPoint from './reSuperAttachmentPoint';
 import ReText from './retext';
 import { Render } from '../raphaelRender';
 import Visel from './visel';
@@ -58,6 +59,7 @@ class ReStruct {
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
+    superAttachmentPoints: ReSuperAttachmentPoint,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
@@ -82,6 +84,7 @@ class ReStruct {
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   public simpleObjects: Map<number, ReSimpleObject> = new Map();
+  public superAttachmentPoints: Map<number, ReSuperAttachmentPoint> = new Map();
   public texts: Map<number, ReText> = new Map();
   public images = new Map<number, ReImage>();
   public multitailArrows = new Map<number, ReMultitailArrow>();
@@ -179,6 +182,9 @@ class ReStruct {
     });
     molecule.multitailArrows.forEach((item, id) => {
       this.multitailArrows.set(id, new ReMultitailArrow(item));
+    });
+    molecule.superAttachmentPoints.forEach((sap, id) => {
+      this.superAttachmentPoints.set(id, new ReSuperAttachmentPoint(sap));
     });
   }
 
@@ -599,6 +605,7 @@ class ReStruct {
     this.showAtoms();
     this.showBonds();
     this.showRgroupAttachmentPoints();
+    this.showSuperAttachmentPoints();
     if (updLoops) this.showLoops();
     this.showReactionSymbols();
     this.showSGroups();
@@ -664,6 +671,29 @@ class ReStruct {
     this.rxnPlusesChanged.forEach((_value, id) => {
       const plus = this.rxnPluses.get(id);
       if (plus) plus.show(this, id, options);
+    });
+  }
+
+  showSuperAttachmentPoints(): void {
+    // SAPs are sparse (typically 0–2 per structure). Sync the render mirror
+    // with the molecule pool, then redraw each visible SAP. The marker is
+    // hidden when ≥1 incident haptic bond exists; ReSuperAttachmentPoint.show
+    // handles that check.
+    this.molecule.superAttachmentPoints.forEach((sap, id) => {
+      if (!this.superAttachmentPoints.has(id)) {
+        this.superAttachmentPoints.set(id, new ReSuperAttachmentPoint(sap));
+      }
+    });
+    for (const id of [...this.superAttachmentPoints.keys()]) {
+      if (!this.molecule.superAttachmentPoints.has(id)) {
+        const re = this.superAttachmentPoints.get(id);
+        if (re) this.clearVisel(re.visel);
+        this.superAttachmentPoints.delete(id);
+      }
+    }
+    this.superAttachmentPoints.forEach((re, id) => {
+      this.clearVisel(re.visel);
+      re.show(this, id);
     });
   }
 

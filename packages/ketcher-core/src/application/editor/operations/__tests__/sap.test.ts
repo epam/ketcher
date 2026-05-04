@@ -83,19 +83,22 @@ describe('SAP operations', () => {
       const sapId = struct.superAttachmentPoints.add(
         new SuperAttachmentPoint({ atoms: ids.slice(0, 3) }),
       );
-      struct.superAttachmentPoints.get(sapId)!.recomputeCenter(struct);
-      const originalPP = struct.superAttachmentPoints.get(sapId)!.pp;
-      expect(originalPP.x).toBe(1);
+      const initialSap = struct.superAttachmentPoints.get(sapId);
+      if (!initialSap) throw new Error('SAP missing');
+      initialSap.recomputeCenter(struct);
+      expect(initialSap.pp.x).toBe(1);
 
       const op = new SuperAPAtomsChange(sapId, ids.slice(2, 5));
       const inverted = op.perform(restruct);
 
-      const sap = struct.superAttachmentPoints.get(sapId)!;
+      const sap = struct.superAttachmentPoints.get(sapId);
+      if (!sap) throw new Error('SAP missing');
       expect(sap.atoms).toEqual(ids.slice(2, 5));
       expect(sap.pp.x).toBe(3); // atoms at x=2..4 → bbox center 3
 
       inverted.perform(restruct);
-      const restored = struct.superAttachmentPoints.get(sapId)!;
+      const restored = struct.superAttachmentPoints.get(sapId);
+      if (!restored) throw new Error('SAP missing');
       expect(restored.atoms).toEqual(ids.slice(0, 3));
       expect(restored.pp.x).toBe(1);
     });

@@ -1,4 +1,5 @@
 import { Atom } from 'domain/entities/atom';
+import { Pile } from 'domain/entities/pile';
 import { Struct } from 'domain/entities/struct';
 import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
@@ -36,7 +37,8 @@ describe('Struct.superAttachmentPoints pool', () => {
     const { struct, ids, sapId } = buildStructWithRingAndSAP();
     const clone = struct.clone();
     expect(clone.superAttachmentPoints.size).toBe(1);
-    const clonedSap = clone.superAttachmentPoints.values().next().value!;
+    const clonedSap = clone.superAttachmentPoints.values().next().value;
+    if (!clonedSap) throw new Error('clonedSap missing');
     // After clone, atom ids may be re-keyed; assert by length and that the
     // cloned atom ids resolve to atoms in the cloned struct.
     expect(clonedSap.atoms.length).toBe(ids.length);
@@ -51,7 +53,7 @@ describe('Struct.superAttachmentPoints pool', () => {
     const { struct, ids } = buildStructWithRingAndSAP();
     // Clone with only first 3 atoms — the SAP's full membership isn't
     // present, so the SAP shouldn't be carried over.
-    const subset = new (require('domain/entities/pile').Pile)(ids.slice(0, 3));
+    const subset = new Pile<number>(ids.slice(0, 3));
     const clone = struct.clone(subset);
     expect(clone.superAttachmentPoints.size).toBe(0);
   });

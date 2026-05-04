@@ -18,6 +18,7 @@ import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { HalfBond } from 'domain/entities/halfBond';
+import { HapticBond } from 'domain/entities/HapticBond';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -364,6 +365,11 @@ class ReBond extends ReObject {
       return;
     }
 
+    if (bond instanceof HapticBond) {
+      this.showHaptic(restruct, bond);
+      return;
+    }
+
     const paper = render.paper;
     const hb1 =
       this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null;
@@ -670,6 +676,36 @@ class ReBond extends ReObject {
     render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, arrowsSet);
 
     return newVisel;
+  }
+
+  showHaptic(restruct: ReStruct, bond: HapticBond): void {
+    const render = restruct.render;
+    const struct = restruct.molecule;
+    const metalAtom = struct.atoms.get(bond.begin);
+    const sap = struct.superAttachmentPoints.get(bond.sapId);
+    if (!metalAtom || !sap) return;
+
+    sap.recomputeCenter(struct);
+    const metalPos = Scale.modelToCanvas(metalAtom.pp, render.options);
+    const sapPos = Scale.modelToCanvas(sap.pp, render.options);
+    const isSnapping = restruct.isSnappingBond(bond.begin);
+
+    this.path = draw.bondHaptic(
+      render.paper,
+      metalPos,
+      sapPos,
+      render.options,
+      isSnapping,
+    );
+    this.rbb = util.relBox(this.path.getBBox());
+    restruct.addReObjectPath(
+      LayerMap.bondSkeleton,
+      this.visel,
+      this.path,
+      null,
+      true,
+    );
+    this.setHover(this.hover, render);
   }
 }
 

@@ -1436,6 +1436,27 @@ function bondHydrogen(
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
+function bondHaptic(
+  paper: RaphaelPaper,
+  metalPos: Vec2,
+  sapPos: Vec2,
+  options: RenderOptions,
+  isSnapping: boolean,
+) {
+  if (
+    isNaN(metalPos.x) ||
+    isNaN(metalPos.y) ||
+    isNaN(sapPos.x) ||
+    isNaN(sapPos.y)
+  ) {
+    return paper.path('');
+  }
+  return paper
+    .path(makeStroke(metalPos, sapPos))
+    .attr(options.lineattr)
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
 function bondDative(
   paper: RaphaelPaper,
   halfBond1: HalfBond,
@@ -1791,6 +1812,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

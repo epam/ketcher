@@ -1,8 +1,8 @@
 import {
-  Struct,
   MultitailArrow,
   KetFileMultitailArrowNode,
-} from 'domain/entities';
+} from 'domain/entities/multitailArrow';
+import { Struct } from 'domain/entities/struct';
 import { KetFileNode } from 'domain/serializers';
 
 export function multitailArrowToStruct(

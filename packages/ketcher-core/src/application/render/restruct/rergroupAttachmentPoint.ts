@@ -236,7 +236,7 @@ class ReRGroupAttachmentPoint extends ReObject {
       this.item.type,
     );
     attachmentPointElement.setAttribute(
-      'data-attached-to-atomid',
+      'data-attached-to-atom-id',
       String(this.item.atomId),
     );
   }

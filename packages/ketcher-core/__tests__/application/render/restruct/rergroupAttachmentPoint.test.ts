@@ -130,10 +130,10 @@ describe('ReRGroupAttachmentPoint', () => {
     expect(primaryAttachmentPoint).not.toBeNull();
     expect(secondaryAttachmentPoint).not.toBeNull();
     expect(
-      primaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
+      primaryAttachmentPoint?.getAttribute('data-attached-to-atom-id'),
     ).toBe(atomElement?.getAttribute('data-atom-id'));
     expect(
-      secondaryAttachmentPoint?.getAttribute('data-attached-to-atomid'),
+      secondaryAttachmentPoint?.getAttribute('data-attached-to-atom-id'),
     ).toBe(atomElement?.getAttribute('data-atom-id'));
   });
 });

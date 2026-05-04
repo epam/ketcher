@@ -47,6 +47,13 @@ export function fromBondAddition(
   beginAtomPos?: Vec2,
   endAtomPos?: Vec2,
 ): [Action, number, number, number] {
+  // Haptic bonds reference a SuperAttachmentPoint via `sapId`, which this
+  // generic addition path can't carry. Tools must use `fromHapticBondAddition`
+  // (in actions/sap.ts) instead. We refuse silently here rather than throwing
+  // so existing call sites that pass through random bond types don't crash.
+  if (bond.type === Bond.PATTERN.TYPE.HAPTIC) {
+    return [new Action(), -1, -1, -1];
+  }
   const action = new Action();
   const struct = reStruct.molecule;
 

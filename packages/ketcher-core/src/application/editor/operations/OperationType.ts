@@ -102,6 +102,11 @@ export const OperationType = Object.freeze({
   MONOMER_CREATION_REASSIGN_LGA:
     'Monomer creation :: Reassign leaving group atom',
   MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
+  SUPER_ATTACHMENT_POINT_ADD: 'Add super-attachment point',
+  SUPER_ATTACHMENT_POINT_DELETE: 'Delete super-attachment point',
+  SUPER_ATTACHMENT_POINT_ATOMS_CHANGE: 'Change super-attachment point atoms',
+  HAPTIC_BOND_ADD: 'Add haptic bond',
+  HAPTIC_BOND_DELETE: 'Delete haptic bond',
 });
 
 export enum OperationPriority {

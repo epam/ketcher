@@ -16,6 +16,7 @@ export * from './reaction';
 export * from './rgroup';
 export * from './rgroupAttachmentPoint';
 export * from './rotate';
+export * from './sap';
 export * from './sgroup';
 export * from './simpleobject';
 export * from './template';

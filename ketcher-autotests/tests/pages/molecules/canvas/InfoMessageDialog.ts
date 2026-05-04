@@ -3,7 +3,7 @@ import { Page, Locator } from '@playwright/test';
 type InfoMessageDialogLocators = {
   infoModalWindow: Locator;
   infoModalBody: Locator;
-  infoModalOk: Locator;
+  okButton: Locator;
 };
 
 export const InfoMessageDialog = (page: Page) => {
@@ -12,9 +12,7 @@ export const InfoMessageDialog = (page: Page) => {
     infoModalBody: page
       .getByTestId('info-modal-window')
       .getByTestId('info-modal-body'),
-    infoModalOk: page
-      .getByTestId('info-modal-close')
-      .or(page.getByTestId('OK')),
+    okButton: page.getByTestId('info-modal-close').or(page.getByTestId('OK')),
   };
 
   return {
@@ -24,8 +22,8 @@ export const InfoMessageDialog = (page: Page) => {
     },
 
     async ok() {
-      await locators.infoModalOk.click();
-      await locators.infoModalOk.waitFor({ state: 'detached' });
+      await locators.okButton.click();
+      await locators.okButton.waitFor({ state: 'detached' });
     },
 
     async getInfoMessage() {

@@ -553,13 +553,7 @@ test(`11. Verify that clicking on "Yes" saves the monomer as is IF there are no 
   await createMonomerDialog.submit();
 
   await WarningMessageDialog(page).ok();
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
+
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnCanvas = getMonomerLocator(page, {
@@ -787,13 +781,6 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   });
 
   await dialog.submit();
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   expect(await Library(page).isMonomerExist(Preset.Preset)).toBeTruthy();

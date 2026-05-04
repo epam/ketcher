@@ -482,10 +482,15 @@ export const CreateMonomerDialog = (page: Page) => {
       await locators.terminalIndicatorTooltip.waitFor(options);
     },
 
-    async submit({ ignoreWarning = false } = {}) {
+    async submit({ ignoreWarning = false, ignoreAllSetInfo = true } = {}) {
       await waitForRender(page, async () => {
         await locators.submitButton.click();
       });
+
+      const allSetNotification = InfoMessageDialog(page);
+      if (ignoreAllSetInfo && (await allSetNotification.okButton.isVisible())) {
+        await allSetNotification.ok();
+      }
 
       // Only handle warning if it's there and we want to ignore it
       if (ignoreWarning) {
@@ -545,7 +550,7 @@ export async function createMonomer(
 
   const infoDlg = InfoMessageDialog(page);
   try {
-    await infoDlg.infoModalOk.waitFor({ state: 'visible', timeout: 2000 });
+    await infoDlg.okButton.waitFor({ state: 'visible', timeout: 2000 });
     await infoDlg.ok();
     await infoDlg.infoModalWindow.waitFor({ state: 'hidden', timeout: 2000 });
   } catch (e) {

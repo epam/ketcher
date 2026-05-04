@@ -30,7 +30,6 @@ import {
   AttachmentPointOption,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
-import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import {
   AminoAcidNaturalAnalogue,
@@ -1141,13 +1140,6 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   await CreateMonomerDialog(page).setSymbol(Chem.CHEM.alias);
   await CreateMonomerDialog(page).setName('CHEM Test monomer');
   await CreateMonomerDialog(page).submit();
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1192,13 +1184,6 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
     AminoAcidNaturalAnalogue.A,
   );
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1243,13 +1228,6 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
     NucleotideNaturalAnalogue.A,
   );
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1379,13 +1357,6 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
     NucleotideNaturalAnalogue.A,
   );
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
-  const infoDlg = InfoMessageDialog(page);
-  await infoDlg.infoModalWindow
-    .waitFor({ state: 'visible', timeout: 3000 })
-    .catch(() => {});
-  if (await infoDlg.infoModalOk.isVisible()) {
-    await infoDlg.ok();
-  }
 
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

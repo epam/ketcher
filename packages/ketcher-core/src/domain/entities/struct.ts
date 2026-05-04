@@ -32,6 +32,7 @@ import { RxnPlus } from './rxnPlus';
 import { SGroup } from './sgroup';
 import { SGroupForest } from './sgroupForest';
 import { SimpleObject } from './simpleObject';
+import { SuperAttachmentPoint } from './superAttachmentPoint';
 import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
@@ -90,6 +91,7 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  superAttachmentPoints = new Pool<SuperAttachmentPoint>();
   private nextArrowId = 0;
 
   constructor() {
@@ -424,6 +426,11 @@ export class Struct {
       const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
       assert(rgroupAttachmentPoint != null);
       cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aids));
+    });
+
+    this.superAttachmentPoints.forEach((sap) => {
+      if (sap.atoms.some((aid) => !atoms.has(aid))) return;
+      cp.superAttachmentPoints.add(sap.clone(aids));
     });
 
     if (!dropRxnSymbols) {

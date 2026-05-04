@@ -1,5 +1,5 @@
 import { Operation } from 'domain/entities/Operation';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class Command {
   public operations: Operation[] = [];

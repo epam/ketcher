@@ -1,5 +1,6 @@
-import { Bond, SGroup } from 'domain/entities';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Bond } from 'domain/entities/bond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { getAttachmentPointLabel } from './attachmentPointCalculations';
 
@@ -13,11 +14,11 @@ export function getAttachmentPointStereoBond(
   sGroup: SGroup,
   sGroupAttachmentPoint: SGroupAttachmentPoint,
 ): number | null {
-  if (!(sGroup instanceof MonomerMicromolecule)) {
+  if (!sGroup.isMonomer) {
     return null;
   }
 
-  const monomer = sGroup.monomer;
+  const monomer = (sGroup as MonomerMicromolecule).monomer;
   if (!monomer?.monomerItem) {
     return null;
   }

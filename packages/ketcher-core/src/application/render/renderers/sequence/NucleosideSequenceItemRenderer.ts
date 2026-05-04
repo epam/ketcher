@@ -1,4 +1,5 @@
-import { Nucleoside, Phosphate } from 'domain/entities';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Phosphate } from 'domain/entities/Phosphate';
 import { getNextMonomerInChain } from 'domain/helpers/monomers';
 import { RNASequenceItemRenderer } from './RNASequenceItemRenderer';
 import { D3SvgElementSelection } from 'application/render/types';

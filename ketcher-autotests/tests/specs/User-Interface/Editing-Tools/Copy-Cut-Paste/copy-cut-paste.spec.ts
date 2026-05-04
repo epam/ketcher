@@ -3,7 +3,7 @@
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -1085,7 +1085,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await MoleculesTopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
@@ -1100,7 +1100,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
     await MoleculesTopToolbar(page).cut();
@@ -1119,7 +1119,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).cut();
     await MoleculesTopToolbar(page).paste();
@@ -1144,14 +1144,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).cancel();
     await page.keyboard.press('ControlOrMeta+Alt+v');
-    // await clickInTheMiddleOfTheScreen(page, 'left', {
+    // await clickInTheMiddleOfTheCanvas(page, 'left', {
     //   waitForMergeInitialization: true,
     // });
     // await expect(
     //   CommonLeftToolbar(page).areaSelectionDropdownButton,
     // ).toHaveClass(/ActionButton-module_selected__/);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'left', {
+      await clickInTheMiddleOfTheCanvas(page, 'left', {
         waitForMergeInitialization: true,
       });
 

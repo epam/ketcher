@@ -44,5 +44,5 @@
       }
     ]
   },
-  "include": ["src"]
+  "include": ["src", "rollup.config.ts"]
 }

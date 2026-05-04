@@ -214,7 +214,8 @@ function mapSelectionToProps(editor: Editor): Partial<TableStateProps> {
   ) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    return { ...fromElement(atom) };
+    if (!atom) return {};
+    return { ...fromElement(atom) } as Partial<TableStateProps>;
   }
 
   return {};

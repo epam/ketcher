@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -38,8 +38,8 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { selectionDelete } from '../../Rotation/utils';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -148,7 +148,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await selectAllStructuresOnCanvas(page);
-    await selectionDelete(page);
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -208,7 +208,7 @@ test.describe('Superatom S-Group tool', () => {
     });
     await EditAbbreviationDialog(page).removeAbbreviation();
     await keyboardPressOnCanvas(page, 'o');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -234,7 +234,7 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

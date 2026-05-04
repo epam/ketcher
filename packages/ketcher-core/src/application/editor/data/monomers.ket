@@ -1075,7 +1075,7 @@
         "$ref": "monomerTemplate-Thr-ol___L-threoninol"
       },
       {
-        "$ref": "monomerTemplate-Gly-ol___aminomethanol"
+        "$ref": "monomerTemplate-Gly-ol___Ethanolamine"
       },
       {
         "$ref": "monomerTemplate-Ala-ol___L-Alaninol"
@@ -104677,38 +104677,46 @@
     ],
     "naturalAnalogShort": "T"
   },
-  "monomerTemplate-Gly-ol___aminomethanol": {
+  "monomerTemplate-Gly-ol___Ethanolamine": {
     "type": "monomerTemplate",
     "atoms": [
       {
-        "label": "O",
+        "label": "C",
         "location": [
-          1.25,
-          -0.433,
+          1,
+          0,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          0.25,
-          -0.433,
+          0,
+          0,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          -0.25,
-          0.433,
+          -0.5,
+          0.866,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          -1.25,
-          0.433,
+          -1.5,
+          0.866,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          1.5,
+          -0.866,
           0
         ]
       }
@@ -104734,12 +104742,19 @@
           2,
           3
         ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          4
+        ]
       }
     ],
     "class": "AminoAcid",
     "classHELM": "PEPTIDE",
-    "id": "Gly-ol___aminomethanol",
-    "fullName": "aminomethanol",
+    "id": "Gly-ol___Ethanolamine",
+    "fullName": "Ethanolamine",
     "alias": "Gly-ol",
     "aliasHELM": "Gly-ol",
     "attachmentPoints": [

@@ -1,10 +1,8 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import {
-  AmbiguousMonomer,
-  Nucleoside,
-  Nucleotide,
-  Vec2,
-} from 'domain/entities';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Vec2 } from 'domain/entities/vec2';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 

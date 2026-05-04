@@ -6,6 +6,7 @@ import {
   PropertyLabelType,
   RepeatPatternOption,
   SGroupPropertiesSettings,
+  SubtypeOption,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
 import { waitForRender } from '@utils/common';
@@ -22,6 +23,7 @@ type SGroupPropertiesLocators = {
   attachedRadioButton: Locator;
   repeatCountEditbox: Locator;
   polymerLabelEditbox: Locator;
+  subtypeDropdown: Locator;
   repeatPatternDropdown: Locator;
   nameEditbox: Locator;
   componentDropdown: Locator;
@@ -42,6 +44,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
     attachedRadioButton: page.getByTestId('radiobuttons-input-Attached'),
     repeatCountEditbox: page.getByTestId('mul-input'),
     polymerLabelEditbox: page.getByTestId('subscript-input'),
+    subtypeDropdown: page.getByTestId('subtype-input-span'),
     repeatPatternDropdown: page.getByTestId('connectivity-input-span'),
     nameEditbox: page.getByTestId('name-input'),
     componentDropdown: page.getByTestId('class-input-span'),
@@ -125,6 +128,15 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.polymerLabelEditbox.fill(value);
     },
 
+    async selectSubtype(subtype: SubtypeOption) {
+      const subtypeToSelect = page.getByTestId(subtype);
+      await locators.subtypeDropdown.waitFor({ state: 'visible' });
+      await locators.subtypeDropdown.click();
+      await subtypeToSelect.waitFor({ state: 'visible' });
+      await subtypeToSelect.click({ force: true });
+      await subtypeToSelect.waitFor({ state: 'hidden' });
+    },
+
     async selectRepeatPattern(repeatPattern: RepeatPatternOption) {
       const contextToSelect = page.getByTestId(repeatPattern);
 
@@ -161,6 +173,9 @@ export const SGroupPropertiesDialog = (page: Page) => {
         await this.setRepeatCountValue(options.RepeatCount);
       } else if (options.Type === TypeOption.SRUPolymer) {
         await this.setPolymerLabelValue(options.PolymerLabel);
+        await this.selectRepeatPattern(options.RepeatPattern);
+      } else if (options.Type === TypeOption.Copolymer) {
+        await this.selectSubtype(options.Subtype);
         await this.selectRepeatPattern(options.RepeatPattern);
       } else if (options.Type === TypeOption.Superatom) {
         await this.setNameValue(options.Name);

@@ -45,9 +45,9 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import {
   horizontalFlipByKeyboard,
-  rotateToCoordinates,
   verticalFlipByKeyboard,
 } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -653,7 +653,7 @@ test('24. Verify that the star atom retains its properties when the structure is
   );
   await CommonTopRightToolbar(page).setZoomInputValue('150');
   await selectAllStructuresOnCanvas(page);
-  await rotateToCoordinates(page, { x: 720, y: 300 });
+  await RotationTool(page).moveRotationHandleTo({ x: 720, y: 300 });
   await clickOnCanvas(page, 1, 1);
   await takeEditorScreenshot(page);
 });

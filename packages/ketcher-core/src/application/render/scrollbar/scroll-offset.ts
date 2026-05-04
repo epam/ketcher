@@ -1,4 +1,5 @@
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 

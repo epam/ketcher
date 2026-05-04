@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -15,7 +16,6 @@ import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditor, SnakeMode } from 'application/editor';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
@@ -123,7 +123,7 @@ export class AttachmentPoint {
     const stroke = this.stroke;
 
     this.attachmentPoint = this.rootElement
-      .insert('g', ':first-child')
+      .append('g')
       .data([this])
       .style('pointer-events', 'none')
       .style('cursor', 'pointer')
@@ -148,7 +148,9 @@ export class AttachmentPoint {
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
-      .attr('data-testid', `${this.attachmentPointName}`)
+      .attr('data-testid', 'monomer-attachment-point')
+      .attr('data-attachment-point-alias', this.attachmentPointName)
+      .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
 
@@ -244,7 +246,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
@@ -262,7 +264,8 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode instanceof SnakeMode && polymerBond.isSideChainConnection))
+        (editor.mode.modeName === 'snake-layout-mode' &&
+          polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;
@@ -316,6 +319,10 @@ export class AttachmentPoint {
     this.hoverableArea = hoverableArea;
 
     return attachmentPoint;
+  }
+
+  public raise() {
+    this.element?.raise();
   }
 
   public updateAttachmentPointStyleForHover() {

@@ -373,7 +373,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
    * Case: 1. Load ket file with 16 bonds at Micro
    *       2. Take screenshot to witness initial state
    *       3. Save to IDT
-   *       4. Take screenshot to witness error message occured
+   *       4. Validate error message occured
    *
    */
   await openFileAndAddToCanvasAsNewProject(
@@ -386,13 +386,12 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.IDT,
   );
-  await takeEditorScreenshot(page);
-  await SaveStructureDialog(page).cancel();
-  test.fixme(
-    true,
-    `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
-     Test should be updated after fix`,
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
   );
+  await ErrorMessageDialog(page).close();
+  await SaveStructureDialog(page).cancel();
 });
 
 test(`Verify that all 16 types of bonds saved in macro mode can be opened in micro mode in MOL v3000`, async () => {

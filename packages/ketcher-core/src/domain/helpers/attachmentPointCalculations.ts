@@ -1,5 +1,5 @@
 import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
-import { BaseMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
 import { AttachmentPointName } from 'domain/types';
 

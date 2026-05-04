@@ -1,4 +1,4 @@
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { BondType } from 'domain/entities/CoreBond';
 

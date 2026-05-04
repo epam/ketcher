@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -55,7 +56,8 @@ import {
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditor, EditorSelection } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { EditorSelection } from 'application/editor/editor.types';
 import {
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
@@ -101,7 +103,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 
 interface RGroupData {
   rgnumber: number | string;
@@ -175,7 +177,7 @@ export class KetSerializer implements Serializer<Struct> {
       else if (node.$ref)
         parseNode(ket[node.$ref] as KetFileNode<unknown>, resultingStruct);
     });
-    resultingStruct.name = ket.header?.moleculeName ?? null;
+    resultingStruct.name = ket.header?.moleculeName ?? '';
 
     return resultingStruct;
   }
@@ -269,7 +271,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   parseAndValidateMacromolecules(fileContent: string) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
@@ -412,6 +414,26 @@ export class KetSerializer implements Serializer<Struct> {
       : attachmentPoints;
   }
 
+  private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
+    if (template.idtAliases && template.aliasAxoLabs) return;
+
+    const library = provideEditorInstance()?.monomersLibraryParsedJson;
+    if (!library) return;
+
+    const libraryTemplate = library[setMonomerTemplatePrefix(template.id)] as
+      | IKetMonomerTemplate
+      | undefined;
+
+    if (!libraryTemplate) return;
+
+    if (!template.idtAliases && libraryTemplate.idtAliases) {
+      template.idtAliases = libraryTemplate.idtAliases;
+    }
+    if (!template.aliasAxoLabs && libraryTemplate.aliasAxoLabs) {
+      template.aliasAxoLabs = libraryTemplate.aliasAxoLabs;
+    }
+  }
+
   public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
     const attachmentPoints =
       KetSerializer.getTemplateAttachmentPoints(template) ?? [];
@@ -533,6 +555,7 @@ export class KetSerializer implements Serializer<Struct> {
             setMonomerTemplatePrefix(nodeDefinition.templateId)
           ] as IKetMonomerTemplate;
           assert(template);
+          KetSerializer.enrichTemplateWithLibraryData(template);
           const struct = KetSerializer.convertMonomerTemplateToStruct(template);
           const monomerAdditionCommand = monomerToDrawingEntity(
             nodeDefinition,
@@ -1042,17 +1065,19 @@ export class KetSerializer implements Serializer<Struct> {
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
         initiallySelected: rxnArrow.initiallySelected,
+        arrowId: rxnArrow.arrowId,
       });
 
-      struct.rxnArrows.add(arrow);
+      struct.addRxnArrow(arrow);
     });
 
     drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
       const arrow = MicromoleculeMultitailArrow.fromKetNode(
         multitailArrow.toKetNode(),
       );
+      arrow.arrowId = multitailArrow.arrowId;
 
-      struct.multitailArrows.add(arrow);
+      struct.addMultitailArrow(arrow);
     });
 
     drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {

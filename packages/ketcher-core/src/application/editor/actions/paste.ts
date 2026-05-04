@@ -34,7 +34,10 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { MultitailArrow, SGroup, Struct, Vec2 } from 'domain/entities';
+import { MultitailArrow } from 'domain/entities/multitailArrow';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
@@ -106,16 +109,16 @@ export function fromPaste(
       Vec2.diff(atom.pp, xy0).rotate(angle).add(point),
     ).perform(restruct) as AtomAdd;
     action.addOp(operation);
-    aidMap.set(aid, operation.data.aid);
+    aidMap.set(aid, operation.data.aid as number);
 
-    pasteItems.atoms.push(operation.data.aid);
-    items.atoms.push(operation.data.aid);
+    pasteItems.atoms.push(operation.data.aid as number);
+    items.atoms.push(operation.data.aid as number);
 
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
         restruct,
         tmpAtom.attachmentPoints,
-        operation.data.aid,
+        operation.data.aid as number,
       ),
     );
   });
@@ -147,11 +150,14 @@ export function fromPaste(
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
-    pasteItems.bonds.push(operation.data.bid);
-    items.bonds.push(operation.data.bid);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview, false).perform(
-      restruct,
-    );
+    pasteItems.bonds.push(operation.data.bid as number);
+    items.bonds.push(operation.data.bid as number);
+    new BondAttr(
+      operation.data.bid as number,
+      'isPreview',
+      isPreview,
+      false,
+    ).perform(restruct);
   });
 
   pstruct.sgroups.forEach((sg: SGroup) => {

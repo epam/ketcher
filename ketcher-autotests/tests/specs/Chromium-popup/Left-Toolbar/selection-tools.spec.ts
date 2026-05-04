@@ -123,24 +123,24 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
    * 3. Hover over the Selection tool icon and check the tooltip for the shortcut
    */
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  const cases = [
+  const selectionToolButtons = [
     {
       tool: SelectionToolType.Lasso,
-      testId: 'select-lasso',
+      testId: SelectionToolType.Lasso,
       title: 'Lasso selection (Shift+Tab)',
     },
     {
       tool: SelectionToolType.Fragment,
-      testId: 'select-structure',
+      testId: SelectionToolType.Fragment,
       title: 'Structure Selection (Shift+Tab)',
     },
   ];
-  for (const c of cases) {
-    await CommonLeftToolbar(page).areaSelectionTool(c.tool);
-    const iconButton = page.getByTestId(c.testId);
-    await expect(iconButton).toHaveAttribute('title', c.title);
-    await iconButton.hover();
-    await expect(c.title).toBeTruthy();
+  for (const selectionToolButton of selectionToolButtons) {
+    await CommonLeftToolbar(page).areaSelectionTool(selectionToolButton.tool);
+    const button = page.getByTestId(selectionToolButton.testId);
+    await expect(button).toHaveAttribute('title', selectionToolButton.title);
+    await button.hover();
+    expect(selectionToolButton.title).toBeTruthy();
     await takeLeftToolbarMacromoleculeScreenshot(page);
   }
 });
@@ -507,7 +507,6 @@ test('Case 15: Check deletion of selected structure by lasso through right-click
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -558,7 +557,6 @@ test('Case 16: Check deletion of selected structure by lasso through right-click
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -610,7 +608,6 @@ test('Case 17: Check deletion of selected structure by lasso through right-click
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getSymbolLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -866,7 +863,6 @@ test('Case 24: Check that Create antisence strand (right-click menu) works for s
     { x: 300, y: 110 },
   ]);
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -904,7 +900,6 @@ test('Case 25: Check that Create antisence strand (right-click menu) works for s
     { x: 300, y: 110 },
   ]);
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -942,7 +937,6 @@ test('Case 26: Check that Create antisence strand (right-click menu) works for s
     { x: 300, y: 110 },
   ]);
   const anySymbol = getSymbolLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -1312,7 +1306,6 @@ test('Case 36: Check deletion of selected structure by Fragment through right-cl
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1360,7 +1353,6 @@ test('Case 37: Check deletion of selected structure by Fragment through right-cl
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1411,7 +1403,6 @@ test('Case 38: Check deletion of selected structure by Fragment through right-cl
     hideMacromoleculeEditorScrollBars: true,
   });
   const anySymbol = getSymbolLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Delete);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -1632,7 +1623,6 @@ test('Case 45: Check that Create antisence strand (right-click menu) works for s
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
   await getMonomerLocator(page, Sugar.R).first().click();
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -1664,7 +1654,6 @@ test('Case 46: Check that Create antisence strand (right-click menu) works for s
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
   await getMonomerLocator(page, Sugar.R).first().click();
   const anySymbol = getMonomerLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
@@ -1699,7 +1688,6 @@ test('Case 47: Check that Create antisence strand (right-click menu) works for s
     nodeIndexOverall: 0,
   }).click();
   const anySymbol = getSymbolLocator(page, {}).first();
-  await ContextMenu(page, anySymbol).open();
   await ContextMenu(page, anySymbol).click(
     SequenceSymbolOption.CreateRNAAntisenseStrand,
   );

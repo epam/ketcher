@@ -42,7 +42,7 @@ import {
   verifyFileExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerType } from '@utils/types';
@@ -573,7 +573,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -624,7 +626,9 @@ for (const monomer of monomerToDrag2) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -1029,7 +1033,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1068,7 +1072,7 @@ for (const monomer of monomerToDrag) {
      */
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)

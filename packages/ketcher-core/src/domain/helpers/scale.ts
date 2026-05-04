@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export interface ScaleOptions {
   microModeScale: number;

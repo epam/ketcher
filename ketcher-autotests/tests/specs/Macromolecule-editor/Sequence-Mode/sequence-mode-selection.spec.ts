@@ -197,11 +197,7 @@ test.describe('Sequence mode selection for view mode', () => {
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
-      await page
-        .locator('g.drawn-structures')
-        .locator('g', { has: page.locator('text="G"') })
-        .first()
-        .click();
+      await getSymbolLocator(page, { symbolAlias: 'G' }).first().click();
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });

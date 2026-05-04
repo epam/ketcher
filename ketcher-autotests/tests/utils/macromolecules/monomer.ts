@@ -4,8 +4,8 @@ import { dragMouseTo } from '../clicks';
 import { Monomer, MonomerType, SymbolType } from '../types';
 import { waitForRender } from '../common/loaders/waitForRender';
 import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -42,7 +42,7 @@ export async function moveMonomerOnMicro(
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
-  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
+  bondType: MacroBondTool | MicroBondTool = MacroBondTool.Single,
 ) {
   await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -85,6 +85,11 @@ export enum AttachmentPoint {
   R7 = 'R7',
   R8 = 'R8',
 }
+
+type AttachmentPointLocatorOptions = {
+  attachmentPointAlias?: AttachmentPoint;
+  parentMonomerId?: string | number;
+};
 
 /**
  * This function returns locator for monomer in the macromolecule editor.
@@ -200,6 +205,35 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   const locator = page.locator(attributeSelectors);
 
   return locator;
+}
+
+export function getAttachmentPointLocator(
+  root: Page | Locator,
+  options: AttachmentPoint | AttachmentPointLocatorOptions = {},
+) {
+  const normalizedOptions =
+    typeof options === 'string' ? { attachmentPointAlias: options } : options;
+
+  const attributes: { [key: string]: string } = {
+    'data-testid': 'monomer-attachment-point',
+  };
+
+  if (normalizedOptions.attachmentPointAlias) {
+    attributes['data-attachment-point-alias'] =
+      normalizedOptions.attachmentPointAlias;
+  }
+
+  if (Object.hasOwn(normalizedOptions, 'parentMonomerId')) {
+    attributes['data-parent-monomer-id'] = String(
+      normalizedOptions.parentMonomerId,
+    );
+  }
+
+  return root.locator(
+    Object.entries(attributes)
+      .map(([key, value]) => `[${key}="${value}"]`)
+      .join(''),
+  );
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {

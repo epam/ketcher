@@ -16,7 +16,7 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter';
 
-import { Component, createRef, RefObject } from 'react';
+import React, { Component, createRef, RefObject } from 'react';
 import { createSelector } from 'reselect';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
@@ -31,6 +31,12 @@ import {
   isClipboardAPIAvailable,
   legacyCopy,
   Struct,
+  StructService,
+  SupportedFormat,
+  OutputFormatType,
+  StructServiceOptions,
+  GenerateImageOptions,
+  SupportedFormatProperties,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -46,7 +52,8 @@ import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
-import { Dispatch } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 const saveSchema = {
   title: 'Save',
@@ -94,14 +101,13 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleCopy: (event: any) => void;
+  handleCopy: (event: React.MouseEvent | React.ClipboardEvent) => void;
 }
 
 interface FormState {
   result: {
     filename: string;
-    format: string;
+    format: SupportedFormat | OutputFormatType | SupportedFormatProperties;
   };
   valid: boolean;
   errors: Record<string, string>;
@@ -122,13 +128,10 @@ interface Editor {
     };
   };
 }
-
 interface SaveDialogProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  server: any;
+  server: StructService | null;
   struct: Struct;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  options: any;
+  options: StructServiceOptions;
   formState: FormState;
   moleculeErrors?: Record<string, string>;
   checkState: CheckState;
@@ -138,8 +141,8 @@ interface SaveDialogProps {
   onCheck: (checkOptions: unknown) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
-  onOk: (result?: Record<string, unknown>) => void;
-  onCancel?: () => void;
+  onOk: (result?: Record<string, unknown> | unknown) => void;
+  onCancel: () => void;
 }
 
 interface SaveDialogState {
@@ -156,15 +159,13 @@ interface AppState {
     app: {
       server?: boolean;
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getServerSettings: () => any;
+    getServerSettings: () => StructServiceOptions;
     check: CheckState;
     settings: {
       bondThickness?: number;
     };
   };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  server: any;
+  server: StructService;
   editor: Editor;
   modal: {
     form: FormState;
@@ -250,29 +251,33 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     this.textAreaRef = createRef();
 
     const formats = !this.props.server
-      ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
+      ? [
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          SupportedFormat.smiles,
+        ]
       : [
-          'ket',
-          this.isRxn ? 'rxn' : 'mol',
-          this.isRxn ? 'rxnV3000' : 'molV3000',
-          'sdf',
-          'sdfV3000',
-          'rdf',
-          'rdfV3000',
-          'smarts',
-          'smiles',
-          'smilesExt',
-          'cml',
+          SupportedFormat.ket,
+          this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+          this.isRxn ? SupportedFormat.rxnV3000 : SupportedFormat.molV3000,
+          SupportedFormat.sdf,
+          SupportedFormat.sdfV3000,
+          SupportedFormat.rdf,
+          SupportedFormat.rdfV3000,
+          SupportedFormat.smarts,
+          SupportedFormat.smiles,
+          SupportedFormat.smilesExt,
+          SupportedFormat.cml,
           '<----firstDivider--->', // for dividers in select list
-          'inChI',
-          'inChIAuxInfo',
-          'inChIKey',
+          SupportedFormat.inChI,
+          SupportedFormat.inChIAuxInfo,
+          SupportedFormat.inChIKey,
           '<----secondDivider--->', // for dividers in select list
           'svg',
           'png',
-          'cdxml',
-          'cdx',
-          'binaryCdx',
+          SupportedFormat.cdxml,
+          SupportedFormat.cdx,
+          SupportedFormat.binaryCdx,
         ];
 
     this.saveSchema = saveSchema;
@@ -281,11 +286,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       {
         enum: formats,
         enumNames: formats.map((format) => {
-          const formatProps =
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            getPropertiesByFormat(format as any) ||
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            getPropertiesByImgFormat(format as any);
+          const formatProps = this.isImageFormat(format)
+            ? getPropertiesByImgFormat(format)
+            : getPropertiesByFormat(format as SupportedFormat);
           return formatProps?.name;
         }),
       },
@@ -295,26 +298,39 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   componentDidMount() {
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
-    this.changeType(this.isRxn ? 'rxn' : 'mol').then(
+    this.changeType(
+      this.isRxn ? SupportedFormat.rxn : SupportedFormat.mol,
+    ).then(
       (res) => res instanceof Error && this.setState({ disableControls: true }),
     );
   }
 
-  isImageFormat = (format: string): boolean => {
+  isImageFormat = (format: string): format is OutputFormatType => {
     return !!getPropertiesByImgFormat(format);
   };
 
-  isBinaryCdxFormat = (format: string): boolean => {
-    return format === 'binaryCdx';
+  isBinaryCdxFormat = (format: string): format is SupportedFormat.binaryCdx => {
+    return format === SupportedFormat.binaryCdx;
   };
 
   showStructWarningMessage = (format: string): boolean => {
     const { errors } = this.props.formState;
-    return format !== 'mol' && Object.keys(errors).length > 0;
+    return format !== SupportedFormat.mol && Object.keys(errors).length > 0;
   };
 
-  changeType = (type: string): Promise<Error | void> => {
+  changeType = (
+    type: SupportedFormat | OutputFormatType,
+  ): Promise<Error | void> => {
     const { struct, server, options, formState, ignoreChiralFlag } = this.props;
+
+    if (!server) {
+      this.setState({
+        disableControls: false,
+        tabIndex: 0,
+        isLoading: false,
+      });
+      return Promise.resolve();
+    }
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -332,7 +348,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       serverOptions.outputFormat = type;
 
       return server
-        .generateImageAsBase64(structStr, serverOptions)
+        .generateImageAsBase64(structStr, serverOptions as GenerateImageOptions)
         .then((base64) => {
           this.setState({
             disableControls: false,
@@ -352,7 +368,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       const factory = new FormatterFactory(server);
       // temporary check if query properties are used
       const queryPropertiesAreUsed = !!(
-        type === 'mol' &&
+        type === SupportedFormat.mol &&
         Array.from(struct.atoms).find(
           ([_, atom]) =>
             atom.queryProperties.aromaticity ||
@@ -364,27 +380,25 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         )
       );
       const service = factory.create(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        type as any,
+        type,
         { ...options, ignoreChiralFlag },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        queryPropertiesAreUsed as any,
+        queryPropertiesAreUsed,
       );
       const getStructFromStringByType = () => {
-        if (type === 'ket') {
+        if (type === SupportedFormat.ket) {
           const selection = this.props.editor.selection();
           if (selection?.atoms?.length && selection.atoms.length > 0) {
             selection.atoms = selection.atoms.filter((selectedAtomId) => {
               return !Atom.isSuperatomLeavingGroupAtom(struct, selectedAtomId);
             });
           }
-          return service.getStructureFromStructAsync(
+          return service.getStringFromStructureAsync(
             struct,
             undefined,
             selection || undefined,
           );
         }
-        return service.getStructureFromStructAsync(struct);
+        return service.getStringFromStructureAsync(struct);
       };
       return getStructFromStringByType()
         .then(
@@ -414,15 +428,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     this.setState({ tabIndex: index });
   };
 
-  getWarnings = (format: string): string[] => {
+  getWarnings = (format: SupportedFormat | OutputFormatType): string[] => {
     const { struct, moleculeErrors } = this.props;
     const warnings: string[] = [];
     const structWarning =
       'Structure contains errors, please check the data, otherwise you ' +
       'can lose some properties or the whole structure after saving in this format.';
     if (!this.isImageFormat(format)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const saveWarning = structFormat.couldBeSaved(struct, format as any);
+      const saveWarning = structFormat.couldBeSaved(struct, format);
       const isStructInvalid = this.showStructWarningMessage(format);
       if (isStructInvalid) {
         warnings.push(structWarning);
@@ -435,7 +448,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     if (moleculeErrors) {
       const filteredMoleculeErrors = Object.values(moleculeErrors).filter(
         (error) => {
-          if (format === 'smarts' || format === 'ket') {
+          if (
+            format === SupportedFormat.smarts ||
+            format === SupportedFormat.ket
+          ) {
             return !error.includes('Structure contains query features');
           } else {
             return true;
@@ -447,10 +463,25 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return warnings;
   };
 
+  isValidStringFormat = (
+    format: SupportedFormat | OutputFormatType | SupportedFormatProperties,
+  ): format is SupportedFormat | OutputFormatType => {
+    return (
+      typeof format === 'string' &&
+      !format.startsWith('<----') &&
+      !!(
+        getPropertiesByFormat(format as SupportedFormat) ||
+        getPropertiesByImgFormat(format as OutputFormatType)
+      )
+    );
+  };
+
   renderForm = (): JSX.Element => {
     const formState = { ...this.props.formState };
     const { filename, format } = formState.result;
-    const warnings = this.getWarnings(format);
+    const warnings = this.isValidStringFormat(format)
+      ? this.getWarnings(format)
+      : [];
     const tabs =
       warnings.length === 0
         ? [
@@ -486,8 +517,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           <Field name="filename" />
           <Field
             name="format"
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            {...({ onChange: this.changeType } as any)}
+            {...{ onChange: this.changeType }}
             options={getSelectOptionsFromSchema(
               this.saveSchema.properties.format,
             )}
@@ -507,14 +537,13 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  handleCopy = (event: any): void => {
+  handleCopy = (event: React.MouseEvent | React.ClipboardEvent): void => {
     const { structStr } = this.state;
 
     try {
       if (isClipboardAPIAvailable()) {
         navigator.clipboard.writeText(structStr || '');
-      } else {
+      } else if ('clipboardData' in event) {
         legacyCopy(event.clipboardData, {
           'text/plain': structStr,
         });
@@ -535,9 +564,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const { structStr, imageSrc, isLoading } = this.state;
     const isCleanStruct = this.props.struct.isBlank();
 
-    if (isLoading) {
-      return <LoadingState classes={classes} />;
-    } else if (this.isImageFormat(format)) {
+    if (isLoading) return <LoadingState classes={classes} />;
+
+    if (this.isValidStringFormat(format) && this.isImageFormat(format)) {
       return (
         <ImageContent
           classes={classes}
@@ -546,23 +575,26 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           isCleanStruct={isCleanStruct}
         />
       );
-    } else if (this.isBinaryCdxFormat(format)) {
-      return <BinaryContent classes={classes} textAreaRef={this.textAreaRef} />;
-    } else {
-      return (
-        <PreviewContent
-          classes={classes}
-          structStr={structStr || ''}
-          textAreaRef={this.textAreaRef}
-          handleCopy={this.handleCopy}
-        />
-      );
     }
+    if (this.isValidStringFormat(format) && this.isBinaryCdxFormat(format)) {
+      return <BinaryContent classes={classes} textAreaRef={this.textAreaRef} />;
+    }
+    return (
+      <PreviewContent
+        classes={classes}
+        structStr={structStr || ''}
+        textAreaRef={this.textAreaRef}
+        handleCopy={this.handleCopy}
+      />
+    );
   };
 
   renderWarnings = (): JSX.Element | null => {
     const formState = { ...this.props.formState };
     const { format } = formState.result;
+
+    if (!this.isValidStringFormat(format)) return null;
+
     const warnings = this.getWarnings(format);
 
     return warnings.length ? (
@@ -587,7 +619,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     options.outputFormat = imageFormat;
 
     const savingStruct =
-      this.isBinaryCdxFormat(format) && !isLoading
+      this.isValidStringFormat(format) &&
+      this.isBinaryCdxFormat(format) &&
+      !isLoading
         ? b64toBlob(structStr || '')
         : structStr;
 
@@ -617,18 +651,16 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       </button>,
     );
 
-    if (this.isImageFormat(format)) {
+    if (this.isValidStringFormat(format) && this.isImageFormat(format)) {
       buttons.push(
         <SaveButton
           mode="saveImage"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          options={options as any}
+          options={options as GenerateImageOptions}
           data={structStr || ''}
           filename={filename}
           key="save-image-button"
           type={`image/${format}+xml`}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSave={this.props.onOk as any}
+          onSave={this.props.onOk}
           testId="save-button"
           disabled={
             disableControls ||
@@ -649,15 +681,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           testId="save-button"
           filename={
             filename +
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (getPropertiesByFormat(format as any)?.extensions[0] || '')
+            (this.isValidStringFormat(format)
+              ? getPropertiesByFormat(format)?.extensions[0] || ''
+              : format.name)
           }
           key="save-file-button"
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          type={(format as any).mime}
+          type={!this.isValidStringFormat(format) ? format.mime : undefined}
           server={this.props.server}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onSave={this.props.onOk as any}
+          onSave={this.props.onOk}
           disabled={disableControls || !formState.valid || isCleanStruct}
           className={classes.ok}
         >
@@ -669,8 +700,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   render(): JSX.Element {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const DialogComponent = Dialog as any;
+    const DialogComponent = Dialog;
     return (
       <DialogComponent
         testId="save-structure-dialog"
@@ -686,6 +716,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   }
 }
+
+const SaveDialogConnectWrapper = (props: SaveDialogProps) => (
+  <SaveDialog {...props} />
+);
 
 const getOptions = (state: AppState) => state.options;
 const serverSettingsSelector = createSelector([getOptions], (options) =>
@@ -704,15 +738,15 @@ const mapStateToProps = (state: AppState) => ({
   editor: state.editor,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions) as any),
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct) as any),
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<AppState, undefined, AnyAction>,
+) => ({
+  onCheck: (checkOptions: unknown) => dispatch(check(checkOptions)),
+  onTmplSave: (struct: Struct) => dispatch(saveUserTmpl(struct)),
   onResetForm: (prevState: FormState) => dispatch(updateFormState(prevState)),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Save = connect(mapStateToProps, mapDispatchToProps)(SaveDialog as any);
-
-export default Save;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SaveDialogConnectWrapper);

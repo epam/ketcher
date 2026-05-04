@@ -12,27 +12,6 @@ Ketcher is an open-source **chemical structure editor** built with TypeScript an
 - If a required page object or helper does not exist, create a reusable file under `ketcher-autotests/tests/pages/...` or `ketcher-autotests/tests/utils/...`.
 - Do not inline long selector chains or duplicate behavior in the spec.
 
-### Ketcher Autotests Generation Instructions
-
-#### Role
-You are a test automation engineer specializing in Playwright and TypeScript.
-
-#### Task: Ketcher Autotests Generation
-- Generate Playwright autotests based on the scenarios listed in the provided "Autotest Request".
-- Under the **Source task(s):** header in the request, find the link to the Feature. Use it to get the Feature Issue Number and Feature Title.
-
-#### Output Format
-For each test, provide the output in a clear structure:
-1. **Target Directory:** `ketcher-autotests/tests/specs/Chromium-popup/Features/#<Feature Number>-<Feature Title>`
-2. **Filename:** `<descriptive-name>.spec.ts`
-3. **Code Content:** The full Playwright test script.
-
-#### Constraints & Rules
-- **Folder Naming:** You MUST use the exact format `#<Feature Number>-<Feature Title>`. Don't modify it!
-  - Example: `ketcher-autotests/tests/specs/Chromium-popup/Features/#3227-Introducing-Copolymer-S-group-type`
-- **File Extension:** Use only `.spec.ts`.
-- **Visuals:** Do not worry about snapshot files; they are handled automatically.
-
 ### Test structure
 - Prefer one `test.describe()` block per file.
 - Prefer `let page: Page;` at file scope plus `test.beforeAll(async ({ initMoleculesCanvas | initFlexCanvas | initSnakeCanvas | initSequenceCanvas }) => { page = await ...(); })`.

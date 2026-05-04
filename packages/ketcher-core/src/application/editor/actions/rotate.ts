@@ -33,7 +33,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
-import { EditorSelection } from '../editor.types';
+import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 import type { FlipDirection } from '../shared/utils.types';
 import { flipPointByCenter, rotateDelta } from '../shared/utils';

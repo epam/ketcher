@@ -15,7 +15,7 @@ import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
@@ -560,7 +560,7 @@ test.describe('Connection rules for RNAs: ', () => {
         );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);
@@ -593,7 +593,7 @@ test.describe('Connection rules for RNAs: ', () => {
         );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);
@@ -626,7 +626,7 @@ test.describe('Connection rules for RNAs: ', () => {
         );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);

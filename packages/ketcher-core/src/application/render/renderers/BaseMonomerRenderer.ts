@@ -22,11 +22,14 @@ import {
 import { BaseRenderer } from './BaseRenderer';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import {
+  getMonomerSize,
+  setMonomerSize,
+} from 'application/render/renderers/monomerSizeState';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
-let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private readonly editorEvents: typeof editorEvents;
@@ -86,7 +89,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
       ),
     };
-    monomerSize = this.monomerSize;
+    setMonomerSize(this.monomerSize);
   }
 
   // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -103,7 +106,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public static get monomerSize() {
-    return monomerSize;
+    return getMonomerSize();
   }
 
   public get center() {
@@ -310,6 +313,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
     this.hoveredAttachmentPoint = attachmentPointName;
+  }
+
+  protected raiseAttachmentPoints() {
+    this.attachmentPoints.forEach((attachmentPoint) => {
+      attachmentPoint.raise();
+    });
   }
 
   protected appendRootElement(
@@ -539,9 +548,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '500')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
+
+    this.raiseAttachmentPoints();
   }
 
   public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
@@ -576,6 +588,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '700')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(
@@ -583,6 +596,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
           : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
       );
+
+    this.raiseAttachmentPoints();
   }
 
   protected abstract get modificationConfig();
@@ -617,6 +632,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.rootElement ??
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendEvents();
     this.drawModification();
 

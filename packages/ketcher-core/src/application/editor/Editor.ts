@@ -693,6 +693,15 @@ export class CoreEditor {
         return;
       }
 
+      // If the right-click happened inside an already-open context menu (the
+      // menu DOM is rendered as a portal sibling of the canvas SVG and overlaps
+      // the symbol underneath), event.target.__data__ is undefined and the
+      // logic below would fall through to rightClickCanvasSequence and replace
+      // the original menu with a reduced one. Skip the dispatch in that case.
+      if ((event.target as HTMLElement | null)?.closest('.contexify')) {
+        return;
+      }
+
       const eventData = event.target?.__data__;
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
       const isClickOnCanvas =

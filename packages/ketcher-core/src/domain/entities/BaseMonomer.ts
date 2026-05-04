@@ -600,9 +600,15 @@ export abstract class BaseMonomer extends DrawingEntity {
       naturalAnalogCode,
     ];
 
-    return namesToCompareNaturalAnalog.every(
-      (nameToCompare) => !naturalAnaloguesToCompare.includes(nameToCompare),
-    );
+    return namesToCompareNaturalAnalog.every((nameToCompare) => {
+      if (naturalAnaloguesToCompare.includes(nameToCompare)) {
+        return false;
+      }
+      // Check if the name is a variation with asterisk (e.g., D* for D)
+      // These are the same monomers with different R groups and should not be marked as modified
+      const nameWithoutAsterisk = nameToCompare.replace(/\*$/, '');
+      return !naturalAnaloguesToCompare.includes(nameWithoutAsterisk);
+    });
   }
 
   public get sideConnections() {

@@ -100,10 +100,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       // TODO: Consider a better approach to handle context menus for auxiliary UI elements
       const target = event.target as Element;
       if (editor.isMonomerCreationWizardActive) {
-        const rLabelElement = target.closest('[data-attachment-point-name]');
+        const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
           const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-name',
+            'data-attachment-point-alias',
           );
           if (attachmentPointName) {
             show({

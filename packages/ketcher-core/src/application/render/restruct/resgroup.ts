@@ -21,7 +21,7 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
@@ -569,9 +569,6 @@ function showValue(
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
-  SGroup.bracketPos(sgroup, restruct.molecule);
-  sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
-
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
 
   return sgroup.data.attached

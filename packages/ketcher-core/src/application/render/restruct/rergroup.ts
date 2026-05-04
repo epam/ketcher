@@ -19,7 +19,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { RGroup } from 'domain/entities/rgroup';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';

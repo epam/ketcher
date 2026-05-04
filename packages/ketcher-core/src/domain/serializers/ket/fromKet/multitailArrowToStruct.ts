@@ -5,10 +5,8 @@ import {
 import { Struct } from 'domain/entities/struct';
 import { KetFileNode } from 'domain/serializers';
 
-export function multitailArrowToStruct(
-  ketItem: KetFileNode<KetFileMultitailArrowNode>,
-  struct: Struct,
-) {
-  struct.multitailArrows.add(MultitailArrow.fromKetNode(ketItem));
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function multitailArrowToStruct(ketItem: any, struct: Struct) {
+  struct.addMultitailArrow(MultitailArrow.fromKetNode(ketItem));
   return struct;
 }

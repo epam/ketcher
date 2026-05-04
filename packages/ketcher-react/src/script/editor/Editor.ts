@@ -623,6 +623,64 @@ class Editor implements KetcherEditor {
     };
   }
 
+  public setConnectionAttachmentPoints(
+    points: Map<AttachmentPointName, [number, number]>,
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      connectionAttachmentPoints: points,
+    };
+    this.render.update(true);
+  }
+
+  /**
+   * Restricts which assigned attachment points are rendered on the canvas.
+   * Pass undefined to show all assigned attachment points (e.g. on Preset tab).
+   */
+  public setVisibleAssignedAttachmentPoints(
+    points: Map<AttachmentPointName, [number, number]> | undefined,
+  ) {
+    const currentState = this.render.monomerCreationState;
+    if (!currentState) return;
+
+    this.render.monomerCreationState = {
+      ...currentState,
+      visibleAssignedAttachmentPoints: points,
+    };
+    this.render.update(true);
+  }
+
+  public highlightConnectionAttachmentPoint(name: AttachmentPointName | null) {
+    if (!name) {
+      this.render.ctab.setSelection(null);
+      return;
+    }
+
+    const currentState = this.render.monomerCreationState;
+    if (!currentState?.connectionAttachmentPoints) return;
+
+    const atomPair = currentState.connectionAttachmentPoints.get(name);
+    if (!atomPair) return;
+
+    this.render.ctab.setSelection({ atoms: [atomPair[0]] });
+  }
+
+  /**
+   * Highlights a specific atom by its ID on the canvas (for use when the
+   * AP name alone is ambiguous, e.g. two components sharing the same AP name).
+   * Pass null to clear the highlight.
+   */
+  public highlightAtomById(atomId: number | null) {
+    if (atomId === null) {
+      this.render.ctab.setSelection(null);
+      return;
+    }
+    this.render.ctab.setSelection({ atoms: [atomId] });
+  }
+
   public get isMonomerCreationWizardActive() {
     return Boolean(this.monomerCreationState);
   }

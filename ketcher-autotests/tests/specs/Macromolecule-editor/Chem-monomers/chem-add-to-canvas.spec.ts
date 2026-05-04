@@ -7,7 +7,7 @@ import {
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -48,7 +48,7 @@ test.describe('Actions with CHEM', () => {
     Description: CHEM name fits in its icon when placed on canvas.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/all-chems.ket');
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +61,7 @@ test.describe('Actions with CHEM', () => {
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(
       page,
       getMonomerLocator(page, Chem.Test_6_Ch),

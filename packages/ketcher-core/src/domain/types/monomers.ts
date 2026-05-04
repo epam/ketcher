@@ -12,9 +12,9 @@ import {
   IKetIdtAliases,
   KetAmbiguousMonomerTemplateOption,
   KetAmbiguousMonomerTemplateSubType,
-  KetMonomerClass,
   MonomerTransformation,
 } from 'application/formatters/types/ket';
+import { KetMonomerClass } from 'domain/constants/monomers';
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';

@@ -23,6 +23,7 @@ import BondAnyIcon from '../../../assets/icons/files/bond-any.svg';
 import BondAromaticIcon from '../../../assets/icons/files/bond-aromatic.svg';
 import BondCrossedIcon from '../../../assets/icons/files/bond-crossed.svg';
 import BondDative from '../../../assets/icons/files/bond-dative.svg';
+import BondHaptic from '../../../assets/icons/files/bond-haptic.svg';
 import BondDoubleAromaticIcon from '../../../assets/icons/files/bond-doublearomatic.svg';
 import BondDoubleIcon from '../../../assets/icons/files/bond-double.svg';
 import BondDownIcon from '../../../assets/icons/files/bond-down.svg';
@@ -313,6 +314,7 @@ export const iconNameToIcon = {
   'bond-crossed': BondCrossedIcon,
   'bond-hydrogen': BondHydrogenIcon,
   'bond-dative': BondDative,
+  'bond-haptic': BondHaptic,
   'bond-double': BondDoubleIcon,
   'bond-doublearomatic': BondDoubleAromaticIcon,
   'bond-down': BondDownIcon,

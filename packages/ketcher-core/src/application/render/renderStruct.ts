@@ -12,6 +12,10 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 const renderCache = new Map();
 let previousOptions: any;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
+// Extra viewBox padding (in SVG user units) added around the molecule bounding
+// box in macro mode. Without it, bond strokes at the bounding-box edges are
+// half-clipped by the viewBox, making them appear thinner than inner bonds.
+const PREVIEW_AUTO_SCALE_MARGIN = 10;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
@@ -115,6 +119,10 @@ export class RenderStruct {
         extendedOptions.fontszsub = 20;
         extendedOptions.width = svgSize;
         extendedOptions.height = svgSize;
+        // Add margin so bond strokes at the bounding-box edge are not clipped
+        // by the SVG viewBox (autoScaleMargin=0 means the viewBox exactly
+        // matches the structure bbox, clipping the outer half of edge strokes).
+        extendedOptions.autoScaleMargin = PREVIEW_AUTO_SCALE_MARGIN;
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);

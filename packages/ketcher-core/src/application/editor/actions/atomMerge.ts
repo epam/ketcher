@@ -17,6 +17,7 @@
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import {
   AtomAttr,
   AtomDelete,
@@ -24,6 +25,7 @@ import {
   BondAttr,
   BondDelete,
 } from '../operations';
+import { SuperAPAtomsChange } from '../operations/sap';
 import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 import { atomGetDegree, atomGetSGroups } from './utils';
 import { mergeFragmentsIfNeeded } from './atom';
@@ -39,10 +41,30 @@ export function fromAtomMerge(
 ): Action {
   if (srcId === dstId) return new Action();
 
+  // SAP membership invariant (Section Y3): an atom can be a member of at
+  // most one SuperAttachmentPoint. If both src and dst are members of
+  // *different* SAPs, refuse the merge — the user must delete one SAP
+  // first. If only src is a member, swap its membership over to dst.
+  const srcSap = SuperAttachmentPoint.findForAtom(restruct.molecule, srcId);
+  const dstSap = SuperAttachmentPoint.findForAtom(restruct.molecule, dstId);
+  if (srcSap && dstSap && srcSap !== dstSap) {
+    return new Action();
+  }
+
   const fragAction = new Action();
   mergeFragmentsIfNeeded(fragAction, restruct, srcId, dstId);
 
   const action = new Action();
+
+  if (srcSap && !dstSap) {
+    const sapId = [...restruct.molecule.superAttachmentPoints.entries()].find(
+      ([, sap]) => sap === srcSap,
+    )?.[0];
+    if (sapId !== undefined) {
+      const newAtoms = srcSap.atoms.map((aid) => (aid === srcId ? dstId : aid));
+      action.addOp(new SuperAPAtomsChange(sapId, newAtoms).perform(restruct));
+    }
+  }
 
   const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId) ?? [];
   atomNeighbors.forEach((nei) => {

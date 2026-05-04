@@ -77,6 +77,13 @@ class SuperAPAtomsChange extends BaseOperation {
     const struct = restruct.molecule;
     const sap = struct.superAttachmentPoints.get(this.sapId);
     if (!sap) return;
+    // Y2: refuse if any incoming atom belongs to a different SAP. This is
+    // defense-in-depth — fromSAPAtomsChange / fromAtomMerge guard at the
+    // action layer; this catches direct op construction too.
+    for (const aid of this.newAtoms) {
+      const other = SuperAttachmentPoint.findForAtom(struct, aid);
+      if (other && other !== sap) return;
+    }
     this.previousAtoms = [...sap.atoms];
     sap.atoms = [...this.newAtoms];
     sap.recomputeCenter(struct);

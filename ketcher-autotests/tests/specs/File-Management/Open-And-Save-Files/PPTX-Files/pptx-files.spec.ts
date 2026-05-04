@@ -4,6 +4,7 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   openFile,
+  waitForRender,
 } from '@utils';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -22,7 +23,9 @@ async function openPPTXFileAndValidateStructurePreview(
   });
   const openPPTXFileDialog = OpenPPTXFileDialog(page);
   if (numberOf.Structure !== 1) {
-    await openPPTXFileDialog.selectStructure(numberOf);
+    await waitForRender(page, async () => {
+      await openPPTXFileDialog.selectStructure(numberOf);
+    });
   }
   await takeEditorScreenshot(page);
   await openPPTXFileDialog.pressOpenAsNewProjectButton();

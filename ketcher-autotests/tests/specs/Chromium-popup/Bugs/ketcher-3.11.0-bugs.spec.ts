@@ -645,7 +645,6 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Expected Result: Section for ambiguous monomers have "Ambiguous Amino Acids" name (all first letters are CAPITAL)
      */
 
-    await Library(page).switchToPeptidesTab();
     await Library(page).selectMonomer(Peptide.X);
     const text = page.getByText('Ambiguous Amino Acids');
     await expect(text).toBeVisible();

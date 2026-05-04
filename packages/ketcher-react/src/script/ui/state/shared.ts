@@ -164,7 +164,7 @@ export function load(struct: Struct, options?) {
         // Find leaving group atoms in new struct
         const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
           Array.from(assignedAttachmentPoints.values()).some(
-            ([, leavingAtomId]) => leavingAtomId === atomId,
+            ({ leavingAtomId }) => leavingAtomId === atomId,
           ),
         );
 

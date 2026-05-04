@@ -30,9 +30,8 @@ const useMakeAttachmentPointMenuItems = ({
     editor.monomerCreationState;
 
   const isAtomInAssignedAttachmentPoint = Array.from(
-    assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [attachmentAtomId, leavingAtomId] = atomPair;
+    assignedAttachmentPoints.entries(),
+  ).some(([attachmentAtomId, { leavingAtomId }]) => {
     return (
       selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
     );
@@ -40,8 +39,7 @@ const useMakeAttachmentPointMenuItems = ({
 
   const isAtomAlreadyLeavingAtom = Array.from(
     assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [, leavingAtomId] = atomPair;
+  ).some(({ leavingAtomId }) => {
     return selectedAtomId === leavingAtomId;
   });
 

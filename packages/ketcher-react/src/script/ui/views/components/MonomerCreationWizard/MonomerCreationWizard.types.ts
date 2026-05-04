@@ -177,7 +177,7 @@ export type RnaPresetWizardAction =
 
 export type AssignedAttachmentPointsByMonomerType = Map<
   WizardState,
-  Map<AttachmentPointName, [number, number]>
+  Map<number, { name: AttachmentPointName; leavingAtomId: number }>
 >;
 
 export function isDispatchActionForRnaPreset(

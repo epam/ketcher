@@ -231,21 +231,21 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const handleAttachmentPointNameChange = (
-    currentName: AttachmentPointName,
+    attachmentAtomId: number,
     newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    editor.reassignAttachmentPoint(attachmentAtomId, newName);
   };
 
   const handleLeavingAtomChange = (
-    apName: AttachmentPointName,
+    attachmentAtomId: number,
     newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+    editor.changeLeavingAtomLabel(attachmentAtomId, newLeavingAtomLabel);
   };
 
-  const handleAttachmentPointRemove = (name: AttachmentPointName) => {
-    editor.removeAttachmentPoint(name);
+  const handleAttachmentPointRemove = (attachmentAtomId: number) => {
+    editor.removeAttachmentPoint(attachmentAtomId);
   };
 
   const currentTabStructure = currentTabState?.structure;
@@ -442,14 +442,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
                   {Array.from(presetAttachmentPoints.entries()).map(
-                    ([name, atomPair]) => (
+                    ([attachmentAtomId, { name, leavingAtomId }]) => (
                       <AttachmentPoint
+                        attachmentAtomId={attachmentAtomId}
                         name={name}
                         editor={editor}
                         onNameChange={handleAttachmentPointNameChange}
                         onLeavingAtomChange={handleLeavingAtomChange}
                         onRemove={handleAttachmentPointRemove}
-                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                        key={`${name}-${attachmentAtomId}-${leavingAtomId}`}
                       />
                     ),
                   )}

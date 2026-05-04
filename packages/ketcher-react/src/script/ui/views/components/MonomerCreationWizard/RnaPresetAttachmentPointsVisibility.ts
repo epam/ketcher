@@ -11,7 +11,10 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
-type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type AttachmentPointMap = Map<
+  number,
+  { name: AttachmentPointName; leavingAtomId: number }
+>;
 type ComponentAttachmentPointNames = Record<
   RnaPresetComponentKey,
   AttachmentPointName[]
@@ -63,7 +66,7 @@ export const getAttachmentPointsForRnaPresetComponent = (
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([, [attachmentAtomId]]) => componentAtomIds.has(attachmentAtomId),
+      ([attachmentAtomId]) => componentAtomIds.has(attachmentAtomId),
     ),
   );
 };
@@ -208,7 +211,7 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   const occupiedAttachmentPoints = new Set<AttachmentPointName>();
 
   assignedAttachmentPoints.forEach(
-    ([attachmentAtomId], attachmentPointName) => {
+    ({ name: attachmentPointName }, attachmentAtomId) => {
       const componentKey = atomToComponentMap.get(attachmentAtomId);
 
       if (!componentKey) {
@@ -247,7 +250,7 @@ export const getVisibleAttachmentPointsForRnaPreset = (
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([attachmentPointName]) =>
+      ([, { name: attachmentPointName }]) =>
         !occupiedAttachmentPoints.has(attachmentPointName),
     ),
   );

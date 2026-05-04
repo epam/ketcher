@@ -8,6 +8,7 @@ export const MonomerCreationComponentStructureUpdateEvent =
   'MonomerCreationComponentStructureUpdate';
 
 export type AttachmentPointClickData = {
+  attachmentAtomId: number;
   attachmentPointName: AttachmentPointName;
   position: Vec2;
 };

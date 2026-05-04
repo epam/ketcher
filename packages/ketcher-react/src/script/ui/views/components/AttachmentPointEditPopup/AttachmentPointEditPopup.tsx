@@ -16,11 +16,11 @@ import assert from 'assert';
 type Props = {
   data: AttachmentPointClickData;
   onNameChange: (
-    currentName: AttachmentPointName,
+    attachmentAtomId: number,
     newName: AttachmentPointName,
   ) => void;
   onLeavingAtomChange: (
-    apName: AttachmentPointName,
+    attachmentAtomId: number,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
   onClose: VoidFunction;
@@ -81,16 +81,13 @@ const AttachmentPointEditPopup = ({
     };
   }, [onClose]);
 
-  const { attachmentPointName, position } = data;
+  const { attachmentAtomId, attachmentPointName, position } = data;
 
   assert(editor.monomerCreationState);
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const selectsData = useAttachmentPointSelectsData(
-    editor,
-    attachmentPointName,
-  );
+  const selectsData = useAttachmentPointSelectsData(editor, attachmentAtomId);
 
   if (!selectsData) {
     return null;
@@ -98,24 +95,24 @@ const AttachmentPointEditPopup = ({
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== attachmentPointName) {
-      onNameChange(attachmentPointName, newName);
+      onNameChange(attachmentAtomId, newName);
     }
     onClose();
   };
 
   const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
-    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointName);
+    const apEntry = assignedAttachmentPoints.get(attachmentAtomId);
 
-    assert(currentAtomPair);
+    assert(apEntry);
 
-    const leavingAtomId = currentAtomPair[1];
+    const { leavingAtomId } = apEntry;
     const leavingAtom = editor.struct().atoms.get(leavingAtomId);
     assert(leavingAtom);
 
     const currentLeavingAtomLabel = leavingAtom.label;
 
     if (newLeavingAtomLabel !== currentLeavingAtomLabel) {
-      onLeavingAtomChange(attachmentPointName, newLeavingAtomLabel);
+      onLeavingAtomChange(attachmentAtomId, newLeavingAtomLabel);
     }
     onClose();
   };

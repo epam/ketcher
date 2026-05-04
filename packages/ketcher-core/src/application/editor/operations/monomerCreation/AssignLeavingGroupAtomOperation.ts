@@ -39,11 +39,14 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
     const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
+      Array.from(assignedAttachmentPoints.values()).map((ap) => ap.name),
     );
     this.attachmentPointName = attachmentPointName;
 
-    assignedAttachmentPoints.set(attachmentPointName, atomPairForLeavingGroup);
+    assignedAttachmentPoints.set(atomPairForLeavingGroup[0], {
+      name: attachmentPointName,
+      leavingAtomId: atomPairForLeavingGroup[1],
+    });
 
     const potentialAttachmentAtoms =
       potentialAttachmentPoints.get(attachmentAtomId);

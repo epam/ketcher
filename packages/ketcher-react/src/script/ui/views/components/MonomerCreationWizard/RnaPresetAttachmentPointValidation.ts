@@ -2,7 +2,10 @@ import { AtomLabel, AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 
 export type PhosphatePosition = '3' | '5';
 
-type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type AttachmentPointMap = Map<
+  number,
+  { name: AttachmentPointName; leavingAtomId: number }
+>;
 
 /**
  * Gets the leaving atom used for RNA preset connection attachment points.
@@ -54,8 +57,16 @@ export const hasPhosphatePositionAttachmentPointConflict = (
   const requiredAttachmentPoints =
     getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
 
-  return Boolean(
-    sugarAttachmentPoints?.has(requiredAttachmentPoints.sugar) ||
-      phosphateAttachmentPoints?.has(requiredAttachmentPoints.phosphate),
-  );
+  const sugarHasRequired = sugarAttachmentPoints
+    ? Array.from(sugarAttachmentPoints.values()).some(
+        (ap) => ap.name === requiredAttachmentPoints.sugar,
+      )
+    : false;
+  const phosphateHasRequired = phosphateAttachmentPoints
+    ? Array.from(phosphateAttachmentPoints.values()).some(
+        (ap) => ap.name === requiredAttachmentPoints.phosphate,
+      )
+    : false;
+
+  return sugarHasRequired || phosphateHasRequired;
 };

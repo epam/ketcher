@@ -71,6 +71,7 @@ export interface MultitailArrowContextMenuProps {
 export interface AttachmentPointLabelContextMenuProps
   extends BaseContextMenuProps {
   id: string;
+  attachmentAtomId: number;
   attachmentPointName: AttachmentPointName;
 }
 

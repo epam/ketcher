@@ -5,7 +5,10 @@ import {
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
 
-type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type AttachmentPointMap = Map<
+  number,
+  { name: AttachmentPointName; leavingAtomId: number }
+>;
 
 describe('getRequiredAttachmentPointsForPhosphatePosition', () => {
   it.each<{
@@ -50,7 +53,9 @@ describe('hasPhosphatePositionAttachmentPointConflict', () => {
     {
       name: "3' conflicts when sugar already uses R2",
       phosphatePosition: '3',
-      sugarAttachmentPoints: new Map([[AttachmentPointName.R2, [1, 10]]]),
+      sugarAttachmentPoints: new Map([
+        [1, { name: AttachmentPointName.R2, leavingAtomId: 10 }],
+      ]),
       phosphateAttachmentPoints: new Map(),
       expected: true,
     },
@@ -58,20 +63,28 @@ describe('hasPhosphatePositionAttachmentPointConflict', () => {
       name: "3' conflicts when phosphate already uses R1",
       phosphatePosition: '3',
       sugarAttachmentPoints: new Map(),
-      phosphateAttachmentPoints: new Map([[AttachmentPointName.R1, [2, 20]]]),
+      phosphateAttachmentPoints: new Map([
+        [2, { name: AttachmentPointName.R1, leavingAtomId: 20 }],
+      ]),
       expected: true,
     },
     {
       name: "3' does not conflict when sugar uses R1 and phosphate uses R2",
       phosphatePosition: '3',
-      sugarAttachmentPoints: new Map([[AttachmentPointName.R1, [1, 10]]]),
-      phosphateAttachmentPoints: new Map([[AttachmentPointName.R2, [2, 20]]]),
+      sugarAttachmentPoints: new Map([
+        [1, { name: AttachmentPointName.R1, leavingAtomId: 10 }],
+      ]),
+      phosphateAttachmentPoints: new Map([
+        [2, { name: AttachmentPointName.R2, leavingAtomId: 20 }],
+      ]),
       expected: false,
     },
     {
       name: "5' conflicts when sugar already uses R1",
       phosphatePosition: '5',
-      sugarAttachmentPoints: new Map([[AttachmentPointName.R1, [1, 10]]]),
+      sugarAttachmentPoints: new Map([
+        [1, { name: AttachmentPointName.R1, leavingAtomId: 10 }],
+      ]),
       phosphateAttachmentPoints: new Map(),
       expected: true,
     },
@@ -79,14 +92,20 @@ describe('hasPhosphatePositionAttachmentPointConflict', () => {
       name: "5' conflicts when phosphate already uses R2",
       phosphatePosition: '5',
       sugarAttachmentPoints: new Map(),
-      phosphateAttachmentPoints: new Map([[AttachmentPointName.R2, [2, 20]]]),
+      phosphateAttachmentPoints: new Map([
+        [2, { name: AttachmentPointName.R2, leavingAtomId: 20 }],
+      ]),
       expected: true,
     },
     {
       name: "5' does not conflict when sugar uses R2 and phosphate uses R1",
       phosphatePosition: '5',
-      sugarAttachmentPoints: new Map([[AttachmentPointName.R2, [1, 10]]]),
-      phosphateAttachmentPoints: new Map([[AttachmentPointName.R1, [2, 20]]]),
+      sugarAttachmentPoints: new Map([
+        [1, { name: AttachmentPointName.R2, leavingAtomId: 10 }],
+      ]),
+      phosphateAttachmentPoints: new Map([
+        [2, { name: AttachmentPointName.R1, leavingAtomId: 20 }],
+      ]),
       expected: false,
     },
   ])(

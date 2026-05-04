@@ -25,7 +25,10 @@ const getNotificationIdForMonomerType = (
 export const validateMonomerLeavingGroups = (
   editor: Editor,
   monomerType: KetMonomerClass | 'rnaPreset',
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+  assignedAttachmentPoints: Map<
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
+  >,
 ): Map<string, WizardNotification> => {
   const notifications = new Map<string, WizardNotification>();
   const validationRule = getValidationRuleForMonomerType(monomerType);
@@ -38,12 +41,12 @@ export const validateMonomerLeavingGroups = (
   let hasWarning = false;
 
   for (const requirement of validationRule.requirements) {
-    const attachmentPoint = assignedAttachmentPoints.get(
-      requirement.attachmentPoint,
+    const apEntry = Array.from(assignedAttachmentPoints.entries()).find(
+      ([, ap]) => ap.name === requirement.attachmentPoint,
     );
 
-    if (attachmentPoint) {
-      const [, leavingAtomId] = attachmentPoint;
+    if (apEntry) {
+      const [, { leavingAtomId }] = apEntry;
       const leavingAtom = struct.atoms.get(leavingAtomId);
 
       if (

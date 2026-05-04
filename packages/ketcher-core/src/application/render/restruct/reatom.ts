@@ -138,32 +138,25 @@ class ReAtom extends ReObject {
 
     const attachmentPointEntry = Array.from(
       assignedAttachmentPoints.entries(),
-    ).find(([, atomsPair]) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
+    ).find(([attachmentAtomId, { leavingAtomId }]) => {
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
 
     if (attachmentPointEntry) {
-      const [attachmentPointName] = attachmentPointEntry;
+      const [attachmentAtomId] = attachmentPointEntry;
       hoverElement.hover(
         () => {
           window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'highlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
+            new CustomEvent<number>('highlightAttachmentPointControls', {
+              detail: attachmentAtomId,
+            }),
           );
         },
         () => {
           window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'resetHighlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
+            new CustomEvent<number>('resetHighlightAttachmentPointControls', {
+              detail: attachmentAtomId,
+            }),
           );
         },
       );
@@ -191,9 +184,8 @@ class ReAtom extends ReObject {
     );
 
     const isAtomInAssignedAttachmentPoint = Array.from(
-      assignedAttachmentPoints.values(),
-    ).some((atomsPair) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
+      assignedAttachmentPoints.entries(),
+    ).some(([attachmentAtomId, { leavingAtomId }]) => {
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
 
@@ -715,17 +707,15 @@ class ReAtom extends ReObject {
 
       if (aid !== null) {
         const [attachmentAtoms, leavingGroups] = Array.from(
-          assignedAttachmentPoints.values(),
+          assignedAttachmentPoints.entries(),
         ).reduce(
-          (acc, currentPair) => {
+          (acc, [attachmentAtomId, { leavingAtomId }]) => {
             let attachmentAtomsIds = acc[0];
-            const attachmentAtomId = currentPair[0];
             if (!attachmentAtomsIds.includes(attachmentAtomId)) {
               attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
             }
 
             let leavingAtomsIds = acc[1];
-            const leavingAtomId = currentPair[1];
             if (!leavingAtomsIds.includes(leavingAtomId)) {
               leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
             }
@@ -751,18 +741,15 @@ class ReAtom extends ReObject {
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
-        const attachmentPointName = Array.from(
-          assignedAttachmentPoints.keys(),
-        ).find((key) => {
-          const atomsPair = assignedAttachmentPoints.get(key);
-          assert(atomsPair);
-          return atomsPair[1] === aid;
-        });
+        const attachmentPointEntry = Array.from(
+          assignedAttachmentPoints.entries(),
+        ).find(([, { leavingAtomId }]) => leavingAtomId === aid);
 
-        if (attachmentPointName) {
-          const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
-          assert(atomsPair);
-          const [attachmentAtomId, leavingGroupAtomId] = atomsPair;
+        if (attachmentPointEntry) {
+          const [
+            attachmentAtomId,
+            { name: attachmentPointName, leavingAtomId: leavingGroupAtomId },
+          ] = attachmentPointEntry;
 
           const attachmentAtom = struct.atoms.get(attachmentAtomId);
           const leavingGroupAtom = struct.atoms.get(leavingGroupAtomId);
@@ -839,6 +826,10 @@ class ReAtom extends ReObject {
               attachmentPointName,
             );
             element.node?.setAttribute(
+              'data-attachment-point-atom-id',
+              String(attachmentAtomId),
+            );
+            element.node?.setAttribute(
               'data-testid',
               'monomer-attachment-point',
             );
@@ -852,7 +843,7 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
+                  attachmentAtomId ||
                 isProblematic
               ) {
                 return;
@@ -862,12 +853,9 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#ffffff' });
 
               window.dispatchEvent(
-                new CustomEvent<AttachmentPointName>(
-                  'highlightAttachmentPointControls',
-                  {
-                    detail: attachmentPointName,
-                  },
-                ),
+                new CustomEvent<number>('highlightAttachmentPointControls', {
+                  detail: attachmentAtomId,
+                }),
               );
             },
             // Mouse leave
@@ -876,7 +864,7 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
+                  attachmentAtomId ||
                 isProblematic
               ) {
                 return;
@@ -886,10 +874,10 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#333333' });
 
               window.dispatchEvent(
-                new CustomEvent<AttachmentPointName>(
+                new CustomEvent<number>(
                   'resetHighlightAttachmentPointControls',
                   {
-                    detail: attachmentPointName,
+                    detail: attachmentAtomId,
                   },
                 ),
               );
@@ -907,7 +895,7 @@ class ReAtom extends ReObject {
             assert(render.monomerCreationState);
 
             render.monomerCreationState.clickedAttachmentPoint =
-              attachmentPointName;
+              attachmentAtomId;
 
             background.attr({ opacity: 1 });
             rLabelElement.attr({ fill: '#ffffff' });

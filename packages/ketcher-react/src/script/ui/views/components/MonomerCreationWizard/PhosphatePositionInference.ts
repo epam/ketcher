@@ -29,15 +29,21 @@ const inferPhosphatePositionFromPhosphate = (
 };
 
 export const inferPhosphatePosition = (
-  sugarAttachmentPoints: Map<AttachmentPointName, [number, number]>,
-  phosphateAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+  sugarAttachmentPoints: Map<
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
+  >,
+  phosphateAttachmentPoints: Map<
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
+  >,
 ): PhosphatePosition => {
-  const positionFromSugar = inferPhosphatePositionFromSugar([
-    ...sugarAttachmentPoints.keys(),
-  ]);
-  const positionFromPhosphate = inferPhosphatePositionFromPhosphate([
-    ...phosphateAttachmentPoints.keys(),
-  ]);
+  const positionFromSugar = inferPhosphatePositionFromSugar(
+    Array.from(sugarAttachmentPoints.values()).map((ap) => ap.name),
+  );
+  const positionFromPhosphate = inferPhosphatePositionFromPhosphate(
+    Array.from(phosphateAttachmentPoints.values()).map((ap) => ap.name),
+  );
 
   if (positionFromSugar && positionFromPhosphate) {
     return positionFromSugar === positionFromPhosphate

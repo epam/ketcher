@@ -33,7 +33,10 @@ import { Autocomplete, TextField } from '@mui/material';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  assignedAttachmentPoints: Map<
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
+  >;
   readonlyAttachmentPoints?: Array<{
     name: AttachmentPointName;
     leavingAtomLabel: AtomLabel;
@@ -111,21 +114,21 @@ const MonomerCreationWizardFields = (
   };
 
   const handleAttachmentPointNameChange = (
-    currentName: AttachmentPointName,
+    attachmentAtomId: number,
     newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    editor.reassignAttachmentPoint(attachmentAtomId, newName);
   };
 
   const handleLeavingAtomChange = (
-    apName: AttachmentPointName,
+    attachmentAtomId: number,
     newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+    editor.changeLeavingAtomLabel(attachmentAtomId, newLeavingAtomLabel);
   };
 
-  const handleAttachmentPointRemove = (name: AttachmentPointName) => {
-    editor.removeAttachmentPoint(name);
+  const handleAttachmentPointRemove = (attachmentAtomId: number) => {
+    editor.removeAttachmentPoint(attachmentAtomId);
   };
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
@@ -227,14 +230,15 @@ const MonomerCreationWizardFields = (
           readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
             {Array.from(assignedAttachmentPoints.entries()).map(
-              ([name, atomPair]) => (
+              ([attachmentAtomId, { name, leavingAtomId }]) => (
                 <AttachmentPoint
+                  attachmentAtomId={attachmentAtomId}
                   name={name}
                   editor={editor}
                   onNameChange={handleAttachmentPointNameChange}
                   onLeavingAtomChange={handleLeavingAtomChange}
                   onRemove={handleAttachmentPointRemove}
-                  key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                  key={`${name}-${attachmentAtomId}-${leavingAtomId}`}
                 />
               ),
             )}

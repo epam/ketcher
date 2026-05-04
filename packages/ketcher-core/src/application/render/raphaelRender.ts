@@ -38,17 +38,31 @@ export type RnaComponentAtoms = Map<
   { atoms: number[]; bonds: number[] }
 >;
 
+/**
+ * Represents a single assigned attachment point.
+ * The map key is the attachment atom ID (unique), so duplicate names are allowed
+ * transiently during editing and detected at submission time.
+ */
+export type AssignedAttachmentPoint = {
+  name: AttachmentPointName;
+  leavingAtomId: number;
+};
+
+/** Maps attachment atom ID → AssignedAttachmentPoint */
+export type AssignedAttachmentPoints = Map<number, AssignedAttachmentPoint>;
+
 export type MonomerCreationState = {
-  // R-label mapping to [attachment atom id, leaving atom id]
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  // Maps attachment atom ID to {name, leavingAtomId}. Duplicate names are
+  // allowed during editing and validated (blocked) at submission time.
+  assignedAttachmentPoints: AssignedAttachmentPoints;
   // Subset of assignedAttachmentPoints to show on canvas (used to restrict
   // display to the active RNA component tab). When undefined, all assigned
   // attachment points are displayed.
-  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  visibleAssignedAttachmentPoints?: AssignedAttachmentPoints;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
-  clickedAttachmentPoint?: AttachmentPointName | null;
+  clickedAttachmentPoint?: number | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
   // RNA preset component atoms and bonds

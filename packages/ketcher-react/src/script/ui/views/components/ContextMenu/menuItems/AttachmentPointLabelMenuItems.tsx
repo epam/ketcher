@@ -26,21 +26,22 @@ const AttachmentPointLabelMenuItems = ({
     return null;
   }
 
-  const { attachmentPointName } = propsFromTrigger;
+  const { attachmentAtomId, attachmentPointName } = propsFromTrigger;
 
   const handleEditClick = () => {
-    const atomPair =
+    const apEntry =
       editor.monomerCreationState?.assignedAttachmentPoints?.get(
-        attachmentPointName,
+        attachmentAtomId,
       );
 
-    assert(atomPair);
+    assert(apEntry);
 
-    const [, leavingAtomId] = atomPair;
+    const { leavingAtomId } = apEntry;
     const leavingAtom = editor.struct().atoms.get(leavingAtomId);
     assert(leavingAtom);
 
     const attachmentPointEditData: AttachmentPointClickData = {
+      attachmentAtomId,
       attachmentPointName,
       position: Coordinates.modelToView(leavingAtom.pp),
     };
@@ -56,7 +57,7 @@ const AttachmentPointLabelMenuItems = ({
   };
 
   const handleRemoveClick = () => {
-    editor.removeAttachmentPoint(attachmentPointName);
+    editor.removeAttachmentPoint(attachmentAtomId);
   };
 
   return (

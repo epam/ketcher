@@ -40,27 +40,23 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
 
     problematicAttachmentPoints.delete(this.currentName);
 
-    const atomPair = assignedAttachmentPoints.get(this.currentName);
-    assert(atomPair);
+    // Find the entry currently named currentName
+    const entry = Array.from(assignedAttachmentPoints.entries()).find(
+      ([, { name }]) => name === this.currentName,
+    );
+    assert(entry, `Attachment point "${this.currentName}" not found`);
 
-    if (assignedAttachmentPoints.has(this.newName)) {
-      const existingAtomPair = assignedAttachmentPoints.get(this.newName);
-      assert(existingAtomPair);
+    const [attachmentAtomId, { leavingAtomId }] = entry;
 
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.set(this.currentName, existingAtomPair);
+    // Simply rename — duplicate names are allowed transiently and will be
+    // caught by the uniqueness validation before the monomer can be saved.
+    assignedAttachmentPoints.set(attachmentAtomId, {
+      name: this.newName,
+      leavingAtomId,
+    });
 
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[0]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[1]);
-    } else {
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.delete(this.currentName);
-
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
-    }
+    BaseOperation.invalidateAtom(restruct, attachmentAtomId);
+    BaseOperation.invalidateAtom(restruct, leavingAtomId);
   }
 
   invert() {

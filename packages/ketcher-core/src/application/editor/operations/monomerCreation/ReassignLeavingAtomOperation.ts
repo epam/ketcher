@@ -18,14 +18,9 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const newAtomPair: [number, number] = [
-      this.attachmentAtomId,
-      this.newLeavingAtomId,
-    ];
-
     this.monomerCreationState.assignedAttachmentPoints.set(
-      this.attachmentPointName,
-      newAtomPair,
+      this.attachmentAtomId,
+      { name: this.attachmentPointName, leavingAtomId: this.newLeavingAtomId },
     );
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };

@@ -98,7 +98,7 @@ export const createReadonlyAttachmentPointSelectData = (
 
 export const useAttachmentPointSelectsData = (
   editor: Editor,
-  attachmentPointName: AttachmentPointName,
+  attachmentAtomId: number,
 ): AttachmentPointSelectData | null => {
   if (!editor.monomerCreationState) {
     return null;
@@ -106,12 +106,12 @@ export const useAttachmentPointSelectsData = (
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const atomPair = assignedAttachmentPoints.get(attachmentPointName);
-  if (!atomPair) {
+  const apEntry = assignedAttachmentPoints.get(attachmentAtomId);
+  if (!apEntry) {
     return null;
   }
 
-  const [attachmentAtomId, leavingAtomId] = atomPair;
+  const { name: attachmentPointName, leavingAtomId } = apEntry;
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
   if (!attachmentAtom) {
     return null;
@@ -122,8 +122,8 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
-    getAttachmentPointNumberFromLabel(name),
+  const usedNumbers = Array.from(assignedAttachmentPoints.values()).map((ap) =>
+    getAttachmentPointNumberFromLabel(ap.name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
 

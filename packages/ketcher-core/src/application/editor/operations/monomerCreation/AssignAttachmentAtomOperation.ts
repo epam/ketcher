@@ -8,8 +8,10 @@ import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointName: AttachmentPointName | null = null;
-  private assignedAttachmentPoints: Map<AttachmentPointName, [number, number]> =
-    new Map();
+  private assignedAttachmentPoints: Map<
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
+  > = new Map();
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
@@ -17,8 +19,8 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     private readonly leavingAtomId: number,
     private readonly _attachmentPointName?: AttachmentPointName,
     private readonly _assignedAttachmentPoints?: Map<
-      AttachmentPointName,
-      [number, number]
+      number,
+      { name: AttachmentPointName; leavingAtomId: number }
     >,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_AA);
@@ -35,13 +37,13 @@ export class AssignAttachmentAtomOperation extends BaseOperation {
     this.attachmentPointName =
       this._attachmentPointName ??
       getNextFreeAttachmentPoint(
-        Array.from(this.assignedAttachmentPoints.keys()),
+        Array.from(this.assignedAttachmentPoints.values()).map((ap) => ap.name),
       );
 
-    this.assignedAttachmentPoints.set(this.attachmentPointName, [
-      this.attachmentAtomId,
-      this.leavingAtomId,
-    ]);
+    this.assignedAttachmentPoints.set(this.attachmentAtomId, {
+      name: this.attachmentPointName,
+      leavingAtomId: this.leavingAtomId,
+    });
     potentialAttachmentPoints.delete(this.attachmentAtomId);
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);

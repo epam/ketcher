@@ -9,10 +9,11 @@ import { AttachmentPointName } from 'domain/types';
 import Restruct from 'application/render/restruct/restruct';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
-  private readonly atomPair: [number, number];
+  private readonly attachmentAtomId: number;
+  private readonly leavingAtomId: number;
   private readonly assignedAttachmentPoints: Map<
-    AttachmentPointName,
-    [number, number]
+    number,
+    { name: AttachmentPointName; leavingAtomId: number }
   > = new Map();
 
   constructor(
@@ -20,8 +21,8 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
     private readonly attachmentPointName: AttachmentPointName,
     private readonly potentialLeavingAtoms?: Set<number>,
     private _assignedAttachmentPoints?: Map<
-      AttachmentPointName,
-      [number, number]
+      number,
+      { name: AttachmentPointName; leavingAtomId: number }
     >,
   ) {
     super(OperationType.MONOMER_CREATION_REMOVE_AP);
@@ -31,13 +32,15 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
     this.assignedAttachmentPoints =
       this._assignedAttachmentPoints ||
       this.monomerCreationState.assignedAttachmentPoints;
-    const atomPair = this.assignedAttachmentPoints.get(
-      this.attachmentPointName,
+
+    const entry = Array.from(this.assignedAttachmentPoints.entries()).find(
+      ([, { name }]) => name === this.attachmentPointName,
     );
+    assert(entry, `Attachment point "${this.attachmentPointName}" not found`);
 
-    assert(atomPair);
-
-    this.atomPair = atomPair;
+    const [attachmentAtomId, { leavingAtomId }] = entry;
+    this.attachmentAtomId = attachmentAtomId;
+    this.leavingAtomId = leavingAtomId;
   }
 
   execute(restruct: Restruct) {
@@ -45,25 +48,22 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
 
     const { potentialAttachmentPoints } = this.monomerCreationState;
 
-    const [attachmentAtomId, leavingAtomId] = this.atomPair;
-    this.assignedAttachmentPoints.delete(this.attachmentPointName);
+    this.assignedAttachmentPoints.delete(this.attachmentAtomId);
 
     if (this.potentialLeavingAtoms)
       potentialAttachmentPoints.set(
-        attachmentAtomId,
+        this.attachmentAtomId,
         this.potentialLeavingAtoms,
       );
 
-    BaseOperation.invalidateAtom(restruct, attachmentAtomId);
-    BaseOperation.invalidateAtom(restruct, leavingAtomId);
+    BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
+    BaseOperation.invalidateAtom(restruct, this.leavingAtomId);
   }
 
   invert() {
-    const leavingAtomId = this.atomPair[1];
-
     return new AssignLeavingGroupAtomOperation(
       this.monomerCreationState,
-      leavingAtomId,
+      this.leavingAtomId,
     );
   }
 }

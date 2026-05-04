@@ -8,20 +8,22 @@ import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
 
 type Props = {
+  attachmentAtomId: number;
   name: AttachmentPointName;
   editor: Editor;
   onNameChange: (
-    currentName: AttachmentPointName,
+    attachmentAtomId: number,
     newName: AttachmentPointName,
   ) => void;
   onLeavingAtomChange: (
-    apName: AttachmentPointName,
+    attachmentAtomId: number,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
-  onRemove: (name: AttachmentPointName) => void;
+  onRemove: (attachmentAtomId: number) => void;
 };
 
 const AttachmentPoint = ({
+  attachmentAtomId,
   name,
   editor,
   onNameChange,
@@ -37,7 +39,7 @@ const AttachmentPoint = ({
     }
 
     const mouseOverHandler = () => {
-      editor.highlightAttachmentPoint(name);
+      editor.highlightAttachmentPoint(attachmentAtomId);
     };
 
     const mouseLeaveHandler = () => {
@@ -51,20 +53,18 @@ const AttachmentPoint = ({
       element.removeEventListener('mouseover', mouseOverHandler);
       element.removeEventListener('mouseleave', mouseLeaveHandler);
     };
-  }, [editor, name]);
+  }, [attachmentAtomId, editor]);
 
   const [highlight, setHighlight] = useState(false);
 
   useEffect(() => {
     const handleAttachmentPointHighlight = (event: Event) => {
-      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
-        .detail;
-      setHighlight(attachmentPointName === name);
+      const highlightedAttachmentAtomId = (event as CustomEvent<number>).detail;
+      setHighlight(highlightedAttachmentAtomId === attachmentAtomId);
     };
     const handleResetAttachmentPointHighlight = (event: Event) => {
-      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
-        .detail;
-      if (attachmentPointName === name) {
+      const highlightedAttachmentAtomId = (event as CustomEvent<number>).detail;
+      if (highlightedAttachmentAtomId === attachmentAtomId) {
         setHighlight(false);
       }
     };
@@ -88,9 +88,9 @@ const AttachmentPoint = ({
         handleResetAttachmentPointHighlight,
       );
     };
-  }, [name]);
+  }, [attachmentAtomId]);
 
-  const selectsData = useAttachmentPointSelectsData(editor, name);
+  const selectsData = useAttachmentPointSelectsData(editor, attachmentAtomId);
 
   if (!selectsData) {
     return null;
@@ -98,16 +98,16 @@ const AttachmentPoint = ({
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== name) {
-      onNameChange(name, newName);
+      onNameChange(attachmentAtomId, newName);
     }
   };
 
   const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
-    onLeavingAtomChange(name, newLeavingAtomLabel);
+    onLeavingAtomChange(attachmentAtomId, newLeavingAtomLabel);
   };
 
   const handleRemove = () => {
-    onRemove(name);
+    onRemove(attachmentAtomId);
   };
 
   return (

@@ -75,7 +75,9 @@ import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
   isValidHelmAlias,
+  isValidIdtAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -452,6 +454,27 @@ export class CoreEditor {
         const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
+      }
+
+      // Validate that slashes in IDT aliases only appear at first/last position
+      if (newMonomer.props?.idtAliases) {
+        const { base, modifications } = newMonomer.props.idtAliases;
+        const aliasesToValidate = [
+          base,
+          modifications?.endpoint3,
+          modifications?.endpoint5,
+          modifications?.internal,
+        ].filter(Boolean) as string[];
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex(

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+export * from './canCreateSAPFromSelection';
 export * from './scale';
 export * from './stereoValidator';
 export * from './functionalGroupsProvider';

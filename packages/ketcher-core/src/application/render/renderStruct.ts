@@ -12,10 +12,6 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 const renderCache = new Map();
 let previousOptions: any;
 const MIN_ATTACHMENT_POINT_SIZE = 8;
-// Extra viewBox padding (in SVG user units) added around the molecule bounding
-// box in macro mode. Without it, bond strokes at the bounding-box edges are
-// half-clipped by the viewBox, making them appear thinner than inner bonds.
-const PREVIEW_AUTO_SCALE_MARGIN = 4;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
@@ -119,10 +115,6 @@ export class RenderStruct {
         extendedOptions.fontszsub = 20;
         extendedOptions.width = svgSize;
         extendedOptions.height = svgSize;
-        // Add margin so bond strokes at the bounding-box edge are not clipped
-        // by the SVG viewBox (autoScaleMargin=0 means the viewBox exactly
-        // matches the structure bbox, clipping the outer half of edge strokes).
-        extendedOptions.autoScaleMargin = PREVIEW_AUTO_SCALE_MARGIN;
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);
@@ -132,6 +124,15 @@ export class RenderStruct {
       }
 
       rnd.setMolecule(preparedStruct);
+
+      if (window.isPolymerEditorTurnedOn) {
+        // Raphael sets overflow:hidden as an inline style on the SVG element,
+        // which clips bond strokes at the bounding-box edge and makes them
+        // appear thinner than bonds in the interior. Override it so strokes
+        // can paint the few pixels beyond the viewBox that they need.
+        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+      }
+
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {

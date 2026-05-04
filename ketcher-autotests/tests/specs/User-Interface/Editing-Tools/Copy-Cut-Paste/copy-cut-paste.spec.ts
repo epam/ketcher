@@ -110,10 +110,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       force: true,
     });
     await MoleculesTopToolbar(page).cut();
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page, {
-      maxDiffPixels: 1,
-    });
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });

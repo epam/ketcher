@@ -6,7 +6,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -23,7 +23,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
       'KET/connection-of-phosphate-and-sugar.ket',
     );
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     const firstRsp = getMonomerLocator(page, { monomerAlias: `Rsp` }).first();
     const sugar = getMonomerLocator(page, { monomerAlias: `5A6` }).first();

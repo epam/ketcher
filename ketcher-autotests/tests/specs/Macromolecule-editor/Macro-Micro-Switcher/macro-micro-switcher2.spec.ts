@@ -43,7 +43,7 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -233,7 +233,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

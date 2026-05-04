@@ -9,7 +9,7 @@ import {
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -114,7 +114,7 @@ test.describe('Check attachment point rotation', () => {
     await dragMouseTo(page, 200, 400);
     await moveMouseAway(page);
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     // Hover 1th peptide
     await peptide1.hover();
     await takeEditorScreenshot(page, {

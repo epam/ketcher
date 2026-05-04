@@ -11,7 +11,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -67,7 +67,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
 

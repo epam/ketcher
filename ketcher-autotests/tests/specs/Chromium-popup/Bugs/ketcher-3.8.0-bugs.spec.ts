@@ -66,6 +66,7 @@ import {
 import {
   AttachmentPoint,
   createRNAAntisenseChain,
+  getAttachmentPointLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 
@@ -339,7 +340,10 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await selectAllStructuresOnCanvas(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
-    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
     await ContextMenu(page, attachmentPointR1).open();
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();

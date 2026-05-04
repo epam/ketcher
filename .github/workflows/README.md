@@ -25,7 +25,7 @@ What it does:
 Result:
 - A feature issue is converted into a dedicated autotest request issue that contains suggested scenarios for automation.
 
-## 2. `implement-autotest.yml`
+## 2. `implement-autotests.yml`
 
 This workflow turns an autotest request issue into Playwright test code and opens a pull request.
 
@@ -34,7 +34,7 @@ How it starts:
 - It only continues if all of the following are true:
   - the commenter is a `COLLABORATOR`, `MEMBER`, or `OWNER`
   - the issue has the `Autotests` label
-  - the comment contains `@claude implement autotest`
+  - the comment contains `@claude implement autotests`
 - It also checks that the labeled issue is a `Task` issue.
 
 What it does:
@@ -60,7 +60,7 @@ Result:
 2. Someone adds the `Run TA creation workflow` label.
 3. GitHub Action generates an `Autotests: ...` issue with a checklist of scenarios.
 4. The checklist can be reviewed or adjusted in that issue.
-5. An authorized contributor comments `@claude implement autotest`.
+5. An authorized contributor comments `@claude implement autotests`.
 6. GitHub Action generates the Playwright test implementation and opens a PR.
 
 In short, the first workflow creates the autotest request, and the second workflow implements it.

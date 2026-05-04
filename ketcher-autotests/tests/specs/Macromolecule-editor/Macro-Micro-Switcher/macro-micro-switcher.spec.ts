@@ -50,9 +50,9 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
-  MacroBondDataIds,
   MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
@@ -905,7 +905,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -946,7 +946,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -1148,7 +1148,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Single,
+        bondType: MacroBondType.Single,
       }).first();
       await bondLine.hover({ force: true });
       await takeEditorScreenshot(page, {
@@ -1181,7 +1181,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
     await bondLine.hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1328,7 +1328,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await CommonLeftToolbar(page).erase();
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Single,
+        bondType: MacroBondType.Single,
       }).first();
       await bondLine.click({ force: true });
       await takeEditorScreenshot(page);
@@ -1362,7 +1362,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await CommonLeftToolbar(page).erase();
     const bondLine = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
     await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
@@ -1487,7 +1487,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
   });
@@ -1906,7 +1906,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await MacromoleculesTopToolbar(page).selectLayoutModeTool(
           LayoutMode.Snake,
         );
-        await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+        await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
         await getMonomerLocator(page, {
           monomerAlias: 'F1',
         }).hover();
@@ -2058,7 +2058,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     // R1 group is actually H atom
     await getAtomLocator(page, { atomLabel: 'H' }).click({
       force: true,

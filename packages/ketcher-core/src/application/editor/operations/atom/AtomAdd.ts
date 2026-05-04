@@ -28,7 +28,7 @@ type Data = {
 
 class AtomAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new () => BaseOperation;
+  static readonly InverseConstructor: new () => BaseOperation;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
     super(OperationType.ATOM_ADD);

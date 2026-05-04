@@ -22,7 +22,7 @@ class RestoreIfThen extends BaseOperation {
   readonly rgid_new: number;
   readonly rgid_old: number;
   readonly ifThenHistory: Map<number, number>;
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     skipRgids?: Array<number>,

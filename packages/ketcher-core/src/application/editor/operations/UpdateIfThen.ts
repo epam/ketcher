@@ -23,7 +23,7 @@ class UpdateIfThen extends BaseOperation {
   readonly rgid_old: number;
   readonly ifThenHistory: Map<number, number>;
   readonly skipRgids: Array<number>;
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     history: Map<number, number>,

@@ -28,7 +28,7 @@ type Data = {
 
 class AtomDelete extends BaseOperation {
   data: Data;
-  static InverseConstructor: new () => BaseOperation;
+  static readonly InverseConstructor: new () => BaseOperation;
 
   constructor(atomId?: number) {
     super(OperationType.ATOM_DELETE, OperationPriority.ATOM_DELETE);

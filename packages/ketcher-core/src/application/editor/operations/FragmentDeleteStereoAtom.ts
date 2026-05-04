@@ -20,7 +20,7 @@ import { ReStruct } from '../../render';
 
 class FragmentDeleteStereoAtom extends BaseOperation {
   readonly data: { frid: number; aid: number };
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     fragmentId: number,
     atomId: number,
   ) => BaseOperation;

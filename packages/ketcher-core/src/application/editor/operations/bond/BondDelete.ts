@@ -30,7 +30,7 @@ type Data = {
 
 class BondDelete extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     begin?: number,
     end?: number,
     bond?: Partial<BondAttributes>,

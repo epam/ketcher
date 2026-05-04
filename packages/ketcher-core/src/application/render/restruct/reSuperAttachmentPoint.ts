@@ -59,6 +59,14 @@ class ReSuperAttachmentPoint extends ReObject {
     this.setHover(this.hover, render);
   }
 
+  makeSelectionPlate(
+    restruct: ReStruct,
+    _paper: unknown,
+    styles: { selectionStyle: object },
+  ): RaphaelPath {
+    return this.drawHover(restruct.render)?.attr(styles.selectionStyle);
+  }
+
   drawHover(render: Render): RaphaelPath {
     // S-group-style outline: a rounded rectangle around the member atoms'
     // bounding box. The visual matches the spec's "Appearance copied from

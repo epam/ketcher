@@ -4,20 +4,11 @@ import { test, expect } from '@fixtures';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
-  takeEditorScreenshot,
-  pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   openFileAndAddToCanvasAsNewProject,
-  moveMouseAway,
-  openFileAndAddToCanvasAsNewProjectMacro,
-  resetZoomLevelToDefault,
-  clickOnCanvas,
-  setMolecule,
   MolFileFormat,
-  readFileContent,
   takeElementScreenshot,
   pasteFromClipboardAndOpenAsNewProjectMacro,
-  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   FileType,
@@ -37,8 +28,7 @@ import {
 } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { C } from 'react-router/dist/development/index-react-server-client-1TI9M9o1';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 const applyAminoAcidModifications = async (page: Page) => {
   const monomerA = getMonomerLocator(page, { monomerAlias: 'A' });
@@ -84,9 +74,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * The structure should be correctly displayed after saving and opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
-     * 2. Select structure on canvas.
-     * 3. Press "Arrange as a Ring" button on the top toolbar
+     * 2. Paste structure on canvas that contains amino acids with modifications.
+     * 3. Save element in KET format.
+     * 4. Paste saved structure from clipboard and open as new project.
+     * 5. Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
@@ -119,9 +110,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * The structure should be correctly displayed after saving and opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
-     * 2. Select structure on canvas.
-     * 3. Press "Arrange as a Ring" button on the top toolbar
+     * 2. Paste structure on canvas that contains amino acids with modifications.
+     * 3. Save element in MOL format.
+     * 4. Paste saved structure from clipboard and open as new project.
+     * 5. Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
@@ -155,7 +147,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * The structure should be correctly displayed after saving and opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
+     * 2. Paste structure on canvas that contains amino acids with modifications.
+     * 3. Save element in HELM format.
+     * 4. Paste saved structure from clipboard and open as new project.
+     * 5. Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
@@ -188,7 +183,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * The structure should be correctly displayed after saving and opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
+     * 2. Paste structure on canvas that contains amino acids with modifications.
+     * 3. Save element in SVG format.
+     * 4. Paste saved structure from clipboard and open as new project.
+     * 5. Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
@@ -202,13 +200,14 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 5: Verify that the Erase tool properly deletes modified amino acids from the canvas.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description:Verify that the Erase tool properly deletes modified amino acids from the canvas.
+     * The structure should be correctly erased from canvas.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
-     *3.Selectstruction on canvas.
-     4.Choose Erase tool and delete the structure from canvas.
+     * 2. Paste structure on canvas that contains amino acids.
+     * 3. Select modified amino acid.Verify that amino acid not longer visible on canvas.
+     * 4. Choose Erase tool and delete the structure from canvas.Repeat steps 3-4 for each modified amino acid.
+     *
      * Version 3.15
      */
     const dALocator = getMonomerLocator(page, { monomerAlias: 'dA' });
@@ -237,11 +236,11 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 6: Validate view switching (flex/sequence/snake) after applying modification', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Validate view switching (flex/sequence/snake) after applying modification
+     * The structure should be correctly displayed after switching mode.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
+     * 2.Paste structure on canvas that contains amino acids with modifications.
      * 3.Take screenshot in Flex view.
      * 4.Switch to Sequence view and take screenshot.
      * 5.Switch to Snake view and take screenshot.
@@ -279,11 +278,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 7: Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Ensure that structures with modified amino acids can be loaded back without corruption or loss of modifications.
+     * The structure should be correctly displayed after opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2.Paste structure on canvas that contains amino acids.
+     * 2.Paste structure on canvas that contains amino acids with modifications.
+     * 3.Verify modified amino acids are visible on canvas.
      *
      * Version 3.15
      */
@@ -317,11 +317,15 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 8: Modify an amino acid, then use undo and redo to verify correct behavior.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Modify an amino acid, then use undo and redo to verify correct behavior.
+     * The structure should be correctly modified, undone and redone on canvas.
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2.Paste structure on canvas that contains amino acids.
+     * 3. Apply modification to amino acid.
+     * 4. Verify modification is visible on canvas.
+     * 5. Use undo and verify modification is removed and original amino acid is visible.
+     * 6. Use redo and verify modification is restored.
      *
      * Version 3.15
      */
@@ -382,11 +386,14 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 9: Zoom in/out and ensure no glitches with modified amino acids on canvas..', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Zoom in/out and ensure no glitches with modified amino acids on canvas...
+     * The structure should be correctly displayed after zooming in zooming out.
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2.Paste structure on canvas that contains amino acids.
+     * 3.Apply modification to amino acid.
+     * 4.Verify modification is visible on canvas.
+     * 5.Zoom in/out and ensure no glitches with modified amino acids on canvas.
      *
      * Version 3.15
      */
@@ -423,11 +430,15 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 10: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Switch to micromolecules mode and back after applying modifications. Structures should remain unchanged.
+     * The structure should be correctly displayed after switching modes.
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2.Paste structure on canvas that contains amino acids.
+     * 3.Apply modification to amino acid.
+     * 4.Verify modification is visible on canvas.
+     * 5.Switch to micromolecules mode and verify structure is correctly displayed.
+     * 6.Switch back to macromolecules mode and verify structure is correctly displayed.
      *
      * Version 3.15
      */
@@ -462,11 +473,16 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 11: Save/load modified amino acid structures from micromolecules mode KET format.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Save/load modified amino acid structures from micromolecules mode KET format.
+     * The structure should be correctly displayed after saving and opening the file in micromolecules mode.
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2.Paste structure on canvas that contains amino acids.
+     * 3.Apply modification to amino acid.
+     * 4.Switch to micromolecules mode.
+     * 5.Save structure in KET format.
+     * 6.Paste saved structure from clipboard and open as new project.
+     * 7.Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
@@ -503,11 +519,16 @@ test.describe('Allow modifying amino acids on canvas', () => {
   test('Case 12: Save/load modified amino acid structures from micromolecules mode MOL format.', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7103
-     * Description: Verify that tructures with modified amino acids are correctly saved in all supported formats.
-     * The structure should be correctly displayed after saving and opening the file.
+     * Description: Save/load modified amino acid structures from micromolecules mode MOL format.
+     * The structure should be correctly displayed after saving and opening the file in micromolecules mode.
      * Scenario:
      * 1. Go to Macro mode - Flex
      * 2.Paste structure on canvas that contains amino acids.
+     * 3.Apply modification to amino acid.
+     * 4.Switch to micromolecules mode.
+     * 5.Save structure in MOL format.
+     * 6.Paste saved structure from clipboard and open as new project.
+     * 7.Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */

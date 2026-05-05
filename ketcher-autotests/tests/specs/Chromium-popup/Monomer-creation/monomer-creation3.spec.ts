@@ -1192,7 +1192,9 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   await CreateMonomerDialog(page).setName('CHEM Test monomer');
   await CreateMonomerDialog(page).submit();
 
-  await takeEditorScreenshot(page);
+  await takeElementScreenshot(page, getAtomLocator(page, { atomId: 1 }), {
+    padding: 40,
+  });
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Chem.CHEM);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1321,11 +1323,9 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
-  await takeElementScreenshot(
-    page,
-    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
-    { padding: 50 },
-  );
+  await takeElementScreenshot(page, getAtomLocator(page, { atomId: 1 }), {
+    padding: 40,
+  });
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Phosphate.Phosphate);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -1409,7 +1409,9 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   );
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
-  await takeEditorScreenshot(page);
+  await takeElementScreenshot(page, getAtomLocator(page, { atomId: 1 }), {
+    padding: 40,
+  });
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Nucleotide.Nucleotide);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();

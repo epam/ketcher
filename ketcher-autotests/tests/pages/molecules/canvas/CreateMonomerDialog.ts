@@ -487,19 +487,19 @@ export const CreateMonomerDialog = (page: Page) => {
         await locators.submitButton.click();
       });
 
-      const allSetNotification = InfoMessageDialog(page);
-      if (ignoreAllSetInfo && (await allSetNotification.okButton.isVisible())) {
-        await allSetNotification.ok();
-      }
-
       // Only handle warning if it's there and we want to ignore it
       if (ignoreWarning) {
         const warningDlg = WarningMessageDialog(page);
         // Check if the warning OK button is visible (not just the window)
         // to distinguish from InfoMessageDialog which shares the same window testId
-        if (await warningDlg.okButton.isVisible()) {
+        if (await warningDlg.cancelButton.isVisible()) {
           await warningDlg.ok();
         }
+      }
+
+      const allSetNotification = InfoMessageDialog(page);
+      if (ignoreAllSetInfo && (await allSetNotification.okButton.isVisible())) {
+        await allSetNotification.ok();
       }
     },
 

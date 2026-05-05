@@ -475,11 +475,13 @@ export class SGroup {
     return cp;
   }
 
-  static addAtom(sgroup: SGroup, aid: number, struct: Struct): void {
+  static addAtom(
+    sgroup: SGroup,
+    aid: number,
+    // TODO refactor references
+    _structNotUsedAnyMore: Struct | undefined = undefined,
+  ): void {
     sgroup.atoms.push(aid);
-    if (sgroup.isNotContractible(struct)) {
-      sgroup.setAttr('expanded', true);
-    }
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {

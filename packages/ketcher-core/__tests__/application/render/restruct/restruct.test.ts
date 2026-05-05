@@ -111,6 +111,45 @@ describe('expanded monomer rendering', () => {
     struct.bondInitHalfBonds(bondId, bond);
   };
 
+  const mockSvgGeometry = () => {
+    const svgSvgElement = window.SVGSVGElement
+      .prototype as unknown as SvgSvgElementWithRaphaelMethods;
+    svgSvgElement.createSVGMatrix = () =>
+      ({
+        a: 1,
+        b: 0,
+        c: 0,
+        d: 1,
+        e: 0,
+        f: 0,
+        inverse() {
+          return this;
+        },
+        multiply() {
+          return this;
+        },
+        translate() {
+          return this;
+        },
+        scale() {
+          return this;
+        },
+        rotate() {
+          return this;
+        },
+      } as unknown as DOMMatrix);
+    svgSvgElement.createSVGPoint = () =>
+      ({
+        x: 0,
+        y: 0,
+        matrixTransform() {
+          return this;
+        },
+      } as unknown as DOMPoint);
+    window.SVGElement.prototype.getBBox = () =>
+      ({ x: 0, y: 0, width: 10, height: 10 } as DOMRect);
+  };
+
   afterEach(() => {
     document.body.innerHTML = '';
   });
@@ -218,5 +257,56 @@ describe('expanded monomer rendering', () => {
     expect(visibleText).toContain('C');
     expect(visibleText).toContain('H');
     expect(visibleText).toContain('3');
+  });
+
+  it('renders bold foreground stereo bond when wide endpoint is visible oxygen label', () => {
+    mockSvgGeometry();
+
+    const struct = new Struct();
+    const incomingCarbonAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    );
+    const centralCarbonAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+    );
+    const oxygenAtomId = struct.atoms.add(
+      new Atom({ label: 'O', pp: new Vec2(2, 0) }),
+    );
+    const incomingOxygenAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(3, 1) }),
+    );
+
+    addBond(struct, incomingCarbonAtomId, centralCarbonAtomId, {
+      stereo: Bond.PATTERN.STEREO.UP,
+    });
+    addBond(struct, centralCarbonAtomId, oxygenAtomId, {
+      stereo: Bond.PATTERN.STEREO.UP,
+    });
+    addBond(struct, incomingOxygenAtomId, oxygenAtomId, {
+      stereo: Bond.PATTERN.STEREO.UP,
+    });
+
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = new Render(container, option);
+    const restruct = new ReStruct(struct, render);
+    restruct.update(true);
+
+    const centralStereoBond = container.querySelector(
+      [
+        'path[data-testid="bond"]',
+        `[data-fromatomid="${centralCarbonAtomId}"]`,
+        `[data-toatomid="${oxygenAtomId}"]`,
+        `[data-bondstereo="${Bond.PATTERN.STEREO.UP}"]`,
+      ].join(''),
+    );
+    const pathData = centralStereoBond?.getAttribute('d') ?? '';
+    const lineCommandsAmount = pathData.match(/L/g)?.length ?? 0;
+
+    expect(centralStereoBond).not.toBeNull();
+    expect(lineCommandsAmount).toBe(3);
   });
 });

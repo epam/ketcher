@@ -161,7 +161,22 @@ const addToCanvas = ({
     throw new Error('Error during parsing file');
   }
 
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  const newStructureHasChains =
+    deserialisedKet.drawingEntitiesManager.polymerBonds.size > 0;
+  const existingCanvasHasChains =
+    editor.drawingEntitiesManager.polymerBonds.size > 0;
+
+  if (
+    !isCanvasEmptyBeforeOpenStructure &&
+    newStructureHasChains &&
+    existingCanvasHasChains
+  ) {
+    deserialisedKet.drawingEntitiesManager.positionMacroStructureBelowExisting(
+      editor.drawingEntitiesManager,
+    );
+  } else {
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  }
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,

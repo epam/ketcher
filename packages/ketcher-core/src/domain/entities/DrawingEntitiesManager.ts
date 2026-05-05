@@ -2553,6 +2553,25 @@ export class DrawingEntitiesManager {
     });
   }
 
+  public positionMacroStructureBelowExisting(
+    existingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    const existingBottom = existingEntitiesManager.getMacroStructureBottom();
+    const newStructTop = this.getMacroStructureTop();
+    const verticalGap = SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS;
+    const offsetY = existingBottom - newStructTop + verticalGap;
+
+    const existingLeft = existingEntitiesManager.getMacroStructureLeft();
+    const newStructLeft = this.getMacroStructureLeft();
+    const offsetX = existingLeft - newStructLeft;
+
+    const offset = new Vec2(offsetX, offsetY);
+
+    this.allEntities.forEach(([, entity]) => {
+      this.moveDrawingEntityModelChange(entity, offset);
+    });
+  }
+
   public getCurrentCenterPointOfCanvas() {
     const editor = provideEditorInstance();
     const originalCenterPointOfCanvas = new Vec2(
@@ -2581,6 +2600,42 @@ export class DrawingEntitiesManager {
       ymax = Math.max(ymax, bond.position.y);
     });
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
+  }
+
+  public getMacroStructureBottom(): number {
+    let ymax = -1e50;
+
+    this.monomers.forEach((monomer: BaseMonomer) => {
+      ymax = Math.max(ymax, monomer.position.y);
+    });
+    this.polymerBonds.forEach((bond: PolymerBond) => {
+      ymax = Math.max(ymax, bond.position.y);
+    });
+    return ymax;
+  }
+
+  public getMacroStructureTop(): number {
+    let ymin = 1e50;
+
+    this.monomers.forEach((monomer: BaseMonomer) => {
+      ymin = Math.min(ymin, monomer.position.y);
+    });
+    this.polymerBonds.forEach((bond: PolymerBond) => {
+      ymin = Math.min(ymin, bond.position.y);
+    });
+    return ymin;
+  }
+
+  public getMacroStructureLeft(): number {
+    let xmin = 1e50;
+
+    this.monomers.forEach((monomer: BaseMonomer) => {
+      xmin = Math.min(xmin, monomer.position.x);
+    });
+    this.polymerBonds.forEach((bond: PolymerBond) => {
+      xmin = Math.min(xmin, bond.position.x);
+    });
+    return xmin;
   }
 
   public rerenderMolecules() {

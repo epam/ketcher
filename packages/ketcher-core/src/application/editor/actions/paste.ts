@@ -40,7 +40,6 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Image } from 'domain/entities/image';
 
 type CreatedItems = {
@@ -170,13 +169,6 @@ export function fromPaste(
       // For macromolecules, attachment points may reference atoms not in aidMap
       // This is expected behavior, use empty array instead
       attachmentPoints = [];
-    }
-    if (
-      sg.isNotContractible(pstruct) &&
-      !(sg instanceof MonomerMicromolecule) &&
-      !SGroup.isSuperAtom(sg)
-    ) {
-      sg.setAttr('expanded', true);
     }
     const sgAction = fromSgroupAddition(
       restruct,

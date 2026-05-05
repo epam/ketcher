@@ -2625,11 +2625,13 @@ class Editor implements KetcherEditor {
         this.explicitSelected().atoms,
       );
       if (stereoFlags.length !== 0) {
-        this._selection?.enhancedFlags
-          ? (this._selection.enhancedFlags = Array.from(
-              new Set([...this._selection.enhancedFlags, ...stereoFlags]),
-            ))
-          : (res.enhancedFlags = stereoFlags);
+        if (this._selection?.enhancedFlags) {
+          this._selection.enhancedFlags = Array.from(
+            new Set([...this._selection.enhancedFlags, ...stereoFlags]),
+          );
+        } else {
+          res.enhancedFlags = stereoFlags;
+        }
       }
     }
 

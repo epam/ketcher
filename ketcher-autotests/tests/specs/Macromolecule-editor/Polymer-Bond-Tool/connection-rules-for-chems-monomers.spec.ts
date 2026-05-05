@@ -21,7 +21,6 @@ import { NotificationBanner } from '@tests/pages/macromolecules/canvas/Notificat
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
-  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ initFlexCanvas }) => {

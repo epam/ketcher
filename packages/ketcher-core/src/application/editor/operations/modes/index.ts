@@ -19,6 +19,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
@@ -40,16 +41,15 @@ export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
     private readonly previousPosition: number,
     private readonly nextPosition: number,
-    private readonly setCaretPosition: (position: number) => void,
   ) {
     this.execute();
   }
 
   public execute() {
-    this.setCaretPosition(this.nextPosition);
+    SequenceRenderer.setCaretPosition(this.nextPosition);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    this.setCaretPosition(this.previousPosition);
+    SequenceRenderer.setCaretPosition(this.previousPosition);
   }
 }

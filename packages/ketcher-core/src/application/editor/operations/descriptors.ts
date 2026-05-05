@@ -17,7 +17,4 @@
 import { AlignDescriptors } from './AlignDescriptors';
 import { RestoreDescriptorsPosition } from './RestoreDescriptorsPosition';
 
-AlignDescriptors.InverseConstructor = RestoreDescriptorsPosition;
-RestoreDescriptorsPosition.InverseConstructor = AlignDescriptors;
-
 export { AlignDescriptors, RestoreDescriptorsPosition };

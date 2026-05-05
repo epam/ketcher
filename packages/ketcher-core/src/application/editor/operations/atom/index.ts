@@ -17,9 +17,6 @@
 import { AtomAdd } from './AtomAdd';
 import { AtomDelete } from './AtomDelete';
 
-AtomAdd.InverseConstructor = AtomDelete;
-AtomDelete.InverseConstructor = AtomAdd;
-
 export { AtomAdd, AtomDelete };
 export * from './AtomAttr';
 export * from './AtomMove';

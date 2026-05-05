@@ -17,9 +17,6 @@
 import { BondAdd } from './BondAdd';
 import { BondDelete } from './BondDelete';
 
-BondAdd.InverseConstructor = BondDelete;
-BondDelete.InverseConstructor = BondAdd;
-
 export { BondAdd, BondDelete };
 export * from './BondAttr';
 export * from './BondMove';

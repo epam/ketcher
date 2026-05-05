@@ -17,7 +17,4 @@
 import { UpdateIfThen } from './UpdateIfThen';
 import { RestoreIfThen } from './RestoreIfThen';
 
-UpdateIfThen.InverseConstructor = RestoreIfThen;
-RestoreIfThen.InverseConstructor = UpdateIfThen;
-
 export { UpdateIfThen, RestoreIfThen };

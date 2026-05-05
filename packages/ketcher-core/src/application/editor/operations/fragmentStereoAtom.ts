@@ -17,7 +17,4 @@
 import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
 import { FragmentDeleteStereoAtom } from './FragmentDeleteStereoAtom';
 
-FragmentAddStereoAtom.InverseConstructor = FragmentDeleteStereoAtom;
-FragmentDeleteStereoAtom.InverseConstructor = FragmentAddStereoAtom;
-
 export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };

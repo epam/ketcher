@@ -1,4 +1,8 @@
-import { IRnaPreset, monomerFactory } from 'ketcher-core';
+import {
+  getRnaPresetPhosphatePosition,
+  IRnaPreset,
+  monomerFactory,
+} from 'ketcher-core';
 
 type Props = {
   preset: IRnaPreset;
@@ -34,11 +38,19 @@ export const GhostRnaPreset = ({ preset }: Props) => {
   const sugarSize = sugarRenderer.monomerSize;
   const phosphateSize = phosphateRenderer?.monomerSize;
   const baseSize = baseRenderer?.monomerSize;
+  const phosphatePosition =
+    preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
+  const phosphateOnLeft = phosphatePosition === 'left';
 
-  const sugarX = 0;
+  const sugarX =
+    phosphateSize && phosphateOnLeft ? phosphateSize.width + 30 : 0;
   const sugarY = 0;
 
-  const phosphateX = phosphateSize ? sugarX + sugarSize.width + 30 : 0;
+  const phosphateX = phosphateSize
+    ? phosphateOnLeft
+      ? 0
+      : sugarX + sugarSize.width + 30
+    : 0;
   const phosphateY = sugarY;
 
   const baseX = sugarX + (sugarSize.width - (baseSize?.width || 0)) / 2;
@@ -175,18 +187,34 @@ export const GhostRnaPreset = ({ preset }: Props) => {
         {phosphateSize && (
           <g>
             <line
-              x1={sugarX + sugarSize.width}
+              x1={
+                phosphateOnLeft
+                  ? phosphateX + phosphateSize.width
+                  : sugarX + sugarSize.width
+              }
               y1={sugarY + sugarSize.height / 2}
-              x2={phosphateX + connectorOutlineWidth / 3}
+              x2={
+                phosphateOnLeft
+                  ? sugarX + connectorOutlineWidth / 3
+                  : phosphateX + connectorOutlineWidth / 3
+              }
               y2={phosphateY + phosphateSize.height / 2}
               stroke="white"
               strokeWidth={7}
               strokeLinecap="butt"
             />
             <line
-              x1={sugarX + sugarSize.width - connectorOutlineWidth / 2}
+              x1={
+                phosphateOnLeft
+                  ? phosphateX + phosphateSize.width - connectorOutlineWidth / 2
+                  : sugarX + sugarSize.width - connectorOutlineWidth / 2
+              }
               y1={sugarY + sugarSize.height / 2}
-              x2={phosphateX + connectorOutlineWidth / 2}
+              x2={
+                phosphateOnLeft
+                  ? sugarX + connectorOutlineWidth / 2
+                  : phosphateX + connectorOutlineWidth / 2
+              }
               y2={phosphateY + phosphateSize.height / 2}
               stroke="#CAD3DD"
               strokeWidth={connectorGreyWidth}

@@ -600,8 +600,6 @@ test.describe('Connection rules for peptides: ', () => {
              *         Validate canvas
              */
             test(`Case 3: Connect ${leftPeptideAttachmentPoint} to ${rightPeptideAttachmentPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
-              test.setTimeout(35000);
-
               const {
                 leftMonomer: leftMonomerLocator,
                 rightMonomer: rightMonomerLocator,
@@ -758,8 +756,6 @@ test.describe('Connection rules for peptides: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 5: Connect ${leftPeptideAttachmentPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(35000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -865,8 +861,6 @@ test.describe('Connection rules for peptides: ', () => {
      *         Validate canvas (No connection established)
      */
     test(`Case 8: Connect Center to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-      test.setTimeout(35000);
-
       const {
         leftMonomer: leftMonomerLocator,
         rightMonomer: rightMonomerLocator,

@@ -23,7 +23,7 @@ import {
 } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -185,7 +185,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -207,7 +207,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -229,7 +229,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Triple);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -276,7 +276,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUp);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -299,7 +299,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleDown);
     await getAtomLocator(page, { atomLabel: 'C' }).first().click({
       force: true,
     });
@@ -322,7 +322,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUpDown);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -345,7 +345,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.DoubleCisTrans);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -368,7 +368,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Any);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -391,7 +391,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Aromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -414,7 +414,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleDouble);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -437,7 +437,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -460,7 +460,7 @@ test.describe('Undo/Redo Actions', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.DoubleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -835,7 +835,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });

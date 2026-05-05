@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
+import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { RingButton } from '../constants/ringButton/Constants';
 
 type BottomToolbarLocators = {
@@ -81,7 +81,7 @@ export const BottomToolbar = (page: Page) => {
 
 export async function drawBenzeneRing(page: Page) {
   await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickInTheMiddleOfTheCanvas(page);
+  await clickInTheMiddleOfTheScreen(page);
   await page.keyboard.press('Escape');
 }
 

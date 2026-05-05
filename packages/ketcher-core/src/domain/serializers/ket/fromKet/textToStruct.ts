@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct, Text } from 'domain/entities';
+import { Struct } from 'domain/entities/struct';
+import { Text } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
   convertDraftToLexical,

@@ -80,7 +80,7 @@ exports[`Save modal renders correctly 1`] = `
               id="save"
             >
               <div
-                class="css-1abudc7"
+                class="css-1ybuxyu"
                 style="padding: 12px 12px 10px;"
               >
                 <div>
@@ -101,7 +101,7 @@ exports[`Save modal renders correctly 1`] = `
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root css-lvo21p-MuiFormControl-root"
+                  class="MuiFormControl-root css-1vqbkeq-MuiFormControl-root"
                 >
                   <label
                     for="fileformat"

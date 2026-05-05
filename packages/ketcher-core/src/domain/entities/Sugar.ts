@@ -1,58 +1,61 @@
 import { BaseMonomer } from './BaseMonomer';
-import { RNABase } from './RNABase';
-import { Phosphate } from './Phosphate';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
-import { IVariantMonomer } from 'domain/entities/types';
+import {
+  isPhosphateOrAmbiguousPhosphate,
+  isRnaBaseOrAmbiguousRnaBase,
+} from 'domain/helpers/monomers';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class Sugar extends BaseMonomer {
-  public getValidSourcePoint(secondMonomer?: BaseMonomer & IVariantMonomer) {
+  public getValidSourcePoint(secondMonomer?: BaseMonomer) {
     if (!secondMonomer) {
       return this.firstFreeAttachmentPoint;
     }
 
-    return this.getValidPoint(
+    return Sugar.getValidPoint(
+      this,
       secondMonomer,
       secondMonomer.potentialSecondAttachmentPointForBond,
     );
   }
 
-  public getValidTargetPoint(firstMonomer: BaseMonomer & IVariantMonomer) {
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
     if (!firstMonomer) {
       return this.firstFreeAttachmentPoint;
     }
 
     // same implementation for both source and target attachment points
-    return this.getValidPoint(
+    return Sugar.getValidPoint(
+      this,
       firstMonomer,
       firstMonomer.chosenFirstAttachmentPointForBond,
     );
   }
 
-  private getValidPoint(
-    otherMonomer: BaseMonomer & IVariantMonomer,
+  private static getValidPoint(
+    self: BaseMonomer,
+    otherMonomer: BaseMonomer,
     potentialPointOnOther: string | null,
   ) {
     // If we chose specific start AP on this monomer, return it
-    if (this.chosenFirstAttachmentPointForBond) {
-      return this.chosenFirstAttachmentPointForBond;
+    if (self.chosenFirstAttachmentPointForBond) {
+      return self.chosenFirstAttachmentPointForBond;
     }
     // If we want to choose specific end AP on this monomer, return it
-    if (this.potentialSecondAttachmentPointForBond) {
-      return this.potentialSecondAttachmentPointForBond;
+    if (self.potentialSecondAttachmentPointForBond) {
+      return self.potentialSecondAttachmentPointForBond;
     }
     // If this is the only available AP on this monomer, return it
-    if (this.unUsedAttachmentPointsNamesList.length === 1) {
-      return this.unUsedAttachmentPointsNamesList[0];
+    if (self.unUsedAttachmentPointsNamesList.length === 1) {
+      return self.unUsedAttachmentPointsNamesList[0];
     }
 
     // If other monomer is neither a Phosphate nor RNABase, open modal
     if (
-      !(otherMonomer instanceof Phosphate) &&
+      !isPhosphateOrAmbiguousPhosphate(otherMonomer) &&
       !isRnaBaseOrAmbiguousRnaBase(otherMonomer)
     ) {
       return;
@@ -60,7 +63,7 @@ export class Sugar extends BaseMonomer {
 
     // If other monomer is RNABase, attach it to R3 or open modal
     if (isRnaBaseOrAmbiguousRnaBase(otherMonomer)) {
-      if (this.isAttachmentPointExistAndFree(AttachmentPointName.R3)) {
+      if (self.isAttachmentPointExistAndFree(AttachmentPointName.R3)) {
         return AttachmentPointName.R3;
       } else return;
     }
@@ -69,12 +72,12 @@ export class Sugar extends BaseMonomer {
     if (potentialPointOnOther) {
       if (
         potentialPointOnOther === AttachmentPointName.R1 &&
-        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
+        self.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
         return AttachmentPointName.R2;
       } else if (
         potentialPointOnOther !== AttachmentPointName.R1 &&
-        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+        self.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
         return AttachmentPointName.R1;
       } else {
@@ -84,21 +87,21 @@ export class Sugar extends BaseMonomer {
 
     if (
       otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
-      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
+      self.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
       return AttachmentPointName.R2;
     }
 
     if (
       otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
-      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+      self.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
       return AttachmentPointName.R1;
     }
 
     if (
       !otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
-      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
+      self.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
       return AttachmentPointName.R1;
     }
@@ -121,7 +124,7 @@ export class Sugar extends BaseMonomer {
 
     return (
       r3PolymerBond instanceof PolymerBond &&
-      r3PolymerBond?.getAnotherMonomer(this) instanceof RNABase
+      isRnaBaseOrAmbiguousRnaBase(r3PolymerBond?.getAnotherMonomer(this))
     );
   }
 }

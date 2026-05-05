@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -16,22 +17,21 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
 
   public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     editor.mode.initialize(false);
   }

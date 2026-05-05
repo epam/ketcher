@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { Fragment } from 'domain/entities/fragment';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 

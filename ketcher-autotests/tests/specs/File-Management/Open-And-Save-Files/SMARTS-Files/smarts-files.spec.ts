@@ -225,33 +225,31 @@ test.describe('Loading SMARTS files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMARTS file and loaded back',
-    async ({ page }) => {
-      /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
-    We have a bug https://github.com/epam/Indigo/issues/2210
-    */
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+     * Test case: #2071
+     * Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+     */
 
-      await openFileAndAddToCanvas(
-        page,
-        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      );
+    await openFileAndAddToCanvas(
+      page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+    );
 
-      await verifyFileExport(
-        page,
-        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
-        FileType.SMARTS,
-      );
+    await verifyFileExport(
+      page,
+      'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+      FileType.SMARTS,
+    );
 
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
     page,

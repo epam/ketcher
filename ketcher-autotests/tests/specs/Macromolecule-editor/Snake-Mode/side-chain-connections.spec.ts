@@ -26,6 +26,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -48,11 +49,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-
-async function clickNthConnectionLine(page: Page, n: number) {
-  const bondLine = page.locator('g[pointer-events="stroke"]').nth(n);
-  await bondLine.click();
-}
 
 test.describe('Side chain connections', () => {
   test('Open file with rna side chain connections', async () => {
@@ -891,7 +887,9 @@ test.describe('Side chain connections', () => {
     );
 
     const randomSideBondToSelect = 12;
-    await clickNthConnectionLine(page, randomSideBondToSelect);
+    await getBondLocator(page, {})
+      .nth(randomSideBondToSelect)
+      .click({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
@@ -910,7 +908,9 @@ test.describe('Side chain connections', () => {
     );
 
     const randomSideBondToSelect = 12;
-    await clickNthConnectionLine(page, randomSideBondToSelect);
+    await getBondLocator(page, {})
+      .nth(randomSideBondToSelect)
+      .click({ force: true });
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -937,7 +937,7 @@ test.describe('Side chain connections', () => {
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
-      await clickNthConnectionLine(page, i);
+      await getBondLocator(page, {}).nth(i).click({ force: true });
       await page.keyboard.up('Shift');
     }
     await CommonLeftToolbar(page).erase();
@@ -967,7 +967,7 @@ test.describe('Side chain connections', () => {
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
-      await clickNthConnectionLine(page, i);
+      await getBondLocator(page, {}).nth(i).click({ force: true });
       await page.keyboard.up('Shift');
     }
     await CommonLeftToolbar(page).erase();

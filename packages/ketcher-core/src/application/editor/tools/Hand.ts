@@ -1,4 +1,6 @@
-import { BaseTool, CoreEditor, ZoomTool } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { BaseTool } from 'application/editor/tools/Tool';
+import { ZoomTool } from 'application/editor/tools/Zoom';
 import { D3DragEvent, drag, DragBehavior, select } from 'd3';
 
 export class HandTool implements BaseTool {

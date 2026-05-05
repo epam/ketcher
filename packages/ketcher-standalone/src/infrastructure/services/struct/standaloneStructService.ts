@@ -53,7 +53,6 @@ import {
   CleanResult,
   ConvertData,
   ConvertResult,
-  CoreEditor,
   DearomatizeData,
   DearomatizeResult,
   ExplicitHydrogensData,
@@ -69,6 +68,7 @@ import {
   pickStandardServerOptions,
   CalculateMacromoleculePropertiesData,
   CalculateMacromoleculePropertiesResult,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -333,7 +333,7 @@ class IndigoService implements StructService {
         }
       };
       const monomerLibrary = JSON.stringify(
-        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+        provideEditorInstance()?.monomersLibraryParsedJson,
       );
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),

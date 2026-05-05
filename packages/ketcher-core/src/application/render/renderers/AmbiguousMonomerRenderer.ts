@@ -1,8 +1,8 @@
 import { Selection } from 'd3';
-import { BaseMonomerRenderer } from 'application/render/renderers';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { monomerFactory } from 'application/editor';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
@@ -115,6 +115,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .attr('font-size', '6px')
       .attr('font-weight', 300)
       .text(this.monomer.monomers.length);
+
+    this.raiseAttachmentPoints();
   }
 
   public show(theme) {
@@ -153,6 +155,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

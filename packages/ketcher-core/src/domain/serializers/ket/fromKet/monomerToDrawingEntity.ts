@@ -13,7 +13,7 @@ import {
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { KetSerializer } from 'domain/serializers';
-import { monomerFactory } from 'application/editor';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {

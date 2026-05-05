@@ -72,6 +72,34 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
         }
       }
     },
+
+    async isOptionVisible(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      const option = getOption(optionId).first();
+      const isVisible = await option.isVisible();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 2000,
+      });
+      return isVisible;
+    },
+
+    async isOptionEnabled(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      const option = getOption(optionId).first();
+      const isEnabled = await option.isEnabled();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 2000,
+      });
+      return isEnabled;
+    },
+
+    getOptionLocator(optionId: ContextMenuOption): Locator {
+      return getOption(optionId).first();
+    },
   };
 };
 

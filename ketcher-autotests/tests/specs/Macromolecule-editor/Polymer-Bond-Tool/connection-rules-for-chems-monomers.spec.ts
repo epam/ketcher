@@ -17,6 +17,7 @@ import {
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
@@ -472,10 +473,9 @@ test.describe('Connection rules for chems: ', () => {
                   );
 
                   await expect(bondLine).toBeVisible();
-                  const errorMessage = page
-                    .getByTestId('error-tooltip')
-                    .first();
-                  await expect(errorMessage).toContainText(
+                  expect(
+                    await NotificationBanner(page).getNotificationText(),
+                  ).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );
                 });
@@ -504,8 +504,6 @@ test.describe('Connection rules for chems: ', () => {
              *         Validate canvas
              */
             test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-              test.setTimeout(35000);
-
               const {
                 leftMonomer: leftMonomerLocator,
                 rightMonomer: rightMonomerLocator,
@@ -584,8 +582,6 @@ test.describe('Connection rules for chems: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 4: Connect ${leftCHEMAttachmentPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(35000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -1201,7 +1197,7 @@ test.describe('Connection rules for chems: ', () => {
     page: Page,
     leftPeptide: IMonomer,
     rightMolecule: IMolecule,
-    attachmentPoint: string,
+    attachmentPoint: AttachmentPoint,
     atomIndex: number,
   ) {
     const leftPeptideLocator = getMonomerLocator(page, {
@@ -1255,7 +1251,7 @@ test.describe('Connection rules for chems: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

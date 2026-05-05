@@ -14,14 +14,11 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
   DEFAULT_LAYOUT_MODE,
-  FlexMode,
   HAS_CONTENT_LAYOUT_MODE,
   LayoutMode,
-  modesMap,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor/modes/';
+} from 'application/editor/modes/types';
 import { BaseMode } from 'application/editor/modes/internal';
+import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
@@ -41,15 +38,15 @@ import {
 } from 'application/formatters';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   NodeSelection,
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { ketcherProvider } from 'application/utils';
-import assert from 'assert';
+import { ketcherProvider } from 'application/ketcherProvider';
 import {
   ChainsCollection,
   MonomerToAtomBond,
@@ -78,7 +75,9 @@ import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
   isValidHelmAlias,
+  isValidIdtAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -104,6 +103,10 @@ import {
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import {
+  setEditorInstance,
+  resetEditorInstance,
+} from 'application/editor/editorSingleton';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -115,6 +118,7 @@ import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
 } from 'domain/serializers';
+import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -135,6 +139,7 @@ interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
+  renderersContainer: RenderersManager;
   mode?: BaseMode;
 }
 
@@ -214,6 +219,7 @@ export class CoreEditor {
     ketcherId,
     theme,
     canvas,
+    renderersContainer,
     mode,
   }: ICoreEditorConstructorParams) {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
@@ -228,13 +234,13 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();
-    this.renderersContainer = new RenderersManager({ theme });
+    this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.domEventSetup();
@@ -248,6 +254,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -300,10 +307,6 @@ export class CoreEditor {
       this.drawingEntitiesManager.unselectAllDrawingEntities();
 
     this.renderersContainer.update(modelChanges);
-  }
-
-  static provideEditorInstance(): CoreEditor {
-    return editor;
   }
 
   public clearMonomersLibrary() {
@@ -451,6 +454,27 @@ export class CoreEditor {
         const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
+      }
+
+      // Validate that slashes in IDT aliases only appear at first/last position
+      if (newMonomer.props?.idtAliases) {
+        const { base, modifications } = newMonomer.props.idtAliases;
+        const aliasesToValidate = [
+          base,
+          modifications?.endpoint3,
+          modifications?.endpoint5,
+          modifications?.internal,
+        ].filter(Boolean) as string[];
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex(
@@ -692,6 +716,15 @@ export class CoreEditor {
         return;
       }
 
+      // If the right-click happened inside an already-open context menu (the
+      // menu DOM is rendered as a portal sibling of the canvas SVG and overlaps
+      // the symbol underneath), event.target.__data__ is undefined and the
+      // logic below would fall through to rightClickCanvasSequence and replace
+      // the original menu with a reduced one. Skip the dispatch in that case.
+      if ((event.target as HTMLElement | null)?.closest('.contexify')) {
+        return;
+      }
+
       const eventData = event.target?.__data__;
       const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
       const isClickOnCanvas =
@@ -770,13 +803,14 @@ export class CoreEditor {
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        // TODO separate by two events for modes
-        this.events.rightClickCanvas.dispatch([
-          event,
-          this.mode instanceof SequenceMode
-            ? sequenceSelections
-            : selectedMonomers,
-        ]);
+        if (this.mode.modeName === 'sequence-layout-mode') {
+          this.events.rightClickCanvasSequence.dispatch([
+            event,
+            sequenceSelections,
+          ]);
+        } else {
+          this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
+        }
       }
 
       return false;
@@ -852,8 +886,8 @@ export class CoreEditor {
       this.mode.onPaste();
     });
     this.events.deleteSelectedStructure.add(() => {
-      if (this.mode instanceof SequenceMode) {
-        this.mode.deleteSelection();
+      if (this.mode.modeName === 'sequence-layout-mode') {
+        this.sequenceMode.deleteSelection();
 
         return;
       }
@@ -983,7 +1017,7 @@ export class CoreEditor {
   }
 
   private onFlipHorizontal() {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1002,7 +1036,7 @@ export class CoreEditor {
   }
 
   private onFlipVertical() {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1036,7 +1070,10 @@ export class CoreEditor {
         new Vec2(1.5, 0),
       );
     } else if (this.drawingEntitiesManager.hasMonomers) {
-      if (this.nextAutochainPosition && !(this.mode instanceof SnakeMode)) {
+      if (
+        this.nextAutochainPosition &&
+        !(this.mode.modeName === 'snake-layout-mode')
+      ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {
         newMonomerPosition =
@@ -1064,7 +1101,7 @@ export class CoreEditor {
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1086,7 +1123,7 @@ export class CoreEditor {
   private onAutochain(
     monomerOrRnaItem: MonomerItemType | AmbiguousMonomerType | IRnaPreset,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1149,7 +1186,7 @@ export class CoreEditor {
       );
     }
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
@@ -1166,9 +1203,9 @@ export class CoreEditor {
     history.update(modelChanges);
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       this.zoomTool.scrollToVerticalBottom();
-    } else if (this.mode instanceof FlexMode) {
+    } else if (this.mode.modeName === 'flex-layout-mode') {
       const editorSettings = provideEditorSettings();
       const oneLayoutCellInAngstroms =
         SnakeLayoutCellWidth / editorSettings.macroModeScale;
@@ -1255,7 +1292,7 @@ export class CoreEditor {
     rnaPresetItem: IRnaPreset,
     sugarPosition: Vec2,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1308,7 +1345,7 @@ export class CoreEditor {
   }
 
   private onPlaceMonomerOnCanvas(monomerItem: MonomerItemType, position: Vec2) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1333,7 +1370,7 @@ export class CoreEditor {
     monomerItem: AmbiguousMonomerType,
     position: Vec2,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1427,47 +1464,47 @@ export class CoreEditor {
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOnEditMode(sequenceItemRenderer);
+    this.sequenceMode.turnOnEditMode(sequenceItemRenderer);
   }
 
   private onEstablishHydrogenBondSequenceMode(
     sequenceItemRenderer: BaseSequenceItemRenderer,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.establishHydrogenBond(sequenceItemRenderer);
+    this.sequenceMode.establishHydrogenBond(sequenceItemRenderer);
   }
 
   private onDeleteHydrogenBondSequenceMode(
     sequenceItemRenderer: BaseSequenceItemRenderer,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.deleteHydrogenBond(sequenceItemRenderer);
+    this.sequenceMode.deleteHydrogenBond(sequenceItemRenderer);
   }
 
   private onTurnOnSequenceEditInRNABuilderMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOnSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
   private onTurnOffSequenceEditInRNABuilderMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOffSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOffSequenceEditInRNABuilderMode();
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -1477,23 +1514,24 @@ export class CoreEditor {
   private onChangeToggleIsSequenceSyncEditMode(
     isSequenceSyncEditMode: boolean,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
+    const sequenceMode = this.sequenceMode;
     if (isSequenceSyncEditMode) {
-      this.mode.turnOnSyncEditMode();
+      sequenceMode.turnOnSyncEditMode();
     } else {
-      this.mode.turnOffSyncEditMode();
+      sequenceMode.turnOffSyncEditMode();
     }
   }
 
   private onResetSequenceSyncEditMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.resetEditMode();
+    this.sequenceMode.resetEditMode();
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {
@@ -1514,29 +1552,29 @@ export class CoreEditor {
 
   private onSelectMonomer(monomer: MonomerItemType) {
     if (
-      this.mode instanceof SequenceMode &&
+      this.mode.modeName === 'sequence-layout-mode' &&
       !this.isSequenceEditMode &&
       SequenceRenderer.chainsCollection.length === 0
     ) {
-      this.mode.turnOnEditMode();
+      this.sequenceMode.turnOnEditMode();
     }
 
-    if (this.mode instanceof SequenceMode) {
-      this.mode.insertMonomerFromLibrary(monomer);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.sequenceMode.insertMonomerFromLibrary(monomer);
     }
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
     if (
-      this.mode instanceof SequenceMode &&
+      this.mode.modeName === 'sequence-layout-mode' &&
       !this.isSequenceEditMode &&
       SequenceRenderer.chainsCollection.length === 0
     ) {
-      this.mode.turnOnEditMode();
+      this.sequenceMode.turnOnEditMode();
     }
 
-    if (this.mode instanceof SequenceMode) {
-      this.mode.insertPresetFromLibrary(preset);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.sequenceMode.insertPresetFromLibrary(preset);
     }
   }
 
@@ -1577,7 +1615,7 @@ export class CoreEditor {
         ),
       );
 
-      if (this.mode instanceof SnakeMode) {
+      if (this.mode.modeName === 'snake-layout-mode') {
         command.merge(
           this.drawingEntitiesManager.recalculateCanvasMatrix(
             this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
@@ -1610,8 +1648,7 @@ export class CoreEditor {
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
-    const ModeConstructor = modesMap[mode];
-    assert(ModeConstructor);
+    const ModeConstructor = getModeConstructor(mode);
     const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
@@ -1747,24 +1784,33 @@ export class CoreEditor {
     }
   }
 
+  private get sequenceMode(): SequenceMode {
+    return this.mode as unknown as SequenceMode;
+  }
+
   public get isSequenceMode() {
-    return this?.mode instanceof SequenceMode;
+    return this.mode.modeName === 'sequence-layout-mode';
   }
 
   public get isSequenceEditMode() {
-    return this?.mode instanceof SequenceMode && this?.mode.isEditMode;
+    return (
+      this.mode.modeName === 'sequence-layout-mode' &&
+      this.sequenceMode.isEditMode
+    );
   }
 
   public get isSequenceEditInRNABuilderMode() {
     return (
-      this?.mode instanceof SequenceMode && this?.mode.isEditInRNABuilderMode
+      this.mode.modeName === 'sequence-layout-mode' &&
+      this.sequenceMode.isEditInRNABuilderMode
     );
   }
 
   public get isSequenceAnyEditMode() {
+    const sequenceMode = this.sequenceMode;
     return (
-      this?.mode instanceof SequenceMode &&
-      (this?.mode.isEditMode || this?.mode.isEditInRNABuilderMode)
+      this.mode.modeName === 'sequence-layout-mode' &&
+      (sequenceMode.isEditMode || sequenceMode.isEditInRNABuilderMode)
     );
   }
 
@@ -2014,14 +2060,15 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+    this.viewModel.initialize([...this.drawingEntitiesManager.bonds.values()]);
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
         this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       this.mode.initialize(false, false, false);
     } else {
       this.renderersContainer.update(modelChanges);
@@ -2034,7 +2081,10 @@ export class CoreEditor {
   }
 
   public isCurrentModeWithAutozoom(): boolean {
-    return this.mode instanceof FlexMode || this.mode instanceof SnakeMode;
+    return (
+      this.mode.modeName === 'flex-layout-mode' ||
+      this.mode.modeName === 'snake-layout-mode'
+    );
   }
 
   public zoomToStructuresIfNeeded() {
@@ -2048,14 +2098,13 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = RenderersManager.getRenderedStructuresBbox();
+    const structureBbox = getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 
   public scrollToTopLeftCorner() {
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = getRenderedStructuresBbox();
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
@@ -2069,5 +2118,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
+    resetEditorInstance();
   }
 }

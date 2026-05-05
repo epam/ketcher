@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ReStruct } from 'application/render';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   RxnArrowAdd,
   RxnArrowDelete,

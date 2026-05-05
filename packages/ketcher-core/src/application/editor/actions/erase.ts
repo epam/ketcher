@@ -27,16 +27,14 @@ import {
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
-import { RGroup } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
 import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
-import {
-  fromBondStereoUpdate,
-  removeAttachmentPointFromSuperatom,
-} from '../actions/bond';
+import { removeAttachmentPointFromSuperatom } from '../actions/bond';
+import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import { ReStruct } from 'application/render';

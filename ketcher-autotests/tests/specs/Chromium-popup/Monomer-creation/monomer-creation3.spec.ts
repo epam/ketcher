@@ -24,7 +24,10 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getAttachmentPointLocator,
+} from '@utils/macromolecules/monomer';
 import {
   AttachmentPointAtom,
   AttachmentPointOption,
@@ -534,8 +537,14 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   await page.mouse.move(600, 200);
 //   await dragMouseTo(page, 600, 250);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
+//   const attachmentPointR1 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R1,
+//   ).first();
+//   const attachmentPointR3 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R3,
+//   ).first();
 
 //   await EditConnectionPointPopup(
 //     page,
@@ -575,7 +584,10 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //   await page.mouse.move(600, 200);
 //   await dragMouseTo(page, 600, 250);
 
-//   const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+//   const attachmentPointR1 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R1,
+//   ).first();
 //   await ContextMenu(page, attachmentPointR1).click(
 //     ConnectionPointOption.EditConnectionPoint,
 //   );
@@ -584,7 +596,10 @@ test(`9. Check that if the structure contains one and only one Rn group (where 2
 //     AttachmentPointName.R3,
 //   );
 
-//   const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
+//   const attachmentPointR3 = getAttachmentPointLocator(
+//     page,
+//     AttachmentPoint.R3,
+//   ).first();
 //   await expect(attachmentPointR3).toHaveText('R3');
 
 //   await CreateMonomerDialog(page).discard();
@@ -618,7 +633,10 @@ test(`12. Check that for already set APs the user can Delete the AP by r-clickin
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 600, 250);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await ContextMenu(page, attachmentPointR1).click(
     ConnectionPointOption.RemoveAssignment,
   );
@@ -658,7 +676,10 @@ test(`13. Check that users can set a new AP by selecting a potential AA, and R-n
     ConnectionPointOption.MarkAsLeavingGroup,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await expect(attachmentPointR1).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
@@ -847,14 +868,38 @@ test(`18. Check that for an already set APs the user can Delete the AP, by click
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 425, 200);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
-  const attachmentPointR3 = page.getByTestId(AttachmentPoint.R3).first();
-  const attachmentPointR4 = page.getByTestId(AttachmentPoint.R4).first();
-  const attachmentPointR5 = page.getByTestId(AttachmentPoint.R5).first();
-  const attachmentPointR6 = page.getByTestId(AttachmentPoint.R6).first();
-  const attachmentPointR7 = page.getByTestId(AttachmentPoint.R7).first();
-  const attachmentPointR8 = page.getByTestId(AttachmentPoint.R8).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
+  const attachmentPointR3 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R3,
+  ).first();
+  const attachmentPointR4 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R4,
+  ).first();
+  const attachmentPointR5 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R5,
+  ).first();
+  const attachmentPointR6 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R6,
+  ).first();
+  const attachmentPointR7 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R7,
+  ).first();
+  const attachmentPointR8 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R8,
+  ).first();
 
   await CreateMonomerDialog(page).deleteAttachmentPoint(
     AttachmentPointOption.R1,
@@ -921,8 +966,14 @@ test(`19. Check that for an already set APs the user can change the R-group numb
   await page.mouse.move(600, 200);
   await dragMouseTo(page, 425, 200);
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R2).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R2,
+  ).first();
 
   await CreateMonomerDialog(page).changeAttachmentPointName({
     oldName: AttachmentPointOption.R2,
@@ -1270,7 +1321,11 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
-  await takeEditorScreenshot(page);
+  await takeElementScreenshot(
+    page,
+    getAtomLocator(page, { atomLabel: 'C' }).nth(1),
+    { padding: 50 },
+  );
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await Library(page).hoverMonomer(Phosphate.Phosphate);
   await MonomerPreviewTooltip(page).waitForBecomeVisible();

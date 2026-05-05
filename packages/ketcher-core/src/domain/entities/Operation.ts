@@ -1,4 +1,4 @@
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Atom } from 'domain/entities/CoreAtom';

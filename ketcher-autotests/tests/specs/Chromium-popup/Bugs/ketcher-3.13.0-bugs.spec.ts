@@ -36,7 +36,7 @@ import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomer
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -312,7 +312,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       // Step 2: Open Save Structure dialog
       await CommonTopLeftToolbar(page).saveFile();
 
-      // const saveDialog = page.getByTestId('save-structure-dialog');
       const dialog = SaveStructureDialog(page);
 
       // Step 3: switch formats repeatedly

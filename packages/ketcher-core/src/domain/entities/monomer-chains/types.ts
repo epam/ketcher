@@ -2,7 +2,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { LinkerSequenceNode } from 'domain/entities';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export type SubChainNode =

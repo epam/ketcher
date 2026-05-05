@@ -36,11 +36,12 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -66,22 +67,10 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
 
 async function interactWithMicroMolecule(
   page: Page,
@@ -192,8 +181,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -255,7 +248,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const baseLocator = getMonomerLocator(page, Base.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -1002,10 +995,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Library(page).selectMonomer(Base.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    const baseA = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('A', { exact: true });
+    const baseA = getAbbreviationLocator(page, { name: 'A' }).first();
     await expandMonomer(page, baseA);
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });

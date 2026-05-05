@@ -45,7 +45,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -1788,7 +1788,7 @@ test(`45.1 Check that newly added two phosphates can be connected to any monomer
       await AttachmentPointsDialog(page).connect();
     }
     const bond = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
       toAttachmentPoint: AttachmentPoint.R1,
       toMonomerId: (
         (await monomerConnectTo.getAttribute('data-monomerid')) || ''

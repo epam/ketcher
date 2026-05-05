@@ -8,7 +8,7 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
   openFileAndAddToCanvas,
@@ -34,7 +34,7 @@ import {
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -57,7 +57,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
 
 declare global {
@@ -91,12 +91,12 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await BottomToolbar(page).clickRing(RingButton.Benzene);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
@@ -131,10 +131,10 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   await StructureLibraryDialog(page).selectFunctionalGroup(
     FunctionalGroupsTabItems.CF3,
   );
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await atomToolbar.clickAtom(Atom.Bromine);
 
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -252,7 +252,7 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await takeEditorScreenshot(page, {
@@ -533,7 +533,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
+    bondType: MacroBondType.Hydrogen,
   }).first();
 
   await CommonLeftToolbar(page).erase();
@@ -620,7 +620,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondDataIds.Hydrogen,
+    bondType: MacroBondType.Hydrogen,
   }).first();
 
   await CommonLeftToolbar(page).erase();

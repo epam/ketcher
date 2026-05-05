@@ -13,7 +13,7 @@ import {
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -142,7 +142,7 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Peptide.Edc).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -200,7 +200,7 @@ test.describe('Peptide library testing', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.MCC).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -236,7 +236,7 @@ test.describe('Peptide library testing', () => {
       'KET/stuck-peptides-not-connected.ket',
     );
     await getMonomerLocator(page, Peptide.Nal).click();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await takeEditorScreenshot(page);
   });
 
@@ -250,7 +250,7 @@ test.describe('Peptide library testing', () => {
     */
     await openFileAndAddToCanvasMacro(page, 'KET/stuck-peptides-connected.ket');
     await getMonomerLocator(page, Peptide.Nal).click();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -21,6 +21,7 @@ import {
 } from '@utils';
 import { waitForSpinnerFinishedWork } from '@utils/common';
 import {
+  AttachmentPoint,
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
@@ -29,7 +30,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
@@ -47,24 +48,13 @@ import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -262,7 +252,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     const from = 'bnn';
     const targets = ['eop', '5hMedC', '5NitInd', 'DOTA'];
     for (const to of targets) {
-      await connectMonomersWithBonds(page, [from, to], MacroBondType.Hydrogen);
+      await connectMonomersWithBonds(page, [from, to], MacroBondTool.Hydrogen);
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -818,8 +808,12 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

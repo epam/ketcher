@@ -1,5 +1,5 @@
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { UnresolvedMonomer } from 'domain/entities';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
 import { Selection } from 'd3';
 
 const UNRESOLVED_MONOMER_HOVERED_ELEMENT_ID = '#unresolved-monomer-hover';

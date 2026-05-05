@@ -3,7 +3,7 @@ import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -39,7 +39,7 @@ test.describe('Peptide', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Peptide.A).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

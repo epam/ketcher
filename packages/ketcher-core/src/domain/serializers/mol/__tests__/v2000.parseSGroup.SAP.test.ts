@@ -1,8 +1,9 @@
+import { SGroup } from 'domain/entities';
 import sGroup from 'domain/serializers/mol/parseSGroup';
 
 describe('parseSGroup', () => {
   it('applyDataSGroupData should trim trailing whitespace', () => {
-    const sg = { data: { fieldValue: '' } };
+    const sg = { data: { fieldValue: '' } } as unknown as SGroup;
 
     sGroup.applyDataSGroupData(sg, 'Value   ', true);
 

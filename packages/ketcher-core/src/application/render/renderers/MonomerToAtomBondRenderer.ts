@@ -142,7 +142,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         .insert('g', `.monomer`)
         .data([this])
         .attr('data-testid', 'bond')
-        .attr('data-type', 'covalent')
+        .attr('data-bondtype', 'covalent')
         .attr('data-bondid', this.monomerToAtomBond.id)
         .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
         .attr('data-toatomid', this.monomerToAtomBond.atom.id)

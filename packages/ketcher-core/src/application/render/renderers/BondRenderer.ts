@@ -1,11 +1,12 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
-import { Box2Abs, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
@@ -317,7 +318,7 @@ export class BondRenderer extends BaseRenderer {
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
@@ -530,7 +531,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   private get halfEdges() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
@@ -570,7 +571,7 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
     this.rootElement = this.rootElement || this.appendRootElement();
@@ -738,7 +739,7 @@ export class BondRenderer extends BaseRenderer {
 
     // Adjust position based on double bond shift
     const doubleBondShift = this.getDoubleBondShift(
-      CoreEditor.provideEditorInstance().viewModel,
+      provideEditorInstance().viewModel,
       firstHalfEdge,
       secondHalfEdge,
     );

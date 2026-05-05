@@ -14,7 +14,7 @@ import {
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   MolFileFormat,
   clickOnCanvas,
   openFile,
@@ -46,11 +46,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import {
-  COORDINATES_TO_PERFORM_ROTATION,
-  rotateToCoordinates,
-  verticalFlip,
-} from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -74,12 +69,13 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -518,10 +514,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/two-monomers-connected.ket',
     );
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await verifySVGExport(page);
   });
@@ -577,16 +576,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Hover over the “Calculate Properties” button in main toolbar
      * 3. Verify that tooltip is displayed
      */
-    const icon = {
+    const calculatePropertiesButton = {
       testId: 'calculate-macromolecule-properties-button',
       title: 'Calculate properties (Alt+C)',
     };
-    const iconButton = page.getByTestId(icon.testId);
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    await expect(icon.title).toBeTruthy();
+    const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
+    await button.hover();
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
     await takeTopToolbarScreenshot(page);
-    await iconButton.click();
+    await button.click();
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
@@ -628,9 +633,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -685,9 +693,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1079,9 +1090,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifySVGExport(page);
   });
 

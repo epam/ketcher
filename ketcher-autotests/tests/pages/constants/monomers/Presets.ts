@@ -212,6 +212,14 @@ export const Preset = {
     phosphate: Phosphate.Phosphate,
   } as PresetType,
   // for monomer creation test, doesn't exist initially
+  A_Copy: {
+    alias: 'A_Copy',
+    testId: 'A_Copy_A_R_P',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar.R,
+    base: Base.A,
+    phosphate: Phosphate.P,
+  } as PresetType,
   Preset: {
     alias: 'Preset',
     testId: 'Preset_Base_Sugar_Phosphate',
@@ -263,6 +271,38 @@ export const Preset = {
     monomerType: MonomerType.Preset,
     sugar: Sugar._25mo3r,
     phosphate: Phosphate.Test_6_Ph,
+  } as PresetType,
+  _25R_A_Test_6_Ph: {
+    alias: '25R(A)Test-6-Ph',
+    testId: '25R(A)Test-6-Ph_A_25R_Test-6-Ph',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar._25R,
+    base: Base.A,
+    phosphate: Phosphate.Test_6_Ph,
+  } as PresetType,
+  _25R_A_Test_6_Ph_Copy: {
+    alias: '25R(A)Test-6-Ph_Copy',
+    testId: '25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar._25R,
+    base: Base.A,
+    phosphate: Phosphate.Test_6_Ph,
+  } as PresetType,
+  _25R_A_P_A_25R_P: {
+    alias: '25R(A)P',
+    testId: '25R(A)P_A_25R_P',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar._25R,
+    base: Base.A,
+    phosphate: Phosphate.P,
+  } as PresetType,
+  _25R_baA_bP: {
+    alias: '25R(baA)bP',
+    testId: '25R(baA)bP_baA_25R_bP',
+    monomerType: MonomerType.Preset,
+    sugar: Sugar._25R,
+    base: Base.baA,
+    phosphate: Phosphate.bP,
   } as PresetType,
 };
 

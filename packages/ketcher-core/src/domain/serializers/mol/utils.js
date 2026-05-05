@@ -350,7 +350,7 @@ function rxnMerge(
   const bbProdAll = aggregateBoundingBoxes(bbProd);
 
   const arrow = createReactionArrow(bbReactAll, bbProdAll);
-  ret.rxnArrows.add(arrow);
+  ret.addRxnArrow(arrow);
 
   ret.isReaction = true;
   return ret;

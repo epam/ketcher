@@ -27,7 +27,7 @@ export class KetFormatter implements StructFormatter {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,

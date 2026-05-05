@@ -5,6 +5,7 @@ import {
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
+  isSugarOrAmbiguousSugar,
   KetAmbiguousMonomerTemplateSubType,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
@@ -128,7 +129,8 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
     return (
       (selectedMonomer instanceof RNABase &&
         getSugarFromRnaBase(selectedMonomer)) ||
-      (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
+      (isSugarOrAmbiguousSugar(selectedMonomer) &&
+        getRnaBaseFromSugar(selectedMonomer))
     );
   });
 };

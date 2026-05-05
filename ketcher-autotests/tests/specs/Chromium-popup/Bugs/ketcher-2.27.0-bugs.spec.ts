@@ -24,7 +24,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import {
   FileType,
@@ -46,7 +46,7 @@ import {
 import { EnhancedStereochemistry } from '@tests/pages/molecules/canvas/EnhancedStereochemistry';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 import {
@@ -86,7 +86,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await connectMonomersWithBonds(
       page,
       ['Cys_Bn', 'Chg'],
-      MacroBondType.Hydrogen,
+      MacroBondTool.Hydrogen,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -110,7 +110,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A}|PEPTIDE2{[1Nal]}$PEPTIDE1,PEPTIDE2,1:pair-1:pair$$$V2.0',
     );
-    await connectMonomersWithBonds(page, ['A', '1Nal'], MacroBondType.Hydrogen);
+    await connectMonomersWithBonds(page, ['A', '1Nal'], MacroBondTool.Hydrogen);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

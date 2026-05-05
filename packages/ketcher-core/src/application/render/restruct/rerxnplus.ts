@@ -22,7 +22,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { Render } from '../raphaelRender';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { RenderOptions } from '../render.types';
 
 class ReRxnPlus extends ReObject {

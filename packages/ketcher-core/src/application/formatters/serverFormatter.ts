@@ -59,7 +59,7 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
   ): Promise<string> {
@@ -87,7 +87,7 @@ export class ServerFormatter implements StructFormatter {
         const details = e instanceof Error ? e.message : String(e);
         message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
+      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
       throw new Error(message);
     }
   }

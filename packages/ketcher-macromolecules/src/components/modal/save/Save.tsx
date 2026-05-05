@@ -138,7 +138,11 @@ export const Save = ({
 
     try {
       setIsLoading(true);
-      if (fileFormat === 'fasta' || fileFormat === 'sequence') {
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'idt'
+      ) {
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {

@@ -21,7 +21,7 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
@@ -509,6 +509,10 @@ function SGroupdrawBrackets({
         font: render.options.font,
         'font-size': render.options.fontszsubInPx,
       });
+    if (isLowerText) {
+      indexPath.node?.setAttribute('data-testid', 's-group-label');
+      indexPath.node?.setAttribute('data-label-text', text);
+    }
     if (indexAttribute) indexPath.attr(indexAttribute);
 
     // Bounding box adjustment and final positioning
@@ -545,6 +549,8 @@ function showValue(
     font: options.font,
     'font-size': options.fontszsubInPx,
   });
+  text.node?.setAttribute('data-testid', 's-group-label');
+  text.node?.setAttribute('data-label-text', sgroup.data.fieldValue);
   const box = text.getBBox();
   let rect = paper.rect(
     box.x - 1,
@@ -563,9 +569,6 @@ function showValue(
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
-  SGroup.bracketPos(sgroup, restruct.molecule);
-  sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
-
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
 
   return sgroup.data.attached

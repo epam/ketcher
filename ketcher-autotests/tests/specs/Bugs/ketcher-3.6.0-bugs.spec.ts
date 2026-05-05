@@ -30,7 +30,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
@@ -48,7 +48,7 @@ import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -252,7 +252,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     const from = 'bnn';
     const targets = ['eop', '5hMedC', '5NitInd', 'DOTA'];
     for (const to of targets) {
-      await connectMonomersWithBonds(page, [from, to], MacroBondType.Hydrogen);
+      await connectMonomersWithBonds(page, [from, to], MacroBondTool.Hydrogen);
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

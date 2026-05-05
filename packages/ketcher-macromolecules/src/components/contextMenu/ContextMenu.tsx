@@ -1,5 +1,11 @@
 import { ReactElement, useEffect } from 'react';
-import { Item, ItemParams, Separator, Submenu } from 'react-contexify';
+import {
+  contextMenu,
+  Item,
+  ItemParams,
+  Separator,
+  Submenu,
+} from 'react-contexify';
 import {
   BaseMonomer,
   BaseSequenceItemRenderer,
@@ -7,8 +13,8 @@ import {
 } from 'ketcher-core';
 import { StyledMenu } from 'components/contextMenu/styles';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { useAppDispatch } from 'hooks';
-import { setContextMenuActive } from 'state/common';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { selectIsContextMenuActive, setContextMenuActive } from 'state/common';
 
 interface MenuItem {
   name: string;
@@ -122,6 +128,7 @@ const assembleMenuItems = (
 
 export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
   const dispatch = useAppDispatch();
+  const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
 
   useEffect(() => {
     const handleContextMenuClose = (e) => {
@@ -140,6 +147,25 @@ export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
       document.removeEventListener('contextmenu', handleContextMenuClose);
     };
   }, [dispatch, id]);
+
+  useEffect(() => {
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !isContextMenuActive) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      contextMenu.hideAll();
+      dispatch(setContextMenuActive(false));
+    };
+
+    document.addEventListener('keydown', handleEscapeKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKeyDown, true);
+    };
+  }, [dispatch, isContextMenuActive]);
 
   return (
     <StyledMenu id={id}>

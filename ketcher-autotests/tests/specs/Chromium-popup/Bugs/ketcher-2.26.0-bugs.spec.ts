@@ -8,7 +8,7 @@ import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   enableViewOnlyModeBySetOptions,
   disableViewOnlyModeBySetOptions,
   openFileAndAddToCanvasAsNewProject,
@@ -62,7 +62,7 @@ import {
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -99,7 +99,7 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 async function removeTail(page: Page, tailName: string, index?: number) {
   const tailElement = page.getByTestId(tailName);
@@ -184,7 +184,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      */
     const applyButton = MiewDialog(page).applyButton;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).threeDViewer({
       waitForApplyButtonIsEnabled: false,
@@ -501,7 +501,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
         getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
       ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
       await takeEditorScreenshot(page);
-      await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+      ).hover([
+        MicroAtomOption.QueryProperties,
+        QueryAtomOption.SubstitutionCount,
+      ]);
       await takeEditorScreenshot(page);
     },
   );
@@ -710,8 +716,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Undo
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
+    await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {
       await ContextMenu(page, middleOfTheScreen).click(

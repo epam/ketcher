@@ -1,41 +1,44 @@
 import autoprefixer from 'autoprefixer';
 import babel from '@rollup/plugin-babel';
-import { execSync } from 'child_process';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
-import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
+import { createRequire } from 'node:module';
 import nodeResolve from '@rollup/plugin-node-resolve';
+import path from 'node:path';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import pkg from './package.json';
 import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
+import type { Plugin, RollupOptions } from 'rollup';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import { license } from '../../license.ts';
+import ttypescript from 'ttypescript';
 import { string } from 'rollup-plugin-string';
+
+type PackageJson = {
+  main: string;
+  module: string;
+  source: string;
+  version: string;
+};
+
+const require = createRequire(import.meta.url);
+const pkg = require('./package.json') as PackageJson;
+
+const asPlugin = (plugin: unknown): Plugin => plugin as Plugin;
 
 const mode = {
   PRODUCTION: 'production',
   DEVELOPMENT: 'development',
-};
+} as const;
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
-const getTagName = () => {
-  try {
-    return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' });
-  } catch (error) {
-    console.error(error);
-    return 'master';
-  }
-};
-
-export const valuesToReplace = {
+export const valuesToReplace: Record<string, string> = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
@@ -45,23 +48,29 @@ export const valuesToReplace = {
   ),
   // TODO: add logic to init BUILD_NUMBER
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),
-  'process.env.HELP_LINK': JSON.stringify(getTagName()),
+  'process.env.HELP_LINK': JSON.stringify(process.env.HELP_LINK || 'master'),
+  'process.env.INDIGO_VERSION': JSON.stringify(
+    process.env.INDIGO_VERSION || '',
+  ),
+  'process.env.INDIGO_MACHINE': JSON.stringify(
+    process.env.INDIGO_MACHINE || '',
+  ),
 };
 
-const config = {
+const config: RollupOptions = {
   input: pkg.source,
   output: [
     {
-      dir: 'dist/cjs',
+      file: pkg.main,
       exports: 'named',
       format: 'cjs',
-      banner: license,
+      banner: `require('./index.css');`,
     },
     {
-      dir: 'dist',
+      file: pkg.module,
       exports: 'named',
       format: 'es',
-      banner: license,
+      banner: `import './index.css';`,
     },
   ],
   plugins: [
@@ -71,12 +80,12 @@ const config = {
     }),
     postcss({
       plugins: [autoprefixer({ grid: 'autoplace' })],
-      extract: 'index.css',
+      extract: path.resolve('dist/index.css'),
       minimize: isProduction,
       sourceMap: true,
-      include: [includePattern, '../ketcher-macromolecules/dist/index.css'],
+      include: includePattern,
     }),
-    svgr({ include: includePattern }),
+    asPlugin(svgr({ include: includePattern })),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
@@ -87,25 +96,27 @@ const config = {
     }),
     json(),
     typescript({
-      tsconfig: './tsconfig.build.json',
+      typescript: ttypescript,
+      tsconfigOverride: {
+        exclude: ['*.test.ts'],
+      },
     }),
     babel({
       extensions,
       babelHelpers: 'runtime',
       include: includePattern,
     }),
-    copy({
-      targets: [{ src: 'src/style/*.svg', dest: 'dist' }],
-    }),
     cleanup({
-      extensions: extensions.map((ext) => ext.trimStart('.')),
+      extensions: extensions.map((extension) => extension.replace(/^\./, '')),
       comments: 'none',
       include: includePattern,
     }),
+    asPlugin(
+      string({
+        include: '**/*.ket',
+      }),
+    ),
     ...(isProduction ? [strip({ include: includePattern })] : []),
-    string({
-      include: '**/*.sdf',
-    }),
   ],
 };
 

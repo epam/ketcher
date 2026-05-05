@@ -1068,9 +1068,7 @@ test.describe('Connection rules for sugars: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            (Object.values(leftMonomer.attachmentPoints) as AttachmentPoint[])[
-              atomIndex
-            ],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

@@ -321,7 +321,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       page,
       'KET/Chromium-popup/Bugs/Unable to change atom to another if molecule has attachment point.ket',
     );
-    const point = await getBondLocator(page, { bondId: 5 });
+    const point = getBondLocator(page, { bondId: 5 });
     await ContextMenu(page, point).open();
     await takeEditorScreenshot(page);
   });

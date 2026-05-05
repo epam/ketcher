@@ -29,20 +29,94 @@ export function getTestDataDirectory() {
   return resolvedFilePath;
 }
 
+function shouldGenerateData() {
+  return (
+    process.env.GENERATE_DATA === 'true' ||
+    process.argv.some(
+      (arg) =>
+        arg === '--update-snapshots' || arg.startsWith('--update-snapshots='),
+    )
+  );
+}
+
+const BASE64_CDX_PREFIX = 'VmpDRDAxMDA';
+const BASE64_TEXT_PATTERN = /^[A-Za-z0-9+/=\r\n]+$/;
+
+type UploadFile =
+  | string
+  | {
+      name: string;
+      mimeType: string;
+      buffer: Buffer;
+    };
+
+function normalizeBase64Content(content: string) {
+  return content.replace(/\s+/g, '');
+}
+
+// Generated CDX snapshots may be stored as base64 text, while uploaded .cdx files
+// must use raw binary bytes to match the app's file opener behavior.
+function isBase64CdxSnapshot(content: string) {
+  const normalizedContent = normalizeBase64Content(content);
+
+  return (
+    normalizedContent.length > 0 &&
+    normalizedContent.length % 4 === 0 &&
+    normalizedContent.startsWith(BASE64_CDX_PREFIX) &&
+    BASE64_TEXT_PATTERN.test(normalizedContent)
+  );
+}
+
+async function readCdxFileContent(filePath: string) {
+  const fileBuffer = await fs.promises.readFile(filePath);
+  const textContent = fileBuffer.toString('utf8');
+
+  if (isBase64CdxSnapshot(textContent)) {
+    return normalizeBase64Content(textContent);
+  }
+
+  return fileBuffer.toString('base64');
+}
+
+async function getUploadFile(filePath: string): Promise<UploadFile> {
+  if (path.extname(filePath).toLowerCase() !== '.cdx') {
+    return filePath;
+  }
+
+  const fileBuffer = await fs.promises.readFile(filePath);
+  const textContent = fileBuffer.toString('utf8');
+
+  if (!isBase64CdxSnapshot(textContent)) {
+    return filePath;
+  }
+
+  return {
+    name: path.basename(filePath),
+    mimeType: 'chemical/x-cdx',
+    buffer: Buffer.from(normalizeBase64Content(textContent), 'base64'),
+  };
+}
+
 export async function readFileContent(filePath: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filePath);
+
+  if (path.extname(resolvedFilePath).toLowerCase() === '.cdx') {
+    return await readCdxFileContent(resolvedFilePath);
+  }
+
   return await fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(page: Page, filename: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
+  const uploadFile = await getUploadFile(resolvedFilePath);
   // Start waiting for file chooser before clicking. Note no await.
   const fileChooserPromise = page.waitForEvent('filechooser');
   await OpenStructureDialog(page).openFromFile();
   const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(resolvedFilePath);
+  await fileChooser.setFiles(uploadFile);
 }
 
 /**
@@ -325,10 +399,22 @@ export async function receiveMolFileComparisonData(
 export async function saveToFile(filename: string, data: string) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
-  if (process.env.GENERATE_DATA === 'true') {
+  if (shouldGenerateData()) {
     await fs.promises.mkdir(path.dirname(resolvedFilePath), {
       recursive: true,
     });
+
+    if (
+      path.extname(resolvedFilePath).toLowerCase() === '.cdx' &&
+      isBase64CdxSnapshot(data)
+    ) {
+      const binaryContent = Uint8Array.from(
+        Buffer.from(normalizeBase64Content(data), 'base64'),
+      );
+
+      return await fs.promises.writeFile(resolvedFilePath, binaryContent);
+    }
+
     return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
 }

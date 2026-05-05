@@ -341,6 +341,20 @@ export class SGroup {
     atomId: number;
     position: Vec2;
   } {
+    // For groups with 2+ attachment points, use the centroid of all AP positions
+    if (this.attachmentPoints.length >= 2) {
+      const apPositions = this.attachmentPoints
+        .map((ap) => struct.atoms.get(ap.atomId)?.pp)
+        .filter((pos): pos is Vec2 => pos !== undefined);
+
+      if (apPositions.length >= 2) {
+        const center = apPositions
+          .reduce((acc, pos) => acc.add(pos), new Vec2(0, 0))
+          .scaled(1 / apPositions.length);
+        return { atomId: this.attachmentPoints[0].atomId, position: center };
+      }
+    }
+
     let atomId = this.attachmentPoints[0]?.atomId;
     let representAtom = struct.atoms.get(atomId);
     // if there is no attachment points in sgroup - use first externally connected atom if exist or just first atom

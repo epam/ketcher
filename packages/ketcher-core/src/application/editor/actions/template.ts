@@ -78,27 +78,30 @@ function extraBondAction(
     );
     action = actionRes[0];
     action.operations.reverse();
-    additionalAtom = actionRes[2] as number;
+    additionalAtom = actionRes[2];
   } else {
+    const pivotAtom = restruct.molecule.atoms.get(aid);
+    if (!pivotAtom) {
+      throw new Error(`Atom ${aid} not found`);
+    }
+
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
-      new Vec2(1, 0)
-        .rotate(angle)
-        .add((restruct.molecule.atoms.get(aid) as Atom).pp)
-        .get_xy0(),
-    ).perform(restruct) as AtomAdd;
+      new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
+    ).perform(restruct);
 
     action.addOp(operation);
-    action.addOp(
-      new BondAdd(aid, operation.data.aid as number, { type: 1 }).perform(
-        restruct,
-      ),
-    );
+    const newAid = operation.data.aid;
+    if (typeof newAid !== 'number') {
+      throw new Error('Atom id was not assigned after AtomAdd');
+    }
 
-    additionalAtom = operation.data.aid as number;
+    action.addOp(new BondAdd(aid, newAid, { type: 1 }).perform(restruct));
+
+    additionalAtom = newAid;
   }
 
-  return { action, aid1: additionalAtom as number };
+  return { action, aid1: additionalAtom };
 }
 
 export function fromTemplateOnAtom(

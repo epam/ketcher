@@ -72,10 +72,9 @@ export function monomerToDrawingEntity(
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MonomerFactoryFn = (
   monomerItem: MonomerItemType,
-) => [new (...args: any[]) => BaseMonomer, ...unknown[]];
+) => [new (...args: unknown[]) => BaseMonomer, ...unknown[]];
 
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,

@@ -19,7 +19,7 @@ import {
   MULTITAIL_ARROW_SERIALIZE_KEY,
 } from 'domain/constants';
 
-function parseNode(node: any, struct: any) {
+function parseNode(node, struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -34,8 +34,10 @@ function parseNode(node: any, struct: any) {
     case 'molecule': {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
-        const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        const fragment = currentStruct.frags.get(0);
+        if (fragment) {
+          fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        }
       }
       currentStruct.mergeInto(struct);
       break;
@@ -61,7 +63,7 @@ function parseNode(node: any, struct: any) {
   }
 }
 
-export function fillMonomerTemplateStruct(ket: any): Struct {
+export function fillMonomerTemplateStruct(ket): Struct {
   const resultingStruct = new Struct();
   const nodes = ket.root.nodes;
 

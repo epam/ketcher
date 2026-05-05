@@ -69,9 +69,6 @@ import {
   fillStructRgLabelsByMonomerTemplate as fillStructRgLabelsByMonomerTemplateUtil,
   getTemplateAttachmentPoints as getTemplateAttachmentPointsUtil,
 } from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type MonomerFactoryFn = (monomer: any) => [any, any, any];
 import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -107,6 +104,9 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MonomerFactoryFn = (monomer: any) => [any, any, any];
 
 function parseNode(node: any, struct: any) {
   const type = node.type;

@@ -495,11 +495,16 @@ export const CreateMonomerDialog = (page: Page) => {
         if (await warningDlg.cancelButton.isVisible()) {
           await warningDlg.ok();
         }
-      }
 
-      const allSetNotification = InfoMessageDialog(page);
-      if (ignoreAllSetInfo && (await allSetNotification.okButton.isVisible())) {
-        await allSetNotification.ok();
+        if (ignoreAllSetInfo) {
+          await InfoMessageDialog(page).ok();
+        }
+      } else if (
+        ignoreAllSetInfo &&
+        (await InfoMessageDialog(page).okButton.isVisible()) &&
+        !(await WarningMessageDialog(page).cancelButton.isVisible())
+      ) {
+        await InfoMessageDialog(page).ok();
       }
     },
 

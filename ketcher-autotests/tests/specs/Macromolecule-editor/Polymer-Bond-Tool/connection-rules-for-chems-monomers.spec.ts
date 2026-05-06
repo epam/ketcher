@@ -21,7 +21,6 @@ import { NotificationBanner } from '@tests/pages/macromolecules/canvas/Notificat
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
-  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ initFlexCanvas }) => {
@@ -457,8 +456,6 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(30000);
-
                   const {
                     leftMonomer: leftMonomerLocator,
                     rightMonomer: rightMonomerLocator,
@@ -542,8 +539,6 @@ test.describe('Connection rules for chems: ', () => {
          *       Validate canvas (Connection should appear)
          */
         test(`Case 3: Connect Center to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(30000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -618,8 +613,6 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case5: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -828,8 +821,6 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case6: Connect ${leftCHEMAttachmentPoint} to ${rightPeptideAttachmentPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -860,8 +851,6 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Attachment Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -890,8 +879,6 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Attachment Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -1085,8 +1072,6 @@ test.describe('Connection rules for chems: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftCHEMAttachmentPoint} to ${rightOMAttachmentPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -1122,8 +1107,6 @@ test.describe('Connection rules for chems: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -1230,8 +1213,6 @@ test.describe('Connection rules for chems: ', () => {
        *        Expected result: Connection should be established
        */
       test(`Case 12: Connect evey connection point of of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
-        test.setTimeout(30000);
-
         await loadMonomer(page, leftMonomer);
         await loadMolecule(page, rightMolecule);
 

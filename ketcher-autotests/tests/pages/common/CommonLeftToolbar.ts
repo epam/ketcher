@@ -18,6 +18,8 @@ type LeftToolbarLocators = {
 };
 
 export const CommonLeftToolbar = (page: Page) => {
+  const bondToolbarActionTimeout = 5000;
+  const bondTypeButtonVisibleTimeout = 1500;
   const locators: LeftToolbarLocators = {
     handToolButton: page
       .getByTestId('hand')
@@ -71,22 +73,46 @@ export const CommonLeftToolbar = (page: Page) => {
     },
 
     async expandBondSelectionDropdown() {
+      if (await locators.bondMultiToolSection.isVisible()) {
+        return;
+      }
+
       try {
         await page.waitForTimeout(200);
-        await locators.bondSelectionDropdownExpandButton.click({ force: true });
+        await locators.bondSelectionDropdownExpandButton.click({
+          force: true,
+          timeout: bondToolbarActionTimeout,
+        });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',
-          timeout: 5000,
+          timeout: bondToolbarActionTimeout,
         });
+        return;
       } catch (error) {
         console.warn(
           "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
+          error,
         );
-        // alternative way to open the dropdown (doesn't work on Macro mode)
-        await this.handTool();
-        await locators.bondSelectionDropdownButton.click({ force: true });
-        await locators.bondSelectionDropdownButton.click({ force: true });
       }
+
+      if (await locators.bondMultiToolSection.isVisible()) {
+        return;
+      }
+
+      // alternative way to open the dropdown (doesn't work on Macro mode)
+      await this.handTool();
+      await locators.bondSelectionDropdownButton.click({
+        force: true,
+        timeout: bondToolbarActionTimeout,
+      });
+      await locators.bondSelectionDropdownButton.click({
+        force: true,
+        timeout: bondToolbarActionTimeout,
+      });
+      await locators.bondMultiToolSection.waitFor({
+        state: 'visible',
+        timeout: bondToolbarActionTimeout,
+      });
     },
 
     async bondTool(bondType: MacroBondTool | MicroBondTool) {
@@ -98,12 +124,25 @@ export const CommonLeftToolbar = (page: Page) => {
         .first();
       while (attempts < maxAttempts) {
         try {
-          await this.expandBondSelectionDropdown();
-          await bondTypeButton.waitFor({ state: 'visible', timeout: 1500 });
-          await bondTypeButton.click({ force: true });
+          if (!(await bondTypeButton.isVisible())) {
+            await this.expandBondSelectionDropdown();
+            await bondTypeButton.waitFor({
+              state: 'visible',
+              timeout: bondTypeButtonVisibleTimeout,
+            });
+          }
+
+          await bondTypeButton.click({
+            force: true,
+            timeout: bondToolbarActionTimeout,
+          });
           return;
         } catch (error) {
           attempts++;
+          if (attempts === maxAttempts) {
+            throw error;
+          }
+
           console.warn('Unable to click on the bond type button, retrying...');
         }
       }

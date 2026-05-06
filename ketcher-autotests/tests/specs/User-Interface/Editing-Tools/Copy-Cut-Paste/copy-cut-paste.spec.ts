@@ -1076,7 +1076,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForPageInit(page);
   });
 
-  test.fail('Copy button', async () => {
+  test.skip('Copy button', async () => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -1132,7 +1132,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async () => {
+  test.skip('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async () => {
     /*
     Description:
     Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393

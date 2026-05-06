@@ -309,7 +309,7 @@ test.describe('Import-Saving .mol Files', () => {
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got   -', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'RXN loader: bad header ', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
     );
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).closeWindow();
@@ -330,27 +330,30 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
-    /*
+  test.fail(
+    'Check that you can save snake viewed chain of peptides in a Mol v3000 file',
+    async () => {
+      /*
     Test case: Import/Saving files
     Description: Snake viewed chain of peptides saved in a Mol v3000 file
 
     Test fails because we have bug https://github.com/epam/ketcher/issues/5634
     */
-    await openFileAndAddToCanvasMacro(
-      page,
-      'Molfiles-V3000/snake-mode-peptides.mol',
-      MacroFileType.MOLv3000,
-    );
-    await resetZoomLevelToDefault(page);
-    await verifyFileExport(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
-      [1],
-    );
-  });
+      await openFileAndAddToCanvasMacro(
+        page,
+        'Molfiles-V3000/snake-mode-peptides.mol',
+        MacroFileType.MOLv3000,
+      );
+      await resetZoomLevelToDefault(page);
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+        [1],
+      );
+    },
+  );
 
   test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
     /*

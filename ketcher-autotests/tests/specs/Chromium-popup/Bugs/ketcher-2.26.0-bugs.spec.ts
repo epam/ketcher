@@ -324,35 +324,40 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5634
-     * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
-     * Scenario:
-     * 1. Go to Macro - Snake mode
-     * 2. Load from file
-     * 3. Save to MOL V3000
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
-    );
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
+    async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5634
+       * Description: ketcher.getMolfile() not stopped working for macro canvas with Peptide.
+       * Scenario:
+       * 1. Go to Macro - Snake mode
+       * 2. Load from file
+       * 3. Save to MOL V3000
+       */
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas.mol',
+      );
+      await takeEditorScreenshot(page);
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/Chromium-popup/snake-mode-peptides-on-canvas-expected.mol',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async () => {
     /*

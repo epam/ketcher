@@ -25,6 +25,8 @@ import {
   notifyCopyCut,
 } from 'ketcher-core';
 
+// test my side
+
 const ieCb: DataTransfer | undefined =
   typeof window !== 'undefined'
     ? (window as Window & { clipboardData?: DataTransfer }).clipboardData

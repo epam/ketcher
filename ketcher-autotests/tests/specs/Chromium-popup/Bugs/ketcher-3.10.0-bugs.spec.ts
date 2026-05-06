@@ -56,8 +56,9 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
+  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -426,6 +427,10 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await Library(page).hideLibrary();
     await expect(monomerOnCanvas).toBeVisible();
 
+    const pageCenter = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+    await monomerOnCanvas.hover();
+    await dragMouseTo(page, pageCenter.x, pageCenter.y + 100);
     await monomerOnCanvas.hover();
 
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -640,7 +645,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

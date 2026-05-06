@@ -30,7 +30,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
@@ -252,7 +252,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     const from = 'bnn';
     const targets = ['eop', '5hMedC', '5NitInd', 'DOTA'];
     for (const to of targets) {
-      await connectMonomersWithBonds(page, [from, to], MacroBondType.Hydrogen);
+      await connectMonomersWithBonds(page, [from, to], MacroBondTool.Hydrogen);
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

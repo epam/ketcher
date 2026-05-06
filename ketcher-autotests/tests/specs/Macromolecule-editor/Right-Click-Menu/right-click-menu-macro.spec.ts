@@ -22,7 +22,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -196,7 +196,7 @@ test.fail(
    * IMPORTANT: Test fails because of the bug: https://github.com/epam/ketcher/issues/7326
    */
     const randomBond = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

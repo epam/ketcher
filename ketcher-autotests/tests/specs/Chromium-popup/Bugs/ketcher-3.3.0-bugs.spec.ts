@@ -10,13 +10,14 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
+  moveMouseAway,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 
@@ -95,7 +96,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const centerOfTheCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     await Library(page).dragMonomerOnCanvas(Sugar.fR, centerOfTheCanvas);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await getMonomerLocator(page, Sugar.fR).first().hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -278,21 +279,25 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       Phosphate.Test_6_Ph,
       Base.V,
     ]);
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectSugarSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectBaseSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await Library(page).rnaBuilder.selectPhosphateSlot();
+    await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -827,7 +832,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
   //      */
   //     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   //     await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
-  //     await clickInTheMiddleOfTheScreen(page);
+  //     await clickInTheMiddleOfTheCanvas(page);
   //     await takeEditorScreenshot(page);
   //   },
   // );

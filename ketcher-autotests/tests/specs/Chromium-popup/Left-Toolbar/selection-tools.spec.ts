@@ -137,7 +137,7 @@ test('Case 4: Verify that the shortcut as in molecules mode Lasso Selection and 
   ];
   for (const selectionToolButton of selectionToolButtons) {
     await CommonLeftToolbar(page).areaSelectionTool(selectionToolButton.tool);
-    const button = page.getByTestId(selectionToolButton.testId);
+    const button = page.getByTestId(selectionToolButton.testId).first();
     await expect(button).toHaveAttribute('title', selectionToolButton.title);
     await button.hover();
     expect(selectionToolButton.title).toBeTruthy();

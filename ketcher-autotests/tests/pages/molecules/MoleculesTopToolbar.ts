@@ -1,6 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
+import {
+  waitForRender,
+  waitForSpinnerFinishedWork,
+} from '@utils/common/loaders';
 
 type MoleculesTopToolbarLocators = {
   copyButton: Locator;
@@ -50,17 +53,21 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async paste() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.pasteButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.pasteButton.click(),
+        );
+      });
     },
 
     async cut() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.cutButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.cutButton.click(),
+        );
+      });
     },
 
     async expandCopyDropdown() {

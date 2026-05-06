@@ -28,7 +28,10 @@ import {
   CreateMonomerDialog,
   deselectAtomAndBonds,
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
-import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getAttachmentPointLocator,
+} from '@utils/macromolecules/monomer';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 import {
   AttachmentPointAtom,
@@ -452,19 +455,28 @@ test(`10. Check that after the option ""Mark as connection point"" is clicked, a
   await ContextMenu(page, targetAtoms.nth(0)).click(
     ConnectionPointOption.MarkAsConnectionPoint,
   );
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   expect(attachmentPointR1).toBeVisible();
 
   await ContextMenu(page, targetAtoms.nth(1)).click(
     ConnectionPointOption.MarkAsConnectionPoint,
   );
-  const attachmentPointR2 = page.getByTestId(AttachmentPoint.R3).first();
+  const attachmentPointR2 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R3,
+  ).first();
   expect(attachmentPointR2).toBeVisible();
 
   await ContextMenu(page, targetAtoms.nth(2)).click(
     ConnectionPointOption.MarkAsConnectionPoint,
   );
-  const attachmentPointR4 = page.getByTestId(AttachmentPoint.R4).first();
+  const attachmentPointR4 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R4,
+  ).first();
   expect(attachmentPointR4).toBeVisible();
 
   await CreateMonomerDialog(page).discard();
@@ -540,7 +552,10 @@ test(`12. Check that right-clicking on that label, gives a menu with two options
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   expect(
     ContextMenu(page, attachmentPointR1).isOptionVisible(
       ConnectionPointOption.EditConnectionPoint,
@@ -589,7 +604,10 @@ test(`13. Check that clicking on "Remove assignment", deleted that AP - the LGA 
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await ContextMenu(page, attachmentPointR1).click(
     ConnectionPointOption.RemoveAssignment,
   );
@@ -633,7 +651,10 @@ test(`14. Check that clicking on "Edit attachment point" gives the user the opti
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await ContextMenu(page, attachmentPointR1).click(
     ConnectionPointOption.EditConnectionPoint,
   );
@@ -728,7 +749,10 @@ test(`16. Check that hovering over any element of the AP (AA, LGA, Rn) highlight
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await attachmentPointR1.hover({ force: true });
 
   await takeElementScreenshot(page, CreateMonomerDialog(page).r1ControlGroup, {
@@ -801,7 +825,10 @@ test(`18. Check that from the attributes panel, the user can delete an already s
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await expect(attachmentPointR1).toBeVisible();
 
   await CreateMonomerDialog(page).deleteAttachmentPoint(
@@ -846,7 +873,10 @@ test(`19. Verify that hovering an AP on the attributes panel highlights the corr
     ConnectionPointOption.MarkAsConnectionPoint,
   );
 
-  const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+  const attachmentPointR1 = getAttachmentPointLocator(
+    page,
+    AttachmentPoint.R1,
+  ).first();
   await expect(attachmentPointR1).toBeVisible();
 
   await CreateMonomerDialog(page).r1ControlGroup.hover();

@@ -671,9 +671,7 @@ test.describe('Right-click menu', () => {
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page, {
-      maxDiffPixels: 1,
-    });
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });

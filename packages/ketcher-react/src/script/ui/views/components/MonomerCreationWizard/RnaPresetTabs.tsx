@@ -337,6 +337,13 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       Boolean(errorValue),
     );
   };
+  const hasRequiredComponents = Boolean(
+    wizardState.sugar.structure?.atoms?.length &&
+      (wizardState.base.structure?.atoms?.length ||
+        wizardState.phosphate.structure?.atoms?.length),
+  );
+  const hasComponentsError =
+    Boolean(wizardState.preset.errors.components) && !hasRequiredComponents;
 
   return (
     <div>
@@ -357,7 +364,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.base) && styles.errorTab,
+            (hasErrorInTab(wizardState.base) || hasComponentsError) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-base-tab"
           label={<div className={styles.tabLabel}>Base</div>}
@@ -366,7 +374,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.sugar) && styles.errorTab,
+            (hasErrorInTab(wizardState.sugar) || hasComponentsError) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-sugar-tab"
           label={<div className={styles.tabLabel}>Sugar</div>}
@@ -375,7 +384,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         <Tab
           className={clsx(
             styles.styledTab,
-            hasErrorInTab(wizardState.phosphate) && styles.errorTab,
+            (hasErrorInTab(wizardState.phosphate) || hasComponentsError) &&
+              styles.errorTab,
           )}
           data-testid="nucleotide-phosphate-tab"
           label={<div className={styles.tabLabel}>Phosphate</div>}

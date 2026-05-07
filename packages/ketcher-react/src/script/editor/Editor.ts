@@ -1942,6 +1942,14 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
+  setProblematicAtoms(problematicAtoms: Set<number>) {
+    assert(this.monomerCreationState);
+
+    this.monomerCreationState.problematicAtoms = problematicAtoms;
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.render.update(true);
+  }
+
   highlightAttachmentPoint(name: AttachmentPointName | null) {
     if (!name) {
       this.render.ctab.setSelection(null);

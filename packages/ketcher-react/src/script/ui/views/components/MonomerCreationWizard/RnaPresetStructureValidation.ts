@@ -1,4 +1,4 @@
-import { Bond } from 'ketcher-core';
+import type { Bond } from 'ketcher-core';
 
 import {
   RnaPresetWizardComponentStateFieldId,
@@ -11,9 +11,25 @@ export type RnaPresetValidationStruct = {
   };
   bonds: {
     forEach: (
-      callback: (bond: Pick<Bond, 'begin' | 'end'>, bondId: number) => void,
+      callback: (
+        bond: Pick<Bond, 'begin' | 'end'> &
+          Partial<Pick<Bond, 'type' | 'stereo'>>,
+        bondId: number,
+      ) => void,
     ) => void;
   };
+};
+
+export type RnaPresetStructureValidationIssueId =
+  | 'rnaPresetAtomsOutsideComponents'
+  | 'rnaPresetAtomsInMultipleComponents'
+  | 'rnaPresetMissingComponents'
+  | 'rnaPresetInvalidSugarConnectionBonds'
+  | 'rnaPresetBasePhosphateBond';
+
+export type RnaPresetStructureValidationResult = {
+  issues: RnaPresetStructureValidationIssueId[];
+  problematicAtomIds: Set<number>;
 };
 
 export type RnaPresetComponentStructures = {
@@ -21,6 +37,11 @@ export type RnaPresetComponentStructures = {
   sugar: Pick<RnaPresetWizardState['sugar'], 'structure'>;
   phosphate: Pick<RnaPresetWizardState['phosphate'], 'structure'>;
 };
+
+const SINGLE_BOND_TYPE = 1;
+const BOND_STEREO_NONE = 0;
+const BOND_STEREO_UP = 1;
+const BOND_STEREO_DOWN = 6;
 
 const hasComponentStructure = (
   structure?: RnaPresetWizardState['base']['structure'],
@@ -51,6 +72,21 @@ const hasBondBetweenComponents = (
   );
 };
 
+const isValidConnectionBond = (
+  bond: Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
+) => {
+  const isSingleBond =
+    bond.type === undefined || bond.type === SINGLE_BOND_TYPE;
+  const validStereoTypes = new Set([
+    undefined,
+    BOND_STEREO_NONE,
+    BOND_STEREO_UP,
+    BOND_STEREO_DOWN,
+  ]);
+
+  return isSingleBond && validStereoTypes.has(bond.stereo);
+};
+
 export const findBondBetweenRnaPresetComponents = (
   wizardStruct: RnaPresetValidationStruct,
   firstComponentAtomIds: number[],
@@ -74,10 +110,36 @@ export const findBondBetweenRnaPresetComponents = (
   return bondBetweenComponents;
 };
 
-export const isValidRnaPresetStructure = (
+const countRnaPresetConnectionBonds = (
+  wizardStruct: RnaPresetValidationStruct,
+  firstComponentAtomIds: number[],
+  secondComponentAtomIds: number[],
+) => {
+  let count = 0;
+  let hasInvalidBond = false;
+
+  wizardStruct.bonds.forEach((bond) => {
+    if (
+      hasBondBetweenComponents(
+        bond,
+        firstComponentAtomIds,
+        secondComponentAtomIds,
+      )
+    ) {
+      count += 1;
+      hasInvalidBond = hasInvalidBond || !isValidConnectionBond(bond);
+    }
+  });
+
+  return { count, hasInvalidBond };
+};
+
+export const getRnaPresetStructureValidationResult = (
   wizardStruct: RnaPresetValidationStruct,
   componentStructures: RnaPresetComponentStructures,
-) => {
+): RnaPresetStructureValidationResult => {
+  const issues: RnaPresetStructureValidationIssueId[] = [];
+  const problematicAtomIds = new Set<number>();
   const sugarAtomIds = componentStructures.sugar.structure?.atoms || [];
   const baseAtomIds = componentStructures.base.structure?.atoms || [];
   const phosphateAtomIds = componentStructures.phosphate.structure?.atoms || [];
@@ -91,39 +153,84 @@ export const isValidRnaPresetStructure = (
     ...baseAtomIds,
     ...phosphateAtomIds,
   ];
-  const atomIdsInComponents = new Set(allComponentAtomIds);
-  let sugarBaseBondCount = 0;
-  let sugarPhosphateBondCount = 0;
-  let basePhosphateBondCount = 0;
+  const atomComponentCount = new Map<number, number>();
+
+  allComponentAtomIds.forEach((atomId) => {
+    atomComponentCount.set(atomId, (atomComponentCount.get(atomId) ?? 0) + 1);
+  });
+
+  const hasAtomsInMultipleComponents = Array.from(
+    atomComponentCount.entries(),
+  ).some(([atomId, componentCount]) => {
+    if (componentCount > 1) {
+      problematicAtomIds.add(atomId);
+      return true;
+    }
+
+    return false;
+  });
+
+  if (hasAtomsInMultipleComponents) {
+    issues.push('rnaPresetAtomsInMultipleComponents');
+  }
+
   let hasAtomsOutsideComponents = false;
-
-  wizardStruct.bonds.forEach((bond) => {
-    if (hasBondBetweenComponents(bond, sugarAtomIds, baseAtomIds)) {
-      sugarBaseBondCount += 1;
-    }
-
-    if (hasBondBetweenComponents(bond, sugarAtomIds, phosphateAtomIds)) {
-      sugarPhosphateBondCount += 1;
-    }
-
-    if (hasBondBetweenComponents(bond, baseAtomIds, phosphateAtomIds)) {
-      basePhosphateBondCount += 1;
-    }
-  });
-
   wizardStruct.atoms.forEach((_, atomId) => {
-    if (!atomIdsInComponents.has(atomId)) {
+    if (!atomComponentCount.has(atomId)) {
       hasAtomsOutsideComponents = true;
+      problematicAtomIds.add(atomId);
     }
   });
 
+  if (hasAtomsOutsideComponents) {
+    issues.push('rnaPresetAtomsOutsideComponents');
+  }
+
+  if (!hasSugar || (!hasBase && !hasPhosphate)) {
+    issues.push('rnaPresetMissingComponents');
+  }
+
+  const sugarBaseBonds = countRnaPresetConnectionBonds(
+    wizardStruct,
+    sugarAtomIds,
+    baseAtomIds,
+  );
+  const sugarPhosphateBonds = countRnaPresetConnectionBonds(
+    wizardStruct,
+    sugarAtomIds,
+    phosphateAtomIds,
+  );
+  const basePhosphateBonds = countRnaPresetConnectionBonds(
+    wizardStruct,
+    baseAtomIds,
+    phosphateAtomIds,
+  );
+
+  if (
+    (hasBase &&
+      (sugarBaseBonds.count !== 1 || sugarBaseBonds.hasInvalidBond)) ||
+    (hasPhosphate &&
+      (sugarPhosphateBonds.count !== 1 || sugarPhosphateBonds.hasInvalidBond))
+  ) {
+    issues.push('rnaPresetInvalidSugarConnectionBonds');
+  }
+
+  if (basePhosphateBonds.count > 0) {
+    issues.push('rnaPresetBasePhosphateBond');
+  }
+
+  return {
+    issues,
+    problematicAtomIds,
+  };
+};
+
+export const isValidRnaPresetStructure = (
+  wizardStruct: RnaPresetValidationStruct,
+  componentStructures: RnaPresetComponentStructures,
+) => {
   return (
-    hasSugar &&
-    (hasBase || hasPhosphate) &&
-    atomIdsInComponents.size === allComponentAtomIds.length &&
-    !hasAtomsOutsideComponents &&
-    sugarBaseBondCount === (hasBase ? 1 : 0) &&
-    sugarPhosphateBondCount === (hasPhosphate ? 1 : 0) &&
-    basePhosphateBondCount === 0
+    getRnaPresetStructureValidationResult(wizardStruct, componentStructures)
+      .issues.length === 0
   );
 };

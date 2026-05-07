@@ -30,7 +30,7 @@ import { isNaturalAnalogueRequired } from './components/NaturalAnaloguePicker/Na
 import {
   findBondBetweenRnaPresetComponents,
   getRnaPresetComponentKeysToSave,
-  isValidRnaPresetStructure,
+  getRnaPresetStructureValidationResult,
 } from './RnaPresetStructureValidation';
 import { useDispatch, useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
@@ -754,6 +754,10 @@ const MonomerCreationWizard = () => {
   const [connectionLeavingAtoms, setConnectionLeavingAtoms] = useState<
     Map<string, AtomLabel>
   >(new Map());
+  const [
+    hasActiveRnaPresetAtomValidationErrors,
+    setHasActiveRnaPresetAtomValidationErrors,
+  ] = useState(false);
 
   const handleConnectionLeavingAtomChange = useCallback(
     (
@@ -998,6 +1002,31 @@ const MonomerCreationWizard = () => {
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
   useEffect(() => {
+    if (
+      !editor.monomerCreationState ||
+      !isRnaPresetType ||
+      !hasActiveRnaPresetAtomValidationErrors
+    ) {
+      return;
+    }
+
+    const { problematicAtomIds } = getRnaPresetStructureValidationResult(
+      editor.struct(),
+      rnaPresetWizardState,
+    );
+
+    editor.setProblematicAtoms(problematicAtomIds);
+    if (problematicAtomIds.size === 0) {
+      setHasActiveRnaPresetAtomValidationErrors(false);
+    }
+  }, [
+    editor,
+    hasActiveRnaPresetAtomValidationErrors,
+    isRnaPresetType,
+    rnaPresetWizardState,
+  ]);
+
+  useEffect(() => {
     if (monomerCreationState?.hasDefaultAttachmentPoints) {
       wizardStateDispatch({
         type: 'AddNotification',
@@ -1178,23 +1207,37 @@ const MonomerCreationWizard = () => {
     ];
 
     // check structure
+    const presetNotifications = new Map<
+      WizardNotificationId,
+      WizardNotification
+    >();
     const wizardStruct = editor.struct();
-    if (!isValidRnaPresetStructure(wizardStruct, rnaPresetWizardState)) {
+    const { issues: structureIssues, problematicAtomIds } =
+      getRnaPresetStructureValidationResult(wizardStruct, rnaPresetWizardState);
+
+    if (structureIssues.length > 0) {
       needSaveMonomers = false;
-      rnaPresetWizardStateDispatch({
-        type: 'SetNotifications',
-        notifications: new Map([
-          [
-            'invalidRnaPresetStructure',
-            {
-              type: 'error',
-              message: NotificationMessages.invalidRnaPresetStructure,
-            },
-          ],
-        ]),
-        rnaComponentKey: 'preset',
-        editor,
+      structureIssues.forEach((issueId) => {
+        presetNotifications.set(issueId, {
+          type: NotificationTypes[issueId],
+          message: NotificationMessages[issueId],
+        });
       });
+
+      if (structureIssues.includes('rnaPresetMissingComponents')) {
+        rnaPresetWizardStateDispatch({
+          type: 'SetErrors',
+          errors: {
+            components: true,
+          },
+          rnaComponentKey: 'preset',
+        });
+      }
+    }
+
+    if (problematicAtomIds.size > 0) {
+      setHasActiveRnaPresetAtomValidationErrors(true);
+      editor.setProblematicAtoms(problematicAtomIds);
     }
 
     const sugarAttachmentPoints = assignedAttachmentPointsByMonomer.get(
@@ -1203,12 +1246,20 @@ const MonomerCreationWizard = () => {
     const phosphateAttachmentPoints = assignedAttachmentPointsByMonomer.get(
       rnaPresetWizardState.phosphate,
     );
-    const presetNotifications = new Map<
-      WizardNotificationId,
-      WizardNotification
-    >();
+
+    const bondBetweenSugarAndBase = findBondBetweenRnaPresetComponents(
+      wizardStruct,
+      rnaPresetWizardState.sugar.structure?.atoms || [],
+      rnaPresetWizardState.base.structure?.atoms || [],
+    );
+    const bondBetweenSugarAndPhosphate = findBondBetweenRnaPresetComponents(
+      wizardStruct,
+      rnaPresetWizardState.sugar.structure?.atoms || [],
+      rnaPresetWizardState.phosphate.structure?.atoms || [],
+    );
 
     if (
+      bondBetweenSugarAndPhosphate &&
       phosphatePosition &&
       hasPhosphatePositionAttachmentPointConflict(
         phosphatePosition,
@@ -1217,23 +1268,32 @@ const MonomerCreationWizard = () => {
       )
     ) {
       needSaveMonomers = false;
-      presetNotifications.set('invalidPhosphatePositionAttachmentPoints', {
-        type: 'error',
-        message: NotificationMessages.invalidPhosphatePositionAttachmentPoints,
-      });
+      presetNotifications.set(
+        'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
+        {
+          type: 'error',
+          message:
+            NotificationMessages.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
+        },
+      );
     }
 
     if (
-      sugarAttachmentPoints?.get(AttachmentPointName.R3) ||
-      assignedAttachmentPointsByMonomer
-        .get(rnaPresetWizardState.base)
-        ?.get(AttachmentPointName.R1)
+      bondBetweenSugarAndBase &&
+      (sugarAttachmentPoints?.get(AttachmentPointName.R3) ||
+        assignedAttachmentPointsByMonomer
+          .get(rnaPresetWizardState.base)
+          ?.get(AttachmentPointName.R1))
     ) {
       needSaveMonomers = false;
-      presetNotifications.set('invalidRnaPresetStructure', {
-        type: 'error',
-        message: NotificationMessages.attachmentPointsNotUnique,
-      });
+      presetNotifications.set(
+        'rnaPresetInvalidSugarBaseConnectionAttachmentPoints',
+        {
+          type: 'error',
+          message:
+            NotificationMessages.rnaPresetInvalidSugarBaseConnectionAttachmentPoints,
+        },
+      );
     }
 
     if (presetNotifications.size > 0) {
@@ -1436,6 +1496,8 @@ const MonomerCreationWizard = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
     editor.setProblematicAttachmentPoints(new Set());
+    editor.setProblematicAtoms(new Set());
+    setHasActiveRnaPresetAtomValidationErrors(false);
 
     const monomersToSave = isRnaPresetType
       ? getRnaPresetComponentKeysToSave(rnaPresetWizardState).map(

@@ -48,6 +48,7 @@ export type MonomerCreationState = {
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
+  problematicAtoms?: Set<number>;
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;

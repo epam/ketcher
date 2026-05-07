@@ -61,6 +61,13 @@ export type WizardNotificationId =
   | 'notUniqueBILNAlias'
   | 'invalidBILNAlias'
   | 'invalidRnaPresetStructure'
+  | 'rnaPresetAtomsOutsideComponents'
+  | 'rnaPresetAtomsInMultipleComponents'
+  | 'rnaPresetMissingComponents'
+  | 'rnaPresetInvalidSugarConnectionBonds'
+  | 'rnaPresetBasePhosphateBond'
+  | 'rnaPresetInvalidSugarBaseConnectionAttachmentPoints'
+  | 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints'
   | 'notUniquePresetCode'
   | 'invalidPresetCode'
   | 'invalidPhosphatePositionAttachmentPoints'
@@ -97,6 +104,7 @@ export type RnaPresetWizardStatePresetFieldValue = {
   errors: {
     name?: boolean;
     phosphatePosition?: boolean;
+    components?: boolean;
   };
   notifications: WizardNotifications;
   manuallyModifiedSymbols: {
@@ -170,6 +178,7 @@ export type RnaPresetWizardAction =
       errors: {
         name?: boolean;
         phosphatePosition?: boolean;
+        components?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
     }

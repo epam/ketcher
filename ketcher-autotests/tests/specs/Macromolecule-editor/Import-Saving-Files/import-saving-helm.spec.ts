@@ -1134,7 +1134,7 @@ const incorrectHELMStrings: IHELMString[] = [
       "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
     HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'Ket Base Monomer: Unknown attachment point 'R4' in monomer 'A6OH(monomer0)''",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown attachment point 'R4' in monomer 'A6OH(monomer0)''",
   },
   {
     helmDescription: '70. Missing monomer name',

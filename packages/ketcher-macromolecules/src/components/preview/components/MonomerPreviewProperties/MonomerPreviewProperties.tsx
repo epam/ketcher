@@ -16,7 +16,7 @@ interface MonomerPreviewProps {
   readonly preset?: boolean;
 }
 
-const stripBrackets = (text: string) => text.replace(/\[|\]/g, '');
+const stripSquareBrackets = (text: string) => text.replace(/\[|\]/g, '');
 
 export default function MonomerPreviewProperties({
   idtAliasesText,
@@ -29,8 +29,12 @@ export default function MonomerPreviewProperties({
   const rows: RowItem[] = [
     ...(idtAliasesText ? [{ label: 'IDT', text: idtAliasesText }] : []),
     ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),
-    ...(helmText ? [{ label: 'HELM', text: stripBrackets(helmText) }] : []),
-    ...(bilnText ? [{ label: 'BILN', text: stripBrackets(bilnText) }] : []),
+    ...(helmText
+      ? [{ label: 'HELM', text: stripSquareBrackets(helmText) }]
+      : []),
+    ...(bilnText
+      ? [{ label: 'BILN', text: stripSquareBrackets(bilnText) }]
+      : []),
     ...(modificationTypeText
       ? [{ label: 'Modification type', text: modificationTypeText }]
       : []),

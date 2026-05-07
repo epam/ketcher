@@ -53,6 +53,29 @@ interface ModificationTypeItem {
   value: string;
 }
 
+const getAliasFieldsVisibility = (
+  type: KetMonomerClass | 'rnaPreset' | undefined,
+) => {
+  const displayAliases =
+    type &&
+    [
+      KetMonomerClass.AminoAcid,
+      KetMonomerClass.Base,
+      KetMonomerClass.Sugar,
+      KetMonomerClass.Phosphate,
+      KetMonomerClass.CHEM,
+    ].includes(type as KetMonomerClass);
+
+  return {
+    displayAliases,
+    // CHEM monomers support BILN aliases, while HELM remains unavailable for CHEM.
+    displayHelmAlias: displayAliases && type !== KetMonomerClass.CHEM,
+    // BILN aliases are defined only for amino-acid and CHEM monomers.
+    displayBilnAlias:
+      type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM,
+  };
+};
+
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
 ) => {
@@ -135,18 +158,8 @@ const MonomerCreationWizardFields = (
   }
 
   const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-      KetMonomerClass.CHEM,
-    ].includes(type as KetMonomerClass);
-  const displayHelmAlias = type !== KetMonomerClass.CHEM;
-  const displayBilnAlias =
-    type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
+  const { displayAliases, displayHelmAlias, displayBilnAlias } =
+    getAliasFieldsVisibility(type);
 
   return (
     <div>

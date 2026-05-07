@@ -165,6 +165,9 @@ export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
+/**
+ * BILN aliases are supported only for peptide and CHEM monomers.
+ */
 const hasBilnAliasUniquenessScope = (
   monomerClass: KetMonomerClass | undefined,
 ) =>

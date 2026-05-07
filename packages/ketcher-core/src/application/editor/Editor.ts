@@ -165,6 +165,12 @@ export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
 
+const hasBilnAliasUniquenessScope = (
+  monomerClass: KetMonomerClass | undefined,
+) =>
+  monomerClass === KetMonomerClass.AminoAcid ||
+  monomerClass === KetMonomerClass.CHEM;
+
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
@@ -416,9 +422,9 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
-      const hasBilnAliasUniquenessScope =
-        newMonomer.props?.MonomerClass === KetMonomerClass.AminoAcid ||
-        newMonomer.props?.MonomerClass === KetMonomerClass.CHEM;
+      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+        newMonomer.props?.MonomerClass,
+      );
       if (
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
@@ -444,10 +450,9 @@ export class CoreEditor {
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
-          (hasBilnAliasUniquenessScope &&
+          (newMonomerHasBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
-            (monomer.props?.MonomerClass === KetMonomerClass.AminoAcid ||
-              monomer.props?.MonomerClass === KetMonomerClass.CHEM) &&
+            hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
             monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
@@ -634,8 +639,7 @@ export class CoreEditor {
       }
 
       return (
-        (monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid ||
-          monomerItem.props.MonomerClass === KetMonomerClass.CHEM) &&
+        hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
         monomerItem.props.aliasBILN === alias
       );
     });

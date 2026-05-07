@@ -225,10 +225,11 @@ function handleHotkeyGroup(
   if (clipArea.actions.indexOf(actName) === -1) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
-    const selectedItems = getSelectedItems(render.ctab);
+    const { atoms, bonds } = editor.selection() ?? {};
+    const hasSelection = Boolean(atoms?.length) || Boolean(bonds?.length);
 
     // For erase action, prioritize selected items over hovered item
-    if (actName === 'erase' && selectedItems) {
+    if (actName === 'erase' && hasSelection) {
       dispatch(onAction(newAction));
     } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
       newAction = getCurrentAction(group[index]) || newAction;
@@ -334,30 +335,6 @@ function getHoveredItem(
   }
 
   return Object.keys(hoveredItem).length ? hoveredItem : null;
-}
-
-function getSelectedItems(
-  ctab: Record<string, Map<number, Record<string, unknown>>>,
-): Record<string, number> | null {
-  const selectedItems = {};
-
-  for (const ctabItem in ctab) {
-    if (Object.keys(selectedItems).length) {
-      break;
-    }
-
-    if (!(ctab[ctabItem] instanceof Map)) {
-      continue;
-    }
-
-    ctab[ctabItem].forEach((item, id) => {
-      if (item.selected) {
-        selectedItems[ctabItem] = id;
-      }
-    });
-  }
-
-  return Object.keys(selectedItems).length ? selectedItems : null;
 }
 
 function checkGroupOnTool(group, actionTool) {

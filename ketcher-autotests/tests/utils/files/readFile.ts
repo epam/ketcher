@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Page } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheCanvas,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacroFileType,
@@ -145,7 +146,7 @@ export async function openFileAndAddToCanvas(
       from: 'pageCenter',
     });
   } else {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   }
 }
 

@@ -124,6 +124,15 @@ export class RenderStruct {
       }
 
       rnd.setMolecule(preparedStruct);
+
+      if (window.isPolymerEditorTurnedOn) {
+        // Raphael sets overflow:hidden as an inline style on the SVG element,
+        // which clips bond strokes at the bounding-box edge and makes them
+        // appear thinner than bonds in the interior. Override it so strokes
+        // can paint the few pixels beyond the viewBox that they need.
+        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+      }
+
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {

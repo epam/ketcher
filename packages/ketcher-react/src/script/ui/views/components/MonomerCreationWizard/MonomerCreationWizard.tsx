@@ -1019,6 +1019,8 @@ const MonomerCreationWizard = () => {
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
 
+  // Recompute atom ownership highlights only after component structures change
+  // while ownership validation errors are active.
   useEffect(() => {
     if (
       !editor?.render?.monomerCreationState ||

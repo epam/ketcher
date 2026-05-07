@@ -25,7 +25,9 @@ export type RnaPresetStructureValidationIssueId =
   | 'rnaPresetAtomsInMultipleComponents'
   | 'rnaPresetMissingComponents'
   | 'rnaPresetInvalidSugarConnectionBonds'
-  | 'rnaPresetUnexpectedBasePhosphateBond';
+  | 'rnaPresetUnexpectedBasePhosphateBond'
+  | 'rnaPresetInvalidSugarBaseConnectionAttachmentPoints'
+  | 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints';
 
 export type RnaPresetStructureValidationResult = {
   issues: RnaPresetStructureValidationIssueId[];
@@ -38,8 +40,9 @@ export type RnaPresetComponentStructures = {
   phosphate: Pick<RnaPresetWizardState['phosphate'], 'structure'>;
 };
 
-// Numeric values mirror ketcher-core Bond.PATTERN type and stereo constants
-// without adding a runtime ketcher-core import to Jest-tested React modules.
+// Mirrors ketcher-core Bond.PATTERN.TYPE.SINGLE and
+// Bond.PATTERN.STEREO.NONE/UP/DOWN without adding a runtime ketcher-core import
+// to Jest-tested React modules.
 export const KETCHER_SINGLE_BOND_TYPE = 1;
 export const KETCHER_BOND_STEREO_NONE = 0;
 export const KETCHER_BOND_STEREO_UP = 1;

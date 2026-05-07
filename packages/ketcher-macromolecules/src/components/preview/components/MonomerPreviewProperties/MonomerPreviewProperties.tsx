@@ -11,21 +11,30 @@ interface MonomerPreviewProps {
   readonly idtAliasesText?: string;
   readonly axoLabsText?: string;
   readonly helmText?: string;
+  readonly bilnText?: string;
   readonly modificationTypeText?: string;
   readonly preset?: boolean;
 }
+
+const removeSquareBrackets = (text: string) => text.replace(/\[|\]/g, '');
 
 export default function MonomerPreviewProperties({
   idtAliasesText,
   axoLabsText,
   helmText,
+  bilnText,
   modificationTypeText,
   preset,
 }: MonomerPreviewProps) {
   const rows: RowItem[] = [
     ...(idtAliasesText ? [{ label: 'IDT', text: idtAliasesText }] : []),
     ...(axoLabsText ? [{ label: 'AxoLabs', text: axoLabsText }] : []),
-    ...(helmText ? [{ label: 'HELM', text: helmText }] : []),
+    ...(helmText
+      ? [{ label: 'HELM', text: removeSquareBrackets(helmText) }]
+      : []),
+    ...(bilnText
+      ? [{ label: 'BILN', text: removeSquareBrackets(bilnText) }]
+      : []),
     ...(modificationTypeText
       ? [{ label: 'Modification type', text: modificationTypeText }]
       : []),

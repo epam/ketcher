@@ -60,6 +60,7 @@ const options: Array<Option> = [
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const formatDetector = {
@@ -70,6 +71,7 @@ const formatDetector = {
   idt: ChemicalMimeType.IDT,
   'axo-labs': ChemicalMimeType.AXOLABS,
   helm: ChemicalMimeType.HELM,
+  biln: ChemicalMimeType.BILN,
 };
 
 const StyledModal = styled(Modal)({

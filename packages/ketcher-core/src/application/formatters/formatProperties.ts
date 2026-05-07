@@ -150,6 +150,12 @@ const formatProperties: FormatPropertiesMap = {
     ['.helm'],
     true,
   ),
+  biln: new SupportedFormatProperties(
+    'BILN',
+    ChemicalMimeType.BILN,
+    ['.biln'],
+    true,
+  ),
   sequence: new SupportedFormatProperties(
     'SEQUENCE',
     ChemicalMimeType.SEQUENCE,

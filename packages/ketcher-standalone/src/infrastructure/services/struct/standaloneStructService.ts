@@ -162,6 +162,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.HELM;
       break;
     }
+    case ChemicalMimeType.BILN: {
+      format = SupportedFormat.BILN;
+      break;
+    }
     case ChemicalMimeType.RDF:
       format = SupportedFormat.RDF;
       break;

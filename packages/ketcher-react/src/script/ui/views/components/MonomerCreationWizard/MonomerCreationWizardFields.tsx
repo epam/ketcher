@@ -69,7 +69,7 @@ const MonomerCreationWizardFields = (
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >([]);
@@ -142,7 +142,11 @@ const MonomerCreationWizardFields = (
       KetMonomerClass.Base,
       KetMonomerClass.Sugar,
       KetMonomerClass.Phosphate,
+      KetMonomerClass.CHEM,
     ].includes(type as KetMonomerClass);
+  const displayHelmAlias = type !== KetMonomerClass.CHEM;
+  const displayBilnAlias =
+    type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
 
   return (
     <div>
@@ -342,27 +346,56 @@ const MonomerCreationWizardFields = (
                 Aliases
               </AccordionSummary>
               <AccordionDetails>
-                <p className={styles.inputLabel}>HELM</p>
-                <Autocomplete
-                  freeSolo
-                  options={[]}
-                  value={aliasHELM}
-                  onInputChange={(_event, newValue) =>
-                    onFieldChange('aliasHELM', newValue)
-                  }
-                  data-testid="helm-alias-input"
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      className={clsx(
-                        styles.inputField,
-                        errors.aliasHELM && styles.error,
+                {displayHelmAlias && (
+                  <>
+                    <p className={styles.inputLabel}>HELM</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasHELM}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasHELM', newValue)
+                      }
+                      data-testid="helm-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasHELM && styles.error,
+                          )}
+                          error={Boolean(errors.aliasHELM)}
+                        />
                       )}
-                      error={Boolean(errors.aliasHELM)}
                     />
-                  )}
-                />
+                  </>
+                )}
+                {displayBilnAlias && (
+                  <>
+                    <p className={styles.inputLabel}>BILN</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasBILN}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasBILN', newValue)
+                      }
+                      data-testid="biln-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasBILN && styles.error,
+                          )}
+                          error={Boolean(errors.aliasBILN)}
+                        />
+                      )}
+                    />
+                  </>
+                )}
               </AccordionDetails>
             </Accordion>
           </div>

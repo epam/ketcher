@@ -74,10 +74,12 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  isValidBilnAlias,
   isValidHelmAlias,
   isValidIdtAlias,
   initHotKeys,
@@ -393,6 +395,9 @@ export class CoreEditor {
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
           : null,
+        monomer.props?.aliasBILN
+          ? `BILN alias "${monomer.props.aliasBILN}"`
+          : null,
         monomer.props?.idtAliases?.base
           ? `IDT base alias "${monomer.props.idtAliases.base}"`
           : null,
@@ -411,11 +416,22 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const hasBilnAliasUniquenessScope =
+        newMonomer.props?.MonomerClass === KetMonomerClass.AminoAcid ||
+        newMonomer.props?.MonomerClass === KetMonomerClass.CHEM;
       if (
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+      if (
+        newMonomer.props?.aliasBILN &&
+        !isValidBilnAlias(newMonomer.props.aliasBILN)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -428,6 +444,11 @@ export class CoreEditor {
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+          (hasBilnAliasUniquenessScope &&
+            Boolean(newMonomer.props?.aliasBILN) &&
+            (monomer.props?.MonomerClass === KetMonomerClass.AminoAcid ||
+              monomer.props?.MonomerClass === KetMonomerClass.CHEM) &&
+            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||
@@ -602,6 +623,20 @@ export class CoreEditor {
       return (
         props.MonomerClass === monomerClass &&
         (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
+  }
+
+  public checkIfBilnAliasExists(alias: string) {
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      return (
+        (monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid ||
+          monomerItem.props.MonomerClass === KetMonomerClass.CHEM) &&
+        monomerItem.props.aliasBILN === alias
       );
     });
   }

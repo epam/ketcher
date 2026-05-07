@@ -101,7 +101,7 @@ export const CommonLeftToolbar = (page: Page) => {
         !(await this.isBondToolActive()) &&
         (await this.isBondToolSelected(bondType))
       ) {
-        await locators.bondSelectionDropdownButton.click({ force: true });
+        await locators.bondSelectionDropdownButton.click();
         return;
       }
 

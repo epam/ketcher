@@ -1,4 +1,4 @@
-import { KetcherLogger, LogLevel } from 'utilities/KetcherLogger';
+import { KetcherLogger, LogLevel } from 'utilities';
 
 function setLogging(opts: { enabled?: boolean; level?: LogLevel } | undefined) {
   (window as unknown as Record<string, unknown>).ketcher =

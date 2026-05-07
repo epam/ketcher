@@ -31,6 +31,9 @@ describe('select helpers', () => {
         atoms: [1, 2],
         bonds: [3],
       });
+      const { SGroup } = jest.requireMock('ketcher-core');
+      expect(SGroup.getAtoms).toHaveBeenCalledWith(struct, sgroup);
+      expect(SGroup.getBonds).toHaveBeenCalledWith(struct, sgroup);
     });
   });
 });

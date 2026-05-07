@@ -65,7 +65,7 @@ export type WizardNotificationId =
   | 'rnaPresetAtomsInMultipleComponents'
   | 'rnaPresetMissingComponents'
   | 'rnaPresetInvalidSugarConnectionBonds'
-  | 'rnaPresetBasePhosphateBond'
+  | 'rnaPresetUnexpectedBasePhosphateBond'
   | 'rnaPresetInvalidSugarBaseConnectionAttachmentPoints'
   | 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints'
   | 'notUniquePresetCode'

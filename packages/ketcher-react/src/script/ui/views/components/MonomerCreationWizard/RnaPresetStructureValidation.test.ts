@@ -124,7 +124,7 @@ describe('getRnaPresetStructureValidationResult', () => {
       }),
     );
 
-    expect(result.issues).toContain('rnaPresetBasePhosphateBond');
+    expect(result.issues).toContain('rnaPresetUnexpectedBasePhosphateBond');
   });
 });
 

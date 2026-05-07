@@ -75,7 +75,8 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'Every preset must contain at least two components, with sugar being a mandatory component.',
   rnaPresetInvalidSugarConnectionBonds:
     'Sugar can only have one single bond with base and one single bond with phosphate.',
-  rnaPresetBasePhosphateBond: "Phosphate and base mustn't have a bond.",
+  rnaPresetUnexpectedBasePhosphateBond:
+    "Phosphate and base mustn't have a bond.",
   rnaPresetInvalidSugarBaseConnectionAttachmentPoints:
     'The bond between sugar and base must be established between R3 of the sugar and R1 of the base.',
   rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints:
@@ -116,7 +117,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   rnaPresetAtomsInMultipleComponents: 'warning',
   rnaPresetMissingComponents: 'error',
   rnaPresetInvalidSugarConnectionBonds: 'error',
-  rnaPresetBasePhosphateBond: 'error',
+  rnaPresetUnexpectedBasePhosphateBond: 'error',
   rnaPresetInvalidSugarBaseConnectionAttachmentPoints: 'error',
   rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints: 'error',
   notUniquePresetCode: 'error',

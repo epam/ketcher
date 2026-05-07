@@ -338,6 +338,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       Boolean(errorValue),
     );
   };
+  // Keep component tabs red only while the missing-components condition still
+  // applies; marking the required components clears the visual state immediately.
   const hasComponentsError =
     Boolean(wizardState.preset.errors.components) &&
     !hasRequiredRnaPresetComponents(wizardState);

@@ -92,9 +92,7 @@ const getInitialWizardState = (
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
-const fieldsWithSubmitValidatedErrors = new Set<WizardFormFieldId>([
-  'aliasBILN',
-]);
+const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
   base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
@@ -150,7 +148,7 @@ const wizardReducer = (
         values,
         errors: {
           ...state.errors,
-          ...(fieldsWithSubmitValidatedErrors.has(fieldId)
+          ...(fieldsValidatedOnSubmit.has(fieldId)
             ? {}
             : { [fieldId]: undefined }),
         },

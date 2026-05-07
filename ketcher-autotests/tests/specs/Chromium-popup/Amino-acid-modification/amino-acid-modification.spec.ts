@@ -551,7 +551,9 @@ test.describe('Allow modifying amino acids on canvas', () => {
      *
      * Version 3.15
      */
-    const sequenceItemLocator = page.locator("text[data-sgroup-name='SerPO3']");
+    const sequenceItemLocator = getAbbreviationLocator(page, {
+      name: 'SerPO3',
+    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

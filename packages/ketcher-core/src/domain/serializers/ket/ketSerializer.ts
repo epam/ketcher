@@ -1041,17 +1041,19 @@ export class KetSerializer implements Serializer<Struct> {
         pos: [rxnArrow.startPosition, rxnArrow.endPosition],
         height: rxnArrow.height,
         initiallySelected: rxnArrow.initiallySelected,
+        arrowId: rxnArrow.arrowId,
       });
 
-      struct.rxnArrows.add(arrow);
+      struct.addRxnArrow(arrow);
     });
 
     drawingEntitiesManager.multitailArrows.forEach((multitailArrow) => {
       const arrow = MicromoleculeMultitailArrow.fromKetNode(
         multitailArrow.toKetNode(),
       );
+      arrow.arrowId = multitailArrow.arrowId;
 
-      struct.multitailArrows.add(arrow);
+      struct.addMultitailArrow(arrow);
     });
 
     drawingEntitiesManager.rxnPluses.forEach((rxnPlus) => {

@@ -57,6 +57,7 @@ import ElementsGroupIcon from '../../../assets/icons/files/elements-group.svg';
 import EraseIcon from '../../../assets/icons/files/erase.svg';
 import ExtendedTableIcon from '../../../assets/icons/files/extended-table.svg';
 import FileThumbnailIcon from '../../../assets/icons/files/file-thumbnail.svg';
+import FilterIcon from '../../../assets/icons/files/filter.svg';
 import GenericGroupsIcon from '../../../assets/icons/files/generic-groups.svg';
 import HandIcon from '../../../assets/icons/files/hand.svg';
 import CompressedHandIcon from '../../../assets/icons/files/compressed-hand.svg';
@@ -347,6 +348,7 @@ export const iconNameToIcon = {
   'extended-table': ExtendedTableIcon,
   erase: EraseIcon,
   'file-thumbnail': FileThumbnailIcon,
+  filter: FilterIcon,
   'fullscreen-enter': FullscreenEnterIcon,
   'fullscreen-exit': FullscreenExitIcon,
   'generic-groups': GenericGroupsIcon,

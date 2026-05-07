@@ -46,7 +46,7 @@ export function fromAtomAddition(restruct, pos, atom) {
   const aid = (
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
   ).data.aid;
-  action.addOp(new CalcImplicitH([aid]).perform(restruct));
+  action.addOp(new CalcImplicitH([aid as number]).perform(restruct));
 
   return action;
 }

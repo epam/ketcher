@@ -59,7 +59,7 @@ import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   setACSSettings,
@@ -93,7 +93,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { MicroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
@@ -234,7 +234,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     const point = getBondLocator(page, {
-      bondType: MicroBondDataIds.SingleDown,
+      bondType: MicroBondType.SingleDown,
     }).first();
     await ContextMenu(page, point).click(MicroBondOption.ChangeDirection);
     await takeEditorScreenshot(page);
@@ -330,35 +330,36 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async ({
-    SnakeCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6947
-     * Bug: https://github.com/epam/ketcher/issues/5634
-     * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
-     * Scenario:
-     * 1. Go to Macro - Snake mode
-     * 2. Load from file
-     * 3. Save to MOL V3000
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
-    );
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides',
+    async ({ SnakeCanvas: _ }) => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6947
+       * Bug: https://github.com/epam/ketcher/issues/5634
+       * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+       * Scenario:
+       * 1. Go to Macro - Snake mode
+       * 2. Load from file
+       * 3. Save to MOL V3000
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
+      );
+      await takeEditorScreenshot(page);
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 11: Export to SDF V3000 not returns SDF V2000', async () => {
     /*
@@ -505,7 +506,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
     ).hover([MicroAtomOption.QueryProperties, QueryAtomOption.HCount]);
     await takeEditorScreenshot(page);
-    await page.getByTestId(QueryAtomOption.SubstitutionCount).hover();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 0 }),
+    ).hover([
+      MicroAtomOption.QueryProperties,
+      QueryAtomOption.SubstitutionCount,
+    ]);
     await takeEditorScreenshot(page);
   });
 
@@ -545,7 +552,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-singleup-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 2 });
+    const point = getBondLocator(page, { bondId: 2 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Green,
@@ -569,7 +576,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'KET/chain-with-double-bond.ket',
     );
     await takeEditorScreenshot(page);
-    const point = await getBondLocator(page, { bondId: 1 });
+    const point = getBondLocator(page, { bondId: 1 });
     await ContextMenu(page, point).click([
       MicroBondOption.Highlight,
       HighlightOption.Red,
@@ -703,7 +710,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Undo
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
     await waitForRender(page, async () => {

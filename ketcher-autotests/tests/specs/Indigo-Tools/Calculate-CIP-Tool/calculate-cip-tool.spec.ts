@@ -26,8 +26,8 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -373,7 +373,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUp);
     await getBondLocator(page, { bondId: 3 }).click({ force: true });
     await takeEditorScreenshot(page);
   });
@@ -970,7 +970,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondMonomerPointToMoleculeAtom(
       page,
       getMonomerLocator(page, Peptide.A).first(),

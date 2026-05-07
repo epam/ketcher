@@ -47,8 +47,9 @@ export const getSvgFromDrawnStructures = (
     if (el.hasAttribute('opacity')) el.removeAttribute('opacity');
   });
   svgInnerHTML = wrapper.innerHTML;
-  // remove "cursor: pointer" style
-  svgInnerHTML = svgInnerHTML?.replaceAll('cursor: pointer;', '');
+  // remove "cursor: pointer" style only from elements where it appears standalone,
+  // preserving other style properties on bond path elements (stroke, fill, stroke-width, etc.)
+  svgInnerHTML = svgInnerHTML?.replace(/\bcursor:\s*pointer;\s*/g, '');
 
   const drawStructureClientRect = canvas
     ?.getElementsByClassName('drawn-structures')[0]

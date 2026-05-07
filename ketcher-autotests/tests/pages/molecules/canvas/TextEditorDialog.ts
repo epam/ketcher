@@ -2,7 +2,10 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common';
 import { LeftToolbar } from '../LeftToolbar';
-import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
+import {
+  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
+} from '@utils/clicks';
 
 type FontOptions = {
   isBold?: boolean;
@@ -138,7 +141,7 @@ export const TextEditorDialog = (page: Page) => {
 
 export async function addTextBoxToCanvas(page: Page) {
   await LeftToolbar(page).text();
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await TextEditorDialog(page).clickTextEditor();
 }
 

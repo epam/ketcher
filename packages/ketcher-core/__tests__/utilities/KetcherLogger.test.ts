@@ -143,7 +143,7 @@ describe('KetcherLogger', () => {
         enabled: true,
         level: LogLevel.LOG,
         showTrace: true,
-      } as any);
+      } as { enabled: boolean; level: LogLevel; showTrace: boolean });
     });
 
     it('log() uses console.trace when showTrace is true', () => {

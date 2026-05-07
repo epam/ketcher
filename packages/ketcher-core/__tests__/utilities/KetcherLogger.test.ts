@@ -121,9 +121,9 @@ describe('KetcherLogger', () => {
       setLogging({ enabled: false, level: LogLevel.LOG });
     });
 
-    it('error() is suppressed', () => {
+    it('error() still outputs to console.error', () => {
       KetcherLogger.error('err');
-      expect(errorSpy).not.toHaveBeenCalled();
+      expect(errorSpy).toHaveBeenCalledTimes(1);
     });
 
     it('warn() is suppressed', () => {

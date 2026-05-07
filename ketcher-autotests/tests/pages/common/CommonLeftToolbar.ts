@@ -90,6 +90,21 @@ export const CommonLeftToolbar = (page: Page) => {
     },
 
     async bondTool(bondType: MacroBondType | MicroBondType) {
+      if (
+        (await this.isBondToolActive()) &&
+        (await this.isBondToolSelected(bondType))
+      ) {
+        return;
+      }
+
+      if (
+        !(await this.isBondToolActive()) &&
+        (await this.isBondToolSelected(bondType))
+      ) {
+        await locators.bondSelectionDropdownButton.click({ force: true });
+        return;
+      }
+
       let attempts = 0;
       const maxAttempts = 5;
       const bondTypeButton = page
@@ -107,6 +122,24 @@ export const CommonLeftToolbar = (page: Page) => {
           console.warn('Unable to click on the bond type button, retrying...');
         }
       }
+    },
+
+    async isBondToolActive() {
+      if (!(await locators.bondSelectionDropdownButton.isVisible())) {
+        return false;
+      }
+
+      return (
+        (await locators.bondSelectionDropdownButton.getAttribute(
+          'data-is-selected',
+        )) === 'true'
+      );
+    },
+
+    async isBondToolSelected(bondType: MacroBondType | MicroBondType) {
+      return locators.bondSelectionDropdownButton
+        .getByTestId(bondType)
+        .isVisible();
     },
   };
 };

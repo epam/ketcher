@@ -774,6 +774,24 @@ const MonomerCreationWizard = () => {
     [],
   );
   const isRnaPresetType = type === 'rnaPreset';
+  const rnaPresetComponentStructures = useMemo(
+    () => ({
+      base: {
+        structure: rnaPresetWizardState.base.structure,
+      },
+      sugar: {
+        structure: rnaPresetWizardState.sugar.structure,
+      },
+      phosphate: {
+        structure: rnaPresetWizardState.phosphate.structure,
+      },
+    }),
+    [
+      rnaPresetWizardState.base.structure,
+      rnaPresetWizardState.phosphate.structure,
+      rnaPresetWizardState.sugar.structure,
+    ],
+  );
   const notifications = isRnaPresetType
     ? new Map([
         ...(rnaPresetWizardState.preset.notifications || []),
@@ -1012,7 +1030,7 @@ const MonomerCreationWizard = () => {
 
     const { problematicAtomIds } = getRnaPresetStructureValidationResult(
       editor.struct(),
-      rnaPresetWizardState,
+      rnaPresetComponentStructures,
     );
 
     editor.setProblematicAtoms(problematicAtomIds);
@@ -1023,7 +1041,7 @@ const MonomerCreationWizard = () => {
     editor,
     hasActiveRnaPresetAtomValidationErrors,
     isRnaPresetType,
-    rnaPresetWizardState,
+    rnaPresetComponentStructures,
   ]);
 
   useEffect(() => {
@@ -1213,7 +1231,10 @@ const MonomerCreationWizard = () => {
     >();
     const wizardStruct = editor.struct();
     const { issues: structureIssues, problematicAtomIds } =
-      getRnaPresetStructureValidationResult(wizardStruct, rnaPresetWizardState);
+      getRnaPresetStructureValidationResult(
+        wizardStruct,
+        rnaPresetComponentStructures,
+      );
 
     if (structureIssues.length > 0) {
       needSaveMonomers = false;

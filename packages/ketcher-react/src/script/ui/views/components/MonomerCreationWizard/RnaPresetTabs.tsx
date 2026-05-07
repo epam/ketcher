@@ -43,6 +43,7 @@ import {
   getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
+import { hasRequiredRnaPresetComponents } from './RnaPresetStructureValidation';
 
 interface IRnaPresetTabsProps {
   wizardState: RnaPresetWizardState;
@@ -337,13 +338,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       Boolean(errorValue),
     );
   };
-  const hasRequiredComponents = Boolean(
-    wizardState.sugar.structure?.atoms?.length &&
-      (wizardState.base.structure?.atoms?.length ||
-        wizardState.phosphate.structure?.atoms?.length),
-  );
   const hasComponentsError =
-    Boolean(wizardState.preset.errors.components) && !hasRequiredComponents;
+    Boolean(wizardState.preset.errors.components) &&
+    !hasRequiredRnaPresetComponents(wizardState);
 
   return (
     <div>

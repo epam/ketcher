@@ -61,6 +61,16 @@ export const getRnaPresetComponentKeysToSave = (
   );
 };
 
+export const hasRequiredRnaPresetComponents = (
+  componentStructures: RnaPresetComponentStructures,
+) => {
+  return (
+    hasComponentStructure(componentStructures.sugar.structure) &&
+    (hasComponentStructure(componentStructures.base.structure) ||
+      hasComponentStructure(componentStructures.phosphate.structure))
+  );
+};
+
 const hasBondBetweenComponents = (
   bond: Pick<Bond, 'begin' | 'end'>,
   firstComponentAtomIds: number[],
@@ -149,7 +159,6 @@ export const getRnaPresetStructureValidationResult = (
   const sugarAtomIds = componentStructures.sugar.structure?.atoms || [];
   const baseAtomIds = componentStructures.base.structure?.atoms || [];
   const phosphateAtomIds = componentStructures.phosphate.structure?.atoms || [];
-  const hasSugar = hasComponentStructure(componentStructures.sugar.structure);
   const hasBase = hasComponentStructure(componentStructures.base.structure);
   const hasPhosphate = hasComponentStructure(
     componentStructures.phosphate.structure,
@@ -192,7 +201,7 @@ export const getRnaPresetStructureValidationResult = (
     issues.push('rnaPresetAtomsOutsideComponents');
   }
 
-  if (!hasSugar || (!hasBase && !hasPhosphate)) {
+  if (!hasRequiredRnaPresetComponents(componentStructures)) {
     issues.push('rnaPresetMissingComponents');
   }
 

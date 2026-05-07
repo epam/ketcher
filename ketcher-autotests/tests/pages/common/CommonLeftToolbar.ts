@@ -3,8 +3,8 @@ import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
 import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '../constants/bondSelectionTool/Constants';
 
 type LeftToolbarLocators = {
@@ -89,7 +89,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async bondTool(bondType: MacroBondType | MicroBondType) {
+    async bondTool(bondType: MacroBondTool | MicroBondTool) {
       if (
         (await this.isBondToolActive()) &&
         (await this.isBondToolSelected(bondType))
@@ -104,7 +104,6 @@ export const CommonLeftToolbar = (page: Page) => {
         await locators.bondSelectionDropdownButton.click({ force: true });
         return;
       }
-
 
       let attempts = 0;
       const maxAttempts = 5;
@@ -137,7 +136,7 @@ export const CommonLeftToolbar = (page: Page) => {
       );
     },
 
-    async isBondToolSelected(bondType: MacroBondType | MicroBondType) {
+    async isBondToolSelected(bondType: MacroBondTool | MicroBondTool) {
       return locators.bondSelectionDropdownButton
         .getByTestId(bondType)
         .isVisible();

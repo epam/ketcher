@@ -89,7 +89,7 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
-    async bondTool(bondType: MacroBondType | MicroBondType) {
+    async bondTool(bondType: MacroBondTool | MicroBondTool) {
       if (
         (await this.isBondToolActive()) &&
         (await this.isBondToolSelected(bondType))
@@ -136,7 +136,7 @@ export const CommonLeftToolbar = (page: Page) => {
       );
     },
 
-    async isBondToolSelected(bondType: MacroBondType | MicroBondType) {
+    async isBondToolSelected(bondType: MacroBondTool | MicroBondTool) {
       return locators.bondSelectionDropdownButton
         .getByTestId(bondType)
         .isVisible();

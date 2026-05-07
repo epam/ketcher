@@ -946,6 +946,42 @@ const MonomerCreationWizard = () => {
     editor?.setMonomerCreationSelectedType?.(values.type);
   }, [editor, values.type]);
 
+  useEffect(() => {
+    const initialValues =
+      editor?.monomerCreationState?.editInstanceInitialValues;
+
+    if (!initialValues) {
+      return;
+    }
+
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'type',
+      value: initialValues.type,
+    });
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'symbol',
+      value: initialValues.symbol,
+    });
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'name',
+      value: initialValues.name,
+    });
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'naturalAnalogue',
+      value: initialValues.naturalAnalogue,
+    });
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'aliasHELM',
+      value: initialValues.aliasHELM,
+    });
+    setModificationTypes([]);
+  }, [editor?.monomerCreationState?.editInstanceInitialValues]);
+
   const monomerTypeSelectOptions = useMemo(
     () =>
       MonomerTypeSelectConfig.map((option) => ({

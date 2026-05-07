@@ -38,10 +38,12 @@ export type RnaPresetComponentStructures = {
   phosphate: Pick<RnaPresetWizardState['phosphate'], 'structure'>;
 };
 
-const SINGLE_BOND_TYPE = 1;
-const BOND_STEREO_NONE = 0;
-const BOND_STEREO_UP = 1;
-const BOND_STEREO_DOWN = 6;
+// Numeric values mirror ketcher-core Bond.PATTERN constants without adding a
+// runtime ketcher-core import to Jest-tested React modules.
+export const KETCHER_SINGLE_BOND_TYPE = 1;
+export const KETCHER_BOND_STEREO_NONE = 0;
+export const KETCHER_BOND_STEREO_UP = 1;
+export const KETCHER_BOND_STEREO_DOWN = 6;
 
 const hasComponentStructure = (
   structure?: RnaPresetWizardState['base']['structure'],
@@ -72,16 +74,20 @@ const hasBondBetweenComponents = (
   );
 };
 
+/**
+ * RNA preset component connections allow only a single bond with none, up, or
+ * down stereo, matching Ketcher's attachment-point bond rules.
+ */
 const isValidConnectionBond = (
   bond: Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
 ) => {
   const isSingleBond =
-    bond.type === undefined || bond.type === SINGLE_BOND_TYPE;
+    bond.type === undefined || bond.type === KETCHER_SINGLE_BOND_TYPE;
   const validStereoTypes = new Set([
     undefined,
-    BOND_STEREO_NONE,
-    BOND_STEREO_UP,
-    BOND_STEREO_DOWN,
+    KETCHER_BOND_STEREO_NONE,
+    KETCHER_BOND_STEREO_UP,
+    KETCHER_BOND_STEREO_DOWN,
   ]);
 
   return isSingleBond && validStereoTypes.has(bond.stereo);

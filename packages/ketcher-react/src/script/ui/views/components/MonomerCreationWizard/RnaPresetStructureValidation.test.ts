@@ -5,6 +5,8 @@ import {
   getRnaPresetComponentKeysToSave,
   getRnaPresetStructureValidationResult,
   isValidRnaPresetStructure,
+  KETCHER_BOND_STEREO_NONE,
+  KETCHER_SINGLE_BOND_TYPE,
   RnaPresetComponentStructures,
   RnaPresetValidationStruct,
 } from './RnaPresetStructureValidation';
@@ -18,9 +20,6 @@ const createWizardStruct = (
   atoms: new Map(atomIds.map((atomId) => [atomId, {}])),
   bonds: new Map(bonds.map((bond, bondId) => [bondId, bond])),
 });
-
-const DOUBLE_BOND_TYPE = 2;
-const BOND_STEREO_NONE = 0;
 
 describe('getRnaPresetStructureValidationResult', () => {
   it('returns an atom ownership error and highlights atoms outside components', () => {
@@ -95,8 +94,8 @@ describe('getRnaPresetStructureValidationResult', () => {
             {
               begin: 0,
               end: 1,
-              type: DOUBLE_BOND_TYPE,
-              stereo: BOND_STEREO_NONE,
+              type: KETCHER_SINGLE_BOND_TYPE + 1,
+              stereo: KETCHER_BOND_STEREO_NONE,
             },
           ],
         ),

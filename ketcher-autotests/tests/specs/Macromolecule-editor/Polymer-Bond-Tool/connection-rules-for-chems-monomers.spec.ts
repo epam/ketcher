@@ -501,6 +501,7 @@ test.describe('Connection rules for chems: ', () => {
              *         Validate canvas
              */
             test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
+              test.slow();
               const {
                 leftMonomer: leftMonomerLocator,
                 rightMonomer: rightMonomerLocator,

@@ -1003,7 +1003,7 @@ const MonomerCreationWizard = () => {
 
   useEffect(() => {
     if (
-      !editor.monomerCreationState ||
+      !editor?.render?.monomerCreationState ||
       !isRnaPresetType ||
       !hasActiveRnaPresetAtomValidationErrors
     ) {

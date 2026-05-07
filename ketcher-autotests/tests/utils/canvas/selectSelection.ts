@@ -1,9 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import {
-  clickInTheMiddleOfTheScreen,
-  clickInTheMiddleOfTheCanvas,
-} from '@utils/clicks';
+import { clickInTheMiddleOfTheCanvas } from '@utils/clicks';
 import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
@@ -26,7 +23,7 @@ export async function cutAndPaste(page: Page) {
 export async function copyAndPaste(page: Page) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);

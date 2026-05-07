@@ -72,18 +72,25 @@ const PresetPreview = ({ className }: Props) => {
   // Resolve the phosphate-position icon (matches the icon used in the RNA
   // Builder's phosphate position selector). `left` => 5'-end (icon with the
   // colored phosphate on the left), `right` => 3'-end.
-  const phosphatePositionIconName =
-    preview.phosphatePosition === 'left'
-      ? 'preset-left-phosphate'
-      : preview.phosphatePosition === 'right'
-      ? 'preset-right-phosphate'
-      : undefined;
-  const phosphatePositionTooltip =
-    preview.phosphatePosition === 'left'
-      ? "Phosphate on the left (5')"
-      : preview.phosphatePosition === 'right'
-      ? "Phosphate on the right (3')"
-      : undefined;
+  let phosphatePositionIconName: IconName | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionIconName = 'preset-left-phosphate';
+  } else {
+    phosphatePositionIconName =
+      preview.phosphatePosition === 'right'
+        ? 'preset-right-phosphate'
+        : undefined;
+  }
+
+  let phosphatePositionTooltip: string | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionTooltip = "Phosphate on the left (5')";
+  } else {
+    phosphatePositionTooltip =
+      preview.phosphatePosition === 'right'
+        ? "Phosphate on the right (3')"
+        : undefined;
+  }
   const getMonomerNameText = (monomer: MonomerItemType) =>
     `(${monomer.props.Name})`;
 

@@ -1072,7 +1072,7 @@ export class CoreEditor {
     } else if (this.drawingEntitiesManager.hasMonomers) {
       if (
         this.nextAutochainPosition &&
-        !(this.mode.modeName === 'snake-layout-mode')
+        this.mode.modeName !== 'snake-layout-mode'
       ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {

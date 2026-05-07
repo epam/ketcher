@@ -294,8 +294,7 @@ function ActionMenu({
             })}
             onClick={handleMenuItemClick}
             onKeyDown={handleMenuItemKeyDown}
-            role="menuitem"
-            tabIndex={0}
+            role="none"
           >
             {showMenuOrButton(action, item, props.status[itemKey], props)}
             {isMenuItemWithMenu(item) &&

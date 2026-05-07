@@ -588,7 +588,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
     let line = ctabLines[0].trim();
     if (line === '$END MOL') {
-      ctabLines = ctabLines.slice(1);
       break;
     }
     if (line !== '$RGP') throw new Error('RGFile format invalid');

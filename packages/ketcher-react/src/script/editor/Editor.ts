@@ -1449,8 +1449,10 @@ class Editor implements KetcherEditor {
 
   finishNewMonomersCreation(
     monomersData,
-    rnaPresetName?: string,
-    phosphatePosition?: '3' | '5',
+    {
+      rnaPresetName,
+      phosphatePosition,
+    }: { rnaPresetName?: string; phosphatePosition?: '3' | '5' } = {},
   ) {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);

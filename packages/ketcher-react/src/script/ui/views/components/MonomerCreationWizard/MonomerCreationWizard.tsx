@@ -1681,11 +1681,10 @@ const MonomerCreationWizard = () => {
         });
       });
 
-      editor.finishNewMonomersCreation(
-        monomersData,
-        rnaPresetWizardState.preset.name,
+      editor.finishNewMonomersCreation(monomersData, {
+        rnaPresetName: rnaPresetWizardState.preset.name,
         phosphatePosition,
-      );
+      });
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();

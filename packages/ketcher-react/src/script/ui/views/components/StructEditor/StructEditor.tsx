@@ -113,6 +113,30 @@ function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
   });
 }
 
+function shouldUpdateEditor(
+  editor: Editor | undefined,
+  props: StructEditorProps,
+  nextProps: StructEditorProps,
+) {
+  if (
+    props.struct !== nextProps.struct ||
+    props.tool !== nextProps.tool ||
+    props.toolOpts !== nextProps.toolOpts ||
+    props.options !== nextProps.options ||
+    props.serverSettings !== nextProps.serverSettings
+  ) {
+    return true;
+  }
+
+  return editor
+    ? Object.keys(editor.event).some((name) => {
+        const eventName = `on${upperFirst(name)}`;
+
+        return props[eventName] !== nextProps[eventName];
+      })
+    : false;
+}
+
 class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editor!: Editor;
   editorRef: RefObject<HTMLDivElement | null>;
@@ -191,14 +215,15 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     nextState: StructEditorState,
   ) {
     return (
+      shouldUpdateEditor(this.editor, this.props, nextProps) ||
       this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor ||
       nextState.tooltip !== this.state.tooltip
     );
   }
 
-  UNSAFE_componentWillReceiveProps(props: StructEditorProps) {
-    setupEditor(this.editor, props, this.props);
+  componentDidUpdate(prevProps: StructEditorProps) {
+    setupEditor(this.editor, this.props, prevProps);
   }
 
   componentDidMount() {
@@ -285,7 +310,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'move': {
+        case 'move':
+        case 'mouseover': {
           this.editorRef.current?.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
@@ -302,13 +328,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'mouseover': {
-          this.editorRef.current?.classList.add(classes.enableCursor);
-          this.setState({
-            enableCursor: true,
-          });
-          break;
-        }
         default:
           break;
       }

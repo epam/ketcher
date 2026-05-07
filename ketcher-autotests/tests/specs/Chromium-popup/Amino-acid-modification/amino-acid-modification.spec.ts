@@ -9,6 +9,7 @@ import {
   MolFileFormat,
   takeElementScreenshot,
   pasteFromClipboardAndOpenAsNewProjectMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils';
 import {
   FileType,
@@ -29,12 +30,13 @@ import {
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 
 const applyAminoAcidModifications = async (page: Page) => {
-  const monomerA = getMonomerLocator(page, { monomerAlias: 'A' });
-  const monomerC = getMonomerLocator(page, { monomerAlias: 'C' });
-  const monomerR = getMonomerLocator(page, { monomerAlias: 'R' });
-  const monomerS = getMonomerLocator(page, { monomerAlias: 'S' });
+  const monomerA = getMonomerLocator(page, Peptide.A);
+  const monomerS = getMonomerLocator(page, Peptide.S);
+  const monomerR = getMonomerLocator(page, Peptide.R);
+  const monomerC = getMonomerLocator(page, Peptide.C);
 
   await ContextMenu(page, monomerA).click([
     MonomerOption.ModifyAminoAcids,
@@ -74,17 +76,19 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * The structure should be correctly displayed after saving and opening the file.
      * Scenario:
      * 1. Go to Macro mode - Flex
-     * 2. Paste structure on canvas that contains amino acids with modifications.
+     * 2. Paste structure on canvas that contains amino acids and perform modifications.
      * 3. Save element in KET format.
      * 4. Paste saved structure from clipboard and open as new project.
      * 5. Take screenshot of the structure on canvas and compare with expected result.
      *
      * Version 3.15
      */
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await verifyFileExport(
       page,
       'KET/amino-acids-with-modification-expected.ket',
@@ -117,10 +121,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
      *
      * Version 3.15
      */
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await verifyFileExport(
       page,
       'KET/amino-acids-with-modification-expected.mol',
@@ -154,10 +160,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
      *
      * Version 3.15
      */
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await verifyHELMExport(
       page,
       `PEPTIDE1{[dA].[Ser_PO3H2].[Cit].[meC]}$$$$V2.0`,
@@ -190,10 +198,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
      *
      * Version 3.15
      */
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await verifySVGExport(page);
   });
 
@@ -214,10 +224,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
     const SerPO3Locator = getMonomerLocator(page, { monomerAlias: 'SerPO3' });
     const CitLocator = getMonomerLocator(page, { monomerAlias: 'Cit' });
     const meCLocator = getMonomerLocator(page, { monomerAlias: 'meC' });
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await expect(dALocator).toBeVisible();
     await expect(SerPO3Locator).toBeVisible();
     await expect(CitLocator).toBeVisible();
@@ -248,10 +260,12 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * Version 3.15
      */
     const sequenceItemLocator = getSymbolLocator(page, {}).first();
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-with-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await applyAminoAcidModifications(page);
     await takeElementScreenshot(
       page,
       getMonomerLocator(page, { monomerAlias: 'Cit' }),
@@ -291,10 +305,15 @@ test.describe('Allow modifying amino acids on canvas', () => {
     const SerPO3Locator = getMonomerLocator(page, { monomerAlias: 'SerPO3' });
     const CitLocator = getMonomerLocator(page, { monomerAlias: 'Cit' });
     const meCLocator = getMonomerLocator(page, { monomerAlias: 'meC' });
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acid-invertion-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
+    await ContextMenu(page, getMonomerLocator(page, Peptide.A)).click([
+      MonomerOption.ModifyAminoAcids,
+      ModifyAminoAcidsOption.Inversion,
+    ]);
     await expect(dALocator).toBeVisible();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -338,9 +357,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
     const SerPO3Locator = getMonomerLocator(page, { monomerAlias: 'SerPO3' });
     const CitLocator = getMonomerLocator(page, { monomerAlias: 'Cit' });
     const meCLocator = getMonomerLocator(page, { monomerAlias: 'meC' });
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-for-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
     await ContextMenu(page, monomerA).click([
       MonomerOption.ModifyAminoAcids,
@@ -397,9 +417,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      *
      * Version 3.15
      */
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-for-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
     await applyAminoAcidModifications(page);
     await takeElementScreenshot(
@@ -445,9 +466,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
     const sequenceItemLocator = getAbbreviationLocator(page, {
       name: 'SerPO3',
     });
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-for-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
     await applyAminoAcidModifications(page);
     await takeElementScreenshot(
@@ -489,9 +511,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
     const sequenceItemLocator = getAbbreviationLocator(page, {
       name: 'SerPO3',
     });
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-for-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
     await applyAminoAcidModifications(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -508,13 +531,9 @@ test.describe('Allow modifying amino acids on canvas', () => {
       padding: 150,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerAlias: 'Cit' }),
-      {
-        padding: 150,
-      },
-    );
+    await takeElementScreenshot(page, getMonomerLocator(page, Peptide.dA), {
+      padding: 180,
+    });
   });
   test('Case 12: Save/load modified amino acid structures from micromolecules mode MOL format.', async () => {
     /*
@@ -533,9 +552,10 @@ test.describe('Allow modifying amino acids on canvas', () => {
      * Version 3.15
      */
     const sequenceItemLocator = page.locator("text[data-sgroup-name='SerPO3']");
-    await openFileAndAddToCanvasAsNewProject(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'KET/amino-acids-for-modification.ket',
+      MacroFileType.HELM,
+      'PEPTIDE1{A.S.R.C}$$$$V2.0',
     );
     await applyAminoAcidModifications(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -553,12 +573,8 @@ test.describe('Allow modifying amino acids on canvas', () => {
       padding: 150,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await takeElementScreenshot(
-      page,
-      getMonomerLocator(page, { monomerAlias: 'Cit' }),
-      {
-        padding: 150,
-      },
-    );
+    await takeElementScreenshot(page, getMonomerLocator(page, Peptide.dA), {
+      padding: 180,
+    });
   });
 });

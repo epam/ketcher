@@ -4,20 +4,49 @@ jest.mock(
   'ketcher-core',
   () => ({
     SGroup: {
-      getAtoms: jest.fn(() => [1, 2]),
-      getBonds: jest.fn(() => [3]),
+      getAtoms: jest.fn((_, sgroup) => sgroup.atoms),
+      getBonds: jest.fn((struct, sgroup) => {
+        const bonds: number[] = [];
+        struct.bonds.forEach((bond, bondId) => {
+          if (
+            sgroup.atoms.includes(bond.begin) &&
+            sgroup.atoms.includes(bond.end)
+          ) {
+            bonds.push(bondId);
+          }
+        });
+
+        return bonds;
+      }),
     },
   }),
   { virtual: true },
 );
 
+const getSGroupMock = () => jest.requireMock('ketcher-core').SGroup;
+
 describe('select helpers', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('getNewSelectedItems', () => {
     it('includes atoms and bonds from selected superatoms without labels', () => {
       const sgroup = {
         isSuperatomWithoutLabel: true,
+        atoms: [1, 2],
       };
-      const struct = {};
+      const struct = {
+        atoms: new Map([
+          [1, {}],
+          [2, {}],
+          [5, {}],
+        ]),
+        bonds: new Map([
+          [3, { begin: 1, end: 2 }],
+          [4, { begin: 2, end: 5 }],
+        ]),
+      };
       const editor = {
         render: {
           ctab: {
@@ -31,9 +60,69 @@ describe('select helpers', () => {
         atoms: [1, 2],
         bonds: [3],
       });
-      const { SGroup } = jest.requireMock('ketcher-core');
+      const SGroup = getSGroupMock();
       expect(SGroup.getAtoms).toHaveBeenCalledWith(struct, sgroup);
       expect(SGroup.getBonds).toHaveBeenCalledWith(struct, sgroup);
+    });
+
+    it('combines atoms and bonds from multiple selected S-groups', () => {
+      const firstSgroup = {
+        isSuperatomWithoutLabel: true,
+        atoms: [1, 2],
+      };
+      const secondSgroup = {
+        isSuperatomWithoutLabel: false,
+        atoms: [5, 6],
+      };
+      const struct = {
+        atoms: new Map([
+          [1, {}],
+          [2, {}],
+          [5, {}],
+          [6, {}],
+        ]),
+        bonds: new Map([
+          [3, { begin: 1, end: 2 }],
+          [7, { begin: 5, end: 6 }],
+        ]),
+      };
+      const editor = {
+        render: {
+          ctab: {
+            sgroups: new Map([
+              [4, { item: firstSgroup }],
+              [8, { item: secondSgroup }],
+            ]),
+          },
+        },
+        struct: () => struct,
+      };
+
+      expect(getNewSelectedItems(editor as never, [4, 8])).toEqual({
+        atoms: [1, 2, 5, 6],
+        bonds: [3, 7],
+      });
+    });
+
+    it('returns empty atoms and bonds when no S-groups are selected', () => {
+      const editor = {
+        render: {
+          ctab: {
+            sgroups: new Map(),
+          },
+        },
+        struct: () => ({
+          atoms: new Map(),
+          bonds: new Map(),
+        }),
+      };
+
+      expect(getNewSelectedItems(editor as never, [])).toEqual({
+        atoms: [],
+        bonds: [],
+      });
+      expect(getSGroupMock().getAtoms).not.toHaveBeenCalled();
+      expect(getSGroupMock().getBonds).not.toHaveBeenCalled();
     });
   });
 });

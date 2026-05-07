@@ -5,19 +5,7 @@ jest.mock(
   () => ({
     SGroup: {
       getAtoms: jest.fn((_, sgroup) => sgroup.atoms),
-      getBonds: jest.fn((struct, sgroup) => {
-        const bonds: number[] = [];
-        struct.bonds.forEach((bond, bondId) => {
-          if (
-            sgroup.atoms.includes(bond.begin) &&
-            sgroup.atoms.includes(bond.end)
-          ) {
-            bonds.push(bondId);
-          }
-        });
-
-        return bonds;
-      }),
+      getBonds: jest.fn((_, sgroup) => sgroup.bonds),
     },
   }),
   { virtual: true },
@@ -35,6 +23,7 @@ describe('select helpers', () => {
       const sgroup = {
         isSuperatomWithoutLabel: true,
         atoms: [1, 2],
+        bonds: [3],
       };
       const struct = {
         atoms: new Map([
@@ -65,14 +54,16 @@ describe('select helpers', () => {
       expect(SGroup.getBonds).toHaveBeenCalledWith(struct, sgroup);
     });
 
-    it('combines atoms and bonds from multiple selected S-groups', () => {
+    it('combines atoms and bonds from selected monomer and labeled S-groups', () => {
       const firstSgroup = {
         isSuperatomWithoutLabel: true,
         atoms: [1, 2],
+        bonds: [3],
       };
       const secondSgroup = {
         isSuperatomWithoutLabel: false,
         atoms: [5, 6],
+        bonds: [7],
       };
       const struct = {
         atoms: new Map([

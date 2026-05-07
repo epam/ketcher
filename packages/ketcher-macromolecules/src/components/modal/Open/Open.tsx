@@ -29,6 +29,7 @@ import {
   ModeTypes,
   normalizeError,
   provideEditorInstance,
+  Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -144,6 +145,27 @@ const peptideLettersFormatOptions: Array<Option> = [
 
 const inputFormats = macromoleculesFilesInputFormats;
 
+const positionStructureOnNextSequenceLine = (
+  editor: CoreEditor,
+  drawingEntitiesManager: ReturnType<
+    KetSerializer['deserializeToDrawingEntities']
+  >['drawingEntitiesManager'],
+) => {
+  const newNodePosition = editor.mode.getNewNodePosition();
+  const firstEntityPosition =
+    drawingEntitiesManager.allEntities[0]?.[1].position;
+
+  if (!firstEntityPosition) {
+    return;
+  }
+
+  const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+
+  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
+    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
+  });
+};
+
 const addToCanvas = ({
   ketSerializer,
   editor,
@@ -161,15 +183,24 @@ const addToCanvas = ({
     throw new Error('Error during parsing file');
   }
 
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
+
+  if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
+    positionStructureOnNextSequenceLine(
+      editor,
+      deserialisedKet.drawingEntitiesManager,
+    );
+  } else {
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  }
+
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
   const editorHistory = EditorHistory.getInstance(editor);
-  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
-  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
-  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode) {
     if (editor.drawingEntitiesManager.hasAntisenseChains) {

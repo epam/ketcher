@@ -6,16 +6,24 @@ export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
 export const IDT_ALIAS_SLASH_ERROR_MESSAGE =
   'The slashes (`/`) can only be the first and last character of an IDT alias.';
 
+export const IDT_ALIAS_LENGTH_MAX = 12;
+
+export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `IDT alias length must not exceed ${IDT_ALIAS_LENGTH_MAX} characters (including slashes).`;
+
 const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 
 /**
  * Validates that slashes in an IDT alias only appear as the first
- * and/or last character. Slashes in the middle are not allowed.
  */
 export function isValidIdtAlias(alias: string): boolean {
   if (!alias) return true;
   const inner = alias.slice(1, -1);
   return !inner.includes('/');
+}
+
+export function isValidIdtAliasLength(alias: string): boolean {
+  if (!alias) return true;
+  return alias.length <= IDT_ALIAS_LENGTH_MAX;
 }
 
 export function isValidHelmAlias(alias: string) {

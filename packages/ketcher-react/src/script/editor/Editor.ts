@@ -1676,7 +1676,6 @@ class Editor implements KetcherEditor {
 
       // Merge wizard struct (with SGroups) into the canvas molecule.
       const atomIdMap = new Map<number, number>();
-      const bondIdMap = new Map<number, number>();
       structFromWizard.mergeInto(
         this.struct(),
         undefined,
@@ -1689,7 +1688,7 @@ class Editor implements KetcherEditor {
         undefined,
         undefined,
         undefined,
-        bondIdMap,
+        undefined,
         true,
       );
 
@@ -1762,68 +1761,47 @@ class Editor implements KetcherEditor {
       // The CanvasLoad swaps the canvas from the current (post-mutation)
       // state to a clean clone. Undo reverses the swap, restoring the
       // pre-mutation originalStruct.
-      // cloneAidMap tracks: merged-struct atom ID → clone atom ID (clone
-      // uses cp.atoms.add() which assigns fresh sequential IDs).
-      const cloneAidMap = new Map<number, number>();
-      const cloneBidMap = new Map<number, number>();
       this.struct(
         this.struct().clone(
           undefined,
           undefined,
           undefined,
-          cloneAidMap,
           undefined,
           undefined,
           undefined,
           undefined,
           undefined,
-          cloneBidMap,
+          undefined,
+          undefined,
           true,
         ),
       );
 
-      const finalAtomIds = new Set<number>();
-      const finalBondIds = new Set<number>();
+      const createdMonomers = new Set(
+        monomersData.map(({ monomer }) => monomer),
+      );
+      const selectedAtoms = new Set<number>();
+      const selectedBonds = new Set<number>();
+      const finalStruct = this.struct();
 
-      const collectCloneIds = (
-        wizardIds: number[] | undefined,
-        wizardToMergedIdMap: Map<number, number>,
-        mergedToCloneIdMap: Map<number, number>,
-        target: Set<number>,
-      ) => {
-        wizardIds?.forEach((wizardId) => {
-          const mergedId = wizardToMergedIdMap.get(wizardId);
-          if (!isNumber(mergedId)) {
-            return;
-          }
+      finalStruct.sgroups.forEach((sgroup) => {
+        const sgroupMonomer = (sgroup as { monomer?: unknown }).monomer;
+        if (!sgroup.isMonomer || !createdMonomers.has(sgroupMonomer)) {
+          return;
+        }
 
-          const cloneId = mergedToCloneIdMap.get(mergedId);
-          if (isNumber(cloneId)) {
-            target.add(cloneId);
-          }
+        SGroup.getAtoms(finalStruct, sgroup).forEach((atomId) => {
+          selectedAtoms.add(atomId);
         });
-      };
-
-      monomersData.forEach((monomerData) => {
-        collectCloneIds(
-          monomerData.monomerStructureInWizard?.atoms,
-          atomIdMap,
-          cloneAidMap,
-          finalAtomIds,
-        );
-
-        collectCloneIds(
-          monomerData.monomerStructureInWizard?.bonds,
-          bondIdMap,
-          cloneBidMap,
-          finalBondIds,
-        );
+        SGroup.getBonds(finalStruct, sgroup).forEach((bondId) => {
+          selectedBonds.add(bondId);
+        });
       });
 
-      if (finalAtomIds.size > 0 || finalBondIds.size > 0) {
+      if (selectedAtoms.size > 0 || selectedBonds.size > 0) {
         this.selection({
-          atoms: Array.from(finalAtomIds),
-          bonds: Array.from(finalBondIds),
+          atoms: Array.from(selectedAtoms),
+          bonds: Array.from(selectedBonds),
         });
       }
     }, 0);

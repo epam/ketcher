@@ -26,6 +26,12 @@ interface ClosestReferencePosition {
 export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
 
+  private setSelectionPointsVisibility(visible: boolean) {
+    this.selectionPointsSet?.attr({
+      opacity: visible ? 1 : 0,
+    });
+  }
+
   static isSelectable(): boolean {
     return true;
   }
@@ -155,17 +161,22 @@ export class ReImage extends ReObject {
     );
     selectionReferencePositions.forEach(([key, { x, y }]) => {
       const element = paper.circle(x, y, scale).attr({
-        fill: 'none',
+        fill: 'transparent',
+        stroke: '#000',
         'stroke-width': strokeWidth,
+        opacity: 0,
       });
       if (element.node?.setAttribute) {
         element.node.setAttribute('data-testid', `imageResize-${key}`);
+        element.node.setAttribute('data-image-id', imageId);
+        element.node.setAttribute('pointer-events', 'all');
       }
 
       this.selectionPointsSet.push(element);
     });
+    this.setSelectionPointsVisibility(false);
     reStruct.addReObjectPath(
-      LayerMap.selectionPoints,
+      LayerMap.indices,
       this.visel,
       this.selectionPointsSet,
     );
@@ -178,6 +189,7 @@ export class ReImage extends ReObject {
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
+    this.drawSelectionPoints(restruct, restruct.render.paper, renderOptions);
 
     const image = restruct.render.paper.image(
       this.image.bitmap,
@@ -234,11 +246,10 @@ export class ReImage extends ReObject {
   }
 
   makeSelectionPlate(
-    reStruct: ReStruct,
+    _reStruct: ReStruct,
     paper: RaphaelPaper,
     options: RenderOptions,
   ) {
-    this.drawSelectionPoints(reStruct, paper, options);
     return this.drawSelectionLine(paper, options);
   }
 
@@ -250,11 +261,11 @@ export class ReImage extends ReObject {
   }
 
   showPoints() {
-    this.selectionPointsSet?.show();
+    this.setSelectionPointsVisibility(true);
   }
 
   hidePoints() {
-    this.selectionPointsSet?.hide();
+    this.setSelectionPointsVisibility(false);
   }
 
   calculateDistanceToPoint(point: Vec2, renderOptions: RenderOptions): number {

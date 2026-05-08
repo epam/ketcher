@@ -579,12 +579,9 @@ test.describe('Image files', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await takeEditorScreenshot(page);
 
     // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = pngImage.bottomRightResizeHandler;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 500, 500);

@@ -844,9 +844,13 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
    *
    * Version 3.15.0
    */
-  const consoleErrors: string[] = [];
-  page.on('console', (msg) => {
-    if (msg.type() === 'error') consoleErrors.push(msg.text());
+  const IDT_LENGTH_ERROR =
+    'The maximum number of characters of an IDT alias without slashes (/) is 10';
+
+  const consoleErrorEvent = page.waitForEvent('console', {
+    predicate: (msg) =>
+      msg.type() === 'error' && msg.text().includes(IDT_LENGTH_ERROR),
+    timeout: 5000,
   });
 
   const sdfFile =
@@ -854,13 +858,7 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
 
   await updateMonomersLibrary(page, sdfFile);
 
-  expect(
-    consoleErrors.some((e) =>
-      e.includes(
-        'The maximum number of characters of an IDT alias without slashes (/) is 10',
-      ),
-    ),
-  ).toBeTruthy();
+  expect(await consoleErrorEvent).toBeTruthy();
   expect(
     await Library(page).isMonomerExist(Nucleotide._Nucleotide1),
   ).toBeFalsy();

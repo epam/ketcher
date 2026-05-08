@@ -147,8 +147,8 @@ const inputFormats = macromoleculesFilesInputFormats;
 
 const positionStructureOnNextSequenceLine = (
   editor: CoreEditor,
-  drawingEntitiesManager: ReturnType<
-    KetSerializer['deserializeToDrawingEntities']
+  drawingEntitiesManager: NonNullable<
+    ReturnType<KetSerializer['deserializeToDrawingEntities']>
   >['drawingEntitiesManager'],
 ) => {
   const newNodePosition = editor.mode.getNewNodePosition();

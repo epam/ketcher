@@ -148,7 +148,7 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors);
+      const errs = getErrorsObj(errors as FormValidationError[]);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
@@ -173,8 +173,8 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors);
-    onUpdate(instance, valid, errs);
+    const errs = getErrorsObj(errors as FormValidationError[]);
+    onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
   field(name: string, onChange?: (value: unknown) => void, extraName?: string) {
@@ -644,26 +644,20 @@ function propSchema(
   };
 }
 
-function isPlainRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
 function serializeRewrite(
   serializeMap: Record<string, string>,
   instance: unknown,
   schema: FormSchema,
-): Record<string, unknown> {
-  if (!isPlainRecord(instance) || !schema.properties) {
-    const fallback = instance !== undefined ? instance : schema.default;
-    if (isPlainRecord(fallback)) {
-      return { ...fallback };
-    }
-    return {};
+): unknown {
+  const res: Record<string, unknown> = {};
+  if (typeof instance !== 'object' || instance === null || !schema.properties) {
+    return instance !== undefined ? instance : schema.default;
   }
 
-  const res: Record<string, unknown> = {};
+  const instanceObj = instance as Record<string, unknown>;
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instance) res[p] = instance[serializeMap[p]] ?? instance[p];
+    if (p in instanceObj)
+      res[p] = instanceObj[serializeMap[p]] ?? instanceObj[p];
   });
 
   return res;

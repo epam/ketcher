@@ -32,6 +32,7 @@ import { fromPaste } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
+import { KetcherLogger } from 'utilities';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
@@ -82,7 +83,10 @@ function extraBondAction(
   } else {
     const pivotAtom = restruct.molecule.atoms.get(aid);
     if (!pivotAtom) {
-      throw new Error(`Atom ${aid} not found`);
+      KetcherLogger.error(
+        `template.ts::extraBondAction: atom ${aid} not found`,
+      );
+      return { action, aid1: aid };
     }
 
     const operation = new AtomAdd(
@@ -93,7 +97,10 @@ function extraBondAction(
     action.addOp(operation);
     const newAid = operation.data.aid;
     if (typeof newAid !== 'number') {
-      throw new Error('Atom id was not assigned after AtomAdd');
+      KetcherLogger.error(
+        'template.ts::extraBondAction: atom id was not assigned after AtomAdd',
+      );
+      return { action, aid1: aid };
     }
 
     action.addOp(new BondAdd(aid, newAid, { type: 1 }).perform(restruct));

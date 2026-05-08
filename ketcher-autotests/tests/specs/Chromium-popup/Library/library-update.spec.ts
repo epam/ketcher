@@ -847,18 +847,26 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
   const IDT_LENGTH_ERROR =
     'The maximum number of characters of an IDT alias without slashes (/) is 10';
 
-  const consoleErrorEvent = page.waitForEvent('console', {
-    predicate: (msg) =>
-      msg.type() === 'error' && msg.text().includes(IDT_LENGTH_ERROR),
-    timeout: 5000,
-  });
+  // Intercept console.error in the browser synchronously before loading the
+  // invalid monomer, so no timing race with CDP event delivery.
+  await page.evaluate(`
+    window.__ktCapturedErrors = [];
+    const _origError = console.error;
+    console.error = function(...args) {
+      window.__ktCapturedErrors.push(JSON.stringify(args));
+      _origError.apply(console, args);
+    };
+  `);
 
   const sdfFile =
     '\n  -INDIGO-10092516272D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Nucleotide1 10.1462 -10.525 0.0 0 CLASS=RNA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 RNA/_Nucleotide1/_Nucleotide1 NATREPLACE=RNA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 17 16 7 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 15 H -2.598 -0.75 0.0 0\nM  V30 16 H -0.866 -0.75 0.0 0\nM  V30 17 H 0.866 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 14 1 4 15\nM  V30 15 1 6 16\nM  V30 16 1 8 17\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(1 15) XBONDS=(1 14) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(1 16) XBONDS=(1 15) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 6 SUP 6 ATOMS=(1 17) XBONDS=(1 16) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 7 SUP 7 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(6 1 13 14 15 16 12-\nM  V30 ) BRKXYZ=(9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.-\nM  V30 000000 0.000000 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.0000-\nM  V30 00 -0.500000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(9 0.000000 --\nM  V30 0.500000 0.000000 0.433000 0.250000 0.000000 0.000000 0.000000 0.00000-\nM  V30 0) LABEL=_Nucleotide1 CLASS=RNA SAP=(3 2 1 Al) SAP=(3 12 13 Br) SAP=(3-\nM  V30  2 14 Cx) SAP=(3 4 15 Dx) SAP=(3 6 16 Ex) SAP=(3 8 17 Fx) NATREPLACE=R-\nM  V30 NA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\n_Nucleotide1HELM\n\n>  <idtAliases>\nbase=N1234567890\n\n$$$$\n';
 
   await updateMonomersLibrary(page, sdfFile);
 
-  expect(await consoleErrorEvent).toBeTruthy();
+  const capturedErrors = await page.evaluate<string[]>(
+    () => (window as unknown as Record<string, string[]>).__ktCapturedErrors,
+  );
+  expect(capturedErrors.some((e) => e.includes(IDT_LENGTH_ERROR))).toBeTruthy();
   expect(
     await Library(page).isMonomerExist(Nucleotide._Nucleotide1),
   ).toBeFalsy();

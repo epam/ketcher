@@ -649,12 +649,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Configure fragments (Base/Sugar/Phosphate)
 
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
+    // Zoom out to ensure all atoms are within the visible canvas area
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
 
     // --- Base ---
     await presetSection.setupBase({
@@ -673,6 +669,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       atomIds: [8, 19, 20, 21, 22],
       bondIds: [21, 22, 23, 24],
     });
+
+    // Reset zoom to 100% so the screenshot matches the baseline
+    await CommonTopRightToolbar(page).resetZoom();
 
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();

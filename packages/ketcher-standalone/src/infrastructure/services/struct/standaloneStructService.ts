@@ -214,13 +214,14 @@ const messageTypeToEventMapping: {
 // Worker action that resolves with a `{ struct, format: Mol }` payload,
 // shared by every command whose result type is `WithStruct & WithFormat`
 // (Aromatize/Dearomatize/ExplicitHydrogens — all extend the same shape).
-function makeMolResultAction<
-  TResult extends { struct: string; format: ChemicalMimeType },
->(resolve: (value: TResult) => void, reject: (reason?: unknown) => void) {
+function makeMolResultAction(
+  resolve: (value: { struct: string; format: ChemicalMimeType.Mol }) => void,
+  reject: (reason?: unknown) => void,
+) {
   return ({ data }: OutputMessageWrapper) => {
     const msg: OutputMessage<string> = data;
     if (!msg.hasError) {
-      resolve({ struct: msg.payload, format: ChemicalMimeType.Mol } as TResult);
+      resolve({ struct: msg.payload, format: ChemicalMimeType.Mol });
     } else {
       reject(new Error(msg.error));
     }
@@ -500,7 +501,7 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise<AromatizeResult>((resolve, reject) => {
-      const action = makeMolResultAction<AromatizeResult>(resolve, reject);
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: AromatizeCommandData = {
         struct,
@@ -527,7 +528,7 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise<DearomatizeResult>((resolve, reject) => {
-      const action = makeMolResultAction<DearomatizeResult>(resolve, reject);
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: DearomatizeCommandData = {
         struct,
@@ -790,10 +791,7 @@ class IndigoService implements StructService {
     const mode = 'auto';
 
     return new Promise<ExplicitHydrogensResult>((resolve, reject) => {
-      const action = makeMolResultAction<ExplicitHydrogensResult>(
-        resolve,
-        reject,
-      );
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: ExplicitHydrogensCommandData = {
         struct,

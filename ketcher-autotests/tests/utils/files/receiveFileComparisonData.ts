@@ -89,7 +89,7 @@ async function getFileContent(
 }
 
 // Filter file lines: by default drop lines containing '-INDIGO-', 'Ketcher',
-// '$DATM', or '$MDL'. When indexes are provided, keep only those line indexes.
+// '$DATM', or '$MDL'. When indexes are provided, exclude those line indexes.
 function filterExportLines(lines: string[], indexes: number[]): string[] {
   if (indexes.length === 0) {
     return lines.filter(

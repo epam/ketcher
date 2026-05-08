@@ -3,7 +3,7 @@ import { test } from '@fixtures';
 import { waitForPageInit, takeEditorScreenshot } from '@utils';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -29,7 +29,7 @@ test.describe('Check attachment point hover', () => {
       y: 400,
     });
     const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

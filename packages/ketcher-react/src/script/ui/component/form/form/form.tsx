@@ -300,7 +300,7 @@ function Label({
   error: _error,
   children,
   ...props
-}: LabelProps) {
+}: Readonly<LabelProps>) {
   return (
     <label {...props}>
       {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
@@ -322,7 +322,7 @@ function usePopoverAnchor() {
   return { anchorEl, handleOpen, handleClose };
 }
 
-function Field(props: FieldProps) {
+function Field(props: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -404,7 +404,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function FieldWithModal(props: FieldWithModalProps) {
+function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -470,7 +470,7 @@ function FieldWithModal(props: FieldWithModalProps) {
   );
 }
 
-function CustomQueryField(props: CustomQueryFieldProps) {
+function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,

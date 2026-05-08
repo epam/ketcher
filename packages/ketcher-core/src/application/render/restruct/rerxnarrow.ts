@@ -32,6 +32,7 @@ type Arrow = {
   pos: Array<Vec2>;
   mode: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 };
 
 type ArrowParams = {
@@ -214,6 +215,9 @@ class ReRxnArrow extends ReObject {
     const path = this.generatePath(restruct.render, options, 'arrow');
     path.node?.setAttribute('data-testid', 'rxn-arrow');
     path.node?.setAttribute('data-arrowtype', this.item.mode + '-arrow');
+    if (typeof this.item.arrowId === 'number') {
+      path.node?.setAttribute('data-arrow-id', String(this.item.arrowId));
+    }
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);

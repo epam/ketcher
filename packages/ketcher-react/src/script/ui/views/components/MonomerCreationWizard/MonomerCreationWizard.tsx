@@ -17,6 +17,7 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
+  NO_NATURAL_ANALOGUE,
   provideEditorInstance,
   RnaPresetComponentKey,
   Struct,
@@ -74,13 +75,13 @@ import { showSnackbarNotification } from '../../../state/notifications';
 
 const getInitialWizardState = (
   type = KetMonomerClass.CHEM,
-  defaultNaturalAnalogue = '',
+  naturalAnalogue = '',
 ): WizardState => ({
   values: {
     type,
     symbol: '',
     name: '',
-    naturalAnalogue: defaultNaturalAnalogue,
+    naturalAnalogue,
     aliasHELM: '',
   },
   errors: {},
@@ -91,9 +92,7 @@ const getInitialWizardState = (
 const initialWizardState: WizardState = getInitialWizardState();
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
-  // Default the Base's natural analogue to 'X' so the field is pre-filled in
-  // the preset wizard (per #9103). The user can still change it.
-  base: getInitialWizardState(KetMonomerClass.Base, 'X'),
+  base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
   sugar: getInitialWizardState(KetMonomerClass.Sugar),
   phosphate: getInitialWizardState(KetMonomerClass.Phosphate),
   preset: {
@@ -453,7 +452,7 @@ const autoAssignPropertiesForHiddenMonomer = (
     // For other types, clear whitespace-only values
     naturalAnalogue:
       values.type === KetMonomerClass.Base
-        ? values.naturalAnalogue?.trim() || 'X'
+        ? values.naturalAnalogue?.trim() || NO_NATURAL_ANALOGUE
         : values.naturalAnalogue?.trim() || '',
   };
 };

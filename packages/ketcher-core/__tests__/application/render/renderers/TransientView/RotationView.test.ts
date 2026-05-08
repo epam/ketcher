@@ -92,6 +92,39 @@ describe('RotationView', () => {
     expect(arcPath?.getAttribute('d')).toContain('M100,10A90,90 0 0,0');
   });
 
+  it('orients the protractor 0° at the provided startAngle (non-default path)', () => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const transientLayer = select(svg).append('g');
+
+    // Provide an explicit startAngle of 0 (rightward in canvas coordinates).
+    // The protractor's 0° tick should anchor on the right of the center
+    // (center.x + radius, center.y), not at the default straight-up position.
+    RotationView.show(
+      transientLayer as unknown as D3SvgElementSelection<SVGGElement, void>,
+      {
+        center: new Vec2(100, 100),
+        boundingBox: {
+          left: 80,
+          top: 80,
+          width: 40,
+          height: 40,
+        },
+        rotationAngle: (75 * Math.PI) / 180,
+        isRotating: true,
+        cursor: new Vec2(200, 100),
+        startAngle: 0,
+      },
+    );
+
+    // With radius 90, startAngle=0 places the 0° point at (190, 100).
+    // The rotation arc starts at that point.
+    const arcPath = Array.from(svg.querySelectorAll('path')).find((path) =>
+      path.getAttribute('d')?.includes('A90,90 0 0,1'),
+    );
+    const arcPathValue = arcPath?.getAttribute('d') ?? '';
+    expect(arcPathValue).toContain('M190,100A90,90 0 0,1');
+  });
+
   it('uses large-arc-flag for rotation angles above 180 degrees', () => {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     const transientLayer = select(svg).append('g');

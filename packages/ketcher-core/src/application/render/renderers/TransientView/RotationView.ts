@@ -32,7 +32,8 @@ export type RotationViewParams = {
   cursor?: Vec2;
   // Direction (in radians, measured the same way as Math.atan2) from the
   // rotation center to the rotation handle at the moment rotation started.
-  // The protractor uses this as its 0°. Defaults to straight up (-π/2).
+  // The protractor uses this as its 0°. Defaults to straight up in canvas
+  // coordinates (-π/2, since +Y is downward in screen space).
   startAngle?: number;
 };
 

@@ -361,6 +361,40 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should reject monomer with IDT alias exceeding 12 characters', () => {
+      const monomerWithLongIdtAlias = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_LONG' }],
+        },
+        'monomerTemplate-CHEM_LONG': {
+          type: 'monomerTemplate',
+          id: 'CHEM_LONG',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem Long IDT',
+          name: 'CHEM_LONG',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_LONG',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_LONG',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: '1234567890123', // 13 chars — exceeds max of 12
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('IDT alias length must not exceed 12'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
     it('should reject monomer group template without name', () => {
       const unnamedPreset = {
         root: {

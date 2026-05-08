@@ -53,6 +53,7 @@ exports[`Menu component should render menu component in a container 1`] = `
           </button>
           <div
             class="css-22lzhe"
+            data-is-selected="false"
           >
             <div
               class="css-5su45f"
@@ -95,6 +96,7 @@ exports[`Menu component should render menu component in a container 1`] = `
           </div>
           <div
             class="css-22lzhe"
+            data-is-selected="false"
           >
             <div
               class="css-5su45f"
@@ -133,6 +135,7 @@ exports[`Menu component should render menu component in a container 1`] = `
           </div>
           <div
             class="css-22lzhe"
+            data-is-selected="false"
           >
             <div
               class="css-5su45f"
@@ -222,6 +225,7 @@ exports[`Menu component should render menu component in a container 1`] = `
         </button>
         <div
           class="css-22lzhe"
+          data-is-selected="false"
         >
           <div
             class="css-5su45f"
@@ -264,6 +268,7 @@ exports[`Menu component should render menu component in a container 1`] = `
         </div>
         <div
           class="css-22lzhe"
+          data-is-selected="false"
         >
           <div
             class="css-5su45f"
@@ -302,6 +307,7 @@ exports[`Menu component should render menu component in a container 1`] = `
         </div>
         <div
           class="css-22lzhe"
+          data-is-selected="false"
         >
           <div
             class="css-5su45f"

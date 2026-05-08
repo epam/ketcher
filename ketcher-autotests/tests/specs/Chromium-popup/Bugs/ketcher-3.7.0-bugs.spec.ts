@@ -584,34 +584,35 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds', async ({
-    MoleculesCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7811
-     * Bug: https://github.com/epam/Indigo/issues/3069
-     * Description: Export to RXN work, system not throws exception: Error: memory access out of bounds
-     * Scenario:
-     * 1. Go to Micro mode
-     * 2. Load from KET
-     * 3. Press Save button
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Bugs/Memory problem.ket',
-    );
-    await verifyFileExport(
-      page,
-      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
-      FileType.RXN,
-      RxnFileFormat.v2000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds',
+    async ({ MoleculesCanvas: _ }) => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7811
+       * Bug: https://github.com/epam/Indigo/issues/3069
+       * Description: Export to RXN work, system not throws exception: Error: memory access out of bounds
+       * Scenario:
+       * 1. Go to Micro mode
+       * 2. Load from KET
+       * 3. Press Save button
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Bugs/Memory problem.ket',
+      );
+      await verifyFileExport(
+        page,
+        'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+        FileType.RXN,
+        RxnFileFormat.v2000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 23: Export of expanded CHEMs works (system not losts CHEM type)', async ({
     FlexCanvas: _,

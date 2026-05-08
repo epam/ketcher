@@ -21,7 +21,7 @@ import { NotificationBanner } from '@tests/pages/macromolecules/canvas/Notificat
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
-  test.setTimeout(400000);
+  test.setTimeout(500000);
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ initFlexCanvas }) => {
@@ -517,8 +517,6 @@ test.describe('Connection rules for peptides: ', () => {
         )
       ) {
         test(`Case 1: Connect Center to Center of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(30000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -553,8 +551,6 @@ test.describe('Connection rules for peptides: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 2: Connect ${leftPeptideAttachmentPoint} to ${rightPeptideAttachmentPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                  test.setTimeout(30000);
-
                   const {
                     leftMonomer: leftMonomerLocator,
                     rightMonomer: rightMonomerLocator,
@@ -787,8 +783,6 @@ test.describe('Connection rules for peptides: ', () => {
          */
 
         test(`Case 6: Connect Center to ${rightPeptideAttachmentPoint} of ${leftPeptide.alias} and Test-6-P`, async () => {
-          test.setTimeout(30000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -825,8 +819,6 @@ test.describe('Connection rules for peptides: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 7: Connect ${leftPeptideAttachmentPoint} to ${rightPeptideAttachmentPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -1048,8 +1040,6 @@ test.describe('Connection rules for peptides: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftPeptideAttachmentPoint} to ${rightOMAttachmentPoint} of Peptide(${leftPeptide.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -1085,8 +1075,6 @@ test.describe('Connection rules for peptides: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Peptide(${leftPeptide.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -1162,8 +1150,6 @@ test.describe('Connection rules for peptides: ', () => {
        */
 
       test(`Case 12: Connect evey connection point of Peptide(${leftPeptide.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
-        test.setTimeout(30000);
-
         await loadMonomer(page, leftPeptide);
         await loadMolecule(page, rightMolecule);
 

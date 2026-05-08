@@ -600,7 +600,10 @@ test.describe('Atom Tool', () => {
     for (const labelKey of atomShortcuts) {
       await CommonTopLeftToolbar(page).clearCanvas();
       await CommonLeftToolbar(page).areaSelectionTool();
-      await clickOnCanvas(page, 0, 0);
+      await clickInTheMiddleOfTheCanvas(page);
+      // Wait for AbbreviationLookup 1000ms timer from previous iteration to expire
+      // before pressing the next shortcut key, otherwise the lookup popup intercepts it
+      await page.waitForTimeout(1100);
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
       });

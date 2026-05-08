@@ -102,6 +102,8 @@ export const OperationType = Object.freeze({
   MONOMER_CREATION_REASSIGN_LGA:
     'Monomer creation :: Reassign leaving group atom',
   MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
+  MONOMER_CREATION_MARK_RNA_COMPONENT:
+    'Monomer creation :: Mark as RNA component',
 });
 
 export enum OperationPriority {

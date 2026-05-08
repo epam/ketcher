@@ -46,11 +46,10 @@ export const GhostRnaPreset = ({ preset }: Props) => {
     phosphateSize && phosphateOnLeft ? phosphateSize.width + 30 : 0;
   const sugarY = 0;
 
-  const phosphateX = phosphateSize
-    ? phosphateOnLeft
-      ? 0
-      : sugarX + sugarSize.width + 30
-    : 0;
+  let phosphateX = 0;
+  if (phosphateSize) {
+    phosphateX = phosphateOnLeft ? 0 : sugarX + sugarSize.width + 30;
+  }
   const phosphateY = sugarY;
 
   const baseX = sugarX + (sugarSize.width - (baseSize?.width || 0)) / 2;

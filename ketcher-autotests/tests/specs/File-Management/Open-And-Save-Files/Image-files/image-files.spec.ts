@@ -575,13 +575,18 @@ test.describe('Image files', () => {
      * Description: Scaling actions of images (PNG) on Canvas can be Undo/Redo
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      200,
+      200,
+    );
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
     // Ensure the element is in view
-    const resizeHandle = pngImage.bottomRightResizeHandler;
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 500, 500);

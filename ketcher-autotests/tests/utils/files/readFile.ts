@@ -22,6 +22,8 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
+import { ImageBox, ImageBoxType } from '@tests/pages/common/canvas/ImageBox';
+import { getImageLocator } from '@utils/canvas/image/getImageLocator';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -194,7 +196,7 @@ export async function openImageAndAddToCanvas(
   filename: string,
   x?: number,
   y?: number,
-) {
+): Promise<ImageBoxType> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   const debugDelay = 0.15;
@@ -212,6 +214,8 @@ export async function openImageAndAddToCanvas(
 
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
+
+  return await ImageBox(page, getImageLocator(page, {}).last());
 }
 
 export async function openPPTXFileAndAddToCanvasAsNewProject(

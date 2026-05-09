@@ -115,6 +115,47 @@ export class ReImage extends ReObject {
     };
   }
 
+  private getHandleReferencePositions(
+    renderOptions: RenderOptions,
+  ): GetReferencePositions {
+    const referencePositions = this.image.getReferencePositions();
+
+    return {
+      topLeftPosition: Scale.modelToCanvas(
+        referencePositions.topLeftPosition,
+        renderOptions,
+      ),
+      topMiddlePosition: Scale.modelToCanvas(
+        referencePositions.topMiddlePosition,
+        renderOptions,
+      ),
+      topRightPosition: Scale.modelToCanvas(
+        referencePositions.topRightPosition,
+        renderOptions,
+      ),
+      rightMiddlePosition: Scale.modelToCanvas(
+        referencePositions.rightMiddlePosition,
+        renderOptions,
+      ),
+      bottomRightPosition: Scale.modelToCanvas(
+        referencePositions.bottomRightPosition,
+        renderOptions,
+      ),
+      bottomMiddlePosition: Scale.modelToCanvas(
+        referencePositions.bottomMiddlePosition,
+        renderOptions,
+      ),
+      bottomLeftPosition: Scale.modelToCanvas(
+        referencePositions.bottomLeftPosition,
+        renderOptions,
+      ),
+      leftMiddlePosition: Scale.modelToCanvas(
+        referencePositions.leftMiddlePosition,
+        renderOptions,
+      ),
+    };
+  }
+
   private drawSelectionLine(
     paper: RaphaelPaper,
     renderOptions: RenderOptions,
@@ -156,8 +197,9 @@ export class ReImage extends ReObject {
     this.selectionPointsSet = paper.set();
     const scale = this.getScale(renderOptions);
     const strokeWidth = scale * REFERENCE_POINT_LINE_WIDTH_MULTIPLIER;
+    const imageId = reStruct.molecule.images.keyOf(this.image);
     const selectionReferencePositions = Object.entries(
-      this.getSelectionReferencePositions(renderOptions),
+      this.getHandleReferencePositions(renderOptions),
     );
     selectionReferencePositions.forEach(([key, { x, y }]) => {
       const element = paper.circle(x, y, scale).attr({
@@ -292,7 +334,7 @@ export class ReImage extends ReObject {
     renderOptions: RenderOptions,
   ): ClosestReferencePosition {
     const entries = Object.entries(
-      this.getSelectionReferencePositions(renderOptions),
+      this.getHandleReferencePositions(renderOptions),
     ) as Array<[ImageReferenceName, Vec2]>;
     return entries.reduce(
       (acc, [key, position]) => {

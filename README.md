@@ -115,19 +115,42 @@ Please refer to the `example/src/App.tsx` file for a complete example of how to 
 
 ## Ketcher API
 
-1. [Structure Export Methods](#structure-export-methods)
-2. [Structure Import Methods](#structure-import-methods)
-3. [Editor Operations](#editor-operations)
-4. [View Control](#view-control)
-5. [Settings Management](#settings-management)
-6. [Event System](#event-system)
-7. [React Component API](#react-component-api)
-8. [Macromolecules Mode](#macromolecules-mode)
-9. [Service Providers](#service-providers)
-10. [Supported Formats](#supported-formats)
-11. [Usage Examples](#usage-examples)
-12. [Internal Services (Advanced)](#internal-services-advanced)
-13. [Error Handling](#error-handling)
+1. [API Method Overview](#api-method-overview)
+2. [Structure Export Methods](#structure-export-methods)
+3. [Structure Import Methods](#structure-import-methods)
+4. [Editor Operations](#editor-operations)
+5. [Structure Analysis Helpers](#structure-analysis-helpers)
+6. [View Control](#view-control)
+7. [Settings Management](#settings-management)
+8. [Event System](#event-system)
+9. [React Component API](#react-component-api)
+10. [Macromolecules Mode](#macromolecules-mode)
+11. [Service Providers](#service-providers)
+12. [Supported Formats](#supported-formats)
+13. [Usage Examples](#usage-examples)
+14. [Internal Services (Advanced)](#internal-services-advanced)
+15. [Error Handling](#error-handling)
+
+## API Method Overview
+
+The public `Ketcher` instance is available from `onInit`, for example `onInit={(ketcher) => { window.ketcher = ketcher; }}`. Use this table as a quick map, then see the detailed sections below.
+
+| Area | Method or property | Mode | Description |
+|------|--------------------|------|-------------|
+| Export | `getSmiles(isExtended?)`, `getExtendedSmiles()`, `getSmarts()` | Molecules | Export line notations. |
+| Export | `getMolfile(molfileFormat?)`, `getRxn(molfileFormat?)`, `getSdf(molfileFormat?)`, `getRdf(molfileFormat?)` | Molecules | Export MDL structure and reaction formats. |
+| Export | `getKet()` | Molecules, Macromolecules | Export Ketcher's native JSON format. |
+| Export | `getCml()`, `getCDXml()`, `getCDX()`, `getInchi(withAuxInfo?)`, `getInChIKey()` | Molecules | Export chemical exchange formats and identifiers. |
+| Export | `getFasta()`, `getSequence(format)`, `getIdt()`, `getAxoLabs()` | Macromolecules | Export sequence/macromolecule formats. |
+| Import | `setMolecule(structure, options?)`, `addFragment(structure, options?)`, `setHelm(helmStr)` | Molecules, Macromolecules | Load or append structures. |
+| Operations | `layout()`, `aromatize()`, `dearomatize()`, `calculate(options?)`, `recognize(image, version?)` | Molecules | Run service-backed chemistry operations. |
+| Operations | `generateImage(data, options?)`, `exportImage(format, params?)` | Molecules, Macromolecules | Generate or download images. |
+| Helpers | `containsReaction()`, `isQueryStructureSelected()` | Molecules | Inspect the current structure or selection. |
+| View | `setZoom(value)`, `setMode(mode)`, `switchToMacromoleculesMode()`, `switchToMoleculesMode()` | Molecules, Macromolecules | Control zoom and editor mode. |
+| Settings | `setSettings(settings)`, `settings` | Molecules, Macromolecules | Update and read supported editor settings. |
+| Events | `editor.subscribe(...)`, `editor.unsubscribe(...)`, `eventBus`, `sendCustomAction(name)` | Molecules, Macromolecules | Subscribe to editor and custom-button events. |
+| Macromolecule library | `updateMonomersLibrary(...)`, `replaceMonomersLibrary(...)` | Macromolecules | Update or replace the monomer library. |
+| Advanced | `structService`, `indigo`, `formatterFactory`, `addEditor(...)`, `reinitializeIndigo(...)`, `ensureMonomersLibraryDataInKetFormat(...)`, `ensureMonomersLibraryDataInSdfFormat(...)` | Advanced | Low-level service access used mostly by integrations and internals. |
 
 ## Structure Export Methods
 
@@ -489,6 +512,40 @@ await ketcher.layout();
 
 ---
 
+### aromatize
+
+```typescript
+aromatize(): Promise<void>
+```
+
+Converts eligible structures on the canvas to aromatic representation.
+
+**Throws:** Error in macromolecules mode
+
+**Example:**
+```javascript
+await ketcher.aromatize();
+```
+
+---
+
+### dearomatize
+
+```typescript
+dearomatize(): Promise<void>
+```
+
+Converts aromatic structures on the canvas to dearomatized representation.
+
+**Throws:** Error in macromolecules mode
+
+**Example:**
+```javascript
+await ketcher.dearomatize();
+```
+
+---
+
 ### circularLayoutMonomers
 
 ```typescript
@@ -621,6 +678,42 @@ ketcher.exportImage('svg', { margin: 10 });
 
 ---
 
+## Structure Analysis Helpers
+
+### containsReaction
+
+```typescript
+containsReaction(): boolean
+```
+
+Returns `true` when the current canvas contains a reaction arrow.
+
+**Example:**
+```javascript
+if (ketcher.containsReaction()) {
+  const rxn = await ketcher.getRxn();
+}
+```
+
+---
+
+### isQueryStructureSelected
+
+```typescript
+isQueryStructureSelected(): boolean
+```
+
+Returns `true` when the current selection contains query atoms, query bonds, or query-component S-groups.
+
+**Example:**
+```javascript
+if (ketcher.isQueryStructureSelected()) {
+  const smarts = await ketcher.getSmarts();
+}
+```
+
+---
+
 ## View Control
 
 ### setZoom
@@ -669,21 +762,21 @@ ketcher.setMode('sequence');
 ### setSettings
 
 ```typescript
-setSettings(settings: Record<string, string | boolean>): void
+setSettings(settings: Record<string, unknown>): void
 ```
 
-Updates editor settings.
+Updates supported editor settings. Unknown keys are ignored.
 
 **Supported Settings:**
 
-| Setting | Type | Description |
-|---------|------|-------------|
-| `general.dearomatize-on-load` | `boolean` | Dearomatize structures on load |
-| `ignoreChiralFlag` | `boolean` | Ignore chiral flag from MOL files |
-| `disableQueryElements` | `string[]` | Array of query elements to disable (e.g., `['Pol', 'CYH']`) |
-| `bondThickness` | `number` | Bond line thickness in pixels |
-| `disableCustomQuery` | `boolean` | Disable custom query features |
-| `persistMonomerLibraryUpdates` | `boolean` | Persist monomer library changes to localStorage |
+| Setting | Type | Returned by `settings` getter | Description |
+|---------|------|-------------------------------|-------------|
+| `general.dearomatize-on-load` | `boolean` or `'true'`/`'false'` | Yes | Dearomatize structures on load |
+| `ignoreChiralFlag` | `boolean` | Yes | Ignore chiral flag from MOL files |
+| `disableQueryElements` | `string[]` | Yes | Array of query elements to disable (e.g., `['Pol', 'CYH']`) |
+| `bondThickness` | `number` | Yes | Bond line thickness in pixels |
+| `disableCustomQuery` | `boolean` | No | Disable custom query features |
+| `persistMonomerLibraryUpdates` | `boolean` | No | Persist monomer library changes to localStorage when `updateMonomersLibrary(..., { shouldPersist: true })` is used |
 
 **Example:**
 ```javascript
@@ -703,55 +796,13 @@ ketcher.setSettings({
 get settings(): Record<string, any>
 ```
 
-Returns current allowed settings.
+Returns current editor options for settings backed by editor options: `general.dearomatize-on-load`, `ignoreChiralFlag`, `disableQueryElements`, and `bondThickness`.
 
 **Example:**
 ```javascript
 const currentSettings = ketcher.settings;
 console.log(currentSettings);
 ```
-
----
-
-
-## Events
-Ketcher allows to subscribe on events to react to changes in the editor.
-
----
-
-`Subscribe()` - method that allows you to attach an event handler function for event.
-
-#### Syntax:
-`ketcher.editor.subscribe(eventName, handler)`
-
-#### Parameters:
-
-`eventName: string` - event type, such as 'change'.
-
-`handler: function` - a function to execute when the event is triggered.
-
-
-#### Return value:
-
-A new object that has one field 'handler'.
-
---- 
-
-`Unsubscribe()` - method that removes event handler.
-
-#### Syntax:
-`ketcher.editor.unsubscribe(eventName, subscriber)`
-
-#### Parameters:
-
-`eventName: string` - one event type, such as 'change'.
-
-`subscriber: object` - an object that is returned from the subscriber function.
-
-#### Return value:
-
-
-undefined
 
 ---
 
@@ -874,6 +925,12 @@ eventData is a string in SDF format according to [specification](https://github.
 Custom buttons emit events via the event bus:
 
 ```typescript
+sendCustomAction(name: string): void
+```
+
+`sendCustomAction` emits the same `CUSTOM_BUTTON_PRESSED` event that built-in custom toolbar buttons emit. This is useful when an integration needs to trigger the custom action flow programmatically.
+
+```typescript
 ketcher.eventBus.on(
   eventName: 'CUSTOM_BUTTON_PRESSED',
   handler: (buttonId: string) => void
@@ -890,6 +947,8 @@ ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', (buttonId) => {
     exportToDatabase();
   }
 });
+
+ketcher.sendCustomAction('export-to-database');
 ```
 
 ---
@@ -1095,6 +1154,32 @@ await ketcher.replaceMonomersLibrary(monomersKet, {
   shouldPersist: true
 });
 ```
+
+---
+
+#### ensureMonomersLibraryDataInKetFormat
+
+```typescript
+ensureMonomersLibraryDataInKetFormat(
+  monomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams
+): Promise<string | JSON>
+```
+
+Converts monomer library data to KET format when the input is SDF. Returns the original data when it is already KET.
+
+---
+
+#### ensureMonomersLibraryDataInSdfFormat
+
+```typescript
+ensureMonomersLibraryDataInSdfFormat(
+  monomersData: string | JSON,
+  params?: UpdateMonomersLibraryParams
+): Promise<string>
+```
+
+Converts monomer library data to SDF format when the input is KET. Returns the original data when it is already SDF.
 
 ---
 
@@ -1372,10 +1457,6 @@ ketcher.setMode('sequence');
 const fasta = await ketcher.getFasta();
 console.log(fasta);
 
-// Export as HELM
-const helm = await ketcher.getHelm();
-console.log(helm);
-
 // Get 1-letter sequence
 const seq = await ketcher.getSequence('1-letter');
 console.log('Sequence:', seq);
@@ -1529,6 +1610,21 @@ document.getElementById('zoom-out').addEventListener('click', () => {
 ---
 
 ## Internal Services (Advanced)
+
+Advanced integrations can access these properties on the `Ketcher` instance:
+
+| Property or method | Description |
+|--------------------|-------------|
+| `id` | Unique Ketcher instance identifier. |
+| `editor` | Current low-level editor instance. |
+| `eventBus` | Event emitter used for custom button events. |
+| `formatterFactory` | Formatter factory used by structure import/export. |
+| `indigo` | Indigo service wrapper used by chemistry operations. |
+| `structService` | Low-level structure service provider implementation. |
+| `addEditor(editor)` | Attaches the low-level editor instance during initialization. |
+| `reinitializeIndigo(structService)` | Replaces the structure service and recreates the Indigo wrapper. |
+
+---
 
 The `ketcher.structService` provides low-level access to chemical operations:
 

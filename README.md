@@ -1095,7 +1095,7 @@ ketcher.switchToMacromoleculesMode();
 
 ```typescript
 updateMonomersLibrary(
-  monomersData: string | JSON,
+  monomersData: string | object,
   params?: UpdateMonomersLibraryParams
 ): Promise<void>
 ```
@@ -1137,7 +1137,7 @@ await ketcher.updateMonomersLibrary(monomersKet, {
 
 ```typescript
 replaceMonomersLibrary(
-  monomersData: string | JSON,
+  monomersData: string | object,
   params?: UpdateMonomersLibraryParams
 ): Promise<void>
 ```
@@ -1161,9 +1161,9 @@ await ketcher.replaceMonomersLibrary(monomersKet, {
 
 ```typescript
 ensureMonomersLibraryDataInKetFormat(
-  monomersData: string | JSON,
+  monomersData: string | object,
   params?: UpdateMonomersLibraryParams
-): Promise<string | JSON>
+): Promise<string | object>
 ```
 
 Converts monomer library data to KET format when the input is SDF. Returns the original data when it is already KET.
@@ -1174,7 +1174,7 @@ Converts monomer library data to KET format when the input is SDF. Returns the o
 
 ```typescript
 ensureMonomersLibraryDataInSdfFormat(
-  monomersData: string | JSON,
+  monomersData: string | object,
   params?: UpdateMonomersLibraryParams
 ): Promise<string>
 ```

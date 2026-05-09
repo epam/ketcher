@@ -89,6 +89,17 @@ describe('Utils', () => {
       ).toBe(ContextMenuTriggerType.Selection);
     });
 
+    it('returns closest item when the item is outside the selection', () => {
+      expect(
+        getTriggerType({
+          item: { id: 2, map: 'atoms', dist: 0 },
+          selection: { atoms: [1] },
+          selectedFunctionalGroups,
+          selectedSGroupsIds,
+        }),
+      ).toBe(ContextMenuTriggerType.ClosestItem);
+    });
+
     it('returns none for non-atom or bond selections without multitail arrows', () => {
       expect(
         getTriggerType({
@@ -137,7 +148,28 @@ describe('Utils', () => {
   });
 
   describe('getShowProps', () => {
-    const editor = {} as Parameters<typeof getShowProps>[0]['editor'];
+    const editor = {
+      struct: () => ({
+        rgroupAttachmentPoints: new Map([[10, { atomId: 4 }]]),
+      }),
+    } as Parameters<typeof getShowProps>[0]['editor'];
+
+    it('returns closest item menu props through the factory method', () => {
+      expect(
+        getShowProps({
+          editor,
+          item: { id: 10, map: 'rgroupAttachmentPoints', dist: 0 },
+          selection: null,
+          selectedFunctionalGroups: new Map(),
+          selectedSGroupsIds: new Set<number>(),
+          ketcherId: 'test',
+        }),
+      ).toEqual({
+        id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT + 'test',
+        rgroupAttachmentPoints: [10],
+        atomIds: [4],
+      });
+    });
 
     it('returns null when trigger type resolves to none', () => {
       expect(

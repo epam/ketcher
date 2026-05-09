@@ -17,6 +17,13 @@
 import { BondAdd } from './BondAdd';
 import { BondDelete } from './BondDelete';
 
+Object.defineProperty(BondAdd, 'InverseConstructor', {
+  get: () => BondDelete,
+});
+Object.defineProperty(BondDelete, 'InverseConstructor', {
+  get: () => BondAdd,
+});
+
 export { BondAdd, BondDelete };
 export * from './BondAttr';
 export * from './BondMove';

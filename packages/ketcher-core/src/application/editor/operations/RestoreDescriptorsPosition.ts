@@ -18,13 +18,10 @@ import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 import { SGroup, Vec2 } from 'domain/entities';
-import { AlignDescriptors } from './AlignDescriptors';
 
 class RestoreDescriptorsPosition extends BaseOperation {
   readonly history: Record<number, Vec2 | null>;
-  static get InverseConstructor(): new () => BaseOperation {
-    return AlignDescriptors;
-  }
+  static readonly InverseConstructor: new () => BaseOperation;
 
   constructor(history: Record<number, Vec2 | null>) {
     super(OperationType.RESTORE_DESCRIPTORS_POSITION);

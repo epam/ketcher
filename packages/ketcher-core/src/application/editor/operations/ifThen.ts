@@ -17,4 +17,11 @@
 import { UpdateIfThen } from './UpdateIfThen';
 import { RestoreIfThen } from './RestoreIfThen';
 
+Object.defineProperty(UpdateIfThen, 'InverseConstructor', {
+  get: () => RestoreIfThen,
+});
+Object.defineProperty(RestoreIfThen, 'InverseConstructor', {
+  get: () => UpdateIfThen,
+});
+
 export { UpdateIfThen, RestoreIfThen };

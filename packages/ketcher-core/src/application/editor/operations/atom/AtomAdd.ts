@@ -19,7 +19,6 @@ import { ReAtom, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { AtomDelete } from './AtomDelete';
 
 type Data = {
   aid: number | null;
@@ -29,9 +28,7 @@ type Data = {
 
 class AtomAdd extends BaseOperation {
   data: Data;
-  static get InverseConstructor(): new () => BaseOperation {
-    return AtomDelete;
-  }
+  static readonly InverseConstructor: new () => BaseOperation;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
     super(OperationType.ATOM_ADD);

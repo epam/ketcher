@@ -19,16 +19,13 @@ import { ReStruct } from '../../render';
 import { BaseOperation } from './BaseOperation';
 import { StructProperty } from 'domain/entities/struct';
 import { OperationType } from './OperationType';
-import { FragmentAdd } from './FragmentAdd';
 
 class FragmentDelete extends BaseOperation {
   readonly frid: number;
-  static get InverseConstructor(): new (
+  static readonly InverseConstructor: new (
     fragmentId?: number | null,
     properties?: Array<StructProperty>,
-  ) => BaseOperation {
-    return FragmentAdd;
-  }
+  ) => BaseOperation;
 
   constructor(fragmentId: number) {
     super(OperationType.FRAGMENT_DELETE, 100);

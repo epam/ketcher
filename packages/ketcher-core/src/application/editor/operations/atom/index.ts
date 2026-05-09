@@ -17,6 +17,13 @@
 import { AtomAdd } from './AtomAdd';
 import { AtomDelete } from './AtomDelete';
 
+Object.defineProperty(AtomAdd, 'InverseConstructor', {
+  get: () => AtomDelete,
+});
+Object.defineProperty(AtomDelete, 'InverseConstructor', {
+  get: () => AtomAdd,
+});
+
 export { AtomAdd, AtomDelete };
 export * from './AtomAttr';
 export * from './AtomMove';

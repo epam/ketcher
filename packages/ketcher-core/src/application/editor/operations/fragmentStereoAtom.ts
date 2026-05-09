@@ -17,4 +17,11 @@
 import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
 import { FragmentDeleteStereoAtom } from './FragmentDeleteStereoAtom';
 
+Object.defineProperty(FragmentAddStereoAtom, 'InverseConstructor', {
+  get: () => FragmentDeleteStereoAtom,
+});
+Object.defineProperty(FragmentDeleteStereoAtom, 'InverseConstructor', {
+  get: () => FragmentAddStereoAtom,
+});
+
 export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };

@@ -17,4 +17,11 @@
 import { AlignDescriptors } from './AlignDescriptors';
 import { RestoreDescriptorsPosition } from './RestoreDescriptorsPosition';
 
+Object.defineProperty(AlignDescriptors, 'InverseConstructor', {
+  get: () => RestoreDescriptorsPosition,
+});
+Object.defineProperty(RestoreDescriptorsPosition, 'InverseConstructor', {
+  get: () => AlignDescriptors,
+});
+
 export { AlignDescriptors, RestoreDescriptorsPosition };

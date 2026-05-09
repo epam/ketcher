@@ -18,4 +18,11 @@ import { FragmentAdd } from './FragmentAdd';
 import { FragmentDelete } from './FragmentDelete';
 import { FragmentSetProperties } from './FragmentSetProperties';
 
+Object.defineProperty(FragmentAdd, 'InverseConstructor', {
+  get: () => FragmentDelete,
+});
+Object.defineProperty(FragmentDelete, 'InverseConstructor', {
+  get: () => FragmentAdd,
+});
+
 export { FragmentAdd, FragmentDelete, FragmentSetProperties };

@@ -19,7 +19,6 @@ import { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { AtomAdd } from './AtomAdd';
 
 type Data = {
   aid: number | null;
@@ -29,9 +28,7 @@ type Data = {
 
 class AtomDelete extends BaseOperation {
   data: Data;
-  static get InverseConstructor(): new () => BaseOperation {
-    return AtomAdd;
-  }
+  static readonly InverseConstructor: new () => BaseOperation;
 
   constructor(atomId?: number) {
     super(OperationType.ATOM_DELETE, OperationPriority.ATOM_DELETE);

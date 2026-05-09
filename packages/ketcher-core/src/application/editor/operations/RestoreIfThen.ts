@@ -17,19 +17,16 @@
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
-import { UpdateIfThen } from './UpdateIfThen';
 
 class RestoreIfThen extends BaseOperation {
   readonly rgid_new: number;
   readonly rgid_old: number;
   readonly ifThenHistory: Map<number, number>;
-  static get InverseConstructor(): new (
+  static readonly InverseConstructor: new (
     rgNew: number,
     rgOld: number,
     skipRgids?: Array<number>,
-  ) => BaseOperation {
-    return UpdateIfThen;
-  }
+  ) => BaseOperation;
 
   constructor(rgNew: number, rgOld: number, history: Map<number, number>) {
     super(OperationType.RESTORE_IF_THEN);

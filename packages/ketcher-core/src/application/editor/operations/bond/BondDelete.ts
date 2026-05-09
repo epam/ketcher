@@ -19,7 +19,6 @@ import { ReStruct } from '../../../render';
 import { BaseOperation } from '../BaseOperation';
 import { BondAttributes } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
-import { BondAdd } from './BondAdd';
 
 type Data = {
   bond: Partial<BondAttributes> | null;
@@ -31,14 +30,12 @@ type Data = {
 
 class BondDelete extends BaseOperation {
   data: Data;
-  static get InverseConstructor(): new (
+  static readonly InverseConstructor: new (
     begin?: number,
     end?: number,
     bond?: Partial<BondAttributes>,
     needInvalidateAtoms?: boolean,
-  ) => BaseOperation {
-    return BondAdd;
-  }
+  ) => BaseOperation;
 
   constructor(bondId?: number) {
     super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);

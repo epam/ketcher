@@ -17,16 +17,13 @@
 import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
-import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
 
 class FragmentDeleteStereoAtom extends BaseOperation {
   readonly data: { frid: number; aid: number };
-  static get InverseConstructor(): new (
+  static readonly InverseConstructor: new (
     fragmentId: number,
     atomId: number,
-  ) => BaseOperation {
-    return FragmentAddStereoAtom;
-  }
+  ) => BaseOperation;
 
   constructor(fragmentId: number, atomId: number) {
     super(

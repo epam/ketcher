@@ -19,14 +19,11 @@ import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 import { BaseOperation } from './BaseOperation';
 import { Fragment, StructProperty } from 'domain/entities';
 import { OperationType } from './OperationType';
-import { FragmentDelete } from './FragmentDelete';
 
 class FragmentAdd extends BaseOperation {
   frid: number | null;
   readonly properties?: Array<StructProperty>;
-  static get InverseConstructor(): new (fragmentId: number) => BaseOperation {
-    return FragmentDelete;
-  }
+  static readonly InverseConstructor: new (fragmentId: number) => BaseOperation;
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);

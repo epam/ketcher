@@ -8,6 +8,7 @@ import {
   clickOnCanvas,
   MacroFileType,
   StructureFormat,
+  waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { MolfileFormat } from 'ketcher-core';
@@ -212,10 +213,24 @@ export async function openImageAndAddToCanvas(
     await clickInTheMiddleOfTheScreen(page);
   }
 
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(resolvedFilePath);
+  await waitForRender(page, async () => {
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(resolvedFilePath);
+  });
 
-  return await ImageBox(page, getImageLocator(page, {}).last());
+  const imageBoxId = Number(
+    await getImageLocator(page, {}).evaluateAll(async (elements) => {
+      const ids = await Promise.all(
+        elements.map(async (element) =>
+          Number(element.getAttribute('data-image-id')),
+        ),
+      );
+      const validIds = ids.filter(Number.isFinite);
+      return validIds.length ? Math.max(...validIds) : null;
+    }),
+  );
+
+  return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
 }
 
 export async function openPPTXFileAndAddToCanvasAsNewProject(

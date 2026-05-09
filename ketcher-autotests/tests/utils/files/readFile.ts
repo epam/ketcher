@@ -25,6 +25,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 import { ImageBox, ImageBoxType } from '@tests/pages/common/canvas/ImageBox';
 import { getImageLocator } from '@utils/canvas/image/getImageLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -197,7 +198,7 @@ export async function openImageAndAddToCanvas(
   filename: string,
   x?: number,
   y?: number,
-): Promise<ImageBoxType> {
+): Promise<ImageBoxType | void> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   const debugDelay = 0.15;
@@ -218,19 +219,20 @@ export async function openImageAndAddToCanvas(
     await fileChooser.setFiles(resolvedFilePath);
   });
 
-  const imageBoxId = Number(
-    await getImageLocator(page, {}).evaluateAll(async (elements) => {
-      const ids = await Promise.all(
-        elements.map(async (element) =>
-          Number(element.getAttribute('data-image-id')),
-        ),
-      );
-      const validIds = ids.filter(Number.isFinite);
-      return validIds.length ? Math.max(...validIds) : null;
-    }),
-  );
-
-  return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
+  if (!(await ErrorMessageDialog(page).isVisible())) {
+    const imageBoxId = Number(
+      await getImageLocator(page, {}).evaluateAll(async (elements) => {
+        const ids = await Promise.all(
+          elements.map(async (element) =>
+            Number(element.getAttribute('data-image-id')),
+          ),
+        );
+        const validIds = ids.filter(Number.isFinite);
+        return validIds.length ? Math.max(...validIds) : null;
+      }),
+    );
+    return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
+  }
 }
 
 export async function openPPTXFileAndAddToCanvasAsNewProject(

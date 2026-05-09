@@ -28,7 +28,6 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { clearLocalStorage, pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -898,9 +897,6 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
-    await clearLocalStorage(page);
-    await pageReloadMicro(page);
-
     const image = await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,

@@ -17,7 +17,6 @@ import { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
-const HIDDEN_HANDLE_INSET = 1;
 
 interface ClosestReferencePosition {
   distance: number;
@@ -118,47 +117,6 @@ export class ReImage extends ReObject {
     };
   }
 
-  private getHandleHitTargetReferencePositions(
-    renderOptions: RenderOptions,
-  ): GetReferencePositions {
-    const referencePositions = this.image.getReferencePositions();
-
-    return {
-      topLeftPosition: Scale.modelToCanvas(
-        referencePositions.topLeftPosition,
-        renderOptions,
-      ).add(new Vec2(HIDDEN_HANDLE_INSET, HIDDEN_HANDLE_INSET)),
-      topMiddlePosition: Scale.modelToCanvas(
-        referencePositions.topMiddlePosition,
-        renderOptions,
-      ).add(new Vec2(0, HIDDEN_HANDLE_INSET)),
-      topRightPosition: Scale.modelToCanvas(
-        referencePositions.topRightPosition,
-        renderOptions,
-      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, HIDDEN_HANDLE_INSET)),
-      rightMiddlePosition: Scale.modelToCanvas(
-        referencePositions.rightMiddlePosition,
-        renderOptions,
-      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, 0)),
-      bottomRightPosition: Scale.modelToCanvas(
-        referencePositions.bottomRightPosition,
-        renderOptions,
-      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, -1 * HIDDEN_HANDLE_INSET)),
-      bottomMiddlePosition: Scale.modelToCanvas(
-        referencePositions.bottomMiddlePosition,
-        renderOptions,
-      ).add(new Vec2(0, -1 * HIDDEN_HANDLE_INSET)),
-      bottomLeftPosition: Scale.modelToCanvas(
-        referencePositions.bottomLeftPosition,
-        renderOptions,
-      ).add(new Vec2(HIDDEN_HANDLE_INSET, -1 * HIDDEN_HANDLE_INSET)),
-      leftMiddlePosition: Scale.modelToCanvas(
-        referencePositions.leftMiddlePosition,
-        renderOptions,
-      ).add(new Vec2(HIDDEN_HANDLE_INSET, 0)),
-    };
-  }
-
   private drawSelectionLine(
     paper: RaphaelPaper,
     renderOptions: RenderOptions,
@@ -204,14 +162,11 @@ export class ReImage extends ReObject {
     const imageId = reStruct.molecule.images.keyOf(this.image);
     const visibleHandleReferencePositions =
       this.getSelectionReferencePositions(renderOptions);
-    const hitTargetReferencePositions =
-      this.getHandleHitTargetReferencePositions(renderOptions);
 
     (
       Object.keys(visibleHandleReferencePositions) as ImageReferenceName[]
     ).forEach((key) => {
       const visiblePosition = visibleHandleReferencePositions[key];
-      const hitTargetPosition = hitTargetReferencePositions[key];
       const element = paper
         .circle(visiblePosition.x, visiblePosition.y, scale)
         .attr({
@@ -221,7 +176,7 @@ export class ReImage extends ReObject {
           opacity: 0,
         });
       const hitTarget = paper
-        .circle(hitTargetPosition.x, hitTargetPosition.y, scale)
+        .circle(visiblePosition.x, visiblePosition.y, scale)
         .attr({
           fill: '#000',
           stroke: '#000',

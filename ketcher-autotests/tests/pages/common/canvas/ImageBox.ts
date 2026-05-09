@@ -13,34 +13,66 @@ type ImageBoxLocators = {
   bottomRightHandle: Locator;
 };
 
-export const ImageBox = async (page: Page, imageBox: Locator) => {
-  const imageBoxId = await imageBox.getAttribute('data-image-id');
+export const ImageBox = async (page: Page, imageBox?: Locator) => {
+  let imageBoxId;
+  if (imageBox) {
+    imageBoxId = await imageBox.getAttribute('data-image-id');
+  } else {
+    imageBoxId = null;
+  }
   const locators: ImageBoxLocators = {
-    imageBoxBody: imageBox,
-    topLeftHandle: page.locator(
-      `[data-testid="imageResize-topLeftPosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    topMiddleHandle: page.locator(
-      `[data-testid="imageResize-topMiddlePosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    topRightHandle: page.locator(
-      `[data-testid="imageResize-topRightPosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    leftMiddleHandle: page.locator(
-      `[data-testid="imageResize-leftMiddlePosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    rightMiddleHandle: page.locator(
-      `[data-testid="imageResize-rightMiddlePosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    bottomLeftHandle: page.locator(
-      `[data-testid="imageResize-bottomLeftPosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    bottomMiddleHandle: page.locator(
-      `[data-testid="imageResize-bottomMiddlePosition"][data-image-id="${imageBoxId}"]`,
-    ),
-    bottomRightHandle: page.locator(
-      `[data-testid="imageResize-bottomRightPosition"][data-image-id="${imageBoxId}"]`,
-    ),
+    imageBoxBody:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(`[data-testid="image"][data-image-id="${imageBoxId}"]`),
+    topLeftHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-topLeftPosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    topMiddleHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-topMiddlePosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    topRightHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-topRightPosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    leftMiddleHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-leftMiddlePosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    rightMiddleHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-rightMiddlePosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    bottomLeftHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-bottomLeftPosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    bottomMiddleHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-bottomMiddlePosition"][data-image-id="${imageBoxId}"]`,
+          ),
+    bottomRightHandle:
+      imageBoxId === null
+        ? page.locator('[data-testid="__missing-image-box-id__"]')
+        : page.locator(
+            `[data-testid="imageResize-bottomRightPosition"][data-image-id="${imageBoxId}"]`,
+          ),
   };
 
   return locators;

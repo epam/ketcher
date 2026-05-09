@@ -198,7 +198,7 @@ export async function openImageAndAddToCanvas(
   filename: string,
   x?: number,
   y?: number,
-): Promise<ImageBoxType | void> {
+): Promise<ImageBoxType> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   const debugDelay = 0.15;
@@ -233,6 +233,7 @@ export async function openImageAndAddToCanvas(
     );
     return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
   }
+  return await ImageBox(page);
 }
 
 export async function openPPTXFileAndAddToCanvasAsNewProject(

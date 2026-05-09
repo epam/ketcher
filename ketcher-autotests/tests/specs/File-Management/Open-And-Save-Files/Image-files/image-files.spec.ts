@@ -921,7 +921,7 @@ test.describe('Image files', () => {
 
       const box = await resizeHandle.boundingBox();
       if (!box) {
-        throw new Error(`${handle.id} bounding box not found`);
+        throw new Error(`${handle.locator} bounding box not found`);
       }
 
       const startX = box.x + box.width / 2;

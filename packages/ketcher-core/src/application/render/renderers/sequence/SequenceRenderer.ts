@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   ChainsCollection,
   ITwoStrandedChainItem,
@@ -9,7 +10,6 @@ import {
   MonomerToAtomBond,
   Nucleotide,
   Phosphate,
-  Pool,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -32,7 +32,7 @@ import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
-import { CoreEditor } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { Command } from 'domain/entities/Command';
@@ -43,12 +43,20 @@ import { SequenceViewModel } from 'application/render/renderers/sequence/Sequenc
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
+import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
+import ZoomTool from 'application/editor/tools/Zoom';
+import { select } from 'd3';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 type BaseNodeSelection = {
   nodeIndexOverall: number;
   isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
   hasR1Connection?: boolean;
 };
+
+type SequenceBondRenderer =
+  | PolymerBondSequenceRenderer
+  | MonomerToAtomBondSequenceRenderer;
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
@@ -69,6 +77,8 @@ export class SequenceRenderer {
   private static lastChainStartPositionValue: Vec2;
   private static sequenceViewModelValue: SequenceViewModel;
   private static newSequenceButtons: NewSequenceButton[] = [];
+  private static readonly sequenceBondRenderers =
+    new Set<SequenceBondRenderer>();
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -123,6 +133,7 @@ export class SequenceRenderer {
     this.removeNewSequenceButtons();
     this.showNodes(SequenceRenderer.sequenceViewModel);
     this.showBonds(SequenceRenderer.chainsCollection);
+    this.attachDelegatedEvents();
     if (newEmptyChain) {
       this.setCaretToLastNodeInChain(newEmptyChain);
     }
@@ -168,7 +179,7 @@ export class SequenceRenderer {
     let hasAntisenseInRow = false;
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
-      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+      provideEditorInstance().isSequenceEditInRNABuilderMode;
     const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
@@ -334,7 +345,7 @@ export class SequenceRenderer {
                   polymerBond,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledHydrogenBonds.add(polymerBond);
 
@@ -352,7 +363,7 @@ export class SequenceRenderer {
                   node,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledAttachmentPoints.add(attachmentPointName);
 
@@ -360,7 +371,7 @@ export class SequenceRenderer {
               }
 
               if (!subChain.bonds.includes(polymerBond)) {
-                subChain.bonds.push(polymerBond);
+                subChain.addBond(polymerBond);
               }
               if (!polymerBond.isSideChainConnection) {
                 polymerBond.setRenderer(
@@ -402,7 +413,7 @@ export class SequenceRenderer {
               } else {
                 bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
               }
-              bondRenderer.show();
+              this.showBondRenderer(bondRenderer);
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
 
@@ -434,14 +445,19 @@ export class SequenceRenderer {
           chain.firstNode,
           chain.lastNonEmptyNode,
         );
-        bondRenderer.show();
+        this.showBondRenderer(bondRenderer);
         polymerBond.setRenderer(bondRenderer);
       }
     });
   }
 
+  private static showBondRenderer(bondRenderer: SequenceBondRenderer) {
+    bondRenderer.show();
+    this.sequenceBondRenderers.add(bondRenderer);
+  }
+
   public static setCaretPosition(caretPosition: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
@@ -881,7 +897,7 @@ export class SequenceRenderer {
   }
 
   public static startNewSequence(indexOfRowBefore?: number) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const oldNewSequenceChainIndex =
       SequenceRenderer.sequenceViewModel.chains.findIndex((chain) => {
         return chain.isNewSequenceChain;
@@ -972,7 +988,7 @@ export class SequenceRenderer {
   }
 
   public static shiftArrowSelectionInEditMode(event) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
 
@@ -1099,7 +1115,7 @@ export class SequenceRenderer {
 
   public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
         twoStrandedNode.senseNode instanceof EmptySequenceNode ||
@@ -1128,7 +1144,7 @@ export class SequenceRenderer {
   }
 
   public static get selections() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;
@@ -1241,39 +1257,41 @@ export class SequenceRenderer {
     );
   }
 
+  private static clearBondRenderers() {
+    this.sequenceBondRenderers.forEach((bondRenderer) => bondRenderer.remove());
+    this.sequenceBondRenderers.clear();
+  }
+
   public static clear() {
+    this.clearBondRenderers();
     this.sequenceViewModel?.forEachNode(({ twoStrandedNode }) => {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
-    this.removeNewSequenceButtons();
-  }
-}
 
-export function sequenceReplacer(key: string, value: unknown): unknown {
-  if (key === 'renderer') {
-    return `<${typeof value}>`;
-  } else if (key === 'baseRenderer') {
-    return `<${typeof value}>`;
-  } else if (['R1', 'R2', 'R3'].includes(key)) {
-    return `<${typeof value}>`;
-  } else if (value instanceof Pool) {
-    return {
-      // eslint-disable-next-line dot-notation
-      nextId: value['nextId'],
-      items: Array.from(value),
-    };
-  } else if (
-    value instanceof Object &&
-    !['Object', 'Array'].includes(value.constructor.name)
-  ) {
-    const valueObj = value as object;
-    const hasOwnToString = valueObj.toString !== Object.prototype.toString;
-    return {
-      ctor: value.constructor.name,
-      ...(hasOwnToString && { repr: valueObj.toString() }),
-      ...value,
-    };
+    if (this.chainsCollection) {
+      const handledBonds = new Set();
+      this.chainsCollection.chains.forEach((chain) => {
+        chain.monomers.forEach((monomer) => {
+          monomer.forEachBond((bond) => {
+            if (!handledBonds.has(bond)) {
+              handledBonds.add(bond);
+              bond.renderer?.remove();
+            }
+          });
+        });
+      });
+    }
+    this.removeNewSequenceButtons();
+    this.removeDelegatedEvents();
   }
-  return value;
+
+  private static attachDelegatedEvents() {
+    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    SequenceEventDelegationManager.instance.attachDelegatedEvents(canvas);
+  }
+
+  private static removeDelegatedEvents() {
+    SequenceEventDelegationManager.instance.removeDelegatedEvents();
+  }
 }

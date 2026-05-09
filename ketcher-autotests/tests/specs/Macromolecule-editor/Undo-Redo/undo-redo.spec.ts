@@ -138,7 +138,7 @@ test.describe('Undo Redo', () => {
     const coords = { x: 100, y: 100 };
     await page.mouse.move(coords.x, coords.y);
 
-    await dragMouseTo(coords.x + 500, coords.y + 500, page);
+    await dragMouseTo(page, coords.x + 500, coords.y + 500);
     await takeEditorScreenshot(page);
   });
 });
@@ -407,16 +407,14 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Copy/Paste working as expected and Undo/Redo
     */
-    const x = 200;
-    const y = 200;
     await Library(page).dragMonomerOnCanvas(Preset.C, {
-      x,
-      y,
+      x: 200,
+      y: 200,
       fromCenter: true,
     });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(200, 200);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

@@ -1,12 +1,15 @@
 import { Page } from '@playwright/test';
-import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { waitForKetcherInit } from './loaders/waitForKetcherInit/waitForKetcherInit';
+import { waitForIndigoToLoad } from './loaders/waitForIndigoToLoad';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export async function emptyFunction() {}
+export async function emptyFunction() {
+  // Intentionally empty callback used as a default async no-op in wait helpers.
+}
 
 export async function pageReload(page: Page) {
+  const { CommonTopRightToolbar } = await import(
+    './../../pages/common/CommonTopRightToolbar'
+  );
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
@@ -27,15 +30,7 @@ export async function pageReloadMicro(page: Page) {
  * @param {Page} page - The Playwright page object.
  */
 export async function clearLocalStorage(page: Page) {
-  page.evaluate(() => {
+  await page.evaluate(() => {
     localStorage.clear();
   });
-}
-
-export async function closeOpenStructure(page: Page) {
-  const openStructure = page.getByText('Open Structure', {
-    exact: true,
-  });
-  await OpenStructureDialog(page).closeWindow();
-  await openStructure.waitFor({ state: 'hidden' });
 }

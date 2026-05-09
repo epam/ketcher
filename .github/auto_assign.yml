@@ -6,8 +6,3 @@ reviewGroups:
   core:
     - svvald
     - rrodionov91
-  developers:
-    - NataliaLoginova
-  QA:
-    - Zhirnoff
-    - AlexeyGirin

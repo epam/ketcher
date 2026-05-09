@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Struct, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
-import { ReStruct } from './restruct';
+import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
@@ -29,16 +31,31 @@ import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
 import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type RnaComponentAtoms = Map<
+  RnaPresetComponentKey,
+  { atoms: number[]; bonds: number[] }
+>;
 
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
+  // display to the active RNA component tab). When undefined, all assigned
+  // attachment points are displayed.
+  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
+  // RNA preset component atoms and bonds
+  rnaComponentAtoms?: RnaComponentAtoms;
+  isRnaPresetMode?: boolean;
+  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
 } | null;
 
 export class Render {
@@ -99,7 +116,8 @@ export class Render {
   };
 
   unobserveCanvasResize = () => {
-    this.resizeObserver?.unobserve(this.paper.canvas);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   };
 
   updateOptions(opts: string) {

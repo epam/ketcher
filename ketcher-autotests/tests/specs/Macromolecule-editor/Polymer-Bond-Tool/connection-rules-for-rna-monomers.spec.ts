@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, Locator, expect } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  resetZoomLevelToDefault,
-  waitForPageInit,
   MonomerType,
 } from '@utils';
 import {
@@ -13,34 +12,24 @@ import {
   AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
-  bondTwoMonomersPointToPoint,
+  bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
   test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.afterEach(async () => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   interface IMonomer {
@@ -524,7 +513,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
     await leftMonomerLocator.hover({ force: true });
 
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(page, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -539,60 +528,13 @@ test.describe('Connection rules for RNAs: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(page, 600, 375);
     await moveMouseAway(page);
 
     return {
       leftMonomer: leftMonomerLocator,
       rightMonomer: rightMonomerLocator,
     };
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = getMonomerLocator(page, {
-      monomerAlias: leftMonomer.alias,
-    }).first();
-
-    const rightMonomerLocators = getMonomerLocator(page, {
-      monomerAlias: rightMonomer.alias,
-    });
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? rightMonomerLocators.nth(1)
-        : rightMonomerLocators.nth(0);
-
-    await rightMonomerLocator.hover();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstAttachmentPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.attachmentPoints,
-      )[0];
-      const leftMonomerAttachmentPoint =
-        leftMonomer.attachmentPoints[firstAttachmentPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerAttachmentPoint).first().click();
-
-      const firstAttachmentPointKeyForRightMonomer = Object.keys(
-        rightMonomer.attachmentPoints,
-      )[0];
-      const rightMonomerAttachmentPoint =
-        rightMonomer.attachmentPoints[firstAttachmentPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerAttachmentPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerAttachmentPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerAttachmentPoint).first().click();
-
-      await AttachmentPointsDialog(page).connect();
-    }
   }
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
@@ -607,10 +549,18 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftSugar, rightBase);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightBase.alias === leftSugar.alias
+            ? getMonomerLocator(page, { monomerAlias: rightBase.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightBase.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);
@@ -630,10 +580,20 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftPhosphate, rightSugar);
 
-        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, {
+            monomerAlias: leftPhosphate.alias,
+          }).first(),
+          rightSugar.alias === leftPhosphate.alias
+            ? getMonomerLocator(page, { monomerAlias: rightSugar.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightSugar.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);
@@ -653,10 +613,20 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await loadTwoMonomers(page, leftSugar, rightPhosphate);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPhosphate);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightPhosphate.alias === leftSugar.alias
+            ? getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).first(),
+        );
 
         const bondLine = getBondLocator(page, {
-          bondType: MacroBondDataIds.Single,
+          bondType: MacroBondType.Single,
         });
 
         expect(await bondLine.count()).toEqual(1);

@@ -454,7 +454,7 @@ const GrossFormulaPart = ({ part }) => {
   return (
     <span>
       {element}
-      <sub>{count}</sub>{' '}
+      <sub>{count}</sub>
     </span>
   );
 };
@@ -1057,11 +1057,11 @@ export const MacromoleculePropertiesWindow = () => {
       <GrossFormula data-testid="Gross-formula">
         {firstMacromoleculesProperties?.grossFormula
           .split(' ')
-          .map((atomNameWithAmount) => (
-            <GrossFormulaPart
-              part={atomNameWithAmount}
-              key={atomNameWithAmount}
-            />
+          .map((atomNameWithAmount, index, array) => (
+            <span key={`${atomNameWithAmount}-${index}`}>
+              <GrossFormulaPart part={atomNameWithAmount} />
+              {index < array.length - 1 ? ' ' : ''}
+            </span>
           ))}
       </GrossFormula>
     );

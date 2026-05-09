@@ -27,6 +27,7 @@ import { bond as bondSchema } from '../data/schema/struct-schema';
 import isHidden from './isHidden';
 import { toBondType } from '../data/convert/structconv';
 import { isFlipDisabled } from './flips';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
 
 const toolActions = {
   hand: {
@@ -49,10 +50,16 @@ const toolActions = {
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'lasso' },
   },
+  'select-structure': {
+    title: 'Structure Selection',
+    shortcut: ['Shift+Tab', 'Escape'],
+    action: { tool: 'select', opts: 'fragment' },
+    hidden: (options) => isHidden(options, 'select-structure'),
+  },
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: ['Shift+Tab', 'Escape'],
-    action: { tool: 'select', opts: 'fragment' },
+    action: { tool: 'fragmentSelection' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {
@@ -406,6 +413,10 @@ const bondCuts = {
 
 const typeSchema = bondSchema.properties.type;
 
+const monomerWizardDisallowedBondTypes = new Set(
+  MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
+);
+
 export default typeSchema.enum.reduce((res, type, i) => {
   res[`bond-${type}`] = {
     title: `${typeSchema.enumNames[i]} Bond`,
@@ -415,6 +426,9 @@ export default typeSchema.enum.reduce((res, type, i) => {
       opts: toBondType(type),
     },
     hidden: (options) => isHidden(options, `bond-${type}`),
+    ...(monomerWizardDisallowedBondTypes.has(type) && {
+      disabled: (editor) => editor.isMonomerCreationWizardActive,
+    }),
   };
   return res;
 }, toolActions);

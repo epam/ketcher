@@ -5,7 +5,7 @@ export type ClickTarget = Locator | { x: number; y: number };
 export enum MonomerOption {
   Copy = 'copy',
   Paste = 'paste',
-  ArrangeAsARing = 'arrange-ring',
+  ArrangeAsARing = 'layout_circular',
   CreateAntisenseRNAStrand = 'create_antisense_rna_chain',
   CreateAntisenseDNAStrand = 'create_antisense_dna_chain',
   ModifyAminoAcids = 'modify_amino_acids',
@@ -40,6 +40,7 @@ export enum SuperatomOption {
 
 export enum MacroBondOption {
   EditAttachmentPoints = 'edit_attachment_points',
+  Delete = 'delete',
 }
 
 export enum SequenceSymbolOption {
@@ -258,6 +259,13 @@ export enum ConnectionPointOption {
   MarkAsConnectionPoint = 'mark-as-connection-point',
 }
 
+export enum MonomerWizardOption {
+  MarkAs = 'Mark as a...-option',
+  Sugar = 'Mark as Sugar-option',
+  Base = 'Mark as Base-option',
+  Phosphate = 'Mark as Phosphate-option',
+}
+
 export type ContextMenuOption =
   | MonomerOption
   | ModifyAminoAcidsOption
@@ -281,4 +289,5 @@ export type ContextMenuOption =
   | ConnectivityOption
   | MultiTailedArrowOption
   | LibraryPresetOption
-  | ConnectionPointOption;
+  | ConnectionPointOption
+  | MonomerWizardOption;

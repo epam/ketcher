@@ -14,7 +14,11 @@ export class BackBoneBondSequenceRenderer extends BaseSequenceRenderer {
     return false;
   }
 
-  public moveStart(): void {}
+  public moveStart(): void {
+    // intentional no-op
+  }
 
-  public moveEnd(): void {}
+  public moveEnd(): void {
+    // intentional no-op
+  }
 }

@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import type { EditorSelection } from 'application/editor';
+import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -57,6 +57,10 @@ export type StructProperty = {
   value: string;
 };
 
+type ArrowWithId = {
+  arrowId?: number;
+};
+
 function arrayAddIfMissing(array, item) {
   for (const arrayItem of array) {
     if (arrayItem === item) return false;
@@ -86,6 +90,7 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  private nextArrowId = 0;
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -106,6 +111,41 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+  }
+
+  private syncNextArrowId(arrowId: number): void {
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+  }
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.syncNextArrowId(arrowId);
+
+    return arrow;
+  }
+
+  addRxnArrow(item: RxnArrow): number {
+    this.ensureArrowId(item);
+
+    return this.rxnArrows.add(item);
+  }
+
+  setRxnArrow(id: number, item: RxnArrow): void {
+    this.ensureArrowId(item);
+    this.rxnArrows.set(id, item);
+  }
+
+  addMultitailArrow(item: MultitailArrow): number {
+    this.ensureArrowId(item);
+
+    return this.multitailArrows.add(item);
+  }
+
+  setMultitailArrow(id: number, item: MultitailArrow): void {
+    this.ensureArrowId(item);
+    this.multitailArrows.set(id, item);
   }
 
   hasRxnProps(): boolean {
@@ -211,9 +251,12 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(
+  getFragment(fid: number | number[], aidMap?: Map<number, number>): Struct {
+    return this.clone(this.getFragmentIds(fid), null, true, aidMap);
+  }
+
+  getFragmentOnly(
     fid: number | number[],
-    copyNonFragmentObjects = true,
     aidMap?: Map<number, number>,
   ): Struct {
     return this.clone(
@@ -221,11 +264,11 @@ export class Struct {
       null,
       true,
       aidMap,
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
-      copyNonFragmentObjects ? undefined : new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
+      new Pile(),
     );
   }
 
@@ -374,7 +417,7 @@ export class Struct {
     });
 
     multitailArrows.forEach((id) => {
-      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
+      cp.addMultitailArrow(this.multitailArrows.get(id)!.clone());
     });
 
     rgroupAttachmentPoints.forEach((id) => {
@@ -386,7 +429,7 @@ export class Struct {
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
-        cp.rxnArrows.add(item.clone());
+        cp.addRxnArrow(item.clone());
       });
       this.rxnPluses.forEach((item) => {
         cp.rxnPluses.add(item.clone());
@@ -441,7 +484,6 @@ export class Struct {
           conn += 3;
           break;
         case Bond.PATTERN.TYPE.DATIVE:
-          break;
         case Bond.PATTERN.TYPE.HYDROGEN:
           break;
         case Bond.PATTERN.TYPE.AROMATIC:
@@ -499,6 +541,10 @@ export class Struct {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : this.atoms.get(halfBond.begin)!.pp;
+    } else if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
+      startCoords =
+        sgroup1.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.begin)!.pp;
     } else {
       startCoords = this.atoms.get(halfBond.begin)!.pp;
     }
@@ -507,6 +553,10 @@ export class Struct {
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : this.atoms.get(halfBond.end)!.pp;
+    } else if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
+      endCoords =
+        sgroup2.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.end)!.pp;
     } else {
       endCoords = this.atoms.get(halfBond.end)!.pp;
     }
@@ -845,7 +895,7 @@ export class Struct {
     return components;
   }
 
-  markFragment(idSet: Pile<number>, properties: [StructProperty]) {
+  markFragment(idSet: Pile<number>, properties?: [StructProperty]) {
     const frag = new Fragment([], undefined, properties);
     const fid = this.frags.add(frag);
 
@@ -1210,13 +1260,11 @@ export class Struct {
       components[j] = components[j].union(component);
     });
 
-    const submolTexts: Array<string> = [];
     const reactants: Array<any> = [];
     const products: Array<any> = [];
 
     components.forEach((component) => {
       if (!component) {
-        submolTexts.push('');
         return;
       }
 
@@ -1257,32 +1305,38 @@ export class Struct {
     });
   }
 
-  getGroupIdFromAtomId(atomId: number, searchBySgroups = false): number | null {
-    if (searchBySgroups) {
-      // Search by sgroups is more expensive, but allows to find
-      // functional groups for atoms which are not exist in struct already.
-      // F.e. if atom already deleted and it needs to find its functional group
-      for (const [groupId, sgroup] of Array.from(this.sgroups)) {
-        if (sgroup.atoms.includes(atomId)) return groupId;
-      }
-      return null;
-    } else {
-      const firstSgroupId = [
-        ...(this.atoms.get(atomId)?.sgs.values() ?? []),
-      ][0];
+  getGroupIdFromAtomId(atomId: number): number | null {
+    const firstSgroupId = [...(this.atoms.get(atomId)?.sgs.values() ?? [])][0];
 
-      return isNumber(firstSgroupId) ? firstSgroupId : null;
-    }
+    return isNumber(firstSgroupId) ? firstSgroupId : null;
   }
 
-  getGroupFromAtomId(
-    atomId: number | undefined,
-    searchBySgroups = false,
-  ): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromAtomId(
-      atomId as number,
-      searchBySgroups,
-    );
+  getGroupIdFromAtomIdBySgroups(atomId: number): number | null {
+    // Search by sgroups is more expensive, but allows to find
+    // functional groups for atoms which are not exist in struct already.
+    // F.e. if atom already deleted and it needs to find its functional group
+    for (const [groupId, sgroup] of Array.from(this.sgroups)) {
+      if (sgroup.atoms.includes(atomId)) return groupId;
+    }
+    return null;
+  }
+
+  getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomId(atomId);
+
+    return isNumber(sgroupId) ? this.sgroups?.get(sgroupId) : undefined;
+  }
+
+  getGroupFromAtomIdBySgroups(atomId: number | undefined): SGroup | undefined {
+    if (!isNumber(atomId)) {
+      return undefined;
+    }
+
+    const sgroupId = this.getGroupIdFromAtomIdBySgroups(atomId);
     return this.sgroups?.get(sgroupId as number);
   }
 

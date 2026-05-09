@@ -1,55 +1,84 @@
-import { test, expect } from '@fixtures';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { test, expect, Page } from '@fixtures';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   keyboardTypeOnCanvas,
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
-  waitForPageInit,
 } from '@utils';
 
+let page: Page;
+
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
+
+test.afterEach(async ({ SequenceCanvas: _ }) => {});
+
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+
 test.describe('Sequence edit mode', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
-  });
-
-  const typingModes = [
-    { buttonTestId: 'RNABtn', expectedTitle: 'RNA (Ctrl+Alt+R)', type: 'RNA' },
-    { buttonTestId: 'DNABtn', expectedTitle: 'DNA (Ctrl+Alt+D)', type: 'DNA' },
-    {
-      buttonTestId: 'PEPTIDEBtn',
-      expectedTitle: 'Peptides (Ctrl+Alt+P)',
-      type: 'Peptide',
-    },
-  ];
-
   test.describe('Check New approach and UI for switching between types in sequence mode', () => {
-    for (const { buttonTestId, expectedTitle, type } of typingModes) {
-      test(`should switch to ${type} mode and verify UI changes`, async ({
-        page,
-      }) => {
-        /*
-         * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
-         * Description: Verify that clicking on ${type} button switches to the correct typing mode and displays correct title.
-         * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
-         */
+    test(`should switch to RNA mode and verify UI changes`, async () => {
+      /*
+       * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+       * Description: Verify that clicking on RNA button switches to the correct typing mode and displays correct title.
+       * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+       */
 
-        await takeTopToolbarScreenshot(page);
+      await takeTopToolbarScreenshot(page);
 
-        const button = page.getByTestId(buttonTestId);
-        await expect(button).toHaveAttribute('title', expectedTitle);
+      await expect(MacromoleculesTopToolbar(page).rnaButton).toHaveAttribute(
+        'title',
+        'RNA (Ctrl+Alt+R)',
+      );
 
-        await button.click();
-        await takeTopToolbarScreenshot(page);
+      await MacromoleculesTopToolbar(page).rna();
+      await takeTopToolbarScreenshot(page);
 
-        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-        await takeEditorScreenshot(page);
-      });
-    }
+      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      await takeEditorScreenshot(page);
+    });
+
+    test(`should switch to DNA mode and verify UI changes`, async () => {
+      /*
+       * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+       * Description: Verify that clicking on DNA button switches to the correct typing mode and displays correct title.
+       * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+       */
+      await takeTopToolbarScreenshot(page);
+
+      await expect(MacromoleculesTopToolbar(page).dnaButton).toHaveAttribute(
+        'title',
+        'DNA (Ctrl+Alt+D)',
+      );
+
+      await MacromoleculesTopToolbar(page).dna();
+      await takeTopToolbarScreenshot(page);
+
+      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      await takeEditorScreenshot(page);
+    });
+
+    test(`should switch to Peptides mode and verify UI changes`, async () => {
+      /*
+       * Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+       * Description: Verify that clicking on Peptides button switches to the correct typing mode and displays correct title.
+       * NEW REQUIREMENT: https://github.com/epam/ketcher/issues/8723
+       */
+      await takeTopToolbarScreenshot(page);
+
+      await expect(
+        MacromoleculesTopToolbar(page).peptidesButton,
+      ).toHaveAttribute('title', 'Peptides (Ctrl+Alt+P)');
+
+      await MacromoleculesTopToolbar(page).peptides();
+      await takeTopToolbarScreenshot(page);
+
+      await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      await takeEditorScreenshot(page);
+    });
   });
 });

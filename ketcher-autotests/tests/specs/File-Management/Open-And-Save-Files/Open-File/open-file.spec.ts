@@ -1,6 +1,7 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -8,8 +9,6 @@ import {
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-
-const X_OFFSET = 200;
 
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
@@ -54,15 +53,10 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1840225-mol-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // add second structure from file to canvas
-    await openFileAndAddToCanvas(
-      page,
-      'Molfiles-V2000/glutamine.mol',
-      X_OFFSET,
-      0,
-    );
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol', 200, 0);
     await takeEditorScreenshot(page);
   });
 
@@ -76,12 +70,7 @@ test.describe('open files with different formats', () => {
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     // add second structure from file to canvas
-    await openFileAndAddToCanvas(
-      page,
-      'Rxn-V2000/rxn-reaction.rxn',
-      0,
-      -X_OFFSET,
-    );
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/rxn-reaction.rxn', 0, -200);
     await takeEditorScreenshot(page);
   });
 
@@ -94,7 +83,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +96,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-2.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -120,7 +109,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-3.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

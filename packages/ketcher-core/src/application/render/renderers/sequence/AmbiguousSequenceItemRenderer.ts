@@ -1,5 +1,5 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
@@ -17,5 +17,7 @@ export class AmbiguousSequenceItemRenderer extends BaseSequenceItemRenderer {
     return this.node.monomer.label;
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 }

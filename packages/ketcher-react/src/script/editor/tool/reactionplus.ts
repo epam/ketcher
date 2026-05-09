@@ -71,15 +71,14 @@ class ReactionPlusTool implements Tool {
   }
 
   mouseup() {
-    if (!this.dragCtx) {
-      return true;
+    if (this.dragCtx) {
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
+      }
+
+      delete this.dragCtx;
     }
 
-    if (this.dragCtx.action) {
-      this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
-    }
-
-    delete this.dragCtx;
     return true;
   }
 

@@ -5,7 +5,7 @@ import {
   waitForPageInit,
   layout,
   recognize,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
@@ -156,7 +156,7 @@ test.describe('getKet', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
 
     await verifyFileExport(

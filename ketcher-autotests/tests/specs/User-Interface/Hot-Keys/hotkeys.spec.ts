@@ -1,23 +1,20 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
-  moveOnAtom,
-  waitForRender,
   takeEditorScreenshot,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   dragMouseTo,
   clickOnCanvas,
   deleteByKeyboard,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { copyStructureByCtrlMove } from '@utils/canvas/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -34,8 +31,9 @@ import {
   FunctionalGroupsTabItems,
   SaltsAndSolventsTabItems,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,15 +47,15 @@ test.describe('Hot keys', () => {
     await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
-    await expect(page).toHaveScreenshot();
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Verify move by ctrl when its a part of molecula as only atom', async ({
@@ -76,7 +74,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await takeEditorScreenshot(page);
   });
 
@@ -97,10 +100,17 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
     await page.keyboard.up('Shift');
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -122,7 +132,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -147,7 +162,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -156,16 +176,14 @@ test.describe('Hot keys', () => {
     page,
   }) => {
     /*
-      Test case: https://github.com/epam/ketcher/issues/4986
-      Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      Case:
-      1. Open a benzene ring with attachment points.
-      2. Select all structure.
-      3. Press Ctrl key and move structure.
-      Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
-      We have a bug: https://github.com/epam/ketcher/issues/6199 
-      After fixing this bug we need update screenshots.
-      */
+     * Test case: https://github.com/epam/ketcher/issues/4986
+     * Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     * Case:
+     * 1. Open a benzene ring with attachment points.
+     * 2. Select all structure.
+     * 3. Press Ctrl key and move structure.
+     * Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+     */
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/benzene-ring-with-two-attachment-points.ket',
@@ -174,7 +192,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -205,7 +228,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 250, y: 250 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 250, 250);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -228,7 +256,12 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 245, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 245, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -246,16 +279,16 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'Cbz' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -274,10 +307,10 @@ test.describe('Hot keys', () => {
       Expected: Functional group structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Cbz,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -286,7 +319,12 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'Cbz' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -304,16 +342,16 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await getAbbreviationLocator(page, { name: 'formic acid' }).hover();
     await page.keyboard.down('ControlOrMeta');
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -332,10 +370,10 @@ test.describe('Hot keys', () => {
       Expected: Salts and solvents structure copied and moves to a new place.
       */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.FormicAcid,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -344,7 +382,12 @@ test.describe('Hot keys', () => {
       getAbbreviationLocator(page, { name: 'formic acid' }),
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -369,7 +412,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 270, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -394,7 +442,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 270, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -419,7 +472,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 270, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
@@ -445,7 +503,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 270, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page, { maxDiffPixels: 2 });
@@ -469,7 +532,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
@@ -494,7 +562,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 300, 300);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
@@ -524,7 +597,12 @@ test.describe('Hot keys', () => {
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).hover({
+      force: true,
+    });
+    await page.keyboard.down('ControlOrMeta');
+    await dragMouseTo(page, 270, 245);
+    await page.keyboard.up('ControlOrMeta');
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -553,15 +631,13 @@ test.describe('Hot key Del', () => {
         );
       }
     });
-    const x = 100;
-    const y = 100;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await moveOnAtom(page, 'C', 0);
+    await clickInTheMiddleOfTheCanvas(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
+      force: true,
     });
     await deleteByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(100, 100);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });

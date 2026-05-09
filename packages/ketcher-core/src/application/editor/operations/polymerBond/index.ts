@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities';
-import { LayoutMode } from 'application/editor';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { LayoutMode } from 'application/editor/modes/types';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -76,7 +76,9 @@ export class PolymerBondMoveOperation implements Operation {
     renderersManager.movePolymerBond(this.polymerBond);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: move state is transient and has no undo state
+  }
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
@@ -86,7 +88,9 @@ export class PolymerBondShowInfoOperation implements Operation {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: show info state is transient and has no undo state
+  }
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
@@ -102,7 +106,9 @@ export class PolymerBondCancelCreationOperation implements Operation {
     );
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: cancel creation is a one-way operation with no undo state
+  }
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {

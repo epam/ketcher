@@ -5,15 +5,15 @@ import {
   waitForPageInit,
   waitForRender,
   takeLeftToolbarScreenshot,
-  clickOnAtom,
   clickOnCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -41,7 +41,9 @@ test.describe('Erase Tool', () => {
     const bondsSizeAfterErase = 18;
 
     await waitForRender(page, async () => {
-      await clickOnAtom(page, 'Br', 0);
+      await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
+        force: true,
+      });
     });
 
     const atomSize = await page.evaluate(() => {
@@ -71,7 +73,10 @@ test.describe('Erase Tool', () => {
     const reactionArrow = 1;
     const plusAfterDelete = 1;
     const reactionPlus = 2;
-    const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+    const { leftBarWidth, topBarHeight } = {
+      leftBarWidth: 52,
+      topBarHeight: 40,
+    };
 
     const { plusElement, scale } = await page.evaluate(() => {
       const [plusElement] = window.ketcher.editor.struct().rxnPluses.values();
@@ -123,7 +128,7 @@ test.describe('Erase Tool', () => {
     };
 
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await RotationTool(page).delete();
 
     await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
       from: 'pageTopLeft',

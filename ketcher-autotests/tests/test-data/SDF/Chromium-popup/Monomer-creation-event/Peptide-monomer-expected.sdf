@@ -53,6 +53,6 @@ monomerTemplate
 PeptTest
 
 >  <modificationTypes>
-Citrullination;modification-type-option-Hydroxylation;modification-type-option-Inversion;modification-type-option-N-methylation;Custom Modification
+Citrullination;modification-type-option-Hydroxylation;modification-type-option-Inversion;modification-type-option-N-methylation;Custom Modification;
 
 $$$$

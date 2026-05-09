@@ -1,18 +1,17 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Page, test } from '@fixtures';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -20,14 +19,14 @@ import {
   takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit } from '@utils/common';
+
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -46,28 +45,19 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { SaltsAndSolventsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
 test.describe('Ketcher bugs in 3.3.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Able to create antisense RNA/DNA chain in case of multipal chain selection (if not eligable for antisense chain selected)', async () => {
@@ -154,7 +144,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -182,7 +172,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await getMonomerLocator(page, Peptide.meC).click();
     await takeEditorScreenshot(page, {
@@ -229,13 +219,15 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await Library(page).selectMonomer(Base.h456UR);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
-    await keyboardPressOnCanvas(page, 'Escape');
-    await Library(page).selectMonomer(Base.e6A);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+    );
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await Library(page).hoverMonomer(Base.e6A);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    // Screenshot suppression is not used on purpose, as it’s required for the test
-    await takePageScreenshot(page);
+    expect(await MonomerPreviewTooltip(page).getTitleText()).toContain(
+      '2-amino-6-etoxypurine',
+    );
   });
 
   test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async () => {
@@ -259,9 +251,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getMonomerLocator(page, Peptide.A).click();
-    await dragMouseTo(500, 350, page);
+    await dragMouseTo(page, 500, 350);
     await getMonomerLocator(page, Peptide.C).click();
-    await dragMouseTo(600, 350, page);
+    await dragMouseTo(page, 600, 350);
     await getMonomerLocator(page, Peptide.D).click();
     await page.mouse.down();
     await page.mouse.move(700, 350, { steps: 20 });
@@ -811,7 +803,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       y: 0,
       fromCenter: true,
     });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -840,10 +832,10 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addSaltsAndSolvents(
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

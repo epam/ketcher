@@ -31,7 +31,7 @@ const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
   active: state.actionState?.activeTool,
-  status: state.actionState || {},
+  status: state.actionState ?? {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,

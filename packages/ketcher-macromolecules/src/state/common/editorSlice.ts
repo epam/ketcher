@@ -17,6 +17,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
+  RenderersManager,
   type LayoutMode,
   SettingsManager,
   type EditorLineLength,
@@ -58,6 +59,7 @@ interface EditorState {
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
+  isDragging: boolean;
   isMacromoleculesPropertiesWindowOpened: boolean;
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
@@ -82,6 +84,7 @@ const initialState: EditorState = {
   },
   position: undefined,
   isContextMenuActive: false,
+  isDragging: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
@@ -89,10 +92,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE || '',
-    indigoVersion: process.env.INDIGO_VERSION || '',
-    indigoMachine: process.env.INDIGO_MACHINE || '',
-    version: process.env.VERSION || '',
+    buildDate: process.env.BUILD_DATE ?? '',
+    indigoVersion: process.env.INDIGO_VERSION ?? '',
+    indigoMachine: process.env.INDIGO_MACHINE ?? '',
+    version: process.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };
@@ -133,9 +136,15 @@ export const editorSlice: Slice<EditorState> = createSlice({
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
-        monomersLibraryReplace: action.payload.monomersLibraryReplace,
+        renderersContainer: new RenderersManager({
+          theme: action.payload.theme,
+        }),
       });
+
+      editor.initializeMonomersLibraryFromKetcher(
+        action.payload.monomersLibraryUpdate,
+        action.payload.monomersLibraryReplace,
+      );
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -158,6 +167,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
+    },
+    setIsDragging: (state, action: PayloadAction<boolean>) => {
+      state.isDragging = action.payload;
     },
     setMacromoleculesPropertiesWindowVisibility: (
       state,
@@ -228,6 +240,7 @@ export const {
   destroyEditor,
   showPreview,
   setContextMenuActive,
+  setIsDragging,
   setMacromoleculesPropertiesWindowVisibility,
   toggleMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
@@ -281,6 +294,9 @@ export const hasAntisenseChains = (state: RootState): CoreEditor =>
 
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
+
+export const selectIsDragging = (state: RootState): boolean =>
+  state.editor.isDragging;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (
   state: RootState,

@@ -8,7 +8,12 @@ import useBondEdit from '../hooks/useBondEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
-import { formatTitle, getBondNames } from '../utils';
+import useMarkAs from '../hooks/useMarkAs';
+import {
+  formatTitle,
+  getBondNames,
+  monomerWizardDisallowedBondNames,
+} from '../utils';
 import Editor from 'src/script/editor';
 import {
   MenuItemsProps,
@@ -21,6 +26,7 @@ import { CREATE_MONOMER_TOOL_NAME, ketcherProvider } from 'ketcher-core';
 import isHidden from '../../../../action/isHidden';
 import { useSelector } from 'react-redux';
 import { optionsSelector } from '../../../../state/options/selectors';
+import clsx from 'clsx';
 
 const bondNames = getBondNames(tools);
 
@@ -35,6 +41,11 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
+  const {
+    handler: handleMarkAs,
+    isVisible: markAsIsVisible,
+    isDisabled: markAsIsDisabled,
+  } = useMarkAs();
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
     const atomIds = props.propsFromTrigger?.atomIds || [];
@@ -49,9 +60,55 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
     });
   };
   const options = useSelector(optionsSelector);
+  const showMarkAsMenu = markAsIsVisible();
+  const markAsDisabled = markAsIsDisabled();
 
   return (
     <>
+      {showMarkAsMenu && (
+        <Submenu
+          {...props}
+          data-testid="Mark as a...-option"
+          label="Mark as a..."
+          disabled={markAsDisabled}
+          className={styles.subMenu}
+        >
+          <Item
+            {...props}
+            data-testid="Mark as Base-option"
+            onClick={handleMarkAs('base')}
+          >
+            <Icon
+              name="base"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Base</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Sugar-option"
+            onClick={handleMarkAs('sugar')}
+          >
+            <Icon
+              name="sugar"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Sugar</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Phosphate-option"
+            onClick={handleMarkAs('phosphate')}
+          >
+            <Icon
+              name="phosphate"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Phosphate</span>
+          </Item>
+        </Submenu>
+      )}
+
       <Item
         {...props}
         data-testid="Edit selected bonds...-option"
@@ -79,8 +136,16 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       >
         {bondNames.map((name) => {
           const iconName = getIconName(name);
+          const isDisabledForMonomerWizard =
+            editor.isMonomerCreationWizardActive &&
+            monomerWizardDisallowedBondNames.includes(name);
           return (
-            <Item id={name} onClick={handleTypeChange} key={name}>
+            <Item
+              id={name}
+              onClick={handleTypeChange}
+              key={name}
+              disabled={isDisabledForMonomerWizard}
+            >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>
             </Item>

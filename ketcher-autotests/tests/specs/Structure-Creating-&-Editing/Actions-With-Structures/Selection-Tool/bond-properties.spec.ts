@@ -2,7 +2,6 @@
 import { test } from '@fixtures';
 import {
   clickOnCanvas,
-  delay,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   MolFileFormat,
@@ -17,7 +16,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
@@ -71,13 +70,13 @@ test.describe('Bond Properties', () => {
     let i = 0;
     while (i < 5) {
       await page.keyboard.press('ArrowDown');
-      await delay(0.1);
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
 
     while (i < 7) {
       await page.keyboard.press('ArrowUp');
-      await delay(0.1);
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
     await takeEditorScreenshot(page);
@@ -460,7 +459,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(x - offset, y - offset);
-    await dragMouseTo(x + offset, y + offset, page);
+    await dragMouseTo(page, x + offset, y + offset);
 
     await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
     await BondPropertiesDialog(page).setOptions({
@@ -541,10 +540,10 @@ test.describe('Bond Properties', () => {
       reactingCenter: BondReactingCenterOption.NoChange,
     });
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y + 30);
-    dragMouseTo(x + 100, y + 100, page);
+    dragMouseTo(page, x + 100, y + 100);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

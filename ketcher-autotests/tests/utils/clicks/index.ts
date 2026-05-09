@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import { AtomLabelType, MouseButton } from './types';
+import { MouseButton } from './types';
 import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { getVisibleCanvas } from '@utils/canvas';
 
 type BoundingBox = {
   width: number;
@@ -104,13 +102,9 @@ export async function clickOnCanvas(
   await waitForRender(
     page,
     async () => {
-      const getCanvas = (page: Page) =>
-        page
-          .getByTestId(KETCHER_CANVAS)
-          .filter({ has: page.locator(':visible') });
       const getRelativeAxisCenter = async (
         page: Page,
-        canvas: any,
+        canvas: Locator,
         fromCenter:
           | 'pageTopLeft'
           | 'pageCenter'
@@ -140,7 +134,7 @@ export async function clickOnCanvas(
 
       const relativeAxisCenter = await getRelativeAxisCenter(
         page,
-        getCanvas(page),
+        await getVisibleCanvas(page),
         options.from ?? 'canvasTopLeft',
       );
       await page.mouse.click(
@@ -158,13 +152,7 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
-  const canvas = page
-    .getByTestId(KETCHER_CANVAS)
-    .filter({ has: page.locator(':visible') });
-  await canvas.waitFor({
-    state: 'attached',
-    timeout: 10000,
-  });
+  const canvas = await getVisibleCanvas(page);
   const box = await canvas.boundingBox();
   if (!box) {
     throw new Error('Unable to get boundingBox for canvas');
@@ -175,9 +163,43 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   };
 }
 
-export async function clickOnMiddleOfCanvas(page: Page) {
+export async function clickInTheMiddleOfTheCanvas(
+  page: Page,
+  button: MouseButton = 'left',
+  options: {
+    waitForMergeInitialization?: boolean;
+    waitForRenderTimeOut?: number;
+  } = {},
+) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await clickOnCanvas(page, x, y);
+
+  if (options.waitForMergeInitialization) {
+    const canvas = await getVisibleCanvas(page);
+    const box = await canvas.boundingBox();
+    if (!box) {
+      throw new Error('Unable to get boundingBox for canvas');
+    }
+
+    await waitForRender(
+      page,
+      async () => {
+        await clickAfterItemsToMergeInitialization(
+          page,
+          box.x + x,
+          box.y + y,
+          button,
+        );
+      },
+      options.waitForRenderTimeOut,
+    );
+
+    return;
+  }
+
+  await clickOnCanvas(page, x, y, {
+    button,
+    waitForRenderTimeOut: options.waitForRenderTimeOut,
+  });
 }
 
 export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
@@ -207,7 +229,7 @@ export async function dragTo(
   });
 }
 
-export async function dragMouseTo(x: number, y: number, page: Page) {
+export async function dragMouseTo(page: Page, x: number, y: number) {
   await page.mouse.down();
   await page.mouse.move(x, y);
   await waitForRender(page, async () => {
@@ -219,74 +241,17 @@ export async function dragMouseAndMoveTo(page: Page, shift: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
-  await dragMouseTo(coordinatesWithShift, y, page);
+  await dragMouseTo(page, coordinatesWithShift, y);
 }
 
 export async function shiftCanvas(page: Page, xShift: number, yShift: number) {
   await CommonLeftToolbar(page).handTool();
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   await page.mouse.move(x, y);
-  await dragMouseTo(x + xShift, y + yShift, page);
+  await dragMouseTo(page, x + xShift, y + yShift);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
 }
 
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
-}
-
-export async function clickOnAtom(
-  page: Page,
-  atomLabel: AtomLabelType,
-  atomNumber: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
-export async function clickOnAtomById(
-  page: Page,
-  atomId: number,
-  buttonSelect?: MouseButton,
-) {
-  const point = await getAtomById(page, atomId);
-  await clickOnCanvas(page, point.x, point.y, {
-    button: buttonSelect,
-    from: 'pageTopLeft',
-  });
-}
-
-export async function doubleClickOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.dblclick(point.x, point.y);
-  });
-}
-
-export async function longClickOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-  timeout = 2000,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.waitForTimeout(timeout);
-}
-
-export async function moveOnAtom(
-  page: Page,
-  atomLabel: string,
-  atomNumber: number,
-) {
-  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.move(point.x, point.y);
 }

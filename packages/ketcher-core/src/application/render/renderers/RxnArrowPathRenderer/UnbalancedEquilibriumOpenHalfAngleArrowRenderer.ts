@@ -5,9 +5,9 @@ import {
   ARROW_OFFSET,
   ARROW_UNBALANCED_OFFSET,
 } from 'application/render/draw';
-import { provideEditorSettings } from 'application/editor';
-import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Vec2 } from 'domain/entities/vec2';
+import { toFixed } from 'utilities';
 
 export class UnbalancedEquilibriumOpenHalfAngleArrowRenderer {
   static preparePaths(start: Vec2, arrowLength: number, arrowAngle: number) {
@@ -21,19 +21,21 @@ export class UnbalancedEquilibriumOpenHalfAngleArrowRenderer {
 
     // First arrow
     pathParts.push(
-      `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
-        `L${tfx(endX - arrowHeadLength)},${tfx(
+      `M${toFixed(start.x)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX)},${toFixed(start.y - arrowOffset)}` +
+        `L${toFixed(endX - arrowHeadLength)},${toFixed(
           start.y - arrowHeadWidth - arrowOffset,
         )}`,
     );
 
     // Second (Unbalanced) arrow
     pathParts.push(
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
-        `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+      `M${toFixed(start.x + unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+        `L${toFixed(endX - unbalanceVal)},${toFixed(start.y + arrowOffset)}` +
+        `M${toFixed(start.x + unbalanceVal)},${toFixed(
+          start.y + arrowOffset,
+        )}` +
+        `L${toFixed(start.x + arrowHeadLength + unbalanceVal)},${toFixed(
           start.y + arrowOffset + arrowHeadWidth,
         )}`,
     );

@@ -11,7 +11,6 @@ import {
   moveMouseAway,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  waitForPageInit,
   MacroFileType,
   MolFileFormat,
   takeElementScreenshot,
@@ -33,7 +32,7 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -45,6 +44,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 let page: Page;
 
@@ -52,23 +52,21 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('Create bond between two peptides', async () => {
@@ -142,7 +140,7 @@ test('Create bond between two chems', async () => {
   const chem2 = getMonomerLocator(page, Chem.hxy).nth(1);
 
   // Select bond tool
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
   // Create bonds between chems, taking screenshots in middle states
   await chem1.hover();
@@ -178,11 +176,11 @@ test('Select monomers and pass a bond', async () => {
   const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide2, peptide1);
-  await page.waitForSelector('#error-tooltip');
-  const errorTooltip = await page.getByTestId('error-tooltip').innerText();
   const errorMessage =
     "There can't be more than 1 bond between the first and the second monomer";
-  expect(errorTooltip).toEqual(errorMessage);
+  expect(await NotificationBanner(page).getNotificationText()).toEqual(
+    errorMessage,
+  );
 });
 
 test('Check in full-screen mode it is possible to add a bond between a Peptide monomers if this bond is pulled not from a specific attachment point R', async () => {
@@ -191,8 +189,6 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     Description: In full-screen mode it is possible to add a bond between 
     a Peptide monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
@@ -201,8 +197,8 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Peptide.Edc, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
@@ -216,8 +212,6 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     Description: In full-screen mode it is possible to add a bond between 
     a RNA monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Preset.MOE_A_P, {
@@ -226,8 +220,8 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Preset.dR_U_P, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
@@ -241,8 +235,6 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     Description: In full-screen mode it is possible to add a bond between 
     a CHEM monomers if this bond is pulled not from a specific attachment point R.
     */
-  const x = 800;
-  const y = 350;
   const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await Library(page).dragMonomerOnCanvas(Chem.A6OH, {
@@ -251,8 +243,8 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     fromCenter: true,
   });
   await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
-    x,
-    y,
+    x: 800,
+    y: 350,
   });
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await AttachmentPointsDialog(page).selectAttachmentPoints({
@@ -341,7 +333,7 @@ test('Verify that clicking "Reconnect" with different attachment points chosen r
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -357,7 +349,7 @@ test('Verify that clicking "Reconnect" without changing the attachment points re
   await openFileAndAddToCanvasMacro(page, 'KET/two-peptides-connected.ket');
   await ContextMenu(page, bondLine).click(MacroBondOption.EditAttachmentPoints);
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -382,7 +374,7 @@ test('Verify that clicking "Cancel" in the dialog results in no change to the bo
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).cancel();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -407,7 +399,7 @@ test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" do
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).close();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -427,19 +419,19 @@ test('Verify that changes made in the "Edit Attachment Points" dialog can be und
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).undo();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).redo();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -464,7 +456,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     'KET/two-peptides-connected-expected.ket',
     FileType.KET,
   );
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -493,7 +485,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     MolFileFormat.v3000,
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -524,7 +516,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.Sequence, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -555,7 +547,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.FASTA, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -581,7 +573,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
   await AttachmentPointsDialog(page).reconnect();
   await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
   await openFileAndAddToCanvasAsNewProject(page, 'IDT/moe-idt-expected.idt');
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -601,7 +593,7 @@ test('Verify changing connection points of a side chain bond', async () => {
     rightMonomer: AttachmentPoint.R1,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -621,7 +613,7 @@ test('Verify editing of a cyclic structure', async () => {
     rightMonomer: AttachmentPoint.R3,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -641,7 +633,7 @@ test('Verify correct display and changing of connection points in the dialog for
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -944,6 +936,7 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     */
   const firstMonomer = getMonomerLocator(page, Peptide.C);
   const secondMonomer = getMonomerLocator(page, Peptide.dC);
+  const thirdMonomer = getMonomerLocator(page, Peptide.meD);
   await openFileAndAddToCanvasMacro(
     page,
     'KET/five-peptides-connected-by-r2-r1.ket',
@@ -965,9 +958,8 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     page,
     'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
   );
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
+  await takeElementScreenshot(page, thirdMonomer, {
+    padding: 200,
   });
 });
 

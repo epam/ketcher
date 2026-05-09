@@ -1,20 +1,18 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import {
-  BaseMonomer,
-  Peptide,
-  Phosphate,
-  SubChainNode,
-  Sugar,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-  Nucleoside,
-  Nucleotide,
-  MonomerSequenceNode,
-  EmptySequenceNode,
-  LinkerSequenceNode,
-  AmbiguousMonomer,
-  PolymerBond,
-} from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   getNextMonomerInChain,
   isValidNucleoside,
@@ -22,6 +20,7 @@ import {
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 let id = 0;
 export class Chain {
@@ -32,6 +31,11 @@ export class Chain {
   public isCyclic = false;
 
   public id: number;
+
+  private nodesChanged = true;
+  private nodesCache: SubChainNode[] = [];
+  private monomersCache: BaseMonomer[] = [];
+  private bondsCache: PolymerBond[] = [];
 
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
     this.id = id++;
@@ -46,6 +50,23 @@ export class Chain {
     }
   }
 
+  private recalculateNodes() {
+    // TODO if node.monomers change somewhere else, we will have incorrect cache
+    if (
+      this.nodesChanged ||
+      this.subChains.some((subChain) => subChain.modified)
+    ) {
+      this.nodesCache = this.subChains.flatMap((subChain) => subChain.nodes);
+      this.monomersCache = this.nodesCache.flatMap((node) => node.monomers);
+      this.bondsCache = this.subChains.flatMap((subChain) => subChain.bonds);
+
+      this.nodesChanged = false;
+      this.subChains.forEach((subChain) => {
+        subChain.modified = false;
+      });
+    }
+  }
+
   private createSubChainIfNeed(monomer) {
     const needCreateNewSubchain =
       !this.lastNode?.monomer ||
@@ -56,7 +77,37 @@ export class Chain {
     }
   }
 
+  private tryAddAsNucleosideOrNucleotide(
+    sugar: Sugar | AmbiguousMonomer,
+  ): boolean {
+    if (isValidNucleoside(sugar, this.firstMonomer)) {
+      this.lastSubChain.add(Nucleoside.fromSugar(sugar, false));
+      return true;
+    }
+    if (isValidNucleotide(sugar, this.firstMonomer)) {
+      this.lastSubChain.add(Nucleotide.fromSugar(sugar, false));
+      return true;
+    }
+    return false;
+  }
+
+  private addAmbiguousMonomer(monomer: AmbiguousMonomer) {
+    if (monomer.monomerClass === KetMonomerClass.Sugar) {
+      if (this.tryAddAsNucleosideOrNucleotide(monomer)) {
+        return;
+      }
+    }
+    // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
+    // connected to other linker-valid monomers), add it as a LinkerSequenceNode
+    if (LinkerSequenceNode.isPartOfLinker(monomer)) {
+      this.lastSubChain.add(new LinkerSequenceNode(monomer));
+    } else {
+      this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
+    }
+  }
+
   public add(monomer: BaseMonomer) {
+    this.nodesChanged = true;
     this.createSubChainIfNeed(monomer);
 
     if (
@@ -69,23 +120,12 @@ export class Chain {
     }
 
     if (monomer instanceof AmbiguousMonomer) {
-      // If this ambiguous monomer can be part of a linker group (CHEM, Sugar, Phosphate, or Base class
-      // connected to other linker-valid monomers), add it as a LinkerSequenceNode
-      if (LinkerSequenceNode.isPartOfLinker(monomer)) {
-        this.lastSubChain.add(new LinkerSequenceNode(monomer));
-      } else {
-        this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
-      }
+      this.addAmbiguousMonomer(monomer);
       return;
     }
 
     if (monomer instanceof Sugar) {
-      if (isValidNucleoside(monomer, this.firstMonomer)) {
-        this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
-        return;
-      }
-      if (isValidNucleotide(monomer, this.firstMonomer)) {
-        this.lastSubChain.add(Nucleotide.fromSugar(monomer, false));
+      if (this.tryAddAsNucleosideOrNucleotide(monomer)) {
         return;
       }
     }
@@ -114,7 +154,7 @@ export class Chain {
     this.createSubChainIfNeed(node.monomer);
 
     this.lastSubChain.add(node);
-
+    this.nodesChanged = true;
     return this;
   }
 
@@ -136,12 +176,8 @@ export class Chain {
   }
 
   public get nodes() {
-    const nodes: SubChainNode[] = [];
-    this.subChains.forEach((subChain) => {
-      nodes.push(...subChain.nodes);
-    });
-
-    return nodes;
+    this.recalculateNodes();
+    return this.nodesCache;
   }
 
   public get lastNode():
@@ -149,6 +185,7 @@ export class Chain {
     | MonomerSequenceNode
     | Nucleoside
     | Nucleotide
+    | LinkerSequenceNode
     | undefined {
     return this.lastSubChain?.lastNode;
   }
@@ -251,18 +288,14 @@ export class Chain {
     return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
   }
 
-  // TODO: This method while being called multiple times (e.g. in isOverlappingCyclicBond) causes performance issues, consider memoization
   public get monomers() {
-    return this.nodes.reduce(
-      (monomers: BaseMonomer[], node) => [...monomers, ...node.monomers],
-      [],
-    );
+    this.recalculateNodes();
+    return this.monomersCache;
   }
 
   // TODO: Currently the only place where bonds are pushed is in SequenceModeRenderer thus it doesn't provide correct data. Collect all bonds in `fromMonomers` method
   public get bonds() {
-    return this.subChains.reduce((bonds: PolymerBond[], subChain) => {
-      return [...bonds, ...subChain.bonds];
-    }, []);
+    this.recalculateNodes();
+    return this.bondsCache;
   }
 }

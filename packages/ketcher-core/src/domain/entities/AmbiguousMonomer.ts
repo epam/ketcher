@@ -3,11 +3,11 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { IVariantMonomer } from 'domain/entities/types';
 import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
@@ -71,12 +71,12 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   }
 
   public static getMonomerClass(monomers: BaseMonomer[]) {
-    const [, , monomerClass] = monomerFactory(monomers[0].monomerItem);
+    const monomerClass = resolveMonomerClass(monomers[0].monomerItem);
 
     const containDifferentMonomerTypes = monomers.some((monomer) => {
-      const [, , MonomerClassToCompare] = monomerFactory(monomer.monomerItem);
+      const monomerClassToCompare = resolveMonomerClass(monomer.monomerItem);
 
-      return monomerClass !== MonomerClassToCompare;
+      return monomerClass !== monomerClassToCompare;
     });
 
     if (containDifferentMonomerTypes) {

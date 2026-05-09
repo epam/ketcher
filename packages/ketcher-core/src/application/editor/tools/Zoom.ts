@@ -277,7 +277,7 @@ export class ZoomTool implements BaseTool {
       canvasWrapperWidth / 2 - xOffsetValue,
       canvasWrapperHeight / 2 - yOffsetValue,
     );
-    const currentY = this._zoomTransform?.y || 0;
+    const currentY = this._zoomTransform?.y ?? 0;
 
     // Calculate Y position for translateTo
     let yPosition: number;
@@ -447,7 +447,8 @@ export class ZoomTool implements BaseTool {
   destroy() {
     this.scrollBars?.horizontal?.bar?.remove();
     this.scrollBars?.vertical?.bar?.remove();
-    this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.zoom = null;
     this.zoomEventHandlers = [];
   }
@@ -486,14 +487,14 @@ export class ZoomTool implements BaseTool {
     const canvasWrapperBbox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect();
-    return canvasWrapperBbox?.height || 0;
+    return canvasWrapperBbox?.height ?? 0;
   }
 
   public get canvasWrapperWidth() {
     const canvasWrapperBbox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect();
-    return canvasWrapperBbox?.width || 0;
+    return canvasWrapperBbox?.width ?? 0;
   }
 
   public get canvasWrapperSize() {
@@ -501,8 +502,8 @@ export class ZoomTool implements BaseTool {
       .node()
       ?.getBoundingClientRect();
     return {
-      width: canvasWrapperBbox?.width || 0,
-      height: canvasWrapperBbox?.height || 0,
+      width: canvasWrapperBbox?.width ?? 0,
+      height: canvasWrapperBbox?.height ?? 0,
     };
   }
 }

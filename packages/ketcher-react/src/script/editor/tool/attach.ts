@@ -24,8 +24,8 @@ class AttachTool implements Tool {
 
   constructor(editor, attachPoints) {
     this.attach = {
-      atomid: attachPoints.atomid || 0,
-      bondid: attachPoints.bondid || 0,
+      atomid: attachPoints.atomid ?? 0,
+      bondid: attachPoints.bondid ?? 0,
     };
     this.editor = editor;
     this.editor.selection({

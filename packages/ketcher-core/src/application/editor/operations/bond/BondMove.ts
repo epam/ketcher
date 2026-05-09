@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
@@ -35,6 +35,7 @@ export class BondMove extends BaseOperation {
     const bond = restruct.bonds.get(bid);
     if (!bond) return;
 
+    bond.b.center.add_(d);
     const scaled = Scale.modelToCanvas(d, restruct.render.options);
     bond.visel.translate(scaled);
     this.data.d = d.negated();

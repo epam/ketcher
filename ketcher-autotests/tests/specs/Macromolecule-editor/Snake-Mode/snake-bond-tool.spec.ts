@@ -16,7 +16,6 @@ import {
   scrollUp,
   clickOnCanvas,
   resetZoomLevelToDefault,
-  waitForPageInit,
   MacroFileType,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -26,7 +25,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -56,7 +55,7 @@ async function createBondedMonomers(page: Page) {
     y: 400,
   });
   const peptide4 = getMonomerLocator(page, Peptide.meC).nth(0);
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide3, peptide4);
 }
@@ -67,23 +66,20 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Snake Bond Tool', () => {
@@ -267,7 +263,7 @@ test.describe('Snake Bond Tool', () => {
       y: 200,
     });
     const sugar9 = getMonomerLocator(page, Preset.T.sugar).nth(9);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -363,7 +359,7 @@ test.describe('Snake Bond Tool', () => {
     });
     const baseOfNucleoside = getMonomerLocator(page, Base.A).nth(1);
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar);
@@ -530,8 +526,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Monomers are located close to each other Snake bond become a straight line.
     */
-    const x = 550;
-    const y = 350;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page, {
@@ -539,7 +533,7 @@ test.describe('Snake Bond Tool', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getMonomerLocator(page, Peptide.meE).hover();
-    await dragMouseTo(x, y, page);
+    await dragMouseTo(page, 550, 350);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -554,16 +548,12 @@ test.describe('Snake Bond Tool', () => {
     We have incorrect behavior because bug https://github.com/epam/ketcher/issues/3607 need to be fixed.
     Then update expected screenshot.
     */
-    const x = 500;
-    const y = 300;
-    const x1 = 300;
-    const y1 = 300;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptide.meE).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x1, y1, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 500, 300);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -626,10 +616,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Peptide moved from middle of chain above and under main snake chain.
     */
-    const x = 450;
-    const y = 150;
-    const x2 = 100;
-    const y2 = 100;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -639,8 +625,8 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await getMonomerLocator(page, Peptide.meS).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 450, 150);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -650,10 +636,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Peptide moved from middle of chain above and under main snake chain.
     */
-    const x = 450;
-    const y = 150;
-    const x2 = 100;
-    const y2 = 100;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -666,8 +648,8 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 450, 150);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -759,10 +741,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Sequence moved to the new position without any distortion.
     */
-    const x = 450;
-    const y = 550;
-    const x2 = 100;
-    const y2 = 100;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -771,8 +749,8 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 450, 550);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -781,10 +759,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Part of sequence moved to the new position without any distortion.
     */
-    const x = 450;
-    const y = 650;
-    const x2 = 100;
-    const y2 = 100;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -798,8 +772,8 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 450, 650);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -808,10 +782,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Part of sequence moved to the new position without any distortion.
     */
-    const x = 450;
-    const y = 650;
-    const x2 = 100;
-    const y2 = 100;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -820,8 +790,8 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectPartOfMolecules(page);
     await getMonomerLocator(page, Peptide.DHis1B).hover();
-    await dragMouseTo(x, y, page);
-    await clickOnCanvas(page, x2, y2, { from: 'pageTopLeft' });
+    await dragMouseTo(page, 450, 650);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -830,8 +800,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Snake mode works on the chain of the CHEM connected through R2-R1.
     */
-    const x = 450;
-    const y = 650;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -844,7 +812,7 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 450, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -854,8 +822,6 @@ test.describe('Snake Bond Tool', () => {
     Description: Snake mode works on the chain of the CHEM connected through R2-R1 
     and igore others connections.
     */
-    const x = 450;
-    const y = 650;
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -863,7 +829,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 450, 650, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 

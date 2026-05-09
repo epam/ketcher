@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator, expect } from '@playwright/test';
-import { waitForRender } from '@utils/common';
+import { waitForRender } from '../../../utils/common/loaders/waitForRender';
 
 type MiewDialogLocators = {
   window: Locator;

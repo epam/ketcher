@@ -1,9 +1,8 @@
 import { expect, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeEditorScreenshot,
-  clickOnAtom,
   openFileAndAddToCanvas,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -15,6 +14,7 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,7 +25,7 @@ test.describe('Select tools tests', () => {
     page,
   }) => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -53,8 +53,9 @@ test.describe('Select tools tests', () => {
     */
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
-    const atomWithQueryFeatures = 4;
-    await clickOnAtom(page, 'C', atomWithQueryFeatures);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 

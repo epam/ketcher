@@ -1,14 +1,15 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   waitForRender,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   deleteByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
@@ -42,7 +43,7 @@ async function moveStructureToNewPosition(page: Page) {
   const point1 = { x: 906, y: 245 };
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
   await page.mouse.up();
 }
 
@@ -119,27 +120,25 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).cancel();
     await LeftToolbar(page).text();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
   test('Create several text objects and modifited them', async ({ page }) => {
-    const x = 150;
-    const y = 145;
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
     // Verify if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText('&&&');
     await TextEditorDialog(page).cancel();
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await TextEditorDialog(page).setText('+++');
     await TextEditorDialog(page).apply();
     await takeEditorScreenshot(page);
 
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 150, 145, { from: 'pageTopLeft' });
     await TextEditorDialog(page).setText(
       'Ketcher is a tool to draw molecular structures and chemical reactions',
     );
@@ -213,12 +212,9 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas(page, 'KET/two-different-text-objects.ket');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await page
-      .getByTestId('erase')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonLeftToolbar(page).erase();
     await CommonTopLeftToolbar(page).undo();
     await CommonTopLeftToolbar(page).redo();
     await CommonTopLeftToolbar(page).undo();
@@ -258,15 +254,13 @@ test.describe('Text tools test cases', () => {
     await selectAllStructuresOnCanvas(page);
     await getTextLabelLocator(page, { text: 'ABC123' }).click();
     await moveStructureToNewPosition(page);
-    await ZoomInByKeyboard(page, { repeat: 2 });
+    await zoomInByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
-    await ZoomOutByKeyboard(page, { repeat: 2 });
+    await zoomOutByKeyboard(page, { repeat: 2 });
     await takeEditorScreenshot(page);
   });
 
   test(' Selection of a text object and a structure', async ({ page }) => {
-    const x = 500;
-    const y = 250;
     // Test case: EPMLSOPKET-2236
     // Verify if all created and selected elements are moved together
     await addTextBoxToCanvas(page);
@@ -274,7 +268,7 @@ test.describe('Text tools test cases', () => {
     await TextEditorDialog(page).apply();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await waitForRender(page, async () => {
-      await page.getByTestId('canvas').click({ position: { x, y } });
+      await page.getByTestId('canvas').click({ position: { x: 500, y: 250 } });
     });
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);

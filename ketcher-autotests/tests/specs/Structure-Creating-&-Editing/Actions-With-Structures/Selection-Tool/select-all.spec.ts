@@ -34,7 +34,7 @@ test.describe('Select all', () => {
     await commonLeftToolbar.handTool();
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + offset, y + offset, page);
+    await dragMouseTo(page, x + offset, y + offset);
     await takeEditorScreenshot(page);
   });
 

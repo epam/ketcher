@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
@@ -9,22 +10,27 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  KetMonomerClass,
+  RNA_DNA_NON_MODIFIED_PART,
+} from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { SugarRenderer } from 'application/render';
-import { KetMonomerClass } from 'application/formatters';
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleotide {
+  private readonly monomersCache: BaseMonomer[] = [];
   constructor(
-    public sugar: Sugar,
-    public rnaBase: RNABase | AmbiguousMonomer,
-    public phosphate: Phosphate,
-  ) {}
+    public readonly sugar: Sugar | AmbiguousMonomer,
+    public readonly rnaBase: RNABase | AmbiguousMonomer,
+    public readonly phosphate: Phosphate,
+  ) {
+    this.monomersCache = [sugar, rnaBase, phosphate];
+  }
 
   toString() {
     return (
@@ -34,7 +40,7 @@ export class Nucleotide {
     );
   }
 
-  static fromSugar(sugar: Sugar, needValidation = true) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
     if (needValidation) {
       assert(
         isValidNucleotide(sugar),
@@ -60,7 +66,7 @@ export class Nucleotide {
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
@@ -85,7 +91,7 @@ export class Nucleotide {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + getMonomerSize().height),
       ),
     );
 
@@ -115,19 +121,19 @@ export class Nucleotide {
   }
 
   public get monomer() {
-    return this.sugar;
+    return this.firstMonomerInNode;
   }
 
   public get monomers(): BaseMonomer[] {
-    return [this.sugar, this.rnaBase, this.phosphate];
+    return this.monomersCache;
   }
 
   public get firstMonomerInNode() {
-    return this.sugar;
+    return this.isFiveEndPhosphate ? this.phosphate : this.sugar;
   }
 
   public get lastMonomerInNode() {
-    return this.phosphate;
+    return this.isFiveEndPhosphate ? this.sugar : this.phosphate;
   }
 
   public get renderer() {
@@ -139,6 +145,16 @@ export class Nucleotide {
       this.rnaBase.isModification ||
       this.sugar.isModification ||
       this.phosphate.isModification
+    );
+  }
+
+  public get isFiveEndPhosphate() {
+    return (
+      this.sugar.attachmentPointsToBonds.R1?.getAnotherEntity(this.sugar) ===
+        this.phosphate &&
+      this.phosphate.attachmentPointsToBonds.R2?.getAnotherEntity(
+        this.phosphate,
+      ) === this.sugar
     );
   }
 }

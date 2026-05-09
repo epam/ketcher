@@ -264,7 +264,7 @@ test.describe('API for update Library', () => {
      */
     const SDF_P77 = await readFileContent('SDF/SDF_P77.sdf');
     await replaceMonomersLibrary(page, SDF_P77, { format: 'sdf' });
-    await Library(page).switchToRNATab();
+    await Library(page).setSearchValue('');
     await Library(page).openRNASection(RNASection.Phosphates);
     await takeMonomerLibraryScreenshot(page);
   });

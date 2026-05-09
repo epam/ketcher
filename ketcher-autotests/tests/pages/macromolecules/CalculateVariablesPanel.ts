@@ -8,8 +8,6 @@ import {
   UnipositiveIonsUnit,
 } from '../constants/calculateVariablesPanel/Constants';
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
-import { delay } from '@utils/canvas';
-
 type PeptidesTabLocators = {
   isoelectricPointValue: Locator;
   isoelectricPointInfoButton: Locator;
@@ -32,6 +30,7 @@ type CalculateVariablesPanelLocators = {
   molecularFormula: Locator;
   molecularMassValue: Locator;
   molecularMassUnitsCombobox: Locator;
+  molecularMassUnitDropDownList: Locator;
   peptidesTab: Locator & PeptidesTabLocators;
   rnaTab: Locator & RNATabLocators;
   closeButton: Locator;
@@ -78,6 +77,9 @@ export const CalculateVariablesPanel = (page: Page) => {
     molecularMassUnitsCombobox: page
       .getByTestId('Molecular Mass Unit')
       .getByRole('combobox'),
+    molecularMassUnitDropDownList: page
+      .getByTestId(MolecularMassUnit.Da)
+      .locator('../..'),
     closeButton: page.getByTestId('macromolecule-properties-close'),
   };
 
@@ -101,7 +103,7 @@ export const CalculateVariablesPanel = (page: Page) => {
     },
 
     async getMolecularMassValue() {
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
       return await locators.molecularMassValue.innerText();
     },
 
@@ -144,8 +146,6 @@ export const CalculateVariablesPanel = (page: Page) => {
       await waitForCalculateProperties(page, async () => {
         await page.getByTestId(value).click();
       });
-      // to avoid render problems on quick changing of few unit selectors in row
-      // await delay(0.5);
     },
 
     async getOligonucleotidesValue() {
@@ -166,8 +166,6 @@ export const CalculateVariablesPanel = (page: Page) => {
       await waitForCalculateProperties(page, async () => {
         await page.getByTestId(value).click();
       });
-      // to avoid render problems on quick changing of few unit selectors in row
-      // await delay(0.5);
     },
 
     async getNaturalAnalogCount(

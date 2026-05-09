@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material/styles';
+import { Provider as StoreProvider } from 'react-redux';
 import { Menu, MenuContext } from 'components/menu';
+import { configureAppStore } from 'state';
+import { defaultTheme } from 'theming/defaultTheme';
 
 const mockClickHandler = jest.fn();
 const MOCK_NAME = 'select-lasso';
@@ -39,14 +44,55 @@ const mockSubMenu = () => {
 };
 
 describe('Test SubMenu component', () => {
+  beforeEach(() => {
+    const ketcherRoot = document.createElement('div');
+    ketcherRoot.className = 'Ketcher-polymer-editor-root';
+    document.body.appendChild(ketcherRoot);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
   it('should be rendered without crashing', () => {
     const { asFragment } = render(withThemeAndStoreProvider(mockSubMenu()));
     expect(asFragment).toMatchSnapshot();
   });
+
   it('should call provided callback when header icon is clicked', () => {
     render(withThemeAndStoreProvider(mockSubMenu()));
     const button = screen.getByRole('button');
     fireEvent.click(button);
     expect(mockClickHandler).toHaveBeenCalled();
+  });
+
+  it('should render opened dropdown above toolbar overlays', () => {
+    const customOverlayZIndex = 321;
+    const customTheme = {
+      ...createTheme(),
+      ketcher: {
+        ...defaultTheme,
+        zIndex: {
+          ...defaultTheme.zIndex,
+          overlay: customOverlayZIndex,
+        },
+      },
+    };
+
+    render(
+      <ThemeProvider theme={customTheme}>
+        <StoreProvider store={configureAppStore()}>
+          {mockSubMenu()}
+        </StoreProvider>
+      </ThemeProvider>,
+    );
+
+    fireEvent.click(screen.getByTestId('dropdown-expand'));
+
+    const dropdown = screen.getByTestId('multi-tool-dropdown');
+    const collapse = dropdown.closest('.MuiCollapse-root');
+
+    expect(collapse).not.toBeNull();
+    expect(collapse).toHaveStyle(`z-index: ${customOverlayZIndex}`);
   });
 });

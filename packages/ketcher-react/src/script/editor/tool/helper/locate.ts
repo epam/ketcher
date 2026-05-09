@@ -128,7 +128,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInRectangle = referencePoints.find(
       (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1,
     );
@@ -148,12 +148,8 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (
-      item.sgroup.pp.x > x0 &&
-      item.sgroup.pp.x < x1 &&
-      item.sgroup.pp.y > y0 &&
-      item.sgroup.pp.y < y1
-    ) {
+    const pp = item.sgroup.pp;
+    if (pp && pp.x > x0 && pp.x < x1 && pp.y > y0 && pp.y < y1) {
       sgroupDataList.push(id);
     }
   });
@@ -307,7 +303,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
     );
@@ -337,7 +333,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (isPointInPolygon(r, item.sgroup.pp)) {
+    if (item.sgroup.pp && isPointInPolygon(r, item.sgroup.pp)) {
       sgroupDataList.push(id);
     }
   });

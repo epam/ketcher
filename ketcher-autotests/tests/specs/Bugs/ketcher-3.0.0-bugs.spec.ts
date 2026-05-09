@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -14,8 +15,6 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  moveOnAtom,
-  clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   clickOnCanvas,
@@ -27,7 +26,7 @@ import {
   readFileContent,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
@@ -38,11 +37,12 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -66,23 +66,12 @@ import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptide.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
 
 async function interactWithMicroMolecule(
   page: Page,
@@ -108,23 +97,14 @@ async function interactWithMicroMolecule(
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
@@ -208,8 +188,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/monomer-and-micro-structure.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-    await connectMonomerToAtom(page);
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      getMonomerLocator(page, Peptide.A).first(),
+      getAtomLocator(page, { atomLabel: 'N' }).first(),
+      AttachmentPoint.R2,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -271,7 +255,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const baseLocator = getMonomerLocator(page, Base.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -398,7 +382,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await interactWithMicroMolecule(page, 'H3C', 'hover', 1);
-    await dragMouseTo(200, 200, page);
+    await dragMouseTo(page, 200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -413,16 +397,20 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Scenario:
      * 1. Draw structure on ketcher canvas
      * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
-     * quickly afterward
+     *    quickly afterward
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnAtom(page, 'C', 0);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'O');
-    await moveOnAtom(page, 'C', 1);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'N');
     await takeEditorScreenshot(page);
   });
@@ -712,7 +700,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await expandMonomers(page, getAbbreviationLocator(page, { name: '1Nal' }));
     await takeEditorScreenshot(page);
-    await collapseMonomers(page, page.getByText('NH'));
+    await collapseMonomers(
+      page,
+      getAtomLocator(page, { atomLabel: 'N' }).nth(2),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -1007,10 +998,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Library(page).selectMonomer(Base.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    const baseA = page
-      .getByTestId(KETCHER_CANVAS)
-      .filter({ has: page.locator(':visible') })
-      .getByText('A', { exact: true });
+    const baseA = getAbbreviationLocator(page, { name: 'A' }).first();
     await expandMonomer(page, baseA);
     await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180, { from: 'pageTopLeft' });

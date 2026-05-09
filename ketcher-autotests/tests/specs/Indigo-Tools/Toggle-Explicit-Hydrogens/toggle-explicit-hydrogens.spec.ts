@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { test, Page } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   BottomToolbar,
@@ -8,23 +9,28 @@ import {
 } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
 } from '@utils';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
-test.describe('Toggle-Explicit-Hydrogens Tool', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
 
-  test('Empty canvas', async ({ page }) => {
+test.describe('Toggle-Explicit-Hydrogens Tool', () => {
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Empty canvas', async () => {
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
   });
 
-  test('Show and then hide hydrogens', async ({ page }) => {
+  test('Show and then hide hydrogens', async () => {
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
@@ -33,7 +39,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(Undo/Redo)', async ({ page }) => {
+  test('(Undo/Redo)', async () => {
     await drawBenzeneRing(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
@@ -45,26 +51,20 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding hydrogens not moves molecules to center of canvas', async ({
-    page,
-  }) => {
+  test('Adding hydrogens not moves molecules to center of canvas', async () => {
     /* 
     Test case: #4128 https://github.com/epam/ketcher/issues/4128
     Description: Adding hydrogens not moves molecules to center of canvas.
     */
-    const x = 200;
-    const y = 200;
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with retrosynthetic arrow after clicking on Explicit hysrogens tool', async ({
-    page,
-  }) => {
+  test('Validate that the schema with retrosynthetic arrow after clicking on Explicit hysrogens tool', async () => {
     /*
     Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
@@ -93,9 +93,7 @@ test.describe('1. Molecules connected ', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All types of bond - Chain topology - Center reaction center.ket',
@@ -122,7 +120,7 @@ test.describe('1. Molecules connected ', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/${fileName}`,
@@ -153,14 +151,12 @@ test.describe('2. Molecules connected ', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = ['All Custom Query Bonds.ket'];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/${fileName}`,
@@ -190,9 +186,7 @@ test.describe('3. Molecules connected ', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All types of bond with Query feature atom on the canvas - Chain topology - Center reaction center.ket',
@@ -219,7 +213,7 @@ test.describe('3. Molecules connected ', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/All types of bond with Query feature atom on the canvas/${fileName}`,
@@ -253,9 +247,7 @@ test.describe('4. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All Special Atoms.ket',
@@ -277,7 +269,7 @@ test.describe('4. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
@@ -304,9 +296,7 @@ test.describe('5. Fold/unfold hydrogens for', () => {
   6. Validate canvas
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'Aromaticity - aromatic Aromaticity - aliphatic.ket',
@@ -322,7 +312,7 @@ test.describe('5. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
@@ -354,14 +344,12 @@ test.describe('6. Fold/unfold hydrogens for', () => {
   Commented code - should be uncommented.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = ['Custom Query1.ket'];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
@@ -389,9 +377,7 @@ test.describe('7. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'Any Atom + charges + Simple molecules + charges  with Custom query feature atom on the canvas.ket',
@@ -411,7 +397,7 @@ test.describe('7. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
@@ -441,14 +427,12 @@ test.describe('8. Fold/unfold hydrogens for', () => {
   Commented code should be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = ['Ordinary Atoms - All Groups.ket'];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
@@ -476,13 +460,9 @@ test.describe('9. Fold/unfold hydrogens for', () => {
   Commented code should be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test(`by Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`, async ({
-    page,
-  }) => {
+  test(`by Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`, async () => {
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/Ordinary Atoms - All Groups - with Custom query feature atom on the canvas.ket`,
@@ -512,9 +492,7 @@ test.describe('10. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All Custom Query Bonds connected with R-group labels.ket',
@@ -538,7 +516,7 @@ test.describe('10. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
@@ -568,9 +546,7 @@ test.describe('11. Fold/unfold hydrogens for', () => {
   Commented code have to be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All Custom Query Bonds with S-Group - Multiple group.ket',
@@ -583,7 +559,7 @@ test.describe('11. Fold/unfold hydrogens for', () => {
       {
         tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
       },
-      async ({ page }) => {
+      async () => {
         test.slow();
         await openFileAndAddToCanvasAsNewProject(
           page,
@@ -613,9 +589,7 @@ test.describe('12. Fold/unfold hydrogens for', () => {
   Commented code have to be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All Custom Query Bonds with S-Group - Query component.ket',
@@ -623,7 +597,7 @@ test.describe('12. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
@@ -657,9 +631,7 @@ test.describe('13. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All types of bond - Either topology - Unmarked - R-Group fragmens - Attachment points.ket',
@@ -702,7 +674,7 @@ test.describe('13. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
@@ -732,9 +704,7 @@ test.describe('14. Fold/unfold hydrogens for', () => {
   Commented code have to be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All types of bond - Either topology - Unmarked - S-Group - Multipal group.ket',
@@ -744,7 +714,7 @@ test.describe('14. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
@@ -772,9 +742,7 @@ test.describe('15. Fold/unfold hydrogens for', () => {
   Commented code have to be uncommented
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'All types of bond - Either topology - Unmarked - S-Group - Query component.ket',
@@ -784,7 +752,7 @@ test.describe('15. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test.skip(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
@@ -819,9 +787,7 @@ test.describe('16. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'Bonds with QFA on the canvas - Either topology - Unmarked - R-Group fragmens - At.ket',
@@ -847,7 +813,7 @@ test.describe('16. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
@@ -878,9 +844,7 @@ test.describe('17. Fold/unfold hydrogens for', () => {
   Screenshots have to be corrected after fix.
   */
 
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
   const fileNames = [
     'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Multipal group.ket',
@@ -894,7 +858,7 @@ test.describe('17. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test.skip(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,

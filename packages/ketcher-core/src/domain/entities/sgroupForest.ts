@@ -143,7 +143,7 @@ export class SGroupForest {
     this.parent.set(childId, id);
   }
 
-  remove(id) {
+  remove(id: number): void {
     try {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
@@ -152,12 +152,13 @@ export class SGroupForest {
       console.info('error: sgid is not in the forest');
     }
 
-    const parentId = this.parent.get(id) as any;
-    const childs = this.children.get(parentId) as any;
+    const parentId = this.parent.get(id);
+    if (typeof parentId === 'undefined') return;
 
-    if (!parentId || !childs) return;
+    const childs = this.children.get(parentId);
+    if (!childs) return;
 
-    this.children.get(id)?.forEach((childId) => {
+    this.children.get(id)?.forEach((childId: number) => {
       this.parent.set(childId, parentId);
       this.children.get(parentId)?.push(childId);
     });

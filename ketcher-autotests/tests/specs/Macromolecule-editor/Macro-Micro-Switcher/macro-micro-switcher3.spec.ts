@@ -7,16 +7,14 @@ import {
   takeEditorScreenshot,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProject,
-  waitForPageInit,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  clickOnAtomById,
   clickOnCanvas,
   waitForRender,
   resetZoomLevelToDefault,
   getCachedBodyCenter,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -31,39 +29,14 @@ import {
 import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-
-async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
-  await clickOnAtomById(page, atomId);
-}
-
-async function selectExpandedMonomer(page: Page) {
-  await getBondLocator(page, { bondId: 1 }).click({ force: true });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  const canvasLocator = page
-    .getByTestId(KETCHER_CANVAS)
-    .getByText(locatorText, { exact: true });
-
-  await waitForRender(page, async () => {
-    await ContextMenu(page, canvasLocator).click(
-      MonomerOnMicroOption.ExpandMonomer,
-    );
-  });
-}
-
-async function selectMonomerOnMicro(page: Page, monomerName: string) {
-  const canvasLocator = page.getByTestId(KETCHER_CANVAS);
-  await waitForRender(page, async () => {
-    await canvasLocator.getByText(monomerName, { exact: true }).click();
-  });
-}
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -71,28 +44,22 @@ async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;
-  monomerLocatorText: string;
+  monomerAlias: string;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -309,7 +276,7 @@ interface IMonomer {
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
   const bondLocator = getBondLocator(page, { bondId: 7 });
   await bondLocator.hover({ force: true });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 const movableExpandedMonomers: IMonomer[] = [
@@ -317,37 +284,37 @@ const movableExpandedMonomers: IMonomer[] = [
     monomerDescription: '1. Petide D (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
+    monomerAlias: 'D',
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
+    monomerAlias: 'hU',
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
+    monomerAlias: '5hMedC',
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
+    monomerAlias: '4aPEGMal',
   },
 ];
 
@@ -373,7 +340,12 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
         movableExpandedMonomer.KETFile,
       );
 
-      await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, {
+          name: movableExpandedMonomer.monomerAlias,
+        }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await takeEditorScreenshot(page);
 
       await moveExpandedMonomerOnMicro(page, 300, 200);
@@ -416,7 +388,12 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
         movableExpandedMonomer.KETFile,
       );
 
-      await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, {
+          name: movableExpandedMonomer.monomerAlias,
+        }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await takeEditorScreenshot(page);
 
       await moveExpandedMonomerOnMicro(page, 250, 400);
@@ -441,7 +418,7 @@ const expandableMonomer: IMonomer = {
   monomerDescription: '1. Petide D (from library)',
   KETFile:
     'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
+  monomerAlias: 'D',
 };
 
 test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async () => {
@@ -458,7 +435,12 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-  await expandMonomer(page, expandableMonomer.monomerLocatorText);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, {
+      name: expandableMonomer.monomerAlias,
+    }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
   await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
@@ -480,7 +462,10 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-  await expandMonomer(page, expandableMonomer.monomerLocatorText);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -496,7 +481,7 @@ const copyableMonomer: IMonomer = {
   monomerDescription: '1. Petide D (from library)',
   KETFile:
     'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
+  monomerAlias: 'D',
 };
 
 test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async () => {
@@ -514,7 +499,9 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
 
   await openFileAndAddToCanvasAsNewProject(page, copyableMonomer.KETFile);
   await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
+  await getAbbreviationLocator(page, {
+    name: copyableMonomer.monomerAlias,
+  }).click({ force: true });
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -525,7 +512,7 @@ const cutableMonomer: IMonomer = {
   monomerDescription: '1. Petide D (from library)',
   KETFile:
     'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
+  monomerAlias: 'D',
 };
 
 test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async () => {
@@ -543,7 +530,9 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
 
   await openFileAndAddToCanvasAsNewProject(page, cutableMonomer.KETFile);
   await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
+  await getAbbreviationLocator(page, {
+    name: cutableMonomer.monomerAlias,
+  }).click({ force: true });
 
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
@@ -567,9 +556,14 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, copyableMonomer.KETFile);
-  await expandMonomer(page, copyableMonomer.monomerLocatorText);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, {
+      name: copyableMonomer.monomerAlias,
+    }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
-  await selectExpandedMonomer(page);
+  await getBondLocator(page, { bondId: 1 }).click({ force: true });
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -599,9 +593,12 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, cutableMonomer.KETFile);
-  await expandMonomer(page, cutableMonomer.monomerLocatorText);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: cutableMonomer.monomerAlias }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
-  await selectExpandedMonomer(page);
+  await getBondLocator(page, { bondId: 1 }).click({ force: true });
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
@@ -632,12 +629,27 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
   );
   await CommonTopRightToolbar(page).setZoomInputValue('50');
   await takeEditorScreenshot(page);
-  await expandMonomer(page, 'A');
-  await expandMonomer(page, '5hMedC');
-  await expandMonomer(page, 'gly');
-  await expandMonomer(page, 'Mal');
-  await expandMonomer(page, '12ddR');
-  await expandMonomer(page, 'oC64m5');
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'A' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '5hMedC' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'gly' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'Mal' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '12ddR' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: 'oC64m5' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page);
 
   test.fixme(
@@ -665,12 +677,27 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
   );
   await CommonTopRightToolbar(page).setZoomInputValue('50');
   await takeEditorScreenshot(page);
-  await expandMonomer(page, '12ddR');
-  await expandMonomer(page, 'Mal');
-  await expandMonomer(page, 'A');
-  await expandMonomer(page, '5hMedC');
-  await expandMonomer(page, 'gly');
-  await expandMonomer(page, 'oC64m5');
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '12ddR' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'Mal' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'A' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '5hMedC' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'gly' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: 'oC64m5' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
@@ -698,12 +725,27 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
   );
   await CommonTopRightToolbar(page).setZoomInputValue('40');
   await takeEditorScreenshot(page);
-  await expandMonomer(page, 'oC64m5');
-  await expandMonomer(page, 'gly');
-  await expandMonomer(page, '5hMedC');
-  await expandMonomer(page, 'A');
-  await expandMonomer(page, 'Mal');
-  await expandMonomer(page, '12ddR');
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: 'oC64m5' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'gly' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '5hMedC' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'A' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'Mal' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '12ddR' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
@@ -730,12 +772,27 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain and large micromolecule in the middle.ket',
   );
   await takeEditorScreenshot(page);
-  await expandMonomer(page, 'oC64m5');
-  await expandMonomer(page, 'gly');
-  await expandMonomer(page, '5hMedC');
-  await expandMonomer(page, 'A');
-  await expandMonomer(page, 'Mal');
-  await expandMonomer(page, '12ddR');
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: 'oC64m5' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'gly' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '5hMedC' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'A' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(page, getAbbreviationLocator(page, { name: 'Mal' })).click(
+    MonomerOnMicroOption.ExpandMonomer,
+  );
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, { name: '12ddR' }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
@@ -782,9 +839,14 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
   await takeEditorScreenshot(page);
 
   for (const monomer of monomers) {
-    await expandMonomer(page, monomer.name);
+    await ContextMenu(
+      page,
+      getAbbreviationLocator(page, { name: monomer.name }),
+    ).click(MonomerOnMicroOption.ExpandMonomer);
     await CommonLeftToolbar(page).erase();
-    await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
+    await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+      force: true,
+    });
     await expect(EditAbbreviationDialog(page).window).toBeVisible();
     await EditAbbreviationDialog(page).cancel();
     await CommonTopLeftToolbar(page).undo();
@@ -866,7 +928,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       const atomToolbar = RightToolbar(page);
 
 //       await atomToolbar.clickAtom(Atom.Bromine);
-//       await clickOnAtomOfExpandedMonomer(page, 1);
+//       await getAtomLocator(page, { atomId: 1 }).click({ force: true });
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
@@ -918,8 +980,13 @@ test(
     });
 
     for (const monomer of monomers) {
-      await expandMonomer(page, monomer.name);
-      await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomer.name }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
+      await getAtomLocator(page, { atomId: monomer.AtomId }).click({
+        force: true,
+      });
       await CommonLeftToolbar(page).erase();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
@@ -944,37 +1011,37 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '1. Petide D (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
+    monomerAlias: 'D',
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
+    monomerAlias: 'hU',
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
+    monomerAlias: '5hMedC',
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
+    monomerAlias: '4aPEGMal',
   },
 ];
 
@@ -994,13 +1061,12 @@ test.describe('Check that in preview expanded monomers exported both to PNG in t
        *       3. Open Save dialog and select PNG Image option
        *       4. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
 
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await verifyPNGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1027,12 +1093,11 @@ test.describe('Check that in preview expanded monomers exported both to SVG in t
        *       3. Open Save dialog and select SVG Document option
        *       4. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await verifySVGExport(page);
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1061,13 +1126,11 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
        *       5. Open Save dialog and select PNG Image option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
@@ -1099,13 +1162,11 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
        *       5. Open Save dialog and select SVG Document option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
@@ -1137,20 +1198,17 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
        *       5. Open Save dialog and select PNG Image option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
-      const rotationHandle = page.getByTestId('rotation-handle');
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await zoomOutByKeyboard(page);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await rotationHandle.hover();
-      await dragMouseTo(750, 150, page);
+      await RotationTool(page).moveRotationHandleTo({ x: 750, y: 150 });
       await verifyPNGExport(page);
+      await resetZoomLevelToDefault(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1178,20 +1236,17 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
        *       5. Open Save dialog and select SVG Document option
        *       6. Take screenshot to witness export preview
        */
-      test.fixme(
-        true,
-        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      );
-
-      const rotationHandle = page.getByTestId('rotation-handle');
-
       await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await zoomOutByKeyboard(page);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: expandableMonomer.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
-      await rotationHandle.hover();
-      await dragMouseTo(750, 150, page);
+      await RotationTool(page).moveRotationHandleTo({ x: 750, y: 150 });
       await verifySVGExport(page);
+      await resetZoomLevelToDefault(page);
       // Test should be skipped if related bug exists
       test.fixme(
         expandableMonomer.shouldFail === true,
@@ -1262,37 +1317,37 @@ const monomerCompositions: IMonomer[] = [
     monomerDescription: '1. Petide L (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/1. Petide L (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: 'L',
+    monomerAlias: 'L',
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/2. Sugar UNA (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
   },
   {
     monomerDescription: '3. Base nC6n5C (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/3. Base nC6n5C (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: 'nC6n5C',
+    monomerAlias: 'nC6n5C',
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/4. Phosphate bnn (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
   },
   {
     monomerDescription: '5. Unsplit nucleotide Super-G (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/5. Unsplit nucleotide Super-G (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: 'Super-G',
+    monomerAlias: 'Super-G',
   },
   {
     monomerDescription: '6. CHEM 4FB (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Expand-monomers/6. CHEM 4FB (from library) surrounded by all types of monomers.ket',
-    monomerLocatorText: '4FB',
+    monomerAlias: '4FB',
   },
 ];
 
@@ -1317,13 +1372,16 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
         page,
         monomerComposition.KETFile,
       );
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await verifyPNGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
-        expandableMonomer.shouldFail === true,
-        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+        monomerComposition.shouldFail === true,
+        `That test results are wrong because of ${monomerComposition.issueNumber} issue(s).`,
       );
     });
   }
@@ -1351,13 +1409,17 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
         monomerComposition.KETFile,
       );
 
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
+
       await verifySVGExport(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
-        expandableMonomer.shouldFail === true,
-        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+        monomerComposition.shouldFail === true,
+        `That test results are wrong because of ${monomerComposition.issueNumber} issue(s).`,
       );
     });
   }
@@ -1391,7 +1453,10 @@ test.describe('If a monomer is expanded in small molecules mode, that option sho
         monomerComposition.KETFile,
       );
 
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await verifyFileExport(page, exportResultFileName, FileType.KET);
 
       await openFileAndAddToCanvasAsNewProject(page, exportResultFileName);
@@ -1399,8 +1464,8 @@ test.describe('If a monomer is expanded in small molecules mode, that option sho
 
       // Test should be skipped if related bug exists
       test.fixme(
-        expandableMonomer.shouldFail === true,
-        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+        monomerComposition.shouldFail === true,
+        `That test results are wrong because of ${monomerComposition.issueNumber} issue(s).`,
       );
     });
   }
@@ -1431,19 +1496,20 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
         parsed.dir,
         `${parsed.name}-expected2${parsed.ext}`,
       );
-      const rotationHandle = page.getByTestId('rotation-handle');
 
       await openFileAndAddToCanvasAsNewProject(
         page,
         monomerComposition.KETFile,
       );
 
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
-      await rotationHandle.hover();
-      await dragMouseTo(950, 150, page);
+      await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
       await selectAllStructuresOnCanvas(page);
       const middleOfTheScreen = await getCachedBodyCenter(page);
       await waitForRender(page, async () => {
@@ -1455,13 +1521,16 @@ test.describe('Check that if a monomer is manipulated (rotated, flipped) in smal
       await verifyFileExport(page, exportResultFileName, FileType.KET);
 
       await openFileAndAddToCanvasAsNewProject(page, exportResultFileName);
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists
       test.fixme(
-        expandableMonomer.shouldFail === true,
-        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+        monomerComposition.shouldFail === true,
+        `That test results are wrong because of ${monomerComposition.issueNumber} issue(s).`,
       );
     });
   }
@@ -1487,21 +1556,21 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
        *       7. Switch to Sequence mode
        *       8. Take screenshot to witness result
        */
-      const rotationHandle = page.getByTestId('rotation-handle');
-
       await openFileAndAddToCanvasAsNewProject(
         page,
         monomerComposition.KETFile,
       );
       await resetZoomLevelToDefault(page);
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
 
-      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await ContextMenu(
+        page,
+        getAbbreviationLocator(page, { name: monomerComposition.monomerAlias }),
+      ).click(MonomerOnMicroOption.ExpandMonomer);
       await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
       await selectAllStructuresOnCanvas(page);
       await verticalFlipByKeyboard(page);
-      await rotationHandle.hover();
-      await dragMouseTo(950, 150, page);
+      await RotationTool(page).moveRotationHandleTo({ x: 950, y: 150 });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await MacromoleculesTopToolbar(page).selectLayoutModeTool(
         LayoutMode.Flex,
@@ -1520,8 +1589,8 @@ test.describe('Check that when going back to macromolecules mode, the monomer is
 
       // Test should be skipped if related bug exists
       test.fixme(
-        expandableMonomer.shouldFail === true,
-        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+        monomerComposition.shouldFail === true,
+        `That test results are wrong because of ${monomerComposition.issueNumber} issue(s).`,
       );
     });
   }

@@ -1,11 +1,11 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
-  clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
@@ -24,9 +24,7 @@ import {
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-
-const CANVAS_CLICK_X = 300;
-const CANVAS_CLICK_Y = 300;
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const inputText = 'My Template';
@@ -50,11 +48,11 @@ test.describe('Click User Templates on canvas', () => {
       Description: open template
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -69,13 +67,13 @@ test.describe('Click User Templates on canvas', () => {
     const inputText = ' name ';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
@@ -97,11 +95,11 @@ test.describe('Click User Templates on canvas', () => {
     const inputText = 'to_delete';
 
     await BottomToolbar(page).structureLibrary();
-    await structureLibraryDialog.addTemplate(
+    await structureLibraryDialog.selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
@@ -174,7 +172,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -187,7 +185,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
     await cutAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 300, 300, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -209,16 +207,16 @@ test.describe('Create and Save Templates', () => {
       page,
       'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'My Template',
     );
-    await page.getByText('0NNNNHNHNNHNNHNH').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -231,23 +229,23 @@ test.describe('Create and Save Templates', () => {
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
     await TemplateEditDialog(page).save();
     await IndigoFunctionsToolbar(page).cleanUp();
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'user_template_1',
     );
-    await page.getByText('user_template_1').click();
     await takeEditorScreenshot(page);
   });
 
@@ -258,18 +256,19 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1729
       Description: Template attached to structure on canvas.
     */
-    const anyAtom = 2;
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page);
 
     await CommonTopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).openSection(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.UserTemplate,
+      'My Template',
     );
-    await page.getByText('My Template').click();
-    await clickOnAtom(page, 'C', anyAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 });
@@ -287,13 +286,13 @@ test.describe('Templates field lenght validations', () => {
       Description: warning message validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
-    await page.getByRole('button', { name: 'Save to Templates' }).click();
+    await SaveStructureDialog(page).saveToTemplates();
     await getEditorScreenshot(page);
   });
 
@@ -303,19 +302,18 @@ test.describe('Templates field lenght validations', () => {
       Description: no mote than 128 symbols error validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
-    await page.getByPlaceholder('template').click();
 
     const tooLongValueLength = 130;
-    await page
-      .getByPlaceholder('template')
-      .fill('a'.repeat(tooLongValueLength));
+    await TemplateEditDialog(page).setMoleculeName(
+      'a'.repeat(tooLongValueLength),
+    );
     await getEditorScreenshot(page);
   });
 
@@ -325,11 +323,11 @@ test.describe('Templates field lenght validations', () => {
       Description: empty field validation
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).clickMoleculeName();
@@ -346,11 +344,11 @@ test.describe('Templates field lenght validations', () => {
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Naphtalene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);

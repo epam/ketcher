@@ -3,6 +3,7 @@ import { Item, Submenu, Separator } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
+import useMarkAs from '../hooks/useMarkAs';
 import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
@@ -23,6 +24,7 @@ import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
+import clsx from 'clsx';
 
 const {
   ringBondCount,
@@ -47,26 +49,29 @@ const atomPropertiesForSubMenu: {
   {
     title: ringBondCount.title,
     key: 'ringBondCount',
-    buttons: ringBondCount.enumNames.map((label, id) => ({
-      label,
-      value: ringBondCount.enum[id],
-    })),
+    buttons:
+      ringBondCount.enumNames?.map((label, id) => ({
+        label,
+        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: hCount.title,
     key: 'hCount',
-    buttons: hCount.enumNames.map((label, id) => ({
-      label,
-      value: hCount.enum[id],
-    })),
+    buttons:
+      hCount.enumNames?.map((label, id) => ({
+        label,
+        value: hCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: substitutionCount.title,
     key: 'substitutionCount',
-    buttons: substitutionCount.enumNames.map((label, id) => ({
-      label,
-      value: substitutionCount.enum[id],
-    })),
+    buttons:
+      substitutionCount.enumNames?.map((label, id) => ({
+        label,
+        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: unsaturatedAtom.title,
@@ -79,20 +84,20 @@ const atomPropertiesForSubMenu: {
   {
     title: implicitHCount.title,
     key: 'implicitHCount',
-    buttons: implicitHCount.enumNames.map((label, id) => ({
-      label,
-      value: implicitHCount.enum[id],
-    })),
+    buttons:
+      implicitHCount.enumNames?.map((label, id) => ({
+        label,
+        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   ...properties.map((name) => ({
     title: atom.properties[name].title,
     key: name,
-    buttons: atom.properties[name].enumNames.map(
-      (label: string, id: number) => ({
+    buttons:
+      atom.properties[name].enumNames?.map((label: string, id: number) => ({
         label,
-        value: atom.properties[name].enum[id],
-      }),
-    ),
+        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   })),
 ];
 
@@ -100,6 +105,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
+  const {
+    handler: handleMarkAs,
+    isVisible: markAsIsVisible,
+    isDisabled: markAsIsDisabled,
+  } = useMarkAs();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -181,9 +191,54 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     : 'Edit...';
 
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+  const showMarkAsMenu = markAsIsVisible();
+  const markAsDisabled = markAsIsDisabled();
 
   return (
     <>
+      {showMarkAsMenu && (
+        <Submenu
+          {...props}
+          data-testid="Mark as a...-option"
+          label="Mark as a..."
+          disabled={markAsDisabled}
+          className={styles.subMenu}
+        >
+          <Item
+            {...props}
+            data-testid="Mark as Base-option"
+            onClick={handleMarkAs('base')}
+          >
+            <Icon
+              name="base"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Base</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Sugar-option"
+            onClick={handleMarkAs('sugar')}
+          >
+            <Icon
+              name="sugar"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Sugar</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Phosphate-option"
+            onClick={handleMarkAs('phosphate')}
+          >
+            <Icon
+              name="phosphate"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Phosphate</span>
+          </Item>
+        </Submenu>
+      )}
       {makeAttachmentPointMenuItems && (
         <>
           {makeAttachmentPointMenuItems}

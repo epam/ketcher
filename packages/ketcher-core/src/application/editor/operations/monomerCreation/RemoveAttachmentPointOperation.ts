@@ -1,4 +1,4 @@
-import { BaseOperation } from 'application/editor/operations/base';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { MonomerCreationState } from 'application/render';
 import {
   OperationType,

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
@@ -5,13 +6,12 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  moveOnAtom,
   dragMouseTo,
-  clickOnAtom,
   waitForPageInit,
   selectPartOfMolecules,
-  selectPartOfChain,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +41,20 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       'Molfiles-V2000/chain-with-double-bond-in-the-middle.mol',
     );
-    await selectPartOfChain(page);
+    const coordinatesToStartSelection = 70;
+    const smallShift = 20;
+    const doubleBond = getBondLocator(page, { bondId: 18 });
+    const box = await doubleBond.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await page.mouse.move(
+      coordinatesToStartSelection,
+      coordinatesToStartSelection,
+    );
+    await page.mouse.down();
+    await page.mouse.move(centerX + 1, centerY + smallShift);
+    await page.mouse.up();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -85,18 +98,17 @@ test.describe('Indigo Tools - Layout', () => {
     Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
     change the atoms/bonds properties after the Layout action.
     */
-    const x = 300;
-    const y = 300;
-    const anyAtom = 0;
-    const atomToolbar = RightToolbar(page);
-
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/toluene.mol');
     await IndigoFunctionsToolbar(page).layout();
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, 300, 300);
     await IndigoFunctionsToolbar(page).layout();
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', anyAtom);
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -176,12 +188,11 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Clean reaction with Layout tool', async ({ page }) => {
+  test('Clean reaction with Layout tool', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2878
     Description: After Layout action structures are undistorted. 
     Position of the reaction does not change.
-    We have a bug https://github.com/epam/Indigo/issues/2229
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/distorted-reaction.rxn');
     await IndigoFunctionsToolbar(page).layout();

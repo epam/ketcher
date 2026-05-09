@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
@@ -7,31 +8,28 @@ import {
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  resetZoomLevelToDefault,
   takeMonomerLibraryScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   SdfFileFormat,
-  clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
-  clickOnAtom,
+  clickInTheMiddleOfTheCanvas,
   MolFileFormat,
   clickOnCanvas,
   openFile,
-  delay,
+  takeElementScreenshot,
 } from '@utils';
 import {
   copyAndPaste,
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common';
 import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -48,11 +46,6 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
-import {
-  COORDINATES_TO_PERFORM_ROTATION,
-  rotateToCoordinates,
-  verticalFlip,
-} from '../Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
@@ -76,10 +69,13 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 async function openPPTXFileAndValidateStructurePreview(
   page: Page,
@@ -103,24 +99,14 @@ async function openPPTXFileAndValidateStructurePreview(
 let page: Page;
 
 test.describe('Ketcher bugs in 3.4.0', () => {
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
 
-  test.afterEach(async ({ context: _ }, testInfo) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-    await resetZoomLevelToDefault(page);
-    await processResetToDefaultState(testInfo, page);
-  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test('Case 1: Tooltips in sequence mode disappear after right-click on letters', async () => {
@@ -528,10 +514,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/two-monomers-connected.ket',
     );
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await verifySVGExport(page);
   });
@@ -573,7 +562,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await takeEditorScreenshot(page);
     await page.keyboard.press('Alt+C');
-    await delay(1);
+    await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
   });
 
@@ -587,16 +576,22 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Hover over the “Calculate Properties” button in main toolbar
      * 3. Verify that tooltip is displayed
      */
-    const icon = {
+    const calculatePropertiesButton = {
       testId: 'calculate-macromolecule-properties-button',
       title: 'Calculate properties (Alt+C)',
     };
-    const iconButton = page.getByTestId(icon.testId);
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    await expect(icon.title).toBeTruthy();
+    const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
+    await button.hover();
+    await expect(button).toHaveAttribute(
+      'title',
+      calculatePropertiesButton.title,
+    );
     await takeTopToolbarScreenshot(page);
-    await iconButton.click();
+    await button.click();
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
@@ -638,15 +633,20 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'O', 0, 'right');
-    await page.getByText('Collapse monomer').click();
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'O', atomId: 4 }),
+    ).click(MonomerOnMicroOption.CollapseMonomer);
     await takeEditorScreenshot(page);
   });
 
@@ -693,9 +693,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await RotationTool(page).moveRotationHandleTo({
+      x: 20,
+      y: 100,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -1087,9 +1090,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/Bugs/Edc-monomer.ket');
     await expandMonomer(page, getAbbreviationLocator(page, { name: 'Edc' }));
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await verticalFlip(page);
+    await RotationTool(page).flipVertically();
     await verifySVGExport(page);
   });
 
@@ -1310,7 +1313,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
     await CalculateVariablesPanel(page).rnaTab.click();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -1331,12 +1334,12 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,14:pair-2:pair$$$V2.0',
     );
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await CalculateVariablesPanel(page).setUnipositiveIonsValue('140');
     await CalculateVariablesPanel(page).setOligonucleotidesValue('0');
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page, CalculateVariablesPanel(page).panel);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
@@ -1351,13 +1354,13 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.DAminoAcids,
       DAminoAcidsTemplate.PHEDPhenylalanine,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageCenter' });
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.PHELPhenylalanine,
     );

@@ -16,25 +16,19 @@
 
 import { FormulaInput, FrozenInput } from './components';
 
-import { Component, ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
+import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { range } from 'lodash/fp';
 import { Dialog } from '../../../../components';
 import { DialogParams } from '../../../../../../../components/Dialog/Dialog';
-import { ErrorsContext } from '../../../../../../../contexts';
 import { analyse } from '../../../../../state/server';
 import { changeRound } from '../../../../../state/options';
-import classes from './Analyse.module.less';
-import { connect } from 'react-redux';
-import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-
-interface AnalyseValues {
-  gross?: string;
-  'molecular-weight'?: number;
-  'monoisotopic-mass'?: number;
-  'mass-composition'?: string;
-  [key: string]: string | number | undefined;
-}
+import { AnalyseValues, StoreState } from '../../../../../state/store.types';
+import classes from './Analyse.module.less';
 
 interface RoundSettings {
   roundWeight: number;
@@ -70,142 +64,131 @@ function roundOff(value: string | number, round: number): string {
 
 const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
 
-class AnalyseDialog extends Component<Props> {
-  static contextType = ErrorsContext;
-  declare context: React.ContextType<typeof ErrorsContext>;
+const analyseItems: AnalyseItem[] = [
+  {
+    name: 'Chemical Formula',
+    key: 'gross',
+    withSelector: false,
+  },
+  {
+    name: 'Molecular Weight',
+    key: 'molecular-weight',
+    round: 'roundWeight',
+    withSelector: true,
+  },
+  {
+    name: 'Exact Mass',
+    key: 'monoisotopic-mass',
+    round: 'roundMass',
+    withSelector: true,
+  },
+  {
+    name: 'Elemental Analysis',
+    key: 'mass-composition',
+    round: 'roundElAnalysis',
+    withSelector: false,
+  },
+];
 
-  componentDidMount() {
-    this.props.onAnalyse();
+function renderInputComponent(
+  item: AnalyseItem,
+  values: AnalyseValues | null,
+  loading: boolean,
+  round: RoundSettings,
+): ReactElement {
+  if (item.key === 'gross') {
+    return (
+      <FormulaInput
+        value={values && !loading ? (values[item.key] as string) || '' : ''}
+        contentEditable={false}
+      />
+    );
   }
 
-  renderInputComponent(
-    item: AnalyseItem,
-    values: AnalyseValues | null,
-    loading: boolean,
-    round: RoundSettings,
-  ): ReactElement {
-    if (item.key === 'gross') {
-      return (
-        <FormulaInput
-          value={values && !loading ? (values[item.key] as string) || '' : ''}
-          contentEditable={false}
-        />
-      );
-    }
-
-    if (item.key === 'mass-composition') {
-      return (
-        <textarea
-          readOnly
-          value={
-            values && !loading && item.round
-              ? roundOff(values[item.key] as string | number, round[item.round])
-              : 0
-          }
-          data-testid={item.name + '-input'}
-        />
-      );
-    }
-
+  if (item.key === 'mass-composition') {
     return (
-      <FrozenInput
-        data-testid={item.name + '-input'}
+      <textarea
+        readOnly
         value={
           values && !loading && item.round
             ? roundOff(values[item.key] as string | number, round[item.round])
             : 0
         }
+        data-testid={item.name + '-input'}
       />
     );
   }
 
-  render() {
-    const {
-      values,
-      round,
-      loading,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      onAnalyse,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      onChangeRound,
-      ...props
-    } = this.props;
-
-    const analyseItems: AnalyseItem[] = [
-      {
-        name: 'Chemical Formula',
-        key: 'gross',
-        withSelector: false,
-      },
-      {
-        name: 'Molecular Weight',
-        key: 'molecular-weight',
-        round: 'roundWeight',
-        withSelector: true,
-      },
-      {
-        name: 'Exact Mass',
-        key: 'monoisotopic-mass',
-        round: 'roundMass',
-        withSelector: true,
-      },
-      {
-        name: 'Elemental Analysis',
-        key: 'mass-composition',
-        round: 'roundElAnalysis',
-        withSelector: false,
-      },
-    ];
-
-    return (
-      <Dialog
-        title="Calculated Values"
-        className={classes.analyse}
-        withDivider={true}
-        needMargin={true}
-        valid={() => true}
-        buttons={['OK']}
-        buttonsNameMap={{ OK: 'Close' }}
-        params={props}
-      >
-        <ul>
-          {analyseItems.map((item) => (
-            <li
-              key={item.key}
-              className={classes.contentWrapper}
-              data-testid={item.name + '-wrapper'}
-            >
-              <div className={classes.inputWrapper}>
-                <label>{item.name}:</label>
-                {this.renderInputComponent(item, values, loading, round)}
-              </div>
-              {item.withSelector && item.round ? (
-                <div className={classes.selectWrapper}>
-                  <span>Decimal places</span>
-                  <Select
-                    options={selectOptions}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    value={round[item.round] as any}
-                    onChange={(val) => {
-                      if (item.round) {
-                        onChangeRound(item.round, val);
-                      }
-                    }}
-                    className={classes.select}
-                    data-testid={item.name + '-select'}
-                  />
-                </div>
-              ) : null}
-            </li>
-          ))}
-        </ul>
-      </Dialog>
-    );
-  }
+  return (
+    <FrozenInput
+      data-testid={item.name + '-input'}
+      value={
+        values && !loading && item.round
+          ? roundOff(values[item.key] as string | number, round[item.round])
+          : 0
+      }
+    />
+  );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapStateToProps = (state: any) => ({
+function AnalyseDialog({
+  values,
+  round,
+  loading,
+  onAnalyse,
+  onChangeRound,
+  ...props
+}: Props) {
+  useEffect(() => {
+    onAnalyse();
+  }, [onAnalyse]);
+
+  return (
+    <Dialog
+      title="Calculated Values"
+      className={classes.analyse}
+      withDivider={true}
+      needMargin={true}
+      valid={() => true}
+      buttons={['OK']}
+      buttonsNameMap={{ OK: 'Close' }}
+      params={props}
+    >
+      <ul>
+        {analyseItems.map((item) => (
+          <li
+            key={item.key}
+            className={classes.contentWrapper}
+            data-testid={item.name + '-wrapper'}
+          >
+            <div className={classes.inputWrapper}>
+              <label>{item.name}:</label>
+              {renderInputComponent(item, values, loading, round)}
+            </div>
+            {item.withSelector && item.round ? (
+              <div className={classes.selectWrapper}>
+                <span>Decimal places</span>
+                <Select
+                  options={selectOptions}
+                  value={round[item.round]}
+                  onChange={(val) => {
+                    if (item.round) {
+                      onChangeRound(item.round, val);
+                    }
+                  }}
+                  className={classes.select}
+                  data-testid={item.name + '-select'}
+                />
+              </div>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </Dialog>
+  );
+}
+
+const mapStateToProps = (state: StoreState) => ({
   values: state.options.analyse.values,
   loading: state.options.analyse.loading,
   round: {
@@ -215,18 +198,14 @@ const mapStateToProps = (state: any) => ({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+type AppDispatch = ThunkDispatch<StoreState, unknown, Action<string>>;
+
+const mapDispatchToProps = (dispatch: AppDispatch) => ({
   onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName: string, val: string) =>
     dispatch(changeRound(roundName, val)),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Analyse = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-)(AnalyseDialog as any) as any;
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
 export default Analyse;

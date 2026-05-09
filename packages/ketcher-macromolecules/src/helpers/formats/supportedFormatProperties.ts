@@ -47,7 +47,7 @@ export class SupportedFormatProperties {
     this.name = name;
     this.mime = mime;
     this.extensions = extensions;
-    this.supportsCoords = supportsCoords || false;
-    this.options = options || {};
+    this.supportsCoords = supportsCoords ?? false;
+    this.options = options ?? {};
   }
 }

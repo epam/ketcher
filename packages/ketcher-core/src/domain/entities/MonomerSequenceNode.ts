@@ -1,7 +1,10 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerSequenceNode {
-  constructor(public monomer: BaseMonomer) {}
+  private readonly monomersCache: BaseMonomer[] = [];
+  constructor(public readonly monomer: BaseMonomer) {
+    this.monomersCache = [monomer];
+  }
 
   public get SubChainConstructor() {
     return this.monomer.SubChainConstructor;
@@ -16,7 +19,7 @@ export class MonomerSequenceNode {
   }
 
   public get monomers() {
-    return [this.monomer];
+    return this.monomersCache;
   }
 
   public get renderer() {

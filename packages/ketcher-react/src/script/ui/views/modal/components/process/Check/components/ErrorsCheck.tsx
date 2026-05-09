@@ -54,22 +54,20 @@ function ErrorsCheck(props: Readonly<ErrorsCheckProps>) {
   };
 
   return (
-    <>
-      <fieldset>
-        {moleculeErrorsTypes.length === 0 ? (
-          <div>
-            <dd>No errors detected</dd>
+    <fieldset>
+      {moleculeErrorsTypes.length === 0 ? (
+        <div>
+          <dd>No errors detected</dd>
+        </div>
+      ) : (
+        moleculeErrorsTypes.map((type) => (
+          <div key={type} data-testid={`${type}-warning`}>
+            <dt>{getOptionName(type)} warning:</dt>
+            <dd>{moleculeErrors[type]}</dd>
           </div>
-        ) : (
-          moleculeErrorsTypes.map((type) => (
-            <div key={type} data-testid={`${type}-warning`}>
-              <dt>{getOptionName(type)} warning:</dt>
-              <dd>{moleculeErrors[type]}</dd>
-            </div>
-          ))
-        )}
-      </fieldset>
-    </>
+        ))
+      )}
+    </fieldset>
   );
 }
 

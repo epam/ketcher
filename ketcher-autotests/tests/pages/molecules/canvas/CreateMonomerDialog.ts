@@ -1,4 +1,4 @@
-﻿/* eslint-disable no-magic-numbers */
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
@@ -20,7 +20,9 @@ import {
   AttachmentPointOption,
 } from './createMonomer/constants/editConnectionPointPopup/Constants';
 import { WarningMessageDialog } from './createMonomer/WarningDialog';
-import { delay } from '@utils/canvas';
+import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -58,6 +60,7 @@ type AliasesSectionLocators = {
 };
 
 type CreateMonomerDialogLocators = {
+  window: Locator;
   typeCombobox: Locator;
   symbolEditbox: Locator;
   nameEditbox: Locator;
@@ -163,6 +166,7 @@ const createModificationTypeDropdownMap = (
   [ModificationTypeDropdown.Fourth]: section.modificationTypeDropdown4,
   [ModificationTypeDropdown.Fifth]: section.modificationTypeDropdown5,
 });
+
 const deleteModificationTypeMap = (
   section: ModificationSectionLocators,
 ): Record<ModificationTypeDropdown, Locator> => ({
@@ -220,7 +224,10 @@ export const CreateMonomerDialog = (page: Page) => {
     },
   );
 
+  const nucleotidePresetSection = NucleotidePresetSection(page);
+
   const locators: CreateMonomerDialogLocators = {
+    window: page.getByTestId('monomer-creation-wizard'),
     typeCombobox: page.getByTestId('type-select'),
     symbolEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
@@ -285,6 +292,8 @@ export const CreateMonomerDialog = (page: Page) => {
 
   return {
     ...locators,
+
+    nucleotidePresetSection,
 
     getAttachmentPointControlGroup(ap: AttachmentPointOption) {
       return attachmentPointControlGroupByAP[ap];
@@ -463,7 +472,7 @@ export const CreateMonomerDialog = (page: Page) => {
       // to avoid helm alias lost on submit due to async validation
       await this.collapseAliasesSection();
       await this.expandAliasesSection();
-      await delay(0.3);
+      await page.waitForTimeout(0.3 * 1000);
     },
 
     async waitForTerminalIndicatorTooltip(
@@ -527,7 +536,7 @@ export async function createMonomer(
   await createMonomerDialog.submit({ ignoreWarning });
 }
 
-export async function prepareMoleculeForMonomerCreation(
+export async function deselectAtomAndBonds(
   page: Page,
   AtomIDsToExclude?: string[],
   BondIDsToExclude?: string[],
@@ -544,11 +553,43 @@ export async function prepareMoleculeForMonomerCreation(
   }
   if (BondIDsToExclude) {
     for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click();
+      await getBondLocator(page, { bondId: Number(bondId) }).click({
+        force: true,
+      });
     }
   }
   await page.keyboard.up('Shift');
   await waitForCustomEvent(page, 'monomerCreationEnabled', 200);
+}
+
+export { selectAtomAndBonds } from './createMonomer/selectAtomAndBonds';
+
+export async function selectMonomersAndBonds(
+  page: Page,
+  options: {
+    monomerIds?: number[];
+    bondIds?: number[];
+  },
+) {
+  await CommonLeftToolbar(page).handTool();
+  await CommonLeftToolbar(page).areaSelectionTool();
+  await clickOnCanvas(page, 0, 0);
+  await page.keyboard.down('Shift');
+  if (options.monomerIds) {
+    for (const monomerId of options.monomerIds) {
+      await getMonomerLocator(page, { monomerId }).click({
+        force: true,
+      });
+    }
+  }
+  if (options.bondIds) {
+    for (const bondId of options.bondIds) {
+      await getBondLocator(page, { bondId }).click({
+        force: true,
+      });
+    }
+  }
+  await page.keyboard.up('Shift');
 }
 
 export type CreateMonomerDialogType = ReturnType<typeof CreateMonomerDialog>;

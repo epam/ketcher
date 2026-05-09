@@ -2,11 +2,10 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
-  clickOnAtom,
   waitForPageInit,
   clickOnCanvas,
   MolFileFormat,
@@ -43,9 +42,7 @@ import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog'
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-
-const CANVAS_CLICK_X = 600;
-const CANVAS_CLICK_Y = 600;
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -78,9 +75,11 @@ test.describe('Data S-Group tool', () => {
       Description: The 'S-Group Properties' dialog appears when user selects atom.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -92,7 +91,7 @@ test.describe('Data S-Group tool', () => {
       Description: The 'S-Group Properties' dialog appears when user selects bond.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).sGroup();
     await getBondLocator(page, { bondId: 8 }).click({ force: true });
     await takeEditorScreenshot(page);
@@ -106,7 +105,7 @@ test.describe('Data S-Group tool', () => {
       Description: The 'S-Group Properties' dialog appears when user selects whole structure.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
@@ -134,7 +133,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y, {
+    await clickOnCanvas(page, 600, 600, {
       from: 'pageTopLeft',
     });
     await takeEditorScreenshot(page);
@@ -147,7 +146,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -314,7 +313,9 @@ test.describe('Data S-Group tool', () => {
 
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 17 }).click({
+      force: true,
+    });
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -328,7 +329,9 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await CommonLeftToolbar(page).erase();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 17 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -348,7 +351,9 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 17 }).click({
+      force: true,
+    });
     await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -370,7 +375,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/chain-with-name-and-value.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -430,7 +435,9 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -466,7 +473,7 @@ test.describe('Data S-Group tool', () => {
       Description: Hover over created S-Group displays tooltip for Benzene ring with Nitrogen atom
     */
     await openFileAndAddToCanvas(page, 'KET/benzene-with-data-s-group.ket');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

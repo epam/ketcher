@@ -17,6 +17,7 @@ import { EmptyFunction } from 'helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback, MouseEvent, useRef, useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import {
   AutochainIcon,
   AutochainIconWrapper,
@@ -29,7 +30,11 @@ import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
-import { selectEditor, selectIsSequenceMode } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceMode,
+  selectIsDragging,
+} from 'state/common';
 import Tooltip from '@mui/material/Tooltip';
 import {
   cardMouseOverHandler,
@@ -50,6 +55,7 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const isDragging = useAppSelector(selectIsDragging);
   const [autochainErrorMessage, setAutochainErrorMessage] =
     useState<string>('');
 
@@ -75,17 +81,6 @@ const MonomerItem = ({
     (event: MouseEvent) => {
       event.stopPropagation();
       dispatch(toggleMonomerFavorites(item));
-    },
-    [dispatch, item],
-  );
-
-  const handleFavoriteKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        event.stopPropagation();
-        dispatch(toggleMonomerFavorites(item));
-      }
     },
     [dispatch, item],
   );
@@ -143,6 +138,7 @@ const MonomerItem = ({
     <Card
       selected={isSelected}
       disabled={isDisabled}
+      isDragging={isDragging}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
       item={monomerItem}
@@ -169,13 +165,9 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
-      data-modificationtype={
-        monomerItem?.props.modificationTypes
-          ? Array.isArray(monomerItem?.props.modificationTypes)
-            ? monomerItem?.props.modificationTypes.join(', ')
-            : monomerItem?.props.modificationTypes
-          : undefined
-      }
+      data-modificationtype={getModificationTypeAttribute(
+        monomerItem?.props.modificationTypes,
+      )}
     >
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
@@ -195,16 +187,14 @@ const MonomerItem = ({
               </AutochainIconWrapper>
             </Tooltip>
           )}
-          <div
+          <button
+            type="button"
             onClick={addFavorite}
-            onKeyDown={handleFavoriteKeyDown}
             className={`star ${item.favorite ? 'visible' : ''}`}
-            role="button"
-            tabIndex={0}
             aria-label="Toggle favorite"
           >
             {FavoriteStarSymbol}
-          </div>
+          </button>
         </>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

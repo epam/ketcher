@@ -59,7 +59,7 @@ export enum BondType {
   HYDROGEN,
 }
 
-export enum Arrows {
+export enum ArrowType {
   OpenAngle = 'open-angle-arrow',
   FilledTriangle = 'filled-triangle-arrow',
   FilledBow = 'filled-bow-arrow',

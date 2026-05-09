@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Base from '../base';
+import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { Scale } from 'domain/helpers';
 

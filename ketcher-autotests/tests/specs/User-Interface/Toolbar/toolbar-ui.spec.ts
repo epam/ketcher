@@ -3,17 +3,16 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   takeTopToolbarScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeRightToolbarScreenshot,
-  clickOnAtom,
   waitForIndigoToLoad,
   keyboardPressOnCanvas,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -23,6 +22,7 @@ import {
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,7 +44,6 @@ test.describe('Open Ketcher', () => {
      */
     await CommonTopRightToolbar(page).helpButton.hover();
     await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Menu bar: UI Verification', async ({ page }) => {
@@ -55,15 +54,15 @@ test.describe('Open Ketcher', () => {
     await takeTopToolbarScreenshot(page);
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Bn,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeTopToolbarScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -138,13 +137,15 @@ test.describe('Open Ketcher', () => {
      * Iodine tool is applied
      * Single bond tool kept selected and applied on further mouse clicks
      */
-    const anyAtom = 2;
-    const secondAtom = 4;
     await drawBenzeneRing(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
-    await clickOnAtom(page, 'C', anyAtom);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
     await keyboardPressOnCanvas(page, 'n');
-    await clickOnAtom(page, 'C', secondAtom);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 7 }).click({
+      force: true,
+    });
   });
 
   test('Highlight currently selected tool with mouse cursor and toolbox icons', async ({

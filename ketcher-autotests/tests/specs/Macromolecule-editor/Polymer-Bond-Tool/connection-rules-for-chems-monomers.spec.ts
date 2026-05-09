@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Locator, Page, test, expect } from '@fixtures';
 import {
@@ -5,9 +6,7 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  resetZoomLevelToDefault,
   MonomerType,
-  waitForPageInit,
 } from '@utils';
 import {
   getMonomerLocator,
@@ -17,30 +16,21 @@ import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 test.describe('Connection rules for chems: ', () => {
   let page: Page;
-  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
-
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
   });
 
-  test.afterEach(async () => {
-    await resetZoomLevelToDefault(page);
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   interface IMonomer {
@@ -306,7 +296,7 @@ test.describe('Connection rules for chems: ', () => {
       monomerAlias: CHEM.alias,
     }).first();
     await CHEMLocator.hover();
-    await dragMouseTo(550, 370, page);
+    await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
     for await (const CHEMAttachmentPoint of Object.values(
@@ -357,7 +347,7 @@ test.describe('Connection rules for chems: ', () => {
       monomerAlias: CHEM.alias,
     }).first();
     await CHEMLocator.hover();
-    await dragMouseTo(550, 370, page);
+    await dragMouseTo(page, 550, 370);
     await moveMouseAway(page);
 
     for await (const CHEMAttachmentPoint of Object.values(
@@ -405,7 +395,7 @@ test.describe('Connection rules for chems: ', () => {
 
     await leftMonomerLocator.hover({ force: true });
 
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(page, 500, 370);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
@@ -420,7 +410,7 @@ test.describe('Connection rules for chems: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(page, 600, 375);
     await moveMouseAway(page);
 
     return {
@@ -466,8 +456,6 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(30000);
-
                   const {
                     leftMonomer: leftMonomerLocator,
                     rightMonomer: rightMonomerLocator,
@@ -482,10 +470,9 @@ test.describe('Connection rules for chems: ', () => {
                   );
 
                   await expect(bondLine).toBeVisible();
-                  const errorMessage = page
-                    .getByTestId('error-tooltip')
-                    .first();
-                  await expect(errorMessage).toContainText(
+                  expect(
+                    await NotificationBanner(page).getNotificationText(),
+                  ).toContain(
                     'You have connected monomers with attachment points of the same group',
                   );
                 });
@@ -514,8 +501,7 @@ test.describe('Connection rules for chems: ', () => {
              *         Validate canvas
              */
             test(`Case 2: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-              test.setTimeout(35000);
-
+              test.slow();
               const {
                 leftMonomer: leftMonomerLocator,
                 rightMonomer: rightMonomerLocator,
@@ -554,8 +540,6 @@ test.describe('Connection rules for chems: ', () => {
          *       Validate canvas (Connection should appear)
          */
         test(`Case 3: Connect Center to ${rightCHEMAttachmentPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(30000);
-
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -594,8 +578,7 @@ test.describe('Connection rules for chems: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 4: Connect ${leftCHEMAttachmentPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(35000);
-
+          test.slow();
           const {
             leftMonomer: leftMonomerLocator,
             rightMonomer: rightMonomerLocator,
@@ -632,8 +615,6 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case5: Connect ${leftCHEMAttachmentPoint} to ${rightCHEMAttachmentPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -842,8 +823,6 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case6: Connect ${leftCHEMAttachmentPoint} to ${rightPeptideAttachmentPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -874,8 +853,6 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Attachment Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -904,8 +881,6 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Attachment Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -1099,8 +1074,6 @@ test.describe('Connection rules for chems: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftCHEMAttachmentPoint} to ${rightOMAttachmentPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(30000);
-
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
@@ -1136,8 +1109,6 @@ test.describe('Connection rules for chems: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(30000);
-
         const {
           leftMonomer: leftMonomerLocator,
           rightMonomer: rightMonomerLocator,
@@ -1198,7 +1169,7 @@ test.describe('Connection rules for chems: ', () => {
       .first()
       .hover();
 
-    await dragMouseTo(300, 380, page);
+    await dragMouseTo(page, 300, 380);
     await moveMouseAway(page);
   }
 
@@ -1211,7 +1182,7 @@ test.describe('Connection rules for chems: ', () => {
     page: Page,
     leftPeptide: IMonomer,
     rightMolecule: IMolecule,
-    attachmentPoint: string,
+    attachmentPoint: AttachmentPoint,
     atomIndex: number,
   ) {
     const leftPeptideLocator = getMonomerLocator(page, {
@@ -1244,8 +1215,6 @@ test.describe('Connection rules for chems: ', () => {
        *        Expected result: Connection should be established
        */
       test(`Case 12: Connect evey connection point of of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
-        test.setTimeout(30000);
-
         await loadMonomer(page, leftMonomer);
         await loadMolecule(page, rightMolecule);
 
@@ -1265,7 +1234,7 @@ test.describe('Connection rules for chems: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

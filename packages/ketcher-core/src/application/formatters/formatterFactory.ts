@@ -19,11 +19,9 @@ import {
   StructFormatter,
   SupportedFormat,
 } from './structFormatter.types';
-import {
-  KetSerializer,
-  MolSerializer,
-  MolSerializerOptions,
-} from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import { MolSerializer } from 'domain/serializers/mol/molSerializer';
 import { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';

@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   ChainsCollection,
   ITwoStrandedChainItem,
@@ -20,7 +21,6 @@ import {
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { CoreEditor } from 'application/editor';
 import { SettingsManager } from 'utilities';
 
 interface IForEachNodeParams {
@@ -84,7 +84,7 @@ export class SequenceViewModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {

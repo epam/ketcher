@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useCallback } from 'react';
-import { Menu, MenuProps } from 'react-contexify';
+import React, { useCallback, useEffect } from 'react';
+import { contextMenu, Menu, MenuProps } from 'react-contexify';
 import 'react-contexify/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -39,6 +39,33 @@ const props: Partial<MenuProps> = {
 
 const ContextMenu: React.FC = () => {
   const { ketcherId } = useAppContext();
+
+  useEffect(() => {
+    const handleEscapeKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      const isAnyContextMenuVisible = Object.values(editor.contextMenu).some(
+        Boolean,
+      );
+
+      if (!isAnyContextMenuVisible) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      contextMenu.hideAll();
+    };
+
+    document.addEventListener('keydown', handleEscapeKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKeyDown, true);
+    };
+  }, [ketcherId]);
 
   const adjustSubmenuPosition = (submenuElement: HTMLElement) => {
     const rect = submenuElement.getBoundingClientRect();

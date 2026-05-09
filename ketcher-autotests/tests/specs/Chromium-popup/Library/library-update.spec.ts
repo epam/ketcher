@@ -14,6 +14,7 @@ import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { updateMonomersLibrary } from '@utils/library/updateLibrary';
 
 let page: Page;
 
@@ -26,24 +27,6 @@ test.afterEach(async () => {});
 test.afterAll(async ({ closePage }) => {
   await closePage();
 });
-
-async function updateMonomersLibrary(
-  page: Page,
-  sdfString: string,
-): Promise<string | null> {
-  return page.evaluate(async (cmd) => {
-    try {
-      await window.ketcher.updateMonomersLibrary(cmd);
-      return null;
-    } catch (error) {
-      if (error instanceof Error) {
-        return error.message;
-      }
-
-      return String(error);
-    }
-  }, sdfString);
-}
 
 test('Case 1: Verify library update functionality: Base', async () => {
   /*

@@ -1,14 +1,13 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
 import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { editorEvents } from 'application/editor/editorEvents';
-import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
@@ -16,7 +15,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -24,7 +22,6 @@ import { SettingsManager } from 'utilities';
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
-  private readonly editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -50,7 +47,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private readonly previousRowsWithAntisense = 0,
   ) {
     super(node.monomer);
-    this.editorEvents = editorEvents;
   }
 
   abstract get symbolToDisplay(): string;
@@ -86,8 +82,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
-  moveSelection(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
+
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   public get currentChain() {
     return this.chain;
@@ -123,33 +124,30 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'sequence-item')
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(
@@ -200,6 +198,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
+      .attr('data-element-type', 'background')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -215,7 +214,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendSpacerElement() {
     const spacerGroupElement = this.rootElement
       ?.append('g')
-      .attr('transform', 'translate(14, -16)');
+      .attr('transform', 'translate(14, -16)')
+      .attr('data-element-type', 'spacer');
 
     spacerGroupElement
       ?.append('rect')
@@ -397,7 +397,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
@@ -687,6 +688,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
       )
       .attr('style', 'user-select: none;')
+      .attr('data-element-type', 'text')
       .attr(
         'cursor',
         this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
@@ -694,7 +696,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           : 'default',
       );
 
-    this.appendEvents();
     this.redrawCounter();
 
     this.drawSelection();
@@ -744,7 +745,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
@@ -769,76 +770,69 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {}
-  public redrawEnumeration() {}
-  public redrawAttachmentPoints() {}
-  public redrawAttachmentPointsCoordinates() {}
+  public setEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
   public get enumeration() {
     return null;
   }
 
-  public redrawChainBeginning() {}
-  public hoverAttachmentPoint(): void {}
-  public updateAttachmentPoints() {}
+  public redrawChainBeginning() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 
-  private drawBackgroundElementHover() {
+  public hoverAttachmentPoint(): void {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public updateAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
 
-    this.backgroundElement?.attr(
-      'fill',
-      this.node.monomer.selected ? 'none' : '#E1E8E9',
-    );
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr('fill', '#35f073');
+    } else {
+      this.backgroundElement?.attr('fill', '#E1E8E9');
+    }
 
     if (this.node.modified) {
       this.drawModification();
     }
   }
 
-  private removeBackgroundElementHover() {
-    this.backgroundElement?.attr('fill', 'none');
+  public removeBackgroundElementHover() {
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#99D6DC'
+          : SELECTION_COLOR,
+      );
+    } else {
+      this.backgroundElement?.attr('fill', 'none');
+    }
 
     if (this.node.modified) {
       this.drawModification();
     }
-  }
-
-  private appendEvents() {
-    assert(this.textElement);
-
-    this.textElement.on('mouseover', (event) => {
-      this.drawBackgroundElementHover();
-      this.editorEvents.mouseOverSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mousemove', (event) => {
-      this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
-    });
-    this.textElement.on('mouseleave', (event) => {
-      this.removeBackgroundElementHover();
-      this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
-    });
-    this.spacerElement?.on('mousedown', (event) => {
-      this.editorEvents.mousedownBetweenSequenceItems.dispatch(event);
-    });
-    this.backgroundElement?.on('click', (event) => {
-      this.editorEvents.clickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mousedown', (event) => {
-      this.editorEvents.mouseDownOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.textElement.on('dblclick', (event) => {
-      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
-    });
-    this.backgroundElement?.on('mouseover', () => {
-      this.drawBackgroundElementHover();
-    });
-    this.backgroundElement?.on('mouseleave', () => {
-      this.removeBackgroundElementHover();
-    });
   }
 
   private isSubChainNode(node: SequenceNode): node is SubChainNode {

@@ -6,9 +6,9 @@ import {
   PropertyLabelType,
   RepeatPatternOption,
   SGroupPropertiesSettings,
+  SubtypeOption,
   TypeOption,
 } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type SGroupPropertiesLocators = {
@@ -23,6 +23,7 @@ type SGroupPropertiesLocators = {
   attachedRadioButton: Locator;
   repeatCountEditbox: Locator;
   polymerLabelEditbox: Locator;
+  subtypeDropdown: Locator;
   repeatPatternDropdown: Locator;
   nameEditbox: Locator;
   componentDropdown: Locator;
@@ -32,7 +33,7 @@ type SGroupPropertiesLocators = {
 
 export const SGroupPropertiesDialog = (page: Page) => {
   const locators: SGroupPropertiesLocators = {
-    window: page.getByTestId('sgroup-dialog'),
+    window: page.getByTestId('sgroup-dialog').getByTestId('info-modal-window'),
     closeWindowButton: page.getByTestId('close-window-button'),
     typeDropdown: page.getByTestId('s-group-type-input-span'),
     contextDropdown: page.getByTestId('context-input-span'),
@@ -43,6 +44,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
     attachedRadioButton: page.getByTestId('radiobuttons-input-Attached'),
     repeatCountEditbox: page.getByTestId('mul-input'),
     polymerLabelEditbox: page.getByTestId('subscript-input'),
+    subtypeDropdown: page.getByTestId('subtype-input-span'),
     repeatPatternDropdown: page.getByTestId('connectivity-input-span'),
     nameEditbox: page.getByTestId('name-input'),
     componentDropdown: page.getByTestId('class-input-span'),
@@ -73,7 +75,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.typeDropdown.waitFor({ state: 'visible' });
       await locators.typeDropdown.click();
       try {
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await typeToSelect.waitFor({ state: 'visible' });
         await typeToSelect.click();
         await typeToSelect.waitFor({ state: 'hidden' });
@@ -82,7 +84,7 @@ export const SGroupPropertiesDialog = (page: Page) => {
         // one more attempt to click
         if (!(await typeToSelect.isVisible())) {
           await locators.typeDropdown.click();
-          await delay(0.1);
+          await page.waitForTimeout(0.1 * 1000);
           await typeToSelect.waitFor({ state: 'visible' });
         }
         await typeToSelect.click();
@@ -126,6 +128,15 @@ export const SGroupPropertiesDialog = (page: Page) => {
       await locators.polymerLabelEditbox.fill(value);
     },
 
+    async selectSubtype(subtype: SubtypeOption) {
+      const subtypeToSelect = page.getByTestId(subtype);
+      await locators.subtypeDropdown.waitFor({ state: 'visible' });
+      await locators.subtypeDropdown.click();
+      await subtypeToSelect.waitFor({ state: 'visible' });
+      await subtypeToSelect.click({ force: true });
+      await subtypeToSelect.waitFor({ state: 'hidden' });
+    },
+
     async selectRepeatPattern(repeatPattern: RepeatPatternOption) {
       const contextToSelect = page.getByTestId(repeatPattern);
 
@@ -162,6 +173,9 @@ export const SGroupPropertiesDialog = (page: Page) => {
         await this.setRepeatCountValue(options.RepeatCount);
       } else if (options.Type === TypeOption.SRUPolymer) {
         await this.setPolymerLabelValue(options.PolymerLabel);
+        await this.selectRepeatPattern(options.RepeatPattern);
+      } else if (options.Type === TypeOption.Copolymer) {
+        await this.selectSubtype(options.Subtype);
         await this.selectRepeatPattern(options.RepeatPattern);
       } else if (options.Type === TypeOption.Superatom) {
         await this.setNameValue(options.Name);

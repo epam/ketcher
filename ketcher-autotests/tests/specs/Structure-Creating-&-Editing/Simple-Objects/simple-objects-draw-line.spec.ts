@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -7,7 +8,7 @@ import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
@@ -26,11 +27,9 @@ async function selectLineWithSelectionTool(page: Page) {
 }
 
 async function moveLineToNewPosition(page: Page) {
-  const x = 759;
-  const y = 183;
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await page.mouse.down();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, 759, 183);
   await page.mouse.up();
 }
 
@@ -42,24 +41,24 @@ async function separetingAndMovingLines(page: Page) {
   const point4 = { x: 534, y: 467 };
   const point5 = { x: 588, y: 277 };
   await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
   await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point3.x, point3.y, page);
+  await dragMouseTo(page, point3.x, point3.y);
   await takeEditorScreenshot(page);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await selectLineWithSelectionTool(page);
   await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
-  await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(page, point5.x, point5.y);
 }
 
 const setupLine = async (page: Page) => {
   await LeftToolbar(page).selectShapeTool(ShapeType.Line);
   const moveTo = 250;
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const LineCoordinates = { x: x + moveTo, y };
-  await dragMouseTo(LineCoordinates.x, LineCoordinates.y, page);
+  await dragMouseTo(page, LineCoordinates.x, LineCoordinates.y);
   return LineCoordinates;
 };
 
@@ -75,10 +74,10 @@ test.describe('draw and highlight line', () => {
     await LeftToolbar(page).selectShapeTool(ShapeType.Line);
 
     const moveTo = 250;
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + moveTo;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
 
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -90,10 +89,10 @@ test.describe('draw and highlight line', () => {
     const point = { x: 686, y: 358 };
     const point1 = { x: 125, y: 161 };
     const LineCoordinates = await setupLine(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(LineCoordinates.x, LineCoordinates.y);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -103,9 +102,9 @@ test.describe('draw and highlight line', () => {
     const point1 = { x: 757, y: 362 };
     await setupLine(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(point.x, point.y, page);
+    await dragMouseTo(page, point.x, point.y);
     await takeEditorScreenshot(page);
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -115,9 +114,9 @@ test.describe('draw and highlight line', () => {
     const point1 = { x: 397, y: 220 };
     await setupLine(page);
     await selectAllStructuresOnCanvas(page);
-    await dragMouseTo(point.x, point.y, page);
+    await dragMouseTo(page, point.x, point.y);
     await takeEditorScreenshot(page);
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 

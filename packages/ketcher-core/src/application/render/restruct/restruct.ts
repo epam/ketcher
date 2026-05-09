@@ -14,18 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  Box2Abs,
-  FunctionalGroup,
-  Pile,
-  Pool,
-  RGroupAttachmentPoint,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
@@ -324,6 +322,28 @@ class ReStruct {
     });
   }
 
+  moveReObjectOnTopOfLayer(visel: Visel, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    visel.paths.forEach((path) => {
+      path.insertBefore(layer);
+    });
+  }
+
+  movePathOnTopOfLayer(path, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    path.insertBefore(layer);
+  }
+
   clearMarks(): void {
     Object.keys(ReStruct.maps).forEach((map) => {
       this[map + 'Changed'] = new Map();
@@ -536,7 +556,7 @@ class ReStruct {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        if (this[map].get(id).visel) {
+        if (this[map].has(id) && this[map].get(id).visel) {
           this.clearVisel(this[map].get(id).visel);
         }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
@@ -682,15 +702,12 @@ class ReStruct {
     }
     this.clearVisel(reloop.visel);
 
-    const bondlist: Array<number> = [];
-
     reloop.loop.hbs.forEach((hbid) => {
       const hb = this.molecule.halfBonds.get(hbid);
       if (!hb) return;
       hb.loop = -1;
       this.markBond(hb.bid, 1);
       this.markAtom(hb.begin, 1);
-      bondlist.push(hb.bid);
     });
 
     this.reloops.delete(loopId);
@@ -887,15 +904,15 @@ class ReStruct {
           fill: '#7f7',
           stroke: '#7f7',
         });
-        if (item.togglePoints) item.togglePoints(true);
+        item.showPoints?.();
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide();
-      if (item.togglePoints) item.togglePoints(false);
+      item.hidePoints?.();
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
-        fill: 'none',
-        stroke: 'none',
+        fill: '#fff',
+        stroke: '#fff',
       });
     }
   }

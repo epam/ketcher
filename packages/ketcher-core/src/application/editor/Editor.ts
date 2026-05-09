@@ -14,14 +14,11 @@ import {
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
   DEFAULT_LAYOUT_MODE,
-  FlexMode,
   HAS_CONTENT_LAYOUT_MODE,
   LayoutMode,
-  modesMap,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor/modes/';
+} from 'application/editor/modes/types';
 import { BaseMode } from 'application/editor/modes/internal';
+import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
@@ -41,15 +38,15 @@ import {
 } from 'application/formatters';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
   NodeSelection,
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { ketcherProvider } from 'application/utils';
-import assert from 'assert';
+import { ketcherProvider } from 'application/ketcherProvider';
 import {
   ChainsCollection,
   MonomerToAtomBond,
@@ -77,6 +74,10 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  isValidHelmAlias,
+  isValidIdtAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -102,6 +103,10 @@ import {
   isLibraryItemRnaPreset,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import {
+  setEditorInstance,
+  resetEditorInstance,
+} from 'application/editor/editorSingleton';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -113,6 +118,7 @@ import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
 } from 'domain/serializers';
+import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -133,9 +139,8 @@ interface ICoreEditorConstructorParams {
   ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
+  renderersContainer: RenderersManager;
   mode?: BaseMode;
-  monomersLibraryUpdate?: string | JSON;
-  monomersLibraryReplace?: string | JSON;
 }
 
 interface ModifyAminoAcidsHandlerParams {
@@ -205,6 +210,7 @@ export class CoreEditor {
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private cutEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
@@ -213,13 +219,10 @@ export class CoreEditor {
     ketcherId,
     theme,
     canvas,
-    monomersLibraryUpdate,
-    monomersLibraryReplace,
+    renderersContainer,
     mode,
   }: ICoreEditorConstructorParams) {
     const ketcher = ketcherProvider.getKetcher(ketcherId);
-    const monomersLibraryUpdateData =
-      monomersLibraryUpdate || monomersLibraryReplace;
 
     this._type = EditorType.Micromolecules;
     this.ketcherId = ketcherId;
@@ -231,25 +234,13 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
-
-    if (monomersLibraryUpdateData) {
-      if (monomersLibraryReplace) {
-        this.clearMonomersLibrary();
-      }
-
-      ketcher
-        .ensureMonomersLibraryDataInKetFormat(monomersLibraryUpdateData)
-        .then((monomersLibraryUpdateInKetFormat) => {
-          this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
-        });
-    }
     this.subscribeEvents();
-    this.renderersContainer = new RenderersManager({ theme });
+    this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.domEventSetup();
@@ -263,6 +254,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -298,7 +290,7 @@ export class CoreEditor {
   };
 
   private cancelActiveDrag(): void {
-    if (this.tool instanceof SelectBase) {
+    if (this.tool instanceof SelectBase && this.tool.mode !== 'standby') {
       this.tool.stopMovement();
     }
   }
@@ -317,13 +309,29 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
   }
 
-  static provideEditorInstance(): CoreEditor {
-    return editor;
-  }
-
   public clearMonomersLibrary() {
     this._monomersLibrary = [];
     this._monomersLibraryParsedJson = getEmptyMonomersLibraryJson();
+  }
+
+  public async initializeMonomersLibraryFromKetcher(
+    monomersLibraryUpdate?: string | JSON,
+    monomersLibraryReplace?: string | JSON,
+  ): Promise<void> {
+    const monomersLibraryUpdateData =
+      monomersLibraryUpdate || monomersLibraryReplace;
+    if (!monomersLibraryUpdateData) {
+      return;
+    }
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+    if (monomersLibraryReplace) {
+      this.clearMonomersLibrary();
+    }
+    const monomersLibraryUpdateInKetFormat =
+      await ketcher.ensureMonomersLibraryDataInKetFormat(
+        monomersLibraryUpdateData,
+      );
+    this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
@@ -361,10 +369,58 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
 
+    const areSameMonomers = (
+      firstMonomer?: MonomerItemType,
+      secondMonomer?: MonomerItemType,
+    ) => {
+      if (!firstMonomer?.props || !secondMonomer?.props) {
+        return false;
+      }
+
+      return (
+        firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
+        firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
+        firstMonomer.props.hidden === secondMonomer.props.hidden
+      );
+    };
+    const formatAliasDetails = (monomer: MonomerItemType) =>
+      [
+        monomer.props?.aliasHELM
+          ? `HELM alias "${monomer.props.aliasHELM}"`
+          : null,
+        monomer.props?.idtAliases?.base
+          ? `IDT base alias "${monomer.props.idtAliases.base}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint3
+          ? `IDT 3' alias "${monomer.props.idtAliases.modifications.endpoint3}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.endpoint5
+          ? `IDT 5' alias "${monomer.props.idtAliases.modifications.endpoint5}"`
+          : null,
+        monomer.props?.idtAliases?.modifications?.internal
+          ? `IDT internal alias "${monomer.props.idtAliases.modifications.internal}"`
+          : null,
+      ]
+        .filter((value): value is string => Boolean(value))
+        .join(', ');
+
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
-      const aliasCollisionExists = this._monomersLibrary.some(
-        (monomer) =>
+      if (
+        newMonomer.props?.aliasHELM &&
+        !isValidHelmAlias(newMonomer.props.aliasHELM)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
+      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
+        if (areSameMonomers(monomer, newMonomer)) {
+          return false;
+        }
+
+        return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
@@ -378,21 +434,55 @@ export class CoreEditor {
               newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
           (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
             monomer.props?.idtAliases?.modifications?.internal ===
-              newMonomer.props?.idtAliases?.modifications?.internal),
-      );
+              newMonomer.props?.idtAliases?.modifications?.internal)
+        );
+      });
 
       if (aliasCollisionExists) {
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Alias collision detected for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
-        );
+        const aliasDetails = formatAliasDetails(newMonomer);
+        const errorMessage = `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
+          newMonomer.props.MonomerName
+        }${
+          aliasDetails ? ` (${aliasDetails})` : ''
+        }. The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
         return;
+      }
+
+      // Validate base IDT alias is present when idtAliases is defined
+      if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
+        const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
+      // Validate that slashes in IDT aliases only appear at first/last position
+      if (newMonomer.props?.idtAliases) {
+        const { base, modifications } = newMonomer.props.idtAliases;
+        const aliasesToValidate = [
+          base,
+          modifications?.endpoint3,
+          modifications?.endpoint5,
+          modifications?.internal,
+        ].filter(Boolean) as string[];
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
           return (
             monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
+            monomer?.props.hidden === newMonomer.props?.hidden
           );
         },
       );
@@ -451,6 +541,13 @@ export class CoreEditor {
         return;
       }
 
+      if (!templateDefinition.name?.trim()) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (
@@ -495,6 +592,11 @@ export class CoreEditor {
         (props.aliasHELM === symbol || props.MonomerName === symbol)
       );
     });
+  }
+
+  public checkIfPresetCodeExists(code: string) {
+    const rnaPresets = this.defaultRnaPresetsLibraryItems;
+    return rnaPresets.some((preset) => preset.name === code);
   }
 
   public get defaultRnaPresetsLibraryItems() {
@@ -558,8 +660,16 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      let isPropagationStopped = false;
+      const originalStopPropagation = event.stopPropagation.bind(event);
+      event.stopPropagation = () => {
+        isPropagationStopped = true;
+        originalStopPropagation();
+      };
+
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) {
+
+      if (!isPropagationStopped) {
         this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });
@@ -587,8 +697,17 @@ export class CoreEditor {
 
       this.mode.onPaste(event);
     };
+    this.cutEventHandler = (event: ClipboardEvent) => {
+      // Need to add some abstraction for events handling to have a single point where we can disable events for macro mode
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
+
+      this.mode.onCut(event);
+    };
     document.addEventListener('copy', this.copyEventHandler);
     document.addEventListener('paste', this.pasteEventHandler);
+    document.addEventListener('cut', this.cutEventHandler);
   }
 
   private setupHotKeysEvents() {
@@ -602,6 +721,15 @@ export class CoreEditor {
 
       if (this.libraryItemDragState) {
         this.cancelLibraryItemDrag();
+        return;
+      }
+
+      // If the right-click happened inside an already-open context menu (the
+      // menu DOM is rendered as a portal sibling of the canvas SVG and overlaps
+      // the symbol underneath), event.target.__data__ is undefined and the
+      // logic below would fall through to rightClickCanvasSequence and replace
+      // the original menu with a reduced one. Skip the dispatch in that case.
+      if ((event.target as HTMLElement | null)?.closest('.contexify')) {
         return;
       }
 
@@ -655,28 +783,42 @@ export class CoreEditor {
         this.events.rightClickPolymerBond.dispatch([event, eventData]);
       } else if (
         eventData instanceof BaseMonomerRenderer &&
-        eventData.monomer.selected
+        !eventData.monomer.selected
       ) {
-        this.events.rightClickSelectedMonomers.dispatch([event]);
+        const modelChanges = this.drawingEntitiesManager.selectDrawingEntity(
+          eventData.monomer,
+        );
+
+        this.renderersContainer.update(modelChanges);
+        this.events.selectEntities.dispatch(
+          this.drawingEntitiesManager.selectedEntities.map(
+            (entity) => entity[1],
+          ),
+        );
         this.events.rightClickSelectedMonomers.dispatch([
           event,
-          selectedMonomers,
+          [eventData.monomer],
         ]);
-      } else if (hasSelectedEntities && eventData?.drawingEntity?.selected) {
-        // Handle right-click on selected microstructures (atoms, bonds, arrows, etc.)
+      } else if (
+        (eventData instanceof BaseMonomerRenderer &&
+          eventData.monomer.selected) ||
+        (hasSelectedEntities && eventData?.drawingEntity?.selected)
+      ) {
+        // Handle right-click on selected entities (monomers and microstructures).
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,
           selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        // TODO separate by two events for modes
-        this.events.rightClickCanvas.dispatch([
-          event,
-          this.mode instanceof SequenceMode
-            ? sequenceSelections
-            : selectedMonomers,
-        ]);
+        if (this.mode.modeName === 'sequence-layout-mode') {
+          this.events.rightClickCanvasSequence.dispatch([
+            event,
+            sequenceSelections,
+          ]);
+        } else {
+          this.events.rightClickCanvas.dispatch([event, selectedMonomers]);
+        }
       }
 
       return false;
@@ -685,10 +827,12 @@ export class CoreEditor {
     document.addEventListener('contextmenu', this.contextMenuEventHandler);
   }
 
-  private onLayoutCircular() {
+  private async onLayoutCircular() {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
-    ketcher.circularLayoutMonomers();
+    await ketcher.circularLayoutMonomers();
+    this.clearTransientViews();
+    this.clearSelection();
   }
 
   private subscribeEvents() {
@@ -750,18 +894,22 @@ export class CoreEditor {
       this.mode.onPaste();
     });
     this.events.deleteSelectedStructure.add(() => {
-      if (this.mode instanceof SequenceMode) {
-        this.mode.deleteSelection();
+      if (this.mode.modeName === 'sequence-layout-mode') {
+        this.sequenceMode.deleteSelection();
 
         return;
       }
 
       const command = new Command();
-      const history = new EditorHistory(this);
+      const history = EditorHistory.getInstance(this);
 
       command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
       history.update(command);
       this.renderersContainer.update(command);
+      this.events.selectEntities.dispatch(
+        this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+      );
+      this.clearTransientViews();
     });
     this.events.modifyAminoAcids.add(
       ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
@@ -783,7 +931,7 @@ export class CoreEditor {
         this.transientDrawingView.update();
 
         const command = new Command();
-        const history = new EditorHistory(this);
+        const history = EditorHistory.getInstance(this);
 
         command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
         history.update(command);
@@ -820,7 +968,7 @@ export class CoreEditor {
         position: { x: number; y: number },
       ) => {
         const modelChanges = new Command();
-        const history = new EditorHistory(this);
+        const history = EditorHistory.getInstance(this);
         const { x, y } = position;
 
         let monomersAddResult: IAutochainMonomerAddResult | undefined;
@@ -872,6 +1020,46 @@ export class CoreEditor {
     this.events.removeAutochainPreview.add(() =>
       this.onRemoveAutochainPreview(),
     );
+    this.events.flipHorizontal.add(() => this.onFlipHorizontal());
+    this.events.flipVertical.add(() => this.onFlipVertical());
+  }
+
+  private onFlipHorizontal() {
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      return;
+    }
+
+    const command = new Command();
+    const history = EditorHistory.getInstance(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('horizontal'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
+  }
+
+  private onFlipVertical() {
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      return;
+    }
+
+    const command = new Command();
+    const history = EditorHistory.getInstance(this);
+
+    command.merge(
+      this.drawingEntitiesManager.flipSelectedDrawingEntities('vertical'),
+    );
+    history.update(command);
+    this.renderersContainer.update(command);
+    this.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+    this.events.selectEntities.dispatch(
+      this.drawingEntitiesManager.selectedEntities.map((entity) => entity[1]),
+    );
   }
 
   public getDataForAutochain() {
@@ -890,7 +1078,10 @@ export class CoreEditor {
         new Vec2(1.5, 0),
       );
     } else if (this.drawingEntitiesManager.hasMonomers) {
-      if (this.nextAutochainPosition && !(this.mode instanceof SnakeMode)) {
+      if (
+        this.nextAutochainPosition &&
+        !(this.mode.modeName === 'snake-layout-mode')
+      ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {
         newMonomerPosition =
@@ -913,11 +1104,12 @@ export class CoreEditor {
   }
 
   private onRemoveAutochainPreview() {
-    this.transientDrawingView.clear();
+    this.transientDrawingView.hideAutochainPreview();
+    this.transientDrawingView.update();
   }
 
   private onPreviewAutochain(monomerOrRnaItem: MonomerItemType | IRnaPreset) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -939,7 +1131,7 @@ export class CoreEditor {
   private onAutochain(
     monomerOrRnaItem: MonomerItemType | AmbiguousMonomerType | IRnaPreset,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -950,7 +1142,7 @@ export class CoreEditor {
     const canvasWasEmptyBeforeAutochain =
       this.drawingEntitiesManager.allEntities.length === 0;
     const modelChanges = new Command();
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const { selectedMonomerToConnect, newMonomerPosition } =
       this.getDataForAutochain();
 
@@ -1002,7 +1194,7 @@ export class CoreEditor {
       );
     }
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(this.drawingEntitiesManager.applySnakeLayout(true));
     }
 
@@ -1019,9 +1211,9 @@ export class CoreEditor {
     history.update(modelChanges);
     this.calculateAndStoreNextAutochainPosition(monomersAddResult.lastMonomer);
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       this.zoomTool.scrollToVerticalBottom();
-    } else if (this.mode instanceof FlexMode) {
+    } else if (this.mode.modeName === 'flex-layout-mode') {
       const editorSettings = provideEditorSettings();
       const oneLayoutCellInAngstroms =
         SnakeLayoutCellWidth / editorSettings.macroModeScale;
@@ -1108,7 +1300,7 @@ export class CoreEditor {
     rnaPresetItem: IRnaPreset,
     sugarPosition: Vec2,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1130,18 +1322,24 @@ export class CoreEditor {
         rnaBasePosition: rnaPresetItem.base
           ? new Vec2(sugarPosition.x, sugarPosition.y + 1.5)
           : undefined,
+        connections: rnaPresetItem.connections,
       });
     const sugar = monomers.find(
       (monomer) => monomer instanceof Sugar,
     ) as BaseMonomer;
     const phosphate = monomers.find((monomer) => monomer instanceof Phosphate);
+    const isFivePrimePhosphate =
+      phosphate &&
+      sugar.attachmentPointsToBonds.R1?.getAnotherEntity(sugar) === phosphate &&
+      phosphate.attachmentPointsToBonds.R2?.getAnotherEntity(phosphate) ===
+        sugar;
 
     modelChanges.merge(addPresetModelChanges);
 
     return {
       modelChanges,
-      firstMonomer: sugar,
-      lastMonomer: phosphate ?? sugar,
+      firstMonomer: isFivePrimePhosphate ? phosphate : sugar,
+      lastMonomer: isFivePrimePhosphate ? sugar : phosphate ?? sugar,
       drawingEntities: [
         ...monomers,
         ...(sugar.attachmentPointsToBonds.R2
@@ -1155,7 +1353,7 @@ export class CoreEditor {
   }
 
   private onPlaceMonomerOnCanvas(monomerItem: MonomerItemType, position: Vec2) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1180,7 +1378,7 @@ export class CoreEditor {
     monomerItem: AmbiguousMonomerType,
     position: Vec2,
   ) {
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -1197,6 +1395,17 @@ export class CoreEditor {
       lastMonomer: monomer,
       drawingEntities: [monomer],
     };
+  }
+
+  private clearTransientViews() {
+    this.transientDrawingView.clear();
+    this.transientDrawingView.update();
+  }
+
+  private clearSelection() {
+    const turnOffSelectionCommand =
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.renderersContainer.update(turnOffSelectionCommand);
   }
 
   public calculateAndStoreNextAutochainPosition(
@@ -1263,47 +1472,47 @@ export class CoreEditor {
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOnEditMode(sequenceItemRenderer);
+    this.sequenceMode.turnOnEditMode(sequenceItemRenderer);
   }
 
   private onEstablishHydrogenBondSequenceMode(
     sequenceItemRenderer: BaseSequenceItemRenderer,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.establishHydrogenBond(sequenceItemRenderer);
+    this.sequenceMode.establishHydrogenBond(sequenceItemRenderer);
   }
 
   private onDeleteHydrogenBondSequenceMode(
     sequenceItemRenderer: BaseSequenceItemRenderer,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.deleteHydrogenBond(sequenceItemRenderer);
+    this.sequenceMode.deleteHydrogenBond(sequenceItemRenderer);
   }
 
   private onTurnOnSequenceEditInRNABuilderMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOnSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOnSequenceEditInRNABuilderMode();
   }
 
   private onTurnOffSequenceEditInRNABuilderMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.turnOffSequenceEditInRNABuilderMode();
+    this.sequenceMode.turnOffSequenceEditInRNABuilderMode();
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -1313,27 +1522,28 @@ export class CoreEditor {
   private onChangeToggleIsSequenceSyncEditMode(
     isSequenceSyncEditMode: boolean,
   ) {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
+    const sequenceMode = this.sequenceMode;
     if (isSequenceSyncEditMode) {
-      this.mode.turnOnSyncEditMode();
+      sequenceMode.turnOnSyncEditMode();
     } else {
-      this.mode.turnOffSyncEditMode();
+      sequenceMode.turnOffSyncEditMode();
     }
   }
 
   private onResetSequenceSyncEditMode() {
-    if (!(this.mode instanceof SequenceMode)) {
+    if (this.mode.modeName !== 'sequence-layout-mode') {
       return;
     }
 
-    this.mode.resetEditMode();
+    this.sequenceMode.resetEditMode();
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const modelChanges =
       this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
 
@@ -1345,33 +1555,34 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
     this.scrollToTopLeftCorner();
+    this.clearTransientViews();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
     if (
-      this.mode instanceof SequenceMode &&
+      this.mode.modeName === 'sequence-layout-mode' &&
       !this.isSequenceEditMode &&
       SequenceRenderer.chainsCollection.length === 0
     ) {
-      this.mode.turnOnEditMode();
+      this.sequenceMode.turnOnEditMode();
     }
 
-    if (this.mode instanceof SequenceMode) {
-      this.mode.insertMonomerFromLibrary(monomer);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.sequenceMode.insertMonomerFromLibrary(monomer);
     }
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
     if (
-      this.mode instanceof SequenceMode &&
+      this.mode.modeName === 'sequence-layout-mode' &&
       !this.isSequenceEditMode &&
       SequenceRenderer.chainsCollection.length === 0
     ) {
-      this.mode.turnOnEditMode();
+      this.sequenceMode.turnOnEditMode();
     }
 
-    if (this.mode instanceof SequenceMode) {
-      this.mode.insertPresetFromLibrary(preset);
+    if (this.mode.modeName === 'sequence-layout-mode') {
+      this.sequenceMode.insertPresetFromLibrary(preset);
     }
   }
 
@@ -1391,7 +1602,7 @@ export class CoreEditor {
   }) {
     if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
-      const history = new EditorHistory(this);
+      const history = EditorHistory.getInstance(this);
 
       if (
         !payload.initialFirstMonomerAttachmentPoint ||
@@ -1412,7 +1623,7 @@ export class CoreEditor {
         ),
       );
 
-      if (this.mode instanceof SnakeMode) {
+      if (this.mode.modeName === 'snake-layout-mode') {
         command.merge(
           this.drawingEntitiesManager.recalculateCanvasMatrix(
             this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
@@ -1445,9 +1656,8 @@ export class CoreEditor {
   ) {
     const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
-    const ModeConstructor = modesMap[mode];
-    assert(ModeConstructor);
-    const history = new EditorHistory(this);
+    const ModeConstructor = getModeConstructor(mode);
+    const history = EditorHistory.getInstance(this);
     const hasModeChanged = this.mode.modeName !== mode;
     const isLastCommandTurnOnSnakeMode =
       history.previousCommand?.operations.find((operation) => {
@@ -1517,7 +1727,7 @@ export class CoreEditor {
     modificationType: string,
   ) {
     const modelChanges = new Command();
-    const editorHistory = new EditorHistory(editor);
+    const editorHistory = EditorHistory.getInstance(editor);
     const aminoAcidsToModify = getAminoAcidsToModify(
       monomers,
       modificationType,
@@ -1582,33 +1792,44 @@ export class CoreEditor {
     }
   }
 
+  private get sequenceMode(): SequenceMode {
+    return this.mode as unknown as SequenceMode;
+  }
+
   public get isSequenceMode() {
-    return this?.mode instanceof SequenceMode;
+    return this.mode.modeName === 'sequence-layout-mode';
   }
 
   public get isSequenceEditMode() {
-    return this?.mode instanceof SequenceMode && this?.mode.isEditMode;
+    return (
+      this.mode.modeName === 'sequence-layout-mode' &&
+      this.sequenceMode.isEditMode
+    );
   }
 
   public get isSequenceEditInRNABuilderMode() {
     return (
-      this?.mode instanceof SequenceMode && this?.mode.isEditInRNABuilderMode
+      this.mode.modeName === 'sequence-layout-mode' &&
+      this.sequenceMode.isEditInRNABuilderMode
     );
   }
 
   public get isSequenceAnyEditMode() {
+    const sequenceMode = this.sequenceMode;
     return (
-      this?.mode instanceof SequenceMode &&
-      (this?.mode.isEditMode || this?.mode.isEditInRNABuilderMode)
+      this.mode.modeName === 'sequence-layout-mode' &&
+      (sequenceMode.isEditMode || sequenceMode.isEditInRNABuilderMode)
     );
   }
 
   public onSelectHistory(name: HistoryOperationType) {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     if (name === 'undo') {
       history.undo();
+      this.clearTransientViews();
     } else if (name === 'redo') {
       history.redo();
+      this.clearTransientViews();
     }
   }
 
@@ -1616,6 +1837,7 @@ export class CoreEditor {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 
+    this.clearTransientViews();
     this.tool = new ToolConstructor(this, options);
 
     if (isBaseTool(oldTool)) {
@@ -1637,6 +1859,7 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
+    document.removeEventListener('cut', this.cutEventHandler);
     document.removeEventListener('keydown', this.keydownEventHandler);
     document.removeEventListener('contextmenu', this.contextMenuEventHandler);
     this.canvas.removeEventListener('mousedown', blurActiveElement);
@@ -1725,16 +1948,11 @@ export class CoreEditor {
         this.updateLastCursorPosition(event);
 
         if (
-          ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !this.isMouseMainButtonPressed(event)
+          !['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) ||
+          this.isMouseMainButtonPressed(event)
         ) {
-          return true;
-        }
-
-        this.useModeIfNeeded(toolEventHandler, event);
-        const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
-        if (isToolUsed) {
-          return true;
+          this.useModeIfNeeded(toolEventHandler, event);
+          this.useToolIfNeeded(toolEventHandler, event);
         }
 
         return true;
@@ -1787,10 +2005,13 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    const history = new EditorHistory(this);
+    const history = EditorHistory.getInstance(this);
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     const zoomTool = ZoomTool.instance;
+
+    this.clearTransientViews();
+    this.clearSelection();
 
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
@@ -1837,6 +2058,8 @@ export class CoreEditor {
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
     this.resetModeIfNeeded();
+    this.clearTransientViews();
+    this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
@@ -1845,14 +2068,15 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+    this.viewModel.initialize([...this.drawingEntitiesManager.bonds.values()]);
 
-    if (this.mode instanceof SnakeMode) {
+    if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
         this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 
-    if (this.mode instanceof SequenceMode) {
+    if (this.mode.modeName === 'sequence-layout-mode') {
       this.mode.initialize(false, false, false);
     } else {
       this.renderersContainer.update(modelChanges);
@@ -1865,7 +2089,10 @@ export class CoreEditor {
   }
 
   public isCurrentModeWithAutozoom(): boolean {
-    return this.mode instanceof FlexMode || this.mode instanceof SnakeMode;
+    return (
+      this.mode.modeName === 'flex-layout-mode' ||
+      this.mode.modeName === 'snake-layout-mode'
+    );
   }
 
   public zoomToStructuresIfNeeded() {
@@ -1879,14 +2106,13 @@ export class CoreEditor {
     ) {
       return;
     }
-    const structureBbox = RenderersManager.getRenderedStructuresBbox();
+    const structureBbox = getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 
   public scrollToTopLeftCorner() {
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = getRenderedStructuresBbox();
 
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
@@ -1900,5 +2126,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
+    resetEditorInstance();
   }
 }

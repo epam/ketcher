@@ -42,6 +42,18 @@ import { openInfoModalWithCustomMessage } from '../shared';
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+  const getSelectedSruCount = () => {
+    const editor = getState().editor;
+    if (!editor?.structSelected) return 0;
+    const selectedStruct = editor.structSelected();
+    let count = 0;
+    for (const sgroup of selectedStruct.sgroups.values()) {
+      if (sgroup.type === 'SRU') {
+        count += 1;
+      }
+    }
+    return count;
+  };
 
   const resetToSelect =
     (force = false) =>
@@ -94,12 +106,6 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
           ap: res,
         }));
-      } else if (elem.type === 'list' || elem.type === 'not-list') {
-        dlg = openDialog(
-          dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo },
-        );
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -119,6 +125,7 @@ export default function initEditor(dispatch, getState) {
           type: 'rlabel',
         }));
       } else {
+        // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
@@ -177,7 +184,12 @@ export default function initEditor(dispatch, getState) {
     },
     onSgroupEdit: (sgroup) =>
       sleep(0) // huck to open dialog after dispatch sgroup tool action
-        .then(() => openDialog(dispatch, 'sgroup', fromSgroup(sgroup)))
+        .then(() =>
+          openDialog(dispatch, 'sgroup', {
+            ...fromSgroup(sgroup),
+            selectedSruCount: getSelectedSruCount(),
+          }),
+        )
         .then(toSgroup),
     onRemoveFG: (result) =>
       sleep(0).then(() => openDialog(dispatch, 'removeFG', result)),

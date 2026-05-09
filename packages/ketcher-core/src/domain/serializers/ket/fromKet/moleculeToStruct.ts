@@ -16,14 +16,14 @@
 
 import {
   Atom,
-  Bond,
-  SGroup,
-  Struct,
-  SGroupAttachmentPoint,
-  RGroupAttachmentPoint,
   AttachmentPoints,
   AtomQueryProperties,
-} from 'domain/entities';
+} from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
@@ -240,8 +240,6 @@ export function sgroupToStruct(source) {
   const sgroup = new SGroup(source.type);
   ifDef(sgroup, 'atoms', source.atoms);
   switch (source.type) {
-    case 'GEN':
-      break;
     case 'MUL': {
       ifDef(sgroup.data, 'mul', source.mul);
       break;
@@ -284,6 +282,7 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'fieldValue', source.fieldData);
       break;
     }
+    case 'GEN':
     default:
       break;
   }

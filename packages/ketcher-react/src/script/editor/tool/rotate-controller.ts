@@ -12,6 +12,7 @@ import RotateTool from './rotate';
 import SelectTool from './select/select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
 import { normalizeAngle } from '../utils/normalizeAngle';
+import FragmentSelectionTool from './fragmentSelection';
 
 type RaphaelElement = {
   [key: string]: any;
@@ -136,7 +137,7 @@ class RotateController {
 
   private isPartOfFragmentSelected() {
     const allAtoms = this.render.ctab.molecule.atoms;
-    const selectedAtomIds = this.editor.selection()?.atoms || [];
+    const selectedAtomIds = this.editor.selection()?.atoms ?? [];
     const selectedFragmentIdSet = new Set();
 
     selectedAtomIds.forEach((atomId) => {
@@ -164,9 +165,11 @@ class RotateController {
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
         .length > 1;
 
+    const currentTool = this.editor.tool();
     const enable =
       isMoreThanOneItemBeingSelected &&
-      this.editor.tool() instanceof SelectTool &&
+      (currentTool instanceof SelectTool ||
+        currentTool instanceof FragmentSelectionTool) &&
       originalCenter;
 
     if (!enable) {
@@ -261,6 +264,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
+        circle.node.setAttribute('data-testid', 'rotation-center-handle');
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);
@@ -721,14 +725,14 @@ class RotateController {
         const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
           this.getProtractorBaseInfo(newRadius);
         this.drawRotateArc(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           rotateArcStart,
           textPos,
         );
         // NOTE: draw protractor behind arc
         this.drawProtractor(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           degree0Line,
           degree0TextPos,

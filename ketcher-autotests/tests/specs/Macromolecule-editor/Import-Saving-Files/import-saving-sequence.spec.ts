@@ -12,7 +12,6 @@ import {
   readFileContent,
   SequenceFileFormat,
   resetZoomLevelToDefault,
-  delay,
 } from '@utils';
 import {
   FileType,
@@ -89,7 +88,7 @@ test.describe('Import-Saving .seq Files', () => {
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       fileContent,
     );
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeEditorScreenshot(page);
   });
 
@@ -802,12 +801,12 @@ test(`7. Verify export option includes both single-letter and three-letter seque
 
   // Click on "File format" dropdown
   await SaveStructureDialog(page).fileFormatDropdownList.click();
-  const singleLetter = page.getByText('Sequence (1-letter code)', {
-    exact: true,
-  });
-  const threeLetter = page.getByText('Sequence (3-letter code)', {
-    exact: true,
-  });
+  const singleLetter = page.getByTestId(
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
+  const threeLetter = page.getByTestId(
+    MacromoleculesFileFormatType.Sequence3LetterCode,
+  );
 
   await expect(singleLetter).toBeVisible();
   await expect(threeLetter).toBeVisible();

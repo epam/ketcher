@@ -8,6 +8,8 @@ export enum ErrorMessage {
   notMinimalViableStructure = 'notMinimalViableStructure',
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
+  invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  invalidPresetCode = 'invalidPresetCode',
 }
 
 export enum InfoMessage {

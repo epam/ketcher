@@ -16,15 +16,15 @@
 
 import {
   FC,
-  KeyboardEvent,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
 
 import clsx from 'clsx';
-import { Icon } from 'components';
+import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
@@ -41,9 +41,10 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
+  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -73,6 +74,7 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
+    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,
@@ -80,19 +82,43 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useLayoutEffect(() => {
-    if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+    const dialogElement = dialogRef.current;
+
+    // Use document.querySelector rather than dialogElement.closest() because
+    // in popup mode the native <dialog> lives inside a MUI portal appended to
+    // document.body — outside the .Ketcher-root subtree — so closest() returns
+    // null and clipArea would be undefined.
+    const clipArea = document.querySelector(
+      `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${CLIP_AREA_BASE_CLASS}`,
+    ) as HTMLElement | null;
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (focusable && dialogElement) {
+      timeoutId = setTimeout(() => {
+        (dialogElement as HTMLElement).focus();
+      }, 0);
     }
 
     return () => {
-      (
-        dialogRef.current
-          ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
-          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
-      ).focus();
+      // Cancel the pending focus-on-open timeout so it cannot fire after
+      // unmount and focus a detached element.
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      // Defer focus restoration so the browser can first move focus to
+      // document.body naturally (when the <dialog> DOM node is removed).
+      // That fires a native focusin on body which triggers MUI FocusTrap's
+      // contain() with activeElement outside the trap, causing it to clear its
+      // reactFocusEventTarget ref. If we focused clipArea synchronously here,
+      // contain() would see focus is still inside the trap and short-circuit —
+      // leaving reactFocusEventTarget pointing at the detached close button
+      // (memory leak in popup mode).
+      setTimeout(() => {
+        clipArea?.focus();
+      }, 0);
     };
   }, [focusable]);
 
@@ -114,26 +140,40 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const { key } = event;
-    const active = document.activeElement;
-    const activeTextarea = active?.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <div
+    <dialog
       ref={dialogRef}
-      role="dialog"
+      open
       data-testid={'info-modal-window'}
-      onKeyDown={keyDown}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header
@@ -181,6 +221,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-    </div>
+    </dialog>
   );
 };

@@ -17,6 +17,7 @@ import { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
+const HIDDEN_HANDLE_INSET = 1;
 
 interface ClosestReferencePosition {
   distance: number;
@@ -25,10 +26,12 @@ interface ClosestReferencePosition {
 
 export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
+  private selectionHitTargetsSet: RaphaelSet;
 
   private setSelectionPointsVisibility(visible: boolean) {
     this.selectionPointsSet?.attr({
       opacity: visible ? 1 : 0,
+      'pointer-events': visible ? 'all' : 'none',
     });
   }
 
@@ -115,7 +118,7 @@ export class ReImage extends ReObject {
     };
   }
 
-  private getHandleReferencePositions(
+  private getHandleHitTargetReferencePositions(
     renderOptions: RenderOptions,
   ): GetReferencePositions {
     const referencePositions = this.image.getReferencePositions();
@@ -124,35 +127,35 @@ export class ReImage extends ReObject {
       topLeftPosition: Scale.modelToCanvas(
         referencePositions.topLeftPosition,
         renderOptions,
-      ),
+      ).add(new Vec2(HIDDEN_HANDLE_INSET, HIDDEN_HANDLE_INSET)),
       topMiddlePosition: Scale.modelToCanvas(
         referencePositions.topMiddlePosition,
         renderOptions,
-      ),
+      ).add(new Vec2(0, HIDDEN_HANDLE_INSET)),
       topRightPosition: Scale.modelToCanvas(
         referencePositions.topRightPosition,
         renderOptions,
-      ),
+      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, HIDDEN_HANDLE_INSET)),
       rightMiddlePosition: Scale.modelToCanvas(
         referencePositions.rightMiddlePosition,
         renderOptions,
-      ),
+      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, 0)),
       bottomRightPosition: Scale.modelToCanvas(
         referencePositions.bottomRightPosition,
         renderOptions,
-      ),
+      ).add(new Vec2(-1 * HIDDEN_HANDLE_INSET, -1 * HIDDEN_HANDLE_INSET)),
       bottomMiddlePosition: Scale.modelToCanvas(
         referencePositions.bottomMiddlePosition,
         renderOptions,
-      ),
+      ).add(new Vec2(0, -1 * HIDDEN_HANDLE_INSET)),
       bottomLeftPosition: Scale.modelToCanvas(
         referencePositions.bottomLeftPosition,
         renderOptions,
-      ),
+      ).add(new Vec2(HIDDEN_HANDLE_INSET, -1 * HIDDEN_HANDLE_INSET)),
       leftMiddlePosition: Scale.modelToCanvas(
         referencePositions.leftMiddlePosition,
         renderOptions,
-      ),
+      ).add(new Vec2(HIDDEN_HANDLE_INSET, 0)),
     };
   }
 
@@ -195,28 +198,57 @@ export class ReImage extends ReObject {
     renderOptions: RenderOptions,
   ) {
     this.selectionPointsSet = paper.set();
+    this.selectionHitTargetsSet = paper.set();
     const scale = this.getScale(renderOptions);
     const strokeWidth = scale * REFERENCE_POINT_LINE_WIDTH_MULTIPLIER;
     const imageId = reStruct.molecule.images.keyOf(this.image);
-    const selectionReferencePositions = Object.entries(
-      this.getHandleReferencePositions(renderOptions),
-    );
-    selectionReferencePositions.forEach(([key, { x, y }]) => {
-      const element = paper.circle(x, y, scale).attr({
-        fill: 'transparent',
-        stroke: '#000',
-        'stroke-width': strokeWidth,
-        opacity: 0,
-      });
+    const visibleHandleReferencePositions =
+      this.getSelectionReferencePositions(renderOptions);
+    const hitTargetReferencePositions =
+      this.getHandleHitTargetReferencePositions(renderOptions);
+
+    (
+      Object.keys(visibleHandleReferencePositions) as ImageReferenceName[]
+    ).forEach((key) => {
+      const visiblePosition = visibleHandleReferencePositions[key];
+      const hitTargetPosition = hitTargetReferencePositions[key];
+      const element = paper
+        .circle(visiblePosition.x, visiblePosition.y, scale)
+        .attr({
+          fill: 'transparent',
+          stroke: '#000',
+          'stroke-width': strokeWidth,
+          opacity: 0,
+        });
+      const hitTarget = paper
+        .circle(hitTargetPosition.x, hitTargetPosition.y, scale)
+        .attr({
+          fill: '#000',
+          stroke: '#000',
+          'stroke-width': 0,
+          'fill-opacity': 0,
+          'stroke-opacity': 0,
+          opacity: 1,
+          'pointer-events': 'all',
+        });
       if (element.node?.setAttribute) {
-        element.node.setAttribute('data-testid', `imageResize-${key}`);
-        element.node.setAttribute('data-image-id', imageId);
-        element.node.setAttribute('pointer-events', 'all');
+        element.node.setAttribute('pointer-events', 'none');
+      }
+      if (hitTarget.node?.setAttribute) {
+        hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
+        hitTarget.node.setAttribute('data-image-id', imageId);
+        hitTarget.node.setAttribute('pointer-events', 'all');
       }
 
       this.selectionPointsSet.push(element);
+      this.selectionHitTargetsSet.push(hitTarget);
     });
     this.setSelectionPointsVisibility(false);
+    reStruct.addReObjectPath(
+      LayerMap.indices,
+      this.visel,
+      this.selectionHitTargetsSet,
+    );
     reStruct.addReObjectPath(
       LayerMap.indices,
       this.visel,
@@ -334,7 +366,7 @@ export class ReImage extends ReObject {
     renderOptions: RenderOptions,
   ): ClosestReferencePosition {
     const entries = Object.entries(
-      this.getHandleReferencePositions(renderOptions),
+      this.getSelectionReferencePositions(renderOptions),
     ) as Array<[ImageReferenceName, Vec2]>;
     return entries.reduce(
       (acc, [key, position]) => {

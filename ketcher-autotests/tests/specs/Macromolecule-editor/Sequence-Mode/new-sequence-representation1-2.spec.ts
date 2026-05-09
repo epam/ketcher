@@ -25,8 +25,8 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  MacroBondDataIds,
   MacroBondType,
+  MacroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -1793,7 +1793,7 @@ async function setupSenseAndAntiSenseSequences(
     antisenseBase,
     undefined,
     undefined,
-    MacroBondType.Hydrogen,
+    MacroBondTool.Hydrogen,
   );
 }
 
@@ -1906,7 +1906,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         );
 
         const hydrogenBondsAll = getBondLocator(page, {
-          bondType: MacroBondDataIds.Hydrogen,
+          bondType: MacroBondType.Hydrogen,
         });
 
         const basesWithHydrogenConnection = getMonomerLocator(page, {

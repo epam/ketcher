@@ -23,10 +23,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
-      "domain/*": ["src/domain/*"],
-      "application/*": ["src/application/*"],
-      "infrastructure/*": ["src/infrastructure/*"],
-      "utilities": ["src/utilities"]
+      "domain/*": ["./src/domain/*"],
+      "application/*": ["./src/application/*"],
+      "infrastructure/*": ["./src/infrastructure/*"],
+      "utilities": ["./src/utilities"]
     },
     "plugins": [
       {

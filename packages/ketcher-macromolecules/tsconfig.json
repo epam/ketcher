@@ -26,14 +26,14 @@
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "components/*": ["src/components/*"],
-      "state/*": ["src/state/*"],
-      "state": ["src/state"],
-      "hooks": ["src/hooks"],
-      "assets/*": ["src/assets/*"],
-      "theming/*": ["src/theming/*"],
-      "helpers": ["src/helpers"],
-      "helpers/*": ["src/helpers/*"]
+      "components/*": ["./src/components/*"],
+      "state/*": ["./src/state/*"],
+      "state": ["./src/state"],
+      "hooks": ["./src/hooks"],
+      "assets/*": ["./src/assets/*"],
+      "theming/*": ["./src/theming/*"],
+      "helpers": ["./src/helpers"],
+      "helpers/*": ["./src/helpers/*"]
     },
     "plugins": [
       {

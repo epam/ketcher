@@ -23,6 +23,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
+      "src": ["./src"],
+      "src/*": ["./src/*"],
       "domain/*": ["./src/domain/*"],
       "application/*": ["./src/application/*"],
       "infrastructure/*": ["./src/infrastructure/*"],

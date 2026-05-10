@@ -131,6 +131,10 @@ export const CommonLeftToolbar = (page: Page) => {
           console.warn('Unable to click on the bond tool button, retrying...');
         }
       }
+
+      throw new Error(
+        `Unable to select bond tool "${bondTool}" after ${maxAttempts} attempts.`,
+      );
     },
 
     async isBondToolActive() {

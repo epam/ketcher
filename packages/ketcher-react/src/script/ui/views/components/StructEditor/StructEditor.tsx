@@ -101,8 +101,10 @@ function setupEditor(
     }
   });
 
-  editor.render.unobserveCanvasResize();
-  editor.render.observeCanvasResize();
+  if (struct !== oldProps.struct || options !== oldProps.options) {
+    editor.render.unobserveCanvasResize();
+    editor.render.observeCanvasResize();
+  }
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {

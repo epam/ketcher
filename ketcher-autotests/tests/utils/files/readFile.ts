@@ -201,10 +201,8 @@ export async function openImageAndAddToCanvas(
 ): Promise<ImageBoxType> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
-  const debugDelay = 0.15;
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.waitForTimeout(debugDelay * 1000);
   await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 

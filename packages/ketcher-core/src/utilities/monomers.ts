@@ -23,14 +23,16 @@ export function isValidIdtAlias(alias: string): boolean {
 }
 
 /**
- * Validates that an IDT alias without leading/trailing slashes does not
- * exceed the maximum allowed length.
+ * Validates that an IDT alias does not exceed the maximum allowed length,
+ *except for the slash-wrapped modification form (`/alias/`).
  */
+
 export function isIdtAliasLengthValid(alias: string): boolean {
   if (!alias) return true;
   const hasLeadingSlash = alias.startsWith('/');
   const hasTrailingSlash = alias.endsWith('/');
-  if (hasLeadingSlash || hasTrailingSlash) return true;
+  if (hasLeadingSlash && hasTrailingSlash) return true;
+  if (hasLeadingSlash || hasTrailingSlash) return false;
   return alias.length <= IDT_ALIAS_MAX_LENGTH_WITHOUT_SLASHES;
 }
 

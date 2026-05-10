@@ -25,7 +25,8 @@
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "components": ["./src/components"]
+      "components": ["./src/components"],
+      "src/*": ["./src/*"]
     }
   },
   "include": ["src"]

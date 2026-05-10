@@ -33,7 +33,8 @@
       "assets/*": ["./src/assets/*"],
       "theming/*": ["./src/theming/*"],
       "helpers": ["./src/helpers"],
-      "helpers/*": ["./src/helpers/*"]
+      "helpers/*": ["./src/helpers/*"],
+      "src/*": ["./src/*"]
     },
     "plugins": [
       {

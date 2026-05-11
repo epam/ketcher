@@ -428,7 +428,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
 
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
-      if (msg.type() === 'error') {
+      // identifyStructFormat logs a benign JSON.parse SyntaxError for non-JSON input — ignore it
+      if (
+        msg.type() === 'error' &&
+        !msg.text().includes('identifyStructFormat')
+      ) {
         consoleErrors.push(msg.text());
       }
     });
@@ -830,7 +834,11 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     const createMonomerDialog = CreateMonomerDialog(page);
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
-      if (msg.type() === 'error') {
+      // identifyStructFormat logs a benign JSON.parse SyntaxError for non-JSON input — ignore it
+      if (
+        msg.type() === 'error' &&
+        !msg.text().includes('identifyStructFormat')
+      ) {
         consoleErrors.push(msg.text());
       }
     });

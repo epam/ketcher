@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
+    "module": "node16",
     "paths": {
       "components": ["./src/components"],
       "src/*": ["./src/*"],
@@ -12,5 +13,5 @@
     },
     "rootDir": "../.."
   },
-  "include": ["src", "rollup.config.ts", "rollup-plugin-shims.d.ts"]
+  "include": ["src", "rollup.config.js", "rollup-plugin-shims.d.ts"]
 }

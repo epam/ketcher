@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "esnext",
+    "module": "node16",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node16",
     "jsx": "react-jsx",
@@ -43,5 +43,5 @@
       }
     ]
   },
-  "include": ["src", "rollup.config.ts"]
+  "include": ["src", "rollup.config.js"]
 }

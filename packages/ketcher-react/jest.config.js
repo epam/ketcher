@@ -5,7 +5,14 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          module: 'esnext',
+        },
+      },
+    ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',
   },
   moduleNameMapper: {

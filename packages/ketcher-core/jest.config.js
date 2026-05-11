@@ -7,6 +7,9 @@ module.exports = {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
+        tsconfig: {
+          module: 'esnext',
+        },
         diagnostics: {
           warnOnly: true,
         },

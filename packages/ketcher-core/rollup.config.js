@@ -61,6 +61,9 @@ const config = {
     typescript({
       typescript: ttypescript,
       tsconfigOverride: {
+        compilerOptions: {
+          module: 'esnext',
+        },
         exclude: ['__tests__/**/*'],
       },
     }),

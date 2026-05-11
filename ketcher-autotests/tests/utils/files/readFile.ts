@@ -8,6 +8,7 @@ import {
   clickOnCanvas,
   MacroFileType,
   StructureFormat,
+  waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { MolfileFormat } from 'ketcher-core';
@@ -22,6 +23,9 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
+import { ImageBox, ImageBoxType } from '@tests/pages/common/canvas/ImageBox';
+import { getImageLocator } from '@utils/canvas/image/getImageLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -194,13 +198,11 @@ export async function openImageAndAddToCanvas(
   filename: string,
   x?: number,
   y?: number,
-) {
+): Promise<ImageBoxType> {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
-  const debugDelay = 0.15;
 
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.waitForTimeout(debugDelay * 1000);
   await CommonLeftToolbar(page).handTool();
   await LeftToolbar(page).image();
 
@@ -210,8 +212,25 @@ export async function openImageAndAddToCanvas(
     await clickInTheMiddleOfTheScreen(page);
   }
 
-  const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(resolvedFilePath);
+  await waitForRender(page, async () => {
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles(resolvedFilePath);
+  });
+
+  if (!(await ErrorMessageDialog(page).isVisible())) {
+    const imageBoxId = await getImageLocator(page, {}).evaluateAll((elements) => {
+      const ids = elements.map((element) =>
+        Number(element.getAttribute('data-image-id')),
+      );
+      const validIds = ids.filter(Number.isFinite);
+      return validIds.length > 0 ? Math.max(...validIds) : null;
+    });
+
+    if (imageBoxId !== null) {
+      return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));
+    }
+  }
+  return await ImageBox(page);
 }
 
 export async function openPPTXFileAndAddToCanvasAsNewProject(

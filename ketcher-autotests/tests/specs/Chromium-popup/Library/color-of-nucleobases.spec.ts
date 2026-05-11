@@ -133,6 +133,7 @@ test.describe('Color of Nucleobases', () => {
        */
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).selectMonomer(nucleotide);
+      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

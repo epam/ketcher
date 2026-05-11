@@ -687,6 +687,10 @@ function findIncomingStereoUpBond(
     const neibond = restruct.bonds.get(hb.bid);
 
     if (!neibond) return false;
+
+    if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b))
+      return false;
+
     const singleUp =
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
@@ -943,8 +947,14 @@ function getBondSingleUpPath(
   // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
-  const n = hb1.norm;
   const options = render.options;
+  // Use the actual rendered bond direction for the normal so the wedge stays
+  // symmetric when bond endpoints have been shifted to contracted monomer centers.
+  const renderedDir = b.sub(a);
+  const n =
+    renderedDir.length() > 1e-6
+      ? renderedDir.normalized().rotateSC(1, 0)
+      : hb1.norm;
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
   let b3 = b.addScaled(n, -bsp);

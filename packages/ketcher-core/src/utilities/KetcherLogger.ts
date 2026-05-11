@@ -80,7 +80,7 @@ export class KetcherLogger {
     const { enabled, level } = this.settings;
 
     if (!enabled || level == null) {
-      return false;
+      return minimumLevel === LogLevel.ERROR;
     }
 
     return level >= minimumLevel;

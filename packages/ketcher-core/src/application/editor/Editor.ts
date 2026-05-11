@@ -75,7 +75,7 @@ import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
-  IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   isValidHelmAlias,
   isValidIdtAlias,
   initHotKeys,
@@ -119,6 +119,7 @@ import {
   getMonomerTemplateRefFromMonomerItem,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
+import { isIdtAliasLengthValid } from '../../../dist';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
@@ -475,8 +476,17 @@ export class CoreEditor {
           KetcherLogger.error(errorMessage);
           return;
         }
-      }
 
+        const hasInvalidLength = aliasesToValidate.some(
+          (alias) => !isIdtAliasLengthValid(alias),
+        );
+
+        if (hasInvalidLength) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
+      }
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
           return (

@@ -16,7 +16,13 @@ import { getSelectedAtoms } from '../../editor/tool/select';
 import { onAction } from './shared';
 import { Editor } from '../../editor';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
-import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv';
+import {
+  fromAtom,
+  toAtom,
+  fromBond,
+  toBond,
+  ElementFormData,
+} from '../data/convert/structconv';
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 import TemplateTool from '../../editor/tool/template';
@@ -152,12 +158,14 @@ function handleAtomPropsDialog({
     const atomFromStruct = restruct.atoms.get(hoveredItemId);
     const convertedAtomForModal = fromAtom(atomFromStruct?.a);
 
-    openDialog(dispatch, newAction.dialog, convertedAtomForModal)
+    if (!newAction.dialog) return;
+
+    openDialog(dispatch, newAction.dialog, convertedAtomForModal ?? undefined)
       .then((res) => {
         const updatedAtom = fromAtomsAttrs(
           restruct,
           hoveredItemId,
-          toAtom(res),
+          toAtom(res as ElementFormData),
           false,
         );
 
@@ -182,9 +190,11 @@ function handleBondPropsDialog({
   const bondFromStruct = restruct.bonds.get(hoveredItemId);
   const convertedBondForModal = fromBond(bondFromStruct?.b);
 
-  openDialog(dispatch, newAction.dialog, convertedBondForModal)
+  if (!newAction.dialog) return;
+
+  openDialog(dispatch, newAction.dialog, convertedBondForModal ?? undefined)
     .then((res) => {
-      const convertedBond = toBond(res);
+      const convertedBond = toBond(res as ReturnType<typeof fromBond>);
       if (!convertedBond) return;
 
       const updatedBond = fromBondsAttrs(

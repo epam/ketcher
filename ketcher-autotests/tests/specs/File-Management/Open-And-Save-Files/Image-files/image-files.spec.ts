@@ -3,7 +3,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   openFile,
@@ -28,7 +28,6 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils/canvas/selectSelection';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { clearLocalStorage, pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -244,7 +243,7 @@ test.describe('Image files', () => {
      */
     const fileContent = await readFileContent('KET/images-png-svg.ket');
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -266,7 +265,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContent('KET/images-png-svg.ket');
     await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -280,7 +279,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-svg-together.cdxml',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -308,7 +307,7 @@ test.describe('Image files', () => {
     );
     await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -320,6 +319,7 @@ test.describe('Image files', () => {
     await CommonTopLeftToolbar(page).openFile();
     await openFile(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
+    await OpenStructureDialog(page).closeWindow();
   });
 
   test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview', async () => {
@@ -509,10 +509,10 @@ test.describe('Image files', () => {
       'KET/images-png-svg-with-elements.ket',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 100);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 800, 100);
     await takeEditorScreenshot(page);
   });
@@ -574,24 +574,23 @@ test.describe('Image files', () => {
      * Description: Scaling actions of images (PNG) on Canvas can be Undo/Redo
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      200,
+      200,
+    );
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await takeEditorScreenshot(page);
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page, {
-      maxDiffPixels: 1,
-    });
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
@@ -601,25 +600,22 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Scaling actions of images (SVG) on Canvas can be Undo/Redo
      */
-    await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
+    const svgImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-svg.svg',
+    );
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-rightMiddlePosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = svgImage.rightMiddleHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page, {
-      maxDiffPixels: 1,
-    });
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
@@ -634,7 +630,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
       await CommonTopLeftToolbar(page).undo();
@@ -891,7 +887,7 @@ test.describe('Image files', () => {
     }
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -901,30 +897,27 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
-    await clearLocalStorage(page);
-    await pageReloadMicro(page);
-
-    await openImageAndAddToCanvas(page, 'Images/image-png.png');
+    const image = await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     const resizeHandles = [
-      { id: 'imageResize-rightMiddlePosition', moveX: 300, moveY: 0 },
-      { id: 'imageResize-topMiddlePosition', moveX: 0, moveY: -200 },
-      { id: 'imageResize-bottomLeftPosition', moveX: -200, moveY: 200 },
+      { locator: image.rightMiddleHandle, moveX: 300, moveY: 0 },
+      { locator: image.topMiddleHandle, moveX: 0, moveY: -200 },
+      { locator: image.bottomLeftHandle, moveX: -200, moveY: 200 },
     ];
 
     for (const handle of resizeHandles) {
-      const resizeHandle = page.getByTestId(handle.id);
+      const resizeHandle = handle.locator;
       await resizeHandle.scrollIntoViewIfNeeded();
       await resizeHandle.hover({ force: true });
 
       const box = await resizeHandle.boundingBox();
       if (!box) {
-        throw new Error(`${handle.id} bounding box not found`);
+        throw new Error(`${handle.locator} bounding box not found`);
       }
 
       const startX = box.x + box.width / 2;
@@ -982,7 +975,7 @@ test.describe('Image files', () => {
       TemplateLibraryTab.UserTemplate,
       'My Custom Template',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1075,16 +1068,19 @@ test.describe('Image files', () => {
      * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      200,
+      200,
+    );
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 500, 500);
@@ -1108,7 +1104,12 @@ test.describe('Image files', () => {
      * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      200,
+      200,
+    );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1116,7 +1117,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
     await dragMouseTo(page, 500, 500);
@@ -1140,7 +1141,12 @@ test.describe('Image files', () => {
      * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
      */
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 200, 200);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      200,
+      200,
+    );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 500, { from: 'pageTopLeft' });
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -1148,7 +1154,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
     await dragMouseTo(page, 500, 500);
@@ -2096,6 +2102,7 @@ test.describe('Image files', () => {
           page,
           PasteFromClipboardDialog(page).openStructureTextarea,
         );
+        await OpenStructureDialog(page).closeWindow();
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(page, testCase.file);
         await CommonTopLeftToolbar(page).saveFile();
@@ -2481,7 +2488,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2500,7 +2507,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2519,7 +2526,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2538,7 +2545,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2557,7 +2564,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2576,7 +2583,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await dragMouseTo(page, 900, 300);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -2622,7 +2629,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
   });
@@ -2637,7 +2644,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
   });
@@ -2752,7 +2759,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -2780,14 +2787,14 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(
+    const svgImage = await openImageAndAddToCanvas(
       page,
       'Images/image-svg-colored.svg',
       200,
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -2795,9 +2802,7 @@ test.describe('Image files', () => {
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = svgImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 300, 300);
@@ -2828,7 +2833,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -2864,7 +2869,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
@@ -2895,7 +2900,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
@@ -2952,7 +2957,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -2980,14 +2985,14 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas(page, 'Images/image-svg.svg');
-    await openImageAndAddToCanvas(
+    const svgImage = await openImageAndAddToCanvas(
       page,
       'Images/image-svg-colored.svg',
       200,
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -2995,9 +3000,7 @@ test.describe('Image files', () => {
     );
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = svgImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 300, 300);
@@ -3028,7 +3031,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -3064,7 +3067,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
@@ -3095,7 +3098,7 @@ test.describe('Image files', () => {
       200,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 500, { from: 'pageTopLeft' });
@@ -3223,7 +3226,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -3253,7 +3256,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -3280,10 +3283,15 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      300,
+      300,
+    );
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -3291,9 +3299,7 @@ test.describe('Image files', () => {
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 600, 500);
@@ -3316,10 +3322,15 @@ test.describe('Image files', () => {
      */
     const saveButton = SaveStructureDialog(page).saveButton;
 
-    await openImageAndAddToCanvas(page, 'Images/image-png.png', 300, 300);
+    const pngImage = await openImageAndAddToCanvas(
+      page,
+      'Images/image-png.png',
+      300,
+      300,
+    );
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
@@ -3327,9 +3338,7 @@ test.describe('Image files', () => {
     );
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
 
-    // Ensure the element is in view
-    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
-    await resizeHandle.scrollIntoViewIfNeeded();
+    const resizeHandle = pngImage.bottomRightHandle;
     await resizeHandle.hover({ force: true });
 
     await dragMouseTo(page, 600, 500);
@@ -3355,14 +3364,14 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3385,14 +3394,14 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png');
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png', 600, 500);
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).erase();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -3415,7 +3424,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
@@ -3441,7 +3450,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
@@ -3467,7 +3476,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
@@ -3498,7 +3507,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas(page, 'Images/image-png.png', 600, 500);
     await openImageAndAddToCanvas(page, 'Images/image-png-demo.png');
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });

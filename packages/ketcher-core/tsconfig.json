@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "node16",
+    "module": "esnext",
     "lib": ["dom", "esnext"],
     "moduleResolution": "node16",
     "sourceMap": true,

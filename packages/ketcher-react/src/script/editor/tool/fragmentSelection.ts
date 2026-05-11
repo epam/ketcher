@@ -221,12 +221,9 @@ export default class FragmentSelectionTool implements Tool {
     blockedBonds.add(bondItem.id);
 
     if (isStartAtomComponent) {
-      // Direction leads to marked component - show gray arrows and tooltip
-      this.preview = null;
-      this.disabledMessage = COMPONENT_TOOLTIP;
-      this.setCursor(true);
-      this.queueTooltip(COMPONENT_TOOLTIP);
-      this.editor.hover(null, this);
+      // Direction leads to marked component - apply common disabled state
+      // handling and then show gray arrows for the blocked direction.
+      this.setDisabledState(COMPONENT_TOOLTIP);
 
       // Draw gray arrows to indicate blocked direction
       this.bondPreview = reBond.drawFragmentSelectionPreview(

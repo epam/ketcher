@@ -35,7 +35,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { INPUT_DELAY } from '@utils/globals';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {

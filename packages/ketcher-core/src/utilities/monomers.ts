@@ -1,4 +1,5 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { IKetIdtAliases } from 'application/formatters/types/ket';
 
 export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
   'The HELM alias must consist only of uppercase and lowercase letters, numbers, underscores (_), asterisks (*), square brackets ([]), parentheses (()), dots (.), and hyphens (-), spaces prohibited.';
@@ -14,6 +15,7 @@ const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 
 /**
  * Validates that slashes in an IDT alias only appear as the first
+ * and/or last character. Slashes in the middle are not allowed.
  */
 export function isValidIdtAlias(alias: string): boolean {
   if (!alias) return true;
@@ -24,6 +26,22 @@ export function isValidIdtAlias(alias: string): boolean {
 export function isValidIdtAliasLength(alias: string): boolean {
   if (!alias) return true;
   return alias.length <= IDT_ALIAS_LENGTH_MAX;
+}
+
+export function getTooLongIdtAliasEntries(
+  idtAliases: IKetIdtAliases,
+): { alias: string; value: string }[] {
+  const { base, modifications } = idtAliases;
+  return [
+    { alias: 'base', value: base },
+    { alias: 'endpoint3', value: modifications?.endpoint3 },
+    { alias: 'endpoint5', value: modifications?.endpoint5 },
+    { alias: 'internal', value: modifications?.internal },
+  ]
+    .filter((entry): entry is { alias: string; value: string } =>
+      Boolean(entry.value),
+    )
+    .filter(({ value }) => !isValidIdtAliasLength(value));
 }
 
 export function isValidHelmAlias(alias: string) {

@@ -79,7 +79,7 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   isValidHelmAlias,
   isValidIdtAlias,
-  isValidIdtAliasLength,
+  getTooLongIdtAliasEntries,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -478,12 +478,15 @@ export class CoreEditor {
           return;
         }
 
-        const hasAliasTooLong = aliasesToValidate.some(
-          (alias) => !isValidIdtAliasLength(alias),
+        const tooLongEntries = getTooLongIdtAliasEntries(
+          newMonomer.props.idtAliases,
         );
 
-        if (hasAliasTooLong) {
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
+        if (tooLongEntries.length > 0) {
+          const offenders = tooLongEntries
+            .map(({ alias: field, value }) => `${field}="${value}"`)
+            .join(', ');
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
           KetcherLogger.error(errorMessage);
           return;
         }

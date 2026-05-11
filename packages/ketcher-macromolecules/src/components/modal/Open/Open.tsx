@@ -29,6 +29,7 @@ import {
   ModeTypes,
   normalizeError,
   provideEditorInstance,
+  SequenceRenderer,
   Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
@@ -146,12 +147,14 @@ const peptideLettersFormatOptions: Array<Option> = [
 const inputFormats = macromoleculesFilesInputFormats;
 
 const positionStructureOnNextSequenceLine = (
-  editor: CoreEditor,
   drawingEntitiesManager: NonNullable<
     ReturnType<KetSerializer['deserializeToDrawingEntities']>
   >['drawingEntitiesManager'],
 ) => {
-  const newNodePosition = editor.mode.getNewNodePosition();
+  // Always place the imported structure at the next chain/line position,
+  // independent of sequence edit mode (where getNewNodePosition() would
+  // return an insertion point inside the current chain instead).
+  const nextChainPosition = SequenceRenderer.getNextChainPosition();
   const firstEntityPosition =
     drawingEntitiesManager.allEntities[0]?.[1].position;
 
@@ -159,7 +162,7 @@ const positionStructureOnNextSequenceLine = (
     return;
   }
 
-  const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+  const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
 
   drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
     drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
@@ -188,10 +191,7 @@ const addToCanvas = ({
   const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
-    positionStructureOnNextSequenceLine(
-      editor,
-      deserialisedKet.drawingEntitiesManager,
-    );
+    positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
   } else {
     deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   }

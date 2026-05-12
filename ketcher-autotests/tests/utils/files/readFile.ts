@@ -218,13 +218,15 @@ export async function openImageAndAddToCanvas(
   });
 
   if (!(await ErrorMessageDialog(page).isVisible())) {
-    const imageBoxId = await getImageLocator(page, {}).evaluateAll((elements) => {
-      const ids = elements.map((element) =>
-        Number(element.getAttribute('data-image-id')),
-      );
-      const validIds = ids.filter(Number.isFinite);
-      return validIds.length > 0 ? Math.max(...validIds) : null;
-    });
+    const imageBoxId = await getImageLocator(page, {}).evaluateAll(
+      (elements) => {
+        const ids = elements.map((element) =>
+          Number(element.getAttribute('data-image-id')),
+        );
+        const validIds = ids.filter(Number.isFinite);
+        return validIds.length > 0 ? Math.max(...validIds) : null;
+      },
+    );
 
     if (imageBoxId !== null) {
       return await ImageBox(page, getImageLocator(page, { id: imageBoxId }));

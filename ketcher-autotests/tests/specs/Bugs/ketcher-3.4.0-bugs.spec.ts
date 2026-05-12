@@ -214,7 +214,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Case 6: Correct highlight behavior for microstructures when opening a file in Macro Mode', async () => {
+  test('Case 6: Correct highlight behavior for microstructures when opening a file in Macro Mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6409
@@ -225,7 +227,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Verify that the highlight accurately outlines the selected microstructures
      * 3. Ensure no extra floating highlight artifacts appear
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/ketcher - 2025-02-03T145910.386.ket',

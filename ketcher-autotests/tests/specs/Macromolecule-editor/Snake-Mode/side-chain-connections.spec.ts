@@ -873,12 +873,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('11. Verify selection of a single side-chain connection', async () => {
+  test('11. Verify selection of a single side-chain connection', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 11: Verify selection of a single side-chain connection
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -894,12 +895,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('12. Verify deletion of a single side-chain connection and Undo', async () => {
+  test('12. Verify deletion of a single side-chain connection and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 12: Verify deletion of a single side-chain connection and Undo
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -917,12 +919,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('13. Verify deletion of multiple side-chain connections and Undo', async () => {
+  test('13. Verify deletion of multiple side-chain connections and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 13: Verify deletion of multiple side-chain connections and Undo
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -947,12 +950,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('14. Verify deletion of a side-chain connection in a complex RNA structure and Undo', async () => {
+  test('14. Verify deletion of a side-chain connection in a complex RNA structure and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 14: Verify deletion of a side-chain connection in a complex RNA structure and Undo
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -979,12 +983,13 @@ test.describe('Side chain connections', () => {
     });
   });
 
-  test('15. Verify copy-paste of a structure with side-chain connections', async () => {
+  test('15. Verify copy-paste of a structure with side-chain connections', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
     /* Case 15: Verify copy-paste of a structure with side-chain connections
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -1013,12 +1018,13 @@ test.describe('Side chain connections', () => {
     await verifySVGExport(page);
   });
 
-  test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {
+  test('17. Verify saving structure with side-chain connections in SVG Document format', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
     /*  
       Case 17: Verify saving structure with side-chain connections in SVG Document format
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/17.ket`,

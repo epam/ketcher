@@ -61,7 +61,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await closePage();
   });
 
-  test('Case 1: Circular hydrogen bond connection between three (or more) chains, those hydrogen bonds is considered as side chain connection for layout purposes', async () => {
+  test('Case 1: Circular hydrogen bond connection between three (or more) chains, those hydrogen bonds is considered as side chain connection for layout purposes', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6201
@@ -71,7 +73,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -83,7 +84,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 2: Unknown monomer and CHEM not overlap to each other if both are the side chain for same chain', async () => {
+  test('Case 2: Unknown monomer and CHEM not overlap to each other if both are the side chain for same chain', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6194
@@ -93,7 +96,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from KET
      * 3. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Unknown monomer and CHEM overlap to each other if both are the side chain for same chain.ket',
@@ -104,7 +106,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 3: Unknown monomer and CHEM not overlap to each other if both are the side chain for same chain (Additional case)', async () => {
+  test('Case 3: Unknown monomer and CHEM not overlap to each other if both are the side chain for same chain (Additional case)', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6194
@@ -114,7 +118,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -126,7 +129,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 4: Nucleotide not become antisense oriented if have hydrogen connection to sugar', async () => {
+  test('Case 4: Nucleotide not become antisense oriented if have hydrogen connection to sugar', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6195
@@ -136,7 +141,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -183,7 +187,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 6: Create Antisense Strand option is disabled even if antisensless base present in chain selection', async () => {
+  test('Case 6: Create Antisense Strand option is disabled even if antisensless base present in chain selection', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6088
@@ -194,7 +200,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Select all monomers on the canvas and call context menu
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -346,7 +351,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {
+  test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4722
@@ -362,7 +369,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 5. Hover over U monomer
      * 6. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.O);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -409,7 +415,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test(`Case 15: Long bond not appears behind the structure after Copy-Paste in Flex Mode`, async () => {
+  test(`Case 15: Long bond not appears behind the structure after Copy-Paste in Flex Mode`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6456
@@ -421,7 +429,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Copy (Ctrl+C) and Paste (Ctrl+V) the structure onto the canvas.
      * 5. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/peptides-with-long-bond.ket',
@@ -584,7 +591,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 20: Adding second chain with antisese chain to the canvas not cause layout problem', async () => {
+  test('Case 20: Adding second chain with antisese chain to the canvas not cause layout problem', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6098
@@ -595,7 +604,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Paste same HELM once again
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

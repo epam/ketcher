@@ -63,7 +63,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await closePage();
   });
 
-  test('Case 1: All snapping related elements (and bonds) not become invisible after switching to Molecules mode and back', async () => {
+  test('Case 1: All snapping related elements (and bonds) not become invisible after switching to Molecules mode and back', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6627
@@ -74,7 +76,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Go to Molecules mode and return back to Macro - Flex mode
      * 4. Grab one monomer and move it
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -91,7 +92,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 2: Library ambiguius RNA bases loaded from HELM as bases with labels from the Library', async () => {
+  test('Case 2: Library ambiguius RNA bases loaded from HELM as bases with labels from the Library', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2818
@@ -102,7 +105,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Take a screenshot.
      * Need to update screenshot after Indigo will be updated.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -314,7 +316,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 9: System create antisense phosphate if it sistuated to the left from nucleotide', async () => {
+  test('Case 9: System create antisense phosphate if it sistuated to the left from nucleotide', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6619
@@ -326,7 +330,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Create antisense chain for selection
      * 5. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -474,7 +477,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 14: Snapping not wipes monomer labels in some cases', async () => {
+  test('Case 14: Snapping not wipes monomer labels in some cases', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6621
@@ -485,7 +490,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Grab central sugar and move it around whole structure petals
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/Bugs/Snapping wipes monomer labels in some cases.ket',

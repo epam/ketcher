@@ -186,7 +186,9 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   });
 });
 
-test(`Case 5: In Snake mode, structure in HELM format does not open via Paste from clipboard`, async () => {
+test(`Case 5: In Snake mode, structure in HELM format does not open via Paste from clipboard`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 5
    * Bug: https://github.com/epam/ketcher/issues/5609
@@ -197,7 +199,6 @@ test(`Case 5: In Snake mode, structure in HELM format does not open via Paste fr
    * 3. Type any text щn the canvas (Sequence mode)
    * 4. Check the console to see if the change event is triggered
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   const errorMessages: string[] = [];
 
@@ -221,7 +222,9 @@ test(`Case 5: In Snake mode, structure in HELM format does not open via Paste fr
   });
 });
 
-test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consist of several rows, are left without part of the name`, async () => {
+test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consist of several rows, are left without part of the name`, async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
    * Bug: https://github.com/epam/ketcher/issues/5552
@@ -232,7 +235,6 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -289,7 +291,9 @@ test(`Case 8: There is no bond in the Sequence mode`, async () => {
   });
 });
 
-test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of the sequence, where there is a phosphate, the cursor does not blink`, async () => {
+test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of the sequence, where there is a phosphate, the cursor does not blink`, async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 9
    * Bug: https://github.com/epam/ketcher/issues/4534
@@ -302,7 +306,6 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
    * 5. Paste the copied preset to the end of the sequence
    * 6. Take a screenshot to validate the cursor blinks in the right place
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await Library(page).dragMonomerOnCanvas(Preset.T, {
     x: 0,
     y: 0,
@@ -355,7 +358,9 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
   expect(bondLengthValue).toBe('80');
 });
 
-test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
+test(`Case 12: Label shift problem for ambiguous monomers`, async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 12
    * Bug: https://github.com/epam/ketcher/issues/5982
@@ -365,7 +370,6 @@ test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
    * 2. Load from HELM one more ambiguous monomer
    * 3. Take a screenshot to validate Sugar label (Mod0) at center of monomer
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -418,7 +422,9 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
   );
 });
 
-test(`Case 16: Lets get back to U (instead of T) for the complementary base of A`, async () => {
+test(`Case 16: Lets get back to U (instead of T) for the complementary base of A`, async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 16
    * Bug: https://github.com/epam/ketcher/issues/6115
@@ -429,7 +435,6 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
    * 3. Select all monomers and click Create Antisense Strand from context menu
    * 4. Validate the complementary base of A is U
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -446,7 +451,9 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
   await expect(baseU).toHaveCount(1);
 });
 
-test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => {
+test(`Case 17: Create Antisense Strand doesn't work in some cases`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 17
    * Bug: https://github.com/epam/ketcher/issues/6115
@@ -457,7 +464,6 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
    * 3. Select certain monomers, call context menu and click Create Antisense Strand
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -487,7 +493,9 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
   });
 });
 
-test(`Case 18: System creates antisense chain only for top chain if many of chains selected`, async () => {
+test(`Case 18: System creates antisense chain only for top chain if many of chains selected`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 18
    * Bug: https://github.com/epam/ketcher/issues/6097
@@ -498,7 +506,6 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
    * 3. Select half of monomers of both chains and click Create Antisense Strand from context menu
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -518,7 +525,9 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
   });
 });
 
-test(`Case 19: System keeps antisense base layout and enumeration even after chain stops being antisense (and vice versa)`, async () => {
+test(`Case 19: System keeps antisense base layout and enumeration even after chain stops being antisense (and vice versa)`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 19
    * Bug: https://github.com/epam/ketcher/issues/6102
@@ -529,7 +538,6 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
    * 3. Remove hydrogen bond
    * 4. Validate system removes antisense base layout and change enumeration back to sense chain
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -561,7 +569,9 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   await expect(terminalIndicator5).toHaveCount(1);
 });
 
-test(`Case 20: Antisense creation works wrong in case of partial selection`, async () => {
+test(`Case 20: Antisense creation works wrong in case of partial selection`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 20
    * Bug: https://github.com/epam/ketcher/issues/6096
@@ -572,7 +582,6 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
    * 3. Select certain monomers, call context menu and click Create Antisense Strand
    * 4. Take screenshot to validate Create Antisense Strand works as expected
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -604,7 +613,9 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
   });
 });
 
-test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () => {
+test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async ({
+  FlexCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 21
    * Bug: https://github.com/epam/ketcher/issues/6061
@@ -616,7 +627,6 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
    * 4. Switch to Snake mode
    * 4. Take screenshot to validate all chain ordered by snake mode
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -638,7 +648,9 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   });
 });
 
-test(`Case 23: Antisense layout is wrong for any ambiguouse base from the library`, async () => {
+test(`Case 23: Antisense layout is wrong for any ambiguouse base from the library`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 23
    * Bug: https://github.com/epam/ketcher/issues/6087
@@ -648,7 +660,6 @@ test(`Case 23: Antisense layout is wrong for any ambiguouse base from the librar
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -663,7 +674,9 @@ test(`Case 23: Antisense layout is wrong for any ambiguouse base from the librar
   });
 });
 
-test(`Case 27: Same chain configuration imported by different HELM layouted differently (anyway - both are wrong)`, async () => {
+test(`Case 27: Same chain configuration imported by different HELM layouted differently (anyway - both are wrong)`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 27
    * Bug: https://github.com/epam/ketcher/issues/6068
@@ -673,7 +686,6 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -687,7 +699,9 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
   });
 });
 
-test(`Case 28: Two chains connected by H-bond arranged wrong if third bond present on the canvas`, async () => {
+test(`Case 28: Two chains connected by H-bond arranged wrong if third bond present on the canvas`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 28
    * Bug: https://github.com/epam/ketcher/issues/6068
@@ -697,7 +711,6 @@ test(`Case 28: Two chains connected by H-bond arranged wrong if third bond prese
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate all chains arranged correctly
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -711,7 +724,9 @@ test(`Case 28: Two chains connected by H-bond arranged wrong if third bond prese
   });
 });
 
-test(`Case 29: Layout works wrong if bases of the same chain connected by H-bonds`, async () => {
+test(`Case 29: Layout works wrong if bases of the same chain connected by H-bonds`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 29
    * Bug: https://github.com/epam/ketcher/issues/6105
@@ -721,7 +736,6 @@ test(`Case 29: Layout works wrong if bases of the same chain connected by H-bond
    * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout goes correct
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -735,7 +749,9 @@ test(`Case 29: Layout works wrong if bases of the same chain connected by H-bond
   });
 });
 
-test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear canvas doesn't help)`, async () => {
+test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear canvas doesn't help)`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 30
    * Bug: https://github.com/epam/ketcher/issues/6129
@@ -746,7 +762,6 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
    * 3. Press Undo button
    * 3. Take screenshot to validate canvas is empty
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -762,7 +777,9 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
   });
 });
 
-test(`Case 31: Unable to create antisense chains for ambiguous monomers from the library`, async () => {
+test(`Case 31: Unable to create antisense chains for ambiguous monomers from the library`, async ({
+  SnakeCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 31
    * Bug: https://github.com/epam/ketcher/issues/6086
@@ -773,7 +790,6 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
    * 3. Select all monomers and click Create Antisense Strand from context menu
    * 3. Take screenshot to validate canvas is empty
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,

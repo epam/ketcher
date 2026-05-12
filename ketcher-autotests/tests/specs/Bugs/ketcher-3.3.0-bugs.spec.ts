@@ -84,7 +84,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test('Case 2: Check correct name for sugar in the library for fR', async () => {
+  test('Case 2: Check correct name for sugar in the library for fR', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6695
@@ -94,7 +96,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Add sugar from library
      * 3. Check name for sugar in the library for fR
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Sugar.fR, {
       x: 0,
       y: 0,
@@ -126,7 +127,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Case 4: Tooltip not appears when dragging a monomer and pausing without releasing mouse button in Macro mode', async () => {
+  test('Case 4: Tooltip not appears when dragging a monomer and pausing without releasing mouse button in Macro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6332
@@ -138,7 +141,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Drag monomer across canvas and stop moving it while still holding mouse button
      * 5. Observe that a tooltip appears after monomer stops moving, even though mouse button remains pressed
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide._2Nal, {
       x: 0,
       y: 0,
@@ -157,7 +159,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 5: Monomer framing should disappear if monomer selected but not hovered', async () => {
+  test('Case 5: Monomer framing should disappear if monomer selected but not hovered', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6293
@@ -166,7 +170,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 1. Go to Macro - Flex mode
      * 2. Put any monomer on the canvas click on it and move mouse away
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide.meC, {
       x: 0,
       y: 0,
@@ -186,7 +189,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test('Case 6: Am- peptide should have symbol -Am', async () => {
+  test('Case 6: Am- peptide should have symbol -Am', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6126
@@ -195,7 +200,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 1. Go to Macro - Snake mode
      * 2. Load from HELM
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -230,7 +234,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     );
   });
 
-  test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async () => {
+  test('Case 8: Horizontal/vertical snap-to-distance work for hydrogen bonds', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6863
@@ -240,7 +246,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from HELM
      * 3. Try to find horizontal snap-to-distance area
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -652,7 +657,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test('Case 21: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas', async () => {
+  test('Case 21: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6705
@@ -663,7 +670,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Generate the antisense sequence.
      * 4. Observe the canvas
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -719,7 +725,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
   });
 
-  test('Case 23: Undo of clear canvas operation not causes molecules bonds overlap atom labels', async () => {
+  test('Case 23: Undo of clear canvas operation not causes molecules bonds overlap atom labels', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6541
@@ -730,7 +738,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Press Clear canvas button
      * 4. Press Undo button
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'Molfiles-V2000/Bugs/benzene-ring-with-n-atoms.mol',
@@ -785,7 +792,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await verifyHELMExport(page, 'RNA1{r(A)p.r(A,C,G,T)p.r(A)}$$$$V2.0');
   });
 
-  test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {
+  test('Case 25: Correct bond length and angle for non-natural monomers in the library', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6573
@@ -797,7 +806,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 4. Expand the monomer
      * 5. Draw cyclohexane and compare the bond length and angle
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
       x: 0,
       y: 0,

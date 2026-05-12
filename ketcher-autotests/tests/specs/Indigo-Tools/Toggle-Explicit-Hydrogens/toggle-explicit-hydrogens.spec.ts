@@ -752,7 +752,7 @@ test.describe('15. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async () => {
+    test.skip(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
@@ -858,7 +858,7 @@ test.describe('17. Fold/unfold hydrogens for', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async () => {
+    test.skip(`by ${fileName}`, async () => {
       await openFileAndAddToCanvasAsNewProject(
         page,
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,

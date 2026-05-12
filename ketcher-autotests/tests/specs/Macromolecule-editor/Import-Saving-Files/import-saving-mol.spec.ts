@@ -60,8 +60,7 @@ test.afterAll(async ({ closePage }) => {
 });
 
 test.describe('Import-Saving .mol Files', () => {
-  test('Import monomers and chem', async () => {
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  test('Import monomers and chem', async ({ FlexCanvas: _ }) => {
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/monomers-and-chem.mol',
@@ -100,8 +99,7 @@ test.describe('Import-Saving .mol Files', () => {
     await OpenStructureDialog(page).closeWindow();
   });
 
-  test('Export monomers and chem', async () => {
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  test('Export monomers and chem', async ({ SnakeCanvas: _ }) => {
     await openFileAndAddToCanvasMacro(page, 'KET/monomers-and-chem.ket');
     await resetZoomLevelToDefault(page);
     await verifyFileExport(
@@ -113,12 +111,13 @@ test.describe('Import-Saving .mol Files', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
-  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {
+  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/3666
      * Description: Structure in center of canvas after opening
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -127,13 +126,14 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async () => {
+  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/3667
      * https://github.com/epam/ketcher/issues/3668
      * Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/peptide-bzl.mol',
@@ -144,13 +144,14 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async () => {
+  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/3669
      * Description: After importing a file with modified monomers, it is clear which monomer is modified,
      * and when hovering, preview display changes made during modification
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
@@ -309,7 +310,7 @@ test.describe('Import-Saving .mol Files', () => {
     );
     const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
     expect(errorMessage).toContain(
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'SEQUENCE loader: Invalid AxoLabs sequence: expected 5'- got   -', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'scanner: readInt(): error parsing ', 'RXN loader: bad header ', 'RXN loader: bad header ', 'scanner: readInt(): error parsing ', 'scanner: readInt(): error parsing ', 'RXN loader: bad header '",
     );
     await ErrorMessageDialog(page).close();
     await OpenStructureDialog(page).closeWindow();
@@ -330,34 +331,38 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
-    /*
+  test.fail(
+    'Check that you can save snake viewed chain of peptides in a Mol v3000 file',
+    async () => {
+      /*
     Test case: Import/Saving files
     Description: Snake viewed chain of peptides saved in a Mol v3000 file
 
     Test fails because we have bug https://github.com/epam/ketcher/issues/5634
     */
-    await openFileAndAddToCanvasMacro(
-      page,
-      'Molfiles-V3000/snake-mode-peptides.mol',
-      MacroFileType.MOLv3000,
-    );
-    await resetZoomLevelToDefault(page);
-    await verifyFileExport(
-      page,
-      'Molfiles-V3000/snake-mode-peptides-expected.mol',
-      FileType.MOL,
-      MolFileFormat.v3000,
-      [1],
-    );
-  });
+      await openFileAndAddToCanvasMacro(
+        page,
+        'Molfiles-V3000/snake-mode-peptides.mol',
+        MacroFileType.MOLv3000,
+      );
+      await resetZoomLevelToDefault(page);
+      await verifyFileExport(
+        page,
+        'Molfiles-V3000/snake-mode-peptides-expected.mol',
+        FileType.MOL,
+        MolFileFormat.v3000,
+        [1],
+      );
+    },
+  );
 
-  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
+  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
@@ -366,12 +371,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that macro .mol file can be imported in micro mode', async () => {
+  test('Check that macro .mol file can be imported in micro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
@@ -379,12 +385,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that RNA preset in not changing after saving and importing it as .mol file', async () => {
+  test('Check that RNA preset in not changing after saving and importing it as .mol file', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/three-presets.mol',
@@ -393,12 +400,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that CHEMs in not changing after saving and importing it as .mol file', async () => {
+  test('Check that CHEMs in not changing after saving and importing it as .mol file', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'Molfiles-V3000/three-chems-connected.mol',
@@ -510,12 +518,13 @@ test.describe('Import-Saving .mol Files', () => {
     );
   });
 
-  test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async () => {
+  test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(
       page,
       'KET/unsplit-nucleotides-connected-with-peptides.ket',

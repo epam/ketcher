@@ -62,6 +62,7 @@ import {
   getNewSelectedItems,
   getSelectedAtoms,
   getSelectedBonds,
+  isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
   onSelectionMove,
@@ -134,7 +135,17 @@ class SelectTool implements Tool {
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
     const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
+    // Only auto-expand the selection to the enclosing sgroup(s) when the
+    // clicked item is not already part of the current selection. Otherwise
+    // a click on, say, an inter-monomer bond would overwrite an existing
+    // multi-selection with the atoms/bonds of just the sgroup containing one
+    // of that bond's endpoints, breaking multi-drag.
+    const isClickedItemInSelection =
+      ci && isItemSelected(this.editor.selection(), ci, ctab);
+    if (
+      !isClickedItemInSelection &&
+      (newSelected.atoms?.length || newSelected.bonds?.length)
+    ) {
       this.editor.selection(newSelected);
     }
     const currentPosition = CoordinateTransformation.pageToModel(
@@ -200,7 +211,9 @@ class SelectTool implements Tool {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(isSelected(selection, ci) ? selection : sel);
+      this.editor.selection(
+        isItemSelected(selection, ci, ctab) ? selection : sel,
+      );
     }
 
     this.handleMoveCloseToEdgeOfCanvas();

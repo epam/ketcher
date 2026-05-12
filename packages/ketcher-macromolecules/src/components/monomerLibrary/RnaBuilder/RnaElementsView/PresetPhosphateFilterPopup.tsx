@@ -111,8 +111,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('fivePrime')}
           data-testid="preset-filter-5-phosphate"
         />
-        <span />
-        5&apos;-phosphate
+        <span /> 5&apos;-phosphate
       </FilterPopupOption>
       <FilterPopupOption>
         <StyledCheckboxInput
@@ -121,8 +120,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('threePrime')}
           data-testid="preset-filter-3-phosphate"
         />
-        <span />
-        3&apos;-phosphate
+        <span /> 3&apos;-phosphate
       </FilterPopupOption>
       <FilterPopupOption>
         <StyledCheckboxInput
@@ -131,8 +129,7 @@ export const PresetPhosphateFilterPopup: React.FC<Props> = ({ onClose }) => {
           onChange={toggle('noPhosphate')}
           data-testid="preset-filter-no-phosphate"
         />
-        <span />
-        No phosphate group
+        <span /> No phosphate group
       </FilterPopupOption>
       <FilterPopupSeparator />
       <FilterPopupActions>

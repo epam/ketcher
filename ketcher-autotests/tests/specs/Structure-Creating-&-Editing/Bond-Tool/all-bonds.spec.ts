@@ -675,20 +675,20 @@ test.describe('Bond Tool', () => {
   });
 });
 
-for (const bondType of Object.values(MicroBondTool)) {
+for (const bondTool of Object.values(MicroBondTool)) {
   /*
    *   Test cases: EPMLSOPKET-1367, 2271,
    */
   const bondTypeName = Object.entries(MicroBondTool).find(
-    ([, enumValue]) => enumValue === bondType,
+    ([, enumValue]) => enumValue === bondTool,
   )?.[0];
 
   test(`${bondTypeName} tool: verification`, async () => {
     const commonLeftToolbar = CommonLeftToolbar(page);
 
     await CommonLeftToolbar(page).expandBondSelectionDropdown();
-    const button = page.getByTestId(bondType);
-    await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
+    const button = page.getByTestId(bondTool);
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[bondTool]);
     await commonLeftToolbar.handTool();
   });
 }

@@ -49,6 +49,7 @@ const createMonomerSGroup = (struct: Struct, atomId: number) => {
   const atom = struct.atoms.get(atomId);
   sgroup.pp = atom ? new Vec2(atom.pp) : new Vec2();
   struct.atomAddToSGroup(sgroupId, atomId);
+  struct.sGroupForest.insert(sgroup);
   return sgroupId;
 };
 

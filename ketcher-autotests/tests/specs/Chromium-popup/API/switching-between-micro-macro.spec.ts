@@ -12,7 +12,9 @@ test.describe('API for switching between modes', () => {
     await closePage();
   });
 
-  test('Case 1: Check that API ketcher.switchToMacromoleculesMode() switching from molecules mode to macromolecules', async () => {
+  test('Case 1: Check that API ketcher.switchToMacromoleculesMode() switching from molecules mode to macromolecules', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Version 3.8
      * Test case: https://github.com/epam/ketcher/issues/7535
@@ -20,7 +22,6 @@ test.describe('API for switching between modes', () => {
      * Scenario:
      * 1. Add command through API
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page.evaluate(() => window.ketcher.switchToMacromoleculesMode());
     const macroCanvas = page.locator('[data-canvasmode="macromolecules-mode"]');
     expect(macroCanvas).toBeVisible();

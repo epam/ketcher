@@ -475,7 +475,7 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
 test(
   '12. Switching from Micro to Sequence, Snake and to Flex does not change layout',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
     IMPORTANT: Test case works wrong because of the bug: https://github.com/epam/ketcher/issues/6940
 
@@ -489,9 +489,6 @@ test(
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,

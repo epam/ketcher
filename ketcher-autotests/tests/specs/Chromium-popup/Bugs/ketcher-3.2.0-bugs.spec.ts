@@ -116,7 +116,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 3: Able to paste HELM from clipboard to the canvas. System not throws an error: Convert error! option manager: Property "sequence-type" not defined', async () => {
+  test('Case 3: Able to paste HELM from clipboard to the canvas. System not throws an error: Convert error! option manager: Property "sequence-type" not defined', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6709
@@ -126,9 +128,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -174,7 +173,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 5: Snapping (and invisible monomer moving) should be disabled on Sequence mode', async () => {
+  test('Case 5: Snapping (and invisible monomer moving) should be disabled on Sequence mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6723
@@ -186,9 +187,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Switch to Flex mode
      * 5. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -208,7 +206,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 6: System allow to select single antisense symbol that not causes an error if it got deleted', async () => {
+  test('Case 6: System allow to select single antisense symbol that not causes an error if it got deleted', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6443
@@ -220,9 +220,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Press Delete button
      * 5. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -240,7 +237,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 7: Empty element not appears after undoing line deletion in Sequence mode and switching to Flex/Snake mode', async () => {
+  test('Case 7: Empty element not appears after undoing line deletion in Sequence mode and switching to Flex/Snake mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6617
@@ -253,9 +252,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 5. Switch to Flex mode or Snake mode.
      * 6. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -276,7 +272,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 8: Sense and antisense chains not switch places during editing based on monomer count', async () => {
+  test('Case 8: Sense and antisense chains not switch places during editing based on monomer count', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6623
@@ -289,9 +287,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 5. Exit edit mode
      * 6. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -358,7 +353,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 10: System creates ambiguous DNA nucleotides (with Uracil) instead of DNA ones (with Thymine)', async () => {
+  test('Case 10: System creates ambiguous DNA nucleotides (with Uracil) instead of DNA ones (with Thymine)', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6609
@@ -370,9 +367,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Click Create DNA antisense stand option
      * 5. Validate HELM export.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Chromium-popup/Bugs/System creates ambiguous RNA nucleotides instead of DNA ones in case of DNA antisense stand creation.ket',
@@ -386,7 +380,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     );
   });
 
-  test('Case 11: Warning message when deleting all hydrogen bonds between two chains', async () => {
+  test('Case 11: Warning message when deleting all hydrogen bonds between two chains', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6615
@@ -398,9 +394,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Click Create DNA antisense stand option
      * 5. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -415,7 +408,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
+  test('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6606
@@ -426,9 +421,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -446,7 +438,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
+  test('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6531
@@ -457,9 +451,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -516,7 +507,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     }
   });
 
-  test('Case 15: Adding nucleotide to first position at sense/antisense chain', async () => {
+  test('Case 15: Adding nucleotide to first position at sense/antisense chain', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6554
@@ -527,9 +520,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the first position
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -547,7 +537,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 16: New sequence not appears gray after clearing the canvas in non-sync mode', async () => {
+  test('Case 16: New sequence not appears gray after clearing the canvas in non-sync mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6632
@@ -561,9 +553,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 6. Start typing a new sequence
      * 7. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -591,7 +580,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 17: Sync mode not causes incorrect letter input after adding a monomer in non-sync mode', async () => {
+  test('Case 17: Sync mode not causes incorrect letter input after adding a monomer in non-sync mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6631
@@ -605,9 +596,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 6. Try to type "A" or "U" on the keyboard.
      * 7. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -634,7 +622,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 18: System add same thing in antisense chain but not connect it with H-bond if it is not nucleotide/nucleoside', async () => {
+  test('Case 18: System add same thing in antisense chain but not connect it with H-bond if it is not nucleotide/nucleoside', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6539
@@ -645,9 +635,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add peptide (E in my case) between two As
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -666,7 +653,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 19: Adding nucleotide between nucleotide and - symbol not causes appearence of separated phosphate on the canvas', async () => {
+  test('Case 19: Adding nucleotide between nucleotide and - symbol not causes appearence of separated phosphate on the canvas', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6530
@@ -677,9 +666,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) before first U and - symbol
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -895,7 +881,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await verifySVGExport(page);
   });
 
-  test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {
+  test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6750
@@ -906,9 +894,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Go to small molecules and expand the ribose monomers
      * 4. Take a screenshot.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'AA');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);

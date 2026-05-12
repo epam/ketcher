@@ -854,14 +854,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('10. Verify display of side-chain connections when switching from sequence mode to flex mode', async () => {
+  test('10. Verify display of side-chain connections when switching from sequence mode to flex mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /* Case 10: Verify display of side-chain connections when switching from sequence mode to flex mode
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     // Closing Library to enlarge canvas
     await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
@@ -1072,14 +1071,13 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('19. Verify saving and opening structure with side-chain connections in KET format', async () => {
+  test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /*
     /* Case 19: Verify saving and opening structure with side-chain connections in KET format
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/19.ket`,
@@ -1091,14 +1089,13 @@ test.describe('Side chain connections', () => {
     );
   });
 
-  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async () => {
+  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /*
     /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await openFileAndAddToCanvasMacro(
       page,
       `KET/Side-Chain-Connections/20.ket`,

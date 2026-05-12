@@ -951,7 +951,9 @@ test.describe('Calculate Properties tests', () => {
     expect(molecularMass).toEqual('128.174');
   });
 
-  test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async () => {
+  test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: The molecular formula and molecular mass is correctly calculated for a simple peptide structure.
@@ -960,9 +962,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Select a simple peptide structure
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).selectMonomer(Peptide.A);
     await MacromoleculesTopToolbar(page).calculateProperties();
     const molecularFormula = await CalculateVariablesPanel(
@@ -1049,7 +1048,9 @@ test.describe('Calculate Properties tests', () => {
     expect(molecularMass).toEqual('701.792');
   });
 
-  test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async () => {
+  test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Isoelectric point calculation with multiple groups are correct (Leaving group atoms at occupied attachment points are ignored).
@@ -1058,9 +1059,6 @@ test.describe('Calculate Properties tests', () => {
      * 2. Add a structure with multiple groups
      * 3. Open the "Calculate Properties" window
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -1488,7 +1486,9 @@ test.describe('Calculate Properties tests', () => {
     await takePageScreenshot(page);
   });
 
-  test('Case 51: Check that hydrophobicity graph is displayed after opening Calculate Properties', async () => {
+  test('Case 51: Check that hydrophobicity graph is displayed after opening Calculate Properties', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that hydrophobicity graph is displayed after opening Calculate Properties
@@ -1500,9 +1500,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1516,7 +1513,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 52: Check that graph remains readable for 4 amino acids ', async () => {
+  test('Case 52: Check that graph remains readable for 4 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 4 amino acids
@@ -1528,9 +1527,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1544,7 +1540,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 53: Check that graph remains readable for 44 amino acids ', async () => {
+  test('Case 53: Check that graph remains readable for 44 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 44 amino acids
@@ -1556,9 +1554,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1572,7 +1567,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 54: Check that graph remains readable for 110 amino acids ', async () => {
+  test('Case 54: Check that graph remains readable for 110 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 110 amino acids
@@ -1584,9 +1581,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1600,7 +1594,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 55: Check that graph remains readable for 532 amino acids ', async () => {
+  test('Case 55: Check that graph remains readable for 532 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 532 amino acids
@@ -1612,9 +1608,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1635,7 +1628,9 @@ test.describe('Calculate Properties tests', () => {
     );
   });
 
-  test('Case 56: Check that graph remains readable for 1240 amino acids ', async () => {
+  test('Case 56: Check that graph remains readable for 1240 amino acids ', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check that graph remains readable for 532 amino acids
@@ -1647,9 +1642,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1858,7 +1850,9 @@ test.describe('Calculate Properties tests', () => {
     await page.setViewportSize(originalViewport);
   });
 
-  test('Case 62: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect labels like 20, 40, 60, 80, 100 (based on spacing logic)', async () => {
+  test('Case 62: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect labels like 20, 40, 60, 80, 100 (based on spacing logic)', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
      * Description: Check correct amino acid label values on x-axis (For 100 AAs and 5 labels -> expect
@@ -1873,9 +1867,6 @@ test.describe('Calculate Properties tests', () => {
      * Version 3.5
      */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

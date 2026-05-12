@@ -199,7 +199,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 4: Replacing all monomers (or part of them) in edit mode system not cuts sequence on two`, async () => {
+  test(`Case 4: Replacing all monomers (or part of them) in edit mode system not cuts sequence on two`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5341
@@ -210,9 +212,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Select three @ symbols in edit mode (having blinking cursor somewhere in the middle of sequence - this is important!
      * 4. Click any monomer from the library (C peptide in my case) - click Yes in appeared Confirm Your Action dialog
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
@@ -267,7 +267,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     });
   });
 
-  test(`Case 6: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode`, async () => {
+  test(`Case 6: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4723
@@ -280,9 +282,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Enter letters
      * 6. Take a screenshot to validate user can not create new sequences in the “Modify RNA Builder” mode
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -912,7 +912,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
   });
 
-  test(`Case 29: Cursor position after adding preset in sequence mode not causes an incorrect sequence formation`, async () => {
+  test(`Case 29: Cursor position after adding preset in sequence mode not causes an incorrect sequence formation`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6272
@@ -924,9 +926,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Continue adding presets and observe the chain formation.
      * 5. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await Library(page).switchToRNATab();
     await Library(page).selectMonomers([
       Preset.A,

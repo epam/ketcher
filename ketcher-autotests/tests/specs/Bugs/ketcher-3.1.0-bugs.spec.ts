@@ -378,7 +378,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async () => {
+  test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/4349
@@ -389,9 +391,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Select sequence with Shift+Up/Down arrow combination
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await keyboardTypeOnCanvas(
       page,
       'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -443,7 +443,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 16: Removing peptide from sense/antisence chain not cause unnessussary phosphate removal', async () => {
+  test('Case 16: Removing peptide from sense/antisence chain not cause unnessussary phosphate removal', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6471
@@ -455,9 +457,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Press Backspace key to delete left E symbol
      * 5. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -518,7 +518,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 18: System split chian pair on two if - symbol deleted', async () => {
+  test('Case 18: System split chian pair on two if - symbol deleted', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6447
@@ -529,9 +531,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Edit mode and remove - symbol
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -555,7 +555,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 19: System not merge two antisense chains if separator monomer got deleted', async () => {
+  test('Case 19: System not merge two antisense chains if separator monomer got deleted', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6446
@@ -566,9 +568,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Switch to Edit mode and remove first A nucleotide
      * 4. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -707,7 +707,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 24: Peptide sequence not pasting directly on canvas', async () => {
+  test('Case 24: Peptide sequence not pasting directly on canvas', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6588
@@ -717,9 +719,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Copy and paste directly onto the canvas sequence GATYLIK
      * 3. Take a screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await MacromoleculesTopToolbar(page).peptides();
     await copyContentToClipboard(page, 'GATYLIK');
     await pasteFromClipboardByKeyboard(page);

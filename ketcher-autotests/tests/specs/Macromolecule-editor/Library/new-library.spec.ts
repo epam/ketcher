@@ -188,7 +188,7 @@ test('5. Verify that RNA tab redesign include change in the appearance of librar
 test(
   '13. Check that when a base is picked in the RNA Builder, clicking on the Base slot in RNA Builder lead to that base in the Bases subsection of the library and the base card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -206,9 +206,6 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -227,7 +224,7 @@ test(
 test(
   '14. Check that when multiple bases are already picked in RNA Builder, clicking on the Base slot in RNA Builder lead to one section if all the bases belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -245,9 +242,6 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the bases belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -266,7 +260,7 @@ test(
 test(
   '15. Check that when a sugar is picked in the RNA Builder, clicking on the Sugar slot in RNA Builder lead to that sugar in the Sugar subsection of the library and the base card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -284,9 +278,6 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -305,7 +296,7 @@ test(
 test(
   '16. Check that when multiple sugars are already picked in RNA Builder, clicking on the Sugar slot in RNA Builder lead to one section if all the sugars belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -323,9 +314,6 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the sugars belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -344,7 +332,7 @@ test(
 test(
   '17. Check that when a phopsphate is picked in the RNA Builder, clicking on the Phopsphate slot in RNA Builder lead to that base in the Phopsphates subsection of the library and the phopsphate card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -362,9 +350,6 @@ test(
      * 7. Click on the Phopsphate slot in RNA Builder
      * 8. Take screenshot to validate that phopsphate card appear selected in Phopsphates subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -383,7 +368,7 @@ test(
 test(
   '18. Check that when multiple phopsphates are already picked in RNA Builder, clicking on the Phopsphate slot in RNA Builder lead to one section if all the phopsphates belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -401,9 +386,6 @@ test(
      * 7. Click on the Phopsphatee slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the phopsphates belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1582,7 +1564,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`34. Check that drag and drop of ${monomer.alias} not working in Sequence mode and when user try to use it we have no errors and app crash`, async () => {
+  test(`34. Check that drag and drop of ${monomer.alias} not working in Sequence mode and when user try to use it we have no errors and app crash`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1597,9 +1581,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') {

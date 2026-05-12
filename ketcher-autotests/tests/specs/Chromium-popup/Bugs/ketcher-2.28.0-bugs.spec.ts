@@ -145,7 +145,9 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
 //   },
 // );
 
-test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async () => {
+test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async ({
+  SequenceCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 3
    * Bug: https://github.com/epam/ketcher/issues/5618
@@ -156,9 +158,6 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
    * 3. Type any text on the canvas (Sequence mode)
    * 4. Check the console to see if the change event is triggered
    */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
 
   const consoleMessagePromise = page.waitForEvent(
     'console',
@@ -264,7 +263,9 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
   });
 });
 
-test(`Case 8: There is no bond in the Sequence mode`, async () => {
+test(`Case 8: There is no bond in the Sequence mode`, async ({
+  SequenceCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 8
    * Bug: https://github.com/epam/ketcher/issues/4439
@@ -274,10 +275,6 @@ test(`Case 8: There is no bond in the Sequence mode`, async () => {
    * 2. Switch to Sequence mode
    * 3. Take a screenshot to validate the bond should be shown
    */
-
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,

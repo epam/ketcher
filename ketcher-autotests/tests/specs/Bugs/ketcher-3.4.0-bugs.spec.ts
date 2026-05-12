@@ -177,7 +177,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 4: Enter key not adds undeletable preset to Preset section', async () => {
+  test('Case 4: Enter key not adds undeletable preset to Preset section', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6870
@@ -189,9 +191,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Select any Preset (U in my case)
      * 4. Press Enter key
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await Library(page).selectMonomer(Preset.U);
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -238,7 +238,9 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
   });
 
-  test('Case 7: Correct numbering in sequence mode when adding Phosphates', async () => {
+  test('Case 7: Correct numbering in sequence mode when adding Phosphates', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7243
      * Bug: https://github.com/epam/ketcher/issues/6584
@@ -250,9 +252,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Add a Phosphates to the sequence.
      * 4. Observe the numbering of the added component.
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
+
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAAPPPPPAAAAAAAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

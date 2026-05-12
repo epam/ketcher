@@ -4,7 +4,7 @@ import {
   identifyStructFormat,
   SupportedFormat,
 } from 'application/formatters';
-import { ensureString } from 'utilities';
+import { ensureString, KetcherLogger } from 'utilities';
 
 const SDF_RECORD_SEPARATOR = '$$$$';
 const SDF_TAG_REGEX = /^>\s*<([^>]+)>\s*$/;
@@ -67,11 +67,11 @@ export const validateMonomerGroupTemplatesInSdf = (
     }
     const groupName = fields.groupName?.trim();
     if (!groupName) {
-      errors.push(
-        `Preset #${
-          index + 1
-        }: "groupName" is mandatory for monomerGroupTemplate but is missing or empty. The preset was not added to the library.`,
-      );
+      const errorMessage = `Ketcher::updateMonomersLibrary: Preset #${
+        index + 1
+      } "groupName" is mandatory for monomerGroupTemplate but is missing or empty. The preset was not added to the library.`;
+      KetcherLogger.error(errorMessage);
+      errors.push(errorMessage);
     }
   });
 

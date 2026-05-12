@@ -6,58 +6,26 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const HALF = 2;
 
-async function clickSvgElementCenter(locator: Locator) {
+async function getSvgElementScreenCenter(
+  locator: Locator,
+): Promise<{ x: number; y: number }> {
   await locator.waitFor({ state: 'attached' });
-  await locator.evaluate((element, half) => {
-    const getElementCenter = () => {
-      if (
-        element instanceof SVGGraphicsElement &&
-        element.ownerSVGElement &&
-        element.getScreenCTM()
-      ) {
-        const box = element.getBBox();
-        const matrix = element.getScreenCTM() as DOMMatrix;
-        const point = element.ownerSVGElement.createSVGPoint();
-        point.x = box.x + box.width / half;
-        point.y = box.y + box.height / half;
-
-        return point.matrixTransform(matrix);
-      }
-
-      const box = element.getBoundingClientRect();
-      return {
-        x: box.x + box.width / half,
-        y: box.y + box.height / half,
-      };
-    };
-
-    const { x, y } = getElementCenter();
-    const mouseEventInit = {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      button: 0,
-      buttons: 1,
-      clientX: x,
-      clientY: y,
-      shiftKey: true,
-    };
-    const pointerEventInit = {
-      ...mouseEventInit,
-      pointerId: 1,
-      pointerType: 'mouse',
-      isPrimary: true,
-    };
-
-    if (typeof PointerEvent !== 'undefined') {
-      element.dispatchEvent(new PointerEvent('pointerdown', pointerEventInit));
+  return locator.evaluate((element, half) => {
+    if (
+      element instanceof SVGGraphicsElement &&
+      element.ownerSVGElement &&
+      element.getScreenCTM()
+    ) {
+      const box = element.getBBox();
+      const matrix = element.getScreenCTM() as DOMMatrix;
+      const point = element.ownerSVGElement.createSVGPoint();
+      point.x = box.x + box.width / half;
+      point.y = box.y + box.height / half;
+      const screen = point.matrixTransform(matrix);
+      return { x: screen.x, y: screen.y };
     }
-    element.dispatchEvent(new MouseEvent('mousedown', mouseEventInit));
-    if (typeof PointerEvent !== 'undefined') {
-      element.dispatchEvent(new PointerEvent('pointerup', pointerEventInit));
-    }
-    element.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
-    element.dispatchEvent(new MouseEvent('click', mouseEventInit));
+    const box = element.getBoundingClientRect();
+    return { x: box.x + box.width / half, y: box.y + box.height / half };
   }, HALF);
 }
 
@@ -76,12 +44,18 @@ export async function selectAtomAndBonds(
   try {
     if (options.atomIds) {
       for (const atomId of options.atomIds) {
-        await clickSvgElementCenter(getAtomLocator(page, { atomId }));
+        const center = await getSvgElementScreenCenter(
+          getAtomLocator(page, { atomId }),
+        );
+        await page.mouse.click(center.x, center.y);
       }
     }
     if (options.bondIds) {
       for (const bondId of options.bondIds) {
-        await clickSvgElementCenter(getBondLocator(page, { bondId }));
+        const center = await getSvgElementScreenCenter(
+          getBondLocator(page, { bondId }),
+        );
+        await page.mouse.click(center.x, center.y);
       }
     }
   } finally {

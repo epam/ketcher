@@ -64,9 +64,7 @@ test.describe('Tests for Ruler', () => {
     await moveMouseAway(page);
   });
 
-  test('Case 2: Verify that a rectangular input field positioned to the right of the slider, allowing users to manually enter a specific numeric value', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 2: Verify that a rectangular input field positioned to the right of the slider, allowing users to manually enter a specific numeric value', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -83,6 +81,9 @@ test.describe('Tests for Ruler', () => {
      * We have a bug: https://github.com/epam/ketcher/issues/7245
      * After fixing need to update screenshots
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).hoverOnInputField();
     await takeEditorScreenshot(page, {
@@ -97,9 +98,7 @@ test.describe('Tests for Ruler', () => {
     });
   });
 
-  test('Case 3: Check that while hovering the mouse cursor below the main toolbar, the ruler become visible and the current layout area visually differentiated from the rest of the canvas', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 3: Check that while hovering the mouse cursor below the main toolbar, the ruler become visible and the current layout area visually differentiated from the rest of the canvas', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -113,6 +112,9 @@ test.describe('Tests for Ruler', () => {
      * 4. Click on ruler handle and hold it
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await Ruler(page).clickAndHold();
     await takeEditorScreenshot(page, {
@@ -128,9 +130,7 @@ test.describe('Tests for Ruler', () => {
     });
   });
 
-  test('Case 4: Check that the default position of the slider in the Sequence mode is 30, while in Snake mode it depends of the viewport size (refer to the current behavior)', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 4: Check that the default position of the slider in the Sequence mode is 30, while in Snake mode it depends of the viewport size (refer to the current behavior)', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -142,6 +142,9 @@ test.describe('Tests for Ruler', () => {
      * 4. Verify that the default position of the slider depends of the viewport size (refer to the current behavior)
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -208,9 +211,7 @@ test.describe('Tests for Ruler', () => {
     });
   });
 
-  test('Case 7: Change layout by dragging ruler slider in Sequence and Snake mode', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 7: Change layout by dragging ruler slider in Sequence and Snake mode', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -224,6 +225,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(
       page,
       'ACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTUACGTU',
@@ -264,9 +268,7 @@ test.describe('Tests for Ruler', () => {
     await Ruler(page).setLength('30');
   });
 
-  test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 8: When the zoom level is at 50% or below, the ruler must display markings at intervals of 5 units', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -278,6 +280,9 @@ test.describe('Tests for Ruler', () => {
      * 2. Set the zoom level to 50% or below
      * 3. Verify that the ruler displays markings at intervals of 5 units
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopRightToolbar(page).setZoomInputValue('50');
@@ -289,9 +294,7 @@ test.describe('Tests for Ruler', () => {
     });
   });
 
-  test('Case 9: Check that in Sequence mode, the ruler and slider control remain the same regardless of the zoom level. The ruler is represented by vertical lines instead of numbers', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 9: Check that in Sequence mode, the ruler and slider control remain the same regardless of the zoom level. The ruler is represented by vertical lines instead of numbers', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -304,6 +307,9 @@ test.describe('Tests for Ruler', () => {
      * 4. The ruler is represented by vertical lines instead of numbers
      * 5. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await keyboardTypeOnCanvas(page, 'ACGTUACGTUACGTUACGTU');
     await CommonTopRightToolbar(page).setZoomInputValue('50');
     await page.keyboard.press('Escape');
@@ -414,9 +420,7 @@ test.describe('Tests for Ruler', () => {
     });
   });
 
-  test('Case 13: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 Peptides', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 13: Change layout by set lenght in ruler slider in Sequence and Snake mode for 1001 Peptides', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -430,6 +434,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Set the ruler value to 12
      * 7. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-peptides.ket',
@@ -470,9 +477,7 @@ test.describe('Tests for Ruler', () => {
     await Ruler(page).setLength('30');
   });
 
-  test('Case 14: Change layout by set length in ruler slider in Sequence and Snake mode for 1001 DNA', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 14: Change layout by set length in ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -486,6 +491,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Set the ruler value to 12
      * 7. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/1001-dna-monomers.ket',
@@ -538,9 +546,7 @@ test.describe('Tests for Ruler', () => {
     await Ruler(page).setLength('30');
   });
 
-  test('Case 16: Change layout by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 16: Change layout by dragging ruler slider in Sequence and Snake mode when opened Calculate properties window', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -555,6 +561,9 @@ test.describe('Tests for Ruler', () => {
      * 7. Drag ruler slider to the left and verify that the layout is changed
      * 8. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
@@ -593,9 +602,7 @@ test.describe('Tests for Ruler', () => {
     });
     await CalculateVariablesPanel(page).closeWindow();
   });
-  test('Case 17: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async ({
-    SequenceCanvas: _,
-  }) => {
+  test('Case 17: Change layout by dragging ruler slider in Sequence and Snake mode for 1001 DNA', async () => {
     /*
      * Version 3.5
      * Test case: https://github.com/epam/ketcher/issues/7276
@@ -609,6 +616,9 @@ test.describe('Tests for Ruler', () => {
      * 6. Drag ruler slider to the left and verify that the layout is changed
      * 7. Take screenshot
      */
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await Ruler(page).setLength('30');
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,

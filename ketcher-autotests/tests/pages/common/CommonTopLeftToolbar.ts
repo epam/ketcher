@@ -14,7 +14,7 @@ type TopLeftToolbarLocators = {
 export const CommonTopLeftToolbar = (page: Page) => {
   const locators: TopLeftToolbarLocators = {
     clearCanvasButton: page
-      .getByTestId('clear-canvas')
+      .getByTestId('Clear Canvas')
       .filter({ has: page.locator(':visible') }),
     openButton: page
       .getByTestId('open-file-button')

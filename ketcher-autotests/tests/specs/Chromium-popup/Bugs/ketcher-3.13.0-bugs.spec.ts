@@ -11,7 +11,6 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
-  shiftCanvas,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -241,20 +240,10 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.selectType(MonomerType.NucleotidePreset);
     await presetSection.setName('sss');
 
-    // Base atoms are accessible at default position via force:true
     await presetSection.setupBase({
       atomIds: [7, 8, 9, 10],
       bondIds: [7, 8, 9],
     });
-
-    // Pan canvas mid-wizard so sugar and phosphate atoms enter the visible area.
-    // Drag from x=600 (visible canvas, left of wizard) leftward 400px.
-    // Done twice to achieve ~800px total shift, ensuring all atoms are accessible.
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 300);
-    await dragMouseTo(page, 200, 300);
-    await page.mouse.move(600, 300);
-    await dragMouseTo(page, 200, 300);
 
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -262,8 +251,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     });
 
     await presetSection.setupPhosphate({
-      atomIds: [0, 1, 11, 12],
-      bondIds: [0, 10, 11],
+      atomIds: [0, 1],
+      bondIds: [0],
     });
 
     // Step 5: Submit monomer creation
@@ -522,13 +511,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [7, 8, 9],
     });
 
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [2, 3, 4, 5, 6],
@@ -641,9 +623,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     );
 
     // Step 3: Select the whole structure and open Create Monomer wizard
-    // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
-    // Pan left so all atoms are within the visible canvas area before the wizard opens.
-    await shiftCanvas(page, -300, 0);
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
@@ -662,15 +641,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       atomIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
       bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
     });
-
-    // Pan canvas mid-wizard so sugar and phosphate atoms enter the visible area.
-    // Ketcher re-centers the molecule when the wizard opens, so pre-wizard shifts
-    // have no effect. Drag 400px left twice (800px total) to bring all atoms into view.
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 300);
-    await dragMouseTo(page, 200, 300);
-    await page.mouse.move(600, 300);
-    await dragMouseTo(page, 200, 300);
 
     // --- Sugar ---
     await presetSection.setupSugar({

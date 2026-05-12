@@ -92,7 +92,7 @@ test.describe('Undo Redo', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo redo for snake mode layout', async ({ page, SnakeCanvas: _ }) => {
+  test('Undo redo for snake mode layout', async ({ page }) => {
     /*
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */

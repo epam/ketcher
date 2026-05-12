@@ -829,3 +829,32 @@ test.fail(
     expect(await Library(page).isMonomerExist(Preset._A3)).toBeTruthy();
   },
 );
+
+test('Case 29: Update Library item with HELM alias longer than 23 symbols returns an error', async () => {
+  /*
+   * AUTOTEST_REQUEST_URL: N/A
+   * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
+   * 3. Verify that API returns an error
+   *
+   * Version 3.16
+   */
+  const sdfFile =
+    _Base1Body +
+    _type +
+    'monomerTemplate' +
+    _betweenEntries +
+    _aliasHELM +
+    '123456789012345678901234' +
+    _betweenEntries +
+    _endToken;
+
+  const error = await updateMonomersLibrary(page, sdfFile);
+
+  expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The HELM alias must be no more than 23 symbols long.',
+  );
+});

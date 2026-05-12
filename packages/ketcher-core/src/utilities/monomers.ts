@@ -6,6 +6,10 @@ export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
 export const BILN_ALIAS_FORMAT_ERROR_MESSAGE =
   'The BILN alias must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).';
 
+export const HELM_ALIAS_MAX_LENGTH = 23;
+
+export const HELM_ALIAS_LENGTH_ERROR_MESSAGE = `The HELM alias must be no more than ${HELM_ALIAS_MAX_LENGTH} symbols long.`;
+
 export const IDT_ALIAS_SLASH_ERROR_MESSAGE =
   'The slashes (`/`) can only be the first and last character of an IDT alias.';
 
@@ -32,6 +36,10 @@ export function isValidHelmAlias(alias: string) {
 
 export function isValidBilnAlias(alias: string) {
   return BILN_ALIAS_REGEX.test(alias);
+}
+
+export function isValidHelmAliasLength(alias: string) {
+  return alias.length <= HELM_ALIAS_MAX_LENGTH;
 }
 
 export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {

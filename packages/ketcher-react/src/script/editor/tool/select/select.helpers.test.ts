@@ -15,7 +15,9 @@ const getSGroupMock = () => jest.requireMock('ketcher-core').SGroup;
 
 describe('select helpers', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    const SGroup = getSGroupMock();
+    SGroup.getAtoms.mockClear();
+    SGroup.getBonds.mockClear();
   });
 
   describe('getNewSelectedItems', () => {

@@ -24,7 +24,7 @@ type PackageJson = {
   version: string;
 };
 
-const require = createRequire(import.meta.url);
+const require = createRequire(__filename);
 const pkg = require('./package.json') as PackageJson;
 
 const asPlugin = (plugin: unknown): Plugin => plugin as Plugin;

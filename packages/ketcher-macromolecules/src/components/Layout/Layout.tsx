@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { RefObject, useRef } from 'react';
+import React, { useRef } from 'react';
 import styled from '@emotion/styled';
 import { MONOMER_HIDE_LIBRARY_BUTTON_WIDTH } from 'components/monomerLibrary/styles';
 import { useInView } from 'react-intersection-observer';
@@ -141,7 +141,7 @@ const Top = (
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
   const { children, ...otherProps } = props;
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const SCROLL_PX_PER_SEC = 300;
 

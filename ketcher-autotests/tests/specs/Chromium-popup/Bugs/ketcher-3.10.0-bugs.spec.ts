@@ -605,22 +605,29 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
     await pasteFromClipboardAndOpenAsNewProject(page, '[*:1]CC |$_R1;;$|');
     await selectAllStructuresOnCanvas(page);
+
+    // Start listening only after the structure is loaded — format-detection errors
+    // (JSON parse failures on SMILES) are expected during loading and unrelated to
+    // the bug being tested (console errors thrown after monomer creation).
+    const consoleErrors: string[] = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        consoleErrors.push(msg.text());
+      }
+    });
+
     await createMonomer(page, {
       type: MonomerType.AminoAcid,
       symbol: 'RNA',
       name: 'GLY',
       naturalAnalogue: AminoAcidNaturalAnalogue.A,
     });
+    expect(
+      consoleErrors,
+      `Console errors after monomer creation: ${consoleErrors.join('; ')}`,
+    ).toHaveLength(0);
   });
   test('16.System replace few spaces in monomer name to one space on monomer preview', async () => {
     /*

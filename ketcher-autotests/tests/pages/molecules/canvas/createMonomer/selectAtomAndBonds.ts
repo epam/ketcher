@@ -8,7 +8,7 @@ const HALF = 2;
 
 async function clickSvgElementCenter(locator: Locator) {
   await locator.waitFor({ state: 'attached' });
-  const debugInfo = await locator.evaluate((element, half) => {
+  await locator.evaluate((element, half) => {
     const getElementCenter = () => {
       if (
         element instanceof SVGGraphicsElement &&
@@ -32,8 +32,6 @@ async function clickSvgElementCenter(locator: Locator) {
     };
 
     const { x, y } = getElementCenter();
-    const hitElement = document.elementFromPoint(x, y);
-    const hitTestId = hitElement?.getAttribute('data-testid');
     const mouseEventInit = {
       bubbles: true,
       cancelable: true,
@@ -60,18 +58,7 @@ async function clickSvgElementCenter(locator: Locator) {
     }
     element.dispatchEvent(new MouseEvent('mouseup', mouseEventInit));
     element.dispatchEvent(new MouseEvent('click', mouseEventInit));
-
-    return {
-      atomId: element.getAttribute('data-atom-id'),
-      bondId: element.getAttribute('data-bondid'),
-      x,
-      y,
-      hitTestId,
-      isHitElement: hitElement === element,
-    };
   }, HALF);
-  // eslint-disable-next-line no-console
-  console.log('selectAtomAndBonds debug', debugInfo);
 }
 
 export async function selectAtomAndBonds(

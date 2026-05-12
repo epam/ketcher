@@ -291,12 +291,13 @@ test.describe('Sequence edit mode', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async () => {
+  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getMonomerLocator(page, Peptide.A).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -306,12 +307,13 @@ test.describe('Sequence edit mode', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async () => {
+  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];

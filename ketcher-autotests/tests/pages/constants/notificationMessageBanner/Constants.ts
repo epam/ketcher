@@ -9,6 +9,7 @@ export enum ErrorMessage {
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
   invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  invalidPhosphatePositionAttachmentPoints = 'invalidPhosphatePositionAttachmentPoints',
   invalidPresetCode = 'invalidPresetCode',
 }
 

@@ -360,7 +360,7 @@ const MonomerCreationWizardFields = (
               </AccordionSummary>
               <AccordionDetails>
                 {displayHelmAlias && (
-                  <>
+                  <div className={styles.aliasField}>
                     <p className={styles.inputLabel}>HELM</p>
                     <Autocomplete
                       freeSolo
@@ -382,10 +382,10 @@ const MonomerCreationWizardFields = (
                         />
                       )}
                     />
-                  </>
+                  </div>
                 )}
                 {displayBilnAlias && (
-                  <>
+                  <div className={styles.aliasField}>
                     <p className={styles.inputLabel}>BILN</p>
                     <Autocomplete
                       freeSolo
@@ -407,7 +407,7 @@ const MonomerCreationWizardFields = (
                         />
                       )}
                     />
-                  </>
+                  </div>
                 )}
               </AccordionDetails>
             </Accordion>

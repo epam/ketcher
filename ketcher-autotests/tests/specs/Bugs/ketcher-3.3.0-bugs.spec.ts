@@ -820,7 +820,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Correct structure of DBU (solvent in the structure library)', async () => {
+  test('Case 26: Correct structure of DBU (solvent in the structure library)', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6553
@@ -830,7 +832,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Go to the Structure library, Salts and Solvents tab
      * 3. Select DBU
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectSaltsAndSolvents(
       SaltsAndSolventsTabItems.DBU,
@@ -839,7 +840,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 27: System not assign stereo label to every atom after load from MOL', async () => {
+  test('Case 27: System not assign stereo label to every atom after load from MOL', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6190
@@ -849,7 +852,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
@@ -857,7 +859,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 28: Able to load MOL file if it contain R8 rgroup inside r-group - system not throws an error: Cannot read properties of undefined (reading toLowerCase)', async () => {
+  test('Case 28: Able to load MOL file if it contain R8 rgroup inside r-group - system not throws an error: Cannot read properties of undefined (reading toLowerCase)', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6189
@@ -867,7 +871,6 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/R-fragment-structure.mol',

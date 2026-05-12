@@ -925,7 +925,9 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async () => {
+  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async ({
+    MoleculesCanvas: _,
+  }) => {
     /* 
     Test case: Snake Mode
     Description: Open chain with 8000 peptides items. Turn on snake mode. Snake mode is applied on structure 
@@ -933,7 +935,6 @@ test.describe('Snake Bond Tool', () => {
     */
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);

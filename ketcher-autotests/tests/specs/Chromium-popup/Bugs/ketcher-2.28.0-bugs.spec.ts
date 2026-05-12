@@ -75,7 +75,9 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 
-test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async () => {
+test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Macro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 1
    * Bug: https://github.com/epam/ketcher/issues/4526
@@ -86,7 +88,6 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 3. Try copy/paste and cut/paste actions
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheCanvas(page);
 
@@ -239,7 +240,9 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
   await verifySVGExport(page);
 });
 
-test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {
+test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 7
    * Bug: https://github.com/epam/ketcher/issues/5675
@@ -249,7 +252,6 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
    * 2. Switch to Macro mode
    * 3. Take a screenshot to validate hydrogens should be shown
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
   await clickInTheMiddleOfTheCanvas(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -323,7 +325,9 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   });
 });
 
-test(`Case 10: System reset micromolecule canvas settings to default if switched to Macro mode and back`, async () => {
+test(`Case 10: System reset micromolecule canvas settings to default if switched to Macro mode and back`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 10
    * Bug: https://github.com/epam/ketcher/issues/5855
@@ -337,7 +341,6 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    * 6. Open Settings, Bond section again
    * 7. Check if Bond length remains the same (80)
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await setSettingsOption(page, BondsSetting.BondLength, '80');
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -381,7 +384,9 @@ test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
   });
 });
 
-test(`Case 13: Export to ket (and getKET function) change incrementally internal IDs every call`, async () => {
+test(`Case 13: Export to ket (and getKET function) change incrementally internal IDs every call`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
    * Bug: https://github.com/epam/ketcher/issues/5873
@@ -392,7 +397,6 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
    * 3. Save the file as .ket
    * 4. Save the file as .ket again to validate the internal IDs remain the same
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvas(
     page,
@@ -787,7 +791,9 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
   });
 });
 
-test(`Case 32: S-group in the middle of a chain does not expand when opening an SDF V3000 file`, async () => {
+test(`Case 32: S-group in the middle of a chain does not expand when opening an SDF V3000 file`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 32
    * Bug: https://github.com/epam/ketcher/issues/6185
@@ -798,7 +804,6 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
    * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
    * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -815,7 +820,9 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
   });
 });
 
-test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files`, async () => {
+test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 32
    * Bug: https://github.com/epam/ketcher/issues/6161
@@ -827,7 +834,6 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
    * 4. Load the MOL V2000 file
    * 5. Take screenshot to validate the stereo flags are displayed
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,

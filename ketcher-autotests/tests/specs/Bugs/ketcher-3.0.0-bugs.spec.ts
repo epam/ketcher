@@ -389,7 +389,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     });
   });
 
-  test(`Case 10: System not opens "intellisence"-like dropdown control`, async () => {
+  test(`Case 10: System not opens "intellisence"-like dropdown control`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6112
@@ -399,7 +401,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
      *    quickly afterward
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
@@ -415,7 +416,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 11: Undo operation work for monomer at micro mode if it was deleted`, async () => {
+  test(`Case 11: Undo operation work for monomer at micro mode if it was deleted`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6112
@@ -426,7 +429,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Undo
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
@@ -737,7 +739,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 23: Correct representation of hydrogens for Alias, Charge, Valence, and Radical properties in Macro mode`, async () => {
+  test(`Case 23: Correct representation of hydrogens for Alias, Charge, Valence, and Radical properties in Macro mode`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6235
@@ -748,7 +752,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Macro mode
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/ketcher - 2025-01-06T160012.582.ket',
@@ -790,7 +793,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
   });
 
-  test(`Case 25: Super G and Super T monomers can be load from a saved RXN V3000 file`, async () => {
+  test(`Case 25: Super G and Super T monomers can be load from a saved RXN V3000 file`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6291
@@ -800,7 +805,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/super-g-and-super-t.ket',
@@ -954,7 +958,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 31: Modified phosphates not shift away from main structure during expand in Micro Mode`, async () => {
+  test(`Case 31: Modified phosphates not shift away from main structure during expand in Micro Mode`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6557
@@ -965,7 +971,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Expand structure
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/modified-phosphates.ket',

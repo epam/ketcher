@@ -694,7 +694,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
   });
 
-  test('Case 20: API setMolecule not moves molecule off-canvas on second call', async () => {
+  test('Case 20: API setMolecule not moves molecule off-canvas on second call', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/ketcher/issues/6608
@@ -704,7 +706,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Make setMolecule call with coordinates (10, 10) twice
      * 3. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     const fileContent = await readFileContent(
       'RDF-V3000/molecule-with-specific-coordinates.rdf',
     );
@@ -720,7 +721,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 21: R Group logic condition is not wrong if loaded from MOL', async () => {
+  test('Case 21: R Group logic condition is not wrong if loaded from MOL', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
@@ -730,7 +733,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/markush.mol',
@@ -738,7 +740,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: R Group logic condition is not wrong if loaded from complex structure MOL', async () => {
+  test('Case 22: R Group logic condition is not wrong if loaded from complex structure MOL', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2699
@@ -748,7 +752,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
@@ -756,7 +759,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 23: System not losts one stereo label if load from MOL', async () => {
+  test('Case 23: System not losts one stereo label if load from MOL', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2704
@@ -766,7 +771,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/two-stereostructures.mol',
@@ -774,7 +778,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 24: Export molecule which contains atom with five neighbors and stereo-bond not cause error', async () => {
+  test('Case 24: Export molecule which contains atom with five neighbors and stereo-bond not cause error', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2702
@@ -785,7 +791,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Save to MOL V2000
      * 4. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
@@ -804,7 +809,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 25: Atom Query feature export: System not lost MOST "Substitution count" values', async () => {
+  test('Case 25: Atom Query feature export: System not lost MOST "Substitution count" values', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2707
@@ -814,7 +821,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Take a screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Substitution count.ket',
@@ -822,7 +828,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 26: Export to SMILES works if loaded from MOL', async () => {
+  test('Case 26: Export to SMILES works if loaded from MOL', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2708
@@ -832,7 +840,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Save to SMILES
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'Molfiles-V2000/Bugs/different-features.mol',
@@ -845,7 +852,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     );
   });
 
-  test('Case 27: Elliptical arrows can be saved to the png', async () => {
+  test('Case 27: Elliptical arrows can be saved to the png', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2513
@@ -855,7 +864,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Save to PNG
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Elliptical arrows can be saved to the png.ket',
@@ -863,7 +871,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await verifyPNGExport(page);
   });
 
-  test('Case 28: Image not missing stereochemistry information when using abbreviations', async () => {
+  test('Case 28: Image not missing stereochemistry information when using abbreviations', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6764
      * Bug: https://github.com/epam/Indigo/issues/2741
@@ -873,7 +883,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from CDXML
      * 3. Save to SVG
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'CDXML/Bugs/stereochemistry.cdxml',

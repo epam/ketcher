@@ -687,7 +687,9 @@ test.describe('Ketcher bugs in 3.5.0', () => {
     });
   });
 
-  test('Case 20: Substituents are displayed backwards if appearing on the left of the molecule', async () => {
+  test('Case 20: Substituents are displayed backwards if appearing on the left of the molecule', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7285
      * Bug: https://github.com/epam/Indigo/issues/2748
@@ -697,7 +699,6 @@ test.describe('Ketcher bugs in 3.5.0', () => {
      * 2. Open structure from KET
      * 3. Save as SVG
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/SiEt3-two-s-groups.ket',

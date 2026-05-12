@@ -148,7 +148,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     });
   });
 
-  test('Case 5: Adding attachment point to microstructure already connected to monomer - causes problems when switch to Macro mode', async () => {
+  test('Case 5: Adding attachment point to microstructure already connected to monomer - causes problems when switch to Macro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/5696
@@ -161,7 +163,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Switch to Macro mode
      * 5. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -226,7 +227,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Case 8: Changing any parameter at Settings not cause Undo/Redo work wrong (or delete undo history)', async () => {
+  test('Case 8: Changing any parameter at Settings not cause Undo/Redo work wrong (or delete undo history)', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6602
      * Bug: https://github.com/epam/ketcher/issues/6164
@@ -238,7 +241,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Press Undo button
      * 5. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
@@ -302,7 +304,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     );
   });
 
-  test(`Case 11: System not shows Edit S-Group option for bond of molecule if it has attachment point`, async () => {
+  test(`Case 11: System not shows Edit S-Group option for bond of molecule if it has attachment point`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4941
@@ -312,7 +316,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Right click on the bond
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',

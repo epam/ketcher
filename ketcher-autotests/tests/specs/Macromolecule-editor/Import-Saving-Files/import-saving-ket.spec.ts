@@ -704,7 +704,9 @@ const allTypesOfMonomers: IMonomer[] = [
 ];
 
 for (const monomer of allTypesOfMonomers) {
-  test(`Save monomer on Micro to KET: ${monomer.monomerDescription}`, async () => {
+  test(`Save monomer on Micro to KET: ${monomer.monomerDescription}`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/5773
      * Description: Verify saving collapsed monomers in KET
@@ -716,7 +718,6 @@ for (const monomer of allTypesOfMonomers) {
      *       6. Take screenshot to witness saved state
      */
 
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, monomer.KETFile);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

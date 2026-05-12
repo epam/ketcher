@@ -369,12 +369,13 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that macro .mol file can be imported in micro mode', async () => {
+  test('Check that macro .mol file can be imported in micro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
       page,
       'Molfiles-V3000/monomers-saved-in-macro-mode.mol',

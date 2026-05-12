@@ -631,7 +631,9 @@ const expandableMonomersWithHydrogenBonds: IMonomer[] = [
 expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
   test(`6.${index + 1} Expand and collapse ${monomer.monomerType}(${
     monomer.alias
-  }) having it hydrogen bonds on Molecules canvas`, async () => {
+  }) having it hydrogen bonds on Molecules canvas`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: 1. Verify that switching from macromolecules mode to small molecules mode hides hydrogen bonds if monomer got expanded
@@ -645,7 +647,6 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          5. Collapce target monomer back
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);

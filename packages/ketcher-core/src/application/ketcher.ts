@@ -30,6 +30,7 @@ import {
 
 import { Editor, getSelectionFromStruct } from './editor';
 import { provideEditorInstance } from './editor/editorSingleton';
+import { validateMonomerGroupTemplatesInSdf } from './editor/helpers';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { MolfileFormat } from 'domain/serializers/mol/mol.types';
@@ -820,6 +821,8 @@ export class Ketcher {
       );
     }
 
+    validateMonomerGroupTemplatesInSdf(rawMonomersData, params);
+
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -853,6 +856,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    validateMonomerGroupTemplatesInSdf(rawMonomersData, params);
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

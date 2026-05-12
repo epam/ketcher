@@ -1594,11 +1594,15 @@ class Editor implements KetcherEditor {
       ket.root.templates.push(getKetRef(templateRef));
       ket[templateRef] = libraryItem[templateRef];
     }
-    ketcher.updateMonomersLibrary(JSON.stringify(ket), {
-      format: 'ket',
-      shouldPersist: true,
-      needDispatchLibraryUpdateEvent: true,
-    });
+    ketcher
+      .updateMonomersLibrary(JSON.stringify(ket), {
+        format: 'ket',
+        shouldPersist: true,
+        needDispatchLibraryUpdateEvent: true,
+      })
+      .catch((error) => {
+        KetcherLogger.error('Failed to update monomers library', error);
+      });
 
     // Collect external bonds (bonds crossing the selection boundary)
     const externalBonds: Bond[] = [];

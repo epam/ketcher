@@ -80,7 +80,9 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase)),
+      ).toThrow(/Editor::updateMonomersLibrary/);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -224,7 +226,9 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
+      ).toThrow(/Editor::updateMonomersLibrary/);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
@@ -277,7 +281,9 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases)),
+      ).toThrow(/Editor::updateMonomersLibrary/);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -355,7 +361,9 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
+      ).toThrow(/Editor::updateMonomersLibrary/);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
@@ -382,7 +390,78 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(unnamedPreset)),
+      ).toThrow(/Monomer group template name cannot be empty/);
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer group template with empty name string', () => {
+      const presetWithEmptyName = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-',
+            },
+          ],
+        },
+        'monomerGroupTemplate-': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: '',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(presetWithEmptyName)),
+      ).toThrow(/Monomer group template name cannot be empty/);
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer group template when name field is omitted', () => {
+      const presetWithoutNameProperty = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-',
+            },
+          ],
+        },
+        'monomerGroupTemplate-': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(presetWithoutNameProperty)),
+      ).toThrow(/Monomer group template name cannot be empty/);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(

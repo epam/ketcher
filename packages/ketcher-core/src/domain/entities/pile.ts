@@ -14,6 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+interface PileSetLike<TValue> {
+  keys(): Iterator<TValue>;
+  has(value: TValue): boolean;
+  readonly size: number;
+}
+
 export class Pile<TValue = any> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
@@ -25,12 +31,15 @@ export class Pile<TValue = any> extends Set<TValue> {
     return null;
   }
 
-  equals(setB: Pile): boolean {
-    return this.isSuperset(setB) && setB.isSuperset(this);
+  equals(setB: PileSetLike<TValue>): boolean {
+    return this.size === setB.size && this.isSuperset(setB);
   }
 
-  isSuperset(subset: Pile): boolean {
-    for (const item of subset) {
+  isSuperset(subset: PileSetLike<TValue>): boolean {
+    const iterator = subset.keys();
+
+    for (let next = iterator.next(); !next.done; next = iterator.next()) {
+      const item = next.value;
       if (!this.has(item)) return false;
     }
 
@@ -41,17 +50,28 @@ export class Pile<TValue = any> extends Set<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
-  union(setB: Pile): Pile<TValue> {
-    const union = new Pile(this);
+  union<U>(setB: PileSetLike<U>): Pile<TValue | U> {
+    const union = new Pile<TValue | U>(this as Iterable<TValue | U>);
 
-    for (const item of setB) union.add(item);
+    const iterator = setB.keys();
+
+    for (let next = iterator.next(); !next.done; next = iterator.next()) {
+      union.add(next.value);
+    }
 
     return union;
   }
 
-  intersection(setB: Pile): Pile<TValue> {
-    const thisSet = new Pile(this);
-    return new Pile([...thisSet].filter((item) => setB.has(item)));
+  intersection<U>(setB: PileSetLike<U>): Pile<TValue & U> {
+    const intersection = new Pile<TValue & U>();
+
+    for (const item of this) {
+      if (setB.has(item as unknown as U)) {
+        intersection.add(item as TValue & U);
+      }
+    }
+
+    return intersection;
   }
 
   /**

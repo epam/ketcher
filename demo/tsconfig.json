@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -11,11 +11,20 @@
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "ketcher-core": ["../packages/ketcher-core/src/index.ts"],
+      "ketcher-standalone": ["../packages/ketcher-standalone/src/index.ts"],
+      "domain/*": ["../packages/ketcher-core/src/domain/*"],
+      "application/*": ["../packages/ketcher-core/src/application/*"],
+      "infrastructure/*": ["../packages/ketcher-core/src/infrastructure/*"],
+      "utilities": ["../packages/ketcher-core/src/utilities"]
+    },
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "noImplicitAny": false
   },
-  "include": ["src"]
+  "include": ["src", "../packages/ketcher-core/src/typing.d.ts"]
 }

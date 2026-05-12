@@ -6,7 +6,7 @@ exports[`LoadingCircles component should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="loading-spinner css-rmxyg7"
+        class="loading-spinner css-5hn0l0-LoadContainer e10ckbgw0"
         data-testid="loading-spinner"
       >
         <span />
@@ -17,7 +17,7 @@ exports[`LoadingCircles component should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="loading-spinner css-rmxyg7"
+      class="loading-spinner css-5hn0l0-LoadContainer e10ckbgw0"
       data-testid="loading-spinner"
     >
       <span />

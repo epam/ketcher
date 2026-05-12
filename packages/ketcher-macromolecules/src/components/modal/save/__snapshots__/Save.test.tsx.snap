@@ -10,7 +10,7 @@ exports[`Save modal renders correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-1d12nfn-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root e12csxs60 e45wfhi5 MuiModal-root css-1u1b1pw-MuiModal-root-MuiDialog-root-StyledDialog-StyledModal"
       role="presentation"
     >
       <div
@@ -37,11 +37,11 @@ exports[`Save modal renders correctly 1`] = `
           testid="save-structure-dialog"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e45wfhi4 css-tun1vd-MuiTypography-root-MuiDialogTitle-root-Header"
             id="«r0»"
           >
             <div
-              class="css-1uarmuk"
+              class="css-d59g19-Title e45wfhi3"
             >
               save structure
             </div>
@@ -54,7 +54,7 @@ exports[`Save modal renders correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1td8dcm"
+                  class="css-2gd1ln-StyledIcon e45wfhi2"
                   fill="none"
                   height="24"
                   viewBox="0 0 24 24"
@@ -73,26 +73,26 @@ exports[`Save modal renders correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            class="MuiDialogContent-root e45wfhi1 css-u4fewx-MuiDialogContent-root-Content-scrollbarThin"
           >
             <form
-              class="css-1o4x0h8"
+              class="css-1puf9gg-Form el6v3ot5"
               id="save"
             >
               <div
-                class="css-1ybuxyu"
+                class="css-qfhshb-Row el6v3ot4"
                 style="padding: 12px 12px 10px;"
               >
                 <div>
                   <label
-                    class="css-zv32v0"
+                    class="css-5wqw0p-Label e10m4n7r1"
                     for="filename"
                   >
                     <span>
                       File name:
                     </span>
                     <input
-                      class="css-1w4st8l"
+                      class="css-is6xq1-Input e10m4n7r0"
                       data-testid="filename-input"
                       id="filename"
                       type="text"
@@ -101,7 +101,7 @@ exports[`Save modal renders correctly 1`] = `
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root css-1vqbkeq-MuiFormControl-root"
+                  class="MuiFormControl-root el6v3ot3 e944g1i2 css-1ozrl0q-MuiFormControl-root-StyledFormControl-StyledDropdown"
                 >
                   <label
                     for="fileformat"
@@ -109,7 +109,7 @@ exports[`Save modal renders correctly 1`] = `
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1ydgb7t-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl e944g1i1 css-18qygrc-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root-DropDownSelect"
                     data-testid="file-format-list"
                   >
                     <div
@@ -132,7 +132,7 @@ exports[`Save modal renders correctly 1`] = `
                       value="ket"
                     />
                     <svg
-                      class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                      class="MuiSelect-icon MuiSelect-iconOutlined css-1jz2ijc-ChevronStyled-MuiSelect-icon e23iben0"
                       fill="none"
                       height="48"
                       viewBox="0 0 48 48"
@@ -162,10 +162,10 @@ exports[`Save modal renders correctly 1`] = `
                 </div>
               </div>
               <div
-                class="css-4ly9h9"
+                class="css-xfhcmh-PreviewContainer el6v3ot0"
               >
                 <textarea
-                  class="css-evzoup"
+                  class="css-1g2kmvf-StyledTextarea-scrollbarThin e1q335jk0"
                   data-testid="preview-area"
                   readonly=""
                 >
@@ -201,10 +201,10 @@ exports[`Save modal renders correctly 1`] = `
             </form>
           </div>
           <div
-            class="MuiDialogActions-root MuiDialogActions-spacing css-k8y9qp-MuiDialogActions-root"
+            class="MuiDialogActions-root MuiDialogActions-spacing e45wfhi0 css-dr66kk-MuiDialogActions-root-Footer"
           >
             <button
-              class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
+              class="MuiButtonBase-root ejign8b0 css-7twbdl-MuiButtonBase-root-SecondaryButton-baseButtonStyle"
               data-testid="cancel-button"
               tabindex="0"
               title="Cancel"
@@ -216,7 +216,7 @@ exports[`Save modal renders correctly 1`] = `
               />
             </button>
             <button
-              class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
+              class="MuiButtonBase-root ejign8b1 css-gvxw7z-MuiButtonBase-root-PrimaryButton-baseButtonStyle"
               data-testid="save-button"
               tabindex="0"
               title="Save"

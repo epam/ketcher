@@ -6,13 +6,13 @@ exports[`Menu component should render menu component in a container 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-jiic2r"
+        class="css-1rpdpw8-MenuLayout e1fh0ozy3"
       >
         <div
-          class="css-498x9x"
+          class="css-460y3r-StyledGroup e1fh0ozy0"
         >
           <button
-            class="open css-1ceu922"
+            class="open e1erwxoo0 css-1slf8vd-StyledIconButton"
             title=""
           >
             <svg
@@ -31,10 +31,10 @@ exports[`Menu component should render menu component in a container 1`] = `
           </button>
         </div>
         <div
-          class="css-498x9x"
+          class="css-460y3r-StyledGroup e1fh0ozy0"
         >
           <button
-            class="erase css-1ceu922"
+            class="erase e1erwxoo0 css-1slf8vd-StyledIconButton"
             title=""
           >
             <svg
@@ -52,14 +52,14 @@ exports[`Menu component should render menu component in a container 1`] = `
             </svg>
           </button>
           <div
-            class="css-22lzhe"
+            class="css-doz6m2-RootContainer e13kdqxv3"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1uj4jtb-VisibleItem e13kdqxv0"
             >
               <button
-                class="select-lasso css-1ceu922"
+                class="select-lasso e1erwxoo0 css-1slf8vd-StyledIconButton"
                 title=""
               >
                 <svg
@@ -81,7 +81,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 </svg>
               </button>
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
                 data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
@@ -95,14 +95,14 @@ exports[`Menu component should render menu component in a container 1`] = `
             </div>
           </div>
           <div
-            class="css-22lzhe"
+            class="css-doz6m2-RootContainer e13kdqxv3"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1uj4jtb-VisibleItem e13kdqxv0"
             >
               <button
-                class="shape-rectangle css-1ceu922"
+                class="shape-rectangle e1erwxoo0 css-1slf8vd-StyledIconButton"
                 title=""
               >
                 <svg
@@ -120,7 +120,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 </svg>
               </button>
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
                 data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
@@ -134,14 +134,14 @@ exports[`Menu component should render menu component in a container 1`] = `
             </div>
           </div>
           <div
-            class="css-22lzhe"
+            class="css-doz6m2-RootContainer e13kdqxv3"
             data-is-selected="false"
           >
             <div
-              class="css-5su45f"
+              class="css-1uj4jtb-VisibleItem e13kdqxv0"
             >
               <button
-                class="transform-flip-h css-1ceu922"
+                class="transform-flip-h e1erwxoo0 css-1slf8vd-StyledIconButton"
                 title=""
               >
                 <svg
@@ -159,7 +159,7 @@ exports[`Menu component should render menu component in a container 1`] = `
                 </svg>
               </button>
               <svg
-                class="dropdown css-zoaulv"
+                class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
                 data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
@@ -178,13 +178,13 @@ exports[`Menu component should render menu component in a container 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-jiic2r"
+      class="css-1rpdpw8-MenuLayout e1fh0ozy3"
     >
       <div
-        class="css-498x9x"
+        class="css-460y3r-StyledGroup e1fh0ozy0"
       >
         <button
-          class="open css-1ceu922"
+          class="open e1erwxoo0 css-1slf8vd-StyledIconButton"
           title=""
         >
           <svg
@@ -203,10 +203,10 @@ exports[`Menu component should render menu component in a container 1`] = `
         </button>
       </div>
       <div
-        class="css-498x9x"
+        class="css-460y3r-StyledGroup e1fh0ozy0"
       >
         <button
-          class="erase css-1ceu922"
+          class="erase e1erwxoo0 css-1slf8vd-StyledIconButton"
           title=""
         >
           <svg
@@ -224,14 +224,14 @@ exports[`Menu component should render menu component in a container 1`] = `
           </svg>
         </button>
         <div
-          class="css-22lzhe"
+          class="css-doz6m2-RootContainer e13kdqxv3"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1uj4jtb-VisibleItem e13kdqxv0"
           >
             <button
-              class="select-lasso css-1ceu922"
+              class="select-lasso e1erwxoo0 css-1slf8vd-StyledIconButton"
               title=""
             >
               <svg
@@ -253,7 +253,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               </svg>
             </button>
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
               data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"
@@ -267,14 +267,14 @@ exports[`Menu component should render menu component in a container 1`] = `
           </div>
         </div>
         <div
-          class="css-22lzhe"
+          class="css-doz6m2-RootContainer e13kdqxv3"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1uj4jtb-VisibleItem e13kdqxv0"
           >
             <button
-              class="shape-rectangle css-1ceu922"
+              class="shape-rectangle e1erwxoo0 css-1slf8vd-StyledIconButton"
               title=""
             >
               <svg
@@ -292,7 +292,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               </svg>
             </button>
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
               data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"
@@ -306,14 +306,14 @@ exports[`Menu component should render menu component in a container 1`] = `
           </div>
         </div>
         <div
-          class="css-22lzhe"
+          class="css-doz6m2-RootContainer e13kdqxv3"
           data-is-selected="false"
         >
           <div
-            class="css-5su45f"
+            class="css-1uj4jtb-VisibleItem e13kdqxv0"
           >
             <button
-              class="transform-flip-h css-1ceu922"
+              class="transform-flip-h e1erwxoo0 css-1slf8vd-StyledIconButton"
               title=""
             >
               <svg
@@ -331,7 +331,7 @@ exports[`Menu component should render menu component in a container 1`] = `
               </svg>
             </button>
             <svg
-              class="dropdown css-zoaulv"
+              class="dropdown css-fsvnpe-StyledDropdownIcon e13kdqxv4"
               data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"

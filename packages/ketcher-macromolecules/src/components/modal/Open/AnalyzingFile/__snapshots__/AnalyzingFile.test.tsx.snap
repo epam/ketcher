@@ -6,10 +6,10 @@ exports[`AnalyzingFile component should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="css-1ro7qq4"
+        class="css-2knggh-RootContainer ep0evuw1"
       >
         <div
-          class="loading-spinner css-rmxyg7"
+          class="loading-spinner css-5hn0l0-LoadContainer e10ckbgw0"
           data-testid="loading-spinner"
         >
           <span />
@@ -21,10 +21,10 @@ exports[`AnalyzingFile component should render correctly 1`] = `
   </body>,
   "container": <div>
     <div
-      class="css-1ro7qq4"
+      class="css-2knggh-RootContainer ep0evuw1"
     >
       <div
-        class="loading-spinner css-rmxyg7"
+        class="loading-spinner css-5hn0l0-LoadContainer e10ckbgw0"
         data-testid="loading-spinner"
       >
         <span />

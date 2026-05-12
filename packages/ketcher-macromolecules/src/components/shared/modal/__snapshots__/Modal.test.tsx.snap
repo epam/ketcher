@@ -10,7 +10,7 @@ exports[`Modal component should render correctly 1`] = `
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-6x6udt-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root e45wfhi5 MuiModal-root css-pfusoa-MuiModal-root-MuiDialog-root-StyledDialog"
       role="presentation"
     >
       <div
@@ -35,11 +35,11 @@ exports[`Modal component should render correctly 1`] = `
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root e45wfhi4 css-tun1vd-MuiTypography-root-MuiDialogTitle-root-Header"
             id="«r0»"
           >
             <div
-              class="css-1uarmuk"
+              class="css-d59g19-Title e45wfhi3"
             >
               title
             </div>
@@ -52,7 +52,7 @@ exports[`Modal component should render correctly 1`] = `
                 type="button"
               >
                 <svg
-                  class="css-1td8dcm"
+                  class="css-2gd1ln-StyledIcon e45wfhi2"
                   fill="none"
                   height="24"
                   viewBox="0 0 24 24"
@@ -71,7 +71,7 @@ exports[`Modal component should render correctly 1`] = `
             </span>
           </h2>
           <div
-            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+            class="MuiDialogContent-root e45wfhi1 css-u4fewx-MuiDialogContent-root-Content-scrollbarThin"
           >
             Content
           </div>

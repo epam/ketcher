@@ -38,7 +38,7 @@ const mockMenuItems = [
 const mockSubMenu = () => {
   return (
     <MenuContext.Provider value={mockValue}>
-      <Menu.Submenu vertical>{...mockMenuItems}</Menu.Submenu>
+      <Menu.Submenu vertical>{mockMenuItems}</Menu.Submenu>
     </MenuContext.Provider>
   );
 };

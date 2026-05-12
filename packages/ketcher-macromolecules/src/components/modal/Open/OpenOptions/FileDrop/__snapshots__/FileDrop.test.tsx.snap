@@ -6,7 +6,7 @@ exports[`FileDrop component should render correctly 1`] = `
   "baseElement": <body>
     <div>
       <button
-        class="css-1mbhme1"
+        class="css-86p2b0-DropzoneButton erk2iw50"
         style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
         tabindex="0"
         type="button"
@@ -18,7 +18,7 @@ exports[`FileDrop component should render correctly 1`] = `
           type="file"
         />
         <svg
-          class="css-1opl6cd"
+          class="css-7enzy5-StyledIcon erk2iw52"
           height="27"
           viewBox="0 0 21 27"
           width="21"
@@ -31,14 +31,14 @@ exports[`FileDrop component should render correctly 1`] = `
           />
         </svg>
         <div
-          class="css-1b8y5ux"
+          class="css-1cut0ub-ButtonContainer erk2iw51"
         >
           <span>
             or drag file here
           </span>
         </div>
         <p
-          class="css-9x63nq"
+          class="css-txjm63-OpenOptionText eff4ds61"
         >
           Open from file
         </p>
@@ -47,7 +47,7 @@ exports[`FileDrop component should render correctly 1`] = `
   </body>,
   "container": <div>
     <button
-      class="css-1mbhme1"
+      class="css-86p2b0-DropzoneButton erk2iw50"
       style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
       tabindex="0"
       type="button"
@@ -59,7 +59,7 @@ exports[`FileDrop component should render correctly 1`] = `
         type="file"
       />
       <svg
-        class="css-1opl6cd"
+        class="css-7enzy5-StyledIcon erk2iw52"
         height="27"
         viewBox="0 0 21 27"
         width="21"
@@ -72,14 +72,14 @@ exports[`FileDrop component should render correctly 1`] = `
         />
       </svg>
       <div
-        class="css-1b8y5ux"
+        class="css-1cut0ub-ButtonContainer erk2iw51"
       >
         <span>
           or drag file here
         </span>
       </div>
       <p
-        class="css-9x63nq"
+        class="css-txjm63-OpenOptionText eff4ds61"
       >
         Open from file
       </p>

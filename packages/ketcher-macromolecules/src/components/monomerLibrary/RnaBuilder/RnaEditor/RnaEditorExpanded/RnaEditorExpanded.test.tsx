@@ -3,11 +3,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
 
-const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
+const mockUseLayoutMode = jest.fn(() => 'sequence-layout-mode');
 
 jest.mock('hooks', () => ({
   ...jest.requireActual('hooks'),
-  useLayoutMode: () => useLayoutModeMock(),
+  useLayoutMode: () => mockUseLayoutMode(),
 }));
 
 describe('Test Rna Editor Expanded component', () => {

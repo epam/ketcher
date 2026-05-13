@@ -1,25 +1,16 @@
-import { Locator, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { clickOnCanvas } from '@utils/clicks';
+import { clickLocatorCenter, clickOnCanvas } from '@utils/clicks';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
-const CENTER_DIVISOR = 2;
-
-async function shiftClickLocatorCenter(page: Page, locator: Locator) {
-  await locator.waitFor({ state: 'attached' });
-  const boundingBox = await locator.boundingBox();
-
-  if (!boundingBox) {
-    throw new Error('Unable to get bounding box for selected canvas element');
-  }
-
+async function shiftClickLocatorCenter(
+  page: Page,
+  locator: ReturnType<typeof getAtomLocator | typeof getBondLocator>,
+) {
   await page.keyboard.down('Shift');
   try {
-    await page.mouse.click(
-      boundingBox.x + boundingBox.width / CENTER_DIVISOR,
-      boundingBox.y + boundingBox.height / CENTER_DIVISOR,
-    );
+    await clickLocatorCenter(page, locator);
   } finally {
     await page.keyboard.up('Shift');
   }

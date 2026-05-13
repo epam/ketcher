@@ -5,6 +5,7 @@ import {
   ContextMenuOption,
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
+import { clickLocatorCenter } from '@utils/clicks';
 
 type ContextMenuLocators = {
   contextMenuBody: Locator;
@@ -25,7 +26,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       if ('x' in element && 'y' in element) {
         await page.mouse.click(element.x, element.y, { button: 'right' });
       } else {
-        await element.click({ button: 'right', force: true });
+        await clickLocatorCenter(page, element, { button: 'right' });
       }
     },
 

@@ -18,6 +18,62 @@ type BoundingBox = {
   x: number;
 };
 
+type Coordinates = {
+  x: number;
+  y: number;
+};
+
+export async function getLocatorCenter(locator: Locator): Promise<Coordinates> {
+  await locator.waitFor({ state: 'attached' });
+  const boundingBox = await locator.boundingBox();
+
+  if (boundingBox) {
+    return {
+      x: boundingBox.x + boundingBox.width / 2,
+      y: boundingBox.y + boundingBox.height / 2,
+    };
+  }
+
+  const svgCenter = await locator.evaluate((element) => {
+    if (!(element instanceof SVGGraphicsElement)) {
+      return undefined;
+    }
+
+    const screenMatrix = element.getScreenCTM();
+    const ownerSvg = element.ownerSVGElement;
+
+    if (!screenMatrix || !ownerSvg) {
+      return undefined;
+    }
+
+    const elementBox = element.getBBox();
+    const point = ownerSvg.createSVGPoint();
+    point.x = elementBox.x + elementBox.width / 2;
+    point.y = elementBox.y + elementBox.height / 2;
+    const screenPoint = point.matrixTransform(screenMatrix);
+
+    return {
+      x: screenPoint.x,
+      y: screenPoint.y,
+    };
+  });
+
+  if (!svgCenter) {
+    throw new Error('Unable to get center coordinates for selected element');
+  }
+
+  return svgCenter;
+}
+
+export async function clickLocatorCenter(
+  page: Page,
+  locator: Locator,
+  options?: Parameters<Page['mouse']['click']>[2],
+) {
+  const center = await getLocatorCenter(locator);
+  await page.mouse.click(center.x, center.y, options);
+}
+
 let cachedBodyCenter: { x: number; y: number } | null = null;
 
 export async function getCachedBodyCenter(page: Page) {

@@ -820,17 +820,16 @@ export class Ketcher {
    * - Unknown type value → rejected with error
    */
   private filterInvalidSdfEntries(rawSdf: string): string {
-    const entries = rawSdf.split(/\$\$\$\$\s*/).filter(Boolean);
+    const entries = rawSdf.split('$$$$').filter((e) => e.trim());
     const validEntries: string[] = [];
 
     for (const entry of entries) {
-      const typeFieldMatch = entry.match(/^>\s*[\d ]*<type>\s*\n\s*(.*)/m);
+      const typeFieldMatch = entry.match(/^>[\d\s]*<type>\s*\n\s*(.*)/m);
 
       if (typeFieldMatch) {
         const typeValue = typeFieldMatch[1].trim();
 
         if (!typeValue || !VALID_SDF_MONOMER_TYPES.has(typeValue)) {
-          // Extract monomer name from V3000 TEMPLATE line for the error message
           const nameMatch = entry.match(
             /M\s+V30\s+TEMPLATE\s+\d+\s+\S+\/([^/\s]+)/,
           );

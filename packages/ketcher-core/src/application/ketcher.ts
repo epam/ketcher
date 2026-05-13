@@ -19,6 +19,7 @@ import { saveAs } from 'file-saver';
 import {
   FormatterFactory,
   identifyStructFormat,
+  KetTemplateType,
   SupportedFormat,
 } from './formatters';
 import {
@@ -82,6 +83,12 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputFormat: ChemicalMimeType.MonomerLibrary,
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
+
+// Valid values for the `> <type>` SDF property.
+const VALID_SDF_MONOMER_TYPES: ReadonlySet<string> = new Set([
+  KetTemplateType.MONOMER_TEMPLATE,
+  KetTemplateType.MONOMER_GROUP_TEMPLATE,
+]);
 
 export class Ketcher {
   _id: string;
@@ -806,6 +813,48 @@ export class Ketcher {
     return convertResult.struct;
   }
 
+  /**
+   * Validates SDF entries against allowed `> <type>` values before Indigo conversion.
+   * - No `> <type>` field at all → allowed (Indigo defaults to monomerTemplate)
+   * - Empty type value → rejected with error
+   * - Unknown type value → rejected with error
+   */
+  private filterInvalidSdfEntries(rawSdf: string): string {
+    const entries = rawSdf.split(/\$\$\$\$\s*/).filter(Boolean);
+    const validEntries: string[] = [];
+
+    for (const entry of entries) {
+      const typeFieldMatch = entry.match(/^>\s*[\d ]*<type>\s*\n\s*(.*)/m);
+
+      if (typeFieldMatch) {
+        const typeValue = typeFieldMatch[1].trim();
+
+        if (!typeValue || !VALID_SDF_MONOMER_TYPES.has(typeValue)) {
+          // Extract monomer name from V3000 TEMPLATE line for the error message
+          const nameMatch = entry.match(
+            /M\s+V30\s+TEMPLATE\s+\d+\s+\S+\/([^/\s]+)/,
+          );
+          const monomerName = nameMatch?.[1] ?? 'Unknown';
+
+          if (!typeValue) {
+            KetcherLogger.error(
+              `Type is not provided. "${monomerName}" monomer hasn't been added to the library.`,
+            );
+          } else {
+            KetcherLogger.error(
+              `Type: "${typeValue}" is unknown. "${monomerName}" monomer hasn't been added to the library.`,
+            );
+          }
+          continue;
+        }
+      }
+
+      validEntries.push(entry);
+    }
+
+    return validEntries.length ? validEntries.join('$$$$\n') + '$$$$\n' : '';
+  }
+
   public async updateMonomersLibrary(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -820,13 +869,22 @@ export class Ketcher {
       );
     }
 
-    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+    // Filter out SDF entries with invalid type before Indigo conversion
+    const validatedMonomersData = this.filterSdfIfNeeded(
       rawMonomersData,
+      params,
+    );
+    if (!validatedMonomersData) {
+      return;
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      validatedMonomersData,
       params,
     );
 
     const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
-      rawMonomersData,
+      validatedMonomersData,
       params,
     );
 
@@ -838,6 +896,21 @@ export class Ketcher {
     if (params?.needDispatchLibraryUpdateEvent) {
       this.libraryUpdateEvent.dispatch(dataInSdfFormat);
     }
+  }
+
+  private filterSdfIfNeeded(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ): string | JSON | null {
+    const rawString = ensureString(rawMonomersData);
+    const format = params?.format ?? identifyStructFormat(rawString);
+
+    if (format !== SupportedFormat.sdf && format !== SupportedFormat.sdfV3000) {
+      return rawMonomersData;
+    }
+
+    const filtered = this.filterInvalidSdfEntries(rawString);
+    return filtered || null;
   }
 
   public async replaceMonomersLibrary(
@@ -854,13 +927,21 @@ export class Ketcher {
       );
     }
 
-    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+    const validatedMonomersData = this.filterSdfIfNeeded(
       rawMonomersData,
+      params,
+    );
+    if (!validatedMonomersData) {
+      return;
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      validatedMonomersData,
       params,
     );
 
     const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
-      rawMonomersData,
+      validatedMonomersData,
       params,
     );
 

@@ -126,6 +126,20 @@ export function formatSelection(selection): any {
 }
 
 const TWO_PI = 2 * Math.PI;
+// New-bond placement uses model coordinates where the proposed bond vector has
+// unit length, so distance values below are fractions/multiples of one bond.
+const BOND_PLACEMENT_SCORING = {
+  environmentRadius: 2.5,
+  atomCollisionDistance: 0.9,
+  bondCollisionDistance: 0.35,
+  atomCollisionWeight: 6,
+  bondCollisionWeight: 4,
+  halfBlockedSectorAngle: Math.PI / 8,
+  angleSearchStep: Math.PI / 36,
+  angleSearchSpan: Math.PI,
+  blockedAngleWeight: 100,
+  spatialWeight: 20,
+} as const;
 
 function normalizeAngle(angle: number): number {
   let normalized = angle % TWO_PI;
@@ -172,35 +186,38 @@ function getSpatialPenalty(
   );
   candidatePos.add_(origin); // eslint-disable-line no-underscore-dangle
 
-  const atomCollisionThreshold = 0.9;
   const atomPenalty = nearbyAtoms.reduce((score, atomPos) => {
     const distance = Vec2.dist(candidatePos, atomPos);
-    if (distance >= atomCollisionThreshold) {
+    if (distance >= BOND_PLACEMENT_SCORING.atomCollisionDistance) {
       return score;
     }
 
     const overlap =
-      (atomCollisionThreshold - distance) / atomCollisionThreshold;
+      (BOND_PLACEMENT_SCORING.atomCollisionDistance - distance) /
+      BOND_PLACEMENT_SCORING.atomCollisionDistance;
     return score + overlap * overlap;
   }, 0);
 
-  const bondCollisionThreshold = 0.35;
   const bondPenalty = nearbyBonds.reduce((score, bondSegment) => {
     const distance = pointToSegmentDistance(
       candidatePos,
       bondSegment.begin,
       bondSegment.end,
     );
-    if (distance >= bondCollisionThreshold) {
+    if (distance >= BOND_PLACEMENT_SCORING.bondCollisionDistance) {
       return score;
     }
 
     const overlap =
-      (bondCollisionThreshold - distance) / bondCollisionThreshold;
+      (BOND_PLACEMENT_SCORING.bondCollisionDistance - distance) /
+      BOND_PLACEMENT_SCORING.bondCollisionDistance;
     return score + overlap * overlap;
   }, 0);
 
-  return atomPenalty * 6 + bondPenalty * 4;
+  return (
+    atomPenalty * BOND_PLACEMENT_SCORING.atomCollisionWeight +
+    bondPenalty * BOND_PLACEMENT_SCORING.bondCollisionWeight
+  );
 }
 
 function optimizeDirectionAngle(
@@ -218,22 +235,26 @@ function optimizeDirectionAngle(
     return preferredAngle;
   }
 
-  const halfBlockedSector = Math.PI / 8;
-  const searchStep = Math.PI / 36;
-  const searchSpan = Math.PI;
-  const steps = Math.round((2 * searchSpan) / searchStep);
+  const steps = Math.round(
+    (2 * BOND_PLACEMENT_SCORING.angleSearchSpan) /
+      BOND_PLACEMENT_SCORING.angleSearchStep,
+  );
   let bestAngle = preferredAngle;
   let bestScore = Number.POSITIVE_INFINITY;
 
   for (let stepIndex = 0; stepIndex <= steps; stepIndex++) {
-    const offset = -searchSpan + stepIndex * searchStep;
+    const offset =
+      -BOND_PLACEMENT_SCORING.angleSearchSpan +
+      stepIndex * BOND_PLACEMENT_SCORING.angleSearchStep;
     const candidate = preferredAngle + offset;
     const overlapPenalty = blockedAngles.reduce((score, blockedAngle) => {
       const distance = shortestAngularDistance(candidate, blockedAngle);
-      if (distance >= halfBlockedSector) {
+      if (distance >= BOND_PLACEMENT_SCORING.halfBlockedSectorAngle) {
         return score;
       }
-      const overlapFactor = (halfBlockedSector - distance) / halfBlockedSector;
+      const overlapFactor =
+        (BOND_PLACEMENT_SCORING.halfBlockedSectorAngle - distance) /
+        BOND_PLACEMENT_SCORING.halfBlockedSectorAngle;
       return score + overlapFactor * overlapFactor;
     }, 0);
 
@@ -246,7 +267,9 @@ function optimizeDirectionAngle(
       nearbyBonds,
     );
     const totalScore =
-      overlapPenalty * 100 + spatialPenalty * 20 + deviationPenalty;
+      overlapPenalty * BOND_PLACEMENT_SCORING.blockedAngleWeight +
+      spatialPenalty * BOND_PLACEMENT_SCORING.spatialWeight +
+      deviationPenalty;
 
     if (totalScore < bestScore) {
       bestScore = totalScore;
@@ -303,7 +326,6 @@ export function atomForNewBond(restruct, id, bond?) {
     });
   });
 
-  const environmentRadius = 2.5;
   restruct.visibleAtoms.forEach((atom, aid) => {
     if (aid === id) {
       return;
@@ -311,7 +333,7 @@ export function atomForNewBond(restruct, id, bond?) {
 
     const atomPos = atom.a.pp;
     const distance = Vec2.dist(pos, atomPos);
-    if (distance > environmentRadius || distance < 0.1) {
+    if (distance > BOND_PLACEMENT_SCORING.environmentRadius || distance < 0.1) {
       return;
     }
 
@@ -333,8 +355,8 @@ export function atomForNewBond(restruct, id, bond?) {
     }
 
     if (
-      Vec2.dist(pos, beginPos) > environmentRadius &&
-      Vec2.dist(pos, endPos) > environmentRadius
+      Vec2.dist(pos, beginPos) > BOND_PLACEMENT_SCORING.environmentRadius &&
+      Vec2.dist(pos, endPos) > BOND_PLACEMENT_SCORING.environmentRadius
     ) {
       return;
     }

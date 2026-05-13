@@ -434,7 +434,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
   });
 
   test('Case 16: Layout not shift when changing mode from sequence to flex and back upon first macromolecules mode initialization', async ({
-    FlexCanvas: _,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
@@ -447,9 +447,6 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Switch to Flex mode
      * 5. Switch back to Sequence mode
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

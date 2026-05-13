@@ -67,7 +67,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await closePage();
   });
 
-  test('Case 1: Able to establish hydrogen bond connection if monomer has no free attachment points', async () => {
+  test('Case 1: Able to establish hydrogen bond connection if monomer has no free attachment points', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5935
@@ -77,7 +79,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from HELM
      * 3. Try to establish hydrogen bond connection between Cys_Bn and Chg peptides
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -94,7 +95,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 2: Error message is correct if user tries to establish hydrogen bond if it is already exist', async () => {
+  test('Case 2: Error message is correct if user tries to establish hydrogen bond if it is already exist', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5933
@@ -104,7 +107,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from HELM
      * 3. Try to establish hydrogen connection between peptides one more time
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -117,7 +119,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 3: Able to connect monomer to molecule in snake mode', async () => {
+  test('Case 3: Able to connect monomer to molecule in snake mode', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5970
@@ -128,7 +132,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Select Single Bond tool
      * 4. Try to establish connection between monomer and molecule
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
@@ -145,7 +148,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 4: Load from file having only micro structures on macro canvas not causes unnecessary zoom up to 200% and not shift molecule to top left angle', async () => {
+  test('Case 4: Load from file having only micro structures on macro canvas not causes unnecessary zoom up to 200% and not shift molecule to top left angle', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5969
@@ -155,7 +160,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Take screenshot
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/Benzene ring.ket',
@@ -166,7 +170,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 5: System not change monomer position after switching from Molecules to Macromolecules - Sequence', async () => {
+  test('Case 5: System not change monomer position after switching from Molecules to Macromolecules - Sequence', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5967
@@ -178,7 +184,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 4. Toggle back to Molecules mode
      * 5. Toggle to Sequence mode
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/System should not change monomer position after switching from Molecules to Macromolecules - Sequence.ket',
@@ -206,7 +211,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 6: Elliptic arrow icons order is correct at arrow toolbar', async () => {
+  test('Case 6: Elliptic arrow icons order is correct at arrow toolbar', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5398
@@ -215,7 +222,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 1. Toggle to Molecules mode
      * 2. Open arrow menu in toobar
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
   });
@@ -255,7 +261,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 8: Attachment points can be colored', async () => {
+  test('Case 8: Attachment points can be colored', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5605
@@ -265,7 +273,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Highlight attachment points
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/benzene-ring-with-two-attachment-points.ket',
@@ -335,7 +342,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
 
-  test('Case 11: getKet not duplicates items when macro molucules are used', async () => {
+  test('Case 11: getKet not duplicates items when macro molucules are used', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5181
@@ -344,7 +353,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 1. Load from file
      * 2. Check that getKet not duplicates items
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/micro-and-macro-structure.ket',
@@ -392,7 +400,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 13: Applying Enhanced Stereochemistry to monomers not causes its disappear from the canvas', async () => {
+  test('Case 13: Applying Enhanced Stereochemistry to monomers not causes its disappear from the canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/4936
@@ -402,7 +412,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Press Stereochemistry button and press Apply button in appeared dialog
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Two nucleotides.ket',
@@ -412,7 +421,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 14: Apply new hash spacing setting to canvas', async () => {
+  test('Case 14: Apply new hash spacing setting to canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5354
@@ -422,7 +433,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Apply new hash spacing setting to canvas
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/bond-with-hash-spacing.ket',
@@ -432,7 +442,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 15: Preview tooltip work for monomers at Molecules mode', async () => {
+  test('Case 15: Preview tooltip work for monomers at Molecules mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5793
@@ -442,7 +454,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Hover mouse over label
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
@@ -525,7 +536,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
   });
 
-  test('Case 19: Ability to focus on the drawing entity within expanded S-group/monomer bounding box', async () => {
+  test('Case 19: Ability to focus on the drawing entity within expanded S-group/monomer bounding box', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6802
      * Bug: https://github.com/epam/ketcher/issues/5910
@@ -535,7 +548,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Click on the monomer 2Nal and expand it
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/circle-peptides-one-expanded.ket',

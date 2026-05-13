@@ -1,4 +1,4 @@
-name: Implement Autotests
+name: Claude Implement Autotests
 
 on:
   issues:
@@ -35,34 +35,30 @@ jobs:
         with:
           script: |
             const issue = context.payload.issue;
-            
+
             if (!issue) {
               throw new Error('No issue found in context');
             }
             
-            const checklistMatches = issue.body?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            const issueBody = issue.body
+            const checklistMatches = issueBody?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
             if (checklistMatches.length === 0) {
               throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
             }
-           
-            const title = issue.title;
-            core.setOutput('title', title);
+
+            core.setOutput('issue_body', issueBody);
 
       - name: Implement autotests with Claude
         uses: anthropics/claude-code-action@beta
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           direct_prompt: |
-            1. Create a new git branch named 'claude/autotests-<feature-number>'.
-            2. Generate Playwright autotests based on Autotest Request issue following the Ketcher conventions.
-            3. Under the **Source task(s):** header in the Request, find the link to the Feature. Use it to get the Feature Issue Number and Feature Title.
-            4. Sanitize Feature title.
-            5. Create the directory: ketcher-autotests/tests/specs/Chromium-popup/Features/#<Feature Number>-<Sanitized Feature Title>. 
-              Example: ketcher-autotests/tests/specs/Chromium-popup/Features/#3227-Introducing-Copolymer-S-group-type
-              You MUST use the exact format `#<Feature Number>-<Sanitized Feature Title>`. Don't modify it!
-            6. Save the code into a .spec.ts file in that directory.
-            7. Commit the changes and push the new branch to origin.
+            Use autotests-generator agent to generate Playwright autotests based on Autotest Request issue.
+            Issue number: ${{ github.event.issue.number }}
+            Issue title: ${{ github.event.issue.title }}
+            Issue details:
+            ${{ steps.issue.outputs.issue_body }}
 
       - name: Get current branch name
         id: vars
@@ -75,7 +71,7 @@ jobs:
         id: create_pr
         run: |
           PR_URL=$(gh pr create \
-            --title "#${{ github.event.issue.number }} - ${{ steps.issue.outputs.title }}" \
+            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
             --body "Closes #${{ github.event.issue.number }}" \
             --head "${{ steps.vars.outputs.branch_name }}" \
             --base master)

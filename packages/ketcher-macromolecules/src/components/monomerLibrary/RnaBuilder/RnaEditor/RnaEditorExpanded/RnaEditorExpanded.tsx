@@ -449,10 +449,6 @@ export const RnaEditorExpanded = ({
     position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
 
   const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
-    if (!newPreset?.phosphate) {
-      return null;
-    }
-
     const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
     const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
     const isPhosphateGroupActive =

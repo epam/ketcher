@@ -122,13 +122,12 @@ test.describe('RNA Library', () => {
   test(
     'Check that switch between Macro and Micro mode does not crash application',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /* 
     Test case: #3498
     Description: Application does not crash. 
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3498
     */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
       await configureInitialState(page);

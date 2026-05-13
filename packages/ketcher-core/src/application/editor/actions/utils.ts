@@ -152,12 +152,12 @@ function pointToSegmentDistance(point: Vec2, start: Vec2, end: Vec2): number {
   const projection =
     (toPoint.x * segment.x + toPoint.y * segment.y) / segmentLengthSq;
   const clampedProjection = Math.max(0, Math.min(1, projection));
-  const closest = new Vec2(
+  const closestPoint = new Vec2(
     start.x + segment.x * clampedProjection,
     start.y + segment.y * clampedProjection,
   );
 
-  return Vec2.dist(point, closest);
+  return Vec2.dist(point, closestPoint);
 }
 
 function getSpatialPenalty(
@@ -304,12 +304,12 @@ export function atomForNewBond(restruct, id, bond?) {
   });
 
   const environmentRadius = 2.5;
-  restruct.molecule.atoms.forEach((atom, aid) => {
+  restruct.visibleAtoms.forEach((atom, aid) => {
     if (aid === id) {
       return;
     }
 
-    const atomPos = atom.pp;
+    const atomPos = atom.a.pp;
     const distance = Vec2.dist(pos, atomPos);
     if (distance > environmentRadius || distance < 0.1) {
       return;
@@ -319,13 +319,15 @@ export function atomForNewBond(restruct, id, bond?) {
     blockedAngles.push(Math.atan2(atomPos.y - pos.y, atomPos.x - pos.x));
   });
 
-  restruct.molecule.bonds.forEach((bondItem) => {
+  restruct.visibleBonds.forEach((bond) => {
+    const bondItem = bond.b;
+
     if (bondItem.begin === id || bondItem.end === id) {
       return;
     }
 
-    const beginPos = atomGetPos(restruct, bondItem.begin);
-    const endPos = atomGetPos(restruct, bondItem.end);
+    const beginPos = restruct.visibleAtoms.get(bondItem.begin)?.a.pp;
+    const endPos = restruct.visibleAtoms.get(bondItem.end)?.a.pp;
     if (!beginPos || !endPos) {
       return;
     }

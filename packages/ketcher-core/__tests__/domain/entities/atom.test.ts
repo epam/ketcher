@@ -429,6 +429,36 @@ describe('Atom', () => {
       expect(nitrogen.badConn).toBe(false);
     });
 
+    it('should use implicit H count query property for carbon', () => {
+      const carbon = new Atom({
+        ...hydrogenParams,
+        label: 'C',
+        charge: null,
+        implicitHCount: 8,
+        isotope: null,
+      });
+
+      expect(carbon.calcValence(0)).toBe(true);
+      expect(carbon.valence).toBe(4);
+      expect(carbon.implicitH).toBe(8);
+      expect(carbon.badConn).toBe(false);
+    });
+
+    it('should continue using implicit H count query property for heteroatoms', () => {
+      const nitrogen = new Atom({
+        ...hydrogenParams,
+        label: 'N',
+        charge: null,
+        implicitHCount: 4,
+        isotope: null,
+      });
+
+      expect(nitrogen.calcValence(0)).toBe(true);
+      expect(nitrogen.valence).toBe(3);
+      expect(nitrogen.implicitH).toBe(4);
+      expect(nitrogen.badConn).toBe(false);
+    });
+
     it('should set valence = 2 for Platinum with 2 or fewer connections', () => {
       const platinumParams = {
         ...hydrogenParams,

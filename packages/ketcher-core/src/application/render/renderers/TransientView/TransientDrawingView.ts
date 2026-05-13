@@ -1,8 +1,12 @@
 import { select } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
-import { IRnaPreset, ZoomTool } from 'application/editor';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
+import ZoomTool from 'application/editor/tools/Zoom';
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Vec2 } from 'domain/entities/vec2';
 import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
@@ -39,7 +43,7 @@ export class TransientDrawingView {
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
 
   constructor() {
-    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
     this.defaultLayer = canvas
       .append('g')
       .attr('class', 'transient-views-layer');

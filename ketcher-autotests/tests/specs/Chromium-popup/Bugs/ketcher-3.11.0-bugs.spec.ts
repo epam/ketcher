@@ -13,7 +13,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { ConfirmMessageDialog } from '@tests/pages/molecules/canvas/createMonomer/ConfirmMessageDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   MacroBondOption,
   MonomerOnMicroOption,
@@ -57,7 +57,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
@@ -84,7 +84,7 @@ import {
   moveMouseAway,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -103,6 +103,8 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
+import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 
 let page: Page;
 
@@ -130,7 +132,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       'KET/S-Groups/All types of Nucleotide Componets S-Groups.ket',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 11 }), {
       padding: 250,
@@ -180,7 +182,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, 200, 200);
@@ -289,6 +291,29 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     });
   });
 
+  test('Case 2.6 — Context menu closes on Escape in popup mode', async () => {
+    /* Test case: regression for popup context menu dismissal
+     * Steps:
+     * 1. Open a structure in popup mode.
+     * 2. Open a context menu on canvas.
+     * 3. Press Escape.
+     * Expected Result: The context menu closes.
+     */
+
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    const contextMenu = ContextMenu(page, getAtomLocator(page, { atomId: 0 }));
+
+    await contextMenu.open();
+    await expect(contextMenu.contextMenuBody).toBeVisible();
+
+    await page.keyboard.press('Escape');
+
+    await expect(contextMenu.contextMenuBody).toBeHidden();
+  });
+
   test('Case 3 — Superatom rendering with multiple connection points — part of structure should not disappear', async () => {
     /* Test case: https://github.com/epam/ketcher/issues/8974
      * Bug: https://github.com/epam/ketcher/issues/2517
@@ -302,8 +327,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
 
     await LeftToolbar(page).sGroup();
+    await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
 
-    const wLocator = page.getByText('w', { exact: true });
+    const wLocator = getSGroupLabelLocator(page, { labelText: 'w' });
     const wBox = await wLocator.boundingBox();
     if (wBox) {
       const clickX = wBox.x - 10;
@@ -502,8 +528,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      */
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
-    await ContextMenu(page, getBondLocator(page, { bondId: 45 })).open();
-    await expect(page.getByTestId(MacroBondOption.Delete)).toBeVisible();
+    expect(
+      await ContextMenu(
+        page,
+        getBondLocator(page, { bondId: 45 }),
+      ).isOptionEnabled(MacroBondOption.Delete),
+    ).toBeTruthy();
   });
 
   test('Case 11 - Preview tooltips for monomers loaded from HELM with inline smiles are wrong', async ({
@@ -724,7 +754,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       page,
       '*1C=*C=*C=1 |$star_e;;star_e;;star_e;$|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).chargePlusButton.click();
     const starAtom = getAtomLocator(page, { atomId: 6 });
     await starAtom.click({ force: true });
@@ -836,8 +866,8 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     );
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectMonomersAndBonds(page, {
-      monomerIds: [68, 69, 82, 83, 73, 76, 71, 72, 80, 79, 81, 84],
-      bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108, 104, 109],
+      monomerIds: [68, 69, 82, 83, 73, 71, 72, 80, 79, 84],
+      bondIds: [97, 112, 115, 101, 102, 113, 114, 100, 111, 108],
     });
     await ContextMenu(page, getMonomerLocator(page, { monomerId: 80 })).click(
       MonomerOption.ArrangeAsARing,
@@ -1030,6 +1060,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       name: 'S1',
       HELMAlias: 'SugAlias',
     });
+
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
 
     await presetSection.setupPhosphate({
       atomIds: [8, 9, 10, 11, 12],
@@ -1367,7 +1400,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       x: 300,
       y: 150,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(
       page,
       getMonomerLocator(page, Sugar.R),

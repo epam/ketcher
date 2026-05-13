@@ -1,6 +1,9 @@
 import { CoreEditor } from 'application/editor';
 import { polymerEditorTheme } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import ZoomTool from 'application/editor/tools/Zoom';
 
 describe('Zoom Tool', () => {
@@ -37,10 +40,11 @@ describe('Zoom Tool', () => {
   it('should zoom in when scroll mouse wheel up and press CTRL', () => {
     jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
-    // eslint-disable-next-line no-new
-    new CoreEditor({
+    // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
+    const _editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
     });
     canvas.dispatchEvent(
       new WheelEvent('wheel', { deltaY: 60, ctrlKey: true }),

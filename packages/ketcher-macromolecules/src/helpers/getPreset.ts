@@ -1,19 +1,28 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
+  buildRnaPresetConnections,
+  IKetTemplateConnection,
   IKetMonomerGroupTemplate,
   monomerFactory,
   MonomerItemType,
   setMonomerTemplatePrefix,
   KetMonomerClass,
   IRnaLabeledPreset,
+  getRnaPresetPhosphatePosition,
   isAmbiguousMonomerLibraryItem,
   setAmbiguousMonomerTemplatePrefix,
 } from 'ketcher-core';
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
-  extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
-    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
+  extends Pick<
+      IKetMonomerGroupTemplate,
+      'templates' | 'idtAliases' | 'aliasAxoLabs'
+    >,
+    Partial<Pick<IKetMonomerGroupTemplate, 'connections'>>,
+    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {
+  connections?: IKetTemplateConnection[];
+}
 
 export const getPresets = (
   monomers: ReadonlyArray<MonomerItemType>,
@@ -65,24 +74,41 @@ export const getPresets = (
         KetMonomerClass.Phosphate,
       ) as MonomerItemType;
 
+      const connections =
+        rnaPresetsTemplate.connections ??
+        buildRnaPresetConnections({
+          base: rnaBase,
+          sugar: ribose,
+          phosphate,
+        });
+
       const result: IRnaPreset = {
         base: rnaBase ? { ...rnaBase, label: rnaBase.label } : undefined,
         name: rnaPresetsTemplate.name,
         phosphate: phosphate
           ? { ...phosphate, label: phosphate.label }
           : undefined,
+        connections,
         sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
+        phosphatePosition: getRnaPresetPhosphatePosition({
+          sugar: ribose,
+          phosphate,
+          connections,
+        }),
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };
 
-      if (!rnaPresetsTemplate.idtAliases) {
-        return result;
-      }
-
-      return {
+      const presetWithAliases: IRnaPreset = {
         ...result,
-        idtAliases: rnaPresetsTemplate.idtAliases,
+        ...(rnaPresetsTemplate.idtAliases && {
+          idtAliases: rnaPresetsTemplate.idtAliases,
+        }),
+        ...(rnaPresetsTemplate.aliasAxoLabs && {
+          aliasAxoLabs: rnaPresetsTemplate.aliasAxoLabs,
+        }),
       };
+
+      return presetWithAliases;
     });
 };

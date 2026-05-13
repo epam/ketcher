@@ -329,6 +329,9 @@ export const EditorEvents = () => {
           monomers,
           name: existingPreset?.name,
           idtAliases: existingPreset?.idtAliases,
+          aliasAxoLabs: existingPreset?.aliasAxoLabs,
+          phosphatePosition:
+            sequenceNode instanceof Nucleotide ? 'right' : undefined,
           position,
           target: e.target,
         };

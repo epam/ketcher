@@ -78,7 +78,6 @@ function filterBugsInTests(
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
       item.MonomerId === undefined ||
-      item.MonomerId === undefined ||
       (monomerId !== undefined && item.MonomerId.includes(monomerId));
 
     return testNameMatch && sequenceIdMatch && replaceMonomerIdMatch;

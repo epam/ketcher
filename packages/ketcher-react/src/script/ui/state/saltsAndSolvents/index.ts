@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { AnyAction } from 'redux';
-import { appUpdate } from '../options';
+import { appUpdate } from '../options/actions';
 import {
   SaltsAndSolventsProvider,
   FunctionalGroupsProvider,

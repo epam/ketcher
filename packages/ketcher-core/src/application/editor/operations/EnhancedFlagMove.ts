@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, Vec2 } from 'domain/entities';
+import { Fragment } from 'domain/entities/fragment';
+import { Vec2 } from 'domain/entities/vec2';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 

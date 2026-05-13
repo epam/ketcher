@@ -8,6 +8,9 @@ export enum ErrorMessage {
   notMinimalViableStructure = 'notMinimalViableStructure',
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
+  invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  invalidPhosphatePositionAttachmentPoints = 'invalidPhosphatePositionAttachmentPoints',
+  invalidPresetCode = 'invalidPresetCode',
 }
 
 export enum InfoMessage {

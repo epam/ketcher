@@ -5,6 +5,9 @@
   "type": "object",
   "required": ["root"],
   "properties": {
+    "ket_version": {
+      "type": "string"
+    },
     "root": {
       "type": "object",
       "required": ["nodes"],
@@ -765,43 +768,235 @@
         }
       }
     },
+    "textIndent": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "first_line": {
+              "type": "number"
+            },
+            "left": {
+              "type": "number"
+            },
+            "right": {
+              "type": "number"
+            }
+          }
+        }
+      ]
+    },
+    "textFont": {
+      "type": "object",
+      "properties": {
+        "family": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer"
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        }
+      }
+    },
+    "textPart": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "font": {
+          "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        }
+      }
+    },
+    "textParagraph": {
+      "type": "object",
+      "required": ["parts"],
+      "properties": {
+        "alignment": {
+          "type": "string",
+          "enum": ["left", "center", "right"]
+        },
+        "indent": {
+          "$ref": "#/definitions/textIndent"
+        },
+        "font": {
+          "$ref": "#/definitions/textFont"
+        },
+        "color": {
+          "type": "string"
+        },
+        "bold": {
+          "type": "boolean"
+        },
+        "italic": {
+          "type": "boolean"
+        },
+        "subscript": {
+          "type": "boolean"
+        },
+        "superscript": {
+          "type": "boolean"
+        },
+        "parts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/textPart"
+          }
+        }
+      }
+    },
     "text": {
       "type": "object",
-      "required": ["type", "data"],
+      "required": ["type"],
       "properties": {
         "type": {
           "const": "text"
         },
-        "data": {
-          "type": "object",
-          "required": ["content"],
+        "selected": {
+          "type": "boolean"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["data"],
           "properties": {
-            "content": {
-              "type": "string"
-            },
-            "pos": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  },
-                  "z": {
-                    "type": "number"
+            "data": {
+              "type": "object",
+              "required": ["content"],
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "z": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "z": {
+                        "type": "number"
+                      }
+                    }
                   }
                 }
               }
             }
           }
         },
-        "selected": {
-          "type": "boolean"
+        {
+          "required": ["boundingBox", "paragraphs"],
+          "properties": {
+            "boundingBox": {
+              "type": "object",
+              "required": ["x", "y", "width", "height"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "z": {
+                  "type": "number"
+                },
+                "width": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "height": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            },
+            "paragraphs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/textParagraph"
+              }
+            },
+            "alignment": {
+              "type": "string",
+              "enum": ["left", "center", "right"]
+            },
+            "indent": {
+              "$ref": "#/definitions/textIndent"
+            },
+            "font": {
+              "$ref": "#/definitions/textFont"
+            },
+            "color": {
+              "type": "string"
+            },
+            "bold": {
+              "type": "boolean"
+            },
+            "italic": {
+              "type": "boolean"
+            },
+            "subscript": {
+              "type": "boolean"
+            },
+            "superscript": {
+              "type": "boolean"
+            }
+          }
         }
-      }
+      ]
     },
     "image": {
       "type": "object",

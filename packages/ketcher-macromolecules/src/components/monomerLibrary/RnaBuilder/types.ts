@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IKetIdtAliases, MonomerItemType } from 'ketcher-core';
+import {
+  IKetIdtAliases,
+  IKetTemplateConnection,
+  MonomerItemType,
+  RnaPhosphatePosition,
+} from 'ketcher-core';
 
 export interface IExpandIconProps {
   expanded: boolean;
@@ -28,8 +33,11 @@ export interface IRnaPreset {
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
+  phosphatePosition?: RnaPhosphatePosition;
   default?: boolean;
   favorite?: boolean;
   readonly idtAliases?: IKetIdtAliases;
+  readonly aliasAxoLabs?: string;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }

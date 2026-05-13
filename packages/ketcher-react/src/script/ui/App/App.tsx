@@ -133,13 +133,17 @@ const App = (props: Props) => {
           onClose={handleCloseSnackbarNotification}
           autoHideDuration={6000}
         >
-          <div className={classes.toastNotification}>
+          <div
+            className={classes.toastNotification}
+            data-testid="notification-banner"
+          >
             <div className={classes.toastNotificationText}>
               {snackbarNotificationText}
             </div>
             <IconButton
               iconName="close"
               className={classes.toastNotificationCloseIcon}
+              testId="notification-banner-close-button"
               onClick={handleCloseSnackbarNotification}
             />
           </div>

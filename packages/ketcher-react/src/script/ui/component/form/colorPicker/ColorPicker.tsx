@@ -61,7 +61,9 @@ const ColorPicker = (props: Props) => {
       if (!inThrottle) {
         func(e);
         inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
+        setTimeout(() => {
+          inThrottle = false;
+        }, limit);
       }
     };
   }, []);

@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 export class CalcImplicitH extends BaseOperation {
-  atomIds: Array<number>;
+  readonly atomIds: Array<number>;
 
   constructor(aids: Array<number>) {
     super(OperationType.CALC_IMPLICIT_H, OperationPriority.CALC_IMPLICIT_H);

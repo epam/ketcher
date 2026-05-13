@@ -104,7 +104,7 @@ function isMenuItemWithComponent(
     typeof item === 'object' &&
     item !== null &&
     'component' in item &&
-    typeof (item as MenuItemWithComponent).component === 'function'
+    typeof item.component === 'function'
   );
 }
 

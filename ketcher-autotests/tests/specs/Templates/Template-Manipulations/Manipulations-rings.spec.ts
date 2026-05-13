@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   deleteByKeyboard,
   dragMouseTo,
@@ -45,7 +45,7 @@ async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
   await waitForRender(page, async () => {
     await BottomToolbar(page).clickRing(type);
   });
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
 
   // Attaching Second Ring By Atom
@@ -187,7 +187,7 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await CommonTopLeftToolbar(page).clearCanvas();
 
   await BottomToolbar(page).clickRing(type);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickInTheMiddleOfTheCanvas(page);
   await deleteRightBondInRing(type, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);

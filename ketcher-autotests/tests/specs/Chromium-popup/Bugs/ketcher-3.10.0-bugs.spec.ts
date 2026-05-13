@@ -52,15 +52,12 @@ import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/C
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
-  resetSelection,
-  rotateToCoordinates,
-} from '@tests/specs/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import {
   verifyPNGExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
@@ -80,6 +77,7 @@ import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/Attac
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 let page: Page;
 
@@ -130,6 +128,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await AttachmentPointsDialog(page).cancel();
   });
+
   test('2.The Arrange as a Ring option should be inactive(disabled), when fewer than three monomers are selected. ', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8369
@@ -144,9 +143,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: true,
@@ -157,12 +155,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
       'PEPTIDE1{A}|PEPTIDE2{A}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, anyMonomer).open();
-    await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
-      state: 'visible',
-    });
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      await ContextMenu(page, anyMonomer).isOptionEnabled(
+        MonomerOption.ArrangeAsARing,
+      ),
+    ).toBeFalsy();
   });
+
   test('3.Context menu incorrectly allows “Arrange as a Ring” even when selection criteria are not met', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8368
@@ -178,8 +177,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, { monomerId: 90 }).first();
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: true,
@@ -189,12 +188,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
       'KET/Chromium-popup/Bugs/ketcher-3.10.0-bugs/micro-macro-structures.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, anyMonomer).open();
-    await ContextMenu(page, anyMonomer).contextMenuBody.waitFor({
-      state: 'visible',
-    });
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      await ContextMenu(page, anyMonomer).isOptionEnabled(
+        MonomerOption.ArrangeAsARing,
+      ),
+    ).toBeFalsy();
   });
+
   test('4.Undo does not revert "Arrange as a ring" - structure disappears, ghost bonds remain and cause console errors', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/8367
@@ -213,8 +213,8 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
     });
@@ -225,9 +225,13 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toHaveAttribute('aria-disabled', 'false');
-    await arrangeAsARing.click();
+    expect(
+      await ContextMenu(page, anyMonomer).isOptionEnabled(
+        MonomerOption.ArrangeAsARing,
+      ),
+    ).toBeTruthy();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, anyMonomer).click(MonomerOption.ArrangeAsARing);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -251,9 +255,9 @@ test.describe('Ketcher-3.10 Bugs', () => {
      *
      * Version 3.10.0
      */
-    const arrangeAsARing = page.getByTestId(MonomerOption.ArrangeAsARing);
     const anyMonomer = getMonomerLocator(page, {}).first();
     const anyMonomerSymbol = getSymbolLocator(page, {}).first();
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
     });
@@ -264,14 +268,20 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await ContextMenu(page, anyMonomer).open();
-    await expect(arrangeAsARing).toBeHidden();
+    expect(
+      await ContextMenu(page, anyMonomer).isOptionVisible(
+        MonomerOption.ArrangeAsARing,
+      ),
+    ).toBeFalsy();
 
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
-    await ContextMenu(page, anyMonomerSymbol).open();
-    await expect(arrangeAsARing).toBeHidden();
+    expect(
+      await ContextMenu(page, anyMonomerSymbol).isOptionVisible(
+        MonomerOption.ArrangeAsARing,
+      ),
+    ).toBeFalsy();
   });
   test('6.No limit on the number of added modification fields; new fields extend beyond the visible wizard area and shift action buttons', async () => {
     /*
@@ -414,49 +424,19 @@ test.describe('Ketcher-3.10 Bugs', () => {
     const monomerOnCanvas = getMonomerLocator(page, {
       monomerAlias: 'CHEM1',
     });
+    await Library(page).hideLibrary();
     await expect(monomerOnCanvas).toBeVisible();
 
-    await monomerOnCanvas.hover();
-    await dragMouseTo(page, 480, 460);
+    const pageCenter = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
     await monomerOnCanvas.hover();
+    await dragMouseTo(page, pageCenter.x, pageCenter.y + 100);
+    await monomerOnCanvas.hover();
+
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
-  test('9.Ketcher crashes completely when switching from Wizard mode to Macro mode', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7633
-     * Bug: https://github.com/epam/ketcher/issues/8334
-     * Description: When the user switches from the Create Monomer Wizard to Macromolecule mode,
-     *  the entire application crashes.The screen becomes completely white, and the console
-     *  displays a TypeError.
-     * Scenario:
-     * 1. Open file with benzene ring structure and add to canvas
-     * 2. Open Create Monomer Wizard
-     * 3. Switch to Macromolecule mode
-     * 4. Verify that Ketcher is not crashed
-     *
-     * Version 3.10.0
-     */
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') {
-        test.fail(
-          msg.type() === 'error',
-          `There is error in console: ${msg.text}`,
-        );
-      }
-    });
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      'C1C=CC=CC%91=1.[*:1]%91 |$;;;;;;_R1$|',
-    );
-    await deselectAtomAndBonds(page);
-    await LeftToolbar(page).createMonomer();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await expect(CommonTopLeftToolbar(page).undoButton).toBeEnabled();
-    const rnaPresetGroup = page.getByTestId('rna-preset-group');
-    expect(rnaPresetGroup).toBeVisible();
-  });
+
   test('10.“+ Add modification type” option appears only after selecting Natural analogue instead of monomer type Amino acid', async () => {
     /*
      * Test case:https://github.com/epam/ketcher/issues/7633
@@ -571,10 +551,11 @@ test.describe('Ketcher-3.10 Bugs', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
-    await ContextMenu(page, targetAtom).open();
-    await expect(
-      page.getByTestId(ConnectionPointOption.MarkAsConnectionPoint),
-    ).toBeEnabled();
+    expect(
+      await ContextMenu(page, targetAtom).isOptionEnabled(
+        ConnectionPointOption.MarkAsConnectionPoint,
+      ),
+    ).toBeTruthy();
     await CreateMonomerDialog(page).discard();
   });
   test('14.Molecule rotation causes error in console: Uncaught TypeError: Cannot read properties of undefined', async () => {
@@ -601,8 +582,10 @@ test.describe('Ketcher-3.10 Bugs', () => {
     });
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await rotateToCoordinates(page, { x: 10, y: 20 });
-    await resetSelection(page);
+    await RotationTool(page).moveRotationHandleTo({ x: 10, y: 20 });
+    await clickOnCanvas(page, 70, 90, {
+      from: 'pageTopLeft',
+    });
   });
   test('15.System throws error to console after every monomer creation', async () => {
     /*
@@ -662,7 +645,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );

@@ -3,7 +3,7 @@ import { test } from '@fixtures';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
@@ -35,11 +35,11 @@ test.describe('Ignore Chiral Flag', () => {
     await resetSettingsValuesToDefault(page);
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -53,11 +53,11 @@ test.describe('Ignore Chiral Flag', () => {
     const pointZ = 211;
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await cutAndPaste(page);
     await clickOnCanvas(page, pointY, pointZ, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -69,11 +69,11 @@ test.describe('Ignore Chiral Flag', () => {
     // Test case: EPMLSOPKET-16919
     await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.LAminoAcids,
       LAminoAcidsTemplate.ARGLArginine,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);

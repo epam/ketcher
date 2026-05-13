@@ -18,7 +18,7 @@ import { TextCreate, TextDelete, TextUpdate } from '../operations';
 
 import { Action } from './action';
 import { ReStruct } from '../../render';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
 export function fromTextCreation(
   restruct: ReStruct,

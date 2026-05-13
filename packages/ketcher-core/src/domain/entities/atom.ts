@@ -25,7 +25,6 @@ import {
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -870,7 +869,7 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
-    if (Atom.isHeteroAtom(this.label) && this.implicitHCount !== null) {
+    if (this.implicitHCount !== null) {
       return this.implicitHCount;
     }
     return hydrogenCount;
@@ -912,10 +911,15 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       }
     } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1 || charge === 2) return rad + conn;
-      } else if (label === 'Sb' || label === 'Bi' || label === 'As') {
-        if (charge === 1 || charge === 2) return rad + conn;
+      if (
+        (label === 'N' ||
+          label === 'P' ||
+          label === 'Sb' ||
+          label === 'Bi' ||
+          label === 'As') &&
+        (charge === 1 || charge === 2)
+      ) {
+        return rad + conn;
       }
     } else if (groupno === 6) {
       if (label === 'O') {
@@ -937,7 +941,9 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
+    const sgroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.atomId === atomId);
@@ -948,10 +954,15 @@ export class Atom extends BaseMicromoleculeEntity {
     atomId: number,
     searchBySgroups = false,
   ) {
-    const sgroup =
-      structOrSgroup instanceof SGroup
-        ? structOrSgroup
-        : structOrSgroup.getGroupFromAtomId(atomId, searchBySgroups);
+    let sgroup: SGroup | undefined;
+
+    if (Atom.isSGroup(structOrSgroup)) {
+      sgroup = structOrSgroup;
+    } else if (searchBySgroups) {
+      sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
+    } else {
+      sgroup = structOrSgroup.getGroupFromAtomId(atomId);
+    }
 
     return sgroup
       ?.getAttachmentPoints()
@@ -1066,23 +1077,31 @@ export class Atom extends BaseMicromoleculeEntity {
       struct,
       atomId,
     );
-    const sGroup = struct.getGroupFromAtomId(atomId, searchBySgroups);
-    const isMonomer = sGroup instanceof MonomerMicromolecule;
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
+    const isMonomer = sGroup?.isMonomer;
 
     if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
     }
 
-    return (
+    return Boolean(
       Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
-      attachmentAtomExternalConnections?.find((_, bond) =>
-        bond.begin === attachmentPoint?.atomId
-          ? bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber
-          : bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint?.attachmentPointNumber,
-      )
+        attachmentAtomExternalConnections?.find((_, bond) =>
+          bond.begin === attachmentPoint?.atomId
+            ? bond.beginSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber
+            : bond.endSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber,
+        ) !== null,
     );
+  }
+
+  private static isSGroup(
+    structOrSgroup: Struct | SGroup,
+  ): structOrSgroup is SGroup {
+    return structOrSgroup instanceof SGroup;
   }
 }
 

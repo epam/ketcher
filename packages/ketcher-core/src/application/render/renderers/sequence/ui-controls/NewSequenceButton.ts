@@ -1,6 +1,6 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
-import { CoreEditor } from 'application/editor';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';
@@ -23,7 +23,7 @@ export class NewSequenceButton {
   }
 
   public show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const chain =
       SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =
@@ -137,11 +137,17 @@ export class NewSequenceButton {
     this.buttonElement?.style('color', HOVER_COLOR);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
-  drawSelection(): void {}
+  drawSelection(): void {
+    // intentional no-op: this renderer type does not render a selection view
+  }
 
-  moveSelection(): void {}
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   protected removeHover(): void {
     this.buttonElement?.style('color', TEXT_COLOR);

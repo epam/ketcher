@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromElement, toElement } from '../../../../data/convert/structconv';
+import {
+  ElementFormData,
+  fromElement,
+  toElement,
+} from '../../../../data/convert/structconv';
 
 import { Dialog } from '../../../components';
 import GenericGroups from './components/GenericGroups';
@@ -53,12 +57,13 @@ const Table = (props: TableProps) => {
     return { type: 'gen', label: value, pseudo: value };
   };
 
-  const onAtomSelect = (label: string, activateImmediately = false): void => {
+  const onAtomSelect = (label: string): void => {
     setValue(label);
+  };
 
-    if (activateImmediately) {
-      props.onOk(result());
-    }
+  const onAtomActivate = (label: string): void => {
+    setValue(label);
+    props.onOk(result());
   };
 
   return (
@@ -75,6 +80,7 @@ const Table = (props: TableProps) => {
       <GenericGroups
         selected={selected}
         onAtomSelect={onAtomSelect}
+        onAtomActivate={onAtomActivate}
         disabledQueryElements={props.disabledQueryElements ?? null}
       ></GenericGroups>
     </Dialog>
@@ -105,7 +111,8 @@ function mapSelectionToProps(editor: Editor): Partial<StateProps> {
   if (selection?.atoms?.length === 1) {
     const struct = editor.struct();
     const atom = struct.atoms.get(selection.atoms[0]);
-    return { ...fromElement(atom) };
+    if (!atom) return {};
+    return { ...fromElement(atom) } as Partial<StateProps>;
   }
 
   return {};
@@ -124,7 +131,12 @@ const mapDispatchToProps = (
   return {
     onOk: (result: unknown) => {
       if (!ownProps.isNestedModal) {
-        dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+        dispatch(
+          onAction({
+            tool: 'atom',
+            opts: toElement(result as ElementFormData),
+          }),
+        );
       }
       ownProps.onOk(result);
     },

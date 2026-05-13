@@ -7,7 +7,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeTopToolbarScreenshot,
   waitForRender,
@@ -33,7 +33,7 @@ test.describe('3D Viewer', () => {
     Position of structure on the canvas is not changed. 
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await dragMouseAndMoveTo(page, 20);
     await waitForRender(page, async () => {
@@ -131,7 +131,7 @@ test.describe('3D Viewer', () => {
     */
     // we need remove or block the variable number of frames per second in the lower right corner
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
@@ -149,7 +149,7 @@ test.describe('3D Viewer', () => {
     Position of the structure on the canvas is changed. 
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     const initialStructureData = await getKet(page);
     await IndigoFunctionsToolbar(page).threeDViewer();
     await moveMouseToTheMiddleOfTheScreen(page);

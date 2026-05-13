@@ -13,7 +13,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
 import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -30,9 +30,14 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-2865
      * Description: Verifying of the button
      */
-    const button = page.getByTestId(ReactionMappingType.ReactionMapping);
-    await button.click();
-    expect(button).toHaveAttribute('title', 'Reaction Mapping Tool');
+    const reactionMappingToolsButton = page.getByTestId(
+      ReactionMappingType.ReactionMapping,
+    );
+    await reactionMappingToolsButton.click();
+    expect(reactionMappingToolsButton).toHaveAttribute(
+      'title',
+      'Reaction Mapping Tool',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +66,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickOnCanvas(page, point2.x, point2.y, { from: 'pageCenter' });
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
@@ -79,7 +84,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       ReactionMappingType.ReactionAutoMapping,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('automap-mode-input-span').click();
+    await ReactionAutoMappingDialog(page).modeDropdown.click();
     await takeEditorScreenshot(page);
   });
 

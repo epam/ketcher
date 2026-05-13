@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { setExpandMonomerSGroup } from 'application/editor/actions/sgroup';
+import {
+  fromSgroupDeletion,
+  setExpandMonomerSGroup,
+} from 'application/editor/actions/sgroup';
 import { Render } from 'application/render';
 import { RenderOptions } from 'application/render/render.types';
 import { ReStruct } from 'application/render/restruct';
@@ -27,6 +30,7 @@ import {
   Vec2,
 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { prepareStructForKet } from 'domain/serializers/ket/toKet/prepare';
 import { Peptide } from 'domain/entities/Peptide';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { peptideMonomerItem } from '../../../mock-data';
@@ -154,5 +158,50 @@ describe('setExpandMonomerSGroup', () => {
     setExpandMonomerSGroup(restruct, firstMonomerSGroupId, { expanded: false });
 
     expect(struct.bonds.get(bondId)?.stereo).toBe(Bond.PATTERN.STEREO.DOWN);
+  });
+
+  it('keeps connected monomers in one fragment after removing abbreviations', () => {
+    const struct = new Struct();
+    const atom1Id = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(0, 0) }),
+    );
+    const atom2Id = struct.atoms.add(
+      new Atom({ label: 'P', pp: new Vec2(1, 0) }),
+    );
+    const bondId = struct.bonds.add(
+      new Bond({
+        begin: atom1Id,
+        end: atom2Id,
+        type: Bond.PATTERN.TYPE.SINGLE,
+      }),
+    );
+    struct.bondInitHalfBonds(bondId);
+    struct.initNeighbors();
+
+    const firstMonomerSGroupId = createMonomerSGroup(struct, atom1Id);
+    const secondMonomerSGroupId = createMonomerSGroup(struct, atom2Id);
+
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+
+    fromSgroupDeletion(restruct, firstMonomerSGroupId);
+    fromSgroupDeletion(restruct, secondMonomerSGroupId);
+
+    expect(struct.atoms.get(atom1Id)?.fragment).toBe(
+      struct.atoms.get(atom2Id)?.fragment,
+    );
+
+    const moleculeNodes = prepareStructForKet(struct).filter(
+      (item) => item.type === 'molecule',
+    );
+
+    expect(moleculeNodes).toHaveLength(1);
+    expect(moleculeNodes[0].fragment?.atoms.size).toBe(2);
+    expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
   });
 });

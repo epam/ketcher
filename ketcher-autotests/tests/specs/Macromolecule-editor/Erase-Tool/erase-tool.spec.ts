@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
@@ -28,7 +28,7 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -99,16 +99,14 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Erase button tooltip is located in the left toolbar.
     */
-    const icon = {
+    const eraseButton = {
       testId: 'erase',
       title: 'Erase (Del)',
     };
-    const iconButton = page
-      .getByTestId(icon.testId)
-      .filter({ has: page.locator(':visible') });
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    const button = CommonLeftToolbar(page).eraseButton;
+    await expect(button).toHaveAttribute('title', eraseButton.title);
+    await button.hover();
+    expect(eraseButton.title).toBeTruthy();
   });
 
   test('Check that RNA and its bonds are deleted when deleting monomer from RNA chain using Erase Tool', async ({
@@ -153,7 +151,7 @@ test.describe('Erase Tool', () => {
     Description: Bond between two CHEMs are deleted.
     */
     const bondLine = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -172,13 +170,12 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted and restored.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasAsNewProject(
       page,
       `KET/two-chems-connected.ket`,
     );
     await CommonLeftToolbar(page).erase();
-    await bondLine.click();
+    await getBondLocator(page, {}).first().click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -326,11 +323,11 @@ test.describe('Erase Tool', () => {
     );
     await CommonLeftToolbar(page).erase();
     await CommonTopRightToolbar(page).selectZoomInTool(5);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await getMonomerLocator(page, Peptide.Bal).click();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(8);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await getMonomerLocator(page, Peptide.D_2Nal).click();
     await takeEditorScreenshot(page);
   });
@@ -351,7 +348,7 @@ test.describe('Erase Tool', () => {
       }
     });
     await CommonLeftToolbar(page).erase();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Erasing some parts of monomer structure, save it to .ket file and then open it', async ({

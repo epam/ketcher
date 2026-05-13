@@ -1,11 +1,12 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
 import {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -14,7 +15,6 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
@@ -82,8 +82,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
-  moveSelection(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
+
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   public get currentChain() {
     return this.chain;
@@ -119,23 +124,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditMode;
+    return provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private get isAntisenseEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+    return provideEditorInstance().mode.isAntisenseEditMode;
   }
 
   private get isSyncEditMode() {
-    const editorMode = CoreEditor.provideEditorInstance().mode;
-
-    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
+    return provideEditorInstance().mode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -146,7 +147,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('data-testid', 'sequence-item')
       .attr('data-symbol-id', this.node.monomer.id)
       .attr('data-chain-id', this.chain.id)
-      // .attr('data-symbol-count', this.chain.id)
+      .attr('data-symbol-alias', this.symbolToDisplay)
       .attr(
         'data-side-connection-number',
         this.node.monomers.reduce(
@@ -396,7 +397,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           !this.hasAntisenseInChain ||
           !(
             this.counterNumber > 9 &&
-            this.isNextSymbolEditing(editingNodeIndexOverall)
+            (this.isNextSymbolEditing(editingNodeIndexOverall) ||
+              this.isEditingSymbol(editingNodeIndexOverall))
           )) &&
           (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
@@ -743,7 +745,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
@@ -768,27 +770,48 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.removeSelection();
   }
 
-  public setEnumeration() {}
-  public redrawEnumeration() {}
-  public redrawAttachmentPoints() {}
-  public redrawAttachmentPointsCoordinates() {}
+  public setEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawEnumeration() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
   public get enumeration() {
     return null;
   }
 
-  public redrawChainBeginning() {}
-  public hoverAttachmentPoint(): void {}
-  public updateAttachmentPoints() {}
+  public redrawChainBeginning() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public hoverAttachmentPoint(): void {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
+
+  public updateAttachmentPoints() {
+    // intentional no-op: default base implementation; subclasses override when behavior is needed
+  }
 
   public drawBackgroundElementHover() {
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
 
-    this.backgroundElement?.attr(
-      'fill',
-      this.node.monomer.selected ? 'none' : '#E1E8E9',
-    );
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr('fill', '#35f073');
+    } else {
+      this.backgroundElement?.attr('fill', '#E1E8E9');
+    }
 
     if (this.node.modified) {
       this.drawModification();
@@ -796,7 +819,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public removeBackgroundElementHover() {
-    this.backgroundElement?.attr('fill', 'none');
+    if (this.node.monomer.selected) {
+      this.selectionRectangle?.attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#99D6DC'
+          : SELECTION_COLOR,
+      );
+    } else {
+      this.backgroundElement?.attr('fill', 'none');
+    }
 
     if (this.node.modified) {
       this.drawModification();

@@ -1,8 +1,8 @@
 import svgPath from 'svgpath';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
-import { provideEditorSettings } from 'application/editor';
-import { Vec2 } from 'domain/entities';
-import { tfx } from 'utilities';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Vec2 } from 'domain/entities/vec2';
+import { toFixed } from 'utilities';
 
 export class EllipticalArcOpenHalfAngleArrowRenderer {
   static preparePaths(
@@ -19,11 +19,11 @@ export class EllipticalArcOpenHalfAngleArrowRenderer {
     const width = direction * arrowHeadWidth;
     const endX = start.x + arrowLength;
     const path =
-      `M${tfx(start.x)},${tfx(start.y)}` +
-      `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0}, ${tfx(
-        endX,
-      )},${tfx(start.y)}` +
-      `L${tfx(endX + width)}, ${tfx(start.y - length)}`;
+      `M${toFixed(start.x)},${toFixed(start.y)}` +
+      `A${arrowLength / 2},${height},${0},${0},${
+        direction > 0 ? 1 : 0
+      }, ${toFixed(endX)},${toFixed(start.y)}` +
+      `L${toFixed(endX + width)}, ${toFixed(start.y - length)}`;
 
     const transformedPath = svgPath(path)
       .rotate(arrowAngle, start.x, start.y)

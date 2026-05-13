@@ -26,11 +26,14 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { IKetTemplateConnection } from 'application/formatters';
+import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
+  connections: IKetTemplateConnection[] | undefined;
 
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;
@@ -54,8 +57,12 @@ class RnaPresetTool implements Tool {
     if (preset?.phosphate) {
       this.phosphate = preset?.phosphate;
     }
+    this.connections = preset?.connections || [];
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
+    }
+    if (preset?.connections) {
+      this.connections = preset?.connections;
     }
     this.history = EditorHistory.getInstance(this.editor);
   }
@@ -64,6 +71,20 @@ class RnaPresetTool implements Tool {
     if (!this.sugar || !this.sugarPreviewRenderer) {
       this.editor.events.error.dispatch('No sugar in RNA preset found');
       return;
+    }
+
+    let phosphatePosition: Vec2 | undefined;
+    if (this.phosphatePreviewRenderer) {
+      const phosphateOffset =
+        getRnaPresetPhosphatePosition(this) === 'left'
+          ? -SnakeLayoutCellWidth
+          : SnakeLayoutCellWidth;
+      phosphatePosition = Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPositionOfCanvas.x + phosphateOffset,
+          this.editor.lastCursorPositionOfCanvas.y,
+        ),
+      );
     }
 
     const { command: modelChanges, monomers } =
@@ -76,14 +97,7 @@ class RnaPresetTool implements Tool {
           ),
         ),
         phosphate: this.phosphate,
-        phosphatePosition: this.phosphatePreviewRenderer
-          ? Coordinates.canvasToModel(
-              new Vec2(
-                this.editor.lastCursorPositionOfCanvas.x + SnakeLayoutCellWidth,
-                this.editor.lastCursorPositionOfCanvas.y,
-              ),
-            )
-          : undefined,
+        phosphatePosition,
         rnaBase: this.rnaBase,
         rnaBasePosition: this.rnaBasePreviewRenderer
           ? Coordinates.canvasToModel(
@@ -93,6 +107,7 @@ class RnaPresetTool implements Tool {
               ),
             )
           : undefined,
+        connections: this.connections,
       });
 
     this.history.update(modelChanges);
@@ -131,7 +146,9 @@ class RnaPresetTool implements Tool {
         new Vec2(
           this.editor.lastCursorPosition.x +
             this.MONOMER_PREVIEW_OFFSET_X +
-            this.PHOSPHATE_PREVIEW_OFFSET_X,
+            (getRnaPresetPhosphatePosition(this) === 'left'
+              ? -this.PHOSPHATE_PREVIEW_OFFSET_X
+              : this.PHOSPHATE_PREVIEW_OFFSET_X),
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
         ),
       ),

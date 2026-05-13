@@ -67,7 +67,7 @@ class TextTool implements Tool {
 
       this.dragCtx.action = fromMultipleMove(
         render.ctab,
-        this.editor.selection() || {},
+        this.editor.selection() ?? {},
         CoordinateTransformation.pageToModel(event, render).sub(
           this.dragCtx.xy0,
         ),

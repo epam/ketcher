@@ -20,11 +20,12 @@ import classes from './Input.module.less';
 import clsx from 'clsx';
 
 type Props = {
+  name?: string;
   component?: ComponentType;
   children?: React.ReactNode;
   className?: string;
-  type: string;
-  value: number | string | boolean;
+  type?: string;
+  value?: unknown;
   onChange: (val: any) => void;
   placeholder?: string;
   isFocused?: boolean;

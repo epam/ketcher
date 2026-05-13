@@ -28,7 +28,7 @@ import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
-import { useCallback, useMemo } from 'react';
+import { cloneElement, useCallback, useMemo } from 'react';
 import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -68,6 +68,7 @@ export interface PanelProps {
   onAbout: VoidFunction;
   onHelp: VoidFunction;
   togglerComponent?: JSX.Element;
+  isModeSwitcherDisabled: boolean;
   customButtons: Array<CustomButton>;
 }
 
@@ -155,6 +156,7 @@ export const TopToolbar = ({
   onAbout,
   onHelp,
   togglerComponent,
+  isModeSwitcherDisabled,
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
@@ -176,6 +178,11 @@ export const TopToolbar = ({
   }, [customButtons.length]);
 
   const isCollapsed = width < collapseLimitWithCustomButtons;
+  const renderedTogglerComponent = togglerComponent
+    ? cloneElement(togglerComponent, {
+        disabled: isModeSwitcherDisabled,
+      })
+    : undefined;
 
   return (
     <ControlsPanel
@@ -240,8 +247,8 @@ export const TopToolbar = ({
         />
       </BtnsWpapper>
       <BtnsWpapper>
-        {togglerComponent}
-        {togglerComponent && <Divider />}
+        {renderedTogglerComponent}
+        {renderedTogglerComponent && <Divider />}
 
         <SystemControls
           onSettingsOpen={onSettingsOpen}

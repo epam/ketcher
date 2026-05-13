@@ -2,7 +2,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { NucleotideNaturalAnalogCount } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
@@ -24,9 +24,6 @@ let page: Page;
 test.describe('Color of Nucleobases', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
-  });
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
   });
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -132,6 +129,7 @@ test.describe('Color of Nucleobases', () => {
        */
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).selectMonomer(nucleotide);
+      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -306,23 +304,23 @@ test.describe('Color of Nucleobases', () => {
       {
         file: 'KET/ACGTUX-bases.ket',
         options: [
-          'A-option',
-          'C-option',
-          'G-option',
-          'T-option',
-          'U-option',
-          'Other-option',
+          NucleotideNaturalAnalogCount.A,
+          NucleotideNaturalAnalogCount.C,
+          NucleotideNaturalAnalogCount.G,
+          NucleotideNaturalAnalogCount.T,
+          NucleotideNaturalAnalogCount.U,
+          NucleotideNaturalAnalogCount.Other,
         ],
       },
       {
         file: 'KET/ACGTUX-nucleotides.ket',
         options: [
-          'A-option',
-          'C-option',
-          'G-option',
-          'T-option',
-          'U-option',
-          'Other-option',
+          NucleotideNaturalAnalogCount.A,
+          NucleotideNaturalAnalogCount.C,
+          NucleotideNaturalAnalogCount.G,
+          NucleotideNaturalAnalogCount.T,
+          NucleotideNaturalAnalogCount.U,
+          NucleotideNaturalAnalogCount.Other,
         ],
       },
     ];

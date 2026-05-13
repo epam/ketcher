@@ -48,5 +48,13 @@
       }
     ],
     "curly": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/fixtures/**/*.ts"],
+      "rules": {
+        "no-empty-pattern": "off"
+      }
+    }
+  ]
 }

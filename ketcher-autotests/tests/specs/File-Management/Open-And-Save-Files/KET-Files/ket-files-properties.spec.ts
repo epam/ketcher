@@ -5,6 +5,7 @@ import {
   GeneralSetting,
   MeasurementUnit,
 } from '@tests/pages/constants/settingsDialog/Constants';
+import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import {
   setACSSettings,
   setSettingsOptions,
@@ -411,10 +412,10 @@ test.describe('Ket files', () => {
       );
       await SettingsDialog(page).apply();
 
-      const youNeedToApplyTheLayoutDialog = page.getByText(
+      await expect(InfoMessageDialog(page).infoModalBody).toHaveText(
         'To fully apply these changes, you need to apply the layout.',
       );
-      await expect(youNeedToApplyTheLayoutDialog).toBeVisible();
+      await InfoMessageDialog(page).ok();
     },
   );
 });

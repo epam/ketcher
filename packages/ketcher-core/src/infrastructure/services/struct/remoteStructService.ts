@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -48,7 +48,7 @@ import {
 } from 'domain/services';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -87,7 +87,7 @@ function request(
     method,
     headers: {
       Accept: 'application/json',
-      ...(headers || {}),
+      ...(headers ?? {}),
     },
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
@@ -120,11 +120,11 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = { ...(data || {}) };
+    const body = { ...(data ?? {}) };
     body.options = {
-      ...(body.options || {}),
-      ...(defaultOptions || {}),
-      ...(options || {}),
+      ...(body.options ?? {}),
+      ...(defaultOptions ?? {}),
+      ...(options ?? {}),
     };
     return request(
       method,
@@ -239,7 +239,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryParsedJson,
     );
     const expandedOptions = {
       monomerLibrary,

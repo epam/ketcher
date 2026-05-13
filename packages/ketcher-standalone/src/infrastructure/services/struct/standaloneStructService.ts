@@ -53,7 +53,6 @@ import {
   CleanResult,
   ConvertData,
   ConvertResult,
-  CoreEditor,
   DearomatizeData,
   DearomatizeResult,
   ExplicitHydrogensData,
@@ -69,6 +68,7 @@ import {
   pickStandardServerOptions,
   CalculateMacromoleculePropertiesData,
   CalculateMacromoleculePropertiesResult,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -265,7 +265,7 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
         if (!msg.hasError) {
-          resolve(msg.payload || '');
+          resolve(msg.payload ?? '');
         } else {
           reject(new Error(msg.error));
         }
@@ -333,7 +333,7 @@ class IndigoService implements StructService {
         }
       };
       const monomerLibrary = JSON.stringify(
-        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+        provideEditorInstance()?.monomersLibraryParsedJson,
       );
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),
@@ -462,7 +462,7 @@ class IndigoService implements StructService {
         struct,
         format,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CleanCommandData> = {
@@ -704,7 +704,7 @@ class IndigoService implements StructService {
         struct,
         properties,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CalculateCommandData> = {

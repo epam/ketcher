@@ -25,7 +25,9 @@ export function fileOpener(server) {
         const fso = new ActiveXObject('Scripting.FileSystemObject'); // eslint-disable-line no-undef
         resolve((file) => Promise.resolve(throughFileSystemObject(fso, file)));
       } catch (e) {
-        reject(e);
+        reject(
+          e instanceof Error ? e : new Error('Failed to open file via ActiveX'),
+        );
       }
     } else if (server) {
       resolve(
@@ -92,8 +94,8 @@ function throughFileReader(file) {
       resolve(content);
     };
 
-    rd.onerror = (event) => {
-      reject(event);
+    rd.onerror = () => {
+      reject(new Error(`Failed to read file: ${file.name}`));
     };
     switch (fileType) {
       case CDX:

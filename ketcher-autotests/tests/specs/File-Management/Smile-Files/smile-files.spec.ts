@@ -4,7 +4,7 @@ import { Page, expect, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
@@ -18,6 +18,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 
 let page: Page;
 test.describe('SMILES files', () => {
@@ -54,7 +55,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +82,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -126,7 +127,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -149,7 +150,7 @@ test.describe('SMILES files', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
 
     await pasteFromClipboardAndAddToCanvas(page, 'NOSPFClBrI[H]');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -181,7 +182,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCC[C@@H](C)[C@@H](C)CC |SgD:4,5:Purity:Purity = 96%::: :|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -207,7 +208,7 @@ test.describe('SMILES files', () => {
       page,
       '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -236,7 +237,7 @@ test.describe('SMILES files', () => {
       page,
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,SgD:8:Purity:Purity = 50%::: :,rb:32:*,u:3|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -261,7 +262,7 @@ test.describe('SMILES files', () => {
       page,
       'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -283,38 +284,35 @@ test.describe('SMILES files', () => {
       page,
       'CCCC*CC |$;;alias123;;GH*;;$|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'SmileString from reaction consists of two or more reaction arrows and structures',
-    async () => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
-       * Test case: EPMLSOPKET-8905
-       * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
-       * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
-       */
-      await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
-      await verifyFileExport(
-        page,
-        'SMILES/smiles-two-arrows-and-plus-expected.smi',
-        FileType.SMILES,
-      );
-      await verifySMILESExport(
-        page,
-        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-      );
-      await CommonTopLeftToolbar(page).clearCanvas();
-      await pasteFromClipboardAndAddToCanvas(
-        page,
-        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-      );
-      await clickInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('SmileString from reaction consists of two or more reaction arrows and structures', async () => {
+    /*
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
+     * Test case: EPMLSOPKET-8905
+     * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
+     * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
+     */
+    await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
+    await verifyFileExport(
+      page,
+      'SMILES/smiles-two-arrows-and-plus-expected.smi',
+      FileType.SMILES,
+    );
+    await verifySMILESExport(
+      page,
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+    );
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Open Daylight SMILES file with reagent above arrow', async () => {
     /*
@@ -338,7 +336,7 @@ test.describe('SMILES files', () => {
     await verifySMILESExport(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -358,14 +356,14 @@ test.describe('SMILES files', () => {
       'SMILES/structure-with-s-group-properties.smi',
       FileType.SMILES,
     );
-    await page.getByText('info2').dblclick();
+    await getSGroupLabelLocator(page, { labelText: 'info2' }).dblclick();
     await SGroupPropertiesDialog(page).cancel();
     await CommonTopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(
       page,
       'CCC |SgD:1:atropisomer:info2::::|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await takeEditorScreenshot(page);
   });
@@ -622,31 +620,27 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back',
-    async () => {
-      /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
-    We have a bug https://github.com/epam/Indigo/issues/2210
-    */
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back', async () => {
+    /*
+     * Test case: #2071
+     * Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+     */
 
-      await openFileAndAddToCanvas(
-        page,
-        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      );
-      await verifyFileExport(
-        page,
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        FileType.SMILES,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        page,
-        'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      page,
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+    );
+    await verifyFileExport(
+      page,
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+      FileType.SMILES,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async () => {
     /*

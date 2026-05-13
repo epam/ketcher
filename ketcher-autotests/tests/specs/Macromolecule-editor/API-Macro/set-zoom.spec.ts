@@ -6,7 +6,7 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   setZoom,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 
 test.describe('setZoom', () => {
@@ -38,7 +38,7 @@ test.describe('setZoom', () => {
 
       if (adjustZoom) {
         await CommonTopRightToolbar(page).selectZoomInTool(3);
-        await clickInTheMiddleOfTheScreen(page);
+        await clickInTheMiddleOfTheCanvas(page);
         await takeEditorScreenshot(page);
       }
 

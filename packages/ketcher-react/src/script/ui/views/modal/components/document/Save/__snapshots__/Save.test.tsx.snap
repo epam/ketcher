@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Save Dialog should be rendered correctly should render opened file format dropdown when the closed dropdown is clicked 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body
     style="padding-right: 1024px; overflow: hidden;"
@@ -9,12 +9,11 @@ Object {
     <div
       aria-hidden="true"
     >
-      <div
+      <dialog
         class="dialog dialog"
         data-testid="info-modal-window"
-        role="dialog"
+        open=""
         tabindex="-1"
-        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -183,7 +182,7 @@ Object {
             Save
           </button>
         </footer>
-      </div>
+      </dialog>
     </div>
     <div
       class="MuiPopover-root MuiMenu-root dropdownList MuiModal-root css-10nakn3-MuiModal-root-MuiPopover-root-MuiMenu-root"
@@ -193,7 +192,7 @@ Object {
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiBackdrop-invisible MuiModal-backdrop css-g3hgs1-MuiBackdrop-root-MuiModal-backdrop"
-        style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 1; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -421,12 +420,11 @@ Object {
   "container": <div
     aria-hidden="true"
   >
-    <div
+    <dialog
       class="dialog dialog"
       data-testid="info-modal-window"
-      role="dialog"
+      open=""
       tabindex="-1"
-      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"
@@ -595,7 +593,7 @@ Object {
           Save
         </button>
       </footer>
-    </div>
+    </dialog>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],

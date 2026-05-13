@@ -1,4 +1,5 @@
 import {
+  Action,
   CoordinateTransformation,
   Struct,
   Vec2,
@@ -8,6 +9,7 @@ import {
   getItemsToFuse,
 } from 'ketcher-core';
 import { dropAndMerge } from '../tool/helper/dropAndMerge';
+import { ClosestItemWithMap } from '../shared/closest.types';
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -37,14 +39,11 @@ export default class FragmentSelectionTool implements Tool {
   private dragCtx?: {
     item?: { map: string; id: number };
     xy0: Vec2;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    action?: any;
+    action?: Action | null;
     mergeItems?: ReturnType<typeof getItemsToFuse>;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    copyAction?: any;
+    copyAction?: Action;
     stopTapping?: () => void;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    closestItem?: any;
+    closestItem?: ClosestItemWithMap | null;
   } | null;
 
   constructor(editor: Editor) {
@@ -53,7 +52,7 @@ export default class FragmentSelectionTool implements Tool {
 
   mousedown(event: PointerEvent) {
     if (this.disabledMessage) {
-      return true;
+      return;
     }
 
     // If we have preview ready, apply selection logic as before
@@ -70,7 +69,7 @@ export default class FragmentSelectionTool implements Tool {
       this.editor.selection(mergedSelection);
       this.editor.rotateController.rerender();
 
-      return true;
+      return;
     }
 
     // No preview: initialize dragging on closest item (atoms/bonds/frags) similar to select.ts
@@ -83,7 +82,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (!ci) {
       this.editor.selection({});
-      return true;
+      return;
     }
 
     // Initialize drag context
@@ -106,8 +105,6 @@ export default class FragmentSelectionTool implements Tool {
     }
     const selection = this.editor.selection();
     this.editor.selection(selMerge(sel, selection, true));
-
-    return true;
   }
 
   mouseup() {
@@ -160,7 +157,7 @@ export default class FragmentSelectionTool implements Tool {
       editor.hover(getHoverToFuse(this.dragCtx.mergeItems));
 
       editor.update(this.dragCtx.action, true);
-      return true;
+      return;
     }
 
     this.removeBondPreview();
@@ -181,7 +178,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (!reBond || reBond.selected) {
       this.resetPreview();
-      return true;
+      return;
     }
 
     const struct = restruct.molecule;
@@ -190,7 +187,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (!halfBondBegin?.p || !halfBondEnd?.p) {
       this.resetPreview();
-      return true;
+      return;
     }
 
     const pointer = CoordinateTransformation.pageToModel(
@@ -202,7 +199,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (!beginAtom || !endAtom) {
       this.resetPreview();
-      return true;
+      return;
     }
 
     const startAtomId =
@@ -213,12 +210,12 @@ export default class FragmentSelectionTool implements Tool {
 
     if (componentData.componentAtoms.has(startAtomId)) {
       this.setDisabledState(COMPONENT_TOOLTIP);
-      return true;
+      return;
     }
 
     if (this.isBondInCycle(struct, bondItem.id)) {
       this.setDisabledState(CYCLE_TOOLTIP);
-      return true;
+      return;
     }
 
     const blockedBonds = new Set<number>(componentData.componentBonds);
@@ -240,7 +237,7 @@ export default class FragmentSelectionTool implements Tool {
     this.editor.hover(null, this);
 
     if (!preview.atoms.length && !preview.bonds.length) {
-      return true;
+      return;
     }
 
     this.editor.hover(
@@ -255,8 +252,6 @@ export default class FragmentSelectionTool implements Tool {
       this.editor.render,
       startAtomId,
     );
-
-    return true;
   }
 
   mouseleave() {

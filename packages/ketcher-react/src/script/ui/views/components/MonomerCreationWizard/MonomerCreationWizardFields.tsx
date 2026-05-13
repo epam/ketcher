@@ -7,7 +7,7 @@ import {
   ketcherProvider,
   KetMonomerClass,
 } from 'ketcher-core';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -23,6 +23,7 @@ import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -33,9 +34,18 @@ import { Autocomplete, TextField } from '@mui/material';
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  readonlyAttachmentPoints?: Array<{
+    name: AttachmentPointName;
+    leavingAtomLabel: AtomLabel;
+  }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
+  onReadonlyLeavingAtomChange?: (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => void;
   showNaturalAnalogue?: boolean;
+  attachmentPointsExtra?: ReactNode;
 }
 
 interface ModificationTypeItem {
@@ -52,8 +62,11 @@ const MonomerCreationWizardFields = (
   const {
     wizardState,
     assignedAttachmentPoints,
+    readonlyAttachmentPoints = [],
     onChangeModificationTypes,
     onFieldChange,
+    onReadonlyLeavingAtomChange,
+    attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
   const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
@@ -195,6 +208,11 @@ const MonomerCreationWizardFields = (
       <div
         className={clsx(styles.attributesFields, selectStyles.selectContainer)}
       >
+        {attachmentPointsExtra && (
+          <div className={styles.attachmentPointsExtra}>
+            {attachmentPointsExtra}
+          </div>
+        )}
         <div className={styles.attachmentPointsHeader}>
           <p className={styles.attachmentPointsTitle}>Attachment points</p>
           <span
@@ -205,7 +223,8 @@ const MonomerCreationWizardFields = (
             <Icon name="about" />
           </span>
         </div>
-        {assignedAttachmentPoints.size > 0 && (
+        {(assignedAttachmentPoints.size > 0 ||
+          readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
             {Array.from(assignedAttachmentPoints.entries()).map(
               ([name, atomPair]) => (
@@ -219,6 +238,17 @@ const MonomerCreationWizardFields = (
                 />
               ),
             )}
+            {readonlyAttachmentPoints.map(
+              ({ name: attachmentPointName, leavingAtomLabel }) => (
+                <ReadonlyAttachmentPoint
+                  key={`readonly-${attachmentPointName}`}
+                  name={attachmentPointName}
+                  leavingAtomLabel={leavingAtomLabel}
+                  editor={editor}
+                  onLeavingAtomChange={onReadonlyLeavingAtomChange}
+                />
+              ),
+            )}
           </div>
         )}
       </div>
@@ -227,7 +257,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square
@@ -294,7 +324,7 @@ const MonomerCreationWizardFields = (
         <>
           <div className={styles.divider} />
 
-          <div>
+          <div className={styles.accordionContainer}>
             <Accordion
               className={clsx(accordionClasses.accordion, styles.accordion)}
               square

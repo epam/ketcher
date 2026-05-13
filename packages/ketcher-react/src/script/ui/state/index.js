@@ -62,7 +62,8 @@ function getRootReducer(setEditor) {
       case 'INIT': {
         setEditor(action.editor);
         // Extract action data (excluding type) and merge into state
-        const { type: _type, ...data } = action;
+        const data = { ...action };
+        delete data.type;
         if (data) {
           updatedState = { ...updatedState, ...data };
         }
@@ -75,7 +76,8 @@ function getRootReducer(setEditor) {
       }
 
       case 'UPDATE': {
-        const { type: _type, ...data } = action;
+        const data = { ...action };
+        delete data.type;
         if (data) {
           updatedState = { ...updatedState, ...data };
         }

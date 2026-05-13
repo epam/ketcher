@@ -1,7 +1,7 @@
 import {
   MultitailArrowReferenceLinesNames,
   MultitailArrowReferencePositionsNames,
-} from 'domain/entities';
+} from 'domain/entities/multitailArrow';
 
 export const MULTITAIL_ARROW_KEY = 'multitailArrows';
 

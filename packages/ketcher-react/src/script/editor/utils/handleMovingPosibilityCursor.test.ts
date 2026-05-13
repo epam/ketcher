@@ -14,7 +14,7 @@ describe('handleMovingPosibilityCursor', () => {
         setAttribute: mockSetAttribute,
       } as unknown as SVGElement;
       handleMovingPosibilityCursor(mockItem, mockCanvas, mockIsCursorShown);
-      expect(mockRemoveAttribute).toBeCalled();
+      expect(mockRemoveAttribute).toHaveBeenCalled();
     });
   });
   describe('When cursor isnt shown and hover item is present', () => {
@@ -27,7 +27,7 @@ describe('handleMovingPosibilityCursor', () => {
         setAttribute: mockSetAttribute,
       } as unknown as SVGElement;
       handleMovingPosibilityCursor(mockItem, mockCanvas, mockIsCursorShown);
-      expect(mockSetAttribute).toBeCalled();
+      expect(mockSetAttribute).toHaveBeenCalled();
     });
   });
 });

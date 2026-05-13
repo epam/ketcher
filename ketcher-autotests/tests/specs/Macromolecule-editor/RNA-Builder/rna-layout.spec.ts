@@ -1,10 +1,10 @@
 import { Page, test } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot } from '@utils';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 
-/* 
+/*
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
@@ -24,11 +24,11 @@ test.describe('RNA layout', () => {
   test('Each panel is collapsed', async ({ page }) => {
     await Library(page).rnaBuilder.collapse();
     await Library(page).rnaTab.presetsSection.click();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('RNA Builder panel is collapsed', async ({ page }) => {
     await Library(page).rnaBuilder.collapse();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 });

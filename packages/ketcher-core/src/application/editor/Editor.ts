@@ -377,7 +377,7 @@ export class CoreEditor {
       return (
         firstMonomer.props.MonomerName === secondMonomer.props.MonomerName &&
         firstMonomer.props.MonomerClass === secondMonomer.props.MonomerClass &&
-        firstMonomer.props.Name === secondMonomer.props.Name
+        firstMonomer.props.hidden === secondMonomer.props.hidden
       );
     };
     const formatAliasDetails = (monomer: MonomerItemType) =>

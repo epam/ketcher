@@ -738,6 +738,7 @@ export class SequenceRenderer {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition ?? this.caretPosition,
+      SequenceRenderer.setCaretPosition.bind(SequenceRenderer),
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
@@ -748,6 +749,7 @@ export class SequenceRenderer {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition ?? this.caretPosition,
+      SequenceRenderer.setCaretPosition.bind(SequenceRenderer),
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 

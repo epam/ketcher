@@ -1,4 +1,4 @@
-import { SnakeMode } from 'application/editor';
+import { SnakeMode } from 'application/editor/modes/SnakeMode';
 import { editorEvents } from 'application/editor/editorEvents';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';

@@ -225,6 +225,19 @@ async function copy(data) {
       }
     } else {
       await navigator.clipboard.write([clipboardItem]);
+      // Chrome/Firefox: clipboard.write can resolve before contents are
+      // durable. A subsequent paste then sees Blobs of the right MIME type
+      // but empty content, sending an empty struct to /indigo/layout. Force
+      // the write to fully commit by reading back each entry's bytes here.
+      const readBack = await navigator.clipboard.read();
+      for (const item of readBack) {
+        for (const t of item.types) {
+          // eslint-disable-next-line no-await-in-loop
+          const b = await item.getType(t);
+          // eslint-disable-next-line no-await-in-loop
+          await b.text();
+        }
+      }
     }
   } catch (e) {
     KetcherLogger.error('cliparea.jsx::copy', e);

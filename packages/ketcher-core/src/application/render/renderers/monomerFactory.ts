@@ -14,14 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerOrAmbiguousType } from 'domain/types';
+import { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 import { monomerRendererFactory } from './monomerRendererFactory';
-import { MonomerEntityClass } from 'domain/helpers/monomerEntityFactory';
+import {
+  MonomerEntityClass,
+  ConcreteMonomerEntityClass,
+} from 'domain/helpers/monomerEntityFactory';
 
 type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
 
@@ -33,13 +36,27 @@ type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
  * The old location (application/editor/operations/monomer/monomerFactory) is
  * kept as a re-export shim for backward compatibility.
  */
-export const monomerFactory = (
+export function monomerFactory(
+  monomer: MonomerItemType,
+): [
+  EntityClass: ConcreteMonomerEntityClass,
+  RendererClass: DerivedRendererClass,
+  ketMonomerClass: KetMonomerClass,
+];
+export function monomerFactory(
   monomer: MonomerOrAmbiguousType,
 ): [
   EntityClass: MonomerEntityClass,
   RendererClass: DerivedRendererClass,
   ketMonomerClass: KetMonomerClass,
-] => {
+];
+export function monomerFactory(
+  monomer: MonomerOrAmbiguousType,
+): [
+  EntityClass: MonomerEntityClass,
+  RendererClass: DerivedRendererClass,
+  ketMonomerClass: KetMonomerClass,
+] {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [
       AmbiguousMonomer,
@@ -48,4 +65,4 @@ export const monomerFactory = (
     ];
   }
   return monomerRendererFactory(monomer);
-};
+}

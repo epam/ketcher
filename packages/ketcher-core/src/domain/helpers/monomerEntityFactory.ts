@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerOrAmbiguousType } from 'domain/types';
+import { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
 import {
   AmbiguousMonomer,
   Chem,
@@ -25,20 +25,20 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { KetMonomerClass } from 'domain/constants/monomers';
 import {
   isAmbiguousMonomerLibraryItem,
   isMonomerItemPhosphate,
   isMonomerItemSugar,
 } from 'domain/helpers/monomers';
 import {
+  KetMonomerClass,
   MONOMER_CONST,
   rnaDnaNaturalAnalogues,
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
 
-export type MonomerEntityClass =
-  | typeof AmbiguousMonomer
+/** Entity classes for concrete (non-ambiguous) monomers only. */
+export type ConcreteMonomerEntityClass =
   | typeof Chem
   | typeof Peptide
   | typeof Phosphate
@@ -47,14 +47,27 @@ export type MonomerEntityClass =
   | typeof UnresolvedMonomer
   | typeof UnsplitNucleotide;
 
+/** All monomer entity classes, including ambiguous. */
+export type MonomerEntityClass =
+  | ConcreteMonomerEntityClass
+  | typeof AmbiguousMonomer;
+
 /**
  * Maps a monomer library item (concrete or ambiguous) to the corresponding
  * domain entity class and KetMonomerClass enum value.
  * This is a pure domain helper — it has no renderer imports.
  */
-export const monomerEntityFactory = (
+export function monomerEntityFactory(
+  monomer: MonomerItemType,
+): [EntityClass: ConcreteMonomerEntityClass, ketMonomerClass: KetMonomerClass];
+
+export function monomerEntityFactory(
   monomer: MonomerOrAmbiguousType,
-): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] => {
+): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass];
+
+export function monomerEntityFactory(
+  monomer: MonomerOrAmbiguousType,
+): [EntityClass: MonomerEntityClass, ketMonomerClass: KetMonomerClass] {
   if (isAmbiguousMonomerLibraryItem(monomer)) {
     return [
       AmbiguousMonomer,
@@ -99,4 +112,4 @@ export const monomerEntityFactory = (
   }
 
   return [Chem, KetMonomerClass.CHEM];
-};
+}

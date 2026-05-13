@@ -16,7 +16,7 @@
 
 import {
   monomerEntityFactory,
-  MonomerEntityClass,
+  ConcreteMonomerEntityClass,
 } from 'domain/helpers/monomerEntityFactory';
 import { MonomerItemType } from 'domain/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
@@ -40,7 +40,10 @@ import { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 
 type DerivedRendererClass = new (...args: unknown[]) => BaseMonomerRenderer;
 
-const entityToRenderer = new Map<MonomerEntityClass, DerivedRendererClass>([
+const entityToRenderer = new Map<
+  ConcreteMonomerEntityClass,
+  DerivedRendererClass
+>([
   [Chem, ChemRenderer as unknown as DerivedRendererClass],
   [Peptide, PeptideRenderer as unknown as DerivedRendererClass],
   [Phosphate, PhosphateRenderer as unknown as DerivedRendererClass],
@@ -64,7 +67,7 @@ const entityToRenderer = new Map<MonomerEntityClass, DerivedRendererClass>([
 export const monomerRendererFactory = (
   monomer: MonomerItemType,
 ): [
-  EntityClass: MonomerEntityClass,
+  EntityClass: ConcreteMonomerEntityClass,
   RendererClass: DerivedRendererClass,
   ketMonomerClass: KetMonomerClass,
 ] => {

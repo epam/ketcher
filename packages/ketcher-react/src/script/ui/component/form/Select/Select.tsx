@@ -23,6 +23,8 @@ import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { useAppContext } from 'src/hooks';
+import { ketcherProvider } from 'ketcher-core';
 
 export interface Option {
   value: string;
@@ -64,10 +66,11 @@ const Select = ({
   error,
   title,
 }: Props) => {
+  const { ketcherId } = useAppContext();
   const currentValue = options?.find((option) => option.value === value);
-  const portalContainer =
-    document.querySelector<HTMLElement>(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
-    undefined;
+  const portalContainer = document.querySelectorAll<HTMLElement>(
+    KETCHER_ROOT_NODE_CSS_SELECTOR,
+  )[ketcherProvider.getIndexById(ketcherId)];
 
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value);

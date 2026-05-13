@@ -7,6 +7,9 @@ jest.mock(
     IMAGE_KEY: 'image',
     MULTITAIL_ARROW_TOOL_NAME: 'multitail',
     CREATE_MONOMER_TOOL_NAME: 'createMonomer',
+    ketcherProvider: {
+      getIndexById: jest.fn().mockReturnValue(0),
+    },
   }),
   { virtual: true },
 );

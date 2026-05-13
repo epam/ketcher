@@ -1,4 +1,4 @@
-name: Create Autotest Request
+name: Claude Create Autotest Request
 
 on:
   issues:

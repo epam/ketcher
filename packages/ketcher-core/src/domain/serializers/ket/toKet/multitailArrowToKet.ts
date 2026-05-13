@@ -1,4 +1,4 @@
-import { KetFileNode } from 'domain/serializers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
 
 export function multitailArrowToKet(node: KetFileNode) {

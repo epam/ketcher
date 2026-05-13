@@ -27,7 +27,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
@@ -39,7 +39,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 test.describe('Common connection rules: ', () => {
@@ -88,7 +88,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -101,7 +101,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
@@ -118,7 +118,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -129,7 +129,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 

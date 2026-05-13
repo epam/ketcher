@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -53,7 +53,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1840225-mol-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // add second structure from file to canvas
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol', 200, 0);
@@ -83,7 +83,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -96,7 +96,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-2.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -109,7 +109,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-3.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

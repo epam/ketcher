@@ -18,16 +18,16 @@ import {
   Atom,
   AtomAttributes,
   AtomQueryProperties,
-  Bond,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+} from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 
 import closest from '../shared/closest';
 import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
-import { EditorSelection } from '../editor.types';
+import type { EditorSelection } from '../editor.types';
 export type AtomType = 'single' | 'list' | 'pseudo';
 export type AtomAttributeName = keyof AtomAttributes;
 export type AtomQueryPropertiesName = keyof AtomQueryProperties;

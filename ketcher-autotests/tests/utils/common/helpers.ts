@@ -30,7 +30,7 @@ export async function pageReloadMicro(page: Page) {
  * @param {Page} page - The Playwright page object.
  */
 export async function clearLocalStorage(page: Page) {
-  page.evaluate(() => {
+  await page.evaluate(() => {
     localStorage.clear();
   });
 }

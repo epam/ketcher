@@ -5,7 +5,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takePageScreenshot,
   moveMouseAway,
   dragMouseTo,
@@ -21,7 +21,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -76,7 +76,7 @@ test.describe('Zoom Tool', () => {
       await button.locator.hover();
       expect(button.title).toBeTruthy();
     }
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   });
 
   test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into top left corner of canvas', async ({
@@ -91,10 +91,10 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomInTool(10);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(10);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -114,14 +114,14 @@ test.describe('Zoom Tool', () => {
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(10);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
     await CommonTopRightToolbar(page).selectZoomInTool(30);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
     await takeEditorScreenshot(page);
@@ -159,7 +159,7 @@ test.describe('Zoom Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -328,7 +328,7 @@ test.describe('Zoom Tool', () => {
     await clickOnCanvas(page, 0, 0, { from: 'canvasCenter' });
     await dragMouseTo(page, 100, 100);
     await zoomInByKeyboard(page, { repeat: 30, timeout: 1 });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);

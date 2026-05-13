@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   MolFileFormat,
   openFileAndAddToCanvas,
@@ -170,7 +170,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await IndigoFunctionsToolbar(page).aromatize();
     await selectAllStructuresOnCanvas(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);

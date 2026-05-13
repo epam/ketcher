@@ -9,6 +9,7 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Page, test, expect } from '@fixtures';
 import {
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
@@ -35,7 +36,7 @@ import {
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -49,7 +50,7 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
 }
 let page: Page;
@@ -76,21 +77,28 @@ test.describe('Sequence edit mode', () => {
     Description: When right ckick on canvas for new sequence: 'Start new sequence'
     For clicking on existed: 'Edit sequence' and 'Start new sequence'.
     */
-    await ContextMenu(page, { x: 100, y: 100 }).open();
     expect(
-      page.getByTestId(SequenceSymbolOption.StartNewSequence),
-    ).toBeVisible();
+      await ContextMenu(page, { x: 100, y: 100 }).isOptionVisible(
+        SequenceSymbolOption.StartNewSequence,
+      ),
+    ).toBeTruthy();
     await page.keyboard.press('Escape');
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
     });
-    await ContextMenu(page, symbolG).open();
-    expect(page.getByTestId(SequenceSymbolOption.EditSequence)).toBeVisible();
     expect(
-      page.getByTestId(SequenceSymbolOption.StartNewSequence),
-    ).toBeVisible();
+      await ContextMenu(page, symbolG).isOptionVisible(
+        SequenceSymbolOption.EditSequence,
+      ),
+    ).toBeTruthy();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, symbolG).isOptionVisible(
+        SequenceSymbolOption.StartNewSequence,
+      ),
+    ).toBeTruthy();
   });
 
   test('Add/edit sequence', async () => {
@@ -190,6 +198,7 @@ test.describe('Sequence edit mode', () => {
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
@@ -207,6 +216,7 @@ test.describe('Sequence edit mode', () => {
     });
     await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -281,12 +291,13 @@ test.describe('Sequence edit mode', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async () => {
+  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/sequence-with-monomers.ket');
     await getMonomerLocator(page, Peptide.A).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -296,12 +307,13 @@ test.describe('Sequence edit mode', () => {
     await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
-  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async () => {
+  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, 'KET/rna-nucleotide-chem.ket');
 
     const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
@@ -917,7 +929,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await hoverMouseOverMonomer(page, Sugar.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -947,7 +959,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await hoverMouseOverMonomer(page, Sugar.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1416,6 +1428,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1484,6 +1497,7 @@ test.describe('Sequence edit mode', () => {
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
     await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1521,6 +1535,7 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbol = getSymbolLocator(page, {}).first();
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Copy);
+    await keyboardPressOnCanvas(page, 'Escape');
     await keyboardPressOnCanvas(page, 'Escape');
     await ContextMenu(page, anySymbol).click(SequenceSymbolOption.Paste);
     await takeEditorScreenshot(page, {

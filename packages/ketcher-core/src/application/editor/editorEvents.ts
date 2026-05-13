@@ -34,6 +34,7 @@ export interface IEditorEvents {
   mouseUpMonomer: Subscription;
   rightClickSequence: Subscription;
   rightClickCanvas: Subscription;
+  rightClickCanvasSequence: Subscription;
   rightClickPolymerBond: Subscription;
   rightClickSelectedMonomers: Subscription;
   keyDown: Subscription;
@@ -109,6 +110,7 @@ export const editorEvents: IEditorEvents = {
   mouseUpMonomer: new Subscription(),
   rightClickSequence: new Subscription(),
   rightClickCanvas: new Subscription(),
+  rightClickCanvasSequence: new Subscription(),
   rightClickPolymerBond: new Subscription(),
   rightClickSelectedMonomers: new Subscription(),
   keyDown: new Subscription(),
@@ -176,6 +178,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseUpMonomer',
   'rightClickSequence',
   'rightClickCanvas',
+  'rightClickCanvasSequence',
   'rightClickPolymerBond',
   'rightClickSelectedMonomers',
   'editSequence',
@@ -259,11 +262,6 @@ export const hotkeysConfiguration = {
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
-      // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      // Sequence mode handles Delete/Backspace itself (even when not editing),
-      // so skip tool switching here.
-      if (editor.isSequenceMode) return;
-
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
 

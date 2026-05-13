@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,7 +15,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -48,7 +48,7 @@ import {
 } from 'domain/services';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -239,7 +239,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryParsedJson,
     );
     const expandedOptions = {
       monomerLibrary,

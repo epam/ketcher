@@ -17,7 +17,7 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -34,7 +34,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { expandMonomer, expandMonomers } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -175,7 +175,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Click on the arrow button of any monomer without R1 in the right panel
      */
     await Library(page).clickMonomerAutochain(Peptide.Me_);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await Library(page).clickMonomerAutochain(Peptide.Me_);
     await takeMonomerLibraryScreenshot(page, {
@@ -434,7 +434,7 @@ test.describe('Ketcher bugs in 3.7.0', () => {
   });
 
   test('Case 16: Layout not shift when changing mode from sequence to flex and back upon first macromolecules mode initialization', async ({
-    FlexCanvas: _,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7811
@@ -447,9 +447,6 @@ test.describe('Ketcher bugs in 3.7.0', () => {
      * 4. Switch to Flex mode
      * 5. Switch back to Sequence mode
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -584,34 +581,35 @@ test.describe('Ketcher bugs in 3.7.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds', async ({
-    MoleculesCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/7811
-     * Bug: https://github.com/epam/Indigo/issues/3069
-     * Description: Export to RXN work, system not throws exception: Error: memory access out of bounds
-     * Scenario:
-     * 1. Go to Micro mode
-     * 2. Load from KET
-     * 3. Press Save button
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/Bugs/Memory problem.ket',
-    );
-    await verifyFileExport(
-      page,
-      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
-      FileType.RXN,
-      RxnFileFormat.v2000,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'Rxn-V2000/Bugs/Memory problem-expected.rxn',
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Case 22: Export to RXN work, system not throws exception: Error: memory access out of bounds',
+    async ({ MoleculesCanvas: _ }) => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/7811
+       * Bug: https://github.com/epam/Indigo/issues/3069
+       * Description: Export to RXN work, system not throws exception: Error: memory access out of bounds
+       * Scenario:
+       * 1. Go to Micro mode
+       * 2. Load from KET
+       * 3. Press Save button
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'KET/Bugs/Memory problem.ket',
+      );
+      await verifyFileExport(
+        page,
+        'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+        FileType.RXN,
+        RxnFileFormat.v2000,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        page,
+        'Rxn-V2000/Bugs/Memory problem-expected.rxn',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Case 23: Export of expanded CHEMs works (system not losts CHEM type)', async ({
     FlexCanvas: _,

@@ -1,5 +1,5 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   FormatterFactory,
   SupportedFormat,
@@ -7,68 +7,9 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { CoreEditor, EditorHistory } from './editor/internal';
+import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
-import { EditorSelection } from './editor/editor.types';
-
-class KetcherProvider {
-  private readonly ketcherInstances = new Map<string, Ketcher>();
-
-  addKetcherInstance(instance: Ketcher) {
-    this.ketcherInstances.set(instance.id, instance);
-  }
-
-  removeKetcherInstance(id) {
-    this.ketcherInstances.delete(id);
-  }
-
-  getIndexById(id: string) {
-    return Array.from(this.ketcherInstances.keys()).indexOf(id);
-  }
-
-  getKetcher(id?: string) {
-    if (!id) {
-      return [...this.ketcherInstances.values()][
-        this.ketcherInstances.size - 1
-      ];
-    }
-
-    const ketcher = this.ketcherInstances.get(id);
-
-    if (!ketcher) {
-      throw Error(`couldnt find ketcher instance ${id}`);
-    }
-
-    return ketcher;
-  }
-}
-
-const ketcherProvider = new KetcherProvider();
-
-export { ketcherProvider };
-
-export function getStructure(
-  ketcherId: string,
-  formatterFactory: FormatterFactory,
-  struct: Struct,
-  structureFormat = SupportedFormat.rxn,
-  drawingEntitiesManager?: DrawingEntitiesManager,
-  selection?: EditorSelection,
-): Promise<string> {
-  const serverSettings =
-    ketcherProvider.getKetcher(ketcherId).editor.serverSettings;
-  const formatter = formatterFactory.create(structureFormat, serverSettings);
-  const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
-    new DrawingEntitiesManager(),
-  );
-
-  return formatter.getStructureFromStructAsync(
-    struct,
-    drawingEntitiesManagerCloningResult?.mergedDrawingEntities,
-    selection,
-  );
-}
 
 export async function prepareStructToRender(
   structStr: string,
@@ -106,7 +47,7 @@ export function parseStruct(
 }
 
 export function deleteAllEntitiesOnCanvas() {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
   EditorHistory.getInstance(editor).update(modelChanges);
@@ -118,7 +59,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
   structService: StructService,
   mergeWithLatestHistoryCommand = false,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct);
   let ketStruct = struct;

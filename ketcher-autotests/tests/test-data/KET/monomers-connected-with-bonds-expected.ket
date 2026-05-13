@@ -583,6 +583,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -599,6 +600,13 @@
                 "type": "right"
             }
         ],
+        "idtAliases": {
+            "base": "Phos",
+            "modifications": {
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
+            }
+        },
         "naturalAnalogShort": "P"
     }
 }

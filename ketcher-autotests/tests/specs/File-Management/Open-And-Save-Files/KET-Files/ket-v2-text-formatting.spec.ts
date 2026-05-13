@@ -6,7 +6,7 @@ import {
   openFileAndAddToCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { getTextLabelLocator } from '@utils/canvas/text/getTextLabelLocator';
@@ -132,7 +132,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     ).toBeVisible();
 
     // Zoom out so all text objects fit within the snapshot area
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
@@ -264,7 +264,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     const para3Part = multiParaNode.paragraphs[2].parts[0];
     expect(para3Part.font?.size).toBe(25);
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
@@ -278,7 +278,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
     const fileContent = await readFileContent(KET_V2_TEXT_FILE);
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // Spot-check representative text objects from different categories
     await expect(
@@ -297,7 +297,7 @@ test.describe('KET v2.0 text formatting — Open file and verify text', () => {
       getTextLabelLocator(page, { text: 'Inherits root styles' }),
     ).toBeVisible();
 
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });

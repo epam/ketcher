@@ -32,7 +32,7 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -44,6 +44,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 let page: Page;
 
@@ -139,7 +140,7 @@ test('Create bond between two chems', async () => {
   const chem2 = getMonomerLocator(page, Chem.hxy).nth(1);
 
   // Select bond tool
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
   // Create bonds between chems, taking screenshots in middle states
   await chem1.hover();
@@ -175,11 +176,11 @@ test('Select monomers and pass a bond', async () => {
   const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide2, peptide1);
-  await page.waitForSelector('#error-tooltip');
-  const errorTooltip = await page.getByTestId('error-tooltip').innerText();
   const errorMessage =
     "There can't be more than 1 bond between the first and the second monomer";
-  expect(errorTooltip).toEqual(errorMessage);
+  expect(await NotificationBanner(page).getNotificationText()).toEqual(
+    errorMessage,
+  );
 });
 
 test('Check in full-screen mode it is possible to add a bond between a Peptide monomers if this bond is pulled not from a specific attachment point R', async () => {
@@ -332,7 +333,7 @@ test('Verify that clicking "Reconnect" with different attachment points chosen r
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -348,7 +349,7 @@ test('Verify that clicking "Reconnect" without changing the attachment points re
   await openFileAndAddToCanvasMacro(page, 'KET/two-peptides-connected.ket');
   await ContextMenu(page, bondLine).click(MacroBondOption.EditAttachmentPoints);
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -373,7 +374,7 @@ test('Verify that clicking "Cancel" in the dialog results in no change to the bo
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).cancel();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -398,7 +399,7 @@ test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" do
     hideMonomerPreview: true,
   });
   await AttachmentPointsDialog(page).close();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -418,19 +419,19 @@ test('Verify that changes made in the "Edit Attachment Points" dialog can be und
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).undo();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await CommonTopLeftToolbar(page).redo();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -455,7 +456,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     'KET/two-peptides-connected-expected.ket',
     FileType.KET,
   );
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -484,7 +485,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     MolFileFormat.v3000,
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -515,7 +516,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.Sequence, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -546,7 +547,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
     [MacroFileType.FASTA, SequenceMonomerType.Peptide],
   );
 
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -572,7 +573,7 @@ test('Verify that changes made in the "Edit Attachment Points" dialog are saved 
   await AttachmentPointsDialog(page).reconnect();
   await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
   await openFileAndAddToCanvasAsNewProject(page, 'IDT/moe-idt-expected.idt');
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -592,7 +593,7 @@ test('Verify changing connection points of a side chain bond', async () => {
     rightMonomer: AttachmentPoint.R1,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -612,7 +613,7 @@ test('Verify editing of a cyclic structure', async () => {
     rightMonomer: AttachmentPoint.R3,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -632,7 +633,7 @@ test('Verify correct display and changing of connection points in the dialog for
     rightMonomer: AttachmentPoint.R2,
   });
   await AttachmentPointsDialog(page).reconnect();
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -796,7 +797,9 @@ const connectionVariants = [
 ];
 
 connectionVariants.forEach(({ from, to }) => {
-  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Flex, Sequence)`, async () => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Flex, Sequence)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Flex and Sequence modes.
@@ -808,7 +811,6 @@ connectionVariants.forEach(({ from, to }) => {
       5. Switch to Sequence mode
       6. Take another screenshot
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     const firstMonomer = getMonomerLocator(page, Peptide.C);
     const secondMonomer = getMonomerLocator(page, Peptide.dC);
@@ -844,7 +846,9 @@ const connectionVariants2 = [
 ];
 
 connectionVariants2.forEach(({ from, to }) => {
-  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Snake, Sequence)`, async () => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Snake, Sequence)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Snake and Sequence modes.
@@ -855,7 +859,6 @@ connectionVariants2.forEach(({ from, to }) => {
       4. Switch to Sequence mode
       5. Take another screenshot
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     const firstMonomer = getMonomerLocator(page, Peptide.C);
     const secondMonomer = getMonomerLocator(page, Peptide.dC);
     await openFileAndAddToCanvasMacro(
@@ -882,7 +885,9 @@ connectionVariants2.forEach(({ from, to }) => {
   });
 });
 
-test('Save and Open structure with long bonds to/from KET', async () => {
+test('Save and Open structure with long bonds to/from KET', async ({
+  FlexCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6167
     Description: Long bond can be saved and opened to/from KET.
@@ -893,7 +898,6 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const firstMonomer = getMonomerLocator(page, Peptide.C);
   const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
@@ -1106,7 +1110,9 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
   }
 });
 
-test('Check that for snake mode, snapping should only happen at 4 radial lines (every 90 degrees)', async () => {
+test('Check that for snake mode, snapping should only happen at 4 radial lines (every 90 degrees)', async ({
+  SnakeCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6215
     Description: For snake mode, snapping only happen at 4 radial lines (every 90 degrees).
@@ -1115,7 +1121,6 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/two-peptides-connected.ket',
@@ -1139,7 +1144,9 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
   }
 });
 
-test('Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle', async () => {
+test('Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle', async ({
+  FlexCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6215
     Description: Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle.
@@ -1148,7 +1155,6 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/three-monomer-connected-by-bond.ket',

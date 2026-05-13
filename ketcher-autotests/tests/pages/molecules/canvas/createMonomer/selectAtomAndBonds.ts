@@ -14,11 +14,11 @@ export async function selectAtomAndBonds(
   await CommonLeftToolbar(page).handTool();
   await CommonLeftToolbar(page).areaSelectionTool();
   await clickOnCanvas(page, 0, 0);
-  await page.keyboard.down('Shift');
   if (options.atomIds) {
     for (const atomId of options.atomIds) {
       await getAtomLocator(page, { atomId }).click({
         force: true,
+        modifiers: ['Shift'],
       });
     }
   }
@@ -26,8 +26,8 @@ export async function selectAtomAndBonds(
     for (const bondId of options.bondIds) {
       await getBondLocator(page, { bondId }).click({
         force: true,
+        modifiers: ['Shift'],
       });
     }
   }
-  await page.keyboard.up('Shift');
 }

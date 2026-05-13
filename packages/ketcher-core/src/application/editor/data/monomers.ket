@@ -277,6 +277,9 @@
         "$ref": "monomerTemplate-E___Glutamic acid"
       },
       {
+        "$ref": "monomerTemplate-E*___Glutamic acid*"
+      },
+      {
         "$ref": "monomerTemplate-Edc___S-ethylthiocysteine"
       },
       {
@@ -1075,7 +1078,7 @@
         "$ref": "monomerTemplate-Thr-ol___L-threoninol"
       },
       {
-        "$ref": "monomerTemplate-Gly-ol___aminomethanol"
+        "$ref": "monomerTemplate-Gly-ol___Ethanolamine"
       },
       {
         "$ref": "monomerTemplate-Ala-ol___L-Alaninol"
@@ -22244,7 +22247,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "D"
+    "naturalAnalogShort": "D",
+    "modificationTypes": ["R3 OH leaving group"]
   },
   "monomerTemplate-Pyrro___Pyrrolidine": {
     "type": "monomerTemplate",
@@ -23434,6 +23438,209 @@
     ],
     "naturalAnalogShort": "E",
     "modificationTypes": ["Natural amino acid"]
+  },
+  "monomerTemplate-E*___Glutamic acid*": {
+    "type": "monomerTemplate",
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "E*___Glutamic acid*",
+    "fullName": "Glutamic acid*",
+    "alias": "E*",
+    "atoms": [
+      {
+        "label": "N",
+        "location": [
+          -0.866,
+          -1.25,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          0,
+          -0.75,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "H",
+        "location": [
+          -1.732,
+          -0.75,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          0.866,
+          -1.25,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          1.732,
+          -0.75,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          0.866,
+          -2.25,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          0,
+          0.25,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          -0.866,
+          0.75,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          -0.866,
+          1.75,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          0,
+          2.25,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          -1.732,
+          2.25,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          1
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          3,
+          5
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          6
+        ],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [
+          6,
+          7
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          7,
+          8
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          8,
+          9
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          8,
+          10
+        ]
+      }
+    ],
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            2
+          ]
+        },
+        "type": "left"
+      },
+      {
+        "attachmentAtom": 3,
+        "leavingGroup": {
+          "atoms": [
+            4
+          ]
+        },
+        "type": "right"
+      },
+      {
+        "attachmentAtom": 8,
+        "leavingGroup": {
+          "atoms": [
+            9
+          ]
+        },
+        "type": "side"
+      }
+    ],
+    "naturalAnalogShort": "E",
+    "modificationTypes": ["R3 OH leaving group"]
   },
   "monomerTemplate-Edc___S-ethylthiocysteine": {
     "type": "monomerTemplate",
@@ -104677,38 +104884,46 @@
     ],
     "naturalAnalogShort": "T"
   },
-  "monomerTemplate-Gly-ol___aminomethanol": {
+  "monomerTemplate-Gly-ol___Ethanolamine": {
     "type": "monomerTemplate",
     "atoms": [
       {
-        "label": "O",
+        "label": "C",
         "location": [
-          1.25,
-          -0.433,
+          1,
+          0,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          0.25,
-          -0.433,
+          0,
+          0,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          -0.25,
-          0.433,
+          -0.5,
+          0.866,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          -1.25,
-          0.433,
+          -1.5,
+          0.866,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          1.5,
+          -0.866,
           0
         ]
       }
@@ -104734,12 +104949,19 @@
           2,
           3
         ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          4
+        ]
       }
     ],
     "class": "AminoAcid",
     "classHELM": "PEPTIDE",
-    "id": "Gly-ol___aminomethanol",
-    "fullName": "aminomethanol",
+    "id": "Gly-ol___Ethanolamine",
+    "fullName": "Ethanolamine",
     "alias": "Gly-ol",
     "aliasHELM": "Gly-ol",
     "attachmentPoints": [

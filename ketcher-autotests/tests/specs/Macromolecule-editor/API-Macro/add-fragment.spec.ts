@@ -8,7 +8,7 @@ import {
   addFragment,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   readFileContent,
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
@@ -59,7 +59,7 @@ test.describe('addFragment', () => {
     );
     const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);
   });

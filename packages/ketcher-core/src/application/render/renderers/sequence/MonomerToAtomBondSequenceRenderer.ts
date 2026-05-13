@@ -1,7 +1,9 @@
 import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
-import { MonomerToAtomBond, SubChainNode, Vec2 } from 'domain/entities';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Vec2 } from 'domain/entities/vec2';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {

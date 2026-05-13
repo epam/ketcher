@@ -1060,7 +1060,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     page: Page,
     leftPeptide: IMonomer,
     rightMolecule: IMolecule,
-    attachmentPoint: string,
+    attachmentPoint: AttachmentPoint,
     atomIndex: number,
   ) {
     const leftPeptideLocator = getMonomerLocator(page, {
@@ -1114,7 +1114,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
+            Object.values(leftMonomer.attachmentPoints)[atomIndex],
             atomIndex,
           );
         }

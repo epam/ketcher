@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs } from 'domain/entities';
-import ReStruct from './restruct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import type ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import Visel from './visel';

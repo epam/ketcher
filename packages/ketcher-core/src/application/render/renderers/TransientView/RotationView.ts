@@ -59,6 +59,8 @@ const STYLE = {
   DEGREE_TEXT_MARGIN: 10,
   DEGREE_LINE_LENGTH: 15,
   MIN_RADIUS_FOR_TEXT: 65,
+  CURRENT_ANGLE_X_OFFSET: 20,
+  CURRENT_ANGLE_Y_OFFSET: 10,
 };
 
 const LEFT_ARROW_PATH =
@@ -423,8 +425,14 @@ export class RotationView extends TransientView {
         const angleInDegrees = Math.round((rotationAngle * 180) / Math.PI);
         const textAngle = startAngle;
         const textRadius = radius + 20;
-        const textX = center.x + textRadius * Math.cos(textAngle);
-        const textY = center.y + textRadius * Math.sin(textAngle);
+        const textX =
+          center.x +
+          textRadius * Math.cos(textAngle) +
+          STYLE.CURRENT_ANGLE_X_OFFSET;
+        const textY =
+          center.y +
+          textRadius * Math.sin(textAngle) +
+          STYLE.CURRENT_ANGLE_Y_OFFSET;
 
         transientLayer
           .append('text')

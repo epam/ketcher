@@ -1,6 +1,9 @@
 import { CoreEditor } from 'application/editor';
 import { polymerEditorTheme } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import ZoomTool from 'application/editor/tools/Zoom';
 
 describe('Zoom Tool', () => {
@@ -41,6 +44,7 @@ describe('Zoom Tool', () => {
     const _editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
     });
     canvas.dispatchEvent(
       new WheelEvent('wheel', { deltaY: 60, ctrlKey: true }),

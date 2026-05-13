@@ -12,7 +12,7 @@ import {
 import {
   getArrowLocator,
   getPlusLocator,
-} from '@utils/canvas/arrow-signes/getArrow';
+} from '@utils/canvas/arrow-signes/getArrowLocator';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';

@@ -16,8 +16,6 @@ import {
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
@@ -470,7 +468,9 @@ test.describe('Preview tooltips checks: ', () => {
   }
 
   for (const ambiguousMonomer of ambiguousMonomers) {
-    test(`${ambiguousMonomer.testDescription} in sequence view`, async () => {
+    test(`${ambiguousMonomer.testDescription} in sequence view`, async ({
+      SequenceCanvas: _,
+    }) => {
       /* 
         Test case1: https://github.com/epam/ketcher/issues/5604
         Description: Verify that the ambiguous monomer preview displays a list of full names of monomers making up the ambiguous
@@ -479,9 +479,6 @@ test.describe('Preview tooltips checks: ', () => {
             2. Hover mouse over monomer, wait for preview tooltip
             2. Take screenshot of the canvas to compare it with example
         */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
       await pasteFromClipboardAndOpenAsNewProjectMacro(
         page,
         MacroFileType.HELM,

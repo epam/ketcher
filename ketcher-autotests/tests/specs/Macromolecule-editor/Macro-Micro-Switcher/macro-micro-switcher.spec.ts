@@ -102,7 +102,6 @@ import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbrevia
 import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
-import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
@@ -189,12 +188,11 @@ test.describe('Macro-Micro-Switcher', () => {
   test.skip(
     'Micromolecules in macromode will be represented as CHEMs with generated name(F1, F2, ...Fn)',
     { tag: ['@NeedToBeUpdated'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /* 
     Test case: Macro-Micro-Switcher
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvas(
         page,
         'KET/eight-micromolecules.ket',
@@ -850,12 +848,13 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async () => {
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async ({
+    MoleculesCanvas: _,
+  }) => {
     /* 
     Test case: Macro-Micro-Switcher/#3902
     Description: Structure is in left upper corner of canvas
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(page, 'KET/peptides-connected-with-bonds.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -952,12 +951,13 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async () => {
+  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/chain-with-eight-attachment-points.ket',

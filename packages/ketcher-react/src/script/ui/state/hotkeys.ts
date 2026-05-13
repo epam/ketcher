@@ -361,6 +361,13 @@ export function initClipboard(dispatch, getState) {
       const state = getState();
       return !state.modal;
     },
+    onLegacyCopy() {
+      const state = getState();
+      const editor = state.editor;
+      const data = legacyClipData(editor);
+      editor.selection(null);
+      return data;
+    },
     onLegacyCut() {
       const state = getState();
       const editor = state.editor;

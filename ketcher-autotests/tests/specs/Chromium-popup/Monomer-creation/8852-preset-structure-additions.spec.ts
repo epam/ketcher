@@ -25,8 +25,6 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
-import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
 import {
   BottomToolbar,
   drawBenzeneRing,

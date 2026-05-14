@@ -724,7 +724,7 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
   );
 });
 
-test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen`, async () => {
+test(`14. Check that the option + Add HELM alias appears only after monomer type Amino acid, CHEM Base, Sugar, or Phosphate is chosen`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8436
    * Description: Check that the option + Add HELM alias appears only after monomer type Amino acid, Base, Sugar, or Phosphate is chosen
@@ -758,7 +758,7 @@ test(`14. Check that the option + Add HELM alias appears only after monomer type
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
   await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
   await createMonomerDialog.selectType(MonomerType.CHEM);
-  await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
+  await expect(createMonomerDialog.aliasesSection).toBeVisible();
   await createMonomerDialog.discard();
 });
 

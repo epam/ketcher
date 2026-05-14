@@ -297,6 +297,7 @@
         "fullName": "N-Methyl-Glutamic acid",
         "alias": "meE",
         "aliasHELM": "meE",
+        "aliasBILN": "meE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

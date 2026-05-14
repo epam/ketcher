@@ -267,6 +267,7 @@
         "fullName": "D-Methionine",
         "alias": "dM",
         "aliasHELM": "dM",
+        "aliasBILN": "dM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

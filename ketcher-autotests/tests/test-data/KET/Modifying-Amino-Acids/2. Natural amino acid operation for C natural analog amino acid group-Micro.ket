@@ -288,6 +288,7 @@
         "fullName": "Cysteine",
         "alias": "C",
         "aliasHELM": "C",
+        "aliasBILN": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

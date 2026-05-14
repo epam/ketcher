@@ -245,6 +245,7 @@
         "fullName": "N-Methyl-Asparagine",
         "alias": "meN",
         "aliasHELM": "meN",
+        "aliasBILN": "meN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

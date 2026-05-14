@@ -165,6 +165,7 @@ const MonomerItem = ({
       }
       data-axolabs={monomerItem?.props.aliasAxoLabs ?? undefined}
       data-helm={monomerItem?.props.aliasHELM ?? undefined}
+      data-biln={monomerItem?.props.aliasBILN ?? undefined}
       data-modificationtype={getModificationTypeAttribute(
         monomerItem?.props.modificationTypes,
       )}

@@ -441,6 +441,7 @@
         "fullName": "Proline",
         "alias": "P",
         "aliasHELM": "P",
+        "aliasBILN": "P",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

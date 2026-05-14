@@ -16,7 +16,8 @@ export type WizardFormFieldId =
   | 'symbol'
   | 'name'
   | 'naturalAnalogue'
-  | 'aliasHELM';
+  | 'aliasHELM'
+  | 'aliasBILN';
 
 export type RnaPresetWizardStateFieldId =
   | 'base'
@@ -57,6 +58,8 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
+  | 'notUniqueBILNAlias'
+  | 'invalidBILNAlias'
   | 'invalidRnaPresetStructure'
   | 'notUniquePresetCode'
   | 'invalidPresetCode'

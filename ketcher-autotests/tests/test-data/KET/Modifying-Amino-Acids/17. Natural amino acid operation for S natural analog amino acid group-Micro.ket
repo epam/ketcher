@@ -341,6 +341,7 @@
         "fullName": "Serine",
         "alias": "S",
         "aliasHELM": "S",
+        "aliasBILN": "S",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

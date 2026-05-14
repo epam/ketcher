@@ -298,6 +298,7 @@
         "fullName": "Glutamic acid",
         "alias": "E",
         "aliasHELM": "E",
+        "aliasBILN": "E",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

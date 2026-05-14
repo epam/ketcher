@@ -822,6 +822,7 @@ export class Ketcher {
   private filterInvalidSdfEntries(rawSdf: string): string {
     const entries = rawSdf.split('$$$$').filter((e) => e.trim());
     const validEntries: string[] = [];
+    let hasInvalidEntries = false;
 
     for (const entry of entries) {
       const typeFieldMatch = entry.match(/^>[\d\s]*<type>\s*\n\s*(.*)/m);
@@ -844,6 +845,7 @@ export class Ketcher {
               `Type: "${typeValue}" is unknown. "${monomerName}" monomer hasn't been added to the library.`,
             );
           }
+          hasInvalidEntries = true;
           continue;
         }
       }
@@ -851,7 +853,13 @@ export class Ketcher {
       validEntries.push(entry);
     }
 
-    return validEntries.length ? validEntries.join('$$$$\n') + '$$$$\n' : '';
+    if (!hasInvalidEntries) {
+      return rawSdf;
+    }
+
+    return validEntries.length
+      ? validEntries.map((e) => e.trim()).join('\n$$$$\n') + '\n$$$$\n'
+      : '';
   }
 
   public async updateMonomersLibrary(

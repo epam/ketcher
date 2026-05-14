@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   clickOnCanvas,
   undoByKeyboard,
+  takeElementScreenshot,
 } from '@utils/index';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -102,7 +103,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify the addition is recognized in Base component
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -153,7 +154,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify the addition is recognized in Sugar component
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -204,7 +205,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify the addition is recognized in Phosphate component
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -263,7 +264,7 @@ test.describe('Additions to the structure: ', () => {
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await dialog.discard();
   });
 
@@ -322,7 +323,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify the connected structure is now part of Base
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     // Should be able to save now
     await dialog.submit();
@@ -384,7 +385,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify the connected structure is now part of Sugar
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -458,7 +459,7 @@ test.describe('Additions to the structure: ', () => {
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await dialog.discard();
   });
 
@@ -525,7 +526,7 @@ test.describe('Additions to the structure: ', () => {
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await dialog.discard();
   });
 
@@ -575,7 +576,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify addition
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     // Remove the addition using undo
     await undoByKeyboard(page);
@@ -649,7 +650,7 @@ test.describe('Additions to the structure: ', () => {
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
     await dialog.discard();
   });
 });

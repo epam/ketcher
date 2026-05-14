@@ -45,11 +45,38 @@ class BondTool implements Tool {
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;
     if (editor.selection()?.bonds) {
-      const action = fromBondsAttrs(
-        editor.render.ctab,
-        editor.selection().bonds,
-        bondProps,
-      );
+      const struct = editor.render.ctab;
+      const molecule = struct.molecule;
+      const functionalGroups = molecule.functionalGroups;
+      const selectedBonds = editor.selection().bonds;
+
+      if (functionalGroups.size) {
+        const fgIds: number[] = [];
+        for (const bondId of selectedBonds) {
+          const bondInFG = FunctionalGroup.bondsInFunctionalGroup(
+            molecule,
+            functionalGroups,
+            bondId,
+          );
+          if (bondInFG !== null) {
+            const fgId = FunctionalGroup.findFunctionalGroupByBond(
+              molecule,
+              functionalGroups,
+              bondId,
+            );
+            if (fgId !== null && !fgIds.includes(fgId)) {
+              fgIds.push(fgId);
+            }
+          }
+        }
+        if (fgIds.length) {
+          this.editor.event.removeFG.dispatch({ fgIds });
+          this.isNotActiveTool = true;
+          return;
+        }
+      }
+
+      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;

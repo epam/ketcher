@@ -948,13 +948,18 @@ function getBondSingleUpPath(
   const a = hb1.p;
   const b = hb2.p;
   const options = render.options;
-  // Use the actual rendered bond direction for the normal so the wedge stays
-  // symmetric when bond endpoints have been shifted to contracted monomer centers.
-  const renderedDir = b.sub(a);
-  const n =
-    renderedDir.length() > 1e-6
-      ? renderedDir.normalized().rotateSC(1, 0)
-      : hb1.norm;
+  // Prefer the stored half-bond normal; fall back to a normal computed from
+  // the actual rendered endpoints when hb1.norm is degenerate (e.g. when the
+  // half-bond direction was not refreshed after a bond was re-initialized for
+  // a monomer-to-monomer connection).
+  let n = hb1.norm;
+  if (!n || n.length() < 1e-6) {
+    const renderedDir = b.sub(a);
+    n =
+      renderedDir.length() > 1e-6
+        ? renderedDir.normalized().rotateSC(1, 0)
+        : hb1.norm;
+  }
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
   let b3 = b.addScaled(n, -bsp);

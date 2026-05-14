@@ -7,7 +7,11 @@ import {
 import { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
-import { KetcherLogger } from 'utilities';
+import {
+  KetcherLogger,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+} from 'utilities';
 
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
@@ -750,6 +754,69 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer group template with name longer than the max length', () => {
+      const longName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH + 1);
+      const presetWithLongName = {
+        root: {
+          templates: [
+            {
+              $ref: `monomerGroupTemplate-${longName}`,
+            },
+          ],
+        },
+        [`monomerGroupTemplate-${longName}`]: {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: longName,
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithLongName));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should accept monomer group template with name at the max length boundary', () => {
+      const boundaryName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH);
+      const presetWithBoundaryName = {
+        root: {
+          templates: [
+            {
+              $ref: `monomerGroupTemplate-${boundaryName}`,
+            },
+          ],
+        },
+        [`monomerGroupTemplate-${boundaryName}`]: {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: boundaryName,
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithBoundaryName));
+
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount + 1,
       );
     });
   });

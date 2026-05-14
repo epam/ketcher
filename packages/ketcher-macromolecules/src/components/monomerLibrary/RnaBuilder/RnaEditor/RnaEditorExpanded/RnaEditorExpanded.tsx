@@ -419,34 +419,42 @@ export const RnaEditorExpanded = ({
     );
   };
 
+  const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
+    position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
+
   const renderPhosphatePositionOption = (
     position: RnaPhosphatePosition,
     isDisabled: boolean,
-  ) => (
-    <Tooltip
-      key={position}
-      title={isDisabled ? phosphatePositionDisabledTooltip[position] : ''}
-    >
-      <span>
-        <button
-          type="button"
-          className={clsx(
-            styles.phosphatePositionOption,
-            isDisabled && styles.phosphatePositionOptionDisabled,
-          )}
-          disabled={isDisabled}
-          onClick={() => {
-            setPhosphatePosition(position);
-          }}
-        >
-          {renderPhosphateTriggerIcon(position, false, true)}
-        </button>
-      </span>
-    </Tooltip>
-  );
+  ) => {
+    let tooltip: string;
+    if (isDisabled) {
+      tooltip = phosphatePositionDisabledTooltip[position];
+    } else if (selectedPhosphatePosition === position) {
+      tooltip = getPhosphatePositionTooltip(position);
+    } else {
+      tooltip = `Switch to ${position}`;
+    }
 
-  const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
-    position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
+    return (
+      <Tooltip key={position} title={tooltip}>
+        <span>
+          <button
+            type="button"
+            className={clsx(
+              styles.phosphatePositionOption,
+              isDisabled && styles.phosphatePositionOptionDisabled,
+            )}
+            disabled={isDisabled}
+            onClick={() => {
+              setPhosphatePosition(position);
+            }}
+          >
+            {renderPhosphateTriggerIcon(position, false, true)}
+          </button>
+        </span>
+      </Tooltip>
+    );
+  };
 
   const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
     const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;

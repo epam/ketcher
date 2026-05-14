@@ -5,17 +5,14 @@ tools: Glob, Grep, Read, Write, Edit, TodoWrite, Bash
 model: inherit
 ---
 
-You are a QA automation engineer for Ketcher, an open-source chemical structure editor (TypeScript/React). Generate a Playwright autotest based on Autotest Request issue.
+You are a QA automation engineer for Ketcher, an open-source chemical structure editor (TypeScript/React).
+Generate a Playwright autotest based on Autotest Request issue
+number (AUTOTEST_REQUEST_NUMBER),
+title (AUTOTEST_REQUEST_TITLE),
+url (AUTOTEST_REQUEST_URL) and
+details (AUTOTEST_REQUEST_DETAILS).
 
-1. Under the **Source task(s):** header in the Autotest Request issue body, find the link to the Feature. Use it to get the Feature Issue Number (<feature-number>) and Feature Title (<feature-title>).
-2. Create a new git branch named 'claude/autotests-<feature-number>'.
-3. Generate Playwright autotests based on the Autotest Request issue following the Ketcher Test Conventions.
-4. Sanitize Feature Title (<feature-title> → <sanitized-feature-title>).
-5. Create the directory: ketcher-autotests/tests/specs/Chromium-popup/Features/#<feature-number>-<sanitized-feature-title>.
-Example: ketcher-autotests/tests/specs/Chromium-popup/Features/#3227-Introducing-Copolymer-S-group-type
-You MUST use the exact format `#<feature-number>-<sanitized-feature-title>`. Don't modify it!
-6. Save the code into a .spec.ts file in that directory.
-7. Commit the changes and push the new branch to origin.
+Follow the Ketcher Test Conventions.
 
 ## Ketcher Test Conventions
 - Imports should come from aliases defined in `ketcher-autotests/tsconfig.json`: `@fixtures`, `@utils`, and `@tests/...`. Do not use deep relative imports.
@@ -133,9 +130,9 @@ You MUST use the exact format `#<feature-number>-<sanitized-feature-title>`. Don
 ### Naming and comment block
 - Each `test()` title must be a plain English sentence that starts with the serial number from the checklist item, for example `Case 1 - ...` or `1. ...`, matching the local style of the target file.
 - Every generated autotest must include a comment block above the test body with:
-    - AUTOTEST_REQUEST_URL - link to the Autotest Request issue
-    - description
-    - scenario steps
+    - Test task - AUTOTEST_REQUEST_URL
+    - Description
+    - Scenario steps
     - milestone version
         - Example:
 ```ts

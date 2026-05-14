@@ -25,6 +25,7 @@ type Coordinates = {
 
 export async function getLocatorCenter(locator: Locator): Promise<Coordinates> {
   await locator.waitFor({ state: 'attached' });
+  await locator.scrollIntoViewIfNeeded();
   const boundingBox = await locator.boundingBox();
 
   if (boundingBox) {

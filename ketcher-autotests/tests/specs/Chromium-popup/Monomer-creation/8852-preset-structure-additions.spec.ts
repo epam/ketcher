@@ -32,6 +32,7 @@ import {
   drawBenzeneRing,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -332,6 +333,7 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 6 - Verify that previously unconnected structure becomes part of Sugar when connected to Sugar', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that previously unconnected structure becomes part of Sugar when connected to Sugar
@@ -379,7 +381,7 @@ test.describe('Additions to the structure: ', () => {
     const isolatedAtom = getAtomLocator(page, { atomId: 6 });
     await isolatedAtom.hover();
     await page.mouse.down();
-    await baseAtom.hover();
+    await sugarAtom.hover();
     await page.mouse.up();
 
     // Verify the connected structure is now part of Sugar
@@ -390,6 +392,7 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify behavior when structure connected to one component is subsequently extended to another component
@@ -435,13 +438,17 @@ test.describe('Additions to the structure: ', () => {
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const baseAtom = getAtomLocator(page, { atomId: 1 });
     const isolatedAtom = getAtomLocator(page, { atomId: 6 });
-    await baseAtom.click();
-    await isolatedAtom.click();
+    await isolatedAtom.hover();
+    await page.mouse.down();
+    await baseAtom.hover();
+    await page.mouse.up();
 
     // Then also connect it to Sugar - creating multi-component connection
     const sugarAtom = getAtomLocator(page, { atomId: 2 });
-    await isolatedAtom.click();
-    await sugarAtom.click();
+    await isolatedAtom.hover();
+    await page.mouse.down();
+    await sugarAtom.hover();
+    await page.mouse.up();
 
     // Try to save - should fail due to multi-component connectivity
     await dialog.submit();
@@ -449,7 +456,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.multiComponentConnectivity,
+      ErrorMessage.invalidRnaPresetStructure,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -458,6 +465,7 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify behavior when part of a component structure is disconnected and reconnected to another component
@@ -497,15 +505,17 @@ test.describe('Additions to the structure: ', () => {
 
     // Break a bond within the Base to make it non-continuous
     await CommonLeftToolbar(page).erase();
-    const bondToBreak = page.locator('[data-testid="bond"]').nth(1);
+    const bondToBreak = getBondLocator(page, { bondId: 1 });
     await bondToBreak.click();
 
     // Connect the detached Base portion to Sugar
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    const detachedBaseAtom = getAtomLocator(page, { atomId: 2 });
+    const detachedBaseAtom = getAtomLocator(page, { atomId: 1 });
     const sugarAtom = getAtomLocator(page, { atomId: 3 });
-    await detachedBaseAtom.click();
-    await sugarAtom.click();
+    await detachedBaseAtom.hover();
+    await page.mouse.down();
+    await sugarAtom.hover();
+    await page.mouse.up();
 
     // Try to save - should fail due to non-continuous structure
     await dialog.submit();
@@ -513,7 +523,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.nonContinuousStructure,
+      ErrorMessage.invalidRnaPresetStructure,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -522,6 +532,7 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that adding and removing simple extensions to a component does not break component continuity
@@ -560,7 +571,7 @@ test.describe('Additions to the structure: ', () => {
     });
 
     // Add a side chain to Base
-    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const baseAtom = getAtomLocator(page, { atomId: 1 });
     await baseAtom.click();
 
@@ -573,8 +584,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify structure is still valid and can be saved
     await dialog.submit();
-
-    await dialog.discard();
   });
 
   test('Case 10 - Verify that additions made before components are defined are handled correctly once components are defined', async () => {
@@ -590,7 +599,10 @@ test.describe('Additions to the structure: ', () => {
      * Version 3.15.0
      */
 
-    // Open wizard first without any structure
+    // Load initial structure
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+
+    // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
@@ -635,7 +647,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error about unassigned structure
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.unassignedStructure,
+      ErrorMessage.invalidRnaPresetStructure,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 

@@ -361,6 +361,365 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should skip monomer with duplicate IDT position alias in the same library update', () => {
+      const monomersWithDuplicatePositionIdtAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-RNA1',
+            },
+            {
+              $ref: 'monomerTemplate-RNA2',
+            },
+          ],
+        },
+        'monomerTemplate-RNA1': {
+          type: 'monomerTemplate',
+          id: 'RNA1',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 1',
+          name: 'RNA1',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA1',
+            MonomerClass: 'RNA',
+            Name: 'RNA1',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA1Base',
+            modifications: {
+              endpoint3: '/same_ep3/',
+            },
+          },
+        },
+        'monomerTemplate-RNA2': {
+          type: 'monomerTemplate',
+          id: 'RNA2',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 2',
+          name: 'RNA2',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA2',
+            MonomerClass: 'RNA',
+            Name: 'RNA2',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA2Base',
+            modifications: {
+              endpoint3: '/same_ep3/',
+            },
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomersWithDuplicatePositionIdtAlias),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected for monomer RNA2'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'RNA1',
+        ),
+      ).toBeDefined();
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'RNA2',
+        ),
+      ).toBeUndefined();
+    });
+
+    it('should validate shorthand IDT position aliases from converted SDF data', () => {
+      const monomersWithShorthandIdtAliases = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-RNA3',
+            },
+            {
+              $ref: 'monomerTemplate-RNA4',
+            },
+          ],
+        },
+        'monomerTemplate-RNA3': {
+          type: 'monomerTemplate',
+          id: 'RNA3',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 3',
+          name: 'RNA3',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA3',
+            MonomerClass: 'RNA',
+            Name: 'RNA3',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA3Base',
+            modifications: {
+              ep3: '/same_sdf_ep3/',
+            },
+          },
+        },
+        'monomerTemplate-RNA4': {
+          type: 'monomerTemplate',
+          id: 'RNA4',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 4',
+          name: 'RNA4',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA4',
+            MonomerClass: 'RNA',
+            Name: 'RNA4',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA4Base',
+            modifications: {
+              ep3: '/same_sdf_ep3/',
+            },
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomersWithShorthandIdtAliases),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected for monomer RNA4'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'RNA4',
+        ),
+      ).toBeUndefined();
+    });
+
+    it('should reject preset with idtAliases but no base alias and still load valid preset', () => {
+      const presetsWithMixedIdtAliases = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-InvalidPresetIdtAlias',
+            },
+            {
+              $ref: 'monomerGroupTemplate-ValidPresetIdtAlias',
+            },
+          ],
+        },
+        'monomerGroupTemplate-InvalidPresetIdtAlias': {
+          type: 'monomerGroupTemplate',
+          id: 'InvalidPresetIdtAlias',
+          name: 'Invalid Preset IDT Alias',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            modifications: {
+              endpoint5: '/invalid_preset_ep5/',
+            },
+          },
+        },
+        'monomerGroupTemplate-ValidPresetIdtAlias': {
+          type: 'monomerGroupTemplate',
+          id: 'ValidPresetIdtAlias',
+          name: 'Valid Preset IDT Alias',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'ValidPresetBase',
+            modifications: {
+              endpoint5: '/valid_preset_ep5/',
+            },
+          },
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetsWithMixedIdtAliases));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Base IDT alias is required when idtAliases is defined for preset Invalid Preset IDT Alias',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount + 1,
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.[
+          'monomerGroupTemplate-InvalidPresetIdtAlias'
+        ],
+      ).toBeUndefined();
+      expect(
+        editor.monomersLibraryParsedJson?.[
+          'monomerGroupTemplate-ValidPresetIdtAlias'
+        ],
+      ).toBeDefined();
+    });
+
+    it('should skip preset with duplicate IDT position alias in the same library update', () => {
+      const presetsWithDuplicateIdtAliases = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-PresetWithUniqueInternalAlias',
+            },
+            {
+              $ref: 'monomerGroupTemplate-PresetWithDuplicateInternalAlias',
+            },
+          ],
+        },
+        'monomerGroupTemplate-PresetWithUniqueInternalAlias': {
+          type: 'monomerGroupTemplate',
+          id: 'PresetWithUniqueInternalAlias',
+          name: 'Preset With Unique Internal Alias',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'PresetInternalBase1',
+            modifications: {
+              internal: '/same_preset_internal/',
+            },
+          },
+        },
+        'monomerGroupTemplate-PresetWithDuplicateInternalAlias': {
+          type: 'monomerGroupTemplate',
+          id: 'PresetWithDuplicateInternalAlias',
+          name: 'Preset With Duplicate Internal Alias',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'PresetInternalBase2',
+            modifications: {
+              internal: '/same_preset_internal/',
+            },
+          },
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(
+        JSON.stringify(presetsWithDuplicateIdtAliases),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Alias collision detected for preset Preset With Duplicate Internal Alias',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount + 1,
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.[
+          'monomerGroupTemplate-PresetWithUniqueInternalAlias'
+        ],
+      ).toBeDefined();
+      expect(
+        editor.monomersLibraryParsedJson?.[
+          'monomerGroupTemplate-PresetWithDuplicateInternalAlias'
+        ],
+      ).toBeUndefined();
+    });
+
+    it('should skip preset with IDT position alias colliding with monomer', () => {
+      const monomerWithEndpoint5Alias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-RNA5',
+            },
+          ],
+        },
+        'monomerTemplate-RNA5': {
+          type: 'monomerTemplate',
+          id: 'RNA5',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 5',
+          name: 'RNA5',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA5',
+            MonomerClass: 'RNA',
+            Name: 'RNA5',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA5Base',
+            modifications: {
+              endpoint5: '/same_monomer_preset_ep5/',
+            },
+          },
+        },
+      };
+      const presetWithCollidingEndpoint5Alias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-PresetWithCollidingEndpoint5Alias',
+            },
+          ],
+        },
+        'monomerGroupTemplate-PresetWithCollidingEndpoint5Alias': {
+          type: 'monomerGroupTemplate',
+          id: 'PresetWithCollidingEndpoint5Alias',
+          name: 'Preset With Colliding Endpoint5 Alias',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+          idtAliases: {
+            base: 'PresetEndpoint5Base',
+            modifications: {
+              endpoint5: '/same_monomer_preset_ep5/',
+            },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithEndpoint5Alias));
+      const templatesCountAfterMonomer =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(
+        JSON.stringify(presetWithCollidingEndpoint5Alias),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Alias collision detected for preset Preset With Colliding Endpoint5 Alias',
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        templatesCountAfterMonomer,
+      );
+      expect(
+        editor.monomersLibraryParsedJson?.[
+          'monomerGroupTemplate-PresetWithCollidingEndpoint5Alias'
+        ],
+      ).toBeUndefined();
+    });
+
     it('should reject monomer group template without name', () => {
       const unnamedPreset = {
         root: {

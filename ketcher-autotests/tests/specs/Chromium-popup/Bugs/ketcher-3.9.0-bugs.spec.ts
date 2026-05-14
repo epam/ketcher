@@ -1024,7 +1024,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(page, 600, 250);
+    await dragMouseTo(page, 600, 300);
 
     const attachmentPointR1 = getAttachmentPointLocator(
       page,

@@ -480,14 +480,8 @@ export class CoreEditor {
         }
       }
 
-      const existingMonomerIndex = this._monomersLibrary.findIndex(
-        (monomer) => {
-          return (
-            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-            monomer?.props.hidden === newMonomer.props?.hidden
-          );
-        },
+      const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
+        areSameMonomers(monomer, newMonomer),
       );
 
       const newMonomerTemplateRef =

@@ -184,9 +184,11 @@ const findIdtAliasCollision = (
     : undefined;
 };
 
-const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) =>
-  IDT_ALIAS_POSITIONS.map((position) => {
-    const alias = getIdtAliasesByPosition(idtAliases)[position];
+const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) => {
+  const aliasesByPosition = getIdtAliasesByPosition(idtAliases);
+
+  return IDT_ALIAS_POSITIONS.map((position) => {
+    const alias = aliasesByPosition[position];
 
     return alias
       ? `IDT ${IDT_ALIAS_POSITION_LABEL[position]} alias "${alias}"`
@@ -194,14 +196,15 @@ const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) =>
   })
     .filter((value): value is string => Boolean(value))
     .join(', ');
+};
 
 const formatIdtAliasCollisionDetails = (
   collision?: ReturnType<typeof findIdtAliasCollision>,
 ) =>
   collision
-    ? ` Bad position IDT alias "${collision.value}" for ${
+    ? ` Conflicting IDT ${
         IDT_ALIAS_POSITION_LABEL[collision.position]
-      } position.`
+      } alias "${collision.value}".`
     : '';
 
 const turnOnScrollAnimation = (
@@ -500,6 +503,45 @@ export class CoreEditor {
         );
     };
 
+    let existingMonomerGroupTemplates = getExistingMonomerGroupTemplates();
+    const findIdtAliasCollisionInLibrary = (
+      idtAliases?: IKetIdtAliases,
+      ignoredMonomer?: MonomerItemType,
+      ignoredTemplateRef?: string,
+    ) => {
+      for (const monomer of this._monomersLibrary) {
+        if (ignoredMonomer && areSameMonomers(monomer, ignoredMonomer)) {
+          continue;
+        }
+
+        const collision = findIdtAliasCollision(
+          idtAliases,
+          monomer.props?.idtAliases,
+        );
+
+        if (collision) {
+          return collision;
+        }
+      }
+
+      for (const template of existingMonomerGroupTemplates) {
+        if (template.ref === ignoredTemplateRef) {
+          continue;
+        }
+
+        const collision = findIdtAliasCollision(
+          idtAliases,
+          template.definition.idtAliases,
+        );
+
+        if (collision) {
+          return collision;
+        }
+      }
+
+      return undefined;
+    };
+
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       if (
@@ -524,25 +566,15 @@ export class CoreEditor {
           return true;
         }
 
-        idtAliasCollision = findIdtAliasCollision(
-          newMonomer.props?.idtAliases,
-          monomer.props?.idtAliases,
-        );
-
-        return Boolean(idtAliasCollision);
+        return false;
       });
 
       if (!aliasCollisionExists) {
-        aliasCollisionExists = getExistingMonomerGroupTemplates().some(
-          (template) => {
-            idtAliasCollision = findIdtAliasCollision(
-              newMonomer.props?.idtAliases,
-              template.definition.idtAliases,
-            );
-
-            return Boolean(idtAliasCollision);
-          },
+        idtAliasCollision = findIdtAliasCollisionInLibrary(
+          newMonomer.props?.idtAliases,
+          newMonomer,
         );
+        aliasCollisionExists = Boolean(idtAliasCollision);
       }
 
       const idtAliasCollisionDetails =
@@ -688,26 +720,11 @@ export class CoreEditor {
         }
       }
 
-      let idtAliasCollision = this._monomersLibrary
-        .map((monomer) =>
-          findIdtAliasCollision(
-            templateDefinition.idtAliases,
-            monomer.props?.idtAliases,
-          ),
-        )
-        .find(Boolean);
-
-      if (!idtAliasCollision) {
-        idtAliasCollision = getExistingMonomerGroupTemplates()
-          .filter((template) => template.ref !== templateRef.$ref)
-          .map((template) =>
-            findIdtAliasCollision(
-              templateDefinition.idtAliases,
-              template.definition.idtAliases,
-            ),
-          )
-          .find(Boolean);
-      }
+      const idtAliasCollision = findIdtAliasCollisionInLibrary(
+        templateDefinition.idtAliases,
+        undefined,
+        templateRef.$ref,
+      );
 
       if (idtAliasCollision) {
         const aliasDetails = formatIdtAliasDetails(
@@ -737,6 +754,7 @@ export class CoreEditor {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
+      existingMonomerGroupTemplates = getExistingMonomerGroupTemplates();
     });
 
     this.events.updateMonomersLibrary.dispatch();

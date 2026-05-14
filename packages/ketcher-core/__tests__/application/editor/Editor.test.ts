@@ -452,6 +452,18 @@ describe('CoreEditor', () => {
             {
               $ref: 'monomerTemplate-RNA4',
             },
+            {
+              $ref: 'monomerTemplate-RNA5',
+            },
+            {
+              $ref: 'monomerTemplate-RNA6',
+            },
+            {
+              $ref: 'monomerTemplate-RNA7',
+            },
+            {
+              $ref: 'monomerTemplate-RNA8',
+            },
           ],
         },
         'monomerTemplate-RNA3': {
@@ -496,6 +508,90 @@ describe('CoreEditor', () => {
             },
           },
         },
+        'monomerTemplate-RNA5': {
+          type: 'monomerTemplate',
+          id: 'RNA5',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 5',
+          name: 'RNA5',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA5',
+            MonomerClass: 'RNA',
+            Name: 'RNA5',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA5Base',
+            modifications: {
+              ep5: '/same_sdf_ep5/',
+            },
+          },
+        },
+        'monomerTemplate-RNA6': {
+          type: 'monomerTemplate',
+          id: 'RNA6',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 6',
+          name: 'RNA6',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA6',
+            MonomerClass: 'RNA',
+            Name: 'RNA6',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA6Base',
+            modifications: {
+              ep5: '/same_sdf_ep5/',
+            },
+          },
+        },
+        'monomerTemplate-RNA7': {
+          type: 'monomerTemplate',
+          id: 'RNA7',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 7',
+          name: 'RNA7',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA7',
+            MonomerClass: 'RNA',
+            Name: 'RNA7',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA7Base',
+            modifications: {
+              i: '/same_sdf_internal/',
+            },
+          },
+        },
+        'monomerTemplate-RNA8': {
+          type: 'monomerTemplate',
+          id: 'RNA8',
+          class: 'RNA',
+          classHELM: 'RNA',
+          fullName: 'Test RNA 8',
+          name: 'RNA8',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'RNA8',
+            MonomerClass: 'RNA',
+            Name: 'RNA8',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          idtAliases: {
+            base: 'RNA8Base',
+            modifications: {
+              i: '/same_sdf_internal/',
+            },
+          },
+        },
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
@@ -506,10 +602,26 @@ describe('CoreEditor', () => {
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected for monomer RNA4'),
       );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected for monomer RNA6'),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected for monomer RNA8'),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 3);
       expect(
         editor.monomersLibrary.find(
           (monomer) => monomer.props?.MonomerName === 'RNA4',
+        ),
+      ).toBeUndefined();
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'RNA6',
+        ),
+      ).toBeUndefined();
+      expect(
+        editor.monomersLibrary.find(
+          (monomer) => monomer.props?.MonomerName === 'RNA8',
         ),
       ).toBeUndefined();
     });

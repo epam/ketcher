@@ -2,7 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { NucleotideNaturalAnalogCount } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
@@ -25,9 +24,6 @@ let page: Page;
 test.describe('Color of Nucleobases', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
-  });
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
   });
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -133,6 +129,7 @@ test.describe('Color of Nucleobases', () => {
        */
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).selectMonomer(nucleotide);
+      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,

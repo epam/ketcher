@@ -399,9 +399,7 @@ describe('CoreEditor', () => {
     });
 
     it('should reject monomer group template with name longer than the max length', () => {
-      const longName = 'a'.repeat(
-        MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH + 1,
-      );
+      const longName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH + 1);
       const presetWithLongName = {
         root: {
           templates: [

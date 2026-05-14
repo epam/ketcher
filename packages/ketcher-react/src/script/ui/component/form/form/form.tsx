@@ -377,7 +377,7 @@ function Field(props: Readonly<FieldProps>) {
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       error={dataError}
-      title={rest.title || desc.title}
+      title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
       data-testid={props['data-testid']}
@@ -434,7 +434,7 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
     <Label
       className={className}
       error={dataError}
-      title={title || desc.title}
+      title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
     >
@@ -620,7 +620,7 @@ function propSchema(
   }
 
   return {
-    key: schema.key || '',
+    key: schema.key ?? '',
     serialize: (inst: Record<string, unknown>) => {
       // Pass an explicit base URI so jsonschema's resolveUrl() always receives
       // a valid absolute URL as `from`.  Without this, it calls

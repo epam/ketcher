@@ -291,15 +291,16 @@ test('Case 12: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('invalid HELM alias value');
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
 });
 
-test('Case 13: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain inpropper characters (quoters and so on)', async () => {
+test('Case 13: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain improper characters (quotation marks and so on)', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain inpropper characters (quoters and so on)
+   * Description: Update Library item with compound that contains MOLv3000 file with aliasHELM that contain improper characters (quotation marks and so on)
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -320,15 +321,16 @@ test('Case 13: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('invalid HELM alias value');
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
 });
 
-test('Case 14: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for base field', async () => {
+test('Case 14: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for base field', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for base field
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for base field
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -346,15 +348,18 @@ test('Case 14: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
 });
 
-test('Case 15: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep5 field', async () => {
+test('Case 15: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep5 field', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep5 field
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep5 field
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -372,15 +377,18 @@ test('Case 15: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
 });
 
-test('Case 16: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep3 field', async () => {
+test('Case 16: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep3 field', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for ep3 field
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for ep3 field
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -398,15 +406,18 @@ test('Case 16: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
 });
 
-test('Case 17: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for internal field', async () => {
+test('Case 17: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for internal field', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain inpropper characters (quoters and so on) for internal field
+   * Description: Update Library item with compound that contains MOLv3000 file with idtAliases that contain improper characters (quotation marks and so on) for internal field
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -424,6 +435,9 @@ test('Case 17: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The slashes (`/`) can only be the first and last character of an IDT alias.',
+  );
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
@@ -527,12 +541,12 @@ test.fail(
 );
 
 test.fail(
-  'Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain inpropper characters (quoters and so on)',
+  'Case 21: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)',
   async () => {
     // This issues fails because of the issue: https://github.com/epam/ketcher/issues/8357
     /*
      * Test case: https://github.com/epam/ketcher/issues/8345
-     * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain inpropper characters (quoters and so on)
+     * Description: Update Library item with compound that contains MOLv3000 file with modificationType field that contain improper characters (quotation marks and so on)
      * Scenario:
      * 1. Go to Macro mode
      * 2. Execute command in console
@@ -579,6 +593,7 @@ test('Case 22: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('Monomer group template class must be "RNA"');
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
@@ -606,6 +621,7 @@ test('Case 23: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('Monomer group template class must be "RNA"');
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
@@ -633,6 +649,7 @@ test('Case 24: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('Monomer group template class must be "RNA"');
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
@@ -663,6 +680,7 @@ test('Case 25: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('Monomer group template class must be "RNA"');
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
@@ -693,13 +711,14 @@ test('Case 26: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain('Monomer group template class must be "RNA"');
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 
-test('Case 27: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value', async () => {
+test('Case 27: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain improper characters (quotation marks and so on) value', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8345
-   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain inpropper characters (quoters and so on) value
+   * Description: Update Library item with compound that contains MOLv3000 file with monomerGroupTemplate groupName field that has contain improper characters (quotation marks and so on) value
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute command in console
@@ -717,12 +736,15 @@ test('Case 27: Update Library item with compound that contains MOLv3000 file wit
     'DNA' +
     _betweenEntries +
     _groupName +
-    'InproperCharacters\\//' +
+    'ImproperCharacters\\//' +
     _betweenEntries +
     _endToken;
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
+  expect(error).toContain(
+    'Monomer item could not be loaded because of an error:',
+  );
   expect(await Library(page).isMonomerExist(Preset._A1)).not.toBeTruthy();
 });
 

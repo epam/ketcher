@@ -130,6 +130,17 @@ const turnOnScrollAnimation = (
   canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
 };
 
+export class MonomerLibraryUpdateError extends Error {
+  readonly partialSuccess = true;
+  readonly skippedItems: string[];
+
+  constructor(messages: string[]) {
+    super(messages.join('\n'));
+    this.name = 'MonomerLibraryUpdateError';
+    this.skippedItems = [...messages];
+  }
+}
+
 const debouncedTurnOffScrollAnimation = debounce(
   (canvas: D3SvgElementSelection<SVGGElement, void>) => {
     canvas.style('transition', 'none');
@@ -373,7 +384,7 @@ export class CoreEditor {
     } = parseMonomersLibrary(monomersDataRaw);
     const validationErrors: string[] = [];
     const reportValidationError = (message: string) => {
-      console.error(message);
+      KetcherLogger.error('Editor::updateMonomersLibrary', message);
       validationErrors.push(message);
     };
 
@@ -578,7 +589,7 @@ export class CoreEditor {
     this.events.updateMonomersLibrary.dispatch();
 
     if (validationErrors.length > 0) {
-      throw new Error(validationErrors.join('\n'));
+      throw new MonomerLibraryUpdateError(validationErrors);
     }
   }
 

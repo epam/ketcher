@@ -111,9 +111,10 @@ interface RGroupData {
   rgnumber: number | string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type MonomerFactoryFn = (monomer: any) => [any, any, any];
+
 function parseNode(node: KetFileNode<unknown>, struct: Struct) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type MonomerFactoryFn = (monomer: any) => [any, any, any];
   const type = node.type;
   switch (type) {
     case 'arrow':

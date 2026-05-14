@@ -786,7 +786,7 @@ export class Ketcher {
           error instanceof Error ? error.message : String(error);
         throw new Error(
           `Monomer item could not be loaded because of an error: ${originalMessage}`,
-          { cause: error },
+          { cause: error instanceof Error ? error : undefined },
         );
       }
     }

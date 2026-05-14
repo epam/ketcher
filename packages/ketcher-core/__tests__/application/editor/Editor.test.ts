@@ -1,4 +1,8 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import {
+  CoreEditor,
+  MonomerLibraryUpdateError,
+  ToolName,
+} from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,
@@ -80,7 +84,9 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase)),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -224,7 +230,9 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
@@ -277,7 +285,9 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases)),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
@@ -355,7 +365,9 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('Alias collision detected'),
       );
@@ -382,7 +394,9 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(unnamedPreset)),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(

@@ -11,10 +11,12 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  clickInTheMiddleOfTheCanvas,
   waitForRender,
   resetZoomLevelToDefault,
   getCachedBodyCenter,
   zoomOutByKeyboard,
+  getKet,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -33,6 +35,7 @@ import { verticalFlipByKeyboard } from '@tests/specs/Structure-Creating-&-Editin
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
@@ -421,6 +424,51 @@ const expandableMonomer: IMonomer = {
   monomerAlias: 'D',
 };
 
+const customRnaMoePreset: IMonomer = {
+  monomerDescription: 'Custom RNA 5meC-MOE-P preset',
+  KETFile: 'KET/Micro-Macro-Switcher/Expand-monomers/5meC-MOE-P-custom-rna.ket',
+  monomerAlias: 'MOE',
+};
+
+function expectCustomRnaMoePresetToStayIntact(rawKet: string) {
+  const ket = JSON.parse(rawKet) as {
+    root: {
+      nodes: Array<{ $ref: string }>;
+      connections: unknown[];
+    };
+    monomer0: { alias: string };
+    monomer1: { alias: string };
+    monomer2: { alias: string };
+  };
+  const nodeRefs = ket.root.nodes.map((node) => node.$ref);
+
+  expect(nodeRefs).toHaveLength(3);
+  expect(nodeRefs).toEqual(
+    expect.arrayContaining(['monomer0', 'monomer1', 'monomer2']),
+  );
+  expect(ket.root.connections).toHaveLength(2);
+  expect(ket.monomer0.alias).toBe('5meC');
+  expect(ket.monomer1.alias).toBe('MOE');
+  expect(ket.monomer2.alias).toBe('P');
+}
+
+function expectKetToContainMicroFragment(rawKet: string) {
+  const ket = JSON.parse(rawKet) as {
+    root: {
+      nodes: Array<{ $ref: string }>;
+    };
+    [key: string]: unknown;
+  };
+
+  const hasMicroFragment = ket.root.nodes.some((node) => {
+    const referencedNode = ket[node.$ref] as { atoms?: unknown[] } | undefined;
+
+    return Boolean(referencedNode?.atoms?.length);
+  });
+
+  expect(hasMicroFragment).toBeTruthy();
+}
+
 test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async ({
   MoleculesCanvas: _,
 }) => {
@@ -477,6 +525,64 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
     true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5849 issue(s).`,
   );
+});
+
+test(`Verify that custom RNA 5meC-MOE-P preset remains intact after expanding MOE and switching to macro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Description: Verify that a custom RNA preset with a multi-attachment MOE sugar
+   *              is not lost when an expanded monomer is converted from Molecules
+   *              mode back to Macromolecules mode.
+   *
+   * Case: 1. Load custom 5meC-MOE-P KET on Molecules canvas
+   *       2. Expand MOE monomer
+   *       3. Switch to Macromolecules mode
+   *       4. Verify monomer nodes and chain connections remain in exported KET
+   */
+  await openFileAndAddToCanvasAsNewProject(page, customRnaMoePreset.KETFile);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, {
+      name: customRnaMoePreset.monomerAlias,
+    }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+  expectCustomRnaMoePresetToStayIntact(await getKet(page));
+});
+
+test(`Verify that custom RNA 5meC-MOE-P preset remains visible after removing MOE abbreviation and switching to macro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Description: Verify that removing a custom RNA monomer abbreviation in
+   *              Molecules mode does not make the resulting atom/bond fragment
+   *              disappear when switching back to Macromolecules mode.
+   *
+   * Case: 1. Load custom 5meC-MOE-P KET on Molecules canvas
+   *       2. Expand MOE monomer
+   *       3. Remove MOE abbreviation
+   *       4. Switch to Macromolecules mode
+   *       5. Verify an atom/bond fragment remains in exported KET
+   */
+  await openFileAndAddToCanvasAsNewProject(page, customRnaMoePreset.KETFile);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, {
+      name: customRnaMoePreset.monomerAlias,
+    }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+
+  await clickInTheMiddleOfTheCanvas(page);
+  await LeftToolbar(page).sGroup();
+  await EditAbbreviationDialog(page).removeAbbreviation();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+  expectKetToContainMicroFragment(await getKet(page));
 });
 
 const copyableMonomer: IMonomer = {

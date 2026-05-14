@@ -58,11 +58,11 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation || '';
+    return tmpl.props.abbreviation ?? '';
   }
   return (
-    tmpl.props.abbreviation ||
-    tmpl.struct.name ||
+    tmpl.props.abbreviation ??
+    tmpl.struct.name ??
     `${tmpl.props.group} template ${i + 1}`
   );
 }

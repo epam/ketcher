@@ -2,7 +2,7 @@
 
 This repository has two GitHub Actions workflows that automate the autotest lifecycle for feature work.
 
-## 1. `create-autotest-request.yml`
+## 1. `claude-create-autotest-request.yml`
 
 This workflow creates a follow-up issue for autotest implementation.
 
@@ -25,16 +25,13 @@ What it does:
 Result:
 - A feature issue is converted into a dedicated autotest request issue that contains suggested scenarios for automation.
 
-## 2. `implement-autotests.yml`
+## 2. `claude-implement-autotests.yml`
 
-This workflow turns an autotest request issue into Playwright test code and opens a pull request.
+This workflow turns an Autotest Request issue into Playwright test code and opens a pull request.
 
 How it starts:
-- It runs when a new comment is added to an issue.
-- It only continues if all of the following are true:
-  - the commenter is a `COLLABORATOR`, `MEMBER`, or `OWNER`
-  - the issue has the `Autotests` label
-  - the comment contains `@claude implement autotests`
+- It runs when an issue gets a label.
+- It only continues if the added label is `Run TA creation workflow`.
 - It also checks that the labeled issue is a `Task` issue.
 
 What it does:
@@ -57,10 +54,10 @@ Result:
 ## End-to-end flow
 
 1. A product or engineering task is created as a `Feature` issue.
-2. Someone adds the `Run TA creation workflow` label.
+2. An authorized contributor adds the `Run TA creation workflow` label.
 3. GitHub Action generates an `Autotests: ...` issue with a checklist of scenarios.
 4. The checklist can be reviewed or adjusted in that issue.
-5. An authorized contributor comments `@claude implement autotests`.
+5. An authorized contributor adds the `Run TA creation workflow` label.
 6. GitHub Action generates the Playwright test implementation and opens a PR.
 
 In short, the first workflow creates the autotest request, and the second workflow implements it.

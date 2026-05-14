@@ -16,14 +16,11 @@ export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
 
 export const getEmptyMonomersLibraryJson =
   function (): IKetMacromoleculesContent {
-    // TODO fix types
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     return {
       root: {
         templates: [],
         nodes: [],
         connections: [],
       },
-    };
+    } as unknown as IKetMacromoleculesContent;
   };

@@ -89,6 +89,7 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Base IDT alias is required when idtAliases is defined',
         ),
@@ -234,6 +235,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
       );
     });
@@ -290,6 +292,7 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Load of "SUGAR3" monomer has failed, monomer definition contains invalid HELM alias value.',
         ),
@@ -369,6 +372,7 @@ describe('CoreEditor', () => {
         editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
       );
     });
@@ -399,6 +403,7 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
         ),

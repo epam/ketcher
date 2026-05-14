@@ -451,9 +451,9 @@ export class CoreEditor {
         newMonomer.props?.aliasHELM &&
         !isValidHelmAliasLength(newMonomer.props.aliasHELM)
       ) {
-        throw new Error(
-          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`,
-        );
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
       }
 
       const aliasCollisionExists = this._monomersLibrary.some((monomer) => {

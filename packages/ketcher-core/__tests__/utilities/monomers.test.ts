@@ -1,4 +1,7 @@
-import { HELM_ALIAS_MAX_LENGTH, isValidHelmAliasLength } from '../monomers';
+import {
+  HELM_ALIAS_MAX_LENGTH,
+  isValidHelmAliasLength,
+} from '../../src/utilities/monomers';
 
 describe('monomers utilities', () => {
   describe('isValidHelmAliasLength', () => {

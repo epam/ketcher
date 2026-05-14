@@ -445,6 +445,7 @@
         "fullName": "Tryptophan",
         "alias": "W",
         "aliasHELM": "W",
+        "aliasBILN": "W",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

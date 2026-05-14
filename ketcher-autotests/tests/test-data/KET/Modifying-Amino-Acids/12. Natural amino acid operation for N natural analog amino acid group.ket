@@ -246,6 +246,7 @@
         "fullName": "Asparagine",
         "alias": "N",
         "aliasHELM": "N",
+        "aliasBILN": "N",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

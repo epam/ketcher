@@ -482,6 +482,7 @@
         "fullName": "Sarcosine",
         "alias": "meG",
         "aliasHELM": "meG",
+        "aliasBILN": "meG",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,

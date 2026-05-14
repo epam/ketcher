@@ -198,11 +198,13 @@ abstract class SelectBase implements BaseTool {
       width: number;
       height: number;
     },
+    startAngle?: number,
   ) {
     return {
       center: Coordinates.modelToCanvas(center),
       boundingBox: this.getCanvasBbox(bbox),
       cursor: this.editor.lastCursorPosition,
+      startAngle,
     };
   }
 
@@ -242,6 +244,7 @@ abstract class SelectBase implements BaseTool {
       const viewParams = this.buildRotationViewParams(
         this.rotationCenter,
         bbox,
+        this.rotationStartAngle,
       );
       this.editor.transientDrawingView.showRotation({
         ...viewParams,
@@ -1301,6 +1304,7 @@ abstract class SelectBase implements BaseTool {
         const viewParams = this.buildRotationViewParams(
           this.rotationCenter,
           bbox,
+          this.rotationStartAngle,
         );
         this.editor.transientDrawingView.showRotation({
           ...viewParams,

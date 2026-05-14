@@ -28,8 +28,12 @@ export const Card = styled.div<{
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled, isDragging }) =>
-    disabled ? 'default' : isDragging ? 'grabbing !important' : 'pointer'};
+  cursor: ${({ disabled, isDragging }) => {
+    if (disabled) {
+      return 'default';
+    }
+    return isDragging ? 'grabbing !important' : 'pointer';
+  }};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;

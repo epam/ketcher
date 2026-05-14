@@ -22,11 +22,14 @@ import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import {
   AtomAdd,
+  AtomAttr,
   BondAdd,
   BondAttr,
   BondDelete,
   CalcImplicitH,
   FragmentAdd,
+  FragmentAddStereoAtom,
+  FragmentDeleteStereoAtom,
   FragmentStereoFlag,
 } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
@@ -254,16 +257,61 @@ export function fromBondsMerge(
 
 export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   const bond = restruct.molecule.bonds.get(id);
+  const struct = restruct.molecule;
 
   const action = new Action();
   action.addOp(new BondDelete(id).perform(restruct));
 
   // TODO: find better way to avoid problem with bond.begin = 0
   if (Number.isInteger(bond?.end) && Number.isInteger(bond?.begin)) {
-    action.addOp(new BondAdd(bond?.end, bond?.begin, bond).perform(restruct));
-  }
+    const bondAddOp = new BondAdd(bond?.end, bond?.begin, bond);
+    action.addOp(bondAddOp.perform(restruct));
 
-  // todo: swap atoms stereoLabels and stereoAtoms in fragment
+    if (bond?.stereo && bond.stereo !== Bond.PATTERN.STEREO.NONE) {
+      const oldBeginId = bond.begin;
+      const oldEndId = bond.end; // becomes new begin after flip
+      const oldBeginAtom = struct.atoms.get(oldBeginId);
+      const frid = oldBeginAtom?.fragment;
+
+      if (frid !== undefined) {
+        const fragment = struct.frags.get(frid);
+        const isOldBeginStereoAtom =
+          fragment?.stereoAtoms.includes(oldBeginId) ?? false;
+
+        if (isOldBeginStereoAtom) {
+          const stereoLabel = oldBeginAtom?.stereoLabel ?? null;
+          const stereoParity = oldBeginAtom?.stereoParity ?? 0;
+          action.addOp(
+            new AtomAttr(oldBeginId, 'stereoLabel', null).perform(restruct),
+          );
+          action.addOp(
+            new AtomAttr(oldBeginId, 'stereoParity', 0).perform(restruct),
+          );
+          action.addOp(
+            new FragmentDeleteStereoAtom(frid, oldBeginId).perform(restruct),
+          );
+          action.addOp(
+            new AtomAttr(oldEndId, 'stereoLabel', stereoLabel).perform(
+              restruct,
+            ),
+          );
+          action.addOp(
+            new AtomAttr(oldEndId, 'stereoParity', stereoParity).perform(
+              restruct,
+            ),
+          );
+          action.addOp(
+            new FragmentAddStereoAtom(frid, oldEndId).perform(restruct),
+          );
+        } else {
+          const newBond = struct.bonds.get(bondAddOp.data.bid as number);
+          if (newBond) {
+            action.mergeWith(fromBondStereoUpdate(restruct, newBond));
+          }
+        }
+      }
+    }
+  }
 
   return action;
 }

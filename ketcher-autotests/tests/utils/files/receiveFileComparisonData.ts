@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher } from 'ketcher-core';
@@ -50,7 +51,7 @@ type FileTypeHandler =
 
 const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
-  [FileType.CDX]: getCdx,
+  [FileType.CDX]: getCdx, // This actually returns Base64 CDX content. https://www.youtube.com/watch?v=-Ui4prpCZ0w
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,

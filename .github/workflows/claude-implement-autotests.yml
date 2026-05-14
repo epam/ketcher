@@ -1,9 +1,8 @@
-name: Implement Autotests
+name: Claude Implement Autotests
 
-# Trigger: comment "@claude implement autotests" on an issue with 'Autotests' label
 on:
-  issue_comment:
-    types: [created]
+  issues:
+    types: [labeled]
 
 permissions:
   contents: write
@@ -15,9 +14,8 @@ permissions:
 jobs:
   implement-autotests:
     if: |
-      contains(fromJson('["COLLABORATOR","MEMBER","OWNER"]'), github.event.comment.author_association) &&
       contains(github.event.issue.labels.*.name, 'Autotests') &&
-      contains(github.event.comment.body, '@claude implement autotests') &&
+      contains(github.event.issue.labels.*.name, 'Run TA creation workflow') &&
       (
         github.event.issue.issue_type.name == 'Task' ||
         github.event.issue.type.name == 'Task' ||
@@ -37,27 +35,30 @@ jobs:
         with:
           script: |
             const issue = context.payload.issue;
-            
+
             if (!issue) {
               throw new Error('No issue found in context');
             }
             
-            const checklistMatches = issue.body?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            const issueBody = issue.body
+            const checklistMatches = issueBody?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
             if (checklistMatches.length === 0) {
               throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
             }
-           
-            const title = issue.title;
-            core.setOutput('title', title);
+
+            core.setOutput('issue_body', issueBody);
 
       - name: Implement autotests with Claude
         uses: anthropics/claude-code-action@beta
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: Generate Playwright autotests for Ketcher.
-          allowed_tools: "Bash,Read,Write,Edit,Glob,Grep"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          direct_prompt: |
+            Use autotests-generator agent to generate Playwright autotests based on Autotest Request issue.
+            Issue number: ${{ github.event.issue.number }}
+            Issue title: ${{ github.event.issue.title }}
+            Issue details:
+            ${{ steps.issue.outputs.issue_body }}
 
       - name: Get current branch name
         id: vars
@@ -70,7 +71,7 @@ jobs:
         id: create_pr
         run: |
           PR_URL=$(gh pr create \
-            --title "#${{ github.event.issue.number }} - ${{ steps.issue.outputs.title }}" \
+            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
             --body "Closes #${{ github.event.issue.number }}" \
             --head "${{ steps.vars.outputs.branch_name }}" \
             --base master)

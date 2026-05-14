@@ -61,6 +61,8 @@ export const Peptide = createMonomerGroup(MonomerType.Peptide, {
   meR: { alias: 'meR', testId: 'meR___N-Methyl-Arginine' },
   meS: { alias: 'meS', testId: 'meS___N-Methyl-Serine' },
   Me_: { alias: 'Me-', testId: 'Me-___N-Terminal methyl' },
+  R: { alias: 'R', testId: 'R___Arginine' },
+  S: { alias: 'S', testId: 'S___Serine' },
   Nal: { alias: 'Nal', testId: '' },
   LysiPr: {
     alias: 'LysiPr',

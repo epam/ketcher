@@ -222,6 +222,16 @@ export const Library = (page: Page) => {
     },
 
     getMonomerLibraryCardLocator(monomer: Monomer | PresetType) {
+      const { rnaSection } = monomer.monomerType
+        ? monomerLibraryTypeLocation[monomer.monomerType]
+        : rnaTabPresetsSection;
+
+      if (rnaSection) {
+        return page
+          .getByTestId(rnaSectionArea[rnaSection])
+          .getByTestId(monomer.testId);
+      }
+
       return getElement(monomer.testId);
     },
 

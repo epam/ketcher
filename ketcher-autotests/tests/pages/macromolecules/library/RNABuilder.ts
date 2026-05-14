@@ -32,20 +32,20 @@ export const RNABuilder = (page: Page) => {
     ...locators,
 
     async expand() {
-      const isExpanded = await page
-        .getByTestId('rna-editor-expanded')
-        .isVisible();
+      const expandedEditor = page.getByTestId('rna-editor-expanded');
+      const isExpanded = await expandedEditor.isVisible();
       if (!isExpanded) {
         await locators.rnaBuilderSection.click();
+        await expandedEditor.waitFor({ state: 'visible' });
       }
     },
 
     async collapse() {
-      const isExpanded = await page
-        .getByTestId('rna-editor-expanded')
-        .isVisible();
+      const expandedEditor = page.getByTestId('rna-editor-expanded');
+      const isExpanded = await expandedEditor.isVisible();
       if (isExpanded) {
         await locators.rnaBuilderSection.click();
+        await expandedEditor.waitFor({ state: 'hidden' });
       }
     },
 

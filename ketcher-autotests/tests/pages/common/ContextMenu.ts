@@ -11,6 +11,12 @@ type ContextMenuLocators = {
   contextMenuBody: Locator;
 };
 
+async function isSvgLocator(locator: Locator): Promise<boolean> {
+  await locator.waitFor({ state: 'attached' });
+
+  return locator.evaluate((element) => element instanceof SVGElement);
+}
+
 export const ContextMenu = (page: Page, element: ClickTarget) => {
   const getOption = (dataTestId: string): Locator =>
     page.getByTestId(dataTestId);
@@ -25,8 +31,10 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
     async open() {
       if ('x' in element && 'y' in element) {
         await page.mouse.click(element.x, element.y, { button: 'right' });
-      } else {
+      } else if (await isSvgLocator(element)) {
         await clickLocatorCenter(page, element, { button: 'right' });
+      } else {
+        await element.click({ button: 'right' });
       }
     },
 

@@ -77,6 +77,8 @@ import {
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidHelmAlias,
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
@@ -556,6 +558,19 @@ export class CoreEditor {
       if (!templateDefinition.name?.trim()) {
         KetcherLogger.error(
           `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
+      if (
+        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
+      ) {
+        const truncatedTemplateName = `${templateDefinition.name.slice(
+          0,
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+        )}...`;
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
         );
         return;
       }

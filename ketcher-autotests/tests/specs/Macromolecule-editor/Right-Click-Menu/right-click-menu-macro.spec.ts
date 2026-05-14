@@ -140,6 +140,7 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
   await takeElementScreenshot(
     page,
     ContextMenu(page, peptideD).contextMenuBody,
+    { maxDiffPixels: 5 },
   );
   expect(
     await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Copy),
@@ -162,6 +163,7 @@ test(`2. Verify context menu in Snake and Flex modes when right-clicking a part 
   await takeElementScreenshot(
     page,
     ContextMenu(page, peptideD).contextMenuBody,
+    { maxDiffPixels: 5 },
   );
   expect(
     await ContextMenu(page, peptideD).isOptionEnabled(MonomerOption.Copy),

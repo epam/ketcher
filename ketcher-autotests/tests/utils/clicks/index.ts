@@ -23,19 +23,10 @@ type Coordinates = {
   y: number;
 };
 
-export async function getLocatorCenter(locator: Locator): Promise<Coordinates> {
-  await locator.waitFor({ state: 'attached' });
-  await locator.scrollIntoViewIfNeeded();
-  const boundingBox = await locator.boundingBox();
-
-  if (boundingBox) {
-    return {
-      x: boundingBox.x + boundingBox.width / 2,
-      y: boundingBox.y + boundingBox.height / 2,
-    };
-  }
-
-  const svgCenter = await locator.evaluate((element) => {
+async function getSvgLocatorCenter(
+  locator: Locator,
+): Promise<Coordinates | undefined> {
+  return locator.evaluate((element) => {
     if (!(element instanceof SVGGraphicsElement)) {
       return undefined;
     }
@@ -58,12 +49,62 @@ export async function getLocatorCenter(locator: Locator): Promise<Coordinates> {
       y: screenPoint.y,
     };
   });
+}
 
-  if (!svgCenter) {
-    throw new Error('Unable to get center coordinates for selected element');
+function getBoundingBoxCenter(boundingBox: BoundingBox): Coordinates {
+  return {
+    x: boundingBox.x + boundingBox.width / 2,
+    y: boundingBox.y + boundingBox.height / 2,
+  };
+}
+
+function isInsideViewport(page: Page, coordinates: Coordinates) {
+  const viewport = page.viewportSize();
+
+  return (
+    !viewport ||
+    (coordinates.x >= 0 &&
+      coordinates.x <= viewport.width &&
+      coordinates.y >= 0 &&
+      coordinates.y <= viewport.height)
+  );
+}
+
+export async function getLocatorCenter(
+  page: Page,
+  locator: Locator,
+): Promise<Coordinates> {
+  await locator.waitFor({ state: 'attached' });
+  let boundingBox = await locator.boundingBox();
+
+  if (boundingBox) {
+    const center = getBoundingBoxCenter(boundingBox);
+
+    if (isInsideViewport(page, center)) {
+      return center;
+    }
   }
 
-  return svgCenter;
+  const svgCenter = await getSvgLocatorCenter(locator);
+
+  if (svgCenter) {
+    return svgCenter;
+  }
+
+  await locator.scrollIntoViewIfNeeded();
+  boundingBox = await locator.boundingBox();
+
+  if (boundingBox) {
+    return getBoundingBoxCenter(boundingBox);
+  }
+
+  const scrolledSvgCenter = await getSvgLocatorCenter(locator);
+
+  if (scrolledSvgCenter) {
+    return scrolledSvgCenter;
+  }
+
+  throw new Error('Unable to get center coordinates for selected element');
 }
 
 export async function clickLocatorCenter(
@@ -71,7 +112,7 @@ export async function clickLocatorCenter(
   locator: Locator,
   options?: Parameters<Page['mouse']['click']>[2],
 ) {
-  const center = await getLocatorCenter(locator);
+  const center = await getLocatorCenter(page, locator);
   await page.mouse.click(center.x, center.y, options);
 }
 

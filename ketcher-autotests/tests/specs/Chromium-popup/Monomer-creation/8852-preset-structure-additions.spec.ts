@@ -5,18 +5,12 @@ import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
-  MonomerType,
   shiftCanvas,
   takeEditorScreenshot,
-  takeElementScreenshot,
   clickOnCanvas,
-  selectAllStructuresOnCanvas,
   undoByKeyboard,
 } from '@utils/index';
-import {
-  CreateMonomerDialog,
-  selectAtomAndBonds,
-} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -33,7 +27,11 @@ import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constant
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -51,7 +49,7 @@ test.afterAll(async ({ closePage }) => {
 
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-test.describe('Autotests: Additions to the structure - presets in the monomer creation wizard', () => {
+test.describe('Additions to the structure: ', () => {
   test('Case 1 - Verify that additions connected to Base become part of Base component', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
@@ -65,16 +63,16 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset');
-    
+
     // Define Base, Sugar, and Phosphate components
     await presetSection.setupBase({
       atomIds: [0, 1],
@@ -83,84 +81,86 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
       name: 'Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
       symbol: 'TestS',
       name: 'Test Sugar',
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
       symbol: 'TestP',
       name: 'Test Phosphate',
     });
-    
-    // Add a new atom connected to the Base (atom 0)
-    await RightToolbar(page).clickAtom(Atom.Nitrogen);
+
+    // Add a new bond connected to the Base (atom 0)
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const baseAtom = getAtomLocator(page, { atomId: 0 });
-    await baseAtom.click();
-    
+    await baseAtom.click({ force: true });
+
     // Verify the addition is recognized in Base component
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
   test('Case 2 - Verify that additions connected to Sugar become part of Sugar component', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that additions connected to Sugar become part of Sugar component
      * Scenario:
-     * 1. With Base, Sugar, and Phosphate already defined in the preset wizard
-     * 2. Draw a new atom or substituent attached to the Sugar
+     * 1. With   already defined in the preset wizard
+     * 2. Draw a new bond or substituent attached to the Sugar
      * 3. Open the Sugar component section and inspect its structure
      * 4. Expected: The new addition is part of the Sugar component structure
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset2');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
-    // Add a sulfur atom connected to the Sugar (atom 2)
-    await selectElementFromPeriodicTable(page, PeriodicTableElement.Sulfur);
+
+    // Add a bond connected to the Sugar (atom 2)
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const sugarAtom = getAtomLocator(page, { atomId: 2 });
-    await sugarAtom.click();
-    
+    await sugarAtom.click({ force: true });
+
     // Verify the addition is recognized in Sugar component
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
   test('Case 3 - Verify that additions connected to Phosphate become part of Phosphate component', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that additions connected to Phosphate become part of Phosphate component
@@ -172,45 +172,46 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset3');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Extend the phosphate chain by adding an oxygen
-    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const phosphateAtom = getAtomLocator(page, { atomId: 5 });
-    await phosphateAtom.click();
-    
+    await phosphateAtom.click({ force: true });
+
     // Verify the addition is recognized in Phosphate component
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
   test('Case 4 - Verify that unconnected additions do not belong to any component and block preset saving', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that unconnected additions do not belong to any component and block preset saving
@@ -222,47 +223,53 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset4');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Draw an isolated benzene ring unconnected to existing structure
-    await drawBenzeneRing(page);
-    
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, 200, 200);
+    await page.keyboard.press('Escape');
+
     // Try to save the preset - should fail
     await dialog.submit();
-    
+
     // Verify error message appears
-    const errorBanner = NotificationMessageBanner(page, ErrorMessage.unassignedStructure);
+    const errorBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.invalidRnaPresetStructure,
+    );
     expect(await errorBanner.isVisible()).toBeTruthy();
-    
+
     await takeEditorScreenshot(page);
     await dialog.discard();
   });
 
   test('Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base', async () => {
+    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that previously unconnected structure becomes part of Base when connected to Base
@@ -274,51 +281,53 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Draw an isolated structure first
     await clickOnCanvas(page, 200, 200);
     await RightToolbar(page).clickAtom(Atom.Carbon);
     await clickOnCanvas(page, 250, 200);
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset5');
-    
+
     // Define components from original structure
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Connect the isolated carbon to the Base
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const baseAtom = getAtomLocator(page, { atomId: 1 });
     const isolatedAtom = getAtomLocator(page, { atomId: 6 });
-    await baseAtom.click();
-    await isolatedAtom.click();
-    
+    await isolatedAtom.hover();
+    await page.mouse.down();
+    await baseAtom.hover();
+    await page.mouse.up();
+
     // Verify the connected structure is now part of Base
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     // Should be able to save now
     await dialog.submit();
-    
+
     await dialog.discard();
   });
 
@@ -333,48 +342,50 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Draw an isolated structure first
     await clickOnCanvas(page, 200, 200);
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnCanvas(page, 250, 200);
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset6');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Connect the isolated nitrogen to the Sugar
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const sugarAtom = getAtomLocator(page, { atomId: 3 });
     const isolatedAtom = getAtomLocator(page, { atomId: 6 });
-    await sugarAtom.click();
-    await isolatedAtom.click();
-    
+    await isolatedAtom.hover();
+    await page.mouse.down();
+    await baseAtom.hover();
+    await page.mouse.up();
+
     // Verify the connected structure is now part of Sugar
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
@@ -389,56 +400,59 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Draw an isolated structure
     await clickOnCanvas(page, 200, 200);
     await RightToolbar(page).clickAtom(Atom.Carbon);
     await clickOnCanvas(page, 250, 200);
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset7');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // First connect the isolated structure to Base
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const baseAtom = getAtomLocator(page, { atomId: 1 });
     const isolatedAtom = getAtomLocator(page, { atomId: 6 });
     await baseAtom.click();
     await isolatedAtom.click();
-    
+
     // Then also connect it to Sugar - creating multi-component connection
     const sugarAtom = getAtomLocator(page, { atomId: 2 });
     await isolatedAtom.click();
     await sugarAtom.click();
-    
+
     // Try to save - should fail due to multi-component connectivity
     await dialog.submit();
-    
+
     // Verify error appears
-    const errorBanner = NotificationMessageBanner(page, ErrorMessage.multiComponentConnectivity);
+    const errorBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.multiComponentConnectivity,
+    );
     expect(await errorBanner.isVisible()).toBeTruthy();
-    
+
     await takeEditorScreenshot(page);
     await dialog.discard();
   });
@@ -455,51 +469,54 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load longer chain structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset8');
-    
+
     // Define components with Base having multiple atoms
     await presetSection.setupBase({
       atomIds: [0, 1, 2],
       bondIds: [0, 1],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [3, 4],
       bondIds: [3],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [5, 6, 7],
       bondIds: [5, 6],
     });
-    
+
     // Break a bond within the Base to make it non-continuous
     await CommonLeftToolbar(page).erase();
     const bondToBreak = page.locator('[data-testid="bond"]').nth(1);
     await bondToBreak.click();
-    
+
     // Connect the detached Base portion to Sugar
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     const detachedBaseAtom = getAtomLocator(page, { atomId: 2 });
     const sugarAtom = getAtomLocator(page, { atomId: 3 });
     await detachedBaseAtom.click();
     await sugarAtom.click();
-    
+
     // Try to save - should fail due to non-continuous structure
     await dialog.submit();
-    
+
     // Verify error appears
-    const errorBanner = NotificationMessageBanner(page, ErrorMessage.nonContinuousStructure);
+    const errorBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.nonContinuousStructure,
+    );
     expect(await errorBanner.isVisible()).toBeTruthy();
-    
+
     await takeEditorScreenshot(page);
     await dialog.discard();
   });
@@ -516,47 +533,47 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Load initial structure
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     // Open wizard and setup preset
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset9');
-    
+
     // Define components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Add a side chain to Base
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     const baseAtom = getAtomLocator(page, { atomId: 1 });
     await baseAtom.click();
-    
+
     // Verify addition
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     // Remove the addition using undo
     await undoByKeyboard(page);
-    
+
     // Verify structure is still valid and can be saved
     await dialog.submit();
-    
+
     await dialog.discard();
   });
 
@@ -572,53 +589,56 @@ test.describe('Autotests: Additions to the structure - presets in the monomer cr
      *
      * Version 3.15.0
      */
-    
+
     // Open wizard first without any structure
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
     await presetSection.setName('TestPreset10');
-    
+
     // Draw several fragments before defining components
     // Fragment 1 - chain for Base
     await RightToolbar(page).clickAtom(Atom.Carbon);
     await clickOnCanvas(page, 100, 100);
     await clickOnCanvas(page, 150, 100);
-    
+
     // Fragment 2 - chain for Sugar
     await clickOnCanvas(page, 200, 100);
     await clickOnCanvas(page, 250, 100);
-    
-    // Fragment 3 - chain for Phosphate  
+
+    // Fragment 3 - chain for Phosphate
     await clickOnCanvas(page, 300, 100);
     await clickOnCanvas(page, 350, 100);
-    
+
     // Fragment 4 - isolated unassigned structure
     await drawBenzeneRing(page);
-    
+
     // Now define components using some of the pre-existing fragments
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [1],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [2],
     });
-    
+
     // Try to save with leftover unassigned benzene ring - should fail
     await dialog.submit();
-    
+
     // Verify error about unassigned structure
-    const errorBanner = NotificationMessageBanner(page, ErrorMessage.unassignedStructure);
+    const errorBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.unassignedStructure,
+    );
     expect(await errorBanner.isVisible()).toBeTruthy();
-    
+
     await takeEditorScreenshot(page);
     await dialog.discard();
   });

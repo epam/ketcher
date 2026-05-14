@@ -11,6 +11,7 @@ type LeftToolbarLocators = {
   handToolButton: Locator;
   areaSelectionDropdownButton: Locator;
   areaSelectionDropdownExpandButton: Locator;
+  toolSelectionDropdownPanel: Locator;
   eraseButton: Locator;
   bondSelectionDropdownButton: Locator;
   bondSelectionDropdownExpandButton: Locator;
@@ -42,6 +43,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
+    toolSelectionDropdownPanel: page.getByTestId('multi-tool-dropdown').first(),
   };
 
   return {
@@ -115,50 +117,56 @@ export const CommonLeftToolbar = (page: Page) => {
       });
     },
 
-    async bondTool(bondType: MacroBondTool | MicroBondTool) {
+    async bondTool(bondTool: MacroBondTool | MicroBondTool) {
       if (
         (await this.isBondToolActive()) &&
-        (await this.isBondToolSelected(bondType))
+        (await this.isBondToolSelected(bondTool))
       ) {
         return;
       }
 
       if (
         !(await this.isBondToolActive()) &&
-        (await this.isBondToolSelected(bondType))
+        (await this.isBondToolSelected(bondTool))
       ) {
         await locators.bondSelectionDropdownButton.click();
         return;
       }
 
       let attempts = 0;
+      let lastError: unknown;
       const maxAttempts = 5;
-      const bondTypeButton = page
-        .getByTestId(bondType)
+      const bondToolButton = locators.toolSelectionDropdownPanel
+        .getByTestId(bondTool)
         .filter({ has: page.locator(':visible') })
         .first();
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();
-          await bondTypeButton.waitFor({
+          await locators.toolSelectionDropdownPanel.waitFor({
             state: 'visible',
             timeout: bondTypeButtonVisibleTimeout,
           });
-
-          await bondTypeButton.click({
+          await bondToolButton.click({
             force: true,
             timeout: bondToolbarActionTimeout,
+          });
+          await locators.toolSelectionDropdownPanel.waitFor({
+            state: 'hidden',
+            timeout: 1000,
           });
           return;
         } catch (error) {
           attempts++;
-          if (attempts === maxAttempts) {
-            throw error;
-          }
-
-          console.warn('Unable to click on the bond type button, retrying...');
+          lastError = error;
+          console.warn('Unable to click on the bond tool button, retrying...');
         }
       }
+
+      throw new Error(
+        `Unable to select bond tool "${bondTool}" after ${maxAttempts} attempts.`,
+        { cause: lastError },
+      );
     },
 
     async isBondToolActive() {
@@ -173,9 +181,9 @@ export const CommonLeftToolbar = (page: Page) => {
       );
     },
 
-    async isBondToolSelected(bondType: MacroBondTool | MicroBondTool) {
+    async isBondToolSelected(bondTool: MacroBondTool | MicroBondTool) {
       return locators.bondSelectionDropdownButton
-        .getByTestId(bondType)
+        .getByTestId(bondTool)
         .isVisible();
     },
   };

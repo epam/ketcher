@@ -7,14 +7,19 @@ import { getBondLocator } from '@utils/macromolecules/polymerBond';
 const canvasElementClickTimeout = 1000;
 const centerCoordinateDivisor = 2;
 
+type ClickModifier = 'Alt' | 'Control' | 'ControlOrMeta' | 'Meta' | 'Shift';
+
 export async function clickSelectableCanvasElement(
   page: Page,
   element: Locator,
+  options: { modifiers?: ClickModifier[] } = {},
 ) {
+  const { modifiers } = options;
   try {
     await element.click({
       force: true,
       timeout: canvasElementClickTimeout,
+      ...(modifiers ? { modifiers } : {}),
     });
   } catch (error) {
     const box = await element.boundingBox();
@@ -22,10 +27,19 @@ export async function clickSelectableCanvasElement(
       throw error;
     }
 
-    await page.mouse.click(
-      box.x + box.width / centerCoordinateDivisor,
-      box.y + box.height / centerCoordinateDivisor,
-    );
+    for (const modifier of modifiers ?? []) {
+      await page.keyboard.down(modifier);
+    }
+    try {
+      await page.mouse.click(
+        box.x + box.width / centerCoordinateDivisor,
+        box.y + box.height / centerCoordinateDivisor,
+      );
+    } finally {
+      for (const modifier of [...(modifiers ?? [])].reverse()) {
+        await page.keyboard.up(modifier);
+      }
+    }
   }
 }
 
@@ -39,12 +53,12 @@ export async function selectAtomAndBonds(
   await CommonLeftToolbar(page).handTool();
   await CommonLeftToolbar(page).areaSelectionTool();
   await clickOnCanvas(page, 0, 0);
-  await page.keyboard.down('Shift');
   if (options.atomIds) {
     for (const atomId of options.atomIds) {
       await clickSelectableCanvasElement(
         page,
         getAtomLocator(page, { atomId }),
+        { modifiers: ['Shift'] },
       );
     }
   }
@@ -53,8 +67,8 @@ export async function selectAtomAndBonds(
       await clickSelectableCanvasElement(
         page,
         getBondLocator(page, { bondId }),
+        { modifiers: ['Shift'] },
       );
     }
   }
-  await page.keyboard.up('Shift');
 }

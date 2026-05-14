@@ -147,7 +147,9 @@ test(`Verify that connections between monomers and molecules are maintained corr
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test(`Verify that switching between micro and macro modes displays molecules without structural changes`, async () => {
+test(`Verify that switching between micro and macro modes displays molecules without structural changes`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5960
    * Description: Verify that switching between micro and macro modes displays molecules without structural changes
@@ -158,7 +160,6 @@ test(`Verify that switching between micro and macro modes displays molecules wit
    *       4. Take screenshot to witness canvas was rendered correct at micro
    *       Canvases should be equal
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket',
@@ -215,7 +216,9 @@ test(`Verify that all 16 bond types are displayed correctly in macromolecules mo
   await takeEditorScreenshot(page);
 });
 
-test(`Verify that small molecules with any bond type retain their representation when switching from molecules mode to macromolecules mode`, async () => {
+test(`Verify that small molecules with any bond type retain their representation when switching from molecules mode to macromolecules mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6318
    * Description: Verify that small molecules with any bond type retain their representation
@@ -231,7 +234,6 @@ test(`Verify that small molecules with any bond type retain their representation
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
@@ -432,7 +434,9 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
-test(`Verify that switching back from macromolecules mode to molecules mode does not corrupt or change bond types`, async () => {
+test(`Verify that switching back from macromolecules mode to molecules mode does not corrupt or change bond types`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6318
    * Description: Verify that switching back from macromolecules mode to molecules mode does not corrupt or change bond types
@@ -449,7 +453,6 @@ test(`Verify that switching back from macromolecules mode to molecules mode does
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
@@ -506,7 +509,9 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   }
 });
 
-test(`Verify that copying and pasting structures with all bond types in macromolecules mode retains the bond representations`, async () => {
+test(`Verify that copying and pasting structures with all bond types in macromolecules mode retains the bond representations`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6318
    * Description: Verify that copying and pasting structures with all bond types in macromolecules mode retains the bond representations
@@ -523,7 +528,6 @@ test(`Verify that copying and pasting structures with all bond types in macromol
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     page,
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',

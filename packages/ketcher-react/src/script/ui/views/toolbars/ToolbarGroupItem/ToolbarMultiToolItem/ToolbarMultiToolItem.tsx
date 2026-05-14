@@ -142,6 +142,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       ref={ref}
       className={classes.root}
       data-testid={`${id}-drop-down-button`}
+      data-is-selected={selected ? 'true' : 'false'}
     >
       <ActionButton
         {...actionButtonProps}

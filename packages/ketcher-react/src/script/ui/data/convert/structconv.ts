@@ -209,13 +209,13 @@ export function toElement(elem: ElementFormData) {
 
 export function fromAtom(satom?: Atom) {
   if (!satom) return null;
-  const alias = satom.alias || '';
+  const alias = satom.alias ?? '';
   const atomType = getAtomType(satom);
   return {
     alias,
     atomType,
     atomList:
-      satom.atomList?.ids.map((i) => Elements.get(i)!.label).join(',') || '',
+      satom.atomList?.ids.map((i) => Elements.get(i)!.label).join(',') ?? '',
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
@@ -292,7 +292,8 @@ export function toAtom(atom: ElementFormData): Partial<Atom> {
     // empty charge value by default treated as zero,
     // no need to pass and display zero values(0, -0) explicitly
     charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
-    alias: restAtom.alias || null,
+    // Empty string from cleared form field must become null like undefined (not ?? alone).
+    alias: restAtom.alias === '' ? null : restAtom.alias ?? null,
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
@@ -365,10 +366,10 @@ export function toStereoLabel(stereoLabel: {
 }) {
   switch (stereoLabel.type) {
     case StereoLabel.And:
-      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`;
+      return `${StereoLabel.And}${stereoLabel.andNumber ?? 1}`;
 
     case StereoLabel.Or:
-      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`;
+      return `${StereoLabel.Or}${stereoLabel.orNumber ?? 1}`;
 
     default:
       return stereoLabel.type;
@@ -377,8 +378,8 @@ export function toStereoLabel(stereoLabel: {
 
 function fromApoint(sap: AttachmentPoints | null) {
   return {
-    primary: ((sap || 0) & 1) > 0,
-    secondary: ((sap || 0) & 2) > 0,
+    primary: ((sap ?? 0) & 1) > 0,
+    secondary: ((sap ?? 0) & 2) > 0,
   };
 }
 
@@ -504,7 +505,7 @@ function fromBondType(type: number, stereo: number) {
 }
 
 export function fromSgroup(ssgroup: SGroupInput) {
-  const type = ssgroup.type || 'DAT';
+  const type = ssgroup.type ?? 'DAT';
   const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
   if (absolute === false && attached === false)

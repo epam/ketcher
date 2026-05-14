@@ -75,7 +75,11 @@ import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidHelmAlias,
+  isValidIdtAlias,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -94,6 +98,7 @@ import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import {
   getAminoAcidsToModify,
   getMonomerUniqueKey,
@@ -115,6 +120,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
+  KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
 
@@ -235,6 +241,7 @@ export class CoreEditor {
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     resetEditorEvents();
     this.events = editorEvents;
+    KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();
@@ -454,14 +461,29 @@ export class CoreEditor {
         return;
       }
 
-      const existingMonomerIndex = this._monomersLibrary.findIndex(
-        (monomer) => {
-          return (
-            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-            monomer?.props.hidden === newMonomer.props?.hidden
-          );
-        },
+      // Validate that slashes in IDT aliases only appear at first/last position
+      if (newMonomer.props?.idtAliases) {
+        const { base, modifications } = newMonomer.props.idtAliases;
+        const aliasesToValidate = [
+          base,
+          modifications?.endpoint3,
+          modifications?.endpoint5,
+          modifications?.internal,
+        ].filter(Boolean) as string[];
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
+      }
+
+      const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
+        areSameMonomers(monomer, newMonomer),
       );
 
       const newMonomerTemplateRef =
@@ -521,6 +543,19 @@ export class CoreEditor {
       if (!templateDefinition.name?.trim()) {
         KetcherLogger.error(
           `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
+      if (
+        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
+      ) {
+        const truncatedTemplateName = `${templateDefinition.name.slice(
+          0,
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+        )}...`;
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
         );
         return;
       }
@@ -637,8 +672,16 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      let isPropagationStopped = false;
+      const originalStopPropagation = event.stopPropagation.bind(event);
+      event.stopPropagation = () => {
+        isPropagationStopped = true;
+        originalStopPropagation();
+      };
+
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) {
+
+      if (!isPropagationStopped) {
         this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });

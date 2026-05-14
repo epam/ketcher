@@ -30,6 +30,13 @@ const ieCb: DataTransfer | undefined =
     ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
     : undefined;
 
+const isSafariBrowser = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+const isAsyncClipboardWriteAvailable = (): boolean =>
+  isClipboardAPIAvailable() && !isSafariBrowser();
+
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
 
@@ -68,6 +75,7 @@ interface ClipAreaProps {
     data: ClipboardItem[] | ClipboardData,
     isSmarts?: boolean,
   ) => Promise<void>;
+  onLegacyCopy: () => ClipboardData | null | undefined;
   onLegacyCut: () => ClipboardData | null | undefined;
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
   target?: HTMLElement;
@@ -117,7 +125,7 @@ class ClipArea extends Component<ClipAreaProps> {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           this.props.onCopy().then((data) => {
             if (!data) {
               return;
@@ -128,39 +136,47 @@ class ClipArea extends Component<ClipAreaProps> {
             });
           });
         } else {
-          if (needSkipCopyEvent) {
-            needSkipCopyEvent = false;
-            return;
+          if (isSafariBrowser()) {
+            const data = this.props.onLegacyCopy();
+            if (data && event.clipboardData) {
+              legacyCopy(event.clipboardData, data);
+            }
+            event.preventDefault();
+          } else {
+            if (needSkipCopyEvent) {
+              needSkipCopyEvent = false;
+              return;
+            }
+            needSkipCopyEvent = true;
+
+            this.props.onCopy().then((data) => {
+              // It is possible to have access to clipboard data through evt.clipboardData
+              // only in synchronous code. That's why we dispatch 'copy' event here after server call.
+              // It will not work with long operations which time > 5 sec, because browser will close access
+              // to clipboard data if user did not interact with application.
+              addEventListener(
+                'copy',
+                (evt: Event) => {
+                  const clipboardEvent = evt as ClipboardEvent;
+                  if (clipboardEvent.clipboardData && data) {
+                    legacyCopy(clipboardEvent.clipboardData, data);
+                  }
+                  evt.preventDefault();
+                },
+                { once: true },
+              );
+              document.execCommand('copy');
+            });
+
+            event.preventDefault();
           }
-          needSkipCopyEvent = true;
-
-          this.props.onCopy().then((data) => {
-            // It is possible to have access to clipboard data through evt.clipboardData
-            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-            // It will not work with long operations which time > 5 sec, because browser will close access
-            // to clipboard data if user did not interact with application.
-            addEventListener(
-              'copy',
-              (evt: Event) => {
-                const clipboardEvent = evt as ClipboardEvent;
-                if (clipboardEvent.clipboardData && data) {
-                  legacyCopy(clipboardEvent.clipboardData, data);
-                }
-                evt.preventDefault();
-              },
-              { once: true },
-            );
-            document.execCommand('copy');
-          });
-
-          event.preventDefault();
         }
       },
       cut: (event: ClipboardEvent) => {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           (async () => {
             const data = await this.props.onCut();
             if (!data) return;

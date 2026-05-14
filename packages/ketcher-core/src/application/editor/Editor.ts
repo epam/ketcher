@@ -368,6 +368,11 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
+    const validationErrors: string[] = [];
+    const reportValidationError = (message: string) => {
+      console.error(message);
+      validationErrors.push(message);
+    };
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -410,8 +415,9 @@ export class CoreEditor {
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -440,19 +446,21 @@ export class CoreEditor {
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
-        const errorMessage = `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
-          newMonomer.props.MonomerName
-        }${
-          aliasDetails ? ` (${aliasDetails})` : ''
-        }. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
+            newMonomer.props.MonomerName
+          }${
+            aliasDetails ? ` (${aliasDetails})` : ''
+          }. The monomer was not added to the library.`,
+        );
         return;
       }
 
       // Validate base IDT alias is present when idtAliases is defined
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
-        const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -471,8 +479,9 @@ export class CoreEditor {
         );
 
         if (hasInvalidSlash) {
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          reportValidationError(
+            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`,
+          );
           return;
         }
       }
@@ -541,8 +550,15 @@ export class CoreEditor {
         return;
       }
 
+      if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
+        reportValidationError(
+          `Editor::updateMonomersLibrary: Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}" for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
+        return;
+      }
+
       if (!templateDefinition.name?.trim()) {
-        KetcherLogger.error(
+        reportValidationError(
           `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
         );
         return;
@@ -563,6 +579,10 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
+
+    if (validationErrors.length > 0) {
+      throw new Error(validationErrors.join('\n'));
+    }
   }
 
   public get monomersLibraryParsedJson() {

@@ -767,19 +767,27 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.structService.convert(
-        {
-          struct: rawMonomersDataString,
-          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
-          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
-        },
-        {
-          ...serverSettings,
-          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
-        },
-      );
+      try {
+        const convertResult = await this.structService.convert(
+          {
+            struct: rawMonomersDataString,
+            input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+            output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+          },
+          {
+            ...serverSettings,
+            outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+          },
+        );
 
-      dataInKetFormat = convertResult.struct;
+        dataInKetFormat = convertResult.struct;
+      } catch (error) {
+        const originalMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new Error(
+          `Monomer item could not be loaded because of an error: ${originalMessage}`,
+        );
+      }
     }
 
     return dataInKetFormat;

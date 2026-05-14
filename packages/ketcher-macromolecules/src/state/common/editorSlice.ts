@@ -141,10 +141,17 @@ export const editorSlice: Slice<EditorState> = createSlice({
         }),
       });
 
-      editor.initializeMonomersLibraryFromKetcher(
-        action.payload.monomersLibraryUpdate,
-        action.payload.monomersLibraryReplace,
-      );
+      editor
+        .initializeMonomersLibraryFromKetcher(
+          action.payload.monomersLibraryUpdate,
+          action.payload.monomersLibraryReplace,
+        )
+        .catch((err) => {
+          console.error(
+            'Editor::initializeMonomersLibraryFromKetcher failed:',
+            err,
+          );
+        });
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

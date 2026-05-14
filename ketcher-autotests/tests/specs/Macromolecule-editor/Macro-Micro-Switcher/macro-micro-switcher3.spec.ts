@@ -469,6 +469,41 @@ function expectKetToContainMicroFragment(rawKet: string) {
   expect(hasMicroFragment).toBeTruthy();
 }
 
+async function getStereoValuesBetweenCollapsedMonomers(
+  page: Page,
+  firstMonomerName: string,
+  secondMonomerName: string,
+) {
+  return page.evaluate(
+    ({ firstMonomerName, secondMonomerName }) => {
+      const struct = window.ketcher.editor.struct();
+      const sgroups = Array.from(struct.sgroups.values());
+      const firstSgroup = sgroups.find(
+        (sgroup) => sgroup.data.name === firstMonomerName,
+      );
+      const secondSgroup = sgroups.find(
+        (sgroup) => sgroup.data.name === secondMonomerName,
+      );
+
+      if (!firstSgroup || !secondSgroup) {
+        throw new Error('Unable to find collapsed monomer S-groups');
+      }
+
+      const firstAtoms = new Set(firstSgroup.atoms);
+      const secondAtoms = new Set(secondSgroup.atoms);
+
+      return Array.from(struct.bonds.values())
+        .filter(
+          (bond) =>
+            (firstAtoms.has(bond.begin) && secondAtoms.has(bond.end)) ||
+            (firstAtoms.has(bond.end) && secondAtoms.has(bond.begin)),
+        )
+        .map((bond) => bond.stereo);
+    },
+    { firstMonomerName, secondMonomerName },
+  );
+}
+
 test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async ({
   MoleculesCanvas: _,
 }) => {
@@ -583,6 +618,37 @@ test(`Verify that custom RNA 5meC-MOE-P preset remains visible after removing MO
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   expectKetToContainMicroFragment(await getKet(page));
+});
+
+test(`Verify that custom RNA 5meC-MOE-P preset keeps a plain base-sugar bond after expanding and collapsing MOE`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Description: Verify that the MOE attachment-point stereo bond is not copied
+   *              permanently to the base-sugar monomer connection after an
+   *              expand-collapse roundtrip.
+   *
+   * Case: 1. Load custom 5meC-MOE-P KET on Molecules canvas
+   *       2. Expand MOE monomer
+   *       3. Collapse MOE monomer
+   *       4. Verify the collapsed MOE-5meC connection has no stereo
+   */
+  await openFileAndAddToCanvasAsNewProject(page, customRnaMoePreset.KETFile);
+  await ContextMenu(
+    page,
+    getAbbreviationLocator(page, {
+      name: customRnaMoePreset.monomerAlias,
+    }),
+  ).click(MonomerOnMicroOption.ExpandMonomer);
+
+  await ContextMenu(page, getAtomLocator(page, { atomId: 10 })).click(
+    MonomerOnMicroOption.CollapseMonomer,
+  );
+
+  expect(
+    await getStereoValuesBetweenCollapsedMonomers(page, 'MOE', '5meC'),
+  ).toEqual([0]);
 });
 
 const copyableMonomer: IMonomer = {

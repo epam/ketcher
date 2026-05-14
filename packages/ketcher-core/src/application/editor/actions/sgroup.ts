@@ -261,6 +261,11 @@ export function setExpandMonomerSGroup(
         }
       }
 
+      if (!attrs.expanded && !otherMonomerIsExpanded) {
+        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+        continue;
+      }
+
       if (hasEffectiveCurrentStereo && !hasEffectiveOtherStereo) {
         if (bondToOutside.begin !== atomInsideCurrentMonomer) {
           action.mergeWith(

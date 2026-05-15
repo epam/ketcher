@@ -65,13 +65,16 @@ export class BondAttr extends BaseOperation {
     }
   }
 
-  isDummy(restruct: ReStruct) {
-    if (this.data) {
-      const { attribute, bid, value } = this.data;
-      const bond = restruct.molecule.bonds.get(bid)!;
-      return bond[attribute] === value;
+  isDummy(restruct?: ReStruct) {
+    if (!restruct || !this.data) {
+      return false;
     }
-    return false;
+    const { attribute, bid, value } = this.data;
+    const bond = restruct.molecule.bonds.get(bid);
+    if (!bond) {
+      return false;
+    }
+    return bond[attribute] === value;
   }
 
   invert() {

@@ -6,7 +6,7 @@ import {
   waitForRender,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { selectElementFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
 import { AtomPropertiesDialog } from '@tests/pages/molecules/canvas/AtomPropertiesDialog';
@@ -100,7 +100,7 @@ test.describe('Checking if displaying atom attributes does not broke integrity o
 test.describe('Checking if preview of attributes is displayed correctly after hover', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).dblclick({
@@ -231,7 +231,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
 test.describe('Checking if atoms are displayed correctly', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await page.keyboard.press('Escape');
   });

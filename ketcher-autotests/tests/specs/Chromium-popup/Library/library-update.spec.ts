@@ -471,7 +471,7 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
     'monomerTemplate' +
     _betweenEntries +
     _idtAliases +
-    'base=_nucleotide1IDT,ep3=/nucleotide1_ep3/,ep5=/nucleotide1_ep5/,internal=/nucleotide1_internal/' +
+    'base=_nuc1IDT,ep3=/nuc1ep3/,ep5=/nuc1ep5/,internal=/nuc1int/' +
     _betweenEntries +
     _endToken;
 
@@ -482,16 +482,16 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
   ).toBeTruthy();
   expect(
     await Library(page).getMonomerIDTAliasBase(Nucleotide._Nucleotide1),
-  ).toContain('_nucleotide1IDT');
+  ).toContain('_nuc1IDT');
   expect(
     await Library(page).getMonomerIDTAliasEp3(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep3/');
+  ).toContain('/nuc1ep3/');
   expect(
     await Library(page).getMonomerIDTAliasEp5(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep5/');
+  ).toContain('/nuc1ep5/');
   expect(
     await Library(page).getMonomerIDTAliasInternal(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_internal/');
+  ).toContain('/nuc1int/');
 });
 
 test.fail(

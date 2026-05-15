@@ -340,6 +340,7 @@
         "fullName": "D-Serine",
         "alias": "dS",
         "aliasHELM": "dS",
+        "aliasBILN": "dS",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

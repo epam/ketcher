@@ -300,7 +300,7 @@ function Label({
   error: _error,
   children,
   ...props
-}: LabelProps) {
+}: Readonly<LabelProps>) {
   return (
     <label {...props}>
       {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
@@ -322,7 +322,7 @@ function usePopoverAnchor() {
   return { anchorEl, handleOpen, handleClose };
 }
 
-function Field(props: FieldProps) {
+function Field(props: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -377,7 +377,7 @@ function Field(props: FieldProps) {
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       error={dataError}
-      title={rest.title || desc.title}
+      title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
       data-testid={props['data-testid']}
@@ -404,7 +404,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function FieldWithModal(props: FieldWithModalProps) {
+function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -434,7 +434,7 @@ function FieldWithModal(props: FieldWithModalProps) {
     <Label
       className={className}
       error={dataError}
-      title={title || desc.title}
+      title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
     >
@@ -470,7 +470,7 @@ function FieldWithModal(props: FieldWithModalProps) {
   );
 }
 
-function CustomQueryField(props: CustomQueryFieldProps) {
+function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,
@@ -620,7 +620,7 @@ function propSchema(
   }
 
   return {
-    key: schema.key || '',
+    key: schema.key ?? '',
     serialize: (inst: Record<string, unknown>) => {
       // Pass an explicit base URI so jsonschema's resolveUrl() always receives
       // a valid absolute URL as `from`.  Without this, it calls

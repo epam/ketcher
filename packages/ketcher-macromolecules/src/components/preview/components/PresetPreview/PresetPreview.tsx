@@ -20,21 +20,34 @@ import {
   PresetIcon,
   PresetContainer,
   PresetName,
+  PhosphatePositionIcon,
+  PhosphatePositionIconWrapper,
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
-import { KetMonomerClass } from 'ketcher-core';
+import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState } from 'state';
 
-const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'>[] = [
-  'sugar',
-  'base',
-  'phosphate',
-];
+const getIconNameForMonomer = (
+  monomer: MonomerItemType,
+): Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'> => {
+  switch (monomer.props.MonomerClass) {
+    case KetMonomerClass.Sugar:
+      return 'sugar';
+    case KetMonomerClass.Base:
+      return 'base';
+    case KetMonomerClass.Phosphate:
+      return 'phosphate';
+    default:
+      return 'chem';
+  }
+};
+
+const PHOSPHATE_INDEX = 2;
 
 interface Props {
   className?: string;
@@ -44,11 +57,6 @@ const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
   const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
-
-  // Check if this is a CHEM chain (all monomers are CHEMs)
-  const isChemChain = monomers.every(
-    (monomer) => monomer?.props.MonomerClass === KetMonomerClass.CHEM,
-  );
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
@@ -61,6 +69,30 @@ const PresetPreview = ({ className }: Props) => {
   });
 
   const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
+  // Resolve the phosphate-position icon (matches the icon used in the RNA
+  // Builder's phosphate position selector). `left` => 5'-end (icon with the
+  // colored phosphate on the left), `right` => 3'-end.
+  let phosphatePositionIconName: IconName | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionIconName = 'preset-left-phosphate';
+  } else {
+    phosphatePositionIconName =
+      preview.phosphatePosition === 'right'
+        ? 'preset-right-phosphate'
+        : undefined;
+  }
+
+  let phosphatePositionTooltip: string | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionTooltip = "Phosphate on the left (5')";
+  } else {
+    phosphatePositionTooltip =
+      preview.phosphatePosition === 'right'
+        ? "Phosphate on the right (3')"
+        : undefined;
+  }
+  const getMonomerNameText = (monomer: MonomerItemType) =>
+    `(${monomer.props.Name})`;
 
   return (
     <PresetContainer
@@ -73,10 +105,19 @@ const PresetPreview = ({ className }: Props) => {
       <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
       {monomers.map((monomer, index) =>
         monomer ? (
-          <PresetMonomerRow key={monomer.props.id}>
-            <PresetIcon name={isChemChain ? 'chem' : icons[index]} />
+          <PresetMonomerRow key={monomer.props.id ?? index}>
+            <PresetIcon name={getIconNameForMonomer(monomer)} />
             <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-            <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+            <PresetMonomerName>{getMonomerNameText(monomer)}</PresetMonomerName>
+            {index === PHOSPHATE_INDEX && phosphatePositionIconName && (
+              <PhosphatePositionIconWrapper
+                title={phosphatePositionTooltip}
+                data-testid="preset-preview-phosphate-position-icon"
+                data-phosphate-position={preview.phosphatePosition}
+              >
+                <PhosphatePositionIcon name={phosphatePositionIconName} />
+              </PhosphatePositionIconWrapper>
+            )}
           </PresetMonomerRow>
         ) : null,
       )}

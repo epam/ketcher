@@ -17,7 +17,7 @@ import { pageReload } from '@utils/common/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -122,7 +122,7 @@ test.describe('Zoom Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -145,7 +145,7 @@ test.describe('Zoom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -170,7 +170,7 @@ test.describe('Zoom Tool', () => {
       y: 0,
       fromCenter: true,
     });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -198,7 +198,7 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.down('ControlOrMeta');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);

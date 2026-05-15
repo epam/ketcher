@@ -8,7 +8,7 @@ import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import { UsageInMacromolecule } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -115,6 +115,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .attr('font-size', '6px')
       .attr('font-weight', 300)
       .text(this.monomer.monomers.length);
+
+    this.raiseAttachmentPoints();
   }
 
   public show(theme) {
@@ -153,6 +155,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

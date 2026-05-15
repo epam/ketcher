@@ -440,6 +440,7 @@
         "fullName": "D-Proline",
         "alias": "dP",
         "aliasHELM": "dP",
+        "aliasBILN": "dP",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -55,6 +55,7 @@ export enum SupportedFormat {
   idt = 'idt',
   axoLabs = 'axoLabs',
   helm = 'helm',
+  biln = 'biln',
   unknown = 'unknown',
   rdf = 'rdf',
   rdfV3000 = 'rdfV3000',

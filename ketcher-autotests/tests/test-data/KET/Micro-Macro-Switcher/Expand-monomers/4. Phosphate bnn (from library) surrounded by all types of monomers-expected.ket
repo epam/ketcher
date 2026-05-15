@@ -11338,6 +11338,7 @@
         "id": "Sta___Statine",
         "fullName": "Statine",
         "alias": "Sta",
+        "aliasBILN": "Sta_3S4S",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

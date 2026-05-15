@@ -361,6 +361,7 @@
         "fullName": "Pyrrolysine",
         "alias": "O",
         "aliasHELM": "Pyl",
+        "aliasBILN": "Pyl",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

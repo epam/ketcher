@@ -22,7 +22,7 @@ import {
   MacroFileType,
   MolFileFormat,
   dragMouseTo,
-  Arrows,
+  ArrowType,
   takeElementScreenshot,
   getCoordinatesOfTheMiddleOfTheCanvas,
 } from '@utils';
@@ -43,7 +43,7 @@ import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -53,7 +53,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import {
@@ -63,7 +63,7 @@ import {
 import {
   getArrowLocator,
   getPlusLocator,
-} from '@utils/canvas/arrow-signes/getArrow';
+} from '@utils/canvas/arrow-signes/getArrowLocator';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
@@ -233,7 +233,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
@@ -274,7 +274,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/three-different-multi-tail-arrows.ket',
     );
-    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1168,24 +1168,24 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+    await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
     await dragMouseTo(page, 200, 200);
-    await getArrowLocator(page, { arrowType: Arrows.FilledBow }).hover({
+    await getArrowLocator(page, { arrowType: ArrowType.FilledBow }).hover({
       force: true,
     });
     await dragMouseTo(page, 200, 300);
     await getArrowLocator(page, {
-      arrowType: Arrows.BothEndsFilledTriangle,
+      arrowType: ArrowType.BothEndsFilledTriangle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 350);
     await getArrowLocator(page, {
-      arrowType: Arrows.UnbalancedOpenHalfAngle,
+      arrowType: ArrowType.UnbalancedOpenHalfAngle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 400);
     await getArrowLocator(page, {
-      arrowType: Arrows.EllipticalArcFilledTriangle,
+      arrowType: ArrowType.EllipticalArcFilledTriangle,
     }).hover({ force: true });
     await dragMouseTo(page, 200, 450);
     await getPlusLocator(page).hover({ force: true });
@@ -1328,14 +1328,14 @@ test.describe('Macro-Micro-Switcher2', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
     const shiftElement = 250;
     const newX = x + shiftElement;
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await getArrowLocator(page, { arrowType: Arrows.OpenAngle }).hover({
+    await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
     await dragMouseTo(page, newX, y);

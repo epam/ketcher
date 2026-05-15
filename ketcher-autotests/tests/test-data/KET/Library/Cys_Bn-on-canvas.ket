@@ -262,6 +262,7 @@
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
         "aliasHELM": "Cys_Bn",
+        "aliasBILN": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

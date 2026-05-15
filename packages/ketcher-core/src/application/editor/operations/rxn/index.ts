@@ -31,6 +31,7 @@ type RxnArrowAddData = {
   pos: Array<Vec2>;
   mode: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 };
 
 class RxnArrowAdd extends Base {
@@ -41,9 +42,10 @@ class RxnArrowAdd extends Base {
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
     id?: number,
     height?: number,
+    arrowId?: number,
   ) {
     super(OperationType.RXN_ARROW_ADD);
-    this.data = { pos, mode, id, height };
+    this.data = { pos, mode, id, height, arrowId };
   }
 
   execute(restruct: any): void {
@@ -51,13 +53,15 @@ class RxnArrowAdd extends Base {
     const item = new RxnArrow({
       mode: this.data.mode,
       height: this.data.height,
+      arrowId: this.data.arrowId,
     });
 
     if (this.data.id == null) {
-      const index = struct.rxnArrows.add(item);
+      const index = struct.addRxnArrow(item);
       this.data.id = index;
+      this.data.arrowId = item.arrowId;
     } else {
-      struct.rxnArrows.set(this.data.id, item);
+      struct.setRxnArrow(this.data.id, item);
     }
 
     const itemId = this.data.id!;
@@ -84,6 +88,7 @@ interface RxnArrowDeleteData {
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 }
 
 class RxnArrowDelete extends Base {
@@ -105,6 +110,7 @@ class RxnArrowDelete extends Base {
     this.data.pos = item.pos;
     this.data.mode = item.mode;
     this.data.height = item.height;
+    this.data.arrowId = item.arrowId;
     this.performed = true;
 
     restruct.markItemRemoved();
@@ -125,6 +131,7 @@ class RxnArrowDelete extends Base {
       this.data.mode,
       this.data.id,
       this.data.height,
+      this.data.arrowId,
     );
   }
 }

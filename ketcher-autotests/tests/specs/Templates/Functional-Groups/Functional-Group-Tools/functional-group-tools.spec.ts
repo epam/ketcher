@@ -21,11 +21,11 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
@@ -71,7 +71,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
@@ -207,7 +207,7 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/expanded-fg-CO2Et.mol');
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page);
     await EditAbbreviationDialog(page).removeAbbreviation();
     await clickInTheMiddleOfTheCanvas(page);
@@ -301,7 +301,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
     await takeEditorScreenshot(page);
 
@@ -708,7 +708,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 
-    await commonLeftToolbar.bondTool(MicroBondType.Single);
+    await commonLeftToolbar.bondTool(MicroBondTool.Single);
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 
@@ -732,7 +732,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 
-    await leftToolbar.selectArrowTool(ArrowType.ArrowOpenAngle);
+    await leftToolbar.selectArrowTool(ArrowTool.ArrowOpenAngle);
     await clickInTheMiddleOfTheCanvas(page, 'right');
     await takeEditorScreenshot(page);
 

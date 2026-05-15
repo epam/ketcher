@@ -35,6 +35,10 @@ import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
+import {
+  AttachmentPointAtom,
+  AttachmentPointOption,
+} from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -280,14 +284,14 @@ test(`5. Check warning messages on Sugar monomer if R3 attachment point with a l
   await createMonomerDialog.discard();
 });
 
-test(`6. Check warning messages on Base monomer if R1 attachment point with a leaving group is not equal OH`, async () => {
+test(`6. Check warning messages on Base monomer if R1 attachment point with a leaving group is not equal H`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/8587
    * Description: Check warning messages on Base monomer if R1 attachment point with a leaving group is not equal OH
    *
    * Case:
    *      1. Open Molecules canvas
-   *      2. Load molecule on canvas (R1 = H)
+   *      2. Load molecule on canvas (R1 = OH)
    *      3. Press Create Monomer button
    *      4. Set mandatory fields in Create Monomer dialog for amino acid monomer
    *      5. Press Submit button
@@ -309,8 +313,12 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
   await createMonomerDialog.setSymbol('TempBase1');
   await createMonomerDialog.setName('TempBase1');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
+  await createMonomerDialog.changeAttachmentPointAtom({
+    attachmentPointName: AttachmentPointOption.R1,
+    newAtom: AttachmentPointAtom.OH,
+  });
 
-  // (R1 = H)
+  // (R1 = OH)
 
   await createMonomerDialog.submit();
 

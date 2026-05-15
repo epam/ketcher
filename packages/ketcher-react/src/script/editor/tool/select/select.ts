@@ -417,6 +417,8 @@ class SelectTool implements Tool {
         this.editor.update(true);
       }
       this.dragCtx = null;
+      editor.event.message.dispatch({ info: false });
+      this.editor.rotateController.rerender();
       return;
     }
 

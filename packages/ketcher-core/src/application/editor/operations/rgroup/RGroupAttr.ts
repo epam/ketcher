@@ -38,7 +38,7 @@ export class RGroupAttr extends BaseOperation {
     if (this.data) {
       const { rgid, attribute, value } = this.data;
 
-      const rgp = restruct.molecule.rgroups.get(rgid)!;
+      const rgp = restruct.molecule.rgroups.get(rgid);
 
       if (!rgp) {
         return;
@@ -65,12 +65,15 @@ export class RGroupAttr extends BaseOperation {
     return inverted;
   }
 
-  isDummy(restruct: ReStruct) {
-    if (this.data) {
-      const { rgid, attribute, value } = this.data;
-      const rgroup = restruct.molecule.rgroups.get(rgid)!;
-      return rgroup[attribute] === value;
+  isDummy(restruct?: ReStruct) {
+    if (!restruct || !this.data) {
+      return false;
     }
-    return false;
+    const { rgid, attribute, value } = this.data;
+    const rgroup = restruct.molecule.rgroups.get(rgid);
+    if (!rgroup) {
+      return false;
+    }
+    return rgroup[attribute] === value;
   }
 }

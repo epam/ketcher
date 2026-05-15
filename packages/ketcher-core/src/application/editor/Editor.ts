@@ -375,7 +375,6 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const validationErrors: string[] = [];
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -420,7 +419,6 @@ export class CoreEditor {
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
         return;
       }
 
@@ -455,7 +453,6 @@ export class CoreEditor {
           aliasDetails ? ` (${aliasDetails})` : ''
         }. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
         return;
       }
 
@@ -463,7 +460,6 @@ export class CoreEditor {
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
         return;
       }
 
@@ -484,7 +480,6 @@ export class CoreEditor {
         if (hasInvalidSlash) {
           const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
           KetcherLogger.error(errorMessage);
-          validationErrors.push(errorMessage);
           return;
         }
       }
@@ -554,9 +549,9 @@ export class CoreEditor {
       }
 
       if (!templateDefinition.name?.trim()) {
-        const errorMessage = `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`;
-        KetcherLogger.error(errorMessage);
-        validationErrors.push(errorMessage);
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        );
         return;
       }
 
@@ -575,14 +570,6 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
-
-    if (validationErrors.length > 0) {
-      throw new Error(
-        `Editor::updateMonomersLibrary: One or more entries were skipped during library update:\n  - ${validationErrors.join(
-          '\n  - ',
-        )}`,
-      );
-    }
   }
 
   public get monomersLibraryParsedJson() {

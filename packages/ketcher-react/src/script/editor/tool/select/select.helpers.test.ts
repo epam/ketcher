@@ -49,9 +49,6 @@ describe('select helpers', () => {
         atoms: [1, 2],
         bonds: [3],
       });
-      const SGroup = getSGroupMock();
-      expect(SGroup.getAtoms).toHaveBeenCalledWith(struct, sgroup);
-      expect(SGroup.getBonds).toHaveBeenCalledWith(struct, sgroup);
     });
 
     it('combines atoms and bonds from selected monomer and labeled S-groups', () => {

@@ -129,6 +129,7 @@ const options: Array<Option> = [
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const additionalOptions: Array<Option> = [

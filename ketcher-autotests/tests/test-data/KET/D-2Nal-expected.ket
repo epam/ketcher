@@ -299,6 +299,7 @@
         "fullName": "D-3-(2-naphthyl)-alanine",
         "alias": "D-2Nal",
         "aliasHELM": "D-2Nal",
+        "aliasBILN": "D-2Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

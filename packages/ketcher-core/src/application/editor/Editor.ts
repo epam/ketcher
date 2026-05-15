@@ -77,8 +77,6 @@ import {
   EditorLineLength,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
-  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidHelmAlias,
   isValidIdtAlias,
   initHotKeys,
@@ -163,49 +161,6 @@ const getIdtAliasesByPosition = (
     internal: modifications?.internal ?? modifications?.i,
   };
 };
-
-const findIdtAliasCollision = (
-  newIdtAliases?: IKetIdtAliases,
-  existingIdtAliases?: IKetIdtAliases,
-) => {
-  const newAliases = getIdtAliasesByPosition(newIdtAliases);
-  const existingAliases = getIdtAliasesByPosition(existingIdtAliases);
-  const position = IDT_ALIAS_POSITIONS.find((position) => {
-    const newAlias = newAliases[position];
-
-    return Boolean(newAlias) && existingAliases[position] === newAlias;
-  });
-
-  return position
-    ? {
-        position,
-        value: newAliases[position],
-      }
-    : undefined;
-};
-
-const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) => {
-  const aliasesByPosition = getIdtAliasesByPosition(idtAliases);
-
-  return IDT_ALIAS_POSITIONS.map((position) => {
-    const alias = aliasesByPosition[position];
-
-    return alias
-      ? `IDT ${IDT_ALIAS_POSITION_LABEL[position]} alias "${alias}"`
-      : null;
-  })
-    .filter((value): value is string => Boolean(value))
-    .join(', ');
-};
-
-const formatIdtAliasCollisionDetails = (
-  collision?: ReturnType<typeof findIdtAliasCollision>,
-) =>
-  collision
-    ? ` Conflicting IDT ${
-        IDT_ALIAS_POSITION_LABEL[collision.position]
-      } alias "${collision.value}".`
-    : '';
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -474,73 +429,18 @@ export class CoreEditor {
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
           : null,
-        formatIdtAliasDetails(monomer.props?.idtAliases),
+        ...IDT_ALIAS_POSITIONS.map((position) => {
+          const alias = getIdtAliasesByPosition(monomer.props?.idtAliases)[
+            position
+          ];
+
+          return alias
+            ? `IDT ${IDT_ALIAS_POSITION_LABEL[position]} alias "${alias}"`
+            : null;
+        }),
       ]
         .filter((value): value is string => Boolean(value))
         .join(', ');
-
-    const getExistingMonomerGroupTemplates = () => {
-      const parsedJson = this._monomersLibraryParsedJson;
-
-      if (!parsedJson) {
-        return [];
-      }
-
-      return parsedJson.root.templates
-        .map((templateRef) => ({
-          ref: templateRef.$ref,
-          definition: parsedJson[templateRef.$ref],
-        }))
-        .filter(
-          (
-            template,
-          ): template is {
-            ref: string;
-            definition: IKetMonomerGroupTemplate;
-          } =>
-            template.definition?.type ===
-            KetTemplateType.MONOMER_GROUP_TEMPLATE,
-        );
-    };
-
-    let existingMonomerGroupTemplates = getExistingMonomerGroupTemplates();
-    const findIdtAliasCollisionInLibrary = (
-      idtAliases?: IKetIdtAliases,
-      ignoredMonomer?: MonomerItemType,
-      ignoredTemplateRef?: string,
-    ) => {
-      for (const monomer of this._monomersLibrary) {
-        if (ignoredMonomer && areSameMonomers(monomer, ignoredMonomer)) {
-          continue;
-        }
-
-        const collision = findIdtAliasCollision(
-          idtAliases,
-          monomer.props?.idtAliases,
-        );
-
-        if (collision) {
-          return collision;
-        }
-      }
-
-      for (const template of existingMonomerGroupTemplates) {
-        if (template.ref === ignoredTemplateRef) {
-          continue;
-        }
-
-        const collision = findIdtAliasCollision(
-          idtAliases,
-          template.definition.idtAliases,
-        );
-
-        if (collision) {
-          return collision;
-        }
-      }
-
-      return undefined;
-    };
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
@@ -553,11 +453,19 @@ export class CoreEditor {
         return;
       }
 
-      let idtAliasCollision: ReturnType<typeof findIdtAliasCollision>;
-      let aliasCollisionExists = this._monomersLibrary.some((monomer) => {
+      let idtAliasCollisionPosition: IdtAliasPosition | undefined;
+      let idtAliasCollisionValue: string | undefined;
+      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
+
+        const existingIdtAliases = getIdtAliasesByPosition(
+          monomer.props?.idtAliases,
+        );
+        const newIdtAliases = getIdtAliasesByPosition(
+          newMonomer.props?.idtAliases,
+        );
 
         if (
           Boolean(newMonomer.props?.aliasHELM) &&
@@ -566,19 +474,23 @@ export class CoreEditor {
           return true;
         }
 
-        return false;
+        idtAliasCollisionPosition = IDT_ALIAS_POSITIONS.find((position) => {
+          const newAlias = newIdtAliases[position];
+
+          if (Boolean(newAlias) && existingIdtAliases[position] === newAlias) {
+            idtAliasCollisionValue = newAlias;
+            return true;
+          }
+
+          return false;
+        });
+
+        return Boolean(idtAliasCollisionPosition);
       });
 
-      if (!aliasCollisionExists) {
-        idtAliasCollision = findIdtAliasCollisionInLibrary(
-          newMonomer.props?.idtAliases,
-          newMonomer,
-        );
-        aliasCollisionExists = Boolean(idtAliasCollision);
-      }
-
-      const idtAliasCollisionDetails =
-        formatIdtAliasCollisionDetails(idtAliasCollision);
+      const idtAliasCollisionDetails = idtAliasCollisionPosition
+        ? ` Bad position IDT alias "${idtAliasCollisionValue}" for ${IDT_ALIAS_POSITION_LABEL[idtAliasCollisionPosition]} position.`
+        : '';
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
@@ -680,68 +592,6 @@ export class CoreEditor {
         return;
       }
 
-      if (
-        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
-      ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
-        );
-        return;
-      }
-
-      if (
-        templateDefinition.idtAliases &&
-        !templateDefinition.idtAliases.base
-      ) {
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for preset ${templateDefinition.name}. The preset was not added to the library.`,
-        );
-        return;
-      }
-
-      if (templateDefinition.idtAliases) {
-        const aliasesToValidate = Object.values(
-          getIdtAliasesByPosition(templateDefinition.idtAliases),
-        ).filter(Boolean) as string[];
-
-        const hasInvalidSlash = aliasesToValidate.some(
-          (alias) => !isValidIdtAlias(alias),
-        );
-
-        if (hasInvalidSlash) {
-          KetcherLogger.error(
-            `Editor::updateMonomersLibrary: Load of "${templateDefinition.name}" preset has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The preset was not added to the library.`,
-          );
-          return;
-        }
-      }
-
-      const idtAliasCollision = findIdtAliasCollisionInLibrary(
-        templateDefinition.idtAliases,
-        undefined,
-        templateRef.$ref,
-      );
-
-      if (idtAliasCollision) {
-        const aliasDetails = formatIdtAliasDetails(
-          templateDefinition.idtAliases,
-        );
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Alias collision detected for preset ${
-            templateDefinition.name
-          }${
-            aliasDetails ? ` (${aliasDetails})` : ''
-          }.${formatIdtAliasCollisionDetails(
-            idtAliasCollision,
-          )} The preset was not added to the library.`,
-        );
-        return;
-      }
-
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (
@@ -754,7 +604,6 @@ export class CoreEditor {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
-      existingMonomerGroupTemplates = getExistingMonomerGroupTemplates();
     });
 
     this.events.updateMonomersLibrary.dispatch();

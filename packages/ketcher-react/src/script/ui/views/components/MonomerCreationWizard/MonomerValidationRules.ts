@@ -51,7 +51,7 @@ export const MONOMER_VALIDATION_RULES: MonomerValidationRule[] = [
     requirements: [
       {
         attachmentPoint: AttachmentPointName.R1,
-        expectedLeavingGroup: AtomLabel.O,
+        expectedLeavingGroup: AtomLabel.H,
       },
     ],
     warningMessage:

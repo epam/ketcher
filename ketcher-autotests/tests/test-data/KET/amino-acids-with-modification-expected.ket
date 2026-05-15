@@ -187,6 +187,7 @@
         "fullName": "D-Alanine",
         "alias": "dA",
         "aliasHELM": "dA",
+        "aliasBILN": "dA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -409,6 +410,7 @@
         "fullName": "O-phospho-L-serine",
         "alias": "SerPO3",
         "aliasHELM": "Ser_PO3H2",
+        "aliasBILN": "Ser_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -646,6 +648,7 @@
         "fullName": "Citrulline",
         "alias": "Cit",
         "aliasHELM": "Cit",
+        "aliasBILN": "Cit",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -838,6 +841,7 @@
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
         "aliasHELM": "meC",
+        "aliasBILN": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

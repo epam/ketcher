@@ -604,7 +604,7 @@ class TemplateTool implements Tool {
       new AtomAttr(id, 'isPreview', false).perform(restruct);
     }
     const completeAction = dragCtx.action;
-    if (completeAction && !completeAction.isDummy()) {
+    if (completeAction && !completeAction.isDummy(restruct)) {
       this.editor.update(completeAction);
     }
     this.editor.hover(this.editor.findItem(event, null), null, event);

@@ -6,7 +6,6 @@ import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import {
   shiftCanvas,
-  takeEditorScreenshot,
   clickOnCanvas,
   undoByKeyboard,
   takeElementScreenshot,
@@ -583,6 +582,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Verify structure is still valid and can be saved
     await dialog.submit();
+    await expect(dialog.window).not.toBeVisible();
   });
 
   test('Case 10 - Verify that additions made before components are defined are handled correctly once components are defined', async () => {

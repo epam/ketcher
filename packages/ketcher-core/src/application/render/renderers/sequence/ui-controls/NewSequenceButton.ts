@@ -1,5 +1,6 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';

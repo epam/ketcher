@@ -4,7 +4,7 @@ import {
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
 } from 'domain/entities';
-import { RGroupAttachmentPointRemove } from '.';
+import { RGroupAttachmentPointRemove } from './RGroupAttachmentPointRemove';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 

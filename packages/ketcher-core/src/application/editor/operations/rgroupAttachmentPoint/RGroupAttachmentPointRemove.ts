@@ -1,6 +1,6 @@
 import { ReStruct } from 'application/render';
 import assert from 'assert';
-import { RGroupAttachmentPointAdd } from '.';
+import { RGroupAttachmentPointAdd } from './RGroupAttachmentPointAdd';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 

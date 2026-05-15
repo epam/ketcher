@@ -1,9 +1,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { MonomerCreationState } from 'application/render';
-import {
-  OperationType,
-  AssignLeavingGroupAtomOperation,
-} from 'application/editor';
+import { OperationType } from '../OperationType';
+import { AssignLeavingGroupAtomOperation } from './AssignLeavingGroupAtomOperation';
 import assert from 'assert';
 import { AttachmentPointName } from 'domain/types';
 import Restruct from 'application/render/restruct/restruct';

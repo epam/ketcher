@@ -8,7 +8,7 @@ import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
-import { ReMultitailArrow } from 'application/render';
+import { ReMultitailArrow } from 'application/render/restruct/reMultitailArrow';
 
 const ARROW_STROKE_WIDTH = 2;
 const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';

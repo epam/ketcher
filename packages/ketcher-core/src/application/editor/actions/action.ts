@@ -27,7 +27,7 @@ export class Action {
   }
 
   addOp(operation: BaseOperation, restruct?: ReStruct): BaseOperation {
-    if (!restruct || !operation.isDummy(restruct)) {
+    if (!operation.isDummy(restruct)) {
       this.operations.push(operation);
     }
 
@@ -53,11 +53,7 @@ export class Action {
     return action;
   }
 
-  isDummy(restruct?: ReStruct) {
-    return (
-      this.operations.find((operation) =>
-        restruct ? !operation.isDummy(restruct) : true,
-      ) === undefined
-    );
+  isDummy(restruct?: ReStruct): boolean {
+    return this.operations.every((operation) => operation.isDummy(restruct));
   }
 }

@@ -54,7 +54,9 @@ class BaseOperation {
     throw new Error('Operation.invert() is not implemented');
   }
 
-  isDummy(_restruct: ReStruct): boolean {
+  isDummy(_restruct?: ReStruct): boolean {
+    // Return false when restruct is undefined
+    // (can't determine state without it, safer to assume not dummy)
     return false;
   }
 

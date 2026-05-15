@@ -77,11 +77,13 @@ import {
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidIdtAlias,
+  getTooLongIdtAliasEntries,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -506,6 +508,19 @@ export class CoreEditor {
 
         if (hasInvalidSlash) {
           const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
+
+        const tooLongEntries = getTooLongIdtAliasEntries(
+          newMonomer.props.idtAliases,
+        );
+
+        if (tooLongEntries.length > 0) {
+          const offenders = tooLongEntries
+            .map(({ alias: field, value }) => `${field}="${value}"`)
+            .join(', ');
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
           KetcherLogger.error(errorMessage);
           return;
         }

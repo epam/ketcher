@@ -2390,7 +2390,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
     let monomerForSideConnections = newPresetNode.monomer;
 
     if (newPresetNode instanceof Nucleotide) {

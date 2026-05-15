@@ -70,7 +70,10 @@ export class SGroupAttr extends BaseOperation {
     return inverted;
   }
 
-  isDummy(restruct: ReStruct) {
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) {
+      return false;
+    }
     const sgroup = restruct.molecule.sgroups.get(this.data.sgid);
     return sgroup?.checkAttr(this.data.attr, this.data.value) ?? false;
   }

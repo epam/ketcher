@@ -70,6 +70,46 @@ type SetMoleculeOptions = {
   needZoom?: boolean;
 };
 
+function validateSdfMonomerLibraryData(sdfData: string): void {
+  const records = sdfData.split(/\${4}/);
+
+  for (const record of records) {
+    if (!record.trim()) continue;
+
+    const lines = record.split(/\r?\n/);
+
+    const extractFieldValue = (fieldName: string): string | undefined => {
+      let collecting = false;
+      const valueLines: string[] = [];
+      for (const line of lines) {
+        if (collecting) {
+          if (/^\s*>\s*</.test(line)) break;
+          valueLines.push(line);
+        } else if (new RegExp(`^\\s*>\\s*<${fieldName}>\\s*$`).test(line)) {
+          collecting = true;
+        }
+      }
+      return collecting ? valueLines.join('\n').trim() : undefined;
+    };
+
+    const typeValue = extractFieldValue('type');
+    if (typeValue !== 'monomerTemplate') continue;
+
+    const modificationTypesValue = extractFieldValue('modificationTypes');
+    if (modificationTypesValue === undefined) continue;
+
+    if (!modificationTypesValue) {
+      const templateMatch = record.match(
+        /M\s+V30\s+TEMPLATE\s+\d+\s+\S+\/([^/\s]+)\//,
+      );
+      const monomerName = templateMatch ? templateMatch[1] : 'unknown';
+      throw new Error(
+        `Load of "${monomerName}" monomer has failed, monomer definition contains invalid modificationTypes value. The modificationTypes couldn't be empty`,
+      );
+    }
+  }
+}
+
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
   ignoreChiralFlag: 'ignoreChiralFlag',
@@ -767,6 +807,7 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
+      validateSdfMonomerLibraryData(rawMonomersDataString);
       const convertResult = await this.structService.convert(
         {
           struct: rawMonomersDataString,

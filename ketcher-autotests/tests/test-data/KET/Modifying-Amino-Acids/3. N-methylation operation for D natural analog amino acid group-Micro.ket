@@ -259,6 +259,7 @@
         "fullName": "N-Methyl-Aspartic acid",
         "alias": "meD",
         "aliasHELM": "meD",
+        "aliasBILN": "meD",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

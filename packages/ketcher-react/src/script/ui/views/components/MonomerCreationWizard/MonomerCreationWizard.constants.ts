@@ -1,4 +1,8 @@
-import { HELM_ALIAS_FORMAT_ERROR_MESSAGE, KetMonomerClass } from 'ketcher-core';
+import {
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  KetMonomerClass,
+} from 'ketcher-core';
 
 import {
   MonomerTypeSelectItem,
@@ -58,6 +62,9 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidHELMAlias: HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   notUniqueHELMAlias:
     'The HELM alias must be unique amongst peptide or RNA monomers.',
+  invalidBILNAlias: BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  notUniqueBILNAlias:
+    'The BILN alias must be unique amongst peptide and CHEM monomers.',
   invalidRnaPresetStructure:
     'Structure of rna preset component contains issues. Please adjust the structure.',
   notUniquePresetCode: 'The preset code must be unique amongst other presets.',
@@ -89,6 +96,8 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   impureStructure: 'error',
   invalidHELMAlias: 'error',
   notUniqueHELMAlias: 'error',
+  invalidBILNAlias: 'error',
+  notUniqueBILNAlias: 'error',
   invalidRnaPresetStructure: 'error',
   notUniquePresetCode: 'error',
   invalidPresetCode: 'error',

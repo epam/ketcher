@@ -7,7 +7,11 @@ import {
 import { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
-import { KetcherLogger } from 'utilities';
+import {
+  KetcherLogger,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+} from 'utilities';
 
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
@@ -297,6 +301,109 @@ describe('CoreEditor', () => {
       ).toBe('[Sugar].(1)');
     });
 
+    it('should skip monomer with invalid BILN alias', () => {
+      const monomerWithInvalidBilnAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE_BILN_INVALID',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE_BILN_INVALID': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE_BILN_INVALID',
+          class: 'AminoAcid',
+          classHELM: 'PEPTIDE',
+          fullName: 'Invalid BILN Alias Peptide',
+          name: 'PEPTIDE_BILN_INVALID',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'PEPTIDE_BILN_INVALID',
+            MonomerClass: 'AminoAcid',
+            Name: 'PEPTIDE_BILN_INVALID',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasBILN: 'Invalid.BILN',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidBilnAlias));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Load of "PEPTIDE_BILN_INVALID" monomer has failed, monomer definition contains invalid BILN alias value.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should log BILN alias collision across peptide and CHEM monomers', () => {
+      const monomerWithBilnAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE_BILN_1',
+          class: 'AminoAcid',
+          classHELM: 'PEPTIDE',
+          fullName: 'Test Peptide BILN 1',
+          name: 'PEPTIDE_BILN_1',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'PEPTIDE_BILN_1',
+            MonomerClass: 'AminoAcid',
+            Name: 'PEPTIDE_BILN_1',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+      const monomerWithBilnAliasCollision = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'CHEM_BILN_1',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test CHEM BILN 1',
+          name: 'CHEM_BILN_1',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_BILN_1',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_BILN_1',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithBilnAlias));
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomerWithBilnAliasCollision),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Alias collision detected'),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('BILN alias "BilnAlias1"'),
+      );
+    });
+
     it('should log IDT alias collision across monomers', () => {
       const monomerWithIdtAlias = {
         root: {
@@ -391,6 +498,69 @@ describe('CoreEditor', () => {
       );
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer group template with name longer than the max length', () => {
+      const longName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH + 1);
+      const presetWithLongName = {
+        root: {
+          templates: [
+            {
+              $ref: `monomerGroupTemplate-${longName}`,
+            },
+          ],
+        },
+        [`monomerGroupTemplate-${longName}`]: {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: longName,
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithLongName));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should accept monomer group template with name at the max length boundary', () => {
+      const boundaryName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH);
+      const presetWithBoundaryName = {
+        root: {
+          templates: [
+            {
+              $ref: `monomerGroupTemplate-${boundaryName}`,
+            },
+          ],
+        },
+        [`monomerGroupTemplate-${boundaryName}`]: {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: boundaryName,
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithBoundaryName));
+
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount + 1,
       );
     });
   });

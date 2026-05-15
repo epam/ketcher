@@ -297,6 +297,7 @@
         "fullName": "D-Glutamic acid",
         "alias": "dE",
         "aliasHELM": "dE",
+        "aliasBILN": "dE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

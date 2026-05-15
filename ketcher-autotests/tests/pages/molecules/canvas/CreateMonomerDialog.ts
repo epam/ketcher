@@ -23,6 +23,7 @@ import { WarningMessageDialog } from './createMonomer/WarningDialog';
 import { NucleotidePresetSection } from './createMonomer/NucleotidePresetSection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { clickSelectableCanvasElement } from './createMonomer/selectAtomAndBonds';
 
 export enum ModificationTypeDropdown {
   First = 'modificationTypeDropdown1',
@@ -546,16 +547,18 @@ export async function deselectAtomAndBonds(
   await page.keyboard.down('Shift');
   if (AtomIDsToExclude) {
     for (const atomId of AtomIDsToExclude) {
-      await getAtomLocator(page, { atomId: Number(atomId) }).click({
-        force: true,
-      });
+      await clickSelectableCanvasElement(
+        page,
+        getAtomLocator(page, { atomId: Number(atomId) }),
+      );
     }
   }
   if (BondIDsToExclude) {
     for (const bondId of BondIDsToExclude) {
-      await getBondLocator(page, { bondId: Number(bondId) }).click({
-        force: true,
-      });
+      await clickSelectableCanvasElement(
+        page,
+        getBondLocator(page, { bondId: Number(bondId) }),
+      );
     }
   }
   await page.keyboard.up('Shift');
@@ -584,9 +587,10 @@ export async function selectMonomersAndBonds(
   }
   if (options.bondIds) {
     for (const bondId of options.bondIds) {
-      await getBondLocator(page, { bondId }).click({
-        force: true,
-      });
+      await clickSelectableCanvasElement(
+        page,
+        getBondLocator(page, { bondId }),
+      );
     }
   }
   await page.keyboard.up('Shift');

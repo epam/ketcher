@@ -11,6 +11,7 @@ import {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
   IKetMonomerTemplate,
+  isValidBilnAlias,
   isValidHelmAlias,
   KetcherLogger,
   ketcherProvider,
@@ -83,6 +84,7 @@ const getInitialWizardState = (
     name: '',
     naturalAnalogue,
     aliasHELM: '',
+    aliasBILN: '',
   },
   errors: {},
   notifications: new Map(),
@@ -90,6 +92,8 @@ const getInitialWizardState = (
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
+// BILN alias errors remain visible until the next submit attempt.
+const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
   base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
@@ -145,7 +149,9 @@ const wizardReducer = (
         values,
         errors: {
           ...state.errors,
-          [fieldId]: undefined,
+          ...(fieldsValidatedOnSubmit.has(fieldId)
+            ? {}
+            : { [fieldId]: undefined }),
         },
       };
     }
@@ -465,7 +471,7 @@ const validateInputs = (
   const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
-  const optionalFields = new Set(['aliasHELM', 'name']);
+  const optionalFields = new Set(['aliasHELM', 'aliasBILN', 'name']);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
@@ -539,6 +545,26 @@ const validateInputs = (
         notifications.set('notUniqueHELMAlias', {
           type: 'error',
           message: NotificationMessages.notUniqueHELMAlias,
+        });
+      }
+    }
+
+    if (key === 'aliasBILN') {
+      if (value && !isValidBilnAlias(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidBILNAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidBILNAlias,
+        });
+
+        return;
+      }
+
+      if (!skipUniquenessChecks && editor.checkIfBilnAliasExists(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('notUniqueBILNAlias', {
+          type: 'error',
+          message: NotificationMessages.notUniqueBILNAlias,
         });
       }
     }
@@ -709,7 +735,7 @@ const MonomerCreationWizard = () => {
     notifications: monomerWizardNotifications,
     errors,
   } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
@@ -853,6 +879,11 @@ const MonomerCreationWizard = () => {
       wizardStateDispatch({
         type: 'SetFieldValue',
         fieldId: 'aliasHELM',
+        value: '',
+      });
+      wizardStateDispatch({
+        type: 'SetFieldValue',
+        fieldId: 'aliasBILN',
         value: '',
       });
     }
@@ -1668,6 +1699,7 @@ const MonomerCreationWizard = () => {
           naturalAnalogue: valuesToSave.naturalAnalogue,
           modificationTypes,
           aliasHELM: valuesToSave.aliasHELM,
+          aliasBILN: valuesToSave.aliasBILN,
           structure,
           attachmentPoints: monomerAssignedAttachmentPoints,
           // Mark monomers as hidden when they are part of a preset and don't have all properties filled
@@ -1884,6 +1916,7 @@ const MonomerCreationWizard = () => {
                     naturalAnalogue,
                     modificationTypes,
                     aliasHELM,
+                    aliasBILN,
                     attachmentPoints: assignedAttachmentPoints,
                     structure,
                   });

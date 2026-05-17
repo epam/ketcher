@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RefObject, useRef } from 'react';
+import { useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
@@ -115,10 +115,10 @@ const Group = ({ items, className, height, rest }: GroupProps) => {
 const LeftToolbar = (props: Props) => {
   const { className, ...rest } = props;
   const { ref, height } = useResizeObserver<HTMLDivElement>();
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const sizeRef = useRef<HTMLDivElement>(null);
 
   const scrollUp = () => {
     if (!scrollRef.current || !sizeRef.current) {

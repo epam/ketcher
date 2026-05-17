@@ -3,6 +3,8 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css';
+
 declare module '*.sdf' {
   const content: string;
   export default content;

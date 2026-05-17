@@ -91,13 +91,13 @@ interface ClipAreaListeners {
 }
 
 class ClipArea extends Component<ClipAreaProps> {
-  private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  private readonly textAreaRef: RefObject<HTMLTextAreaElement>;
   private target: HTMLElement | null = null;
   private listeners: ClipAreaListeners | null = null;
 
   constructor(props: ClipAreaProps) {
     super(props);
-    this.textAreaRef = createRef<HTMLTextAreaElement | null>();
+    this.textAreaRef = createRef<HTMLTextAreaElement>();
   }
 
   componentDidMount(): void {

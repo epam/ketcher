@@ -1,9 +1,13 @@
-import { screen, fireEvent, render as rtlRender } from '@testing-library/react';
+import {
+  act,
+  screen,
+  fireEvent,
+  render as rtlRender,
+} from '@testing-library/react';
 import { LeftToolbarContainer } from '../views/toolbars';
 import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
-import { act } from 'react';
 
 jest.mock('react-intersection-observer', () => {
   return {

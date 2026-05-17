@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, PropsWithChildren, RefObject, useRef } from 'react';
+import { FC, PropsWithChildren, useRef } from 'react';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -55,8 +55,8 @@ const RightToolbar = (props: Props) => {
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
-  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const sizeRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const scrollUp = () => {
     if (!scrollRef.current || !sizeRef.current) {

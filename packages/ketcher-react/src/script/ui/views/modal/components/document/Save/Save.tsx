@@ -94,13 +94,13 @@ interface ImageContentProps {
 
 interface BinaryContentProps {
   classes: typeof classes;
-  textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  textAreaRef: RefObject<HTMLTextAreaElement>;
 }
 
 interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
-  textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  textAreaRef: RefObject<HTMLTextAreaElement>;
   handleCopy: (event: React.MouseEvent | React.ClipboardEvent) => void;
 }
 
@@ -235,7 +235,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
   declare context: React.ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
-  private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
+  private readonly textAreaRef: RefObject<HTMLTextAreaElement>;
   private readonly saveSchema: typeof saveSchema;
 
   constructor(props: SaveDialogProps) {

@@ -41,17 +41,22 @@ export class Pile<TValue = any> extends Set<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
-  union(setB: Pile): Pile<TValue> {
-    const union = new Pile(this);
+  union<U>(setB: ReadonlySetLike<U>): Pile<TValue | U> {
+    const union = new Pile<TValue | U>(this);
+    const iterator = setB.keys();
 
-    for (const item of setB) union.add(item);
+    for (let result = iterator.next(); !result.done; result = iterator.next()) {
+      union.add(result.value);
+    }
 
     return union;
   }
 
-  intersection(setB: Pile): Pile<TValue> {
+  intersection<U>(setB: ReadonlySetLike<U>): Pile<TValue & U> {
     const thisSet = new Pile(this);
-    return new Pile([...thisSet].filter((item) => setB.has(item)));
+    return new Pile(
+      [...thisSet].filter((item) => setB.has(item as TValue & U)),
+    ) as Pile<TValue & U>;
   }
 
   /**

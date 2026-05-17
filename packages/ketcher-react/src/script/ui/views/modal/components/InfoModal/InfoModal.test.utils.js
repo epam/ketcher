@@ -3,6 +3,12 @@ import { Provider } from 'react-redux';
 import { render as rtlRender } from '@testing-library/react';
 import modalReducer from '../../../../state/modal';
 
+/**
+ * @param {any} component
+ * @param {any} initialState
+ * @param {any} store
+ * @returns {any}
+ */
 export function renderWithMockStore(
   component,
   initialState = {

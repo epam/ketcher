@@ -115,8 +115,8 @@ function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
 
 class StructEditor extends Component<StructEditorProps, StructEditorState> {
   editor!: Editor;
-  editorRef: RefObject<HTMLDivElement | null>;
-  logRef: RefObject<HTMLDivElement | null>;
+  editorRef: RefObject<HTMLDivElement>;
+  logRef: RefObject<HTMLDivElement>;
 
   constructor(props: StructEditorProps) {
     super(props);

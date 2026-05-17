@@ -5,6 +5,12 @@ declare module '*.module.less' {
   export default classes;
 }
 
+declare module '*.less';
+
+declare namespace JSX {
+  type Element = React.JSX.Element;
+}
+
 declare namespace NodeJS {
   export interface ProcessEnv {
     VERSION: string;

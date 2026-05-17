@@ -13,8 +13,8 @@ import replace from '@rollup/plugin-replace';
 import type { Plugin, RollupOptions } from 'rollup';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
-import typescript from 'rollup-plugin-typescript2';
-import ttypescript from 'ttypescript';
+import rollupTypescript from 'rollup-plugin-typescript2';
+import ts from 'typescript';
 import { string } from 'rollup-plugin-string';
 
 type PackageJson = {
@@ -89,17 +89,17 @@ const config: RollupOptions = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
+    json(),
+    rollupTypescript({
+      typescript: ts as never,
+      tsconfigOverride: {
+        exclude: ['*.test.ts'],
+      },
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
-    }),
-    json(),
-    typescript({
-      typescript: ttypescript,
-      tsconfigOverride: {
-        exclude: ['*.test.ts'],
-      },
     }),
     babel({
       extensions,

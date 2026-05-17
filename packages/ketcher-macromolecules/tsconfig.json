@@ -3,7 +3,7 @@
     "outDir": "dist",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node16",
+    "moduleResolution": "node",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "sourceMap": true,
@@ -23,6 +23,8 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "ignoreDeprecations": "6.0",
+    "types": ["jest", "node", "react", "react-dom"],
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {

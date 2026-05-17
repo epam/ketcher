@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Icon } from 'ketcher-react';
 
 export const RnaEditorContainer = styled.div`
@@ -46,7 +47,11 @@ export const StyledHeader = styled.button`
   }
 `;
 
-export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>`
+type ExpandIconProps = ComponentProps<typeof Icon> & { expanded?: boolean };
+
+export const ExpandIcon: ComponentType<ExpandIconProps> = styled(Icon)<{
+  expanded?: boolean;
+}>`
   height: 16px;
   width: 16px;
   transform: ${(props) => (props.expanded ? 'rotate(180deg)' : 'none')};

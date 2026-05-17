@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { IconButton } from 'ketcher-react';
 
 export const StyledToast = styled.div({
@@ -15,7 +16,9 @@ export const StyledToastContent = styled.div({
   display: 'flex',
 });
 
-export const StyledIconButton = styled(IconButton)`
+export const StyledIconButton: ComponentType<
+  ComponentProps<typeof IconButton>
+> = styled(IconButton)`
   color: white;
   width: 24px;
   height: auto;

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Icon } from 'ketcher-react';
 import { IStyledIconProps } from './types';
 
@@ -32,7 +33,9 @@ export const SummaryText = styled.span((props) => ({
   fontSize: props.theme.ketcher.font.size.regular,
 }));
 
-export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
+export const StyledIcon: ComponentType<
+  ComponentProps<typeof Icon> & IStyledIconProps
+> = styled(Icon)<IStyledIconProps>((props) => ({
   width: '16px',
   height: '16px',
   color: props.theme.ketcher.color.icon.grey,

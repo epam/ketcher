@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled.div<{
@@ -120,7 +121,12 @@ export const GroupIconContainer = styled.div`
   justify-content: center;
 `;
 
-export const GroupIcon = styled(Icon)<{
+type GroupIconProps = ComponentProps<typeof Icon> & {
+  selected?: boolean;
+  empty?: boolean;
+};
+
+export const GroupIcon: ComponentType<GroupIconProps> = styled(Icon)<{
   selected?: boolean;
   empty?: boolean;
 }>`

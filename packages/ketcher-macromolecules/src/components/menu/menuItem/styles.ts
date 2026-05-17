@@ -15,10 +15,13 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 
 import { IconButton } from 'ketcher-react';
 
-export const StyledIconButton = styled(IconButton)`
+export const StyledIconButton: ComponentType<
+  ComponentProps<typeof IconButton>
+> = styled(IconButton)`
   margin: 2px;
   outline: none;
 `;

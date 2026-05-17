@@ -76,7 +76,9 @@ export class RxnPlusRenderer extends BaseRenderer {
       .attr('stroke-width', 1.2)
       .attr('class', 'dynamic-element');
 
-    this.setSelectionContourAttributes(this.hoverElement as never);
+    this.setSelectionContourAttributes(
+      this.hoverElement as D3SvgElementSelection<SVGRectElement, void>,
+    );
   }
 
   protected appendHoverAreaElement(): void {
@@ -91,7 +93,9 @@ export class RxnPlusRenderer extends BaseRenderer {
       .attr('pointer-events', 'all')
       .attr('class', 'dynamic-element');
 
-    this.setSelectionContourAttributes(this.hoverAreaElement as never);
+    this.setSelectionContourAttributes(
+      this.hoverAreaElement as D3SvgElementSelection<SVGRectElement, void>,
+    );
 
     const hoverAreaElement = this.hoverAreaElement as D3SvgElementSelection<
       SVGRectElement,

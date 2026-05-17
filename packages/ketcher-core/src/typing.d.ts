@@ -1,5 +1,15 @@
 import { Ketcher } from 'ketcher-core';
+import { BaseRenderer } from 'application/render';
+import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
 import { LogSettings } from 'utilities';
+
+type D3ElementData =
+  | BaseRenderer
+  | BaseMonomerRenderer
+  | BaseSequenceItemRenderer
+  | FlexOrSequenceOrSnakeModePolymerBondRenderer;
 
 declare global {
   const global: typeof globalThis;
@@ -15,17 +25,11 @@ declare global {
   }
 
   export interface Element {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    __data__?: any;
+    __data__?: D3ElementData;
   }
 
   export interface EventTarget {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    __data__?: any;
-  }
-
-  export interface Map<K, V> {
-    get(key: K): V;
+    __data__?: D3ElementData;
   }
 
   declare module '*.ket' {

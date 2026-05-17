@@ -91,7 +91,6 @@
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "^29.4.9",
     "tslib": "^2.8.1",
-    "ttypescript": "^1.5.13",
     "typedoc": "^0.28.19",
     "typedoc-plugin-markdown": "^4.11.0",
     "typescript": "^6.0.3"

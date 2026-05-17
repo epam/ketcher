@@ -167,7 +167,7 @@ abstract class SelectBase implements BaseTool {
       }
 
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
-      this.mousedownEntity(renderer, event.shiftKey, modKey);
+      this.mousedownEntity(renderer as BaseRenderer, event.shiftKey, modKey);
     }
   }
 

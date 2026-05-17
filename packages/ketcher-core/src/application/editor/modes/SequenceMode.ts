@@ -461,8 +461,8 @@ export class SequenceMode extends BaseMode {
 
   public mousedown(event: MouseEvent) {
     if (this.isEditInRNABuilderMode) return;
-    const eventData: BaseRenderer | NewSequenceButton | undefined =
-      event.target?.__data__;
+    const eventData: BaseRenderer | NewSequenceButton | undefined = event.target
+      ?.__data__ as BaseRenderer | NewSequenceButton | undefined;
     const isClickedOnEmptyPlace = !(
       eventData instanceof NewSequenceButton ||
       eventData instanceof BaseRenderer

@@ -22,13 +22,16 @@ import {
   isMonomerItemPhosphate,
   isMonomerItemSugar,
 } from 'domain/helpers/monomerItem';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
 
 export abstract class BaseMonomer extends DrawingEntity {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public renderer: any = undefined;
+  public renderer: BaseMonomerRenderer | BaseSequenceItemRenderer =
+    undefined as never;
+
   public attachmentPointsToBonds: AttachmentPointsToBonds = {};
 
   public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
@@ -211,8 +214,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public setRenderer(renderer: any) {
+  public setRenderer(renderer: BaseMonomerRenderer | BaseSequenceItemRenderer) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

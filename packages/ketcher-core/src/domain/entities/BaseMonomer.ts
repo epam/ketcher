@@ -29,6 +29,7 @@ export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
 
 export abstract class BaseMonomer extends DrawingEntity {
+  // Assigned by the renderer manager through setRenderer before renderer-dependent operations run.
   public renderer!: BaseMonomerRenderer | BaseSequenceItemRenderer;
 
   public attachmentPointsToBonds: AttachmentPointsToBonds = {};

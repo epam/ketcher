@@ -16,19 +16,20 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    assert(this.monomerCreationState);
+    const monomerCreationState = this.monomerCreationState;
+    assert(monomerCreationState);
 
     const newAtomPair: [number, number] = [
       this.attachmentAtomId,
       this.newLeavingAtomId,
     ];
 
-    this.monomerCreationState.assignedAttachmentPoints.set(
+    monomerCreationState.assignedAttachmentPoints.set(
       this.attachmentPointName,
       newAtomPair,
     );
 
-    this.monomerCreationState = { ...this.monomerCreationState };
+    this.monomerCreationState = { ...monomerCreationState };
 
     BaseOperation.invalidateAtom(restruct, this.attachmentAtomId);
     BaseOperation.invalidateAtom(restruct, this.newLeavingAtomId);

@@ -97,6 +97,12 @@ const config: RollupOptions = {
     json(),
     typescript({
       tsconfig: './tsconfig.build.json',
+      tsconfigOverride: {
+        compilerOptions: {
+          allowJs: false,
+          ignoreDeprecations: '6.0',
+        },
+      },
     }),
     babel({
       extensions,

@@ -34,6 +34,8 @@ import { IndigoProvider } from 'src/script/providers';
 import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
 import { CustomButton } from './CustomButtons';
 
+const optionalEnvValue = (value: string | undefined): string => value ?? '';
+
 class KetcherBuilder {
   private structService: StructService | null;
   private serviceMode: ServiceMode | null;
@@ -127,9 +129,9 @@ class KetcherBuilder {
         {
           buttons: buttons ?? {},
           errorHandler: errorHandler ?? null,
-          version: process.env.VERSION ?? '',
-          buildDate: process.env.BUILD_DATE ?? '',
-          buildNumber: process.env.BUILD_NUMBER ?? '',
+          version: optionalEnvValue(process.env.VERSION),
+          buildDate: optionalEnvValue(process.env.BUILD_DATE),
+          buildNumber: optionalEnvValue(process.env.BUILD_NUMBER),
           customButtons: customButtons ?? [],
         },
         structService,

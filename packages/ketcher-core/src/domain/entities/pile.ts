@@ -14,6 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+type PileSetLike<TValue> = {
+  keys(): Iterator<TValue>;
+  has(value: TValue): boolean;
+  readonly size: number;
+};
+
 export class Pile<TValue = any> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
@@ -41,7 +47,7 @@ export class Pile<TValue = any> extends Set<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
-  union<U>(setB: ReadonlySetLike<U>): Pile<TValue | U> {
+  union<U>(setB: PileSetLike<U>): Pile<TValue | U> {
     const union = new Pile<TValue | U>(this);
     const iterator = setB.keys();
 
@@ -52,7 +58,7 @@ export class Pile<TValue = any> extends Set<TValue> {
     return union;
   }
 
-  intersection<U>(setB: ReadonlySetLike<U>): Pile<TValue & U> {
+  intersection<U>(setB: PileSetLike<U>): Pile<TValue & U> {
     const thisSet = new Pile(this);
     return new Pile(
       [...thisSet].filter((item) => setB.has(item as TValue & U)),

@@ -1,8 +1,7 @@
-import { KetMonomerClass } from 'application/formatters';
 import { IconName } from 'components';
 import { Editor } from '../../../../editor';
 import { Selection } from '../../../../editor/Editor';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 
 type ActionDispatch<TAction extends [unknown]> = (action: TAction[0]) => void;
 

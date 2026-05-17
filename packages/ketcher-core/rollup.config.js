@@ -3,18 +3,15 @@ import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
-import { createRequire } from 'module';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import pkg from './package.json';
 import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
+import ts from 'typescript';
 import typescript from 'rollup-plugin-typescript2';
 import { license } from '../../license.ts';
 import { string } from 'rollup-plugin-string';
-
-const require = createRequire(import.meta.url);
-const ts = require('typescript');
 
 const mode = {
   PRODUCTION: 'production',

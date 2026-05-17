@@ -20,7 +20,6 @@
     "types": ["jest", "node"],
     "strict": true,
     "useDefineForClassFields": false,
-    "strictBuiltinIteratorReturn": false,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,

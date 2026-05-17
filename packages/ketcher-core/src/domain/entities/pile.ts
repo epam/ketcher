@@ -16,7 +16,7 @@
 
 type PileSetLike<TValue> = {
   keys(): Iterator<TValue>;
-  has(value: TValue): boolean;
+  has(value: unknown): boolean;
   readonly size: number;
 };
 
@@ -61,7 +61,7 @@ export class Pile<TValue = any> extends Set<TValue> {
   intersection<U>(setB: PileSetLike<U>): Pile<TValue & U> {
     const thisSet = new Pile(this);
     const isSharedValue = (item: TValue): item is TValue & U =>
-      setB.has(item as unknown as U);
+      setB.has(item);
     return new Pile([...thisSet].filter(isSharedValue));
   }
 

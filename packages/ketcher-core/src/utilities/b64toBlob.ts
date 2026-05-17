@@ -4,7 +4,7 @@ export function b64toBlob(
   sliceSize = 512,
 ): Blob {
   const byteCharacters: string = window.atob(b64Data);
-  const byteArrays: Array<BlobPart> = [];
+  const byteArrays: Array<ArrayBuffer> = [];
 
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     const slice: string = byteCharacters.slice(offset, offset + sliceSize);
@@ -14,8 +14,10 @@ export function b64toBlob(
       byteNumbers[i] = slice.charCodeAt(i);
     }
 
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray as BlobPart);
+    const arrayBuffer = new ArrayBuffer(byteNumbers.length);
+    const byteArray = new Uint8Array(arrayBuffer);
+    byteArray.set(byteNumbers);
+    byteArrays.push(arrayBuffer);
   }
 
   const blob: Blob = new Blob(byteArrays, { type: contentType });

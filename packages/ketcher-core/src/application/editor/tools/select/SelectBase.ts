@@ -75,6 +75,12 @@ function isGroupCenterSnapResult(
   return (result as GroupCenterSnapResult).showGroupCenterSnapping;
 }
 
+function isSnapResult(
+  result: SnapResult | EmptySnapResult | GroupCenterSnapResult,
+): result is SnapResult {
+  return Boolean(result.snapPosition) && !isGroupCenterSnapResult(result);
+}
+
 abstract class SelectBase implements BaseTool {
   readonly name = 'select-tool';
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
@@ -1055,7 +1061,7 @@ abstract class SelectBase implements BaseTool {
           absoluteSnapPosition: snapResult.absoluteSnapPosition,
           monomerPair: snapResult.monomerPair,
         });
-      } else if (snapResult.snapPosition) {
+      } else if (isSnapResult(snapResult)) {
         const {
           showAngleSnapping,
           connectedMonomer,
@@ -1064,7 +1070,7 @@ abstract class SelectBase implements BaseTool {
           showDistanceSnapping,
           alignment,
           alignedMonomers,
-        } = snapResult as SnapResult;
+        } = snapResult;
 
         if (showAngleSnapping) {
           this.editor.transientDrawingView.showAngleSnap({

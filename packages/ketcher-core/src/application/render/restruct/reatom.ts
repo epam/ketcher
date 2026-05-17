@@ -1204,7 +1204,7 @@ class ReAtom extends ReObject {
     atomElement?.node?.setAttribute('data-testid', 'atom');
     atomElement?.node?.setAttribute(
       'data-atom-id',
-      restruct.molecule.atoms.keyOf(this.a ?? ''),
+      String(this.a ? restruct.molecule.atoms.keyOf(this.a) : ''),
     );
     atomElement?.node?.setAttribute('data-atom-type', getAtomType(this.a));
     atomElement?.node?.setAttribute('data-atomLabel', this.a.label ?? '');

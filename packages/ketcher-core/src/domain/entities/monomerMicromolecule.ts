@@ -17,6 +17,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities/vec2';
 
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer: BaseMonomer) {
@@ -29,10 +30,14 @@ export class MonomerMicromolecule extends SGroup {
     return true;
   }
 
-  public override getContractedPosition(struct: Struct) {
+  public override getContractedPosition(struct: Struct): {
+    atomId: number;
+    position: Vec2;
+  } {
     assert(this.pp);
+    const position = this.pp;
     const sgroupContractedPosition = super.getContractedPosition(struct);
-    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
+    return { position, atomId: sgroupContractedPosition.atomId };
   }
 
   public static clone(

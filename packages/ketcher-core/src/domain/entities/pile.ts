@@ -25,12 +25,14 @@ export class Pile<TValue = any> extends Set<TValue> {
     return null;
   }
 
-  equals(setB: Pile): boolean {
+  equals(setB: Pile<TValue>): boolean {
     return this.isSuperset(setB) && setB.isSuperset(this);
   }
 
-  isSuperset(subset: Pile): boolean {
-    for (const item of subset) {
+  isSuperset(subset: ReadonlySetLike<TValue>): boolean {
+    const iterator = subset.keys();
+    for (let result = iterator.next(); !result.done; result = iterator.next()) {
+      const item = result.value;
       if (!this.has(item)) return false;
     }
 
@@ -41,17 +43,23 @@ export class Pile<TValue = any> extends Set<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
-  union(setB: Pile): Pile<TValue> {
-    const union = new Pile(this);
+  union<U>(setB: ReadonlySetLike<U>): Pile<TValue | U> {
+    const union = new Pile<TValue | U>(this);
 
-    for (const item of setB) union.add(item);
+    const iterator = setB.keys();
+    for (let result = iterator.next(); !result.done; result = iterator.next()) {
+      union.add(result.value);
+    }
 
     return union;
   }
 
-  intersection(setB: Pile): Pile<TValue> {
-    const thisSet = new Pile(this);
-    return new Pile([...thisSet].filter((item) => setB.has(item)));
+  intersection<U>(setB: ReadonlySetLike<U>): Pile<TValue & U> {
+    return new Pile(
+      [...this].filter((item) => setB.has(item as unknown as U)) as Array<
+        TValue & U
+      >,
+    );
   }
 
   /**

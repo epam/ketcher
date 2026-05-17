@@ -53,6 +53,9 @@ describe('SelectBase mouseup', () => {
     );
     addArrowCommand.execute(editor.renderersContainer);
     const arrow = editor.drawingEntitiesManager.rxnArrows.values().next().value;
+    if (!arrow) {
+      throw new Error('Expected reaction arrow to be created');
+    }
     const selectCommand =
       editor.drawingEntitiesManager.selectDrawingEntity(arrow);
     selectCommand.execute(editor.renderersContainer);

@@ -39,7 +39,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
-  private attachmentPoints: AttachmentPoint[] | [] = [];
+  private attachmentPoints: AttachmentPoint[] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
@@ -538,7 +538,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected appendEnumeration() {
     assert(this.rootElement);
-    assert(this.enumerationElementPosition);
+    const enumerationElementPosition = this.enumerationElementPosition;
+    assert(enumerationElementPosition);
     this.enumerationElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
@@ -549,8 +550,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
       .attr('pointer-events', 'none')
-      .attr('x', this.enumerationElementPosition.x)
-      .attr('y', this.enumerationElementPosition.y)
+      .attr('x', enumerationElementPosition.x)
+      .attr('y', enumerationElementPosition.y)
       .text(this.enumeration);
 
     this.raiseAttachmentPoints();

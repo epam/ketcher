@@ -251,7 +251,11 @@ export class MultitailArrowRenderer extends BaseRenderer {
       this.hoverAreaElement?.attr('data-arrow-id', arrowId);
     }
 
-    this.hoverAreaElement
+    const hoverAreaElement = this.hoverAreaElement as D3SvgElementSelection<
+      SVGPathElement,
+      void
+    >;
+    hoverAreaElement
       ?.on('mouseover', () => {
         this.appendHover();
       })
@@ -259,7 +263,7 @@ export class MultitailArrowRenderer extends BaseRenderer {
         this.removeHover();
       });
 
-    this.hoverAreaElement?.data([this]);
+    hoverAreaElement?.data([this]);
   }
 
   public drawSelection() {

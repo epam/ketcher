@@ -23,6 +23,10 @@ export class Pool<TValue = any> extends Map<number, TValue> {
     return id;
   }
 
+  get(id: number): TValue {
+    return super.get(id) as TValue;
+  }
+
   newId(): number {
     return this.nextId++;
   }

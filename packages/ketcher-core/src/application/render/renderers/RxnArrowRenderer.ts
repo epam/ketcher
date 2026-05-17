@@ -302,7 +302,11 @@ export class RxnArrowRenderer extends BaseRenderer {
       .attr('pointer-events', 'all')
       .attr('class', 'dynamic-element');
 
-    this.hoverAreaElement
+    const hoverAreaElement = this.hoverAreaElement as D3SvgElementSelection<
+      SVGPathElement,
+      void
+    >;
+    hoverAreaElement
       ?.on('mouseover', () => {
         this.appendHover();
       })

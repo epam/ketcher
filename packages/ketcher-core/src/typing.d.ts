@@ -1,8 +1,9 @@
 import { Ketcher } from 'ketcher-core';
-import { BaseRenderer } from 'application/render';
 import { LogSettings } from 'utilities';
 
 declare global {
+  const global: typeof globalThis;
+
   export interface Window {
     ketcher?: Ketcher;
     logging: LogSettings;
@@ -14,11 +15,17 @@ declare global {
   }
 
   export interface Element {
-    __data__?: BaseRenderer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    __data__?: any;
   }
 
   export interface EventTarget {
-    __data__?: BaseRenderer;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    __data__?: any;
+  }
+
+  export interface Map<K, V> {
+    get(key: K): V;
   }
 
   declare module '*.ket' {

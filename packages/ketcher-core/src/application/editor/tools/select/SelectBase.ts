@@ -1055,7 +1055,7 @@ abstract class SelectBase implements BaseTool {
           absoluteSnapPosition: snapResult.absoluteSnapPosition,
           monomerPair: snapResult.monomerPair,
         });
-      } else {
+      } else if (snapResult.snapPosition) {
         const {
           showAngleSnapping,
           connectedMonomer,
@@ -1064,7 +1064,7 @@ abstract class SelectBase implements BaseTool {
           showDistanceSnapping,
           alignment,
           alignedMonomers,
-        } = snapResult;
+        } = snapResult as SnapResult;
 
         if (showAngleSnapping) {
           this.editor.transientDrawingView.showAngleSnap({

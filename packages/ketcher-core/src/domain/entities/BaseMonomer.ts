@@ -7,7 +7,6 @@ import {
   MonomerBond,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { IKetAttachmentPoint } from 'application/formatters/types/ket';
@@ -16,7 +15,6 @@ import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
@@ -29,7 +27,8 @@ export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
 
 export abstract class BaseMonomer extends DrawingEntity {
-  public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public renderer: any = undefined;
   public attachmentPointsToBonds: AttachmentPointsToBonds = {};
 
   public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
@@ -212,7 +211,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     );
   }
 
-  public setRenderer(renderer: BaseMonomerRenderer | BaseSequenceItemRenderer) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public setRenderer(renderer: any) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

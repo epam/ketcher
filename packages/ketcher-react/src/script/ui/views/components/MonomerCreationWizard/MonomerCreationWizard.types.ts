@@ -2,7 +2,6 @@ import { IconName } from 'components';
 import { Editor } from '../../../../editor';
 import { Selection } from '../../../../editor/Editor';
 import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
-import { Dispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass | 'rnaPreset';
@@ -183,7 +182,7 @@ export type AssignedAttachmentPointsByMonomerType = Map<
 >;
 
 export function isDispatchActionForRnaPreset(
-  action: Dispatch<WizardAction> | Dispatch<RnaPresetWizardAction>,
-): action is Dispatch<RnaPresetWizardAction> {
+  action: WizardAction | RnaPresetWizardAction,
+): action is RnaPresetWizardAction {
   return 'rnaComponentKey' in action;
 }

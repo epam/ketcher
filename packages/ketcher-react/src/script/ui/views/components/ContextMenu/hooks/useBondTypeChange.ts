@@ -18,7 +18,14 @@ const useBondTypeChange = () => {
       const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds ?? [];
-      const bondProps = { ...tools[id].action.opts };
+      const toolAction = id != null ? tools[String(id)]?.action : undefined;
+      const toolOpts =
+        toolAction && typeof toolAction !== 'function'
+          ? toolAction.opts
+          : undefined;
+      const bondProps = {
+        ...(toolOpts as Record<string, unknown> | undefined),
+      };
       const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
       if (isCustomQuery) {
         bondProps.customQuery = null;

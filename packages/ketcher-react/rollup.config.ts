@@ -101,6 +101,8 @@ const config: RollupOptions = {
         compilerOptions: {
           allowJs: false,
           ignoreDeprecations: '6.0',
+          module: 'esnext',
+          moduleResolution: 'node',
         },
       },
     }),

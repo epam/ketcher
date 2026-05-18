@@ -3,6 +3,7 @@ import { Struct } from 'domain/entities';
 import {
   FormatterFactory,
   SupportedFormat,
+  getPropertiesByFormat,
   identifyStructFormat,
 } from './formatters';
 import { Ketcher } from './ketcher';
@@ -61,13 +62,19 @@ export async function parseAndAddMacromoleculesOnCanvas(
 ) {
   const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
-  const format = identifyStructFormat(struct);
+  const format = identifyStructFormat(struct, true);
   let ketStruct = struct;
   if (format !== SupportedFormat.ket) {
+    const inputFormat =
+      format === SupportedFormat.unknown
+        ? undefined
+        : getPropertiesByFormat(format).mime;
+
     ketStruct = (
       await structService.convert({
         struct,
         output_format: ChemicalMimeType.KET,
+        input_format: inputFormat,
       })
     ).struct;
   }

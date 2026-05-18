@@ -94,6 +94,12 @@ export function identifyStructFormat(
     return SupportedFormat.inChI;
   }
 
+  const isIdt = /[*/]/.test(sanitizedString);
+
+  if (isIdt) {
+    return SupportedFormat.idt;
+  }
+
   if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
@@ -109,11 +115,8 @@ export function identifyStructFormat(
 
   const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
-  const isIdt = /([a-zA-Z0-9]+)\/*([a-zA-Z0-9*-]+)/.test(sanitizedString);
 
-  if (!isThreeLetter && isIdt) {
-    return SupportedFormat.idt;
-  } else if (isSequence) {
+  if (!isThreeLetter && isSequence) {
     return SupportedFormat.sequence;
   }
 

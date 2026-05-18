@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
-    "module": "esnext",
+    "module": "preserve",
     "lib": ["dom", "esnext"],
     "moduleResolution": "bundler",
     "jsx": "react-jsx",

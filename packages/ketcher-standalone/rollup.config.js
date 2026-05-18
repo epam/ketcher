@@ -64,7 +64,13 @@ const baseConfig = {
     nodePolyfills(),
     resolve({ extensions }),
     commonjs(),
-    typescript(),
+    typescript({
+      tsconfigOverride: {
+        compilerOptions: {
+          module: 'ESNext',
+        },
+      },
+    }),
     babel({
       extensions,
       babelHelpers: 'runtime',

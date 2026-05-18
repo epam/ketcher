@@ -354,7 +354,7 @@ class SelectTool implements Tool {
           this.#lassoHelper.fragment || event.altKey,
         );
         const item = editor.findItem(event, maps, null);
-        editor.hover(item, null, event);
+        editor.hover(getHoverTarget(item, editor), null, event);
         handleMovingPosibilityCursor(
           item,
           this.editor.render.paper.canvas,
@@ -687,6 +687,28 @@ function closestToSel(ci) {
 
 function isSelected(selection, item) {
   return selection?.[item.map]?.includes(item.id) ?? false;
+}
+
+function getHoverTarget(item, editor: Editor) {
+  if (item?.map !== 'frags') {
+    return item;
+  }
+
+  const ctab = editor.render.ctab;
+  const frag = ctab.frags.get(item.id);
+
+  if (!frag) {
+    return item;
+  }
+
+  return {
+    map: 'merge',
+    id: item.id,
+    items: {
+      atoms: frag.fragGetAtoms(ctab, item.id),
+      bonds: frag.fragGetBonds(ctab, item.id),
+    },
+  };
 }
 
 function preventSaltAndSolventsMerge(

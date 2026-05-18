@@ -11,6 +11,7 @@ import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_CLASS_EMPTY_ERROR_MESSAGE,
 } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -595,6 +596,72 @@ describe('CoreEditor', () => {
 
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount + 1,
+      );
+    });
+
+    it('should reject monomer group template with empty class', () => {
+      const presetWithEmptyClass = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-emptyClass',
+            },
+          ],
+        },
+        'monomerGroupTemplate-emptyClass': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: 'TestPresetEmptyClass',
+          class: '',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithEmptyClass));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_CLASS_EMPTY_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer group template with whitespace-only class', () => {
+      const presetWithWhitespaceClass = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-whitespaceClass',
+            },
+          ],
+        },
+        'monomerGroupTemplate-whitespaceClass': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: 'TestPresetWhitespaceClass',
+          class: '   ',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithWhitespaceClass));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_CLASS_EMPTY_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
       );
     });
   });

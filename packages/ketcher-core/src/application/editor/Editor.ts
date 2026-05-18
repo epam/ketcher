@@ -80,6 +80,7 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_CLASS_EMPTY_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidIdtAlias,
@@ -600,6 +601,19 @@ export class CoreEditor {
         )}...`;
         KetcherLogger.error(
           `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+        );
+        return;
+      }
+
+      // Only a present-but-empty/whitespace class is rejected here. An absent
+      // (`undefined`) class is intentionally left untouched — that case is
+      // out of scope for this validation and handled separately.
+      if (
+        templateDefinition.class !== undefined &&
+        !templateDefinition.class.trim()
+      ) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_CLASS_EMPTY_ERROR_MESSAGE} The template was not added to the library.`,
         );
         return;
       }

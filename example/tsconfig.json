@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "esnext",
+    "module": "preserve",
     "lib": ["dom", "esnext"],
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
@@ -15,7 +15,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2015",
+    "target": "esnext",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "3.6.0-unc42",
+  "version": "3.6.0-unc43",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",

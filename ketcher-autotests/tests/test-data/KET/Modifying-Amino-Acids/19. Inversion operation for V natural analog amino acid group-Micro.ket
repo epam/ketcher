@@ -384,6 +384,7 @@
         "fullName": "D-Valine",
         "alias": "dV",
         "aliasHELM": "dV",
+        "aliasBILN": "dV",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

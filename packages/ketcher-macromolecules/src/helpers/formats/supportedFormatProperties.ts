@@ -23,6 +23,7 @@ export enum ChemicalMimeType {
   Idt = 'chemical/x-idt',
   AxoLabs = 'chemical/x-axo-labs',
   Svg = 'image/svg+xml',
+  BILN = 'chemical/x-biln',
 }
 
 interface SupportedFormatPropertiesOptions {

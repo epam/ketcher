@@ -247,6 +247,7 @@
         "fullName": "Glutamine",
         "alias": "Q",
         "aliasHELM": "Q",
+        "aliasBILN": "Q",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

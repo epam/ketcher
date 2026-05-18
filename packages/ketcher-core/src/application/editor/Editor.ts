@@ -74,10 +74,16 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  IDT_ALIAS_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  isValidBilnAlias,
   isValidHelmAlias,
   isValidIdtAlias,
+  getTooLongIdtAliasEntries,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -160,6 +166,15 @@ interface IAutochainMonomerAddResult {
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
+
+/**
+ * BILN aliases are supported only for peptide and CHEM monomers.
+ */
+const hasBilnAliasUniquenessScope = (
+  monomerClass: KetMonomerClass | undefined,
+) =>
+  monomerClass === KetMonomerClass.AminoAcid ||
+  monomerClass === KetMonomerClass.CHEM;
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
@@ -391,6 +406,9 @@ export class CoreEditor {
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
           : null,
+        monomer.props?.aliasBILN
+          ? `BILN alias "${monomer.props.aliasBILN}"`
+          : null,
         monomer.props?.idtAliases?.base
           ? `IDT base alias "${monomer.props.idtAliases.base}"`
           : null,
@@ -409,11 +427,22 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+        newMonomer.props?.MonomerClass,
+      );
       if (
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+      if (
+        newMonomer.props?.aliasBILN &&
+        !isValidBilnAlias(newMonomer.props.aliasBILN)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -426,6 +455,10 @@ export class CoreEditor {
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+          (newMonomerHasBilnAliasUniquenessScope &&
+            Boolean(newMonomer.props?.aliasBILN) &&
+            hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
+            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||
@@ -478,16 +511,23 @@ export class CoreEditor {
           KetcherLogger.error(errorMessage);
           return;
         }
+
+        const tooLongEntries = getTooLongIdtAliasEntries(
+          newMonomer.props.idtAliases,
+        );
+
+        if (tooLongEntries.length > 0) {
+          const offenders = tooLongEntries
+            .map(({ alias: field, value }) => `${field}="${value}"`)
+            .join(', ');
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
       }
 
-      const existingMonomerIndex = this._monomersLibrary.findIndex(
-        (monomer) => {
-          return (
-            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-            monomer?.props.hidden === newMonomer.props?.hidden
-          );
-        },
+      const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
+        areSameMonomers(monomer, newMonomer),
       );
 
       const newMonomerTemplateRef =
@@ -551,6 +591,19 @@ export class CoreEditor {
         return;
       }
 
+      if (
+        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
+      ) {
+        const truncatedTemplateName = `${templateDefinition.name.slice(
+          0,
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+        )}...`;
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+        );
+        return;
+      }
+
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (
@@ -593,6 +646,19 @@ export class CoreEditor {
       return (
         props.MonomerClass === monomerClass &&
         (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
+  }
+
+  public checkIfBilnAliasExists(alias: string) {
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      return (
+        hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
+        monomerItem.props.aliasBILN === alias
       );
     });
   }

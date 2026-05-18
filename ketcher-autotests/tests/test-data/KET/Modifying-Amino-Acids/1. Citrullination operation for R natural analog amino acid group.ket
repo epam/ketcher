@@ -405,6 +405,7 @@
         "fullName": "Citrulline",
         "alias": "Cit",
         "aliasHELM": "Cit",
+        "aliasBILN": "Cit",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

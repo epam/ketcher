@@ -245,6 +245,7 @@
         "fullName": "D-Asparagine",
         "alias": "dN",
         "aliasHELM": "dN",
+        "aliasBILN": "dN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

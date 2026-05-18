@@ -444,6 +444,7 @@
         "fullName": "N-Methyl-Tryptophan",
         "alias": "meW",
         "aliasHELM": "meW",
+        "aliasBILN": "meW",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

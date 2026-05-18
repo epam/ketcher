@@ -841,6 +841,7 @@
         "fullName": "D-Phenylalanine",
         "alias": "dF",
         "aliasHELM": "dF",
+        "aliasBILN": "dF",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -640,6 +640,7 @@
         "fullName": "D-Alanine",
         "alias": "dA",
         "aliasHELM": "dA",
+        "aliasBILN": "dA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -355,6 +355,7 @@
         "fullName": "Histidine",
         "alias": "H",
         "aliasHELM": "H",
+        "aliasBILN": "H",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

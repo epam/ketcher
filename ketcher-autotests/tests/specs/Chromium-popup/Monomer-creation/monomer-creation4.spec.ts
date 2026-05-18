@@ -206,7 +206,7 @@ test(`4. Verify that both potential AAs and potential LGAs are marked on hover o
   // to make molecule visible
   await CommonLeftToolbar(page).handTool();
   await page.mouse.move(600, 200);
-  await dragMouseTo(page, 600, 260);
+  await dragMouseTo(page, 600, 320);
 
   const atoms = ['N', 'P', 'C', 'S'];
   for (const atom of atoms) {

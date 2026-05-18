@@ -41,7 +41,9 @@ type Props = {
 const Tabs = (props: Props) => {
   const { tabs, selectedTabIndex, isLayoutToRight, onChange } = props;
   const tabPanel = tabs[selectedTabIndex];
-  const Component = tabPanel?.component;
+  const Component = tabPanel?.component as
+    | ((props: Record<string, unknown>) => JSX.Element | null)
+    | undefined;
   const componentProps = tabPanel?.props;
 
   return (
@@ -64,7 +66,7 @@ const Tabs = (props: Props) => {
         ))}
         <HiddenTab value={-1} />
       </StyledTabs>
-      {tabPanel && (
+      {tabPanel && Component && (
         <TabPanel value={selectedTabIndex} index={selectedTabIndex}>
           <TabPanelContent>
             <Component {...componentProps} />

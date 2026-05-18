@@ -325,15 +325,12 @@ const mapDispatchToProps = (
   },
 });
 
-// Workaround: @types/react version conflict with connect()
-// TODO: remove @ts-expect-error after TS 6 migration is complete
-// @ts-expect-error - @types/react version conflict, will be resolved after TS 6 migration
 const Check = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(
-  // @ts-expect-error
+  // @ts-expect-error - @types/react version conflict with connect()
   CheckDialog as React.ComponentType<CheckDialogProps>,
-) as React.ComponentType<CheckDialogOwnProps>;
+) as unknown as React.ComponentType<CheckDialogOwnProps>;
 
 export default Check;

@@ -1,0 +1,99 @@
+name: Claude Implement Autotests
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+  actions: read
+
+jobs:
+  implement-autotests:
+    if: |
+      contains(github.event.issue.labels.*.name, 'Autotests') &&
+      contains(github.event.issue.labels.*.name, 'Run TA creation workflow') &&
+      (
+        github.event.issue.issue_type.name == 'Task' ||
+        github.event.issue.type.name == 'Task' ||
+        github.event.issue.issue_type == 'Task' ||
+        github.event.issue.type == 'Task'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract and check data
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+
+            if (!issue) {
+              throw new Error('No issue found in context');
+            }
+            
+            const issueBody = issue.body
+            const checklistMatches = issueBody?.match(/^\s*-\s\[(?: |x|X)\]\s+.+$/gm) ?? [];
+            if (checklistMatches.length === 0) {
+              throw new Error('Autotest Request issue must contain at least one markdown checklist item before PR generation can start.');
+            }
+
+            core.setOutput('issue_body', issueBody);
+
+      - name: Implement autotests with Claude
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          direct_prompt: |
+            1. Use autotests-generator agent to generate Playwright autotests based on Autotest Request issue.
+               AUTOTEST_REQUEST_NUMBER: ${{ github.event.issue.number }}.
+               AUTOTEST_REQUEST_TITLE: ${{ github.event.issue.title }}.
+               AUTOTEST_REQUEST_URL: ${{ github.event.issue.html_url }}.
+               AUTOTEST_REQUEST_DETAILS:
+               ${{ steps.issue.outputs.issue_body }}                        
+               !!!AUTOTEST_REQUEST_URL must always be used in the Test task: comment.             
+            
+            2. Under the **Source task(s):** header in the Autotest Request details AUTOTEST_REQUEST_DETAILS, 
+               find the link to the Feature. Use it to get the Feature Issue Number and Feature Title. 
+               !!!Feature Issue data is only for folder naming.
+            3. Sanitize Feature title.
+            4. Create the directory: ketcher-autotests/tests/specs/Chromium-popup/Features/<Feature Number>-<Sanitized Feature Title>. 
+               Example: ketcher-autotests/tests/specs/Chromium-popup/Features/3227-Introducing-Copolymer-S-group-type
+               You MUST use the exact format `<Feature Number>-<Sanitized Feature Title>`. Don't modify it!
+            5. Save the code into a .spec.ts file in that directory.
+            6. Commit the changes and push the new branch to origin.
+
+      - name: Get current branch name
+        id: vars
+        run: |
+          BRANCH=$(git branch --show-current)
+          echo "Branch name: $BRANCH"
+          echo "branch_name=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Create pull request
+        id: create_pr
+        run: |
+          PR_URL=$(gh pr create \
+            --title "#${{ github.event.issue.number }} - ${{ github.event.issue.title }}" \
+            --body "Closes #${{ github.event.issue.number }}" \
+            --head "${{ steps.vars.outputs.branch_name }}" \
+            --base master)
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on issue
+        run: |
+          gh issue comment ${{ github.event.issue.number }} \
+            --body "Generated Playwright test: ${{ steps.create_pr.outputs.pr_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

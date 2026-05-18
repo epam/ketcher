@@ -4,6 +4,7 @@ import {
   IKetIdtAliases,
   MonomerItemType,
   PolymerBond,
+  RnaPhosphatePosition,
 } from 'ketcher-core';
 
 export enum PreviewType {
@@ -46,6 +47,7 @@ export interface PresetPreviewState extends BasePreviewState {
   readonly name?: string;
   readonly idtAliases?: IKetIdtAliases;
   readonly aliasAxoLabs?: string;
+  readonly phosphatePosition?: RnaPhosphatePosition;
 }
 
 export interface BondPreviewState extends BasePreviewState {

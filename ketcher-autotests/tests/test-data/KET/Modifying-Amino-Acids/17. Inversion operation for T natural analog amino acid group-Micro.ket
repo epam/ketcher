@@ -327,6 +327,7 @@
         "fullName": "D-Threonine",
         "alias": "dT",
         "aliasHELM": "dT",
+        "aliasBILN": "dT",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

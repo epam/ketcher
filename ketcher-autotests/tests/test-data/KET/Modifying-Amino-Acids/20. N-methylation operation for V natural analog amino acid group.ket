@@ -399,6 +399,7 @@
         "fullName": "N-Methyl-Valine",
         "alias": "meV",
         "aliasHELM": "meV",
+        "aliasBILN": "meV",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

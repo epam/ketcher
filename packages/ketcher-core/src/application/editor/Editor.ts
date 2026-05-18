@@ -74,8 +74,16 @@ import {
 import { DOMSubscription } from 'subscription';
 import {
   EditorLineLength,
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  IDT_ALIAS_SLASH_ERROR_MESSAGE,
+  IDT_ALIAS_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+  MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  isValidBilnAlias,
   isValidHelmAlias,
+  isValidIdtAlias,
+  getTooLongIdtAliasEntries,
   initHotKeys,
   KetcherLogger,
   keyNorm,
@@ -94,6 +102,7 @@ import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import {
   getAminoAcidsToModify,
   getMonomerUniqueKey,
@@ -115,6 +124,7 @@ import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
+  KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
 
@@ -156,6 +166,15 @@ interface IAutochainMonomerAddResult {
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
+
+/**
+ * BILN aliases are supported only for peptide and CHEM monomers.
+ */
+const hasBilnAliasUniquenessScope = (
+  monomerClass: KetMonomerClass | undefined,
+) =>
+  monomerClass === KetMonomerClass.AminoAcid ||
+  monomerClass === KetMonomerClass.CHEM;
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
@@ -235,6 +254,7 @@ export class CoreEditor {
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     resetEditorEvents();
     this.events = editorEvents;
+    KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
     this.subscribeEvents();
@@ -386,6 +406,9 @@ export class CoreEditor {
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
           : null,
+        monomer.props?.aliasBILN
+          ? `BILN alias "${monomer.props.aliasBILN}"`
+          : null,
         monomer.props?.idtAliases?.base
           ? `IDT base alias "${monomer.props.idtAliases.base}"`
           : null,
@@ -404,11 +427,22 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
+        newMonomer.props?.MonomerClass,
+      );
       if (
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+      if (
+        newMonomer.props?.aliasBILN &&
+        !isValidBilnAlias(newMonomer.props.aliasBILN)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -421,6 +455,10 @@ export class CoreEditor {
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+          (newMonomerHasBilnAliasUniquenessScope &&
+            Boolean(newMonomer.props?.aliasBILN) &&
+            hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
+            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||
@@ -454,14 +492,42 @@ export class CoreEditor {
         return;
       }
 
-      const existingMonomerIndex = this._monomersLibrary.findIndex(
-        (monomer) => {
-          return (
-            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
-            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass &&
-            monomer?.props.hidden === newMonomer.props?.hidden
-          );
-        },
+      // Validate that slashes in IDT aliases only appear at first/last position
+      if (newMonomer.props?.idtAliases) {
+        const { base, modifications } = newMonomer.props.idtAliases;
+        const aliasesToValidate = [
+          base,
+          modifications?.endpoint3,
+          modifications?.endpoint5,
+          modifications?.internal,
+        ].filter(Boolean) as string[];
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
+
+        const tooLongEntries = getTooLongIdtAliasEntries(
+          newMonomer.props.idtAliases,
+        );
+
+        if (tooLongEntries.length > 0) {
+          const offenders = tooLongEntries
+            .map(({ alias: field, value }) => `${field}="${value}"`)
+            .join(', ');
+          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
+          KetcherLogger.error(errorMessage);
+          return;
+        }
+      }
+
+      const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>
+        areSameMonomers(monomer, newMonomer),
       );
 
       const newMonomerTemplateRef =
@@ -525,6 +591,19 @@ export class CoreEditor {
         return;
       }
 
+      if (
+        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
+      ) {
+        const truncatedTemplateName = `${templateDefinition.name.slice(
+          0,
+          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+        )}...`;
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+        );
+        return;
+      }
+
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
       if (
@@ -567,6 +646,19 @@ export class CoreEditor {
       return (
         props.MonomerClass === monomerClass &&
         (props.aliasHELM === symbol || props.MonomerName === symbol)
+      );
+    });
+  }
+
+  public checkIfBilnAliasExists(alias: string) {
+    return this._monomersLibrary.some((monomerItem) => {
+      if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+        return false;
+      }
+
+      return (
+        hasBilnAliasUniquenessScope(monomerItem.props.MonomerClass) &&
+        monomerItem.props.aliasBILN === alias
       );
     });
   }
@@ -637,8 +729,16 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      let isPropagationStopped = false;
+      const originalStopPropagation = event.stopPropagation.bind(event);
+      event.stopPropagation = () => {
+        isPropagationStopped = true;
+        originalStopPropagation();
+      };
+
       this.events.keyDown.dispatch(event);
-      if (!event.cancelBubble) {
+
+      if (!isPropagationStopped) {
         this.mode.onKeyDown(event).catch((error) => {
           KetcherLogger.error('Editor.ts::keydownEventHandler', error);
         });
@@ -690,6 +790,15 @@ export class CoreEditor {
 
       if (this.libraryItemDragState) {
         this.cancelLibraryItemDrag();
+        return;
+      }
+
+      // If the right-click happened inside an already-open context menu (the
+      // menu DOM is rendered as a portal sibling of the canvas SVG and overlaps
+      // the symbol underneath), event.target.__data__ is undefined and the
+      // logic below would fall through to rightClickCanvasSequence and replace
+      // the original menu with a reduced one. Skip the dispatch in that case.
+      if ((event.target as HTMLElement | null)?.closest('.contexify')) {
         return;
       }
 

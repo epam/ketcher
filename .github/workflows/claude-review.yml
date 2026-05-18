@@ -1,0 +1,31 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  review:
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'Run Claude Review') &&
+      !contains(github.event.pull_request.title, 'Autotests')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: PR Review with Progress Tracking
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          prompt: "/review-pr REPO: ${{ github.repository }} PR_NUMBER: ${{ github.event.pull_request.number }}"
+          claude_args: |
+            --allowedTools "mcp__github_inline_comment__create_inline_comment"
+            --model "claude-opus-4-7"

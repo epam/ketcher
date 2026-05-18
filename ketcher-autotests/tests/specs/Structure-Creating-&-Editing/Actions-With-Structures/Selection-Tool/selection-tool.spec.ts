@@ -4,7 +4,7 @@ import { expect, Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   takeLeftToolbarScreenshot,
   waitForRender,
@@ -67,7 +67,7 @@ test.describe('Selection tools', () => {
     Description: Selection is not reset. User can use right-click menu in order to perform actions.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await selectAllStructuresOnCanvas(page);
     await ContextMenu(
@@ -106,7 +106,7 @@ test.describe('Selection tools', () => {
     Description: When hovered selected Atom becomes lighter than the rest of the structure.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
@@ -121,7 +121,7 @@ test.describe('Selection tools', () => {
     */
     const bondLocator = getBondLocator(page, { bondId: 7 });
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await bondLocator.hover({ force: true });
     await takeEditorScreenshot(page);
@@ -903,7 +903,7 @@ test.describe('Selection tools', () => {
     selected and pressing esc doesn't choose another mode of selection tool
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Escape');

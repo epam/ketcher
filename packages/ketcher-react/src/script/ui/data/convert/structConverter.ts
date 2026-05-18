@@ -47,7 +47,7 @@ export function couldBeSaved(
     );
     const bondsHaveUnsupportedProperties = arrayOfBonds.some(
       (bond) =>
-        bond.reactingCenterStatus ||
+        Boolean(bond.reactingCenterStatus) ||
         bond.type === Bond.PATTERN.TYPE.DATIVE ||
         bond.type === Bond.PATTERN.TYPE.HYDROGEN,
     );

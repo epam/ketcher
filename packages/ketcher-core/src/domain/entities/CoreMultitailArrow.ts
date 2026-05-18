@@ -13,6 +13,7 @@ import { MultitailArrowRenderer } from 'application/render/renderers/MultitailAr
 
 export class MultitailArrow extends DrawingEntity {
   public renderer?: MultitailArrowRenderer = undefined;
+  public arrowId?: number;
 
   constructor(
     private spineTopX: FixedPrecisionCoordinates,

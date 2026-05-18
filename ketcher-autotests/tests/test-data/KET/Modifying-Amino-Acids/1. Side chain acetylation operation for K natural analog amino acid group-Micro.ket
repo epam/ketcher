@@ -496,6 +496,7 @@
         "fullName": "N-epsilon-acetyl-L-lysine",
         "alias": "Lys_Ac",
         "aliasHELM": "Lys_Ac",
+        "aliasBILN": "Lys_Ac",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,

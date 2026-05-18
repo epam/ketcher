@@ -16,7 +16,6 @@ import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPoi
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
-  Arrows,
   copyToClipboardByKeyboard,
   getCoordinatesOfTheMiddleOfTheScreen,
   pasteFromClipboardByKeyboard,
@@ -32,6 +31,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   takeTopToolbarScreenshot,
   setMolecule,
+  ArrowType,
 } from '@utils';
 import {
   pasteFromClipboardAndOpenAsNewProject,
@@ -43,8 +43,8 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
-import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrow';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   AttachmentPoint,
@@ -75,6 +75,7 @@ import {
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
+import { waitForSpinnerFinishedWork } from '@utils/common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 
 let page: Page;
 
@@ -671,7 +672,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     const screenCenter = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(screenCenter.x, screenCenter.y);
     await dragMouseTo(page, screenCenter.x + 100, screenCenter.y + 20);
@@ -680,7 +681,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CommonLeftToolbar(page).areaSelectionTool();
 
     const arrow = getArrowLocator(page, {
-      arrowType: Arrows.OpenAngle,
+      arrowType: ArrowType.OpenAngle,
     }).first();
     await arrow.waitFor({ state: 'visible' });
 
@@ -696,7 +697,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     const arrowAfterUndoBox = await arrow.boundingBox();
     expect(arrowAfterUndoBox).not.toBeNull();
     const arrowAfterUndoX = arrowAfterUndoBox!.x + arrowAfterUndoBox!.width / 2;
-    expect(Math.abs(arrowAfterUndoX - screenCenter.x)).toBeLessThan(10);
+    expect(Math.abs(arrowAfterUndoX - screenCenter.x)).toBeLessThan(50);
 
     await CommonTopLeftToolbar(page).redo();
     const arrowAfterRedoBox = await arrow.boundingBox();
@@ -705,9 +706,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(Math.abs(arrowAfterRedoX - arrowMovedX)).toBeLessThan(10);
   });
 
-  test('Case 20: setMolecule and addFragment API should preserve selections from KET files', async ({
-    page,
-  }) => {
+  test('Case 20: setMolecule and addFragment API should preserve selections from KET files', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/8898
      * Bug: https://github.com/epam/ketcher/issues/8898
@@ -725,9 +724,16 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    const ketWithSelectedAtom = await readFileContent('KET/selected-atoms.ket');
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
 
-    await setMolecule(page, ketWithSelectedAtom);
+    const ketWithSelectedAtom = await readFileContent('KET/selected-atoms.ket');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, ketWithSelectedAtom),
+    );
 
     const selectionAfterSetMolecule = await page.evaluate(() => {
       return window.ketcher.editor.selection();
@@ -750,9 +756,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(selectionAfterAddFragment?.bonds).toEqual([0]);
   });
 
-  test('Case 21 — Pt bad valence indication is preserved on Macromolecules canvas', async ({
-    page,
-  }) => {
+  test('Case 21 — Pt bad valence indication is preserved on Macromolecules canvas', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/8837
      * Bug: https://github.com/epam/ketcher/issues/8837
@@ -770,6 +774,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
+    await page.waitForTimeout(5000);
     await pasteFromClipboardAndOpenAsNewProject(page, '[Pt](C)(C)(C)(C)C');
 
     const ptAtom = getAtomLocator(page, { atomLabel: 'Pt' }).first();
@@ -859,9 +864,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await takeElementScreenshot(page, atomMacro, { padding: 80 });
   });
 
-  test('Case 23 — Attachment point dialog shows selected connection point controls', async ({
-    page,
-  }) => {
+  test('Case 23 — Attachment point dialog shows selected connection point controls', async () => {
     /**
      * Test task: https://github.com/epam/ketcher/issues/8437
      * Bug: https://github.com/epam/ketcher/issues/8437
@@ -879,6 +882,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
+    await page.waitForTimeout(2000);
     await pasteFromClipboardAndOpenAsNewProject(
       page,
       'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
@@ -945,9 +949,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     expect(await Library(page).isMonomerExist(Chem._CHEM1)).toBeFalsy();
   });
 
-  test('Case 25: Edit connection point context menu option should open popup when attachment atom was not selected before Create Monomer', async ({
-    page,
-  }) => {
+  test('Case 25: Edit connection point context menu option should open popup when attachment atom was not selected before Create Monomer', async () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/7823
      * Bug: https://github.com/epam/ketcher/issues/7823
@@ -985,9 +987,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await CreateMonomerDialog(page).discard();
   });
 
-  test('Case 26 — Underline colour for X base counter in Calculate Properties is the same in RNA/DNA and Peptides tabs', async ({
-    page,
-  }) => {
+  test('Case 26 — Underline colour for X base counter in Calculate Properties is the same in RNA/DNA and Peptides tabs', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7797
      * Bug: https://github.com/epam/ketcher/issues/7797

@@ -11,6 +11,7 @@ import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_CLASS_INVALID_ERROR_MESSAGE,
 } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -592,6 +593,67 @@ describe('CoreEditor', () => {
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
       editor.updateMonomersLibrary(JSON.stringify(presetWithBoundaryName));
+
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount + 1,
+      );
+    });
+
+    it('should reject monomer group template with invalid class', () => {
+      const presetWithInvalidClass = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-invalidClass',
+            },
+          ],
+        },
+        'monomerGroupTemplate-invalidClass': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: 'TestPreset',
+          class: 'RNA1111',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithInvalidClass));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_CLASS_INVALID_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should accept monomer group template with valid class RNA', () => {
+      const presetWithValidClass = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-validClass',
+            },
+          ],
+        },
+        'monomerGroupTemplate-validClass': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: 'TestValidPreset',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(presetWithValidClass));
 
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount + 1,

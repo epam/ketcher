@@ -830,14 +830,14 @@ test.fail(
   },
 );
 
-test('Case 29: Update Library item with HELM alias longer than 23 symbols returns an error', async () => {
+test('Case 29: Update Library item with HELM alias longer than 23 symbols logs an error', async () => {
   /*
    * AUTOTEST_REQUEST_URL: N/A
    * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
    * Scenario:
    * 1. Go to Macro mode
    * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
-   * 3. Verify that API returns an error
+   * 3. Verify that API logs an error
    *
    * Version 3.16
    */
@@ -850,11 +850,32 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols return
     '123456789012345678901234' +
     _betweenEntries +
     _endToken;
+  type ConsoleCaptureWindow = typeof window & {
+    capturedConsoleErrors: string[];
+    originalConsoleError: typeof console.error;
+  };
+
+  await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
+
+    window.ketcher.logging.enabled = true;
+    testWindow.capturedConsoleErrors = [];
+    testWindow.originalConsoleError = console.error;
+    console.error = (...args) => {
+      testWindow.capturedConsoleErrors.push(args.flat().join(' '));
+    };
+  });
 
   const error = await updateMonomersLibrary(page, sdfFile);
+  const consoleMessages = await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
 
-  expect(error).not.toBeNull();
-  expect(error).toContain(
+    console.error = testWindow.originalConsoleError;
+    return testWindow.capturedConsoleErrors;
+  });
+
+  expect(error).toBeNull();
+  expect(consoleMessages.join('\n')).toContain(
     'The HELM alias must be no more than 23 symbols long.',
   );
 });

@@ -51,26 +51,19 @@ class BondTool implements Tool {
       const selectedBonds = editor.selection().bonds;
 
       if (functionalGroups.size) {
-        const fgIds: number[] = [];
+        const fgIds = new Set<number>();
         for (const bondId of selectedBonds) {
-          const bondInFG = FunctionalGroup.bondsInFunctionalGroup(
+          const fgId = FunctionalGroup.findFunctionalGroupByBond(
             molecule,
             functionalGroups,
             bondId,
           );
-          if (bondInFG !== null) {
-            const fgId = FunctionalGroup.findFunctionalGroupByBond(
-              molecule,
-              functionalGroups,
-              bondId,
-            );
-            if (fgId !== null && !fgIds.includes(fgId)) {
-              fgIds.push(fgId);
-            }
+          if (fgId !== null) {
+            fgIds.add(fgId);
           }
         }
-        if (fgIds.length) {
-          this.editor.event.removeFG.dispatch({ fgIds });
+        if (fgIds.size) {
+          this.editor.event.removeFG.dispatch({ fgIds: [...fgIds] });
           this.isNotActiveTool = true;
           return;
         }

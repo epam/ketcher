@@ -14,47 +14,70 @@
  * limitations under the License.
  ***************************************************************************/
 
+import assert from 'assert';
+
 import { Bond } from 'domain/entities/bond';
 import { Vec2 } from 'domain/entities/vec2';
-
-import { LayerMap } from './generalEnumTypes';
-import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import { toFixed } from 'utilities';
 
+import { LayerMap } from './generalEnumTypes';
+import ReObject from './reobject';
+
+import type { Loop } from 'domain/entities/loop';
+import type { Struct } from 'domain/entities/struct';
+import type ReStruct from './restruct';
+import type { RenderOptions } from '../render.types';
+
+function getFromMap<T>(map: Map<number, T>, key: number): T {
+  const value = map.get(key);
+  if (value === undefined) {
+    throw new Error(`Map entry not found for key ${key}`);
+  }
+  return value;
+}
+
 class ReLoop extends ReObject {
-  constructor(loop) {
+  loop: Loop;
+  centre: Vec2;
+  radius: number;
+
+  constructor(loop: Loop | undefined) {
     super('loop');
+    assert(loop !== undefined, 'ReLoop requires a Loop instance');
     this.loop = loop;
     this.centre = new Vec2();
-    this.radius = new Vec2();
+    this.radius = 0;
   }
 
-  static isSelectable() {
+  static isSelectable(): boolean {
     return false;
   }
 
-  show(restruct, rlid, options) {
-    // eslint-disable-line max-statements
-    const render = restruct.render;
+  // eslint-disable-next-line max-statements
+  show(restruct: ReStruct, _rlid: number, options: RenderOptions): void {
+    const { render, molecule } = restruct;
     const paper = render.paper;
-    const molecule = restruct.molecule;
-    const loop = this.loop;
+    const { loop } = this;
+    const { hbs } = loop;
+
     this.centre = new Vec2();
-    loop.hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid);
-      const bond = restruct.bonds.get(hb.bid);
+    hbs.forEach((hbid) => {
+      const hb = getFromMap(molecule.halfBonds, hbid);
+      const bond = getFromMap(restruct.bonds, hb.bid);
       const apos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.begin).a.pp,
+        getFromMap(restruct.atoms, hb.begin).a.pp,
         options,
       );
       if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false;
-      this.centre.add_(apos); // eslint-disable-line no-underscore-dangle
+      // eslint-disable-next-line no-underscore-dangle
+      this.centre.add_(apos);
     });
+
     loop.convex = true;
-    for (let k = 0; k < this.loop.hbs.length; ++k) {
-      const hba = molecule.halfBonds.get(loop.hbs[k]);
-      const hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+    for (let k = 0; k < hbs.length; ++k) {
+      const hba = getFromMap(molecule.halfBonds, hbs[k]);
+      const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
       const angle = Math.atan2(
         Vec2.cross(hba.dir, hbb.dir),
         Vec2.dot(hba.dir, hbb.dir),
@@ -62,16 +85,16 @@ class ReLoop extends ReObject {
       if (angle > 0) loop.convex = false;
     }
 
-    this.centre = this.centre.scaled(1.0 / loop.hbs.length);
+    this.centre = this.centre.scaled(1.0 / hbs.length);
     this.radius = -1;
-    loop.hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid);
+    hbs.forEach((hbid) => {
+      const hb = getFromMap(molecule.halfBonds, hbid);
       const apos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.begin).a.pp,
+        getFromMap(restruct.atoms, hb.begin).a.pp,
         options,
       );
       const bpos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.end).a.pp,
+        getFromMap(restruct.atoms, hb.end).a.pp,
         options,
       );
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
@@ -81,30 +104,22 @@ class ReLoop extends ReObject {
     this.radius *= 0.7;
     if (!loop.aromatic) return;
 
-    // Check if all atoms in the loop belong to a contracted sgroup
-    // If they do, skip rendering the aromatic circle
-    const atomIds = new Set();
-    loop.hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid);
+    // Skip rendering the aromatic circle when the loop sits entirely inside one contracted sgroup
+    const atomIds = new Set<number>();
+    hbs.forEach((hbid) => {
+      const hb = getFromMap(molecule.halfBonds, hbid);
       atomIds.add(hb.begin);
       atomIds.add(hb.end);
     });
 
-    // Get the sgroup for the first atom to check if it's a contracted sgroup
     const firstAtomId = atomIds.values().next().value;
+    if (firstAtomId === undefined) return;
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
-
-    // If the loop is inside a contracted sgroup, don't render it
     if (sgroup?.isContracted()) {
-      // Verify all atoms in the loop belong to the same contracted sgroup
-      const allAtomsInSameSgroup = Array.from(atomIds).every((atomId) => {
-        const atomSgroup = molecule.getGroupFromAtomId(atomId);
-        return atomSgroup === sgroup;
-      });
-
-      if (allAtomsInSameSgroup) {
-        return;
-      }
+      const allInSameSgroup = [...atomIds].every(
+        (atomId) => molecule.getGroupFromAtomId(atomId) === sgroup,
+      );
+      if (allInSameSgroup) return;
     }
 
     let path = null;
@@ -115,9 +130,9 @@ class ReLoop extends ReObject {
       });
     } else {
       let pathStr = '';
-      for (let k = 0; k < loop.hbs.length; ++k) {
-        const hba = molecule.halfBonds.get(loop.hbs[k]);
-        const hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
+      for (let k = 0; k < hbs.length; ++k) {
+        const hba = getFromMap(molecule.halfBonds, hbs[k]);
+        const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
         const angle = Math.atan2(
           Vec2.cross(hba.dir, hbb.dir),
           Vec2.dot(hba.dir, hbb.dir),
@@ -125,7 +140,7 @@ class ReLoop extends ReObject {
         const halfAngle = (Math.PI - angle) / 2;
         const dir = hbb.dir.rotate(halfAngle);
         const pi = Scale.modelToCanvas(
-          restruct.atoms.get(hbb.begin).a.pp,
+          getFromMap(restruct.atoms, hbb.begin).a.pp,
           options,
         );
         let sin = Math.sin(halfAngle);
@@ -146,11 +161,12 @@ class ReLoop extends ReObject {
     restruct.addReObjectPath(LayerMap.data, this.visel, path, null, true);
   }
 
-  isValid(struct, rlid) {
-    const halfBonds = struct.halfBonds;
-    return this.loop.hbs.every(
-      (hbid) => halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid,
-    );
+  isValid(struct: Struct, rlid: number): boolean {
+    const { halfBonds } = struct;
+    return this.loop.hbs.every((hbid) => {
+      const hb = halfBonds.get(hbid);
+      return hb !== undefined && hb.loop === rlid;
+    });
   }
 }
 

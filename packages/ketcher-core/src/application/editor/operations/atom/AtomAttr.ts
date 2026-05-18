@@ -24,6 +24,64 @@ type Data = {
   value?: any;
 };
 
+type AtomListLike = {
+  ids: Array<number>;
+  notList: boolean;
+  equals: (atomList: AtomListLike) => boolean;
+};
+
+function isAtomListLike(value: unknown): value is AtomListLike {
+  const valueRecord = value as { equals?: unknown };
+
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'ids' in value &&
+    'notList' in value &&
+    'equals' in value &&
+    typeof valueRecord.equals === 'function'
+  );
+}
+
+function areValuesEqual(left: unknown, right: unknown): boolean {
+  if (left === right) {
+    return true;
+  }
+
+  if (isAtomListLike(left) && isAtomListLike(right)) {
+    return left.equals(right);
+  }
+
+  if (left === null || right === null) {
+    return false;
+  }
+
+  if (Array.isArray(left) && Array.isArray(right)) {
+    return (
+      left.length === right.length &&
+      left.every((item, index) => areValuesEqual(item, right[index]))
+    );
+  }
+
+  if (typeof left !== 'object' || typeof right !== 'object') {
+    return false;
+  }
+
+  const leftRecord = left as Record<string, unknown>;
+  const rightRecord = right as Record<string, unknown>;
+  const leftKeys = Object.keys(leftRecord);
+  const rightKeys = Object.keys(rightRecord);
+
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every(
+      (key) =>
+        Object.prototype.hasOwnProperty.call(rightRecord, key) &&
+        areValuesEqual(leftRecord[key], rightRecord[key]),
+    )
+  );
+}
+
 export class AtomAttr extends BaseOperation {
   data: Data | null;
   data2: Data | null;
@@ -81,6 +139,17 @@ export class AtomAttr extends BaseOperation {
       return false;
     }
 
-    return atom[attribute] === value;
+    const currentValue = atom[attribute];
+
+    if (
+      currentValue !== null &&
+      value !== null &&
+      typeof currentValue === 'object' &&
+      typeof value === 'object'
+    ) {
+      return areValuesEqual(currentValue, value);
+    }
+
+    return currentValue === value;
   }
 }

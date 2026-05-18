@@ -32,6 +32,70 @@ export class CalcImplicitH extends BaseOperation {
     restruct.molecule.setImplicitHydrogen(aIds);
   }
 
+  isDummy(restruct?: ReStruct): boolean {
+    if (!restruct) {
+      return false;
+    }
+
+    const atomIds = Array.from(new Set(this.atomIds));
+    if (atomIds.length === 0) {
+      return true;
+    }
+
+    const { molecule } = restruct;
+    const beforeState = new Map<
+      number,
+      { implicitH: number; badConn: boolean; hasImplicitH?: boolean }
+    >();
+
+    atomIds.forEach((atomId) => {
+      const atom = molecule.atoms.get(atomId);
+      if (!atom) {
+        return;
+      }
+
+      beforeState.set(atomId, {
+        implicitH: atom.implicitH,
+        badConn: atom.badConn,
+        hasImplicitH: atom.hasImplicitH,
+      });
+    });
+
+    if (beforeState.size === 0) {
+      return true;
+    }
+
+    const aidMap = new Map<number, number>();
+    const moleculeClone = molecule.clone(null, null, false, aidMap);
+    const mappedAtomIds = atomIds
+      .map((atomId) => aidMap.get(atomId))
+      .filter((atomId): atomId is number => atomId !== undefined);
+
+    moleculeClone.setImplicitHydrogen(mappedAtomIds);
+
+    for (const [atomId, state] of beforeState.entries()) {
+      const mappedAtomId = aidMap.get(atomId);
+      if (mappedAtomId === undefined) {
+        continue;
+      }
+
+      const clonedAtom = moleculeClone.atoms.get(mappedAtomId);
+      if (!clonedAtom) {
+        continue;
+      }
+
+      if (
+        clonedAtom.implicitH !== state.implicitH ||
+        clonedAtom.badConn !== state.badConn ||
+        clonedAtom.hasImplicitH !== state.hasImplicitH
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   invert() {
     return new CalcImplicitH(this.atomIds);
   }

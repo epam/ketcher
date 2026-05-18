@@ -545,7 +545,7 @@ export class SequenceMode extends BaseMode {
       const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
         this.selectionStartCaretPosition,
         SequenceRenderer.caretPosition,
-        SequenceRenderer.setCaretPosition.bind(SequenceRenderer),
+        (position) => SequenceRenderer.setCaretPosition(position),
       );
       modelChanges.addOperation(moveCaretOperation);
       editor.renderersContainer.update(modelChanges);
@@ -779,7 +779,7 @@ export class SequenceMode extends BaseMode {
       isNumber(newCaretPosition)
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
-      SequenceRenderer.setCaretPosition.bind(SequenceRenderer),
+      (position) => SequenceRenderer.setCaretPosition(position),
     );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -1822,7 +1822,7 @@ export class SequenceMode extends BaseMode {
       new RestoreSequenceCaretPositionOperation(
         SequenceRenderer.caretPosition,
         nextCaretPosition,
-        SequenceRenderer.setCaretPosition.bind(SequenceRenderer),
+        (position) => SequenceRenderer.setCaretPosition(position),
       ),
     );
 

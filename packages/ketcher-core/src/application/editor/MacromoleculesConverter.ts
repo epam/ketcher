@@ -53,6 +53,8 @@ type StructBondEndpoint = {
 };
 
 export class MacromoleculesConverter {
+  // Clear only INVALID serialization sentinels; using enableInitiallySelected()
+  // here would also drop legitimate selected=true values.
   private static resetInvalidInitiallySelected(struct: Struct) {
     const reset = (entity: EntityWithInitialSelection) => {
       if (entity.initiallySelected === INVALID) {

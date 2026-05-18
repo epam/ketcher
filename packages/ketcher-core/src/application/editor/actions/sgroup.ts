@@ -262,7 +262,13 @@ export function setExpandMonomerSGroup(
       }
 
       if (!attrs.expanded && !otherMonomerIsExpanded) {
-        action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE));
+        // Both monomers will be collapsed: clear transient attachment-point
+        // stereo carried over from the expanded state.
+        if (bondToOutside.stereo !== Bond.PATTERN.STEREO.NONE) {
+          action.addOp(
+            new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.NONE),
+          );
+        }
         continue;
       }
 

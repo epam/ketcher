@@ -566,7 +566,7 @@ test(`Verify that custom RNA 5meC-MOE-P preset remains intact after expanding MO
   MoleculesCanvas: _,
 }) => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Test task: https://github.com/epam/ketcher/issues/9889
    * Description: Verify that a custom RNA preset with a multi-attachment MOE sugar
    *              is not lost when an expanded monomer is converted from Molecules
    *              mode back to Macromolecules mode.
@@ -593,7 +593,7 @@ test(`Verify that custom RNA 5meC-MOE-P preset remains visible after removing MO
   MoleculesCanvas: _,
 }) => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Test task: https://github.com/epam/ketcher/issues/9889
    * Description: Verify that removing a custom RNA monomer abbreviation in
    *              Molecules mode does not make the resulting atom/bond fragment
    *              disappear when switching back to Macromolecules mode.
@@ -624,7 +624,7 @@ test(`Verify that custom RNA 5meC-MOE-P preset keeps a plain base-sugar bond aft
   MoleculesCanvas: _,
 }) => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/7153
+   * Test task: https://github.com/epam/ketcher/issues/9889
    * Description: Verify that the MOE attachment-point stereo bond is not copied
    *              permanently to the base-sugar monomer connection after an
    *              expand-collapse roundtrip.

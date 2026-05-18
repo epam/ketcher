@@ -60,8 +60,7 @@ export class Pile<TValue = any> extends Set<TValue> {
 
   intersection<U>(setB: PileSetLike<U>): Pile<TValue & U> {
     const thisSet = new Pile(this);
-    const isSharedValue = (item: TValue): item is TValue & U =>
-      setB.has(item);
+    const isSharedValue = (item: TValue): item is TValue & U => setB.has(item);
     return new Pile([...thisSet].filter(isSharedValue));
   }
 

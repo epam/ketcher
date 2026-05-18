@@ -5,8 +5,13 @@ import {
 } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const validateMultitailArrows = (json: any): boolean => {
+interface KetFileSchema {
+  root: {
+    nodes: Array<KetFileNode<unknown>>;
+  };
+}
+
+export const validateMultitailArrows = (json: KetFileSchema): boolean => {
   const nodes: Array<KetFileNode<unknown>> = json.root.nodes;
   return nodes.every((node) => {
     if (node.type === MULTITAIL_ARROW_SERIALIZE_KEY) {

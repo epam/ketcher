@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -45,7 +44,7 @@ interface Props {
   title?: string;
 }
 
-const ChevronIcon = ({ className }) => (
+const ChevronIcon = ({ className }: { className?: string }) => (
   <Icon name="chevron" className={className} />
 );
 
@@ -73,19 +72,22 @@ const Select = ({
     onChange(event.target.value);
   };
 
+  const renderValue = (selected: string): ReactNode =>
+    currentValue?.children ??
+    currentValue?.label ??
+    placeholder ??
+    selected ??
+    '';
+
   return (
     <MuiSelect
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       title={title}
       onChange={handleChange}
-      renderValue={(selected: string) =>
-        (currentValue?.children ??
-          currentValue?.label ??
-          placeholder ??
-          selected ??
-          '') as any
-      }
+      // TODO: remove after TS 6 migration is complete
+      // @ts-expect-error - @types/react version conflict, will be resolved after TS 6 migration
+      renderValue={renderValue}
       displayEmpty
       multiple={multiple}
       disabled={disabled}

@@ -16,6 +16,8 @@
 
 import React, { FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 import Form, {
   Field,
   FormState,
@@ -312,7 +314,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>
@@ -324,11 +326,14 @@ const mapDispatchToProps = (
 });
 
 // Workaround: @types/react version conflict with connect()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CheckDialogAny = CheckDialog as any;
+// TODO: remove @ts-expect-error after TS 6 migration is complete
+// @ts-expect-error - @types/react version conflict, will be resolved after TS 6 migration
 const Check = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as React.ComponentType<CheckDialogOwnProps>;
+)(
+  // @ts-expect-error
+  CheckDialog as React.ComponentType<CheckDialogProps>,
+) as React.ComponentType<CheckDialogOwnProps>;
 
 export default Check;

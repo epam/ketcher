@@ -42,7 +42,7 @@ import { SelectCommonTool } from './select';
 import CreateMonomerTool from './create-monomer';
 import FragmentSelectionTool from './fragmentSelection';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
+export const toolsMap = {
   hand: HandTool,
   rgroupatom: RGroupAtomTool,
   select: SelectCommonTool,
@@ -68,4 +68,4 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   text: TextTool,
   [IMAGE_KEY]: ImageTool,
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerTool,
-};
+} as unknown as Record<string, ToolConstructorInterface>;

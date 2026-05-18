@@ -35,6 +35,8 @@ import { DialogActionButton } from 'src/script/ui/views/modal/components/documen
 import { Icon, StructRender } from 'components';
 import { ketcherProvider, Struct } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
+import { ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 
 type StructStringOrPromise = string | Promise<unknown> | null;
 
@@ -240,9 +242,9 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const URL = window.URL || (window as any).webkitURL;
-  return URL ? URL.createObjectURL(file) : 'No preview';
+  const webkitURL = (window as Window & { webkitURL?: typeof URL }).webkitURL;
+  const URLObject = window.URL || webkitURL;
+  return URLObject ? URLObject.createObjectURL(file) : 'No preview';
 }
 
 interface RecognizeState {
@@ -268,8 +270,9 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
   onImage: (file: File | FileContent | null) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>

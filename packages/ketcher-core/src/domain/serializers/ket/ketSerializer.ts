@@ -199,6 +199,8 @@ export class KetSerializer implements Serializer<Struct> {
 
     const ketNodes = prepareStructForKet(struct);
 
+    type KetRGroupData = { rgnumber: number; rgroup: unknown };
+
     let moleculeId = 0;
     ketNodes.forEach((item) => {
       switch (item.type) {
@@ -208,10 +210,11 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
         case 'rgroup': {
-          result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` });
-          result[`rg${item.data!.rgnumber}`] = rgroupToKet(
+          const rgroupData = item.data as KetRGroupData;
+          result.root.nodes.push({ $ref: `rg${rgroupData.rgnumber}` });
+          result[`rg${rgroupData.rgnumber}`] = rgroupToKet(
             item.fragment!,
-            item.data,
+            rgroupData,
           );
           break;
         }

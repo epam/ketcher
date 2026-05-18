@@ -553,6 +553,11 @@ function findClosestItem(
   return priorityItem ?? closestItem;
 }
 
+type ClosestMergeSelection = {
+  atoms: number[];
+  bonds: number[];
+};
+
 /**
  * @param restruct { ReStruct }
  * @param selected { object }
@@ -566,13 +571,13 @@ function findClosestItem(
  */
 function findCloseMerge(
   restruct: ReStruct,
-  selected,
+  selected: ClosestMergeSelection,
   options,
-  maps = ['atoms', 'bonds'],
+  maps: Array<'atoms' | 'bonds'> = ['atoms', 'bonds'],
 ) {
   const pos = {
-    atoms: new Map(), // aid -> position
-    bonds: new Map(), // bid -> position
+    atoms: new Map<number, Vec2>(),
+    bonds: new Map<number, Vec2>(),
   };
 
   const struct = restruct.molecule;
@@ -601,30 +606,29 @@ function findCloseMerge(
     }
   });
 
-  const result = {
-    atoms: new Map(),
-    atomToFunctionalGroup: new Map(),
+  const result: {
+    atoms: Map<number, number>;
+    atomToFunctionalGroup: Map<number, number>;
+    [key: string]: Map<number, number>;
+  } = {
+    atoms: new Map<number, number>(),
+    atomToFunctionalGroup: new Map<number, number>(),
   };
 
   maps.forEach((map) => {
     if (map === 'atoms') {
       Array.from(pos.atoms.keys()).forEach((atomId) => {
         const atomPosition = pos.atoms.get(atomId);
+        if (!atomPosition) return;
         mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) ||
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
       });
     } else {
-      result[map] = Array.from(pos[map].keys()).reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: Map<any, any>, srcId) => {
+      const posMap = pos[map as keyof typeof pos] as Map<number, Vec2>;
+      result[map] = Array.from(posMap.entries()).reduce(
+        (res: Map<number, number>, [srcId, position]) => {
           const skip = { map, id: srcId };
-          const item = findMaps[map](
-            restruct,
-            pos[map].get(srcId),
-            skip,
-            null,
-            options,
-          );
+          const item = findMaps[map](restruct, position, skip, null, options);
 
           if (item && !selected[map].includes(item.id)) {
             res.set(srcId, item.id);
@@ -632,7 +636,7 @@ function findCloseMerge(
 
           return res;
         },
-        new Map(),
+        new Map<number, number>(),
       );
     }
   });
@@ -641,11 +645,14 @@ function findCloseMerge(
 }
 
 function mergeAtomToAtom(
-  atomId,
+  atomId: number,
   restruct: ReStruct,
   atomPosition: Vec2,
-  selected,
-  result,
+  selected: ClosestMergeSelection,
+  result: {
+    atoms: Map<number, number>;
+    atomToFunctionalGroup: Map<number, number>;
+  },
 ) {
   const skip = { map: 'atoms', id: atomId };
   const closestAtom = findClosestAtom(restruct, atomPosition, skip, null);
@@ -666,10 +673,13 @@ function mergeAtomToAtom(
  * @return {boolean}
  */
 function mergeAtomToFunctionalGroup(
-  atomId,
+  atomId: number,
   restruct: ReStruct,
   atomPosition: Vec2,
-  result,
+  result: {
+    atoms: Map<number, number>;
+    atomToFunctionalGroup: Map<number, number>;
+  },
 ) {
   const sgroup = restruct.molecule.getGroupFromAtomId(atomId);
   const isAttachmentAtom = atomId === sgroup?.getAttachmentAtomId();

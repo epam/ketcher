@@ -17,6 +17,12 @@
 import { KetcherLogger } from './KetcherLogger';
 import { LayoutMode } from 'application/editor/modes/types';
 
+export type SelectionToolSettings = {
+  tool: 'select';
+  opts: 'rectangle' | 'lasso' | 'fragment';
+  dialog?: string;
+} | null;
+
 export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
 
@@ -33,8 +39,7 @@ const DefaultEditorLineLength: EditorLineLength = {
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 interface SavedSettings {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectionTool?: any;
+  selectionTool?: SelectionToolSettings;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];
@@ -101,17 +106,17 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
   }
 
-  static get selectionTool() {
+  static get selectionTool(): SelectionToolSettings | undefined {
     const { selectionTool } = this.getSettings();
     return selectionTool;
   }
 
-  static set selectionTool(selectionTool) {
+  static set selectionTool(selectionTool: unknown) {
     const settings = this.getSettings();
 
     this.saveSettings({
       ...settings,
-      selectionTool,
+      selectionTool: selectionTool as SelectionToolSettings,
     });
   }
 

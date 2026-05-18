@@ -67,7 +67,7 @@ const baseConfig = {
     typescript({
       tsconfigOverride: {
         compilerOptions: {
-          module: 'ESNext',
+          module: 'esnext',
         },
       },
     }),

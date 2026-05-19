@@ -59,6 +59,7 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   invert() {
     const leavingAtomId = this.atomPair[1];
 
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return new AssignLeavingGroupAtomOperation(
       this.monomerCreationState,
       leavingAtomId,

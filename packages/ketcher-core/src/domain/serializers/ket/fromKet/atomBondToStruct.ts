@@ -14,13 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AtomQueryProperties } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
+import {
+  Atom,
+  type AtomAttributes,
+  type AtomQueryProperties,
+} from 'domain/entities/atom';
+import { Bond, type BondAttributes } from 'domain/entities/bond';
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
 
 export function atomToStruct(source) {
-  const params: any = {};
+  const params: Partial<AtomAttributes> = {};
 
   const queryAttribute: Array<keyof AtomQueryProperties> = [
     'aromaticity',
@@ -85,7 +89,7 @@ export function atomToStruct(source) {
   // implicit hydrogens
   ifDef(params, 'implicitHCount', source.implicitHCount);
 
-  const newAtom = new Atom(params);
+  const newAtom = new Atom(params as AtomAttributes);
   newAtom.setInitiallySelected(source.selected);
   return newAtom;
 }
@@ -106,7 +110,7 @@ export function atomToStruct(source) {
  * @returns newly created Bond
  */
 export function bondToStruct(source, atomOffset = 0) {
-  const params: any = {};
+  const params: Partial<BondAttributes> = {};
 
   ifDef(params, 'type', source.type);
   ifDef(params, 'topology', source.topology);
@@ -118,7 +122,7 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'end', source.atoms[1] + atomOffset);
   ifDef(params, 'initiallySelected', source.selected);
 
-  const newBond = new Bond(params);
+  const newBond = new Bond(params as BondAttributes);
   newBond.setInitiallySelected(source.selected);
   return newBond;
 }

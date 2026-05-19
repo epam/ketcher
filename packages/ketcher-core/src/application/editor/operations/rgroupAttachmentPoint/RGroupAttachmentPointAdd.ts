@@ -55,6 +55,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     if (this.data.attachmentPointId === undefined) {
       throw Error(`Inverted attachmentPointId doesn't exist`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return new RGroupAttachmentPointRemove(this.data.attachmentPointId);
   }
 }

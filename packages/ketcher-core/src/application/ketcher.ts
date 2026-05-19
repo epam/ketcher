@@ -28,7 +28,11 @@ import {
   type CalculateResult,
 } from 'domain/services';
 
-import { Editor, getSelectionFromStruct } from './editor';
+import {
+  Editor,
+  getSelectionFromStruct,
+  MonomerLibraryConvertError,
+} from './editor';
 import { provideEditorInstance } from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
@@ -801,9 +805,9 @@ export class Ketcher {
       } catch (error) {
         const originalMessage =
           error instanceof Error ? error.message : String(error);
-        throw new Error(
+        throw new MonomerLibraryConvertError(
           `Monomer item could not be loaded because of an error: ${originalMessage}`,
-          { cause: error instanceof Error ? error : undefined },
+          error instanceof Error ? error : undefined,
         );
       }
     }

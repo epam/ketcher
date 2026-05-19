@@ -141,6 +141,13 @@ export class MonomerLibraryUpdateError extends Error {
   }
 }
 
+export class MonomerLibraryConvertError extends Error {
+  constructor(message: string, cause?: Error) {
+    super(message, { cause });
+    this.name = 'MonomerLibraryConvertError';
+  }
+}
+
 const debouncedTurnOffScrollAnimation = debounce(
   (canvas: D3SvgElementSelection<SVGGElement, void>) => {
     canvas.style('transition', 'none');

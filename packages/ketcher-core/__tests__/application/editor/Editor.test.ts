@@ -1,5 +1,6 @@
 import {
   CoreEditor,
+  MonomerLibraryConvertError,
   MonomerLibraryUpdateError,
   ToolName,
 } from 'application/editor';
@@ -14,6 +15,19 @@ import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import { KetcherLogger } from 'utilities';
 
 describe('CoreEditor', () => {
+  it('should create MonomerLibraryConvertError with a cause', () => {
+    const cause = new Error('convert failed');
+    const error = new MonomerLibraryConvertError(
+      'Monomer item could not be loaded because of an error: convert failed',
+      cause,
+    );
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error).toBeInstanceOf(MonomerLibraryConvertError);
+    expect(error.name).toBe('MonomerLibraryConvertError');
+    expect(error.cause).toBe(cause);
+  });
+
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({

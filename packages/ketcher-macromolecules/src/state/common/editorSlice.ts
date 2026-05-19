@@ -17,6 +17,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
+  MonomerLibraryConvertError,
   RenderersManager,
   type LayoutMode,
   SettingsManager,
@@ -157,9 +158,13 @@ export const editorSlice: Slice<EditorState> = createSlice({
               : typeof err === 'string'
               ? err
               : 'Failed to load monomers library';
+          const errorTitle =
+            err instanceof MonomerLibraryConvertError
+              ? 'Monomer library conversion failed'
+              : 'Monomer library update failed';
           editor.events.openErrorModal.dispatch({
             errorMessage,
-            errorTitle: 'Monomer library update failed',
+            errorTitle,
           });
         });
 

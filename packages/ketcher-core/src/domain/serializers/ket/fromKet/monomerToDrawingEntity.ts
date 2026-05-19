@@ -35,6 +35,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     modificationTypes: template.modificationTypes,
     ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
     ...(template.aliasAxoLabs ? { aliasAxoLabs: template.aliasAxoLabs } : {}),
+    ...(template.aliasBILN ? { aliasBILN: template.aliasBILN } : {}),
     ...(template.hidden ? { hidden: template.hidden } : {}),
   };
 }

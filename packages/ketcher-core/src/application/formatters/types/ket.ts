@@ -170,6 +170,7 @@ export interface IKetMonomerTemplate {
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
@@ -202,6 +203,7 @@ export interface IKetMonomerGroupTemplate {
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
 }
 
 export interface IKetNodeRef {

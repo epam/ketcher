@@ -457,6 +457,9 @@ export class CoreEditor {
         monomer.props?.aliasHELM
           ? `HELM alias "${monomer.props.aliasHELM}"`
           : null,
+        monomer.props?.aliasBILN
+          ? `BILN alias "${monomer.props.aliasBILN}"`
+          : null,
         monomer.props?.idtAliases?.base
           ? `IDT base alias "${monomer.props.idtAliases.base}"`
           : null,
@@ -494,6 +497,8 @@ export class CoreEditor {
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+          (Boolean(newMonomer.props?.aliasBILN) &&
+            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||

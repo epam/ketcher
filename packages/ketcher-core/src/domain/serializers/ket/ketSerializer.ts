@@ -373,7 +373,8 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private static enrichTemplateWithLibraryData(template: IKetMonomerTemplate) {
-    if (template.idtAliases && template.aliasAxoLabs) return;
+    if (template.idtAliases && template.aliasAxoLabs && template.aliasBILN)
+      return;
 
     const library = provideEditorInstance()?.monomersLibraryParsedJson;
     if (!library) return;
@@ -389,6 +390,9 @@ export class KetSerializer implements Serializer<Struct> {
     }
     if (!template.aliasAxoLabs && libraryTemplate.aliasAxoLabs) {
       template.aliasAxoLabs = libraryTemplate.aliasAxoLabs;
+    }
+    if (!template.aliasBILN && libraryTemplate.aliasBILN) {
+      template.aliasBILN = libraryTemplate.aliasBILN;
     }
   }
 
@@ -689,6 +693,7 @@ export class KetSerializer implements Serializer<Struct> {
       alias: monomer.monomerItem.label,
       aliasHELM: monomer.monomerItem.props.aliasHELM,
       aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
+      aliasBILN: monomer.monomerItem.props.aliasBILN,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer.monomerItem.props.unresolved ? true : undefined,

@@ -54,6 +54,7 @@ export type MonomerItemType = MonomerItemBase & {
     Name: string;
     aliasHELM?: string;
     aliasAxoLabs?: string;
+    aliasBILN?: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
     MonomerCaps?: Partial<Record<AttachmentPointName, string>>;

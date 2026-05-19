@@ -415,6 +415,69 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should log BILN alias collision across peptide and CHEM monomers', () => {
+      const peptideWithBilnAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE_BILN_1',
+          class: 'AminoAcid',
+          classHELM: 'PEPTIDE',
+          fullName: 'Test Peptide BILN 1',
+          name: 'PEPTIDE_BILN_1',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'PEPTIDE_BILN_1',
+            MonomerClass: 'AminoAcid',
+            Name: 'PEPTIDE_BILN_1',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+      const chemWithBilnCollision = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'CHEM_BILN_1',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem BILN 1',
+          name: 'CHEM_BILN_1',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_BILN_1',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_BILN_1',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(peptideWithBilnAlias));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(chemWithBilnCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('BILN alias "BilnAlias1"'),
+      );
+    });
+
     it('should reject monomer group template without name', () => {
       const unnamedPreset = {
         root: {

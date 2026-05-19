@@ -14,21 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from '../Open.module.less'
+import classes from '../Open.module.less';
 
 export type TextEditorProps = {
-  structStr: string
-  inputHandler: (str: string) => void
-}
+  structStr: string;
+  inputHandler: (str: string) => void;
+  autoFocus?: boolean;
+  testId?: string;
+};
 
-export const TextEditor = ({ structStr, inputHandler }: TextEditorProps) => {
+export const TextEditor = ({
+  structStr,
+  inputHandler,
+  autoFocus = false,
+  testId,
+}: TextEditorProps) => {
   return (
-    <>
-      <textarea
-        className={classes.textareaEditor}
-        value={structStr}
-        onChange={(event) => inputHandler(event.target.value)}
-      />
-    </>
-  )
-}
+    <textarea
+      className={classes.textareaEditor}
+      value={structStr}
+      data-testid={testId}
+      onChange={(event) => inputHandler(event.target.value)}
+      autoFocus={autoFocus}
+    />
+  );
+};

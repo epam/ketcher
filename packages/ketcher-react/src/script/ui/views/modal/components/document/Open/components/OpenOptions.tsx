@@ -14,36 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
+import { FC } from 'react';
 
-import Icon from 'src/script/ui/component/view/icon'
-import styles from './OpenOptions.module.less'
-import { FileDrop } from './FileDrop'
+import styles from './OpenOptions.module.less';
+import { FileDrop } from './FileDrop';
+import { Icon } from 'components';
 
 const ICON_NAMES = {
   PASTE: 'open-window-paste-icon',
   FILE: 'open-window-upload-icon',
-  IMAGE: 'image-frame'
-}
+  IMAGE: 'image-frame',
+} as const;
 
 export type OpenOptionsProps = {
-  selectClipboard: () => void
-  errorHandler: (err: string) => void
-  fileLoadHandler: (files: File[]) => void
-  imageLoadHandler: (files: File[]) => void
-  isRecognizeDisabled: boolean
-}
+  selectClipboard: () => void;
+  errorHandler: (err: string) => void;
+  fileLoadHandler: (files: File[]) => void;
+  imageLoadHandler: (files: File[]) => void;
+  isRecognizeDisabled: boolean;
+};
 
 export const OpenOptions: FC<OpenOptionsProps> = ({
   selectClipboard,
   fileLoadHandler,
   imageLoadHandler,
   isRecognizeDisabled,
-  errorHandler
+  errorHandler,
 }) => {
   return (
     <div className={styles.optionsContainer}>
-      <div onClick={selectClipboard} className={styles.dropContainer}>
+      <button
+        onClick={selectClipboard}
+        className={styles.dropContainer}
+        data-testid="paste-from-clipboard-button"
+        type="button"
+      >
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />
         </div>
@@ -53,7 +58,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         <div className={styles.buttonLabelWrapper}>
           <p className={styles.buttonLabel}>Paste from clipboard</p>
         </div>
-      </div>
+      </button>
 
       <FileDrop
         onDropAccepted={fileLoadHandler}
@@ -61,6 +66,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         buttonLabel="Open from file"
         textLabel="or drag file here"
         iconName={ICON_NAMES.FILE}
+        testId="open-from-file-button"
       />
 
       <FileDrop
@@ -70,13 +76,14 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         onDropAccepted={imageLoadHandler}
         onDropRejected={() =>
           errorHandler(
-            'Unable to accept file(s). Make sure you upload 1 image.'
+            'Unable to accept file(s). Make sure you upload 1 image.',
           )
         }
         buttonLabel="Open from image"
         textLabel="or drag file here"
         iconName={ICON_NAMES.IMAGE}
+        testId="open-from-image-button"
       />
     </div>
-  )
-}
+  );
+};

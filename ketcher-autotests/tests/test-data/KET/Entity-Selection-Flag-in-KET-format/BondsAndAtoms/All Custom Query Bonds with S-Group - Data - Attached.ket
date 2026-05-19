@@ -1,0 +1,978 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            },
+            {
+                "$ref": "mol16"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    22.07499833919998,
+                    -13.24538444629918,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    23.07499834246382,
+                    -13.24538444629918,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "="
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    17.099999403961988,
+                    -13.270384342826304,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.099999407225823,
+                    -13.270384342826304,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": ":"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    6.675000132875901,
+                    -13.195383579642062,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.67500013613974,
+                    -13.195383579642062,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "#"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.224999388050763,
+                    -13.195383579642062,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.224999391314604,
+                    -13.195383579642062,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "-"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.09999027505888,
+                    -17.97610004977398,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.100001722414552,
+                    -17.97609242037942,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.600001717518793,
+                    -17.110064585521595,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    13.599997902821512,
+                    -18.842112625842688,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "\\"
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    21.19998877235324,
+                    -18.026099286997717,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.20000021970891,
+                    -18.026091657603157,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.70000021481315,
+                    -17.160063822745336,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    20.70000021481315,
+                    -18.8921156777637,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "/"
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    27.875003728866567,
+                    -13.276083633730586,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    26.87500375542079,
+                    -13.276083633730586,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "~"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    22.03749694409212,
+                    -22.80788434819724,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    23.037496880059166,
+                    -22.80788434819724,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "=;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    17.062498343655648,
+                    -22.832884243041953,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.062498279622684,
+                    -22.832884243041953,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": ":;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    6.637499774138668,
+                    -22.757883484905022,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.637499710105706,
+                    -22.757883484905022,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "#;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.187498655816329,
+                    -22.757883484905022,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.187498591783372,
+                    -22.757883484905022,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "-;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.06248941664356,
+                    -27.538599633310017,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.062500796701665,
+                    -27.53859200391597,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.562500892751101,
+                    -26.672564227339045,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    13.562497078054077,
+                    -28.404612151098853,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "\\;@"
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    21.16248743613073,
+                    -27.588598867168965,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.162498816188833,
+                    -27.58859123777492,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.66249891223827,
+                    -26.722563461197996,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    20.66249891223827,
+                    -28.454615199654818,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "/;@"
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    27.837501943436898,
+                    -22.83858353356269,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    26.837502037287923,
+                    -22.83858353356269,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "~;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    33.06250039020013,
+                    -13.256249707970754,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    32.06250041981072,
+                    -13.256249707970754,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "/?"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    33.01250039168066,
+                    -22.856249423709052,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    32.01250042129125,
+                    -22.856249423709052,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "\\?"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    },
+    "mol16": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    38.61250022586134,
+                    -18.331249557696992,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    37.61250025547193,
+                    -18.331249557696992,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "-&/&\\&/?&\\?&=&#&:&~&@,-,/,\\,/?,\\?,=,#,:,~,@,-;/;\\;/?;\\?;=;#;:;~;@,-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@&-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@;-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@"
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Bond",
+                "fieldName": "S-Group-Data",
+                "fieldData": "S-Group-Data value",
+                "bonds": [
+                    0
+                ]
+            }
+        ]
+    }
+}

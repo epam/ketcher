@@ -1,3 +1,4 @@
+import { Subscription } from 'subscription';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,188 +15,886 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { saveAs } from 'file-saver';
 import {
   FormatterFactory,
+  identifyStructFormat,
   SupportedFormat,
-  identifyStructFormat
-} from './formatters'
-import { GenerateImageOptions, StructService } from 'domain/services'
+} from './formatters';
+import {
+  GenerateImageOptions,
+  StructService,
+  CalculateData,
+  type CalculateResult,
+} from 'domain/services';
 
-import { Editor } from './editor'
-import { Indigo } from 'application/indigo'
-import { MolfileFormat } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import assert from 'assert'
+import { Editor, getSelectionFromStruct } from './editor';
+import { provideEditorInstance } from './editor/editorSingleton';
+import { Indigo } from 'application/indigo';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import { MolfileFormat } from 'domain/serializers/mol/mol.types';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import assert from 'assert';
+import { EventEmitter } from 'events';
+import {
+  LogSettings,
+  LogLevel,
+  runAsyncAction,
+  SettingsManager,
+  getSvgFromDrawnStructures,
+  KetcherLogger,
+  ensureString,
+} from 'utilities';
+import { ketcherProvider } from './ketcherProvider';
+import {
+  deleteAllEntitiesOnCanvas,
+  parseAndAddMacromoleculesOnCanvas,
+  prepareStructToRender,
+} from './utils';
+import { EditorSelection, EditorType } from './editor/editor.types';
+import {
+  BlobTypes,
+  ExportImageParams,
+  ModeTypes,
+  SupportedImageFormats,
+  SupportedModes,
+  UpdateMonomersLibraryParams,
+} from 'application/ketcher.types';
+import { isNumber, uniqueId } from 'lodash';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import { getStructure } from 'application/getStructure';
 
-function parseStruct(structStr: string, structService: StructService) {
-  const format = identifyStructFormat(structStr)
-  const factory = new FormatterFactory(structService)
+type SetMoleculeOptions = {
+  position?: { x: number; y: number };
+  needZoom?: boolean;
+};
 
-  const service = factory.create(format)
-  return service.getStructureFromStringAsync(structStr)
-}
+const allowedApiSettings = {
+  'general.dearomatize-on-load': 'dearomatize-on-load',
+  ignoreChiralFlag: 'ignoreChiralFlag',
+  disableQueryElements: 'disableQueryElements',
+  bondThickness: 'bondThickness',
+};
 
-function getStructure(
-  structureFormat: SupportedFormat = 'rxn',
-  formatterFactory: FormatterFactory,
-  struct: Struct
-): Promise<string> {
-  const formatter = formatterFactory.create(structureFormat)
-  return formatter.getStructureFromStructAsync(struct)
-}
+const MONOMER_LIBRARY_FORMAT_OPTIONS = {
+  inputFormat: ChemicalMimeType.MonomerLibrary,
+  outputFormat: ChemicalMimeType.MonomerLibrary,
+  outputContentType: ChemicalMimeType.MonomerLibrary,
+} as const;
 
 export class Ketcher {
-  #structService: StructService
-  #formatterFactory: FormatterFactory
-  #editor: Editor
-  #indigo: Indigo
+  _id: string;
+  logging: LogSettings;
+  structService: StructService;
+  readonly #formatterFactory: FormatterFactory;
+  #editor: Editor | null = null;
+  _indigo: Indigo;
+  readonly #eventBus: EventEmitter;
+  changeEvent: Subscription;
+  libraryUpdateEvent: Subscription;
 
   get editor(): Editor {
-    return this.#editor
+    // we should assign editor exactly after ketcher creation
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    return this.#editor!;
+  }
+
+  get eventBus(): EventEmitter {
+    return this.#eventBus;
   }
 
   constructor(
-    editor: Editor,
     structService: StructService,
-    formatterFactory: FormatterFactory
+    formatterFactory: FormatterFactory,
   ) {
-    assert(editor != null)
-    assert(structService != null)
-    assert(formatterFactory != null)
+    assert(structService != null);
+    assert(formatterFactory != null);
+    this._id = uniqueId();
+    this.changeEvent = new Subscription();
+    this.libraryUpdateEvent = new Subscription();
+    this.structService = structService;
+    this.#formatterFactory = formatterFactory;
+    this._indigo = new Indigo(this.structService);
+    this.#eventBus = new EventEmitter();
+    this.logging = {
+      enabled: false,
+      level: LogLevel.ERROR,
+      showTrace: false,
+    };
+  }
 
-    this.#editor = editor
-    this.#structService = structService
-    this.#formatterFactory = formatterFactory
-    this.#indigo = new Indigo(this.#structService)
+  get id() {
+    return this._id;
+  }
+
+  get formatterFactory() {
+    return this.#formatterFactory;
   }
 
   get indigo() {
-    return this.#indigo
+    return this._indigo;
+  }
+
+  // TEMP.: getting only dearomatize-on-load setting
+  get settings() {
+    const options = this.editor.options();
+    const result = Object.entries(allowedApiSettings).reduce(
+      (acc, [apiSetting, clientSetting]) => {
+        if (clientSetting in options) {
+          return { ...acc, [apiSetting]: clientSetting };
+        }
+        return acc;
+      },
+      {},
+    );
+
+    if (!Object.keys(result).length) {
+      throw new Error('Allowed options are not provided');
+    }
+
+    return result;
+  }
+
+  addEditor(editor: Editor) {
+    this.#editor = editor;
+  }
+
+  // TODO: create options type
+  setSettings(settings: Record<string, string | boolean>) {
+    // TODO: need to expand this and refactor this method
+    if (!settings) {
+      throw new Error('Please provide settings');
+    }
+    const options = {};
+    for (const [apiSetting, clientSetting] of Object.entries(
+      allowedApiSettings,
+    )) {
+      options[clientSetting] = settings[apiSetting];
+    }
+
+    if (Object.hasOwn(settings, 'disableCustomQuery')) {
+      SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
+    }
+
+    if (Object.hasOwn(settings, 'persistMonomerLibraryUpdates')) {
+      SettingsManager.persistMonomerLibraryUpdates =
+        !!settings.persistMonomerLibraryUpdates;
+    }
+
+    return this.editor.setOptions(JSON.stringify(options));
   }
 
   getSmiles(isExtended = false): Promise<string> {
-    const format: SupportedFormat = isExtended ? 'smilesExt' : 'smiles'
-    return getStructure(format, this.#formatterFactory, this.editor.struct())
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SMILES format is not available in macro mode');
+    }
+    const format = isExtended
+      ? SupportedFormat.smilesExt
+      : SupportedFormat.smiles;
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      format,
+    );
   }
 
-  async getMolfile(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+  getExtendedSmiles(): Promise<string> {
+    return this.getSmiles(true);
+  }
+
+  async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
-        'The structure cannot be saved as *.MOL due to reaction arrrows.'
-      )
+        'The structure cannot be saved as *.MOL due to reaction arrows.',
+      );
     }
 
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'molV3000' : 'mol'
-    const molfile = await getStructure(
-      format,
-      this.#formatterFactory,
-      this.#editor.struct()
-    )
+    const formatPassed =
+      molfileFormat === 'v3000'
+        ? SupportedFormat.molV3000
+        : SupportedFormat.mol;
+    const format = molfileFormat ? formatPassed : SupportedFormat.molAuto;
 
-    return molfile
+    const molfile = await getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      format,
+      provideEditorInstance()?.drawingEntitiesManager,
+    );
+
+    return molfile;
+  }
+
+  getIdt(): Promise<string> {
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.idt,
+      provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
+  getAxoLabs(): Promise<string> {
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.axoLabs,
+      provideEditorInstance()?.drawingEntitiesManager,
+    );
   }
 
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('RXN format is not available in macro mode');
+    }
     if (!this.containsReaction()) {
       throw Error(
-        'The structure cannot be saved as *.RXN: there is no reaction arrows.'
-      )
+        'The structure cannot be saved as *.RXN: there is no reaction arrows.',
+      );
     }
-    const format: SupportedFormat =
-      molfileFormat === 'v3000' ? 'rxnV3000' : 'rxn'
+    const format =
+      molfileFormat === 'v3000'
+        ? SupportedFormat.rxnV3000
+        : SupportedFormat.rxn;
     const rxnfile = await getStructure(
-      format,
+      this.id,
       this.#formatterFactory,
-      this.#editor.struct()
-    )
+      this.editor.struct(),
+      format,
+    );
 
-    return rxnfile
+    return rxnfile;
   }
 
   getKet(): Promise<string> {
-    return getStructure('ket', this.#formatterFactory, this.#editor.struct())
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      (provideEditorInstance()?._type ?? EditorType.Micromolecules) ===
+        EditorType.Micromolecules
+        ? this.editor.struct()
+        : provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+      SupportedFormat.ket,
+      (provideEditorInstance()?._type ?? EditorType.Micromolecules) ===
+        EditorType.Micromolecules
+        ? undefined
+        : provideEditorInstance()?.drawingEntitiesManager,
+      this.editor.selection() as EditorSelection,
+    );
+  }
+
+  getFasta(): Promise<string> {
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.fasta,
+      provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
+  async getSequence(
+    format: '1-letter' | '3-letter' = '1-letter',
+  ): Promise<string> {
+    if (format === '1-letter' || format === '3-letter') {
+      const editor = provideEditorInstance();
+      const indigo = this.indigo;
+
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+        editor.drawingEntitiesManager,
+      );
+
+      const formatToUse =
+        format === '1-letter'
+          ? ChemicalMimeType.SEQUENCE
+          : ChemicalMimeType.PeptideSequenceThreeLetter;
+
+      try {
+        const result = await indigo.convert(serializedKet, {
+          outputFormat: formatToUse,
+        });
+        return result.struct;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(
+          `Failed to convert structure to ${format} format: ${errorMessage}`,
+        );
+      }
+    }
+
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      format === '3-letter'
+        ? SupportedFormat.sequence3Letter
+        : SupportedFormat.sequence,
+      provideEditorInstance()?.drawingEntitiesManager,
+    );
   }
 
   getSmarts(): Promise<string> {
-    return getStructure('smarts', this.#formatterFactory, this.#editor.struct())
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SMARTS format is not available in macro mode');
+    }
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.smarts,
+    );
   }
 
   getCml(): Promise<string> {
-    return getStructure('cml', this.#formatterFactory, this.#editor.struct())
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CML format is not available in macro mode');
+    }
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.cml,
+    );
+  }
+
+  getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SDF format is not available in macro mode');
+    }
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.sdf
+        : SupportedFormat.sdfV3000;
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      format,
+    );
+  }
+
+  getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('RDF format is not available in macro mode');
+    }
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.rdf
+        : SupportedFormat.rdfV3000;
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      format,
+    );
+  }
+
+  getCDXml(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CDXML format is not available in macro mode');
+    }
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.cdxml,
+    );
+  }
+
+  getCDX(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CDX format is not available in macro mode');
+    }
+    return getStructure(
+      this.id,
+      this.#formatterFactory,
+      this.editor.struct(),
+      SupportedFormat.cdx,
+    );
   }
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
-      withAuxInfo ? 'inChIAuxInfo' : 'inChI',
+      this.id,
       this.#formatterFactory,
-      this.#editor.struct()
-    )
+      this.editor.struct(),
+      withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
+    );
   }
 
-  async generateInchIKey(): Promise<string> {
+  async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
-      'ket',
+      this.id,
       this.#formatterFactory,
-      this.#editor.struct()
-    )
+      this.editor.struct(),
+      SupportedFormat.ket,
+    );
 
-    return this.#structService.generateInchIKey(struct)
+    return this.structService.getInChIKey(struct);
   }
 
   containsReaction(): boolean {
-    return this.editor.struct().hasRxnArrow()
+    const editor = provideEditorInstance();
+    return (
+      this.editor.struct().hasRxnArrow() ||
+      editor?.drawingEntitiesManager?.micromoleculesHiddenEntities.hasRxnArrow()
+    );
   }
 
-  async setMolecule(structStr: string): Promise<void> {
-    assert(typeof structStr === 'string')
+  isQueryStructureSelected(): boolean {
+    const structure = this.editor.struct();
+    const selection = this.editor.selection();
 
-    const struct: Struct = await parseStruct(structStr, this.#structService)
-    struct.initHalfBonds()
-    struct.initNeighbors()
-    struct.setImplicitHydrogen()
-    struct.markFragments()
-    this.#editor.struct(struct)
+    if (!selection) {
+      return false;
+    }
+
+    let hasQueryAtoms = false;
+    if (selection.atoms) {
+      hasQueryAtoms = selection.atoms.some((atomId) => {
+        const atom = structure.atoms.get(atomId);
+        assert(atom);
+        const sGroupIds = Array.from(atom.sgs.values());
+        const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
+          const sGroup = structure.sgroups.get(sGroupId);
+          assert(sGroup);
+          return SGroup.isQuerySGroup(sGroup);
+        });
+        return atom.isQuery() || isQueryComponentSGroup;
+      });
+    }
+
+    let hasQueryBonds = false;
+    if (selection.bonds) {
+      hasQueryBonds = selection.bonds.some((bondId) => {
+        const bond = structure.bonds.get(bondId);
+        assert(bond);
+        return bond.isQuery();
+      });
+    }
+    return hasQueryAtoms || hasQueryBonds;
   }
 
-  async addFragment(fragment: string): Promise<void> {
-    assert(typeof fragment === 'string')
+  async setMolecule(
+    structStr: string,
+    options?: SetMoleculeOptions,
+  ): Promise<void | undefined> {
+    const macromoleculesEditor = provideEditorInstance();
+    if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
-    throw Error('not implemented yet')
+    await runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string');
+
+      if (window.isPolymerEditorTurnedOn) {
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+
+        if (options?.needZoom !== false) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+          macromoleculesEditor.mode.initialize();
+        }
+      } else {
+        const struct: Struct = await prepareStructToRender(
+          structStr,
+          this.structService,
+          this,
+        );
+
+        struct.rescale();
+
+        const { x, y } = options?.position ?? {};
+
+        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+        // It needs to rotate them by 180 degrees in y-axis.
+        this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
+
+        this.editor.zoomAccordingContent(struct);
+        if (x == null && y == null) {
+          this.editor.centerStruct();
+        }
+      }
+    }, this.eventBus);
+  }
+
+  async setHelm(helmStr: string): Promise<void | undefined> {
+    await runAsyncAction<void>(async () => {
+      assert(typeof helmStr === 'string');
+      const struct: Struct = await prepareStructToRender(
+        helmStr,
+        this.structService,
+        this,
+      );
+      struct.rescale();
+      this.editor.struct(struct);
+      this.editor.zoomAccordingContent(struct);
+      this.editor.centerStruct();
+    }, this.eventBus);
+  }
+
+  async addFragment(
+    structStr: string,
+    options?: SetMoleculeOptions,
+  ): Promise<void | undefined> {
+    const macromoleculesEditor = provideEditorInstance();
+
+    if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
+
+    await runAsyncAction<void>(async () => {
+      assert(typeof structStr === 'string');
+
+      if (window.isPolymerEditorTurnedOn) {
+        const isCanvasEmptyBeforeOpenStructure =
+          !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
+
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+
+        if (isCanvasEmptyBeforeOpenStructure) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+        }
+      } else {
+        const struct: Struct = await prepareStructToRender(
+          structStr,
+          this.structService,
+          this,
+        );
+
+        struct.rescale();
+        const { x, y } = options?.position ?? {};
+
+        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+        // It needs to rotate them by 180 degrees in y-axis.
+        this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+
+        // Restore selection from initiallySelected flags in the loaded structure
+        this.editor.selection(getSelectionFromStruct(this.editor.struct()));
+        // Clean up initiallySelected flags after restoring selection
+        this.editor.struct().disableInitiallySelected();
+      }
+    }, this.eventBus);
+  }
+
+  async circularLayoutMonomers() {
+    const editor = provideEditorInstance();
+
+    await runAsyncAction<void>(async () => {
+      if (window.isPolymerEditorTurnedOn) {
+        const ketSerializer = new KetSerializer();
+        const serializedKet = ketSerializer.serialize(
+          new Struct(),
+          editor.drawingEntitiesManager,
+          undefined,
+          false,
+          true,
+        );
+
+        const result = await this.structService.layout(
+          {
+            struct: serializedKet,
+            output_format: ChemicalMimeType.KET,
+          },
+          {
+            'smart-layout': false,
+          },
+        );
+
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(
+          result.struct,
+          this.structService,
+          true,
+        );
+      }
+    }, this.eventBus);
+  }
+
+  async layout(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Layout is not available in macro mode');
+    }
+
+    await runAsyncAction<void>(async () => {
+      const struct = await this._indigo.layout(
+        this.editor.struct(),
+        this.editor.serverSettings,
+      );
+      const ketSerializer = new KetSerializer();
+      await this.setMolecule(ketSerializer.serialize(struct));
+    }, this.eventBus);
+  }
+
+  async aromatize(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Aromatize is not available in macro mode');
+    }
+
+    await runAsyncAction<void>(async () => {
+      const struct = await this._indigo.aromatize(this.editor.struct());
+      const ketSerializer = new KetSerializer();
+      await this.setMolecule(ketSerializer.serialize(struct));
+    }, this.eventBus);
+  }
+
+  async dearomatize(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Dearomatize is not available in macro mode');
+    }
+
+    await runAsyncAction<void>(async () => {
+      const struct = await this._indigo.dearomatize(this.editor.struct());
+      const ketSerializer = new KetSerializer();
+      await this.setMolecule(ketSerializer.serialize(struct));
+    }, this.eventBus);
+  }
+
+  async calculate(options?: CalculateData): Promise<CalculateResult> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Calculate is not available in macro mode');
+    }
+    return await this._indigo.calculate(this.editor.struct(), options);
+  }
+
+  /**
+   * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
+   */
+  setZoom(value: number) {
+    const editor = provideEditorInstance();
+    if (editor && value) editor.zoomTool.zoomTo(value);
+  }
+
+  setMode(mode: SupportedModes) {
+    const editor = provideEditorInstance();
+    if (editor && mode) {
+      editor.events.selectMode.dispatch(ModeTypes[mode]);
+      editor.events.layoutModeChange.dispatch(ModeTypes[mode]);
+    }
+  }
+
+  exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
+    const editor = provideEditorInstance();
+    const fileName = 'ketcher';
+    let blobPart;
+
+    if (format === 'svg' && editor?.canvas) {
+      blobPart = getSvgFromDrawnStructures(
+        editor.canvas,
+        'file',
+        params?.margin,
+      );
+    }
+    if (!blobPart) {
+      throw new Error('Cannot export image');
+    }
+
+    const blob = new Blob([blobPart], {
+      type: BlobTypes[format],
+    });
+    saveAs(blob, `${fileName}.${format}`);
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
-    return this.#indigo.recognize(image, { version: version })
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Recognize is not available in macro mode');
+    }
+    return this._indigo.recognize(image, { version });
   }
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' }
+    options: GenerateImageOptions = {
+      outputFormat: 'png',
+    },
   ): Promise<Blob> {
-    let meta = ''
+    let meta = '';
 
     switch (options.outputFormat) {
       case 'svg':
-        meta = 'image/svg+xml'
-        break
+        meta = 'image/svg+xml';
+        break;
 
       case 'png':
       default:
-        meta = 'image/png'
-        options.outputFormat = 'png'
+        meta = 'image/png';
+        options.outputFormat = 'png';
+    }
+    const serverSettings = this.editor.serverSettings;
+
+    const base64 = await this.structService.generateImageAsBase64(data, {
+      ...serverSettings,
+      ...options,
+    });
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: meta });
+    return blob;
+  }
+
+  public reinitializeIndigo(structService: StructService) {
+    this.structService = structService;
+    this._indigo = new Indigo(structService);
+  }
+
+  public sendCustomAction(name: string) {
+    this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
+  }
+
+  public async ensureMonomersLibraryDataInKetFormat(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const serverSettings = this.editor.serverSettings;
+    const rawMonomersDataString = ensureString(rawMonomersData);
+    const format =
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
+    let dataInKetFormat: string | JSON;
+
+    if (format === SupportedFormat.ket) {
+      dataInKetFormat = rawMonomersDataString;
+    } else {
+      const convertResult = await this.structService.convert(
+        {
+          struct: rawMonomersDataString,
+          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+        },
+        {
+          ...serverSettings,
+          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+        },
+      );
+
+      dataInKetFormat = convertResult.struct;
     }
 
-    const base64 = await this.#structService.generateImageAsBase64(
-      data,
-      options
-    )
-    const byteCharacters = atob(base64)
-    const byteNumbers = new Array(byteCharacters.length)
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    return dataInKetFormat;
+  }
+
+  public async ensureMonomersLibraryDataInSdfFormat(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const rawMonomersDataString = ensureString(rawMonomersData);
+    const format =
+      params?.format ?? identifyStructFormat(rawMonomersDataString);
+
+    if (format === SupportedFormat.sdf || format === SupportedFormat.sdfV3000) {
+      return rawMonomersDataString;
     }
-    const byteArray = new Uint8Array(byteNumbers)
-    const blob = new Blob([byteArray], { type: meta })
-    return blob
+
+    const convertResult = await this.indigo.convert(rawMonomersDataString, {
+      ...MONOMER_LIBRARY_FORMAT_OPTIONS,
+      monomerLibrarySavingMode: 'sdf',
+      molfileSavingSkipDate: 'true',
+    });
+
+    return convertResult.struct;
+  }
+
+  public async updateMonomersLibrary(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const editor = provideEditorInstance();
+
+    ketcherProvider.getKetcher(this.id);
+
+    if (!editor) {
+      throw new Error(
+        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
+      );
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      rawMonomersData,
+      params,
+    );
+
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
+    editor.updateMonomersLibrary(dataInKetFormat);
+    if (SettingsManager.persistMonomerLibraryUpdates && params?.shouldPersist) {
+      const updateString = ensureString(dataInKetFormat);
+      SettingsManager.addMonomerLibraryUpdate(updateString);
+    }
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
+  }
+
+  public async replaceMonomersLibrary(
+    rawMonomersData: string | JSON,
+    params?: UpdateMonomersLibraryParams,
+  ) {
+    const editor = provideEditorInstance();
+
+    ketcherProvider.getKetcher(this.id);
+
+    if (!editor) {
+      throw new Error(
+        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
+      );
+    }
+
+    const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
+      rawMonomersData,
+      params,
+    );
+
+    const dataInSdfFormat = await this.ensureMonomersLibraryDataInSdfFormat(
+      rawMonomersData,
+      params,
+    );
+
+    editor.clearMonomersLibrary();
+    editor.updateMonomersLibrary(dataInKetFormat);
+
+    if (params?.needDispatchLibraryUpdateEvent) {
+      this.libraryUpdateEvent.dispatch(dataInSdfFormat);
+    }
+
+    editor.events.updateMonomersLibrary.dispatch();
+  }
+
+  public switchToMacromoleculesMode() {
+    const editor = provideEditorInstance();
+
+    if (!editor) {
+      KetcherLogger.error('Editor instance is not available');
+
+      return;
+    }
+
+    editor.events.switchToMacromoleculesMode.dispatch();
+  }
+
+  public switchToMoleculesMode() {
+    const editor = provideEditorInstance();
+
+    if (!editor) {
+      KetcherLogger.error('Editor instance is not available');
+
+      return;
+    }
+
+    editor.events.switchToMoleculesMode.dispatch();
   }
 }

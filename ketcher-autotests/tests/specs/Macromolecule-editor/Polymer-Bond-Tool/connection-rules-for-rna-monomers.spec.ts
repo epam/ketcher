@@ -1,0 +1,636 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable no-magic-numbers */
+import { Page, test, Locator, expect } from '@fixtures';
+import {
+  openFileAndAddToCanvasMacro,
+  moveMouseAway,
+  dragMouseTo,
+  MonomerType,
+} from '@utils';
+import {
+  getMonomerLocator,
+  AttachmentPoint,
+} from '@utils/macromolecules/monomer';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+
+test.describe('Connection rules for RNAs: ', () => {
+  let page: Page;
+  test.setTimeout(400000);
+  test.describe.configure({ retries: 0 });
+
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
+
+  test.beforeEach(async ({ FlexCanvas: _ }) => {});
+
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+
+  interface IMonomer {
+    monomerType: MonomerType;
+    fileName: string;
+    alias: string;
+    attachmentPoints: { [attachmentPointName: string]: AttachmentPoint };
+  }
+
+  const sugarMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R3) - Side only': {
+    //   monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: '(R1,R3)_-_R2_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: '(R2,R3)_-_R1_gap',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R3,R4)': {
+    //        monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: MonomerType.Sugar,
+      fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
+      alias: '(R1,R2,R3)',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+        R3: AttachmentPoint.R3,
+      },
+    },
+    // '(R1,R3,R4)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Sugar,
+    //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+  };
+
+  const baseMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.Base,
+      fileName: 'KET/Base-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.Base,
+      fileName: 'KET/Base-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R3) - Side only': {
+    //   monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.Base,
+      fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R3,R4)': {
+    //        monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R2,R3)': {
+    //   monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
+    //   alias: '(R1,R2,R3)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R1,R3,R4)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    N: {
+      monomerType: MonomerType.Base,
+      fileName:
+        'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
+      alias: 'W',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    // '%': {
+    //   monomerType: MonomerType.Base,
+    //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
+    //   alias: '%',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //   },
+    // },
+  };
+
+  const phosphateMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: MonomerType.Phosphate,
+      fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: MonomerType.Phosphate,
+      fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      attachmentPoints: {
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R3) - Side only': {
+    //   monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    '(R1,R2) - R3 gap': {
+      monomerType: MonomerType.Phosphate,
+      fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      attachmentPoints: {
+        R1: AttachmentPoint.R1,
+        R2: AttachmentPoint.R2,
+      },
+    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R3,R4)': {
+    //        monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R2,R3)': {
+    //   monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
+    //   alias: '(R1,R2,R3)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //   },
+    // },
+    // '(R1,R3,R4)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    // monomerType: MonomerType.Phosphate,
+    //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   attachmentPoints: {
+    //     R1: AttachmentPoint.R1,
+    //     R2: AttachmentPoint.R2,
+    //     R3: AttachmentPoint.R3,
+    //     R4: AttachmentPoint.R4,
+    //     R5: AttachmentPoint.R5,
+    //   },
+    // },
+  };
+
+  async function loadTwoMonomers(
+    page: Page,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+      monomerType: leftMonomer.monomerType,
+    }).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
+    await dragMouseTo(page, 500, 370);
+    await moveMouseAway(page);
+
+    await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
+    const tmpMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
+    // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
+    await dragMouseTo(page, 600, 375);
+    await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
+  }
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(baseMonomers).forEach((rightBase) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 1
+       *  Sugar could be connected with base using R3 of sugar and R1 of base. (Center-to-center connection)
+       *  If no R3 available - open Select Attachment Points dialog
+       */
+      test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
+        test.setTimeout(40000);
+
+        await loadTwoMonomers(page, leftSugar, rightBase);
+
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightBase.alias === leftSugar.alias
+            ? getMonomerLocator(page, { monomerAlias: rightBase.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightBase.alias,
+              }).first(),
+        );
+
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondType.Single,
+        });
+
+        expect(await bondLine.count()).toEqual(1);
+      });
+    });
+  });
+
+  Object.values(phosphateMonomers).forEach((leftPhosphate) => {
+    Object.values(sugarMonomers).forEach((rightSugar) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 2.1
+       *  If user drags a bond from phosphate to sugar then R2 of phosphate is connected with R1 of sugar (Center to Center).
+       *  If R2 is not available but R1 is than system establishes Sugar(R1)-Phosphate(R2)
+       */
+      test(`Case 2.1: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and Sugar(${rightSugar.alias})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftPhosphate, rightSugar);
+
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, {
+            monomerAlias: leftPhosphate.alias,
+          }).first(),
+          rightSugar.alias === leftPhosphate.alias
+            ? getMonomerLocator(page, { monomerAlias: rightSugar.alias }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightSugar.alias,
+              }).first(),
+        );
+
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondType.Single,
+        });
+
+        expect(await bondLine.count()).toEqual(1);
+      });
+    });
+  });
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(phosphateMonomers).forEach((rightPhosphate) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 2.2
+       *  If user drags a bond for sugar to phosphate then R2 of sugar is connected with the R1 of phosphate (Center to Center).
+       *  If R2 is not available but R1 is than system establishes Phosphate(R1)-Sugar(R2)
+       */
+      test(`Case 2.2: Connect Center to Center of Sugar(${leftSugar.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftSugar, rightPhosphate);
+
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, { monomerAlias: leftSugar.alias }).first(),
+          rightPhosphate.alias === leftSugar.alias
+            ? getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightPhosphate.alias,
+              }).first(),
+        );
+
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondType.Single,
+        });
+
+        expect(await bondLine.count()).toEqual(1);
+      });
+    });
+  });
+});

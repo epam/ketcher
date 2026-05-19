@@ -14,39 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import classes from './RemoveFG.module.less'
-import { useAppContext } from '../../../../../../../hooks'
-import { fromSgroupDeletion } from 'ketcher-core'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import classes from './RemoveFG.module.less';
+import { useAppContext } from '../../../../../../../hooks';
+import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 
 interface RemoveFGProps extends BaseProps {
-  fgIds: any
+  fgIds: any;
 }
 
-type Props = RemoveFGProps & BaseCallProps
+type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
-  const { getKetcherInstance } = useAppContext()
-  const editor = getKetcherInstance().editor as any
-  const { fgIds } = props
+  const { ketcherId } = useAppContext();
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
+  const { fgIds } = props;
 
   const remove = function () {
     if (fgIds.length > 0)
       for (const id of fgIds) {
-        editor.update(fromSgroupDeletion(editor.render.ctab, id))
+        editor.update(fromSgroupDeletion(editor.render.ctab, id));
       }
-    return true
-  }
+    return true;
+  };
 
   const exit = (key, res) => {
-    props[key](res)
-  }
+    props[key](res);
+  };
 
   return (
     <div
       onSubmit={(event) => event.preventDefault()}
       tabIndex={-1}
       className={classes.window}
+      data-testid="edit-abbreviation-window"
     >
       <header className={classes.header}>Edit Abbreviation</header>
       <div className={classes.question}>
@@ -60,17 +61,19 @@ const RemoveFG = (props: Props) => {
           value={'Cancel'}
           className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
+          data-testid="Cancel"
         />
         <input
           type="button"
           value={'Remove Abbreviation'}
+          data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}
         />
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export type { RemoveFGProps }
-export { RemoveFG }
+export type { RemoveFGProps };
+export { RemoveFG };

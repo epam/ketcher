@@ -14,12 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch } from 'redux'
+import { Dispatch } from 'redux';
+import { Struct } from 'ketcher-core';
+import Editor from '../../editor/Editor';
 
 type ToolVariant =
+  | 'any-atom'
   | 'about'
   | 'analyse'
   | 'arom'
+  | 'atom-props'
   | 'bond-any'
   | 'bond-hydrogen'
   | 'bond-aromatic'
@@ -28,12 +32,16 @@ type ToolVariant =
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'
+  | 'bond-props'
   | 'bond-single'
   | 'bond-singlearomatic'
   | 'bond-singledouble'
   | 'bond-triple'
   | 'bond-up'
   | 'bond-updown'
+  | 'copies'
+  | 'copy-mol'
+  | 'copy-ket'
   | 'chain'
   | 'charge-minus'
   | 'charge-plus'
@@ -46,12 +54,15 @@ type ToolVariant =
   | 'cut'
   | 'dearom'
   | 'dropdown'
+  | 'deselect-all'
   | 'enhanced-stereo'
   | 'erase'
+  | 'extended-table'
   | 'fullscreen'
   | 'functional-groups'
   | 'generic-groups'
   | 'help'
+  | 'info-modal'
   | 'layout'
   | 'logo'
   | 'miew'
@@ -70,12 +81,14 @@ type ToolVariant =
   | 'rgroup-fragment'
   | 'rgroup-label'
   | 'save'
+  | 'select-structure'
   | 'select-fragment'
   | 'select-lasso'
   | 'select-rectangle'
+  | 'select-all'
+  | 'select-descriptors'
   | 'settings'
   | 'sgroup'
-  | 'sgroup-data'
   | 'template-0'
   | 'template-1'
   | 'template-2'
@@ -95,45 +108,81 @@ type ToolVariant =
   | 'shape-rectangle'
   | 'shape-polyline'
   | 'shape-line'
-  | 'undo'
+  | 'undo';
+
+type ActionStateEditor = Editor & {
+  actions?: {
+    active?: {
+      tool?: string;
+    };
+  };
+  struct(): Struct;
+  struct(value: Struct | null): Struct;
+};
+
+type ActionStateOptions = {
+  app: {
+    server?: unknown;
+    templates?: unknown;
+    functionalGroups?: unknown;
+  };
+  buttons?: Record<string, { hidden?: boolean }>;
+};
+
+type ActionThunkState = {
+  editor: ActionStateEditor;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
+};
 
 // todo: find out types
-type Editor = any
-type Server = any
-type Options = any
-type ReduxState = any
-
 type ActionObj = {
-  tool?: string
-  opts?: any
-  dialog?: string
-  thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void
-}
-type ActionFn = (editor: Editor) => void
+  tool?: string;
+  opts?: unknown;
+  dialog?: string;
+  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
+};
+type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
-type UiActionAction = ActionObj | ActionFn
+type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
-type GetActionState = (
-  editor: Editor,
-  server?: Server,
-  options?: Options
-) => boolean
+type GetSelectedState = (
+  editor: ActionStateEditor,
+  server?: unknown,
+) => boolean;
+type GetDisabledState = (
+  editor: ActionStateEditor,
+  server: unknown,
+  options: ActionStateOptions,
+) => boolean;
+type GetHiddenState = (options: ActionStateOptions) => boolean;
 
-type IsActionState = boolean | GetActionState
+export type GetActionState =
+  | GetSelectedState
+  | GetDisabledState
+  | GetHiddenState;
+
+type IsSelectedState = boolean | GetSelectedState;
+type IsDisabledState = boolean | GetDisabledState;
+type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
-  title?: string
-  shortcut?: string
-  action: UiActionAction
-  selected?: IsActionState
-  disabled?: IsActionState
-  hidden?: IsActionState
-  onAction?: (action: UiActionAction) => void
+  title?: string;
+  shortcut?: string | Array<string>;
+  enabledInViewOnly?: true;
+  action: UiActionAction;
+  selected?: IsSelectedState;
+  disabled?: IsDisabledState;
+  hidden?: IsHiddenState;
+  onAction?: (action: UiActionAction) => void;
 }
 
 type Tools = {
-  [ket in keyof ToolVariant]?: UiAction
-}
+  [key in ToolVariant]: UiAction;
+};
 
-export type { Tools, UiAction, UiActionAction }
+export type { Tools, UiAction, UiActionAction };

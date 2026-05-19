@@ -1,9 +1,44 @@
-# NOTES
-
 ## Prerequisites
 
-- Stable [Node.js](https://nodejs.org) version
-- [Yarn](https://yarnpkg.com/) installed globally
+- Stable [Node.js](https://nodejs.org) version >= 24.14.1
+- Stable [npm](https://npmjs.com) version >= 7
+
+# NOTES
+
+The project switched from using yarn to using npm for managing packages.
+If you want to convert your current codebase from yarn to npm you can follow the instructions below.
+
+Remove current node_modules from all directories:
+
+```
+rm -rf node_modules
+rm -rf ./packages/ketcher-core/node_modules
+rm -rf ./packages/ketcher-react/node_modules
+rm -rf ./packages/ketcher-standalone/node_modules
+rm -rf ./packages/ketcher-macromolecules/node_modules
+rm -rf ./example/node_modules
+rm -rf ./demo/node_modules
+```
+
+Remove yarn.lock:
+
+```
+rm yarn.lock
+```
+
+Install all packages with npm:
+
+```
+npm install
+```
+
+_NOTE!_ this command should only be run from root directory
+
+Build the project:
+
+```
+npm run build
+```
 
 ## Build instructions
 
@@ -14,8 +49,8 @@ The latest version of Ketcher has been splitted into two packages: component lib
 To create production build of ready-to-run application execute the following command from root directory:
 
 ```sh
-yarn install
-yarn build
+npm install
+npm run build
 ```
 
 The following parameters are used by default:
@@ -28,57 +63,71 @@ PUBLIC_URL='./'
 If you want to change these parameters you can build application by using the following command:
 
 ```sh
-npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' yarn build
+npx cross-env API_PATH='{your_api_path_here}' PUBLIC_URL='{your_public_url_here}' npm run build
 ```
 
 To serve results of build locally run the following command from root directory:
 
 ```sh
-yarn serve:remote
+npm run serve:remote
   or
-yarn serve:standalone
+npm run serve:standalone
   or
-yarn serve
+npm run serve
 ```
 
 ### Development
 
-The latest version of Ketcher is based on yarn workspaces. So before starting development it is necessary to run the following command from root directory:
+The latest version of Ketcher is based on npm workspaces. So before starting development it is necessary to run the following command from root directory:
 
 ```sh
-yarn install
+npm install
 ```
 
-After that component library and application should be started separately.
+Then start a Vite dev server in example:
 
-#### Build kecther-react package
+```sh
+cd example
+
+# Standalone
+npm run dev:standalone
+
+# Or remote
+npm run dev:remote
+```
+
+**NB!** We use Vite for development and react-app-rewired(Webpack based) for build. To make sure your implementation has consistent behavior both in development and production, after you finish developing with Vite, you'd better check your implementation with react-app-rewired before creating a new PR. Please follow the following steps:
+
+Component libraries and application should be started separately. First should be started ketcher-core package.
+
+#### Build ketcher-core package
+
+```sh
+cd packages/ketcher-core
+npm start
+```
+
+#### Build ketcher-react package
 
 ```sh
 cd packages/ketcher-react
-yarn start
+npm start
 ```
 
 #### Build ketcher-standalone package
 
 ```sh
 cd packages/ketcher-standalone
-yarn start
-```
-
-#### Build ketcher-core package
-
-```sh
-cd packages/ketcher-core
-yarn start
+npm start
 ```
 
 #### Build example application
 
 ```sh
 cd example
-yarn start:remote
+npm run start:remote
   or
-yarn start:standalone
+npm run start:standalone
 ```
 
 ## Indigo service
@@ -100,9 +149,9 @@ You can find the instruction for service installation
 ### Start unit tests
 
 ```sh
-yarn test:unit
+npm run test:unit
   or
-yarn test:watch
+npm run test:watch
 ```
 
 ### Start prettier
@@ -122,15 +171,15 @@ test:lint
 ### Start stylelint
 
 ```sh
-yarn stylelint
+npm run stylelint
   or
-yarn stylelint:fix
+npm run stylelint:fix
 ```
 
 ### Start all tests and formatting
 
 ```sh
-yarn test
+npm test
 ```
 
 ## Simple server
@@ -199,3 +248,43 @@ docker-compose up -d
 ```
 
 Service with Ketcher will be run under localhost:8080/ketcher.html
+
+## Custom Buttons
+
+Custom buttons enable developers who embed Ketcher into their applications to extend its functionality by implementing custom workflows using existing Ketcher APIs. To add custom buttons to the Ketcher top toolbar, follow these steps:
+
+1. **Provide an Array of Custom Buttons to the Editor Component**
+
+   Pass an array of custom buttons to the `<Editor>` component using the `customButtons` prop:
+
+    ```jsx
+    <Editor customButtons={array_of_custom_buttons_here} />
+    ```
+
+   Each custom button should follow this schema:
+
+    ```ts
+    {
+      id: string,       // unique identifier of the button
+      title: string,    // optional button tooltip
+      imageLink: string // absolute link to the image icon
+    }
+    ```
+
+   Once added, all the buttons will appear on the top toolbar.
+
+2. **Subscribe to the `'CUSTOM_BUTTON_PRESSED'` Event on the Ketcher Bus**
+
+   Subscribe to the event using the following code:
+
+    ```js
+    ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', (id: string) => {
+      // Your custom logic here
+    });
+    ```
+
+   This function receives a single parameter, `id`, which is the identifier of the pressed button. The function is invoked each time a user presses one of the custom buttons. It is up to the developer to use Ketcher APIs to implement the custom workflow logic.
+
+### Limitations
+
+Currently, custom buttons have a slightly different visual appearance compared to native buttons. Since images are used via links, it is not possible to change the color of the icons based on user actions like hovering.

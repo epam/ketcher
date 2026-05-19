@@ -13,39 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, SGroup, Struct, Vec2 } from 'domain/entities'
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import { KetFileNode } from '../../serializers.types';
 
 export function prepareStructForKet(struct: Struct) {
-  const ketNodes: any = []
+  const ketNodes: KetFileNode[] = [];
 
-  const rgFrags = new Set() // skip this when writing molecules
+  const rgFrags = new Set(); // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
     // RGroups writing
-    rgroup.frags.forEach((frid) => rgFrags.add(frid))
+    rgroup.frags.forEach((frid) => rgFrags.add(frid));
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
-      new Pile()
-    )
+      new Pile(),
+    );
 
     ketNodes.push({
       type: 'rgroup',
       fragment: struct.clone(fragsAtoms),
       center: getFragmentCenter(struct, fragsAtoms),
-      data: { rgnumber, rgroup }
-    })
+      data: { rgnumber, rgroup },
+    });
   }
 
-  Array.from(struct.frags.keys())
-    .filter((fid) => !rgFrags.has(fid))
-    .forEach((fid) => {
-      const fragAtoms = struct.getFragmentIds(fid)
-      ketNodes.push({
-        type: 'molecule',
-        fragment: struct.clone(fragAtoms),
-        center: getFragmentCenter(struct, fragAtoms)
-      })
-    })
+  const filteredFragmentIds = Array.from(struct.frags.keys()).filter(
+    (fid) => !rgFrags.has(fid),
+  );
+  addMolecules(ketNodes, filteredFragmentIds, struct);
 
   struct.rxnArrows.forEach((item) => {
     ketNodes.push({
@@ -54,18 +53,20 @@ export function prepareStructForKet(struct: Struct) {
       data: {
         mode: item.mode,
         pos: item.pos,
-        height: item.height
-      }
-    })
-  })
+        height: item.height,
+      },
+      selected: item.getInitiallySelected(),
+    });
+  });
 
   struct.rxnPluses.forEach((item) => {
     ketNodes.push({
       type: 'plus',
       center: item.pp,
-      data: {}
-    })
-  })
+      data: {},
+      selected: item.getInitiallySelected(),
+    });
+  });
 
   struct.simpleObjects.forEach((item) => {
     ketNodes.push({
@@ -73,10 +74,11 @@ export function prepareStructForKet(struct: Struct) {
       center: item.pos[0],
       data: {
         mode: item.mode,
-        pos: item.pos
-      }
-    })
-  })
+        pos: item.pos,
+      },
+      selected: item.getInitiallySelected(),
+    });
+  });
 
   struct.texts.forEach((item) => {
     ketNodes.push({
@@ -84,31 +86,120 @@ export function prepareStructForKet(struct: Struct) {
       center: item.position,
       data: {
         content: item.content,
-        position: item.position
-      }
-    })
-  })
+        position: item.position,
+        pos: item.pos,
+      },
+      selected: item.getInitiallySelected(),
+    });
+  });
+
+  struct.images.forEach((image) => {
+    ketNodes.push(image.toKetNode());
+  });
+
+  struct.multitailArrows.forEach((multitailArrow) => {
+    ketNodes.push(multitailArrow.toKetNode());
+  });
 
   ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
-      const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values())
+      const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
       const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every((atom) => atom !== undefined)
-      )
-      const filteredSGroupsMap = new Map()
+        sg.atoms.every((atom) => atom !== undefined),
+      );
+      const filteredSGroupsMap = new Pool<SGroup>();
       filteredSGroups.forEach((sg, index) => {
-        filteredSGroupsMap.set(index, sg)
-      })
-      ketNode.fragment.sgroups = filteredSGroupsMap
+        filteredSGroupsMap.set(index, sg);
+      });
+      ketNode.fragment.sgroups = filteredSGroupsMap;
     }
-  })
+  });
 
   // TODO: check if this sorting operation is needed
   // return ketNodes.sort((a, b) => a.center.x - b.center.x)
-  return ketNodes
+  return ketNodes;
 }
 
 function getFragmentCenter(struct, atomSet) {
-  const bb = struct.getCoordBoundingBox(atomSet)
-  return Vec2.centre(bb.min, bb.max)
+  const bb = struct.getCoordBoundingBox(atomSet);
+  return Vec2.centre(bb.min, bb.max);
+}
+
+/**
+ * Merge fragments which are in the same S-Groups to one fragment(molecule)
+ * and add new fragments(molecules) to KetNodes
+ * See: https://github.com/epam/ketcher/issues/2142
+ */
+function addMolecules(
+  ketNodes: KetFileNode[],
+  fragmentIds: number[],
+  struct: Struct,
+) {
+  const sGroupFragmentsMap = generateSGroupFragmentsMap(
+    ketNodes,
+    fragmentIds,
+    struct,
+  );
+  const mergedFragments = Pile.unionIntersections(
+    Array.from(sGroupFragmentsMap.values()),
+  );
+
+  mergedFragments.forEach((fragments) => {
+    let atomSet = new Pile<number>();
+    fragments.forEach((fragmentId) => {
+      atomSet = atomSet.union(struct.getFragmentIds(fragmentId));
+    });
+    ketNodes.push({
+      type: 'molecule',
+      fragment: struct.clone(atomSet),
+      center: getFragmentCenter(struct, atomSet),
+    });
+  });
+}
+
+/**
+ * @example Give `fragmentIds` is `[0, 1]`,
+ * and S-Group0 includes fragment0 and fragment1,
+ * and S-Group1 includes fragment1,
+ * then return value should be
+ * ```
+ * {
+ *   0: [0, 1],
+ *   1: [1]
+ * }
+ * ```
+ */
+function generateSGroupFragmentsMap(
+  ketNodes: KetFileNode[],
+  fragmentIds: number[],
+  struct: Struct,
+) {
+  const sGroupFragmentsMap = new Map<number, Pile<number>>();
+
+  fragmentIds.forEach((fragmentId) => {
+    const atomsInFragment = struct.getFragmentIds(fragmentId);
+
+    let hasAtomInSGroup = false;
+    atomsInFragment.forEach((atomId) => {
+      struct.atoms.get(atomId)?.sgs.forEach((sGroupId) => {
+        hasAtomInSGroup = true;
+        const fragmentSet = sGroupFragmentsMap.get(sGroupId);
+        if (fragmentSet) {
+          fragmentSet.add(fragmentId);
+        } else {
+          sGroupFragmentsMap.set(sGroupId, new Pile([fragmentId]));
+        }
+      });
+    });
+
+    if (!hasAtomInSGroup) {
+      ketNodes.push({
+        type: 'molecule',
+        fragment: struct.clone(atomsInFragment),
+        center: getFragmentCenter(struct, atomsInFragment),
+      });
+    }
+  });
+
+  return sGroupFragmentsMap;
 }

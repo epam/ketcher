@@ -17,49 +17,51 @@
 import {
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'domain/services'
+  StructServiceProvider,
+} from 'domain/services';
 
-import { Editor } from 'application/editor'
-import { FormatterFactory } from 'application/formatters'
-import { Ketcher } from './ketcher'
-import assert from 'assert'
+import { FormatterFactory } from 'application/formatters';
+import { Ketcher } from './ketcher';
+import assert from 'assert';
+import { ketcherProvider } from './ketcherProvider';
 
-const DefaultStructServiceOptions = {
+export const DefaultStructServiceOptions = {
   'smart-layout': true,
   'ignore-stereochemistry-errors': true,
   'mass-skip-error-on-pseudoatoms': false,
   'gross-formula-add-rsites': true,
-  'aromatize-skip-superatoms': true
-}
+  'aromatize-skip-superatoms': true,
+  'dearomatize-on-load': false,
+  'ignore-no-chiral-flag': false,
+};
 
 export class KetcherBuilder {
-  #structServiceProvider?: StructServiceProvider
+  #structServiceProvider?: StructServiceProvider;
 
   withStructServiceProvider(
-    structServiceProvider: StructServiceProvider
-  ): KetcherBuilder {
-    this.#structServiceProvider = structServiceProvider
-    return this
+    structServiceProvider: StructServiceProvider,
+  ): this {
+    this.#structServiceProvider = structServiceProvider;
+    return this;
   }
 
-  build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
-    assert(editor != null)
-    assert(this.#structServiceProvider != null)
+  build(serviceOptions?: StructServiceOptions): Ketcher {
+    assert(this.#structServiceProvider != null);
 
     const mergedServiceOptions: StructServiceOptions = {
       ...DefaultStructServiceOptions,
-      ...serviceOptions
-    }
+      ...serviceOptions,
+    };
     const structService: StructService =
-      this.#structServiceProvider!.createStructService(mergedServiceOptions)
+      this.#structServiceProvider!.createStructService(mergedServiceOptions);
     const ketcher = new Ketcher(
-      editor,
       structService,
-      new FormatterFactory(structService)
-    )
-    ketcher[this.#structServiceProvider.mode] = true
+      new FormatterFactory(structService),
+    );
+    structService.addKetcherId(ketcher.id);
+    ketcher[this.#structServiceProvider.mode] = true;
 
-    return ketcher
+    ketcherProvider.addKetcherInstance(ketcher);
+    return ketcher;
   }
 }

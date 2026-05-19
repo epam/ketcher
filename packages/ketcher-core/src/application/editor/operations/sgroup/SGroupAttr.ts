@@ -14,44 +14,59 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../BaseOperation';
+import { OperationPriority, OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export class SGroupAttr extends BaseOperation {
   data: {
-    sgid: any
-    attr: any
-    value: any
-  }
+    sgid: any;
+    attr: any;
+    value: any;
+  };
 
   constructor(sgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.S_GROUP_ATTR, 4)
+    super(OperationType.S_GROUP_ATTR, OperationPriority.S_GROUP_ATTR);
     this.data = {
       sgid: sgroupId,
       attr: attribute,
-      value
-    }
+      value,
+    };
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const sgroupId = this.data.sgid
-    const sgroup = struct.sgroups.get(sgroupId)!
+    const struct = restruct.molecule;
+    const sgroupId = this.data.sgid!;
+    const sgroup = struct.sgroups.get(sgroupId)!;
 
-    const sgroupData = restruct.sgroupData.get(sgroupId)
-    if (sgroup.type === 'DAT' && sgroupData) {
-      // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-      restruct.clearVisel(sgroupData.visel)
-      restruct.sgroupData.delete(sgroupId)
+    if (!sgroup) {
+      return;
     }
 
-    this.data.value = sgroup.setAttr(this.data.attr, this.data.value)
+    const sgroupData = restruct.sgroupData.get(sgroupId);
+    if (sgroup.type === 'DAT' && sgroupData) {
+      // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
+      restruct.clearVisel(sgroupData.visel);
+      restruct.sgroupData.delete(sgroupId);
+    }
+
+    if (
+      this.data.attr === 'expanded' &&
+      sgroup instanceof MonomerMicromolecule
+    ) {
+      if (Object.isFrozen(sgroup.monomer.monomerItem)) {
+        sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
+      }
+      sgroup.monomer.monomerItem.expanded = this.data.value;
+    }
+
+    this.data.value = sgroup.setAttr(this.data.attr, this.data.value);
   }
 
   invert() {
-    const inverted = new SGroupAttr()
-    inverted.data = this.data
-    return inverted
+    const inverted = new SGroupAttr();
+    inverted.data = this.data;
+    return inverted;
   }
 }

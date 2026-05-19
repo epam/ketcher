@@ -159,4 +159,4 @@ export const basic =
   'M  SUB  1  17  -2\n' +
   'M  UNS  1   4   1\n' +
   'M  ALS  28  3 F Sg  Bh  Pr \n' +
-  'M  END\n'
+  'M  END\n';

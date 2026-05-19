@@ -14,70 +14,81 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromHighlightCreate, fromHighlightClear } from 'ketcher-core'
-import type { Struct } from 'ketcher-core'
+import { fromHighlightCreate, fromHighlightClear, Struct } from 'ketcher-core';
 
-import type { Editor } from './Editor'
+import type { Editor } from './Editor';
 
 type HighlightAttributes = {
-  atoms: number[]
-  bonds: number[]
-  color: string
-}
+  atoms: number[];
+  bonds: number[];
+  rgroupAttachmentPoints: number[];
+  color: string;
+};
 
 export class Highlighter {
-  editor: Editor
+  editor: Editor;
 
   constructor(editor: Editor) {
-    this.editor = editor
+    this.editor = editor;
   }
 
   getAll() {
-    const highlightsMap = this.editor.render.ctab.molecule.highlights
+    const highlightsMap = this.editor.render.ctab.molecule.highlights;
     const highlightsArray = [...highlightsMap].map(([id, highlight]) => ({
       id,
-      highlight
-    }))
-    return highlightsArray
+      highlight,
+    }));
+    return highlightsArray;
   }
 
   create(...args: HighlightAttributes[]) {
-    const createdHighlights: HighlightAttributes[] = []
+    const createdHighlights: HighlightAttributes[] = [];
 
     args.forEach((arg) => {
-      const { atoms, bonds, color } = arg
+      const { atoms, bonds, rgroupAttachmentPoints, color } = arg;
       if (typeof color !== 'string') {
-        return
+        return;
       }
 
-      if (!atoms && !bonds) {
-        return
+      if (!atoms && !bonds && !rgroupAttachmentPoints) {
+        return;
       }
 
-      const restruct = this.editor.render.ctab
+      const restruct = this.editor.render.ctab;
 
-      const { validAtoms, validBonds } = getValidInputOnly(
-        restruct.molecule,
-        atoms,
-        bonds
-      )
+      const { validAtoms, validBonds, validRgroupAttachmentPoints } =
+        getValidInputOnly(
+          restruct.molecule,
+          atoms,
+          bonds,
+          rgroupAttachmentPoints,
+        );
 
-      if (validAtoms.length === 0 && validBonds.length === 0) {
-        return
+      if (
+        validAtoms.length === 0 &&
+        validBonds.length === 0 &&
+        validRgroupAttachmentPoints.length === 0
+      ) {
+        return;
       }
 
-      createdHighlights.push({ atoms: validAtoms, bonds: validBonds, color })
-    })
+      createdHighlights.push({
+        atoms: validAtoms,
+        bonds: validBonds,
+        rgroupAttachmentPoints: validRgroupAttachmentPoints,
+        color,
+      });
+    });
     const action = fromHighlightCreate(
       this.editor.render.ctab,
-      createdHighlights
-    )
-    this.editor.update(action)
+      createdHighlights,
+    );
+    this.editor.update(action, true);
   }
 
   clear() {
-    const action = fromHighlightClear(this.editor.render.ctab)
-    this.editor.update(action)
+    const action = fromHighlightClear(this.editor.render.ctab);
+    this.editor.update(action, true);
   }
 
   /*
@@ -184,33 +195,54 @@ export class Highlighter {
 }
 
 type ValidInput = {
-  validAtoms: number[]
-  validBonds: number[]
-}
+  validAtoms: number[];
+  validBonds: number[];
+  validRgroupAttachmentPoints: number[];
+};
 
-function getValidInputOnly(struct: Struct, atoms, bonds): ValidInput {
+function getValidInputOnly(
+  struct: Struct,
+  atoms,
+  bonds,
+  rgroupAttachmentPoints,
+): ValidInput {
   if (!Array.isArray(atoms)) {
-    atoms = []
+    atoms = [];
   }
 
   if (!Array.isArray(bonds)) {
-    bonds = []
+    bonds = [];
   }
 
-  const { atoms: structAtoms, bonds: structBonds } = struct
+  if (!Array.isArray(rgroupAttachmentPoints)) {
+    rgroupAttachmentPoints = [];
+  }
+
+  const {
+    atoms: structAtoms,
+    bonds: structBonds,
+    rgroupAttachmentPoints: structRgroupAttachmentPoints,
+  } = struct;
 
   // Filter out atom ids that are not in struct
   if (atoms.length > 0) {
-    atoms = atoms.filter((aid) => structAtoms.has(aid))
+    atoms = atoms.filter((aid) => structAtoms.has(aid));
   }
 
   // Filter out bond ids that are not in struct
   if (bonds.length > 0) {
-    bonds = bonds.filter((bid) => structBonds.has(bid))
+    bonds = bonds.filter((bid) => structBonds.has(bid));
+  }
+
+  if (rgroupAttachmentPoints.length > 0) {
+    rgroupAttachmentPoints = rgroupAttachmentPoints.filter((rgroupAPId) =>
+      structRgroupAttachmentPoints.has(rgroupAPId),
+    );
   }
 
   return {
     validAtoms: atoms,
-    validBonds: bonds
-  }
+    validBonds: bonds,
+    validRgroupAttachmentPoints: rgroupAttachmentPoints,
+  };
 }

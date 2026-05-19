@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2022 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+export { default } from './GenericGroups';
 
 export enum groupNames {
   atomsGen = 'atoms-gen',
@@ -25,5 +25,5 @@ export enum groupNames {
   acyclicHetero = 'acyclic-hetero',
   groupCyclic = 'group-cyclic',
   cyclicHetero = 'cyclic-hetero',
-  cyclicCarbo = 'cyclic-carbo'
+  cyclicCarbo = 'cyclic-carbo',
 }

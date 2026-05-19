@@ -14,29 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import { StructServiceOptions } from 'domain/services'
+import { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import { Struct } from 'domain/entities/struct';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { StructServiceOptions } from 'domain/services';
+import { EditorSelection } from 'application/editor/editor.types';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (struct: Struct) => Promise<string>
-  getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>
+  getStringFromStructureAsync: (
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ) => Promise<string>;
+  getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
+  parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }
 
-export type SupportedFormat =
-  | 'rxn'
-  | 'rxnV3000'
-  | 'mol'
-  | 'molV3000'
-  | 'smiles'
-  | 'smilesExt'
-  | 'smarts'
-  | 'inChI'
-  | 'inChIAuxInfo'
-  | 'cml'
-  | 'ket'
-  | 'cdxml'
+export enum SupportedFormat {
+  mol = 'mol',
+  molV3000 = 'molV3000',
+  molAuto = 'molAuto',
+  rxn = 'rxn',
+  rxnV3000 = 'rxnV3000',
+  smiles = 'smiles',
+  smilesExt = 'smilesExt',
+  smarts = 'smarts',
+  inChI = 'inChI',
+  inChIAuxInfo = 'inChIAuxInfo',
+  inChIKey = 'inChIKey',
+  cml = 'cml',
+  ket = 'ket',
+  cdxml = 'cdxml',
+  cdx = 'cdx',
+  binaryCdx = 'binaryCdx',
+  sdf = 'sdf',
+  sdfV3000 = 'sdfV3000',
+  fasta = 'fasta',
+  sequence = 'sequence',
+  sequence3Letter = 'sequence-3-letter',
+  idt = 'idt',
+  axoLabs = 'axoLabs',
+  helm = 'helm',
+  biln = 'biln',
+  unknown = 'unknown',
+  rdf = 'rdf',
+  rdfV3000 = 'rdfV3000',
+}
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions
->
+>;

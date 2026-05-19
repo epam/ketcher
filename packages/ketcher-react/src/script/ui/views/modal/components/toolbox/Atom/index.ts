@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Atom.container'
+export { default } from './Atom.container';

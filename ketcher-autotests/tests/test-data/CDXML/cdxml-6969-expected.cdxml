@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1" BoundingBox="317.009064 270.000000 564.990906 210.000000">
+        <fragment id="4">
+            <n id="21" NodeType="Fragment">
+                <fragment id="23">
+                    <n id="5" p="25.981894 30.749989"/>
+                    <n id="6" Element="1" p="0.000000 45.749931">
+                        <t p="0.000000 45.749931" LabelJustification="Left">
+                            <s font="3" size="10" face="96">H</s>
+                        </t>
+                    </n>
+                    <n id="7" Element="8" NumHydrogens="1" p="51.961754 45.749931">
+                        <t p="51.961754 45.749931" LabelJustification="Left">
+                            <s font="3" size="10" face="96">OH</s>
+                        </t>
+                    </n>
+                    <n id="8" Element="8" NumHydrogens="0" p="25.981894 0.750146">
+                        <t p="25.981894 0.750146" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <b id="14" B="5" E="6"/>
+                    <b id="15" B="5" E="7"/>
+                    <b id="16" B="5" E="8" Order="2"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>formic acid</s>
+                </t>
+            </n>
+            <n id="22" NodeType="Fragment">
+                <fragment id="24">
+                    <n id="9" Element="16" NumHydrogens="0" p="217.981857 30.000000">
+                        <t p="217.981857 30.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">S</s>
+                        </t>
+                    </n>
+                    <n id="10" Element="8" NumHydrogens="0" p="217.981857 -0.000000">
+                        <t p="217.981857 -0.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="11" Element="8" NumHydrogens="0" p="217.981857 60.000000">
+                        <t p="217.981857 60.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="12" Element="8" NumHydrogens="1" p="247.981857 30.000000">
+                        <t p="247.981857 30.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">OH</s>
+                        </t>
+                    </n>
+                    <n id="13" p="187.981857 30.000000"/>
+                    <b id="17" B="9" E="10" Order="2"/>
+                    <b id="18" B="9" E="11" Order="2"/>
+                    <b id="19" B="9" E="12"/>
+                    <b id="20" B="9" E="13"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>methane sulphonic acid</s>
+                </t>
+            </n>
+        </fragment>
+    </page>
+</CDXML>

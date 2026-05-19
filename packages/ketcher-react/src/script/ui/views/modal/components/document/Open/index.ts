@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Open.container'
+export { default } from './Open.container';

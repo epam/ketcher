@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, useRef } from 'react'
+import { RefObject, useRef } from 'react';
+import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
+  ToolbarGroupItemProps,
+} from '../ToolbarGroupItem';
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
 import {
   arrowsOptions,
   bondCommon,
@@ -31,102 +32,131 @@ import {
   rGroupOptions,
   selectOptions,
   shapeOptions,
-  transformOptions
-} from './leftToolbarOptions'
+} from './leftToolbarOptions';
 
-import { ArrowScroll } from '../ArrowScroll'
-import { Bond } from './Bond'
-import { RGroup } from './RGroup'
-import { Shape } from './Shape'
-import { Transform } from './Transform'
-import classes from './LeftToolbar.module.less'
-import clsx from 'clsx'
-import { useInView } from 'react-intersection-observer'
-import { useResizeObserver } from '../../../../../hooks'
+import { ArrowScroll } from '../ArrowScroll';
+import { Bond } from './Bond';
+import { RGroup } from './RGroup';
+import { Shape } from './Shape';
+import classes from './LeftToolbar.module.less';
+import clsx from 'clsx';
+import { useInView } from 'react-intersection-observer';
+import { useResizeObserver } from '../../../../../hooks';
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  className?: string
+  className?: string;
 }
 
-type LeftToolbarCallProps = ToolbarGroupItemCallProps
+type LeftToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Props = LeftToolbarProps & LeftToolbarCallProps
+type Props = LeftToolbarProps & LeftToolbarCallProps;
+
+type ItemProps = {
+  id: ToolbarItemVariant;
+  options?: ToolbarItem[];
+  dataTestId?: string;
+};
+
+interface GroupProps {
+  items?: ItemProps[];
+  className?: string;
+  height?: number;
+  rest: Omit<Props, 'className'>;
+}
+
+const Group = ({ items, className, height, rest }: GroupProps) => {
+  const { status } = rest;
+  const visibleItems =
+    items?.reduce<ItemProps[]>(
+      (acc, item) =>
+        status[item.id]?.hidden ||
+        item.options?.every((option) => status[option.id]?.hidden)
+          ? acc
+          : acc.concat(item),
+      [],
+    ) ?? [];
+
+  return visibleItems.length ? (
+    <div className={clsx(classes.group, className)}>
+      {visibleItems.map((item) => {
+        switch (item.id) {
+          case 'bond-common':
+            return <Bond {...rest} height={height} key={item.id} />;
+          case 'rgroup':
+            return <RGroup {...rest} key={item.id} />;
+          case 'shapes':
+            return <Shape {...rest} key={item.id} />;
+          case 'bonds':
+            return (
+              <ToolbarGroupItem
+                id={item.id}
+                options={item.options}
+                key={item.id}
+                dataTestId="bonds"
+                {...rest}
+              />
+            );
+          default:
+            return (
+              <ToolbarGroupItem
+                id={item.id}
+                options={item.options}
+                key={item.id}
+                {...rest}
+              />
+            );
+        }
+      })}
+    </div>
+  ) : null;
+};
 
 const LeftToolbar = (props: Props) => {
-  const { className, ...rest } = props
-  const { ref, height } = useResizeObserver<HTMLDivElement>()
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
-  const [startRef, startInView] = useInView({ threshold: 0.8 })
-  const [endRef, endInView] = useInView({ threshold: 0.8 })
-  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
-
-  type ItemProps = {
-    id: ToolbarItemVariant
-    options?: ToolbarItem[]
-  }
-  const Item = ({ id, options }: ItemProps) =>
-    ToolbarGroupItem({ id, options, ...rest })
+  const { className, ...rest } = props;
+  const { ref, height } = useResizeObserver<HTMLDivElement>();
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const [startRef, startInView] = useInView({ threshold: 1 });
+  const [endRef, endInView] = useInView({ threshold: 1 });
+  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollUp = () => {
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
-  }
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
+  };
 
   const scrollDown = () => {
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
-  }
-
-  const status = rest.status
-
-  type GroupItem = ItemProps
-
-  const Group: FC<{ items?: GroupItem[]; className?: string }> = ({
-    items,
-    className
-  }) => {
-    const visibleItems: GroupItem[] = []
-    if (items) {
-      items.forEach((item) => {
-        let visible = true
-        if (status[item.id]?.hidden) {
-          visible = false
-        } else if (item.options?.every((option) => status[option.id]?.hidden)) {
-          visible = false
-        }
-        if (visible) visibleItems.push(item)
-      })
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
     }
-    return visibleItems.length ? (
-      <div className={clsx(classes.group, className)}>
-        {visibleItems.map((item) => {
-          switch (item.id) {
-            case 'bond-common':
-              return <Bond {...rest} height={height} key={item.id} />
-            case 'transform-rotate':
-              return <Transform {...rest} height={height} key={item.id} />
-            case 'rgroup':
-              return <RGroup {...rest} key={item.id} />
-            case 'shapes':
-              return <Shape {...rest} key={item.id} />
-            default:
-              return <Item id={item.id} options={item.options} key={item.id} />
-          }
-        })}
-      </div>
-    ) : null
-  }
+
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
+  };
 
   return (
-    <div className={clsx(classes.root, className)} ref={ref}>
-      <div className={classes.buttons} ref={scrollRef}>
+    <div
+      data-testid="left-toolbar"
+      className={clsx(classes.root, className)}
+      ref={ref}
+    >
+      <div
+        className={classes.buttons}
+        ref={scrollRef}
+        data-testid="left-toolbar-buttons"
+      >
         <div className={classes.listener} ref={startRef}>
           <Group
             className={classes.groupItem}
             items={[
               { id: 'hand' },
               { id: 'select', options: selectOptions },
-              { id: 'erase' }
+              { id: 'erase' },
             ]}
+            height={height}
+            rest={rest}
           />
         </div>
 
@@ -139,32 +169,29 @@ const LeftToolbar = (props: Props) => {
                 ...bondCommon,
                 ...bondQuery,
                 ...bondSpecial,
-                ...bondStereo
-              ]
+                ...bondStereo,
+              ],
             },
-            { id: 'chain' }
+            { id: 'chain' },
+            { id: 'enhanced-stereo' },
+            { id: 'charge-plus' },
+            { id: 'charge-minus' },
           ]}
+          height={height}
+          rest={rest}
         />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[
-            {
-              id: 'transforms',
-              options: transformOptions
-            }
-          ]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'sgroup' }, { id: 'sgroup-data' }]}
-        />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group
+            className={classes.groupItem}
+            items={[
+              { id: 'sgroup' },
+              { id: 'rgroup', options: rGroupOptions },
+              { id: CREATE_MONOMER_TOOL_NAME },
+            ]}
+            height={height}
+            rest={rest}
+          />
+        </div>
 
         <Group
           className={classes.groupItem}
@@ -173,35 +200,37 @@ const LeftToolbar = (props: Props) => {
             { id: 'arrows', options: arrowsOptions },
             {
               id: 'reaction-mapping-tools',
-              options: mappingOptions
-            }
+              options: mappingOptions,
+            },
           ]}
-        />
-        <div className={classes.listener} ref={sizeRef}>
-          <Group
-            className={classes.groupItem}
-            items={[{ id: 'rgroup', options: rGroupOptions }]}
-          />
-        </div>
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'shapes', options: shapeOptions }]}
+          height={height}
+          rest={rest}
         />
 
         <div ref={endRef}>
-          <Group className={classes.groupItem} items={[{ id: 'text' }]} />
+          <Group
+            className={classes.groupItem}
+            items={[
+              { id: 'shapes', options: shapeOptions },
+              { id: 'text' },
+              { id: IMAGE_KEY },
+            ]}
+            height={height}
+            rest={rest}
+          />
         </div>
       </div>
-      <ArrowScroll
-        startInView={startInView}
-        endInView={endInView}
-        scrollUp={scrollUp}
-        scrollDown={scrollDown}
-      />
+      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
+        <ArrowScroll
+          startInView={startInView}
+          endInView={endInView}
+          scrollForward={scrollDown}
+          scrollBack={scrollUp}
+        />
+      )}
     </div>
-  )
-}
+  );
+};
 
-export type { LeftToolbarProps, LeftToolbarCallProps }
-export { LeftToolbar }
+export type { LeftToolbarProps, LeftToolbarCallProps };
+export { LeftToolbar };

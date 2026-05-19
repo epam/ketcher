@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../../action'
+import { UiAction, UiActionAction } from '../../../../../action';
 
-import { ToolbarItem } from '../../../toolbar.types'
+import { ToolbarItem } from '../../../toolbar.types';
 
 type GroupDescriptor = {
-  start: number
-  end: number
-}
+  start: number;
+  end: number;
+};
 
 interface MultiToolProps {
-  options: ToolbarItem[]
-  groups?: GroupDescriptor[]
+  options: ToolbarItem[];
+  groups?: GroupDescriptor[];
   status: {
-    [key in string]?: UiAction
-  }
-  disableableButtons: string[]
-  indigoVerification: boolean
+    [key in string]?: UiAction;
+  };
+  disableableButtons: string[];
+  indigoVerification: boolean;
 }
 
 interface MultiToolCallProps {
-  onAction: (action: UiActionAction) => void
+  onAction: (action: UiActionAction) => void;
 }
 
-type MultiToolVariant = 'default' | 'grouped'
+type MultiToolVariant = 'default' | 'grouped';
 
 export type {
   GroupDescriptor,
   MultiToolProps,
   MultiToolCallProps,
-  MultiToolVariant
-}
+  MultiToolVariant,
+};

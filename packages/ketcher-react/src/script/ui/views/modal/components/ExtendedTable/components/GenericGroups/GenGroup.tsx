@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2022 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { GenGroup as GenGroupType } from 'ketcher-core'
-import { GenSet } from './GenSet'
-import { isGenericGroup } from '../../helpers'
-import styles from './GenGroup.module.less'
+import type { GenGroup as GenGroupType } from 'ketcher-core';
+import { GenSet } from './GenSet';
+import { isGenericGroup } from '../../helpers';
+import styles from './GenGroup.module.less';
 
 type GenProps = {
-  selected: (label: string) => boolean
-  onAtomSelect: (label: string, activateImmediately: boolean) => void
-  group: GenGroupType
-}
+  selected: (label: string) => boolean;
+  onAtomSelect: (label: string) => void;
+  onAtomActivate: (label: string) => void;
+  group: GenGroupType;
+  disabledQueryElements: Array<string> | null;
+};
 
 const getLegendClassname = (title: string) => {
   const mainTitles = [
@@ -31,13 +33,19 @@ const getLegendClassname = (title: string) => {
     'Special Nodes',
     'Group Generics',
     'Acyclic',
-    'Cyclic'
-  ]
-  if (mainTitles.includes(title)) return 'legendMain'
-  return 'legend'
-}
+    'Cyclic',
+  ];
+  if (mainTitles.includes(title)) return 'legendMain';
+  return 'legend';
+};
 
-const GenGroup = ({ group, onAtomSelect, selected }: GenProps) => {
+const GenGroup = ({
+  group,
+  onAtomSelect,
+  onAtomActivate,
+  selected,
+  disabledQueryElements,
+}: GenProps) => {
   return (
     <div className={styles.fieldFlexWrapper}>
       <fieldset className={styles.fieldset}>
@@ -56,14 +64,16 @@ const GenGroup = ({ group, onAtomSelect, selected }: GenProps) => {
               labels={group.itemSets}
               selected={selected}
               onAtomSelect={onAtomSelect}
+              onAtomActivate={onAtomActivate}
               className={styles.subGroup}
               group={group.title}
+              disabledQueryElements={disabledQueryElements}
             />
           )}
         </div>
       </fieldset>
     </div>
-  )
-}
+  );
+};
 
-export { GenGroup }
+export { GenGroup };

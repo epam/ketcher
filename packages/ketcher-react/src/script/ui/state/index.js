@@ -14,83 +14,137 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { applyMiddleware, combineReducers, createStore } from 'redux'
-import { load, onAction } from './shared'
-import optionsReducer, { initOptionsState } from './options'
-import templatesReducer, { initTmplsState } from './templates'
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { load, onAction } from './shared';
+import optionsReducer, { initOptionsState } from './options';
+import templatesReducer, { initTmplsState } from './templates';
+import abbreviationLookupReducer from './abbreviationLookup';
+import commonReducer from './common';
 
-import actionStateReducer from './action'
-import functionalGroupsReducer from './functionalGroups'
-import { logger } from 'redux-logger'
-import modalReducer from './modal'
-import { pick } from 'lodash/fp'
-import requestReducer from './request'
-import thunk from 'redux-thunk'
-import toolbarReducer from './toolbar'
+import actionStateReducer from './action';
+import functionalGroupsReducer from './functionalGroups';
+import saltsAndSolventsReducer from './saltsAndSolvents';
+import { logger } from 'redux-logger';
+import modalReducer from './modal';
+import { pick } from 'lodash/fp';
+import requestReducer from './request';
+import { thunk } from 'redux-thunk';
+import toolbarReducer from './toolbar';
+import floatingToolsReducer from './floatingTools';
+import notificationsReducer, { initNotificationsState } from './notifications';
 
-export { onAction, load }
+export { onAction, load };
+
+export const SET_SERVER = 'SET_SERVER';
 
 const shared = combineReducers({
+  common: commonReducer,
   actionState: actionStateReducer,
   toolbar: toolbarReducer,
   modal: modalReducer,
+  abbreviationLookup: abbreviationLookupReducer,
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,
   templates: templatesReducer,
-  controller: (store = null) => store,
   functionalGroups: functionalGroupsReducer,
-  requestsStatuses: requestReducer
-})
+  saltsAndSolvents: saltsAndSolventsReducer,
+  requestsStatuses: requestReducer,
+  floatingTools: floatingToolsReducer,
+  notifications: notificationsReducer,
+});
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
-    switch (action.type) {
-      case 'INIT':
-        setEditor(action.editor)
+    let updatedState = state;
 
-      case 'UPDATE':
-        const { type, ...data } = action
-        if (data) state = { ...state, ...data }
+    switch (action.type) {
+      case 'INIT': {
+        setEditor(action.editor);
+        // Extract action data (excluding type) and merge into state
+        const data = { ...action };
+        delete data.type;
+        if (data) {
+          updatedState = { ...updatedState, ...data };
+        }
+        // Set server
+        updatedState = {
+          ...updatedState,
+          server: action.server || updatedState.server,
+        };
+        break;
+      }
+
+      case 'UPDATE': {
+        const data = { ...action };
+        delete data.type;
+        if (data) {
+          updatedState = { ...updatedState, ...data };
+        }
+        break;
+      }
+
+      case SET_SERVER: {
+        updatedState = {
+          ...updatedState,
+          server: action.server || updatedState.server,
+        };
+        break;
+      }
     }
 
-    const sh = shared(state, {
+    const sh = shared(updatedState, {
       ...action,
-      ...pick(['editor', 'server', 'options'], state)
-    })
+      ...pick(['editor', 'server', 'options'], updatedState),
+    });
 
     const finalState =
-      sh === state.shared
-        ? state
+      sh === updatedState.shared
+        ? updatedState
         : {
-            ...state,
-            ...sh
-          }
+            ...updatedState,
+            ...sh,
+          };
 
     // TODO: temporary solution. Need to review work with redux store
-    global.currentState = finalState
-    return finalState
-  }
+    global.currentState = finalState;
+    return finalState;
+  };
 }
 
 export default function (options, server, setEditor) {
-  const { buttons = {}, ...restOptions } = options
-  const newAbortController = new AbortController()
+  const { buttons = {}, customButtons, ...restOptions } = options;
+
   // TODO: redux localStorage here
   const initState = {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, { app: restOptions, buttons }),
+    options: Object.assign(initOptionsState, {
+      app: restOptions,
+      buttons,
+      customButtons,
+    }),
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState,
-    controller: newAbortController
+    notifications: initNotificationsState,
+  };
+
+  const middleware = [thunk];
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
+  ) {
+    middleware.push(logger);
   }
 
-  const middleware = [thunk]
+  const rootReducer = getRootReducer(setEditor);
+  return createStore(rootReducer, initState, applyMiddleware(...middleware));
+}
 
-  if (process.env.NODE_ENV !== 'production') middleware.push(logger)
-
-  const rootReducer = getRootReducer(setEditor)
-  return createStore(rootReducer, initState, applyMiddleware(...middleware))
+export function setServer(server) {
+  return {
+    type: SET_SERVER,
+    server,
+  };
 }

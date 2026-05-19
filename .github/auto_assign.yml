@@ -1,0 +1,8 @@
+addReviewers: true
+numberOfReviewers: 1
+useReviewGroups: true
+addAssignees: author
+reviewGroups:
+  core:
+    - svvald
+    - rrodionov91

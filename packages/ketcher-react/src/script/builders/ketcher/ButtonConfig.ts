@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export interface ButtonConfig {
-  hidden?: boolean
+  hidden?: boolean;
 }

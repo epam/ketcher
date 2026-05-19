@@ -18,21 +18,22 @@ import {
   InfoResult,
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'ketcher-core'
+  StructServiceProvider,
+} from 'ketcher-core';
 
-type Api = StructService & Promise<InfoResult>
+type Api = StructService & Promise<InfoResult>;
 
-// todo: remove
+// todo: remove - ?? should we? it's in use
 function createApi(
   structServiceProvider: StructServiceProvider,
-  defaultOptions: StructServiceOptions
+  defaultOptions: StructServiceOptions,
 ): Api {
   const structService =
-    structServiceProvider.createStructService(defaultOptions)
-  const info = structService.info()
+    structServiceProvider.createStructService(defaultOptions);
+  const info = structService.info();
 
   return Object.assign(info, {
+    addKetcherId: structService.addKetcherId.bind(structService),
     info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),
@@ -46,8 +47,13 @@ function createApi(
     recognize: structService.recognize.bind(structService),
     generateImageAsBase64:
       structService.generateImageAsBase64.bind(structService),
-    generateInchIKey: structService.generateInchIKey.bind(structService)
-  })
+    getInChIKey: structService.getInChIKey.bind(structService),
+    toggleExplicitHydrogens:
+      structService.toggleExplicitHydrogens.bind(structService),
+    calculateMacromoleculeProperties:
+      structService.calculateMacromoleculeProperties.bind(structService),
+    destroy: structService.destroy?.bind(structService),
+  });
 }
 
-export default createApi
+export default createApi;

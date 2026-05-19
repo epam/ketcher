@@ -17,78 +17,82 @@
 import {
   findStereoAtoms,
   fromAtomsAttrs,
-  fromStereoFlagUpdate
-} from 'ketcher-core'
+  fromStereoFlagUpdate,
+} from 'ketcher-core';
 
-import Editor from '../Editor'
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
-class EnhancedStereoTool {
-  editor: Editor
-  stereoAtoms: Array<number>
-  isNotActiveTool: true
+class EnhancedStereoTool implements Tool {
+  private readonly editor: Editor;
+  private readonly stereoAtoms: Array<number>;
+  isNotActiveTool: true;
 
   constructor(editor) {
-    const selection = editor.selection()
-    this.editor = editor
-    this.isNotActiveTool = true
+    const selection = editor.selection();
+    this.editor = editor;
+    this.isNotActiveTool = true;
 
     this.stereoAtoms = findStereoAtoms(
       editor.struct(),
       selection
         ? selection.atoms || []
-        : Array.from(editor.struct().atoms.keys())
-    )
+        : Array.from(editor.struct().atoms.keys()),
+    );
 
     if (this.stereoAtoms.length === 0) {
-      return
+      return;
     }
 
-    this.changeAtomsStereoAction().then(
-      (action) => action && editor.update(action)
-    )
+    EnhancedStereoTool.changeAtomsStereoAction(
+      this.editor,
+      this.stereoAtoms,
+    ).then((action) => action && editor.update(action));
   }
 
-  changeAtomsStereoAction() {
-    const struct = this.editor.struct()
-    const restruct = this.editor.render.ctab
-    const stereoLabels = this.stereoAtoms.map((stereoAtom) => {
-      const atom = struct.atoms.get(stereoAtom)
-      return atom && atom.stereoLabel
-    })
+  static changeAtomsStereoAction(editor: Editor, stereoAtoms: Array<number>) {
+    const struct = editor.struct();
+    const restruct = editor.render.ctab;
+    const stereoLabels = stereoAtoms.map((stereoAtom) => {
+      const atom = struct.atoms.get(stereoAtom);
+      return atom?.stereoLabel;
+    });
     const hasAnotherLabel = stereoLabels.some(
-      (stereoLabel) => stereoLabel !== stereoLabels[0]
-    )
-    const res = this.editor.event.enhancedStereoEdit.dispatch({
-      stereoLabel: hasAnotherLabel ? null : stereoLabels[0]
-    })
+      (stereoLabel) => stereoLabel !== stereoLabels[0],
+    );
+    const res = editor.event.enhancedStereoEdit.dispatch({
+      stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
+    });
 
     return res.then((stereoLabel) => {
       if (!stereoLabel) {
-        return null
+        return null;
       }
 
-      const action = this.stereoAtoms.reduce(
+      const action = stereoAtoms.reduce(
         (acc, stereoAtom) => {
-          return acc.mergeWith(
-            fromStereoFlagUpdate(
-              restruct,
-              struct.atoms.get(stereoAtom)?.fragment
-            )
-          )
+          const frid = struct.atoms.get(stereoAtom)?.fragment;
+          const frag =
+            frid !== undefined ? restruct.molecule.frags.get(frid) : null;
+
+          if (frag?.stereoAtoms) {
+            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+          }
+          return acc;
         },
         fromAtomsAttrs(
           restruct,
-          this.stereoAtoms,
+          stereoAtoms,
           {
-            stereoLabel
+            stereoLabel,
           },
-          false
-        )
-      )
-      action.operations.reverse()
-      return action
-    })
+          false,
+        ),
+      );
+      action.operations.reverse();
+      return action;
+    });
   }
 }
 
-export default EnhancedStereoTool
+export default EnhancedStereoTool;

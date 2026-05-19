@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './LeftToolbar.container'
+export * from './LeftToolbar.container';

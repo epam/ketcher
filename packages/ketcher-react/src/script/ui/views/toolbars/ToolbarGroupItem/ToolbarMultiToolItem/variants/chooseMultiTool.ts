@@ -14,27 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { DefaultMultiTool, classes as defaultClasses } from './DefaultMultiTool'
+import {
+  DefaultMultiTool,
+  classes as defaultClasses,
+} from './DefaultMultiTool';
 import {
   MultiToolCallProps,
   MultiToolProps,
-  MultiToolVariant
-} from './variants.types'
+  MultiToolVariant,
+} from './variants.types';
 
-import { ComponentType } from 'react'
-import { GroupedMultiTool } from './GroupedMultiTool'
+import { ComponentType } from 'react';
+import { GroupedMultiTool } from './GroupedMultiTool';
 
 export function chooseMultiTool(
-  variant: MultiToolVariant = 'default'
+  variant: MultiToolVariant = 'default',
 ): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
   switch (variant) {
     case 'default':
-      return [DefaultMultiTool, defaultClasses.default]
+      return [
+        DefaultMultiTool,
+        `${defaultClasses.default} default-multitool-dropdown`,
+      ];
 
     case 'grouped':
-      return [GroupedMultiTool]
+      return [GroupedMultiTool, 'grouped-multitool-dropdown'];
 
     default:
-      throw new Error(`Unsupported variant ${variant}`)
+      throw new Error(`Unsupported variant ${variant}`);
   }
 }

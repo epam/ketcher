@@ -14,96 +14,96 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action, Scale, fromAtomsAttrs } from 'ketcher-core'
-import Editor from '../Editor'
+import {
+  Action,
+  Scale,
+  fromAtomsAttrs,
+  CoordinateTransformation,
+} from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
-class ReactionMapTool {
-  editor: Editor
-  rcs: any
-  dragCtx: any
-  line: any
+class ReactionMapTool implements Tool {
+  private readonly editor: Editor;
+  private dragCtx: any;
+  private line: any;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousedown(event) {
-    const rnd = this.editor.render
-    this.rcs = rnd.ctab.molecule.getComponents()
+    const rnd = this.editor.render;
 
-    const ci = this.editor.findItem(event, ['atoms'])
+    const closestItem = this.editor.findItem(event, ['atoms']);
 
-    if (ci && ci.map === 'atoms') {
-      this.editor.hover(null)
+    if (closestItem?.map === 'atoms') {
+      this.editor.hover(null);
       this.dragCtx = {
-        item: ci,
-        xy0: rnd.page2obj(event)
-      }
+        item: closestItem,
+        xy0: CoordinateTransformation.pageToModel(event, rnd),
+      };
     }
   }
 
   mousemove(event) {
-    const editor = this.editor
-    const rnd = editor.render
+    const editor = this.editor;
+    const rnd = editor.render;
 
     if ('dragCtx' in this) {
-      const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
-      const atoms = rnd.ctab.molecule.atoms
+      const closestItem = this.editor.findItem(
+        event,
+        ['atoms'],
+        this.dragCtx.item,
+      );
+      const atoms = rnd.ctab.molecule.atoms;
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
-        editor.hover(ci)
+      if (closestItem?.map === 'atoms') {
+        editor.hover(closestItem);
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
-          atoms.get(ci.id)?.pp
-        )
+          atoms.get(closestItem.id)?.pp,
+        );
       } else {
-        editor.hover(null)
+        editor.hover(null);
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
-          rnd.page2obj(event)
-        )
+          CoordinateTransformation.pageToModel(event, rnd),
+        );
       }
     } else {
-      editor.hover(editor.findItem(event, ['atoms']))
+      editor.hover(editor.findItem(event, ['atoms']), null, event);
     }
   }
 
   updateLine(p1, p2) {
     if (this.line) {
-      this.line.remove()
-      this.line = null
+      this.line.remove();
+      this.line = null;
     }
 
     if (p1 && p2) {
-      const rnd = this.editor.render
+      const rnd = this.editor.render;
       this.line = rnd.selectionLine(
-        Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-        Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset)
-      )
+        Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
+        Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
+      );
     }
   }
 
   mouseup(event) {
     if ('dragCtx' in this) {
-      const rnd = this.editor.render
-      const ci = this.editor.findItem(event, ['atoms'], this.dragCtx.item)
+      const rnd = this.editor.render;
+      const closestItem = this.editor.findItem(event, ['atoms']);
 
-      if (
-        ci &&
-        ci.map === 'atoms' &&
-        isValidMap(this.rcs, this.dragCtx.item.id, ci.id)
-      ) {
-        const action = new Action()
-        const atoms = rnd.ctab.molecule.atoms
-        const atom1 = atoms.get(this.dragCtx.item.id)
-        const atom2 = atoms.get(ci.id)
-        const aam1 = atom1?.aam
-        const aam2 = atom2?.aam
+      if (closestItem?.map === 'atoms') {
+        const action = new Action();
+        const atoms = rnd.ctab.molecule.atoms;
+        const atom1 = atoms.get(this.dragCtx.item.id);
+        const atom2 = atoms.get(closestItem.id);
+        const aam1 = atom1?.aam;
+        const aam2 = atom2?.aam;
 
         if (!aam1 || aam1 !== aam2) {
           if ((aam1 && aam1 !== aam2) || (!aam1 && aam2)) {
@@ -114,64 +114,40 @@ class ReactionMapTool {
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
-                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null)
-                )
-            })
+                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
+                );
+            });
           }
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam1 }, null)
-            )
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
+            );
           } else {
-            let aam = 0
+            let aam = 0;
             atoms.forEach((atom) => {
-              aam = Math.max(aam, atom.aam || 0)
-            })
+              aam = Math.max(aam, atom.aam || 0);
+            });
             action.mergeWith(
               fromAtomsAttrs(
                 rnd.ctab,
                 this.dragCtx.item.id,
                 { aam: aam + 1 },
-                null
-              )
-            )
+                null,
+              ),
+            );
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, ci.id, { aam: aam + 1 }, null)
-            )
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null),
+            );
           }
-          this.editor.update(action)
+          this.editor.update(action);
         }
       }
-      this.updateLine(null, null)
-      delete this.dragCtx
+      this.updateLine(null, null);
+      delete this.dragCtx;
     }
-    this.editor.hover(null)
+    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
   }
 }
 
-function isValidMap(rcs, aid1, aid2) {
-  let t1
-  let t2
-  for (let ri = 0; (!t1 || !t2) && ri < rcs.reactants.length; ri++) {
-    const ro = Array.from(rcs.reactants[ri])
-    if (!t1 && ro.indexOf(aid1) >= 0) {
-      t1 = 'r'
-    }
-    if (!t2 && ro.indexOf(aid2) >= 0) {
-      t2 = 'r'
-    }
-  }
-  for (let pi = 0; (!t1 || !t2) && pi < rcs.products.length; pi++) {
-    const po = Array.from(rcs.products[pi])
-    if (!t1 && po.indexOf(aid1) >= 0) {
-      t1 = 'p'
-    }
-    if (!t2 && po.indexOf(aid2) >= 0) {
-      t2 = 'p'
-    }
-  }
-  return t1 && t2 && t1 !== t2
-}
-
-export default ReactionMapTool
+export default ReactionMapTool;

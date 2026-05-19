@@ -1,0 +1,67 @@
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
+import {
+  clickInTheMiddleOfTheCanvas,
+  takeEditorScreenshot,
+  waitForPageInit,
+  dragMouseAndMoveTo,
+} from '@utils';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+
+test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('drawing atom, then dragging other atom', async ({ page }) => {
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Carbon);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await dragMouseAndMoveTo(page, 100);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await takeEditorScreenshot(page);
+  });
+
+  test('drawing benzene ring, then adding single bond', async ({ page }) => {
+    await drawBenzeneRing(page);
+
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await takeEditorScreenshot(page);
+  });
+
+  test('single bond tool', async ({ page }) => {
+    /*
+     *   Test case: EPMLSOPKET-1371
+     */
+
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await takeEditorScreenshot(page);
+  });
+
+  test('double bond tool ', async ({ page }) => {
+    /*
+     *   Test case: EPMLSOPKET-1380
+     */
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
+
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await takeEditorScreenshot(page);
+  });
+});

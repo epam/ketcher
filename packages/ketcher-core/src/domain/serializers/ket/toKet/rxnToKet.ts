@@ -14,20 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function arrowToKet(arrowNode) {
   return {
     type: 'arrow',
-    data: getNodeWithInvertedYCoord(arrowNode.data)
-  }
+    data: getNodeWithInvertedYCoord(arrowNode.data),
+    selected: arrowNode.selected,
+  };
 }
 
 export function plusToKet(plusNode) {
-  const coord = plusNode.center
+  const coord = plusNode.center;
   return {
     type: 'plus',
     location: [coord.x, -coord.y, coord.z],
-    prop: plusNode.data
-  }
+    prop: plusNode.data,
+    selected: plusNode.selected,
+  };
 }

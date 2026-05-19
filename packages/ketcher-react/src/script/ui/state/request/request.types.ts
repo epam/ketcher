@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION'
-export const ANALYZING_FILE = 'ANALYZING_FILE'
+export const INDIGO_VERIFICATION = 'INDIGO_VERIFICATION';
+export const ANALYZING_FILE = 'ANALYZING_FILE';
 
 export interface RequestState {
-  indigoVerification: boolean
-  isAnalyzingFile: boolean
+  indigoVerification: boolean;
+  isAnalyzingFile: boolean;
 }
 
 interface IndigoVerificationAction {
-  type: string
-  data: boolean
+  type: string;
+  data: boolean;
 }
 
-export type RequestActionTypes = IndigoVerificationAction
+export type RequestActionTypes = IndigoVerificationAction;

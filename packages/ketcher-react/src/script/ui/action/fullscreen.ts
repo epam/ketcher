@@ -14,21 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
+import isHidden from './isHidden';
+import { getFullscreenElement } from '../../../utils';
 
 const requestFullscreen = (element: HTMLElement) => {
-  ;(element.requestFullscreen && element.requestFullscreen()) ||
-    (element.msRequestFullscreen && element.msRequestFullscreen()) ||
-    (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
-    (element.webkitRequestFullscreen && element.webkitRequestFullscreen())
-}
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.msRequestFullscreen) {
+    element.msRequestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullscreen) {
+    element.webkitRequestFullscreen();
+  }
+};
 
 const exitFullscreen = () => {
-  ;(document.exitFullscreen && document.exitFullscreen()) ||
-    (document.msExitFullscreen && document.msExitFullscreen()) ||
-    (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-    (document.webkitExitFullscreen && document.webkitExitFullscreen())
-}
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.msExitFullscreen) {
+    document.msExitFullscreen();
+  } else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+};
 
 const getIfFullScreen = () => {
   return !!(
@@ -36,19 +47,19 @@ const getIfFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const toggleFullscreen = () => {
-  const fullscreenElement: HTMLElement =
-    document.querySelector('.Ketcher-root') || document.documentElement
-  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
-}
+  const fullscreenElement = getFullscreenElement();
+  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
+};
 
 export default {
   fullscreen: {
     title: 'Fullscreen mode',
+    enabledInViewOnly: true,
     action: () => toggleFullscreen(),
-    hidden: (options) => isHidden(options, 'fullscreen')
-  }
-}
+    hidden: (options) => isHidden(options, 'fullscreen'),
+  },
+};

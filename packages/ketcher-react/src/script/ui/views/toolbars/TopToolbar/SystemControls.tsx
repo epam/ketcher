@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { shortcutStr } from '../shortcutStr'
-import { IconButton } from './IconButton'
+import styled from '@emotion/styled';
+import { useEffect, useState } from 'react';
+import { shortcutStr } from 'ketcher-core';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  className?: string
-  onSettingsOpen: () => void
-  onAboutOpen: () => void
-  onHistoryClick: () => void
-  onFullscreen: () => void
-  onHelp: () => void
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  className?: string;
+  onSettingsOpen: () => void;
+  onAboutOpen: () => void;
+  onFullscreen: () => void;
+  onHelp: () => void;
 }
 
 const getIfFullScreen = () => {
@@ -35,15 +35,15 @@ const getIfFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
-  flex-grow: 1;
+  flex-grow: 0;
   justify-content: flex-end;
-`
+`;
 
 export const SystemControls = ({
   disabledButtons,
@@ -53,8 +53,29 @@ export const SystemControls = ({
   onFullscreen,
   onHelp,
   onAboutOpen,
-  className
+  className,
 }: SystemControlsProps) => {
+  const [isFullscreen, setIsFullscreen] = useState(getIfFullScreen);
+
+  useEffect(() => {
+    const syncFullscreenMode = () => setIsFullscreen(getIfFullScreen());
+
+    document.addEventListener('fullscreenchange', syncFullscreenMode);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenMode);
+    document.addEventListener('mozfullscreenchange', syncFullscreenMode);
+    document.addEventListener('MSFullscreenChange', syncFullscreenMode);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreenMode);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        syncFullscreenMode,
+      );
+      document.removeEventListener('mozfullscreenchange', syncFullscreenMode);
+      document.removeEventListener('MSFullscreenChange', syncFullscreenMode);
+    };
+  }, []);
+
   return (
     <ControlsPanel className={className}>
       {/* Uncomment upon History log implementation */}
@@ -65,35 +86,39 @@ export const SystemControls = ({
         disabled={disabledButtons.includes('history')}
         isHidden={hiddenButtons.includes('history')}
       /> */}
-      <IconButton
+      <TopToolbarIconButton
         title="Settings"
         onClick={onSettingsOpen}
         iconName="settings"
         disabled={disabledButtons.includes('settings')}
         isHidden={hiddenButtons.includes('settings')}
+        testId="settings-button"
       />
-      <IconButton
+      <TopToolbarIconButton
         title={`Help (${shortcutStr(['?', '&', 'Shift+/'])})`}
         onClick={onHelp}
         iconName="help"
         disabled={disabledButtons.includes('help')}
         isHidden={hiddenButtons.includes('help')}
+        testId="help-button"
       />
       {/* @TODO Temporary About button, when design is ready, reimplement */}
-      <IconButton
+      <TopToolbarIconButton
         title="About"
         onClick={onAboutOpen}
         iconName="about"
         disabled={disabledButtons.includes('about')}
         isHidden={hiddenButtons.includes('about')}
+        testId="about-button"
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Fullscreen mode"
         onClick={onFullscreen}
-        iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
+        iconName={isFullscreen ? 'fullscreen-exit' : 'fullscreen-enter'}
         disabled={disabledButtons.includes('fullscreen')}
         isHidden={hiddenButtons.includes('fullscreen')}
+        testId="fullscreen-mode-button"
       />
     </ControlsPanel>
-  )
-}
+  );
+};

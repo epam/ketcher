@@ -5,7 +5,7 @@ export const isGenericGroup = (group) => {
     'Acyclic Carbo',
     'Cyclic Carbo',
     'Acyclic Hetero',
-    'Cyclic Hetero'
-  ]
-  return cyclicGroups.includes(group)
-}
+    'Cyclic Hetero',
+  ];
+  return cyclicGroups.includes(group);
+};

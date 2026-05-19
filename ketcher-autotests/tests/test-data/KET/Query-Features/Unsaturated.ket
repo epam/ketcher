@@ -1,0 +1,147 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"3hpl7\",\"text\":\"Unsaturated\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -19.777709015939614,
+                        "y": 15.044444837454051,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -19.777709015939614,
+                            "y": 15.044444837454051,
+                            "z": 0
+                        },
+                        {
+                            "x": -19.777709015939614,
+                            "y": 14.678591146352977,
+                            "z": 0
+                        },
+                        {
+                            "x": -18.008000001047037,
+                            "y": 14.678591146352977,
+                            "z": 0
+                        },
+                        {
+                            "x": -18.008000001047037,
+                            "y": 15.044444837454051,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -16.259147286804094,
+                    15.47965886657219,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    -14.528681230994598,
+                    15.480144100657242,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    -15.392276593862304,
+                    15.97981389973746,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    -14.528681230994598,
+                    14.479106183199127,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    -16.259147286804094,
+                    14.474617767912415,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    -15.390093040479579,
+                    13.979557692640169,
+                    0
+                ],
+                "unsaturatedAtom": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

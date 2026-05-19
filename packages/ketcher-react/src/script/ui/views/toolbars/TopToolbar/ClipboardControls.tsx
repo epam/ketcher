@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from './IconButton'
-import { ElementWithDropdown } from './ElementWithDropdown'
+import { ElementWithDropdown } from './ElementWithDropdown';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface ClipboardControlsProps {
-  onCopy: () => void
-  onCopyMol: () => void
-  onCopyKet: () => void
-  onCopyImage: () => void
-  onPaste: () => void
-  onCut: () => void
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  shortcuts: { [key in string]: string }
+  onCopy: () => void;
+  onCopyMol: () => void;
+  onCopyKet: () => void;
+  onCopyImage: () => void;
+  onPaste: () => void;
+  onCut: () => void;
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  shortcuts: { [key in string]: string };
 }
 
 export const ClipboardControls = ({
@@ -38,33 +38,37 @@ export const ClipboardControls = ({
   onCut,
   shortcuts,
   disabledButtons,
-  hiddenButtons
+  hiddenButtons,
 }: ClipboardControlsProps) => {
   const copyButtons = [
     {
       name: 'copy',
       title: 'Copy',
-      handler: onCopy
+      handler: onCopy,
+      testId: 'copy-button',
     },
     {
       name: 'copy-mol',
       title: 'Copy as MOL',
-      handler: onCopyMol
+      handler: onCopyMol,
+      testId: 'copy-mol-button',
     },
     {
       name: 'copy-ket',
       title: 'Copy as KET',
-      handler: onCopyKet
+      handler: onCopyKet,
+      testId: 'copy-ket-button',
     },
     {
       name: 'copy-image',
       title: 'Copy Image',
-      handler: onCopyImage
-    }
-  ]
+      handler: onCopyImage,
+      testId: 'copy-image-button',
+    },
+  ];
 
   const getButtonElement = (button) => (
-    <IconButton
+    <TopToolbarIconButton
       title={button.title}
       onClick={button.handler}
       iconName={button.name}
@@ -72,15 +76,16 @@ export const ClipboardControls = ({
       disabled={disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
+      testId={button.testId}
     />
-  )
+  );
 
   const firstButtonObj = copyButtons.find(
-    (button) => !hiddenButtons.includes(button.name)
-  )
+    (button) => !hiddenButtons.includes(button.name),
+  );
   const collapsibleElements = copyButtons
     .filter((button) => button !== firstButtonObj)
-    .map((button) => getButtonElement(button))
+    .map((button) => getButtonElement(button));
 
   return (
     <>
@@ -90,16 +95,18 @@ export const ClipboardControls = ({
           dropDownElements={collapsibleElements}
         />
       )}
-      <IconButton
+      <TopToolbarIconButton
         title="Paste"
+        testId="paste-button"
         onClick={onPaste}
         iconName="paste"
         shortcut={shortcuts.paste}
         disabled={disabledButtons.includes('paste')}
         isHidden={hiddenButtons.includes('paste')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Cut"
+        testId="cut-button"
         onClick={onCut}
         iconName="cut"
         shortcut={shortcuts.cut}
@@ -107,5 +114,5 @@ export const ClipboardControls = ({
         isHidden={hiddenButtons.includes('cut')}
       />
     </>
-  )
-}
+  );
+};

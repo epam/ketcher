@@ -10,10 +10,10 @@ import {
   SGroup,
   SimpleObject,
   Struct,
-  Text
-} from 'domain/entities'
+  Text,
+} from 'domain/entities';
 
-import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers'
+import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
 
 const structs = {
   prepareContent: {
@@ -36,7 +36,7 @@ const structs = {
         pp: {
           x: 8,
           y: -9.950014667043124,
-          z: 0
+          z: 0,
         },
         neighbors: [0, 11],
         sgs: {},
@@ -49,7 +49,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -69,7 +69,7 @@ const structs = {
         pp: {
           x: 8.866012701659344,
           y: -9.450007333521562,
-          z: 0
+          z: 0,
         },
         neighbors: [1, 2],
         sgs: {},
@@ -82,7 +82,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'R#',
@@ -102,7 +102,7 @@ const structs = {
         pp: {
           x: 8.866012701659344,
           y: -8.44999266647844,
-          z: 0
+          z: 0,
         },
         neighbors: [3, 4],
         sgs: {},
@@ -115,7 +115,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -135,7 +135,7 @@ const structs = {
         pp: {
           x: 8,
           y: -7.949985332956879,
-          z: 0
+          z: 0,
         },
         neighbors: [6, 5],
         sgs: {},
@@ -148,7 +148,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -168,7 +168,7 @@ const structs = {
         pp: {
           x: 7.133987298340656,
           y: -8.44999266647844,
-          z: 0
+          z: 0,
         },
         neighbors: [8, 7],
         sgs: {},
@@ -181,7 +181,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'R#',
@@ -201,7 +201,7 @@ const structs = {
         pp: {
           x: 7.133987298340656,
           y: -9.450007333521562,
-          z: 0
+          z: 0,
         },
         neighbors: [10, 9],
         sgs: {},
@@ -214,8 +214,8 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
-      }
+        pseudo: '',
+      },
     ],
     bonds: [
       {
@@ -235,8 +235,8 @@ const structs = {
         center: {
           x: 8.433006350829675,
           y: -9.700011000282347,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 1,
@@ -255,8 +255,8 @@ const structs = {
         center: {
           x: 8.866012701659347,
           y: -8.950000000000005,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 2,
@@ -275,8 +275,8 @@ const structs = {
         center: {
           x: 8.433006350829675,
           y: -8.199988999717663,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 3,
@@ -295,8 +295,8 @@ const structs = {
         center: {
           x: 7.566993649170332,
           y: -8.199988999717663,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 4,
@@ -315,8 +315,8 @@ const structs = {
         center: {
           x: 7.133987298340659,
           y: -8.950000000000005,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 5,
@@ -335,84 +335,84 @@ const structs = {
         center: {
           x: 7.566993649170332,
           y: -9.700011000282347,
-          z: 0
-        }
-      }
+          z: 0,
+        },
+      },
     ],
     frags: [
       {
-        stereoAtoms: []
-      }
+        stereoAtoms: [],
+      },
     ],
     halfBonds: [
       {
         begin: 0,
         end: 1,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 1,
         end: 0,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 1,
         end: 2,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 2,
         end: 1,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 2,
         end: 3,
-        bid: 2
+        bid: 2,
       },
       {
         begin: 3,
         end: 2,
-        bid: 2
+        bid: 2,
       },
       {
         begin: 3,
         end: 4,
-        bid: 3
+        bid: 3,
       },
       {
         begin: 4,
         end: 3,
-        bid: 3
+        bid: 3,
       },
       {
         begin: 4,
         end: 5,
-        bid: 4
+        bid: 4,
       },
       {
         begin: 5,
         end: 4,
-        bid: 4
+        bid: 4,
       },
       {
         begin: 5,
         end: 0,
-        bid: 5
+        bid: 5,
       },
       {
         begin: 0,
         end: 5,
-        bid: 5
-      }
+        bid: 5,
+      },
     ],
     loops: [
       {
         aromatic: false,
         convex: true,
         dblBonds: 3,
-        hbs: [1, 11, 9, 7, 5, 3]
-      }
+        hbs: [1, 11, 9, 7, 5, 3],
+      },
     ],
     rxnArrows: [
       {
@@ -421,24 +421,24 @@ const structs = {
           {
             x: 9.05,
             y: -7.775000000000001,
-            z: 0
+            z: 0,
           },
           {
             x: 11.05,
             y: -7.775000000000001,
-            z: 0
-          }
-        ]
-      }
+            z: 0,
+          },
+        ],
+      },
     ],
     rxnPluses: [
       {
         pp: {
           x: 9.725,
           y: -9.025000000000002,
-          z: 0
-        }
-      }
+          z: 0,
+        },
+      },
     ],
     simpleObjects: [
       {
@@ -447,27 +447,49 @@ const structs = {
           {
             x: 5.949999999999999,
             y: -11.3,
-            z: 0
+            z: 0,
           },
           {
             x: 12.1,
             y: -6.750000000000001,
-            z: 0
-          }
-        ]
-      }
+            z: 0,
+          },
+        ],
+      },
     ],
     texts: [
       {
         content:
-          '{"blocks":[{"key":"932pu","text":"Test","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":4,"style":"CUSTOM_FONT_SIZE_20px"},{"offset":0,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}}],"entityMap":{}}',
+          '{"blocks":[{"key":"dikr0","text":"Test text","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
         position: {
-          x: 11.575000000000001,
-          y: -6.125000000000001,
-          z: 0
-        }
-      }
-    ]
+          x: 6.1250433921813965,
+          y: -9.850043392181398,
+          z: 0,
+        },
+        pos: [
+          {
+            x: 6.1250433921813965,
+            y: -9.850043392181398,
+            z: 0,
+          },
+          {
+            x: 6.1250433921813965,
+            y: -10.211157727241517,
+            z: 0,
+          },
+          {
+            x: 7.334906673431396,
+            y: -10.211157727241517,
+            z: 0,
+          },
+          {
+            x: 7.334906673431396,
+            y: -9.850043392181398,
+            z: 0,
+          },
+        ],
+      },
+    ],
   },
   moleculeSgroup: {
     atoms: [
@@ -489,7 +511,7 @@ const structs = {
         pp: {
           x: 3.841456392727846,
           y: -18.14948962361272,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -502,7 +524,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'S',
@@ -522,7 +544,7 @@ const structs = {
         pp: {
           x: 3.8600141530791876,
           y: -16.887561919721445,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -535,7 +557,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'S',
@@ -555,7 +577,7 @@ const structs = {
         pp: {
           x: 4.750786649943616,
           y: -16.869004159370103,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -568,7 +590,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'S',
@@ -588,7 +610,7 @@ const structs = {
         pp: {
           x: 5.029153055213749,
           y: -18.205162904666746,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -601,7 +623,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'S',
@@ -621,7 +643,7 @@ const structs = {
         pp: {
           x: 5.901367791726835,
           y: -18.130931863261377,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -634,7 +656,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'S',
@@ -654,7 +676,7 @@ const structs = {
         pp: {
           x: 6.012714353834888,
           y: -16.664868795505342,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -667,30 +689,30 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
-      }
+        pseudo: '',
+      },
     ],
     frags: [{}, {}, {}, {}, {}, {}],
     sgroups: [
       {
-        type: 'GEN'
+        type: 'GEN',
       },
       {
-        type: 'MUL'
+        type: 'MUL',
       },
       {
-        type: 'SRU'
+        type: 'SRU',
       },
       {
-        type: 'MUL'
+        type: 'MUL',
       },
       {
-        type: 'SUP'
+        type: 'SUP',
       },
       {
-        type: 'SRU'
-      }
-    ]
+        type: 'SRU',
+      },
+    ],
   },
   moleculeContent: {
     atoms: [
@@ -712,7 +734,7 @@ const structs = {
         pp: {
           x: 3.8750000000000027,
           y: -12.375000000000007,
-          z: 0
+          z: 0,
         },
         neighbors: [],
         sgs: {},
@@ -725,7 +747,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -745,7 +767,7 @@ const structs = {
         pp: {
           x: 3.59998533295688,
           y: -12.075000000000006,
-          z: 0
+          z: 0,
         },
         neighbors: [0, 11],
         sgs: {},
@@ -758,7 +780,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -778,7 +800,7 @@ const structs = {
         pp: {
           x: 4.099992666478442,
           y: -12.94101270165935,
-          z: 0
+          z: 0,
         },
         neighbors: [2, 1],
         sgs: {},
@@ -791,7 +813,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -811,7 +833,7 @@ const structs = {
         pp: {
           x: 5.100007333521565,
           y: -12.94101270165935,
-          z: 0
+          z: 0,
         },
         neighbors: [4, 3],
         sgs: {},
@@ -824,7 +846,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -844,7 +866,7 @@ const structs = {
         pp: {
           x: 5.6000146670431254,
           y: -12.075000000000006,
-          z: 0
+          z: 0,
         },
         neighbors: [5, 12, 6],
         sgs: {},
@@ -857,13 +879,13 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: 'abs',
         stereoParity: 1,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'L#',
         fragment: 1,
         atomList: {
-          ids: [4, 3]
+          ids: [4, 3],
         },
         attpnt: null,
         isotope: 0,
@@ -879,7 +901,7 @@ const structs = {
         pp: {
           x: 5.100007333521565,
           y: -11.208987298340663,
-          z: 0
+          z: 0,
         },
         neighbors: [7, 8],
         sgs: {},
@@ -892,7 +914,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -912,7 +934,7 @@ const structs = {
         pp: {
           x: 4.099992666478442,
           y: -11.208987298340663,
-          z: 0
+          z: 0,
         },
         neighbors: [10, 9],
         sgs: {},
@@ -925,7 +947,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -945,7 +967,7 @@ const structs = {
         pp: {
           x: 6.6000146670431254,
           y: -12.075000000000006,
-          z: 0
+          z: 0,
         },
         neighbors: [13],
         sgs: {},
@@ -958,8 +980,8 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
-      }
+        pseudo: '',
+      },
     ],
     bonds: [
       {
@@ -979,8 +1001,8 @@ const structs = {
         center: {
           x: 3.849988999717661,
           y: -12.508006350829678,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 2,
@@ -999,8 +1021,8 @@ const structs = {
         center: {
           x: 4.600000000000003,
           y: -12.94101270165935,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 3,
@@ -1019,8 +1041,8 @@ const structs = {
         center: {
           x: 5.350011000282345,
           y: -12.508006350829678,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 4,
@@ -1039,8 +1061,8 @@ const structs = {
         center: {
           x: 5.350011000282345,
           y: -11.641993649170335,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 5,
@@ -1059,8 +1081,8 @@ const structs = {
         center: {
           x: 4.600000000000003,
           y: -11.208987298340663,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 6,
@@ -1079,8 +1101,8 @@ const structs = {
         center: {
           x: 3.849988999717661,
           y: -11.641993649170335,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 4,
@@ -1099,91 +1121,91 @@ const structs = {
         center: {
           x: 6.1000146670431254,
           y: -12.075000000000006,
-          z: 0
-        }
-      }
+          z: 0,
+        },
+      },
     ],
     frags: [{}, {}],
     halfBonds: [
       {
         begin: 1,
         end: 2,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 2,
         end: 1,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 2,
         end: 3,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 3,
         end: 2,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 3,
         end: 4,
-        bid: 2
+        bid: 2,
       },
       {
         begin: 4,
         end: 3,
-        bid: 2
+        bid: 2,
       },
       {
         begin: 4,
         end: 5,
-        bid: 3
+        bid: 3,
       },
       {
         begin: 5,
         end: 4,
-        bid: 3
+        bid: 3,
       },
       {
         begin: 5,
         end: 6,
-        bid: 4
+        bid: 4,
       },
       {
         begin: 6,
         end: 5,
-        bid: 4
+        bid: 4,
       },
       {
         begin: 6,
         end: 1,
-        bid: 5
+        bid: 5,
       },
       {
         begin: 1,
         end: 6,
-        bid: 5
+        bid: 5,
       },
       {
         begin: 4,
         end: 7,
-        bid: 6
+        bid: 6,
       },
       {
         begin: 7,
         end: 4,
-        bid: 6
-      }
+        bid: 6,
+      },
     ],
     loops: [
       {
         hbs: [1, 11, 9, 7, 5, 3],
         dblBonds: 3,
         aromatic: false,
-        convex: true
-      }
-    ]
+        convex: true,
+      },
+    ],
   },
   contentRgroup: {
     atoms: [
@@ -1205,7 +1227,7 @@ const structs = {
         pp: {
           x: 6.295977383084059,
           y: -18.276046879284927,
-          z: 0
+          z: 0,
         },
         neighbors: [3],
         sgs: {},
@@ -1218,7 +1240,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -1238,7 +1260,7 @@ const structs = {
         pp: {
           x: 5.0561045992030555,
           y: -17.068378583296937,
-          z: 0
+          z: 0,
         },
         neighbors: [0],
         sgs: {},
@@ -1251,7 +1273,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'C',
@@ -1271,7 +1293,7 @@ const structs = {
         pp: {
           x: 6.779044701479256,
           y: -16.9717651196179,
-          z: 0
+          z: 0,
         },
         neighbors: [5],
         sgs: {},
@@ -1284,7 +1306,7 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
+        pseudo: '',
       },
       {
         label: 'R#',
@@ -1304,7 +1326,7 @@ const structs = {
         pp: {
           x: 5.61390269182741,
           y: -17.39042346222707,
-          z: 0
+          z: 0,
         },
         neighbors: [2, 4, 1],
         sgs: {},
@@ -1317,8 +1339,8 @@ const structs = {
         rxnFragmentType: -1,
         stereoLabel: null,
         stereoParity: 0,
-        pseudo: ''
-      }
+        pseudo: '',
+      },
     ],
     bonds: [
       {
@@ -1338,8 +1360,8 @@ const structs = {
         center: {
           x: 5.335003645515233,
           y: -17.229401022762005,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 3,
@@ -1358,8 +1380,8 @@ const structs = {
         center: {
           x: 5.954940037455735,
           y: -17.833235170755998,
-          z: 0
-        }
+          z: 0,
+        },
       },
       {
         begin: 3,
@@ -1378,41 +1400,41 @@ const structs = {
         center: {
           x: 6.196473696653333,
           y: -17.181094290922484,
-          z: 0
-        }
-      }
+          z: 0,
+        },
+      },
     ],
     halfBonds: [
       {
         begin: 1,
         end: 3,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 3,
         end: 1,
-        bid: 0
+        bid: 0,
       },
       {
         begin: 3,
         end: 0,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 0,
         end: 3,
-        bid: 1
+        bid: 1,
       },
       {
         begin: 3,
         end: 2,
-        bid: 2
+        bid: 2,
       },
       {
         begin: 2,
         end: 3,
-        bid: 2
-      }
+        bid: 2,
+      },
     ],
     frags: [{}],
     rgroups: [
@@ -1420,78 +1442,78 @@ const structs = {
         id: 14,
         resth: false,
         range: '',
-        ifthen: 0
-      }
-    ]
-  }
-}
+        ifthen: 0,
+      },
+    ],
+  },
+};
 
 const initStruct = (structName) => {
-  const structData = structs[structName]
-  const struct = new Struct()
+  const structData = structs[structName];
+  const struct = new Struct();
   Object.keys(structData).forEach((key) => {
     switch (key) {
       case 'atoms':
-        structData.atoms.forEach((props) => struct.atoms.add(new Atom(props)))
-        break
+        structData.atoms.forEach((props) => struct.atoms.add(new Atom(props)));
+        break;
       case 'bonds':
-        structData.bonds.forEach((props) => struct.bonds.add(new Bond(props)))
-        break
+        structData.bonds.forEach((props) => struct.bonds.add(new Bond(props)));
+        break;
       case 'frags':
         structData.frags.forEach((props) =>
-          struct.frags.add(new Fragment(props.stereoAtoms))
-        )
-        break
+          struct.frags.add(new Fragment(props.stereoAtoms)),
+        );
+        break;
       case 'halfBonds':
         structData.halfBonds.forEach((props) =>
-          struct.halfBonds.add(new HalfBond(props.begin, props.end, props.bid))
-        )
-        break
+          struct.halfBonds.add(new HalfBond(props.begin, props.end, props.bid)),
+        );
+        break;
       case 'loops':
         structData.loops.forEach((props) =>
-          struct.loops.add(new Loop(props.hbs, struct, props.convex))
-        )
-        break
+          struct.loops.add(new Loop(props.hbs, struct, props.convex)),
+        );
+        break;
       case 'rxnArrows':
         structData.rxnArrows.forEach((props) =>
-          struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(props)))
-        )
-        break
+          struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(props))),
+        );
+        break;
       case 'rxnPluses':
         structData.rxnPluses.forEach((props) =>
-          struct.rxnPluses.add(new RxnPlus(getNodeWithInvertedYCoord(props)))
-        )
-        break
+          struct.rxnPluses.add(new RxnPlus(getNodeWithInvertedYCoord(props))),
+        );
+        break;
       case 'simpleObjects':
         structData.simpleObjects.forEach((props) =>
           struct.simpleObjects.add(
-            new SimpleObject(getNodeWithInvertedYCoord(props))
-          )
-        )
-        break
+            new SimpleObject(getNodeWithInvertedYCoord(props)),
+          ),
+        );
+        break;
       case 'sgroups':
         structData.sgroups.forEach((props) =>
-          struct.sgroups.add(new SGroup(props.type))
-        )
-        break
+          struct.sgroups.add(new SGroup(props.type)),
+        );
+        break;
       case 'rgroups':
         structData.rgroups.forEach(({ id, ...props }) => {
-          const rGroup = new RGroup(props)
-          struct.rgroups.set(id, rGroup)
-          rGroup.frags.add(0)
-        })
-        break
+          const rGroup = new RGroup(props);
+          struct.rgroups.set(id, rGroup);
+          rGroup.frags.add(0);
+        });
+        break;
       case 'texts':
         structData.texts.forEach((props) =>
-          struct.texts.add(new Text(getNodeWithInvertedYCoord(props)))
-        )
-        break
+          struct.texts.add(new Text(getNodeWithInvertedYCoord(props))),
+        );
+        break;
     }
-  })
-  return struct
-}
+  });
+  return struct;
+};
 
-export const moleculeSgroupStruct = initStruct('moleculeSgroup')
-export const contentRgroupStruct = initStruct('contentRgroup')
-export const moleculeContentStruct = initStruct('moleculeContent')
-export const prepareStruct = initStruct('prepareContent')
+export const moleculeSgroupStruct = initStruct('moleculeSgroup');
+export const contentRgroupStruct = initStruct('contentRgroup');
+export const moleculeContentStruct = initStruct('moleculeContent');
+export const prepareStruct = initStruct('prepareContent');

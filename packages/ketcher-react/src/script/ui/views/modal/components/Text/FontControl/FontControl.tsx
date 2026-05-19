@@ -14,56 +14,87 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { useClickOutside } from '../../../../../../../hooks/useClickOutside';
+import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical';
+import {
+  $patchStyleText,
+  $getSelectionStyleValueForProperty,
+} from '@lexical/selection';
 
-import classes from './FontControl.module.less'
+import classes from './FontControl.module.less';
 
-import { range } from 'lodash/fp'
+import { range } from 'lodash/fp';
 
-export const FontControl = ({ editorState, setEditorState, styles }) => {
-  const defaultFontSize = '13px'
-  const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false)
-  const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize)
+export const FontControl = ({ editor }: { editor: LexicalEditor }) => {
+  const defaultFontSize = '13px';
+  const [isShowingFontSizeMenu, setIsShowingFontSizeMenu] = useState(false);
+  const [currentFontSize, setCurrentFontSize] = useState(defaultFontSize);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const onClickOutsideCloseDrowndown = (): void =>
+    setIsShowingFontSizeMenu(false);
 
-  const setFontSize = (e, value) => {
-    e.preventDefault()
-    setCurrentFontSize(value)
-    const newEditorState = styles.fontSize.remove(editorState)
-    setEditorState(styles.fontSize.add(newEditorState, value))
-    setIsShowingFontSizeMenu(false)
-  }
+  // TODO suppressed after upgrade to react 19. Need to fix
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  useClickOutside(wrapperRef, onClickOutsideCloseDrowndown);
 
-  const currentStyle = styles.fontSize.current(editorState)
+  const setFontSize = (e, value: string) => {
+    e.preventDefault();
+    setCurrentFontSize(value);
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        $patchStyleText(selection, { 'font-size': value });
+      }
+    });
+    setIsShowingFontSizeMenu(false);
+  };
 
   useEffect(() => {
-    setCurrentFontSize(currentStyle || defaultFontSize)
-  }, [currentStyle])
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          const fontSize = $getSelectionStyleValueForProperty(
+            selection,
+            'font-size',
+            defaultFontSize,
+          );
+          setCurrentFontSize(fontSize);
+        }
+      });
+    });
+  }, [editor]);
 
-  const MIN_FONT_SIZE = 4
-  const MAX_FONT_SIZE = 144
-  const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1)
+  const MIN_FONT_SIZE = 4;
+  const MAX_FONT_SIZE = 144;
+  const fontSizes = range(MIN_FONT_SIZE, MAX_FONT_SIZE + 1);
 
   const fontSizeOptions = useMemo(
     () =>
       fontSizes.map((fontSize) => (
-        <div
+        <button
           key={fontSize}
+          type="button"
           className={classes.fontSizeOption}
           onMouseDown={(e) => setFontSize(e, `${fontSize}px`)}
+          data-testid={`${fontSize}-option`}
         >
           {fontSize}
-        </div>
+        </button>
       )),
-    [isShowingFontSizeMenu]
-  )
+    [isShowingFontSizeMenu],
+  );
 
   return (
-    <div>
+    <div ref={wrapperRef}>
       <button
+        data-testid="font-size-button"
         className={classes.fontBtn}
         onMouseDown={(e) => {
-          e.preventDefault()
-          setIsShowingFontSizeMenu(!isShowingFontSizeMenu)
+          e.preventDefault();
+          setIsShowingFontSizeMenu(!isShowingFontSizeMenu);
         }}
       >
         {parseFloat(currentFontSize)}
@@ -72,7 +103,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
         <div className={classes.fontSizeMenu}>{fontSizeOptions}</div>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default FontControl
+export default FontControl;

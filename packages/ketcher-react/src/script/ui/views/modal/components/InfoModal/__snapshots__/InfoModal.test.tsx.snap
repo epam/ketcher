@@ -1,0 +1,365 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <dialog
+        class="dialog infoModal"
+        data-testid="info-modal-window"
+        open=""
+        tabindex="-1"
+      >
+        <header
+          class="header"
+        >
+          <div>
+            Error Message
+          </div>
+          <div
+            class="btnContainer"
+          >
+            <button
+              class="buttonTop"
+              data-testid="close-window-button"
+            >
+              <icon-close.svg
+                class="closeButton"
+              />
+            </button>
+          </div>
+        </header>
+        <div
+          class="body withMargin"
+          data-testid="info-modal-body"
+        >
+          <div>
+            <div
+              class="pasteErrorModalBody"
+              data-testid="error-message-body"
+            >
+              <div>
+                Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
+              </div>
+              <div
+                class="shortcutsBlock"
+              >
+                <div
+                  class="shortcuts"
+                >
+                  <div
+                    class="shortcut"
+                    data-testid="infoModal-shortcut-for-paste"
+                  >
+                    CTRL/Cmd + V
+                  </div>
+                  <div>
+                    for paste
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer
+          class="footer"
+        >
+          <button
+            class="ok"
+            data-testid="info-modal-close"
+          >
+            Close
+          </button>
+        </footer>
+      </dialog>
+    </div>
+  </body>,
+  "container": <div>
+    <dialog
+      class="dialog infoModal"
+      data-testid="info-modal-window"
+      open=""
+      tabindex="-1"
+    >
+      <header
+        class="header"
+      >
+        <div>
+          Error Message
+        </div>
+        <div
+          class="btnContainer"
+        >
+          <button
+            class="buttonTop"
+            data-testid="close-window-button"
+          >
+            <icon-close.svg
+              class="closeButton"
+            />
+          </button>
+        </div>
+      </header>
+      <div
+        class="body withMargin"
+        data-testid="info-modal-body"
+      >
+        <div>
+          <div
+            class="pasteErrorModalBody"
+            data-testid="error-message-body"
+          >
+            <div>
+              Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
+            </div>
+            <div
+              class="shortcutsBlock"
+            >
+              <div
+                class="shortcuts"
+              >
+                <div
+                  class="shortcut"
+                  data-testid="infoModal-shortcut-for-paste"
+                >
+                  CTRL/Cmd + V
+                </div>
+                <div>
+                  for paste
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer
+        class="footer"
+      >
+        <button
+          class="ok"
+          data-testid="info-modal-close"
+        >
+          Close
+        </button>
+      </footer>
+    </dialog>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "store": {
+    "@@observable": [Function],
+    "dispatch": [Function],
+    "getState": [Function],
+    "replaceReducer": [Function],
+    "subscribe": [Function],
+  },
+  "unmount": [Function],
+}
+`;
+
+exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <dialog
+        class="dialog infoModal"
+        data-testid="info-modal-window"
+        open=""
+        tabindex="-1"
+      >
+        <header
+          class="header"
+        >
+          <div>
+            Error Message
+          </div>
+          <div
+            class="btnContainer"
+          >
+            <button
+              class="buttonTop"
+              data-testid="close-window-button"
+            >
+              <icon-close.svg
+                class="closeButton"
+              />
+            </button>
+          </div>
+        </header>
+        <div
+          class="body withMargin"
+          data-testid="info-modal-body"
+        >
+          <div>
+            This action is unavailable via menu. Instead, use shortcut to Cut.
+          </div>
+        </div>
+        <footer
+          class="footer"
+        >
+          <button
+            class="ok"
+            data-testid="info-modal-close"
+          >
+            Close
+          </button>
+        </footer>
+      </dialog>
+    </div>
+  </body>,
+  "container": <div>
+    <dialog
+      class="dialog infoModal"
+      data-testid="info-modal-window"
+      open=""
+      tabindex="-1"
+    >
+      <header
+        class="header"
+      >
+        <div>
+          Error Message
+        </div>
+        <div
+          class="btnContainer"
+        >
+          <button
+            class="buttonTop"
+            data-testid="close-window-button"
+          >
+            <icon-close.svg
+              class="closeButton"
+            />
+          </button>
+        </div>
+      </header>
+      <div
+        class="body withMargin"
+        data-testid="info-modal-body"
+      >
+        <div>
+          This action is unavailable via menu. Instead, use shortcut to Cut.
+        </div>
+      </div>
+      <footer
+        class="footer"
+      >
+        <button
+          class="ok"
+          data-testid="info-modal-close"
+        >
+          Close
+        </button>
+      </footer>
+    </dialog>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "store": {
+    "@@observable": [Function],
+    "dispatch": [Function],
+    "getState": [Function],
+    "replaceReducer": [Function],
+    "subscribe": [Function],
+  },
+  "unmount": [Function],
+}
+`;

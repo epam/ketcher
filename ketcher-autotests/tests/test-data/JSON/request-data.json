@@ -1,0 +1,14 @@
+{
+  "struct": "{\n    \"root\": {\n        \"nodes\": [\n            {\n                \"$ref\": \"mol0\"\n            }\n        ]\n    },\n    \"mol0\": {\n        \"type\": \"molecule\",\n        \"atoms\": [\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    10.284849152128567,\n                    -7.350074417174607,\n                    0\n                ]\n            },\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    12.015150847871434,\n                    -7.349589229177203,\n                    0\n                ]\n            },\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    11.15163750949124,\n                    -6.849966888850188,\n                    0\n                ]\n            },\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    12.015150847871434,\n                    -8.350532067822149,\n                    0\n                ]\n            },\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    10.284849152128567,\n                    -8.355020056798137,\n                    0\n                ]\n            },\n            {\n                \"label\": \"C\",\n                \"location\": [\n                    11.153820855479559,\n                    -8.850033111149813,\n                    0\n                ]\n            }\n        ],\n        \"bonds\": [\n            {\n                \"type\": 2,\n                \"atoms\": [\n                    2,\n                    0\n                ]\n            },\n            {\n                \"type\": 2,\n                \"atoms\": [\n                    3,\n                    1\n                ]\n            },\n            {\n                \"type\": 1,\n                \"atoms\": [\n                    0,\n                    4\n                ]\n            },\n            {\n                \"type\": 1,\n                \"atoms\": [\n                    1,\n                    2\n                ]\n            },\n            {\n                \"type\": 2,\n                \"atoms\": [\n                    4,\n                    5\n                ]\n            },\n            {\n                \"type\": 1,\n                \"atoms\": [\n                    5,\n                    3\n                ]\n            }\n        ]\n    }\n}",
+  "output_format": "chemical/x-mdl-molfile",
+  "options": {
+    "smart-layout": true,
+    "ignore-stereochemistry-errors": true,
+    "mass-skip-error-on-pseudoatoms": false,
+    "gross-formula-add-rsites": true,
+    "aromatize-skip-superatoms": true,
+    "dearomatize-on-load": false,
+    "gross-formula-add-isotopes": true,
+    "molfile-saving-mode": "3000"
+  }
+}

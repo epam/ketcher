@@ -14,535 +14,1120 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, AtomListParams } from './atomList'
-import { Point, Vec2 } from './vec2'
+import { AtomList, AtomListParams } from './atomList';
+import { Point, Vec2 } from './vec2';
 
-import { Elements } from 'domain/constants'
-import { Pile } from './pile'
+import { Elements } from 'domain/constants';
+import { Pile } from './pile';
+import { Struct } from './struct';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
+import { isNumber } from 'lodash';
+import { AtomCIP } from './types';
+import { SGroup } from 'domain/entities/sgroup';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
-function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return typeof value !== 'undefined' ? value : defaultValue
-}
+/**
+ * Return unions of Pick.
+ * Difference with <Partial<Pick<O,P>>>  that this type always require at least one property
+ *
+ * Example:
+ * interface O {
+ *   field1 : 1;
+ *   field2: 2;
+ *   field3: 3
+ * }
+ * SubsetOfFields<O, 'field1'| 'field2'>
+ * @returns Pick<O, "field1"> | Pick<O, "field2">
+ */
+type SubsetOfFields<O, P extends keyof O> = P extends P ? Pick<O, P> : never;
 
-function getPseudo(label: string) {
-  return !Elements.get(label) &&
-    label !== 'L' &&
-    label !== 'L#' &&
-    label !== 'R#'
-    ? label
-    : ''
-}
-
-export function radicalElectrons(radical: any) {
-  radical -= 0
-  if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1
-  else if (
-    radical === Atom.PATTERN.RADICAL.SINGLET ||
-    radical === Atom.PATTERN.RADICAL.TRIPLET
-  ) {
-    return 2
-  } else {
-    return 0
-  }
+export enum AttachmentPoints {
+  None = 0,
+  FirstSideOnly = 1,
+  SecondSideOnly = 2,
+  BothSides = 3,
 }
 
 export enum StereoLabel {
   Abs = 'abs',
   And = '&',
-  Or = 'or'
+  Or = 'or',
+}
+
+export type Aromaticity = 'aromatic' | 'aliphatic';
+export type Chirality = 'clockwise' | 'anticlockwise';
+
+export interface AtomQueryProperties {
+  aromaticity?: Aromaticity | null;
+  ringMembership?: number | null;
+  ringSize?: number | null;
+  connectivity?: number | null;
+  chirality?: Chirality | null;
+  customQuery?: string | null;
 }
 
 export interface AtomAttributes {
-  stereoParity?: number
-  stereoLabel?: string | null
-  exactChangeFlag?: number
-  rxnFragmentType?: number
-  invRet?: number
-  aam?: number
-  hCount?: number
-  unsaturatedAtom?: number
-  substitutionCount?: number
-  ringBondCount?: number
-  explicitValence?: number
-  attpnt?: any
-  rglabel?: string | null
-  charge?: number
-  radical?: number
-  isotope?: number
-  alias?: string | null
-  pseudo?: string
-  atomList?: AtomListParams | null
-  label: string
-  fragment?: number
-  pp?: Point
-  implicitH?: number
+  stereoParity?: number;
+  stereoLabel?: string | null;
+  exactChangeFlag?: number;
+  rxnFragmentType?: number;
+  invRet?: number;
+  aam?: number;
+  hCount?: number;
+  isPreview?: boolean;
+  unsaturatedAtom?: number;
+  substitutionCount?: number;
+  ringBondCount?: number;
+  queryProperties?: AtomQueryProperties;
+  explicitValence?: number;
+  /**
+   * Rgroup member attachment points
+   * Its value is indigo-converted `ATTCHPT`
+   * Ref: https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf P15
+   * Note: value `-1` has been converted to `3` by indigo.
+   */
+  attachmentPoints?: AttachmentPoints | null;
+  rglabel?: string | null;
+  charge?: number | null;
+  radical?: number;
+  cip?: AtomCIP | null;
+  isotope?: number | null;
+  alias?: string | null;
+  pseudo?: string;
+  atomList?: AtomListParams | null;
+  label: string;
+  fragment?: number;
+  pp?: Point;
+  implicitH?: number;
+  implicitHCount?: number | null;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class Atom {
-  static PATTERN = {
+export type AtomPropertiesInContextMenu = SubsetOfFields<
+  AtomAttributes,
+  | 'hCount'
+  | 'ringBondCount'
+  | 'substitutionCount'
+  | 'unsaturatedAtom'
+  | 'implicitHCount'
+>;
+
+type ValenceContext = {
+  label: string;
+  charge: number;
+  connectionCount: number;
+  radicalCount: number;
+  absCharge: number;
+};
+
+type ValenceComputationResult = {
+  valence: number;
+  hydrogenCount: number;
+};
+
+export class Atom extends BaseMicromoleculeEntity {
+  static readonly PATTERN = {
     RADICAL: {
       NONE: 0,
       SINGLET: 1,
       DOUPLET: 2,
-      TRIPLET: 3
+      TRIPLET: 3,
     },
     STEREO_PARITY: {
       NONE: 0,
       ODD: 1,
       EVEN: 2,
-      EITHER: 3
-    }
-  }
+      EITHER: 3,
+    },
+  };
 
   // TODO: rename
-  static attrlist = {
+  static readonly attrlist = {
     alias: null,
     label: 'C',
-    isotope: 0,
+    isotope: null,
     radical: 0,
-    charge: 0,
+    cip: null,
+    charge: null,
     explicitValence: -1,
     ringBondCount: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
     hCount: 0,
+    queryProperties: {
+      aromaticity: null,
+      ringMembership: null,
+      ringSize: null,
+      connectivity: null,
+      chirality: null,
+      customQuery: null,
+    },
     atomList: null,
     invRet: 0,
     exactChangeFlag: 0,
     rglabel: null,
-    attpnt: null,
+    attachmentPoints: null,
     aam: 0,
+    isPreview: false,
     // enhanced stereo
     stereoLabel: null,
-    stereoParity: 0
+    stereoParity: 0,
+    implicitHCount: null,
+  };
+
+  label: string;
+  fragment: number;
+  atomList: AtomList | null;
+  attachmentPoints: AttachmentPoints | null;
+  isotope: number | null;
+  isPreview: boolean;
+  hCount: number;
+  radical: number;
+  cip: AtomCIP | null;
+  charge: number | null;
+  explicitValence: number;
+  ringBondCount: number;
+  queryProperties: AtomQueryProperties;
+  unsaturatedAtom: number;
+  substitutionCount: number;
+  valence: number;
+  implicitH: number;
+  implicitHCount: number | null;
+  pp: Vec2;
+  neighbors: Array<number>;
+  sgs: Pile<number>;
+  badConn: boolean;
+  alias: string | null;
+  rglabel: string | null;
+  aam: number;
+  invRet: number;
+  exactChangeFlag: number;
+  rxnFragmentType: number;
+  stereoLabel?: string | null;
+  stereoParity: number;
+  hasImplicitH?: boolean;
+  pseudo!: string;
+
+  /** @deprecated */
+  get attpnt() {
+    return this.attachmentPoints;
   }
 
-  label: string
-  fragment: number
-  atomList: AtomList | null
-  attpnt: any
-  isotope: number
-  hCount: number
-  radical: number
-  charge: number
-  explicitValence: number
-  ringBondCount: number
-  unsaturatedAtom: number
-  substitutionCount: number
-  valence: number
-  implicitH: number
-  pp: Vec2
-  neighbors: Array<number>
-  sgs: Pile<any>
-  badConn: boolean
-  alias: string | null
-  rglabel: string | null
-  aam: number
-  invRet: number
-  exactChangeFlag: number
-  rxnFragmentType: number
-  stereoLabel?: string | null
-  stereoParity: number
-  hasImplicitH?: boolean
-  pseudo!: string
-
   constructor(attributes: AtomAttributes) {
-    this.label = attributes.label
-    this.fragment = getValueOrDefault(attributes.fragment, -1)
-    this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias)
-    this.isotope = getValueOrDefault(attributes.isotope, Atom.attrlist.isotope)
-    this.radical = getValueOrDefault(attributes.radical, Atom.attrlist.radical)
-    this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge)
-    this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel)
-    this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt)
+    super(attributes?.initiallySelected);
+    this.label = attributes.label;
+    this.fragment = getValueOrDefault(attributes.fragment, -1);
+    this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias);
+    this.isotope = getValueOrDefault(attributes.isotope, Atom.attrlist.isotope);
+    this.radical = getValueOrDefault(attributes.radical, Atom.attrlist.radical);
+    this.cip = getValueOrDefault(attributes.cip, Atom.attrlist.cip);
+    this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge);
+    this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel);
+    this.attachmentPoints = getValueOrDefault(
+      attributes.attachmentPoints,
+      Atom.attrlist.attachmentPoints,
+    );
+    this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null);
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
-      Atom.attrlist.explicitValence
-    )
+      Atom.attrlist.explicitValence,
+    );
+    this.isPreview = getValueOrDefault(
+      attributes.isPreview,
+      Atom.attrlist.isPreview,
+    );
 
-    this.valence = 0
-    this.implicitH = attributes.implicitH || 0 // implicitH is not an attribute
-    this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2()
+    this.valence = 0;
+    this.implicitH = attributes.implicitHCount ?? attributes.implicitH ?? 0; // implicitH is not an attribute
+    this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2();
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
     //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom
     // TODO: make a consistency check on atom/s-group assignments
-    this.sgs = new Pile()
+    this.sgs = new Pile();
 
     // query
     this.ringBondCount = getValueOrDefault(
       attributes.ringBondCount,
-      Atom.attrlist.ringBondCount
-    )
+      Atom.attrlist.ringBondCount,
+    );
     this.substitutionCount = getValueOrDefault(
       attributes.substitutionCount,
-      Atom.attrlist.substitutionCount
-    )
+      Atom.attrlist.substitutionCount,
+    );
     this.unsaturatedAtom = getValueOrDefault(
       attributes.unsaturatedAtom,
-      Atom.attrlist.unsaturatedAtom
-    )
-    this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount)
+      Atom.attrlist.unsaturatedAtom,
+    );
+    this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount);
+    this.queryProperties = {};
+    for (const property in Atom.attrlist.queryProperties) {
+      this.queryProperties[property] = getValueOrDefault(
+        attributes.queryProperties?.[property],
+        Atom.attrlist.queryProperties[property],
+      );
+    }
 
     // reaction
-    this.aam = getValueOrDefault(attributes.aam, Atom.attrlist.aam)
-    this.invRet = getValueOrDefault(attributes.invRet, Atom.attrlist.invRet)
+    this.aam = getValueOrDefault(attributes.aam, Atom.attrlist.aam);
+    this.invRet = getValueOrDefault(attributes.invRet, Atom.attrlist.invRet);
     this.exactChangeFlag = getValueOrDefault(
       attributes.exactChangeFlag,
-      Atom.attrlist.exactChangeFlag
-    )
-    this.rxnFragmentType = getValueOrDefault(attributes.rxnFragmentType, -1)
+      Atom.attrlist.exactChangeFlag,
+    );
+    this.rxnFragmentType = getValueOrDefault(attributes.rxnFragmentType, -1);
 
     // stereo
     this.stereoLabel = getValueOrDefault(
       attributes.stereoLabel,
-      Atom.attrlist.stereoLabel
-    )
+      Atom.attrlist.stereoLabel,
+    );
     this.stereoParity = getValueOrDefault(
       attributes.stereoParity,
-      Atom.attrlist.stereoParity
-    )
+      Atom.attrlist.stereoParity,
+    );
 
     this.atomList = attributes.atomList
       ? new AtomList(attributes.atomList)
-      : null
-    this.neighbors = [] // set of half-bonds having this atom as their origin
-    this.badConn = false
+      : null;
+    this.neighbors = []; // set of half-bonds having this atom as their origin
+    this.badConn = false;
 
     Object.defineProperty(this, 'pseudo', {
       enumerable: true,
       get: function () {
-        return getPseudo(this.label)
+        return getPseudo(this.label);
+      },
+      set: function (value) {
+        if (isCorrectPseudo(value)) {
+          this.label = value;
+        }
+      },
+    });
+  }
+
+  get isRGroupAttachmentPointEditDisabled() {
+    return this.label === 'R#' && this.rglabel !== null;
+  }
+
+  /**
+   * Trick: used for cloned struct for tooltips, for preview, for templates
+   *
+   * Why?
+   * Currently, tooltips are implemented with removing sgroups (wrong implementation)
+   * That's why we need to mark atoms as sgroup attachment points.
+   *
+   * If we change preview approach to flagged (option for showing sgroups without abbreviation),
+   * then we will be able to remove this hack.
+   */
+  setRGAttachmentPointForDisplayPurpose() {
+    this.attachmentPoints = AttachmentPoints.FirstSideOnly;
+  }
+
+  static getConnectedBondIds(struct: Struct, atomId: number): number[] {
+    const result: number[] = [];
+    for (const [bondId, bond] of struct.bonds.entries()) {
+      if (bond.begin === atomId || bond.end === atomId) {
+        result.push(bondId);
       }
-    })
+    }
+    return result;
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: any = {}
+    const attrs: Partial<Record<keyof typeof Atom.attrlist, unknown>> = {};
     for (const attr in Atom.attrlist) {
-      if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr]
+      if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr];
     }
-    return attrs
+    return attrs;
   }
 
   static attrGetDefault(attr: string) {
     if (attr in Atom.attrlist) {
-      return Atom.attrlist[attr]
+      return Atom.attrlist[attr];
     }
   }
 
-  clone(fidMap: Map<number, number>): Atom {
-    const ret = new Atom(this)
-    if (fidMap && fidMap.has(this.fragment)) {
-      ret.fragment = fidMap.get(this.fragment)!
+  static isHeteroAtom(label: string): boolean {
+    return label !== 'C' && label !== 'H';
+  }
+
+  static isInAromatizedRing(struct: Struct, atomId: number): boolean {
+    const atom = struct.atoms.get(atomId);
+    if (atom && Atom.isHeteroAtom(atom.label)) {
+      for (const [_, loop] of struct.loops) {
+        const halfBondIds = loop.hbs;
+        if (loop.aromatic) {
+          for (const halfBondId of halfBondIds) {
+            const halfBond = struct.halfBonds.get(halfBondId);
+            if (!halfBond) return false;
+            const { begin, end } = halfBond;
+            if (begin === atomId || end === atomId) {
+              return true;
+            }
+          }
+        }
+      }
     }
-    return ret
+    return false;
+  }
+
+  clone(fidMap?: Map<number, number>): Atom {
+    const ret = new Atom(this);
+    const fragmentId = fidMap?.get(this.fragment);
+
+    if (fragmentId !== undefined) {
+      ret.fragment = fragmentId;
+    }
+    return ret;
   }
 
   isQuery(): boolean {
-    return (
-      this.atomList !== null || this.label === 'A' || this.attpnt || this.hCount
-    )
+    const { queryProperties } = this;
+    const isAnyAtom = this.label === 'A';
+    const isAnyMetal = this.label === 'M' || this.label === 'MH';
+    const isAnyHalogen = this.label === 'X' || this.label === 'XH';
+    const isAnyGroup =
+      this.label === 'G' ||
+      this.label === 'G*' ||
+      this.label === 'GH' ||
+      this.label === 'GH*';
+    return Boolean(
+      this.substitutionCount !== 0 ||
+        this.unsaturatedAtom !== 0 ||
+        this.ringBondCount !== 0 ||
+        isAnyAtom ||
+        isAnyMetal ||
+        isAnyHalogen ||
+        isAnyGroup ||
+        this.hCount !== 0 ||
+        this.atomList !== null ||
+        Object.values(queryProperties).some((value) => value),
+    );
   }
 
   pureHydrogen(): boolean {
-    return this.label === 'H' && this.isotope === 0
+    return this.label === 'H' && this.isotope === 0;
   }
 
   isPlainCarbon(): boolean {
     return (
       this.label === 'C' &&
-      this.isotope === 0 &&
+      this.isotope === null &&
       this.radical === 0 &&
-      this.charge === 0 &&
+      this.charge === null &&
       this.explicitValence < 0 &&
       this.ringBondCount === 0 &&
       this.substitutionCount === 0 &&
       this.unsaturatedAtom === 0 &&
       this.hCount === 0 &&
       !this.atomList
-    )
+    );
   }
 
   isPseudo(): boolean {
     // TODO: handle reaxys generics separately
-    return !this.atomList && !this.rglabel && !Elements.get(this.label)
+    return !this.atomList && !this.rglabel && !Elements.get(this.label);
   }
 
   hasRxnProps(): boolean {
     return !!(
       this.invRet ||
       this.exactChangeFlag ||
-      this.attpnt !== null ||
+      this.attachmentPoints !== null ||
       this.aam
-    )
+    );
   }
 
-  calcValence(conn: number): boolean {
-    const label = this.label
-    const charge = this.charge
-    if (this.isQuery()) {
-      this.implicitH = 0
-      return true
+  calcValence(connectionCount: number): boolean {
+    const label = this.label;
+    const charge = this.charge ?? 0;
+    if (this.isQuery() || this.attachmentPoints) {
+      this.implicitH = 0;
+      return true;
     }
-    const element = Elements.get(label)
-    if (!element) {
-      this.implicitH = 0
-      return true
+    const element = Elements.get(label);
+    const radicalCount = radicalElectrons(this.radical);
+    const absCharge = Math.abs(charge);
+    const valenceResult = this.calculateValenceResult(element?.group, {
+      label,
+      charge,
+      connectionCount,
+      radicalCount,
+      absCharge,
+    });
+
+    if (!valenceResult) {
+      return true;
     }
 
-    const groupno = element.group
-    const rad = radicalElectrons(this.radical)
-    let valence = conn
-    let hyd = 0
-    const absCharge = Math.abs(charge)
-    if (groupno === 1) {
+    const hydrogenCount = this.overrideHydrogenCountIfNeeded(
+      valenceResult.hydrogenCount,
+    );
+
+    return this.applyValenceResult(
+      valenceResult.valence,
+      hydrogenCount,
+      connectionCount,
+    );
+  }
+
+  private calculateValenceResult(
+    groupno: number | undefined,
+    context: ValenceContext,
+  ): ValenceComputationResult | null {
+    if (groupno === undefined) {
+      return this.calculateUndefinedGroupValence(context);
+    }
+
+    switch (groupno) {
+      case 1:
+        return this.calculateGroup1Valence(context);
+      case 2:
+        return this.calculateGroup2Valence(context);
+      case 3:
+        return this.calculateGroup3Valence(context);
+      case 4:
+        return this.calculateGroup4Valence(context);
+      case 5:
+        return this.calculateGroup5Valence(context);
+      case 6:
+        return this.calculateGroup6Valence(context);
+      case 7:
+        return this.calculateGroup7Valence(context);
+      case 8:
+        return this.calculateGroup8Valence(context);
+      default:
+        return {
+          valence: context.connectionCount,
+          hydrogenCount: 0,
+        };
+    }
+  }
+
+  private calculateUndefinedGroupValence({
+    label,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult | null {
+    if (label === 'D' || label === 'T') {
+      return {
+        valence: 1,
+        hydrogenCount: 1 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    this.implicitH = 0;
+    return null;
+  }
+
+  private calculateGroup1Valence({
+    label,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (
+      label === 'H' ||
+      label === 'Li' ||
+      label === 'Na' ||
+      label === 'K' ||
+      label === 'Rb' ||
+      label === 'Cs' ||
+      label === 'Fr'
+    ) {
+      return {
+        valence: 1,
+        hydrogenCount: 1 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
+
+  private calculateGroup2Valence({
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (
+      connectionCount + radicalCount + absCharge === 2 ||
+      connectionCount + radicalCount + absCharge === 0
+    ) {
+      return {
+        valence: 2,
+        hydrogenCount: 0,
+      };
+    }
+    return { valence: connectionCount, hydrogenCount: -1 };
+  }
+
+  private calculateGroup3Valence({
+    label,
+    charge,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {
+      if (charge === -1) {
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount,
+        };
+      }
+      return {
+        valence: 3,
+        hydrogenCount: 3 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    if (label === 'Tl') {
+      if (charge === -1) {
+        if (radicalCount + connectionCount <= 2) {
+          return {
+            valence: 2,
+            hydrogenCount: 2 - radicalCount - connectionCount,
+          };
+        }
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount,
+        };
+      }
+      if (charge === -2) {
+        if (radicalCount + connectionCount <= 3) {
+          return {
+            valence: 3,
+            hydrogenCount: 3 - radicalCount - connectionCount,
+          };
+        }
+        return {
+          valence: 5,
+          hydrogenCount: 5 - radicalCount - connectionCount,
+        };
+      }
+      if (radicalCount + connectionCount + absCharge <= 1) {
+        return {
+          valence: 1,
+          hydrogenCount: 1 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return {
+        valence: 3,
+        hydrogenCount: 3 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
+
+  private calculateGroup4Valence({
+    label,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'C' || label === 'Si' || label === 'Ge') {
+      return {
+        valence: 4,
+        hydrogenCount: 4 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    if (label === 'Sn' || label === 'Pb') {
+      if (connectionCount + radicalCount + absCharge <= 2) {
+        return {
+          valence: 2,
+          hydrogenCount: 2 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return {
+        valence: 4,
+        hydrogenCount: 4 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
+
+  private calculateGroup5Valence({
+    label,
+    charge,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'N' || label === 'P') {
+      if (charge === 1) {
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount,
+        };
+      }
+      if (charge === 2) {
+        return {
+          valence: 3,
+          hydrogenCount: 3 - radicalCount - connectionCount,
+        };
+      }
+      if (radicalCount + connectionCount + absCharge <= 3) {
+        return {
+          valence: 3,
+          hydrogenCount: 3 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return {
+        valence: 5,
+        hydrogenCount: 5 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    if (label === 'Bi' || label === 'Sb' || label === 'As') {
+      if (charge === 1) {
+        if (radicalCount + connectionCount <= 2 && label !== 'As') {
+          return {
+            valence: 2,
+            hydrogenCount: 2 - radicalCount - connectionCount,
+          };
+        }
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount,
+        };
+      }
+      if (charge === 2) {
+        return {
+          valence: 3,
+          hydrogenCount: 3 - radicalCount - connectionCount,
+        };
+      }
+      if (radicalCount + connectionCount <= 3) {
+        return {
+          valence: 3,
+          hydrogenCount: 3 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return {
+        valence: 5,
+        hydrogenCount: 5 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
+
+  private calculateGroup6Valence({
+    label,
+    charge,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'O') {
+      if (charge >= 1) {
+        return {
+          valence: 3,
+          hydrogenCount: 3 - radicalCount - connectionCount,
+        };
+      }
+      return {
+        valence: 2,
+        hydrogenCount: 2 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    if (label === 'S' || label === 'Se' || label === 'Po') {
+      if (charge === 1) {
+        if (connectionCount <= 3) {
+          return {
+            valence: 3,
+            hydrogenCount: 3 - radicalCount - connectionCount,
+          };
+        }
+        return {
+          valence: 5,
+          hydrogenCount: 5 - radicalCount - connectionCount,
+        };
+      }
+      if (connectionCount + radicalCount + absCharge <= 2) {
+        return {
+          valence: 2,
+          hydrogenCount: 2 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      if (connectionCount + radicalCount + absCharge <= 4) {
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return {
+        valence: 6,
+        hydrogenCount: 6 - radicalCount - connectionCount - absCharge,
+      };
+    }
+    if (label === 'Te') {
+      let valence = connectionCount;
+      let hydrogenCount = 0;
+
       if (
-        label === 'H' ||
-        label === 'Li' ||
-        label === 'Na' ||
-        label === 'K' ||
-        label === 'Rb' ||
-        label === 'Cs' ||
-        label === 'Fr'
+        (charge === -1 || charge === 0 || charge === 2) &&
+        connectionCount <= 2
       ) {
-        valence = 1
-        hyd = 1 - rad - conn - absCharge
-      }
-    } else if (groupno === 2) {
-      if (conn + rad + absCharge === 2 || conn + rad + absCharge === 0) {
-        valence = 2
-      } else hyd = -1
-    } else if (groupno === 3) {
-      if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {
-        if (charge === -1) {
-          valence = 4
-          hyd = 4 - rad - conn
+        valence = 2;
+        hydrogenCount = 2 - radicalCount - connectionCount - absCharge;
+      } else if (charge === 0 || charge === 2) {
+        if (connectionCount <= 4) {
+          valence = 4;
+          hydrogenCount = 4 - radicalCount - connectionCount - absCharge;
+        } else if (charge === 0 && connectionCount <= 6) {
+          valence = 6;
+          hydrogenCount = 6 - radicalCount - connectionCount - absCharge;
         } else {
-          valence = 3
-          hyd = 3 - rad - conn - absCharge
-        }
-      } else if (label === 'Tl') {
-        if (charge === -1) {
-          if (rad + conn <= 2) {
-            valence = 2
-            hyd = 2 - rad - conn
-          } else {
-            valence = 4
-            hyd = 4 - rad - conn
-          }
-        } else if (charge === -2) {
-          if (rad + conn <= 3) {
-            valence = 3
-            hyd = 3 - rad - conn
-          } else {
-            valence = 5
-            hyd = 5 - rad - conn
-          }
-        } else if (rad + conn + absCharge <= 1) {
-          valence = 1
-          hyd = 1 - rad - conn - absCharge
-        } else {
-          valence = 3
-          hyd = 3 - rad - conn - absCharge
+          hydrogenCount = -1;
         }
       }
-    } else if (groupno === 4) {
-      if (label === 'C' || label === 'Si' || label === 'Ge') {
-        valence = 4
-        hyd = 4 - rad - conn - absCharge
-      } else if (label === 'Sn' || label === 'Pb') {
-        if (conn + rad + absCharge <= 2) {
-          valence = 2
-          hyd = 2 - rad - conn - absCharge
-        } else {
-          valence = 4
-          hyd = 4 - rad - conn - absCharge
-        }
-      }
-    } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1) {
-          valence = 4
-          hyd = 4 - rad - conn
-        } else if (charge === 2) {
-          valence = 3
-          hyd = 3 - rad - conn
-        } else if (label === 'N' || rad + conn + absCharge <= 3) {
-          valence = 3
-          hyd = 3 - rad - conn - absCharge
-        } else {
-          // ELEM_P && rad + conn + absCharge > 3
-          valence = 5
-          hyd = 5 - rad - conn - absCharge
-        }
-      } else if (label === 'Bi' || label === 'Sb' || label === 'As') {
-        if (charge === 1) {
-          if (rad + conn <= 2 && label !== 'As') {
-            valence = 2
-            hyd = 2 - rad - conn
-          } else {
-            valence = 4
-            hyd = 4 - rad - conn
-          }
-        } else if (charge === 2) {
-          valence = 3
-          hyd = 3 - rad - conn
-        } else if (rad + conn <= 3) {
-          valence = 3
-          hyd = 3 - rad - conn - absCharge
-        } else {
-          valence = 5
-          hyd = 5 - rad - conn - absCharge
-        }
-      }
-    } else if (groupno === 6) {
-      if (label === 'O') {
-        if (charge >= 1) {
-          valence = 3
-          hyd = 3 - rad - conn
-        } else {
-          valence = 2
-          hyd = 2 - rad - conn - absCharge
-        }
-      } else if (label === 'S' || label === 'Se' || label === 'Po') {
-        if (charge === 1) {
-          if (conn <= 3) {
-            valence = 3
-            hyd = 3 - rad - conn
-          } else {
-            valence = 5
-            hyd = 5 - rad - conn
-          }
-        } else if (conn + rad + absCharge <= 2) {
-          valence = 2
-          hyd = 2 - rad - conn - absCharge
-        } else if (conn + rad + absCharge <= 4) {
-          // See examples in PubChem
-          // [S] : CID 16684216
-          // [Se]: CID 5242252
-          // [Po]: no example, just following ISIS/Draw logic here
-          valence = 4
-          hyd = 4 - rad - conn - absCharge
-        } else {
-          // See examples in PubChem
-          // [S] : CID 46937044
-          // [Se]: CID 59786
-          // [Po]: no example, just following ISIS/Draw logic here
-          valence = 6
-          hyd = 6 - rad - conn - absCharge
-        }
-      } else if (label === 'Te') {
-        if (charge === -1) {
-          if (conn <= 2) {
-            valence = 2
-            hyd = 2 - rad - conn - absCharge
-          }
-        } else if (charge === 0 || charge === 2) {
-          if (conn <= 2) {
-            valence = 2
-            hyd = 2 - rad - conn - absCharge
-          } else if (conn <= 4) {
-            valence = 4
-            hyd = 4 - rad - conn - absCharge
-          } else if (charge === 0 && conn <= 6) {
-            valence = 6
-            hyd = 6 - rad - conn - absCharge
-          } else {
-            hyd = -1
-          }
-        }
-      }
-    } else if (groupno === 7) {
-      if (label === 'F') {
-        valence = 1
-        hyd = 1 - rad - conn - absCharge
-      } else if (
-        label === 'Cl' ||
-        label === 'Br' ||
-        label === 'I' ||
-        label === 'At'
-      ) {
-        if (charge === 1) {
-          if (conn <= 2) {
-            valence = 2
-            hyd = 2 - rad - conn
-          } else if (conn === 3 || conn === 5 || conn >= 7) {
-            hyd = -1
-          }
-        } else if (charge === 0) {
-          if (conn <= 1) {
-            valence = 1
-            hyd = 1 - rad - conn
-            // While the halogens can have valence 3, they can not have
-            // hydrogens in that case.
-          } else if (conn === 2 || conn === 4 || conn === 6) {
-            if (rad === 1) {
-              valence = conn
-              hyd = 0
-            } else {
-              hyd = -1 // will throw an error in the end
-            }
-          } else if (conn > 7) {
-            hyd = -1 // will throw an error in the end
-          }
-        }
-      }
-    } else if (groupno === 8) {
-      if (conn + rad + absCharge === 0) valence = 1
-      else hyd = -1
+      return { valence, hydrogenCount };
     }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
 
-    this.valence = valence
-    this.implicitH = hyd
-    if (this.implicitH < 0) {
-      this.valence = conn
-      this.implicitH = 0
-      this.badConn = true
-      return false
+  private calculateGroup7Valence({
+    label,
+    charge,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'F') {
+      return {
+        valence: 1,
+        hydrogenCount: 1 - radicalCount - connectionCount - absCharge,
+      };
     }
-    return true
+    if (label === 'Cl' || label === 'Br' || label === 'I' || label === 'At') {
+      if (charge === 1) {
+        if (connectionCount <= 2) {
+          return {
+            valence: 2,
+            hydrogenCount: 2 - radicalCount - connectionCount,
+          };
+        }
+        if (
+          connectionCount === 3 ||
+          connectionCount === 5 ||
+          connectionCount >= 7
+        ) {
+          return { valence: connectionCount, hydrogenCount: -1 };
+        }
+      } else if (charge === 0) {
+        if (connectionCount <= 1) {
+          return {
+            valence: 1,
+            hydrogenCount: 1 - radicalCount - connectionCount,
+          };
+        }
+        if (
+          connectionCount === 2 ||
+          connectionCount === 4 ||
+          connectionCount === 6
+        ) {
+          if (radicalCount === 1) {
+            return { valence: connectionCount, hydrogenCount: 0 };
+          }
+          return { valence: connectionCount, hydrogenCount: -1 };
+        }
+        if (connectionCount > 7) {
+          return { valence: connectionCount, hydrogenCount: -1 };
+        }
+      }
+    }
+    return { valence: connectionCount, hydrogenCount: 0 };
+  }
+
+  private calculateGroup8Valence({
+    label,
+    connectionCount,
+    radicalCount,
+    absCharge,
+  }: ValenceContext): ValenceComputationResult {
+    if (label === 'Pt') {
+      if (connectionCount + radicalCount + absCharge <= 2) {
+        return {
+          valence: 2,
+          hydrogenCount: 2 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      if (connectionCount + radicalCount + absCharge <= 4) {
+        return {
+          valence: 4,
+          hydrogenCount: 4 - radicalCount - connectionCount - absCharge,
+        };
+      }
+      return { valence: connectionCount, hydrogenCount: -1 };
+    }
+    if (connectionCount + radicalCount + absCharge === 0) {
+      return { valence: 1, hydrogenCount: 0 };
+    }
+    return { valence: connectionCount, hydrogenCount: -1 };
+  }
+
+  private overrideHydrogenCountIfNeeded(hydrogenCount: number): number {
+    if (this.implicitHCount !== null) {
+      return this.implicitHCount;
+    }
+    return hydrogenCount;
+  }
+
+  private applyValenceResult(
+    valence: number,
+    hydrogenCount: number,
+    connectionCount: number,
+  ): boolean {
+    this.valence = valence;
+    this.implicitH = hydrogenCount;
+    if (this.implicitH < 0) {
+      this.valence = connectionCount;
+      this.implicitH = 0;
+      this.badConn = true;
+      return false;
+    }
+    return true;
   }
 
   calcValenceMinusHyd(conn: number): number {
-    const charge = this.charge
-    const label = this.label
-    const element = Elements.get(this.label)
+    const charge = this.charge ?? 0;
+    const label = this.label;
+    const element = Elements.get(this.label);
     if (!element) {
       // query atom, skip
-      this.implicitH = 0
-      return 0
+      this.implicitH = 0;
+      return 0;
     }
 
-    const groupno = element.group
-    const rad = radicalElectrons(this.radical)
+    const groupno = element.group;
+    const rad = radicalElectrons(this.radical);
 
     if (groupno === 3) {
       if (label === 'B' || label === 'Al' || label === 'Ga' || label === 'In') {
         if (charge === -1) {
-          if (rad + conn <= 4) return rad + conn
+          if (rad + conn <= 4) return rad + conn;
         }
       }
     } else if (groupno === 5) {
-      if (label === 'N' || label === 'P') {
-        if (charge === 1) return rad + conn
-        if (charge === 2) return rad + conn
-      } else if (label === 'Sb' || label === 'Bi' || label === 'As') {
-        if (charge === 1) return rad + conn
-        else if (charge === 2) return rad + conn
+      if (
+        (label === 'N' ||
+          label === 'P' ||
+          label === 'Sb' ||
+          label === 'Bi' ||
+          label === 'As') &&
+        (charge === 1 || charge === 2)
+      ) {
+        return rad + conn;
       }
     } else if (groupno === 6) {
       if (label === 'O') {
-        if (charge >= 1) return rad + conn
+        if (charge >= 1) return rad + conn;
       } else if (label === 'S' || label === 'Se' || label === 'Po') {
-        if (charge === 1) return rad + conn
+        if (charge === 1) return rad + conn;
       }
     } else if (groupno === 7) {
       if (label === 'Cl' || label === 'Br' || label === 'I' || label === 'At') {
-        if (charge === 1) return rad + conn
+        if (charge === 1) return rad + conn;
       }
     }
 
-    return rad + conn + Math.abs(charge)
+    return rad + conn + Math.abs(charge);
   }
+
+  public static getSuperAtomAttachmentPointByAttachmentAtom(
+    struct: Struct,
+    atomId: number,
+    searchBySgroups = false,
+  ) {
+    const sgroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.atomId === atomId);
+  }
+
+  public static getSuperAtomAttachmentPointByLeavingGroup(
+    structOrSgroup: Struct | SGroup,
+    atomId: number,
+    searchBySgroups = false,
+  ) {
+    let sgroup: SGroup | undefined;
+
+    if (Atom.isSGroup(structOrSgroup)) {
+      sgroup = structOrSgroup;
+    } else if (searchBySgroups) {
+      sgroup = structOrSgroup.getGroupFromAtomIdBySgroups(atomId);
+    } else {
+      sgroup = structOrSgroup.getGroupFromAtomId(atomId);
+    }
+
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.leaveAtomId === atomId);
+  }
+
+  public static isSuperatomLeavingGroupAtom(
+    structOrSgroup: Struct | SGroup,
+    atomId?: number,
+    searchBySgroups = false,
+  ) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(
+        structOrSgroup,
+        atomId,
+        searchBySgroups,
+      ),
+    );
+  }
+
+  public static isSuperatomAttachmentAtom(struct: Struct, atomId?: number) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+    );
+  }
+
+  public static getAttachmentAtomExternalConnections(
+    struct: Struct,
+    attachmentAtomId?: number,
+    leavingGroupAtomid?: number,
+    searchBySgroups = false,
+  ) {
+    const bonds = struct.bonds;
+    const atomId = isNumber(attachmentAtomId)
+      ? attachmentAtomId
+      : (leavingGroupAtomid as number);
+    const atom = struct.atoms.get(atomId);
+    const attachmentPoint = isNumber(attachmentAtomId)
+      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(
+          struct,
+          atomId,
+          searchBySgroups,
+        )
+      : Atom.getSuperAtomAttachmentPointByLeavingGroup(
+          struct,
+          atomId,
+          searchBySgroups,
+        );
+    const attachmentPointAtomBonds = attachmentPoint
+      ? bonds.filter(
+          (_, bond) =>
+            (bond.begin === attachmentPoint.atomId &&
+              bond.end !== attachmentPoint.leaveAtomId) ||
+            (bond.end === attachmentPoint.atomId &&
+              bond.begin !== attachmentPoint.leaveAtomId),
+        )
+      : undefined;
+    const attachmentAtomExternalConnection = attachmentPointAtomBonds?.filter(
+      (_, bond) => {
+        const beginAtom = struct.atoms.get(bond.begin);
+        const endAtom = struct.atoms.get(bond.end);
+        const isExternalBondBetweenMonomers =
+          bond.isExternalBondBetweenMonomers(struct);
+
+        return (
+          isExternalBondBetweenMonomers ||
+          beginAtom?.fragment !== atom?.fragment ||
+          endAtom?.fragment !== atom?.fragment
+        );
+      },
+    );
+
+    return attachmentAtomExternalConnection;
+  }
+
+  public static isHiddenLeavingGroupAtom(
+    struct: Struct,
+    atomId: number,
+    searchBySgroups = false,
+    includeAtomsInCollapsedSgroups = false,
+  ) {
+    const atom = struct.atoms.get(atomId);
+
+    if (
+      atom &&
+      !includeAtomsInCollapsedSgroups &&
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom,
+        struct.sgroups,
+        struct.functionalGroups,
+      )
+    ) {
+      return false;
+    }
+
+    const attachmentAtomExternalConnections =
+      Atom.getAttachmentAtomExternalConnections(
+        struct,
+        undefined,
+        atomId,
+        searchBySgroups,
+      );
+    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      struct,
+      atomId,
+    );
+    const sGroup = searchBySgroups
+      ? struct.getGroupFromAtomIdBySgroups(atomId)
+      : struct.getGroupFromAtomId(atomId);
+    const isMonomer = sGroup?.isMonomer;
+
+    if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.isSuperatomLeavingGroupAtom(struct, atomId, searchBySgroups) &&
+        attachmentAtomExternalConnections?.find((_, bond) =>
+          bond.begin === attachmentPoint?.atomId
+            ? bond.beginSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber
+            : bond.endSuperatomAttachmentPointNumber ===
+              attachmentPoint?.attachmentPointNumber,
+        ) !== null,
+    );
+  }
+
+  private static isSGroup(
+    structOrSgroup: Struct | SGroup,
+  ): structOrSgroup is SGroup {
+    return structOrSgroup instanceof SGroup;
+  }
+}
+
+export function radicalElectrons(radical: unknown) {
+  const normalizedRadical = Number(radical);
+  if (normalizedRadical === Atom.PATTERN.RADICAL.DOUPLET) return 1;
+  else if (
+    normalizedRadical === Atom.PATTERN.RADICAL.SINGLET ||
+    normalizedRadical === Atom.PATTERN.RADICAL.TRIPLET
+  ) {
+    return 2;
+  } else {
+    return 0;
+  }
+}
+
+function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+  return typeof value !== 'undefined' ? value : defaultValue;
+}
+
+function isCorrectPseudo(label) {
+  return (
+    !Elements.get(label) && label !== 'L' && label !== 'L#' && label !== 'R#'
+  );
+}
+
+function getPseudo(label: string) {
+  return isCorrectPseudo(label) ? label : '';
 }

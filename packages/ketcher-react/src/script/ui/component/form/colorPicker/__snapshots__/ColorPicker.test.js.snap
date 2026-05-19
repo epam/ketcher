@@ -1,23 +1,28 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should be rendered correctly should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="none"
   >
-    <div
+    <button
+      aria-controls="color-picker-«r0»"
+      aria-expanded="false"
+      aria-haspopup="true"
       class="colorPickerInput"
+      type="button"
     >
       <div
         class="colorPickerPreview"
-        data-testid="color-picker-preview"
+        data-testid="undefined-color-picker-preview"
         style="background-color: rgb(0, 0, 0);"
       />
       <icon-chevron.svg
-        classname="expandIcon turnedIcon"
+        class="expandIcon turnedIcon"
       />
-    </div>
+    </button>
   </div>
 </DocumentFragment>
 `;

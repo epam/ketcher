@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" p="30.000000 45.000000"/>
+            <n id="6" p="55.980778 30.000000"/>
+            <n id="7" p="81.961525 45.000000"/>
+            <n id="8" p="107.942276 30.000000"/>
+            <n id="9" p="133.923050 45.000000"/>
+            <n id="10" Element="35" p="151.206604 149.926437">
+                <t p="151.206604 149.926437" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="11" Element="35" p="151.095520 120.073532">
+                <t p="151.095520 120.073532" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="12" Element="16" NumHydrogens="0" p="120.849236 149.539124">
+                <t p="120.849236 149.539124" LabelJustification="Left">
+                    <s font="3" size="10" face="96">S</s>
+                </t>
+            </n>
+            <n id="13" Element="35" p="120.774162 120.073532">
+                <t p="120.774162 120.073532" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="14" p="465.240143 129.750366"/>
+            <n id="15" Element="16" NumHydrogens="0" p="450.239929 103.769234">
+                <t p="450.239929 103.769234" LabelJustification="Left">
+                    <s font="3" size="10" face="96">S</s>
+                </t>
+            </n>
+            <n id="16" p="420.240143 103.768845"/>
+            <n id="17" p="405.240601 129.749619"/>
+            <n id="18" p="420.240845 155.730743"/>
+            <n id="19" Element="16" NumHydrogens="0" p="450.240601 155.731140">
+                <t p="450.240601 155.731140" LabelJustification="Left">
+                    <s font="3" size="10" face="96">S</s>
+                </t>
+            </n>
+            <b id="20" B="5" E="6"/>
+            <b id="21" B="6" E="7"/>
+            <b id="22" B="7" E="8"/>
+            <b id="23" B="8" E="9"/>
+            <b id="24" B="10" E="11"/>
+            <b id="25" B="10" E="12"/>
+            <b id="26" B="11" E="13"/>
+            <b id="27" B="12" E="13"/>
+            <b id="28" B="14" E="19"/>
+            <b id="29" B="14" E="15"/>
+            <b id="30" B="15" E="16"/>
+            <b id="31" B="16" E="17"/>
+            <b id="32" B="17" E="18"/>
+            <b id="33" B="18" E="19"/>
+        </fragment>
+    </page>
+</CDXML>

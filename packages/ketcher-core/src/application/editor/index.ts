@@ -14,11 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from './shared/utils'
+import utils from './shared/utils';
 
-// TODO: delete it
-export const fracAngle = utils.fracAngle
-export * from './operations'
-export * from './actions'
-export * from './shared/constants'
-export * from './editor.types'
+export const vectorUtils = {
+  fracAngle: utils.fracAngle,
+  calcAngle: utils.calcAngle,
+  degrees: utils.degrees,
+  calcNewAtomPos: utils.calcNewAtomPos,
+};
+
+export * from './operations';
+export * from './actions';
+export * from './shared/constants';
+export * from './shared/coordinates';
+export * from './shared/customEvents';
+export * from './editor.types';
+export * from './Editor';
+export * from './editorSingleton';
+export * from './shared/sort';
+export * from './EditorHistory';
+export * from './modes';
+export * from './editorEvents';
+export * from './editorSettings';
+export * from './tools';
+export * from './MacromoleculesConverter';
+export * from 'application/editor/tools/types';
+export type { FlipDirection } from 'application/editor/shared/utils.types';
+export type { LibraryItemDragState } from 'application/editor/editor.types';

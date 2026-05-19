@@ -14,57 +14,77 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AnyAction } from 'redux'
-import { appUpdate } from '../options'
+import { AnyAction } from 'redux';
+import { appUpdate } from '../options/actions';
 import {
   FunctionalGroupsProvider,
   SdfItem,
   SdfSerializer,
-  Struct
-} from 'ketcher-core'
-import { prefetchStatic } from '../templates/init-lib'
+  Struct,
+} from 'ketcher-core';
+import templatesRawData from '../../../../templates/fg.sdf';
+import { memoizedDebounce } from '../../utils';
+import { TOOLTIP_DELAY } from '../../../editor/utils/functionalGroupsTooltip';
+import { MODES } from 'src/constants';
 
 interface FGState {
-  lib: []
-  mode: string
+  lib: [];
+  functionalGroupInfo: any;
+  mode: string;
 }
 
 const initialState: FGState = {
   lib: [],
-  mode: 'fg'
-}
+  functionalGroupInfo: null,
+  mode: MODES.FG,
+};
 
-const functionalGroupsReducer = (
-  state = initialState,
-  { type, payload }: AnyAction
-) => {
+const functionalGroupsReducer = (state = initialState, action: AnyAction) => {
+  const { type, payload } = action;
   switch (type) {
     case 'FG_INIT':
-      return { ...state, ...payload }
+      return { ...state, ...payload };
+
+    case 'FG_HIGHLIGHT':
+      return { ...state, functionalGroupInfo: payload };
 
     default:
-      return state
+      return state;
   }
+};
+
+export const initFGroups = (lib: SdfItem[]) => ({
+  type: 'FG_INIT',
+  payload: { lib },
+});
+const highlightFGroup = (group: any) => ({
+  type: 'FG_HIGHLIGHT',
+  payload: group,
+});
+
+function notDebouncedHighlightFG(dispatch, group: any) {
+  dispatch(highlightFGroup(group));
 }
 
-const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } })
+export const highlightFG = memoizedDebounce(
+  notDebouncedHighlightFG,
+  TOOLTIP_DELAY / 3,
+  [0],
+);
 
-export function initFGTemplates(baseUrl: string) {
+export function initFGTemplates() {
   return async (dispatch) => {
-    const fileName = 'fg.sdf'
-    const url = `${baseUrl}/templates/${fileName}`
-    const provider = FunctionalGroupsProvider.getInstance()
-    const sdfSerializer = new SdfSerializer()
-    const text = await prefetchStatic(url)
-    const templates = sdfSerializer.deserialize(text)
+    const provider = FunctionalGroupsProvider.getInstance();
+    const sdfSerializer = new SdfSerializer();
+    const templates = sdfSerializer.deserialize(templatesRawData);
     const functionalGroups = templates.reduce(
       (acc: Struct[], { struct }) => [...acc, struct],
-      []
-    )
-    provider.setFunctionalGroupsList(functionalGroups)
-    dispatch(initFGroups(templates))
-    dispatch(appUpdate({ functionalGroups: true }))
-  }
+      [],
+    );
+    provider.setFunctionalGroupsList(functionalGroups);
+    dispatch(initFGroups(templates));
+    dispatch(appUpdate({ functionalGroups: true }));
+  };
 }
 
-export default functionalGroupsReducer
+export default functionalGroupsReducer;

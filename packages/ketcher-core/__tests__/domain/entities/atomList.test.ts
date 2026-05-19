@@ -1,46 +1,65 @@
-import { AtomList } from 'domain/entities/atomList'
+import { AtomList, AtomListParams } from 'domain/entities/atomList';
 
-const ids = [66, 44, 12, 88]
-const params = { notList: false, ids }
+const ids = [66, 44, 12, 88];
+const createParams = (overrides?: Partial<AtomListParams>): AtomListParams => {
+  const { ids: overrideIds, ...restOverrides } = overrides ?? {};
+
+  return {
+    notList: false,
+    ids: overrideIds ?? [...ids],
+    ...restOverrides,
+  };
+};
 
 describe('labelList', () => {
   it('should return array of elements labels', () => {
-    const atomList = new AtomList(params)
+    const atomList = new AtomList(createParams());
 
-    expect(atomList.labelList()).toStrictEqual(['Dy', 'Ru', 'Mg', 'Ra'])
-  })
-})
+    expect(atomList.labelList()).toStrictEqual(['Dy', 'Ru', 'Mg', 'Ra']);
+  });
+});
 
 describe('label', () => {
   it('should return list', () => {
-    const atomList = new AtomList(params)
+    const atomList = new AtomList(createParams());
 
-    expect(atomList.label()).toBe('[Dy,Ru,Mg,Ra]')
-  })
+    expect(atomList.label()).toBe('[Dy,Ru,Mg,Ra]');
+  });
 
   it('should return not list', () => {
-    const atomList = new AtomList({ ...params, notList: true })
+    const atomList = new AtomList(createParams({ notList: true }));
 
-    expect(atomList.label()).toBe('![Dy,Ru,Mg,Ra]')
-  })
-})
+    expect(atomList.label()).toBe('![Dy,Ru,Mg,Ra]');
+  });
+});
 describe('equals', () => {
   it.each([false, true])('should return true', (notList) => {
-    const atomList = new AtomList({ ...params, notList })
-    const dataWithReverseIds = { notList, ids: params.ids.sort().reverse() }
-    const atomList2 = new AtomList(dataWithReverseIds)
+    const atomList = new AtomList(createParams({ notList }));
+    const sortedIds = [...ids];
+    sortedIds.sort((a, b) => a - b);
+    sortedIds.reverse();
 
-    expect(atomList.equals(atomList2)).toBeTruthy()
-  })
+    const dataWithReverseIds = {
+      notList,
+      ids: sortedIds,
+    };
+    const atomList2 = new AtomList(dataWithReverseIds);
+
+    expect(atomList.equals(atomList2)).toBeTruthy();
+  });
 
   it('should return false', () => {
-    const atomList = new AtomList(params)
+    const atomList = new AtomList(createParams());
+    const sortedIds = [...ids];
+    sortedIds.sort((a, b) => a - b);
+    sortedIds.reverse();
+
     const dataWithReverseIds = {
       notList: true,
-      ids: params.ids.sort().reverse()
-    }
-    const atomList2 = new AtomList(dataWithReverseIds)
+      ids: sortedIds,
+    };
+    const atomList2 = new AtomList(dataWithReverseIds);
 
-    expect(atomList.equals(atomList2)).toBeFalsy()
-  })
-})
+    expect(atomList.equals(atomList2)).toBeFalsy();
+  });
+});

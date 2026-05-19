@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import About from './About'
-import Settings from './Settings'
+import About from './About';
+import Settings from './Settings';
 
-export { About, Settings }
+export { About, Settings };

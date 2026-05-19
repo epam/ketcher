@@ -1,0 +1,277 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"9v86a\",\"text\":\"Chirality\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -88.92947938310633,
+                        "y": 18.80875009173434,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -88.92947938310633,
+                            "y": 18.80875009173434,
+                            "z": 0
+                        },
+                        {
+                            "x": -88.92947938310633,
+                            "y": 18.442896424475123,
+                            "z": 0
+                        },
+                        {
+                            "x": -87.67423922883997,
+                            "y": 18.442896424475123,
+                            "z": 0
+                        },
+                        {
+                            "x": -87.67423922883997,
+                            "y": 18.80875009173434,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -86.19583907798209,
+                    19.332161444527795,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -84.46537302217259,
+                    19.332646678612846,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.3289683850403,
+                    19.832316477693066,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -84.46537302217259,
+                    18.331608761154733,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -86.19583907798209,
+                    18.32712034586802,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.32678483165756,
+                    17.83206027059578,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -82.7892655208369,
+                    19.14464363404274,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.05879946502742,
+                    19.14512886812779,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.92239482789512,
+                    19.64479866720801,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.05879946502742,
+                    18.14409095066968,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -82.72675958400856,
+                    18.139602535382966,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.9202112745124,
+                    17.644542460110724,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "clockwise"
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

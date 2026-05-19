@@ -14,19 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
+import isHidden from './isHidden';
 
 const openHelpLink = () =>
   window
     .open(
-      `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`
+      `https://github.com/epam/ketcher/blob/${process.env.HELP_LINK}/documentation/help.md#ketcher-overview`,
     )
-    ?.focus()
+    ?.focus();
 
 export default {
   help: {
+    enabledInViewOnly: true,
     shortcut: ['?', '&', 'Shift+/'],
     action: () => openHelpLink(),
-    hidden: (options) => isHidden(options, 'help')
-  }
-}
+    hidden: (options) => isHidden(options, 'help'),
+  },
+};

@@ -1,0 +1,159 @@
+import {
+  MonomerItemType,
+  Entities,
+  MonomerOrAmbiguousType,
+} from 'domain/types';
+import {
+  IKetMonomerGroupTemplate,
+  IKetTemplateConnection,
+} from 'application/formatters/types/ket';
+
+interface ToolEventHandler {
+  click?(event: Event): void;
+
+  dblclick?(event: Event): void;
+
+  mousedown?(event: Event): void;
+
+  mousemove?(event: Event): void;
+
+  mouseup?(event: Event): void;
+
+  mouseleave?(event: Event): void;
+
+  mouseLeaveClientArea?(event: Event): void;
+
+  mouseover?(event: Event): void;
+
+  mouseOverPolymerBond?(event: Event): void;
+
+  mouseLeavePolymerBond?(event: Event): void;
+
+  mouseOnMovePolymerBond?(event: Event): void;
+
+  mouseOverMonomer?(event: Event): void;
+
+  mouseOverAttachmentPoint?(event: Event): void;
+
+  mouseLeaveAttachmentPoint?(event: Event): void;
+
+  mouseUpAttachmentPoint?(event: Event): void;
+
+  mouseDownAttachmentPoint?(event: Event): void;
+
+  mouseOnMoveMonomer?(event: Event): void;
+
+  mouseLeaveMonomer?(event: Event): void;
+
+  mouseOverDrawingEntity?(event: Event): void;
+
+  mouseLeaveDrawingEntity?(event: Event): void;
+
+  mouseUpMonomer?(event: Event): void;
+
+  rightClickSequence?(event: Event): void;
+
+  rightClickCanvas?(event: Event): void;
+
+  rightClickCanvasSequence?(event: Event): void;
+
+  rightClickPolymerBond?(event: Event): void;
+
+  rightClickSelectedMonomers?(event: Event): void;
+
+  editSequence?(): void;
+
+  startNewSequence?(): void;
+
+  turnOnSequenceEditInRNABuilderMode?(): void;
+
+  turnOffSequenceEditInRNABuilderMode?(): void;
+
+  modifySequenceInRnaBuilder?(): void;
+
+  mouseOverSequenceItem?(event: Event): void;
+
+  mouseOnMoveSequenceItem?(event: Event): void;
+
+  mouseLeaveSequenceItem?(event: Event): void;
+
+  changeSequenceTypeEnterMode?(event: Event): void;
+
+  toggleSequenceEditMode?(event: Event): void;
+
+  toggleSequenceEditInRNABuilderMode?(event: Event): void;
+
+  clickOnSequenceItem?(event: Event): void;
+
+  mousedownBetweenSequenceItems?(event: Event): void;
+
+  mouseDownOnSequenceItem?(event: Event): void;
+
+  doubleClickOnSequenceItem?(event: Event): void;
+
+  mouseUpAtom?(event: Event): void;
+
+  selectEntities?(event: Event): void;
+}
+
+export type RnaPhosphatePosition = 'left' | 'right';
+
+export interface IRnaPreset {
+  name?: string;
+  nameInList?: string;
+  base?: MonomerItemType;
+  sugar?: MonomerItemType;
+  phosphate?: MonomerItemType;
+  phosphatePosition?: 'left' | 'right';
+  default?: boolean;
+  favorite?: boolean;
+  editedName?: boolean;
+  connections?: IKetTemplateConnection[];
+}
+
+export interface IRnaLabeledPreset
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+    Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
+  connections?: IKetTemplateConnection[];
+}
+
+export type LabeledNodesWithPositionInSequence = {
+  type: Entities;
+  nodeIndexOverall: number;
+  hasAntisense: boolean;
+  baseLabel?: string;
+  sugarLabel?: string;
+  phosphateLabel?: string;
+  rnaBaseMonomerItem?: MonomerOrAmbiguousType;
+  isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
+  hasR1Connection?: boolean;
+};
+
+export interface Tool extends ToolEventHandler {
+  cancel?(): void;
+
+  isSelectionRunning?(): boolean;
+
+  isNotActiveTool?: boolean;
+
+  readonly name?: string;
+}
+
+export interface BaseTool extends Tool {
+  destroy(): void;
+}
+
+export type PeptideToolOptions = MonomerItemType;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
+  | Tool
+  | BaseTool;
+
+export type ToolEventHandlerName = keyof ToolEventHandler;
+
+export function isBaseTool(
+  tool: Tool | BaseTool | undefined,
+): tool is BaseTool {
+  return (tool as BaseTool)?.destroy !== undefined;
+}

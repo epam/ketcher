@@ -22,41 +22,53 @@ import {
   fromItemsFuse,
   getHoverToFuse,
   getItemsToFuse,
-  FunctionalGroup
-} from 'ketcher-core'
+  FunctionalGroup,
+  SGroup,
+  vectorUtils,
+  removeInfoLabelFromAtoms,
+  CoordinateTransformation,
+} from 'ketcher-core';
 
-import { atomLongtapEvent } from './atom'
-import utils from '../shared/utils'
-import Editor from '../Editor'
+import { atomLongtapEvent } from './atom';
+import Editor from '../Editor';
+import { Tool } from './Tool';
+import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
-class ChainTool {
-  editor: Editor
-  dragCtx: any
+class ChainTool implements Tool {
+  private readonly editor: Editor;
+  private dragCtx: any;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousedown(event) {
-    if (this.dragCtx) return
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const rnd = this.editor.render
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-    const atomResult: Array<number> = []
-    const bondResult: Array<number> = []
-    const result: Array<number> = []
+    if (this.dragCtx) return;
+    if (isBondingWithMacroMolecule(this.editor, event)) {
+      return;
+    }
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const rnd = this.editor.render;
+    const ci = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+      'functionalGroups',
+    ]);
+    const atomResult: Array<number> = [];
+    const bondResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -64,11 +76,11 @@ class ChainTool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (bondId !== null) {
-        bondResult.push(bondId)
+        bondResult.push(bondId);
       }
     }
 
@@ -76,124 +88,146 @@ class ChainTool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
-    this.editor.hover(null)
+    this.editor.hover(null);
     this.dragCtx = {
-      xy0: rnd.page2obj(event),
-      item: ci
+      xy0: CoordinateTransformation.pageToModel(event, rnd),
+      item: ci,
+    };
+
+    if (ci?.map === 'atoms') {
+      this.editor.selection({ atoms: [ci.id] }); // for change atom
+      // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
+      atomLongtapEvent(this, rnd);
     }
 
-    if (ci && ci.map === 'atoms') {
-      this.editor.selection({ atoms: [ci.id] }) // for change atom
-      // this event has to be stopped in others events by `tool.dragCtx.stopTapping()`
-      atomLongtapEvent(this, rnd)
+    if (ci?.map === 'functionalGroups') {
+      const functionalGroup = molecule.functionalGroups.get(ci.id);
+      if (!SGroup.isSaltOrSolvent(functionalGroup?.name ?? '')) {
+        const sGroupId = ci.id;
+        const sGroup = molecule.sgroups.get(sGroupId);
+        const attachmentAtomId = sGroup?.getAttachmentAtomId();
+        this.dragCtx.item = {
+          map: 'atoms',
+          id: attachmentAtomId,
+        };
+      }
     }
 
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
-      delete this.dragCtx.item
-    return true
+      delete this.dragCtx.item;
+    return true;
   }
 
   mousemove(event) {
-    const editor = this.editor
-    const restruct = editor.render.ctab
-    const dragCtx = this.dragCtx
+    const editor = this.editor;
+    const restruct = editor.render.ctab;
+    const dragCtx = this.dragCtx;
 
-    editor.hover(this.editor.findItem(event, ['atoms', 'bonds']))
-    if (!dragCtx) {
-      return true
-    }
-
-    if (dragCtx && dragCtx.stopTapping) {
-      dragCtx.stopTapping()
-    }
-
-    editor.selection(null)
-
-    if (!dragCtx.item || dragCtx.item.map === 'atoms') {
-      if (dragCtx.action) {
-        dragCtx.action.perform(restruct)
+    editor.hover(
+      this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
+      null,
+      event,
+    );
+    if (dragCtx) {
+      if (dragCtx?.stopTapping) {
+        dragCtx.stopTapping();
       }
 
-      const atoms = restruct.molecule.atoms
+      editor.selection(null);
 
-      const pos0 = dragCtx.item ? atoms.get(dragCtx.item.id)?.pp : dragCtx.xy0
+      if (!dragCtx.item || dragCtx.item.map === 'atoms') {
+        if (dragCtx.action) {
+          dragCtx.action.perform(restruct);
+        }
 
-      const pos1 = editor.render.page2obj(event)
-      const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length())
+        const atoms = restruct.molecule.atoms;
 
-      const angle = event.ctrlKey
-        ? utils.calcAngle(pos0, pos1)
-        : utils.fracAngle(pos0, pos1)
+        const pos0 = dragCtx.item
+          ? atoms.get(dragCtx.item.id)?.pp
+          : dragCtx.xy0;
 
-      const [action, newItems] = fromChain(
-        restruct,
-        pos0,
-        angle,
-        sectCount,
-        dragCtx.item ? dragCtx.item.id : null
-      )
+        const pos1 = CoordinateTransformation.pageToModel(event, editor.render);
+        const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
-      editor.event.message.dispatch({
-        info: sectCount + ' sectors'
-      })
+        const angle = event.ctrlKey
+          ? vectorUtils.calcAngle(pos0, pos1)
+          : vectorUtils.fracAngle(pos0, pos1);
 
-      dragCtx.action = action
-      editor.update(dragCtx.action, true)
+        const [action, newItems] = fromChain(
+          restruct,
+          pos0,
+          angle,
+          sectCount,
+          dragCtx.item ? dragCtx.item.id : null,
+        );
 
-      dragCtx.mergeItems = getItemsToFuse(editor, newItems)
-      editor.hover(getHoverToFuse(dragCtx.mergeItems))
+        editor.event.message.dispatch({
+          info: sectCount + ' sectors',
+        });
 
-      return true
+        dragCtx.action = action;
+        editor.update(dragCtx.action, true);
+
+        dragCtx.mergeItems = getItemsToFuse(editor, newItems);
+        editor.hover(getHoverToFuse(dragCtx.mergeItems));
+      }
     }
 
-    return true
+    return true;
   }
 
   mouseup() {
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    let atom
-    const atomResult: Array<number> = []
-    const result: Array<number> = []
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    let atom;
+    const atomResult: Array<number> = [];
+    const result: Array<number> = [];
 
-    if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
-      atom = this.dragCtx.mergeItems.atoms.values().next().value
+    removeInfoLabelFromAtoms(struct);
+    this.editor.render.update(true, null);
+
+    if (this.dragCtx?.mergeItems && functionalGroups.size) {
+      atom = this.dragCtx.mergeItems.atoms.values().next().value;
     }
     if (atom) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        atom
-      )
+        atom,
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -201,64 +235,62 @@ class ChainTool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
-    const dragCtx = this.dragCtx
+    const dragCtx = this.dragCtx;
 
-    if (!dragCtx) {
-      return true
+    if (dragCtx) {
+      delete this.dragCtx;
+
+      const editor = this.editor;
+
+      if (dragCtx.stopTapping) {
+        dragCtx.stopTapping();
+      }
+
+      if (!dragCtx.action && dragCtx.item?.map === 'bonds') {
+        const bond = molecule.bonds.get(dragCtx.item.id) as Bond;
+
+        dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
+          type: Bond.PATTERN.TYPE.SINGLE,
+          stereo: Bond.PATTERN.STEREO.NONE,
+        });
+      } else {
+        dragCtx.action = dragCtx.action
+          ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
+          : fromItemsFuse(struct, dragCtx.mergeItems);
+      }
+
+      editor.selection(null);
+      editor.hover(null);
+
+      if (dragCtx.action) {
+        editor.update(dragCtx.action);
+      }
+
+      editor.event.message.dispatch({
+        info: false,
+      });
     }
 
-    delete this.dragCtx
-
-    const editor = this.editor
-
-    if (dragCtx.stopTapping) {
-      dragCtx.stopTapping()
-    }
-
-    if (!dragCtx.action && dragCtx.item && dragCtx.item.map === 'bonds') {
-      const bond = molecule.bonds.get(dragCtx.item.id) as Bond
-
-      dragCtx.action = bondChangingAction(struct, dragCtx.item.id, bond, {
-        type: Bond.PATTERN.TYPE.SINGLE,
-        stereo: Bond.PATTERN.STEREO.NONE
-      })
-    } else {
-      dragCtx.action = dragCtx.action
-        ? fromItemsFuse(struct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-        : fromItemsFuse(struct, dragCtx.mergeItems)
-    }
-
-    editor.selection(null)
-    editor.hover(null)
-
-    if (dragCtx.action) {
-      editor.update(dragCtx.action)
-    }
-
-    editor.event.message.dispatch({
-      info: false
-    })
-
-    return true
+    return true;
   }
 
   cancel() {
-    this.mouseup()
+    this.mouseup();
   }
 
   mouseleave() {
-    this.mouseup()
+    this.mouseup();
   }
 }
 
-export default ChainTool
+export default ChainTool;

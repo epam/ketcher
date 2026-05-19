@@ -14,36 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'ketcher-core';
+
 /* local storage */
 export const storage = {
   warningMessage:
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable() {
     try {
-      const storage = global.localStorage
-      return storage
-    } catch (ex) {
-      return false
+      const storage = global.localStorage;
+      return storage;
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::isAvailable', e);
+      return false;
     }
   },
   getItem(key) {
-    let item = null
+    let item = null;
     try {
-      item = JSON.parse(localStorage.getItem(key))
-    } catch (ex) {
-      console.info('LocalStorage:', ex.name)
+      item = JSON.parse(localStorage.getItem(key));
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::getItem', e);
+      console.info('LocalStorage:', e.name);
     }
-    return item
+    return item;
   },
   setItem(key, data) {
-    let isSet = null
+    let isSet = null;
     try {
-      localStorage.setItem(key, JSON.stringify(data))
-      isSet = true
-    } catch (ex) {
-      console.info('LocalStorage:', ex.name)
-      isSet = false
+      localStorage.setItem(key, JSON.stringify(data));
+      isSet = true;
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::setItem', e);
+      console.info('LocalStorage:', e.name);
+      isSet = false;
     }
-    return isSet
-  }
-}
+    return isSet;
+  },
+};

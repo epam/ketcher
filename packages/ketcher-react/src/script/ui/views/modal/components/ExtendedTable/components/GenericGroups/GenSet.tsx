@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2022 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,51 +14,57 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { GenItemSet } from 'ketcher-core'
-import classes from './GenSet.module.less'
-import clsx from 'clsx'
-import { isGenericGroup } from '../../helpers'
+import type { GenItemSet } from 'ketcher-core';
+import classes from './GenSet.module.less';
+import { isGenericGroup } from '../../helpers';
+import ButtonGenSet from './components/ButtonGenSet';
 
 type GenSetProps = {
-  labels: GenItemSet[]
-  selected: (label: string) => boolean
-  onAtomSelect: (label: string, activateImmediately: boolean) => void
-  className?: string
-  group: string
-}
+  labels: GenItemSet[];
+  selected: (label: string) => boolean;
+  onAtomSelect: (label: string) => void;
+  onAtomActivate: (label: string) => void;
+  className?: string;
+  group: string;
+  disabledQueryElements: Array<string> | null;
+};
 
-const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '')
+const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '');
 
 function GenSet({
   labels,
   selected,
   onAtomSelect,
+  onAtomActivate,
   className,
-  group
-}: GenSetProps) {
+  group,
+  disabledQueryElements,
+}: Readonly<GenSetProps>) {
   return (
     <>
-      {labels.map((item, index) => {
-        const buttons = item.items
-        const caption = item.displayName
+      {labels.map((item) => {
+        const buttons = item.items;
+        const caption = item.displayName;
+        const fieldsetKey =
+          caption ??
+          buttons
+            .map((b) => b.label)
+            .sort((a, b) => a.localeCompare(b))
+            .join('|');
         return (
-          <fieldset className={className} key={index}>
+          <fieldset className={className} key={fieldsetKey}>
             <div className={classes[getGroupClassName(group)]}>
-              {buttons.map((button, index) => (
-                <button
-                  key={index}
-                  onClick={() => onAtomSelect(button.label, false)}
-                  onDoubleClick={() => onAtomSelect(button.label, true)}
-                  title={button.description || button.label}
-                  className={clsx(
-                    {
-                      [classes.selected]: selected(button.label)
-                    },
-                    classes.button
+              {buttons.map((button) => (
+                <ButtonGenSet
+                  key={button.label}
+                  button={button}
+                  onAtomSelect={onAtomSelect}
+                  onAtomActivate={onAtomActivate}
+                  selected={selected}
+                  disabled={Boolean(
+                    disabledQueryElements?.includes(button.label),
                   )}
-                >
-                  {button.label}
-                </button>
+                />
               ))}
             </div>
             {!isGenericGroup(group) && caption && (
@@ -72,10 +78,10 @@ function GenSet({
               </div>
             )}
           </fieldset>
-        )
+        );
       })}
     </>
-  )
+  );
 }
 
-export { GenSet }
+export { GenSet };

@@ -1,0 +1,584 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer1621"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__UNA___2'-3'-Unlocked-ribose__SGNA___S Propanetriol (GNA sugar)__RGNA___R Propanetriol (GNA sugar)_"
+            },
+            {
+                "$ref": "monomerTemplate-UNA___2'-3'-Unlocked-ribose"
+            },
+            {
+                "$ref": "monomerTemplate-SGNA___S Propanetriol (GNA sugar)"
+            },
+            {
+                "$ref": "monomerTemplate-RGNA___R Propanetriol (GNA sugar)"
+            }
+        ]
+    },
+    "monomer1621": {
+        "type": "ambiguousMonomer",
+        "id": "1621",
+        "position": {
+            "x": 17.60616455078125,
+            "y": -10.43641586303711
+        },
+        "alias": "%",
+        "templateId": "alternatives__UNA___2'-3'-Unlocked-ribose__SGNA___S Propanetriol (GNA sugar)__RGNA___R Propanetriol (GNA sugar)_"
+    },
+    "ambiguousMonomerTemplate-alternatives__UNA___2'-3'-Unlocked-ribose__SGNA___S Propanetriol (GNA sugar)__RGNA___R Propanetriol (GNA sugar)_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__UNA___2'-3'-Unlocked-ribose__SGNA___S Propanetriol (GNA sugar)__RGNA___R Propanetriol (GNA sugar)_",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "UNA___2'-3'-Unlocked-ribose"
+            },
+            {
+                "templateId": "SGNA___S Propanetriol (GNA sugar)"
+            },
+            {
+                "templateId": "RGNA___R Propanetriol (GNA sugar)"
+            }
+        ]
+    },
+    "monomerTemplate-UNA___2'-3'-Unlocked-ribose": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    0.6066,
+                    -1.351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6923,
+                    -2.1029,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.6057,
+                    0.1499,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.9045,
+                    0.9019,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6915,
+                    -3.6037,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.732,
+                    -1.5039,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6932,
+                    0.9018,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.6925,
+                    2.4027,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.731,
+                    3.0037,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.9036,
+                    2.4027,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.7299,
+                    -4.205,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.9422,
+                    3.0039,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    4
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    11
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "UNA___2'-3'-Unlocked-ribose",
+        "fullName": "2'-3'-Unlocked-ribose",
+        "alias": "UNA",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 9,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "side",
+                "leavingGroup": {
+                    "atoms": [
+                        5
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "R"
+    },
+    "monomerTemplate-SGNA___S Propanetriol (GNA sugar)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.2258,
+                    -0.326,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.976,
+                    -1.6259,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.176,
+                    -1.6267,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.974,
+                    0.9749,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.1741,
+                    0.9778,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2751,
+                    -0.3249,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.0254,
+                    0.9749,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.2253,
+                    0.9758,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "SGNA___S Propanetriol (GNA sugar)",
+        "fullName": "S Propanetriol (GNA sugar)",
+        "alias": "SGNA",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "side",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "R"
+    },
+    "monomerTemplate-RGNA___R Propanetriol (GNA sugar)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.2258,
+                    -0.326,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.976,
+                    -1.6259,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.176,
+                    -1.6267,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.974,
+                    0.9749,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.1741,
+                    0.9778,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2751,
+                    -0.3249,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.0254,
+                    0.9749,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.2253,
+                    0.9758,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "RGNA___R Propanetriol (GNA sugar)",
+        "fullName": "R Propanetriol (GNA sugar)",
+        "alias": "RGNA",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "side",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "R"
+    }
+}

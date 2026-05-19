@@ -18,48 +18,48 @@ import {
   INDIGO_VERIFICATION,
   ANALYZING_FILE,
   RequestActionTypes,
-  RequestState
-} from './request.types'
+  RequestState,
+} from './request.types';
 
 export function indigoVerification(data: boolean): RequestActionTypes {
   return {
     type: INDIGO_VERIFICATION,
-    data
-  }
+    data,
+  };
 }
 
 export function setAnalyzingFile(data: boolean): RequestActionTypes {
   return {
     type: ANALYZING_FILE,
-    data
-  }
+    data,
+  };
 }
 
 const initialState = {
   indigoVerification: false,
-  isAnalyzingFile: false
-}
+  isAnalyzingFile: false,
+};
 
 export default function (
   state = initialState,
-  action: RequestActionTypes
+  action: RequestActionTypes,
 ): RequestState {
-  const { type, data } = action
+  const { type, data } = action;
 
   switch (type) {
     case INDIGO_VERIFICATION: {
       return {
         ...state,
-        indigoVerification: data
-      }
+        indigoVerification: data,
+      };
     }
     case ANALYZING_FILE: {
       return {
         ...state,
-        isAnalyzingFile: data
-      }
+        isAnalyzingFile: data,
+      };
     }
     default:
-      return state
+      return state;
   }
 }

@@ -456,7 +456,18 @@ export class SequenceRenderer {
     this.sequenceBondRenderers.add(bondRenderer);
   }
 
+  private static isCaretAfterRowEndValue = false;
+
+  public static get isCaretAfterRowEnd() {
+    return this.isCaretAfterRowEndValue;
+  }
+
+  private static set isCaretAfterRowEnd(value: boolean) {
+    this.isCaretAfterRowEndValue = value;
+  }
+
   public static setCaretPosition(caretPosition: number) {
+    this.isCaretAfterRowEnd = false;
     const editor = provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -754,6 +765,148 @@ export class SequenceRenderer {
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
     return operation;
+  }
+
+  private static showCaretAfterNode(node: ITwoStrandedChainItem) {
+    this.isCaretAfterRowEnd = true;
+    const renderer = node.senseNode?.renderer;
+
+    if (renderer instanceof BaseSequenceItemRenderer) {
+      renderer.removeCaret();
+      renderer.showCaretAfterNode();
+
+      if (renderer.antisenseNodeRenderer) {
+        renderer.antisenseNodeRenderer.removeCaret();
+        renderer.antisenseNodeRenderer.showCaretAfterNode();
+      }
+    }
+  }
+
+  public static get isCurrentCaretAtLastInFullRow(): boolean {
+    const currentNode = this.currentEdittingNode;
+    const currentRow = this.currentChainRow;
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    return (
+      !!currentNode &&
+      currentNode === lastNodeInRow &&
+      !(lastNodeInRow?.senseNode instanceof EmptySequenceNode)
+    );
+  }
+
+  public static moveCaretForwardOrToRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      this.isCaretAfterRowEnd = false;
+      this.moveCaretForward();
+
+      return;
+    }
+
+    if (this.isCurrentCaretAtLastInFullRow) {
+      const lastNodeInRow =
+        this.currentChainRow[this.currentChainRow.length - 1];
+
+      if (!lastNodeInRow) {
+        return;
+      }
+
+      this.showCaretAfterNode(lastNodeInRow);
+    } else {
+      this.moveCaretForward();
+    }
+  }
+
+  public static moveCaretBackOrFromRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      this.isCaretAfterRowEnd = false;
+
+      const currentNode = this.currentEdittingNode;
+      const renderer = currentNode?.senseNode?.renderer;
+
+      if (renderer instanceof BaseSequenceItemRenderer) {
+        renderer.removeCaret();
+        renderer.showCaret();
+
+        if (renderer.antisenseNodeRenderer) {
+          renderer.antisenseNodeRenderer.removeCaret();
+          renderer.antisenseNodeRenderer.showCaret();
+        }
+      }
+
+      return;
+    }
+
+    const currentNode = this.currentEdittingNode;
+
+    if (!currentNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentNode);
+
+    if (currentNodeIndexInRow === 0) {
+      this.moveCaretBack();
+
+      if (this.isCurrentCaretAtLastInFullRow) {
+        const lastNodeInRow =
+          this.currentChainRow[this.currentChainRow.length - 1];
+
+        if (!lastNodeInRow) {
+          return;
+        }
+
+        this.showCaretAfterNode(lastNodeInRow);
+      }
+
+      return;
+    }
+
+    this.moveCaretBack();
+  }
+
+  public static moveCaretToRowStart() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentNodeIndexInRow =
+      this.currentChainRow.indexOf(currentEdittingNode);
+
+    SequenceRenderer.setCaretPosition(
+      this.caretPosition - currentNodeIndexInRow,
+    );
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+  }
+
+  public static moveCaretToRowEnd() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    if (!lastNodeInRow) {
+      return;
+    }
+
+    const isPartialRow = lastNodeInRow.senseNode instanceof EmptySequenceNode;
+
+    const offset = currentRow.length - 1 - currentNodeIndexInRow;
+
+    SequenceRenderer.setCaretPosition(this.caretPosition + offset);
+
+    if (!isPartialRow) {
+      SequenceRenderer.showCaretAfterNode(lastNodeInRow);
+    }
+
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
   public static get currentChainIndex() {

@@ -587,7 +587,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
   }
 
-  public showCaret() {
+  public showCaret(xOffset = -17) {
     this.caretElement = this.spacerElement?.append('g');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
@@ -616,13 +616,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     ) {
       this.caretElement
         ?.append('line')
-        .attr('x1', -17)
+        .attr('x1', xOffset)
         .attr('y1', -1)
-        .attr('x2', -17)
+        .attr('x2', xOffset)
         .attr('y2', 21)
         .attr('stroke', '#333')
         .attr('class', 'blinking');
     }
+  }
+
+  public showCaretAfterNode() {
+    this.showCaret(3);
   }
 
   public removeCaret() {
@@ -638,7 +642,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      this.showCaret();
+      const shouldRenderCaretAfterNode =
+        SequenceRenderer.isCaretAfterRowEnd &&
+        SequenceRenderer.isCurrentCaretAtLastInFullRow;
+
+      if (shouldRenderCaretAfterNode) {
+        this.showCaretAfterNode();
+      } else {
+        this.showCaret();
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import type { Bond } from 'ketcher-core';
+import { Bond } from 'ketcher-core';
 
 import {
   RnaPresetWizardComponentStateFieldId,
@@ -39,14 +39,6 @@ export type RnaPresetComponentStructures = {
   sugar: Pick<RnaPresetWizardState['sugar'], 'structure'>;
   phosphate: Pick<RnaPresetWizardState['phosphate'], 'structure'>;
 };
-
-// Mirrors ketcher-core Bond.PATTERN.TYPE.SINGLE and
-// Bond.PATTERN.STEREO.NONE/UP/DOWN without adding a runtime ketcher-core import
-// to Jest-tested React modules.
-export const KETCHER_SINGLE_BOND_TYPE = 1;
-export const KETCHER_BOND_STEREO_NONE = 0;
-export const KETCHER_BOND_STEREO_UP = 1;
-export const KETCHER_BOND_STEREO_DOWN = 6;
 
 const hasComponentStructure = (
   structure?: RnaPresetWizardState['base']['structure'],
@@ -95,12 +87,12 @@ const isValidConnectionBond = (
   bond: Pick<Bond, 'begin' | 'end'> & Partial<Pick<Bond, 'type' | 'stereo'>>,
 ) => {
   const isSingleBond =
-    bond.type === undefined || bond.type === KETCHER_SINGLE_BOND_TYPE;
+    bond.type === undefined || bond.type === Bond.PATTERN.TYPE.SINGLE;
   const validStereoTypes = new Set([
     undefined,
-    KETCHER_BOND_STEREO_NONE,
-    KETCHER_BOND_STEREO_UP,
-    KETCHER_BOND_STEREO_DOWN,
+    Bond.PATTERN.STEREO.NONE,
+    Bond.PATTERN.STEREO.UP,
+    Bond.PATTERN.STEREO.DOWN,
   ]);
 
   return isSingleBond && validStereoTypes.has(bond.stereo);

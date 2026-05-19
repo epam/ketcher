@@ -1943,7 +1943,13 @@ class Editor implements KetcherEditor {
   }
 
   setProblematicAtoms(problematicAtoms: Set<number>) {
-    assert(this.monomerCreationState);
+    if (!this.monomerCreationState) {
+      KetcherLogger.error(
+        'Can not set problematic atoms. There is no monomerCreationState',
+      );
+
+      return;
+    }
 
     this.monomerCreationState.problematicAtoms = problematicAtoms;
     this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };

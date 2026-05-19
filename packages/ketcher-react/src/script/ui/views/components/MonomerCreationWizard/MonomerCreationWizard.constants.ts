@@ -114,7 +114,7 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   notUniqueBILNAlias: 'error',
   invalidRnaPresetStructure: 'error',
   rnaPresetAtomsOutsideComponents: 'error',
-  rnaPresetAtomsInMultipleComponents: 'warning',
+  rnaPresetAtomsInMultipleComponents: 'error',
   rnaPresetMissingComponents: 'error',
   rnaPresetInvalidSugarConnectionBonds: 'error',
   rnaPresetUnexpectedBasePhosphateBond: 'error',

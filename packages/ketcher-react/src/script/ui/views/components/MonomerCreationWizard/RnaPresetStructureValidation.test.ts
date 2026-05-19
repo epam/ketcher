@@ -1,12 +1,10 @@
-import type { Bond } from 'ketcher-core';
+import { Bond } from 'ketcher-core';
 
 import {
   findBondBetweenRnaPresetComponents,
   getRnaPresetComponentKeysToSave,
   getRnaPresetStructureValidationResult,
   isValidRnaPresetStructure,
-  KETCHER_BOND_STEREO_NONE,
-  KETCHER_SINGLE_BOND_TYPE,
   RnaPresetComponentStructures,
   RnaPresetValidationStruct,
 } from './RnaPresetStructureValidation';
@@ -94,8 +92,8 @@ describe('getRnaPresetStructureValidationResult', () => {
             {
               begin: 0,
               end: 1,
-              type: KETCHER_SINGLE_BOND_TYPE + 1,
-              stereo: KETCHER_BOND_STEREO_NONE,
+              type: Bond.PATTERN.TYPE.SINGLE + 1,
+              stereo: Bond.PATTERN.STEREO.NONE,
             },
           ],
         ),
@@ -128,7 +126,7 @@ describe('getRnaPresetStructureValidationResult', () => {
   });
 });
 
-const createRnaPresetWizardState = ({
+function createRnaPresetWizardState({
   sugar,
   base = [],
   phosphate = [],
@@ -136,26 +134,28 @@ const createRnaPresetWizardState = ({
   sugar: number[];
   base?: number[];
   phosphate?: number[];
-}): RnaPresetComponentStructures => ({
-  sugar: {
-    structure: {
-      atoms: sugar,
-      bonds: [],
+}): RnaPresetComponentStructures {
+  return {
+    sugar: {
+      structure: {
+        atoms: sugar,
+        bonds: [],
+      },
     },
-  },
-  base: {
-    structure: {
-      atoms: base,
-      bonds: [],
+    base: {
+      structure: {
+        atoms: base,
+        bonds: [],
+      },
     },
-  },
-  phosphate: {
-    structure: {
-      atoms: phosphate,
-      bonds: [],
+    phosphate: {
+      structure: {
+        atoms: phosphate,
+        bonds: [],
+      },
     },
-  },
-});
+  };
+}
 
 describe('isValidRnaPresetStructure', () => {
   it.each([

@@ -67,6 +67,7 @@ const baseConfig = {
     typescript({
       tsconfigOverride: {
         compilerOptions: {
+          // rollup-plugin-typescript2 rejects tsconfig's "module": "preserve".
           module: 'esnext',
         },
       },

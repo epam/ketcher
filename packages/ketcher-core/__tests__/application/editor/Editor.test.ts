@@ -106,8 +106,8 @@ describe('CoreEditor', () => {
       }
 
       expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError!.partialSuccess).toBe(false);
-      expect(thrownError!.skippedItems).toEqual([
+      expect(thrownError?.partialSuccess).toBe(false);
+      expect(thrownError?.skippedItems).toEqual([
         {
           name: 'CHEM1',
           reason: expect.stringContaining(
@@ -323,8 +323,8 @@ describe('CoreEditor', () => {
       }
 
       expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError!.partialSuccess).toBe(true);
-      expect(thrownError!.skippedItems).toEqual([
+      expect(thrownError?.partialSuccess).toBe(true);
+      expect(thrownError?.skippedItems).toEqual([
         {
           name: 'SUGAR3',
           reason: expect.stringContaining('Invalid HELM alias value'),
@@ -444,8 +444,8 @@ describe('CoreEditor', () => {
       }
 
       expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
-      expect(thrownError!.partialSuccess).toBe(false);
-      expect(thrownError!.skippedItems).toEqual([
+      expect(thrownError?.partialSuccess).toBe(false);
+      expect(thrownError?.skippedItems).toEqual([
         {
           name: 'monomerGroupTemplate-',
           reason: expect.stringContaining('cannot be empty or whitespace'),

@@ -774,6 +774,13 @@ export class Ketcher {
     }
   }
 
+  /**
+   * Converts raw monomer data to KET format before it is sent to the editor.
+   *
+   * @throws {Error} When conversion fails or the server rejects the payload.
+   *   The thrown message is prefixed with
+   *   "Monomer item could not be loaded because of an error: ".
+   */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,

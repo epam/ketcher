@@ -16,3 +16,4 @@
 
 export * from './sdf.types';
 export * from './sdfSerializer';
+export * from './validateSdfMonomerLibraryData';

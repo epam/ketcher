@@ -64,51 +64,12 @@ import {
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { getStructure } from 'application/getStructure';
+import { validateSdfMonomerLibraryData } from 'domain/serializers/sdf/validateSdfMonomerLibraryData';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
   needZoom?: boolean;
 };
-
-function validateSdfMonomerLibraryData(sdfData: string): void {
-  const records = sdfData.split(/\${4}/);
-
-  for (const record of records) {
-    if (!record.trim()) continue;
-
-    const lines = record.split(/\r?\n/);
-
-    const extractFieldValue = (fieldName: string): string | undefined => {
-      let collecting = false;
-      const valueLines: string[] = [];
-      for (const line of lines) {
-        if (collecting) {
-          if (/^\s*>\s*</.test(line)) break;
-          valueLines.push(line);
-        } else if (new RegExp(`^\\s*>\\s*<${fieldName}>\\s*$`).test(line)) {
-          collecting = true;
-        }
-      }
-      return collecting ? valueLines.join('\n').trim() : undefined;
-    };
-
-    const typeValue = extractFieldValue('type');
-    if (typeValue !== 'monomerTemplate') continue;
-
-    const modificationTypesValue = extractFieldValue('modificationTypes');
-    if (modificationTypesValue === undefined) continue;
-
-    if (!modificationTypesValue) {
-      const templateMatch = record.match(
-        /M\s+V30\s+TEMPLATE\s+\d+\s+\S+\/([^/\s]+)\//,
-      );
-      const monomerName = templateMatch ? templateMatch[1] : 'unknown';
-      throw new Error(
-        `Load of "${monomerName}" monomer has failed, monomer definition contains invalid modificationTypes value. The modificationTypes couldn't be empty`,
-      );
-    }
-  }
-}
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -794,6 +755,11 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
+  /**
+   * Converts raw monomer library data to KET format.
+   * @throws {Error} If the input is SDF and contains a monomerTemplate record
+   *   with an empty `modificationTypes` field.
+   */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -807,7 +773,12 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      validateSdfMonomerLibraryData(rawMonomersDataString);
+      if (
+        format === SupportedFormat.sdf ||
+        format === SupportedFormat.sdfV3000
+      ) {
+        validateSdfMonomerLibraryData(rawMonomersDataString);
+      }
       const convertResult = await this.structService.convert(
         {
           struct: rawMonomersDataString,
@@ -847,6 +818,10 @@ export class Ketcher {
     return convertResult.struct;
   }
 
+  /**
+   * @throws {Error} If SDF input contains a monomerTemplate with an empty
+   *   `modificationTypes` field, or if not in macromolecules mode.
+   */
   public async updateMonomersLibrary(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -881,6 +856,10 @@ export class Ketcher {
     }
   }
 
+  /**
+   * @throws {Error} If SDF input contains a monomerTemplate with an empty
+   *   `modificationTypes` field, or if not in macromolecules mode.
+   */
   public async replaceMonomersLibrary(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,

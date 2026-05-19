@@ -56,6 +56,7 @@ import {
   initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
+  setMonomerLibraryLoadError,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -213,6 +214,15 @@ function Editor({
         monomersLibraryUpdate,
         monomersLibraryReplace,
         onInit,
+        onLibraryError: (err) => {
+          dispatch(
+            setMonomerLibraryLoadError(
+              err instanceof Error
+                ? err.message
+                : 'Failed to load monomers library',
+            ),
+          );
+        },
       }),
     );
 

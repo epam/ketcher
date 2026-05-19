@@ -22,7 +22,7 @@ const NAME_FIELD_RE = /^\s*>\s*<name>\s*$/;
 type CollectingField = 'type' | 'modificationTypes' | 'name';
 
 function sanitizeMonomerName(raw: string): string {
-  return raw.slice(0, 64).replace(/[^\w.\-]/g, '_');
+  return raw.slice(0, 64).replace(/[^\w.-]/g, '_');
 }
 
 /**

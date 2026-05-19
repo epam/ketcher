@@ -130,14 +130,46 @@ const turnOnScrollAnimation = (
   canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
 };
 
-export class MonomerLibraryUpdateError extends Error {
-  readonly partialSuccess = true;
-  readonly skippedItems: string[];
+export interface SkippedMonomerItem {
+  name: string;
+  reason: string;
+}
 
-  constructor(messages: string[]) {
-    super(messages.join('\n'));
+/**
+ * Thrown by `CoreEditor.updateMonomersLibrary` when one or more incoming
+ * monomer definitions are invalid and could not be committed to the library.
+ *
+ * `partialSuccess` is `true` when at least one item from the payload was
+ * committed successfully alongside the failures, and `false` when every item
+ * was rejected.
+ *
+ * `skippedItems` holds a structured list of every rejected item — `name` is
+ * the monomer or template identifier, `reason` is a human-readable explanation
+ * of why it was skipped.
+ *
+ * @example
+ * try {
+ *   await ketcher.updateMonomersLibrary(data);
+ * } catch (err) {
+ *   if (err instanceof MonomerLibraryUpdateError) {
+ *     console.warn(`Partial success: ${err.partialSuccess}`);
+ *     err.skippedItems.forEach(({ name, reason }) =>
+ *       console.warn(`Skipped ${name}: ${reason}`)
+ *     );
+ *   }
+ * }
+ */
+export class MonomerLibraryUpdateError extends Error {
+  readonly partialSuccess: boolean;
+  readonly skippedItems: SkippedMonomerItem[];
+
+  constructor(skippedItems: SkippedMonomerItem[], partialSuccess: boolean) {
+    super(
+      skippedItems.map(({ name, reason }) => `${name}: ${reason}`).join('\n'),
+    );
     this.name = 'MonomerLibraryUpdateError';
-    this.skippedItems = [...messages];
+    this.skippedItems = [...skippedItems];
+    this.partialSuccess = partialSuccess;
   }
 }
 
@@ -389,11 +421,13 @@ export class CoreEditor {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
-    const validationErrors: string[] = [];
-    const reportValidationError = (message: string) => {
+    const skippedItems: SkippedMonomerItem[] = [];
+    const reportValidationError = (name: string, reason: string) => {
+      const message = `${name}: ${reason}`;
       KetcherLogger.error('Editor::updateMonomersLibrary', message);
-      validationErrors.push(message);
+      skippedItems.push({ name, reason });
     };
+    let didCommitAnyItem = false;
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -437,7 +471,8 @@ export class CoreEditor {
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
         reportValidationError(
-          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+          newMonomer.props.MonomerName,
+          `Invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
         );
         return;
       }
@@ -468,9 +503,8 @@ export class CoreEditor {
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
         reportValidationError(
-          `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
-            newMonomer.props.MonomerName
-          }${
+          newMonomer.props.MonomerName,
+          `Alias collision detected${
             aliasDetails ? ` (${aliasDetails})` : ''
           }. The monomer was not added to the library.`,
         );
@@ -480,7 +514,8 @@ export class CoreEditor {
       // Validate base IDT alias is present when idtAliases is defined
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         reportValidationError(
-          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`,
+          newMonomer.props.MonomerName,
+          `Base IDT alias is required when idtAliases is defined. The monomer was not added to the library.`,
         );
         return;
       }
@@ -501,7 +536,8 @@ export class CoreEditor {
 
         if (hasInvalidSlash) {
           reportValidationError(
-            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`,
+            newMonomer.props.MonomerName,
+            `${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`,
           );
           return;
         }
@@ -532,6 +568,7 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex] = newMonomer;
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
+          didCommitAnyItem = true;
 
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
           this._monomersLibraryParsedJson![existingMonomerTemplateRef] =
@@ -545,6 +582,7 @@ export class CoreEditor {
         }
       } else {
         this._monomersLibrary.push(newMonomer);
+        didCommitAnyItem = true;
 
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(
@@ -567,20 +605,23 @@ export class CoreEditor {
 
       if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
         reportValidationError(
-          `Editor::updateMonomersLibrary: Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}" for template ${templateRef.$ref}. The template was not added to the library.`,
+          templateRef.$ref,
+          `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
         );
         return;
       }
 
       if (!templateDefinition.name?.trim()) {
         reportValidationError(
-          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+          templateRef.$ref,
+          `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
         );
         return;
       }
 
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      didCommitAnyItem = true;
       if (
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         !this._monomersLibraryParsedJson!.root.templates.find(
@@ -595,8 +636,8 @@ export class CoreEditor {
 
     this.events.updateMonomersLibrary.dispatch();
 
-    if (validationErrors.length > 0) {
-      throw new MonomerLibraryUpdateError(validationErrors);
+    if (skippedItems.length > 0) {
+      throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
     }
   }
 

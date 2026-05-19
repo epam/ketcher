@@ -98,9 +98,23 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase)),
-      ).toThrow(MonomerLibraryUpdateError);
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError!.partialSuccess).toBe(false);
+      expect(thrownError!.skippedItems).toEqual([
+        {
+          name: 'CHEM1',
+          reason: expect.stringContaining(
+            'Base IDT alias is required when idtAliases is defined',
+          ),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -301,15 +315,25 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases)),
-      ).toThrow(MonomerLibraryUpdateError);
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError!.partialSuccess).toBe(true);
+      expect(thrownError!.skippedItems).toEqual([
+        {
+          name: 'SUGAR3',
+          reason: expect.stringContaining('Invalid HELM alias value'),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining(
-          'Load of "SUGAR3" monomer has failed, monomer definition contains invalid HELM alias value.',
-        ),
+        expect.stringContaining('Invalid HELM alias value'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -412,14 +436,26 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      expect(() =>
-        editor.updateMonomersLibrary(JSON.stringify(unnamedPreset)),
-      ).toThrow(MonomerLibraryUpdateError);
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError!.partialSuccess).toBe(false);
+      expect(thrownError!.skippedItems).toEqual([
+        {
+          name: 'monomerGroupTemplate-',
+          reason: expect.stringContaining('cannot be empty or whitespace'),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
         expect.stringContaining(
-          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+          'Monomer group template name cannot be empty or whitespace',
         ),
       );
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(

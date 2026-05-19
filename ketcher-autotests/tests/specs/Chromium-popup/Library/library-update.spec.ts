@@ -771,6 +771,7 @@ test('Case 28: Update Library with SDF that contain few compounds but one of the
     _groupName +
     '_A1' +
     _betweenEntries +
+    _endToken +
     _A1Body +
     _type +
     'monomerGroupTemplate' +
@@ -781,6 +782,7 @@ test('Case 28: Update Library with SDF that contain few compounds but one of the
     _groupName +
     '_A2' +
     _betweenEntries +
+    _endToken +
     _A1Body +
     _type +
     'monomerGroupTemplate' +

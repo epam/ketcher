@@ -151,6 +151,16 @@ export const editorSlice: Slice<EditorState> = createSlice({
             'Editor::initializeMonomersLibraryFromKetcher failed:',
             err,
           );
+          const errorMessage =
+            err instanceof Error
+              ? err.message
+              : typeof err === 'string'
+              ? err
+              : 'Failed to load monomers library';
+          editor.events.openErrorModal.dispatch({
+            errorMessage,
+            errorTitle: 'Monomer library update failed',
+          });
         });
 
       // TODO: Figure out proper typing here and below

@@ -556,7 +556,7 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
 
-    it('should log BILN alias collision across peptide and CHEM monomers', () => {
+    it('should throw MonomerLibraryUpdateError on BILN alias collision across peptide and CHEM monomers', () => {
       const peptideWithBilnAlias = {
         root: {
           templates: [

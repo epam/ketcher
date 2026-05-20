@@ -475,9 +475,6 @@ export class CoreEditor {
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
           : null,
-        monomer.props?.aliasBILN
-          ? `BILN alias "${monomer.props.aliasBILN}"`
-          : null,
         monomer.props?.idtAliases?.base
           ? `IDT base alias "${monomer.props.idtAliases.base}"`
           : null,
@@ -507,14 +504,6 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `Invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
         );
-        return;
-      }
-      if (
-        newMonomer.props?.aliasBILN &&
-        !isValidBilnAlias(newMonomer.props.aliasBILN)
-      ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
         return;
       }
       if (
@@ -681,19 +670,6 @@ export class CoreEditor {
         reportValidationError(
           templateRef.$ref,
           `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
-        );
-        return;
-      }
-
-      if (
-        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
-      ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
         );
         return;
       }

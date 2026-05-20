@@ -468,7 +468,7 @@ describe('CoreEditor', () => {
       );
     });
 
-    it('should reject monomer with IDT alias exceeding 12 characters', () => {
+    it('should reject monomer with IDT alias exceeding 10 characters without slashes', () => {
       const monomerWithLongIdtAlias = {
         root: {
           templates: [{ $ref: 'monomerTemplate-CHEM_LONG' }],
@@ -488,7 +488,7 @@ describe('CoreEditor', () => {
             MonomerNaturalAnalogCode: 'X',
           },
           idtAliases: {
-            base: '1234567890123', // 13 chars — exceeds max of 12
+            base: '12345678901', // 11 chars without slashes — exceeds max of 10
           },
         },
       };
@@ -497,7 +497,9 @@ describe('CoreEditor', () => {
       editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('IDT alias length must not exceed 12'),
+        expect.stringContaining(
+          'The maximum number of characters of an IDT alias without slashes (/) is 10',
+        ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });

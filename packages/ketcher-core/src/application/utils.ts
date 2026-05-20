@@ -59,17 +59,15 @@ export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
   mergeWithLatestHistoryCommand = false,
+  format = identifyStructFormat(struct, true),
+  inputFormat = format === SupportedFormat.unknown
+    ? undefined
+    : getPropertiesByFormat(format).mime,
 ) {
   const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
-  const format = identifyStructFormat(struct, true);
   let ketStruct = struct;
   if (format !== SupportedFormat.ket) {
-    const inputFormat =
-      format === SupportedFormat.unknown
-        ? undefined
-        : getPropertiesByFormat(format).mime;
-
     ketStruct = (
       await structService.convert({
         struct,

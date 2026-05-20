@@ -483,6 +483,11 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
+  /**
+   * Loads structure onto canvas, replacing existing structure.
+   * Detected IDT input is loaded through the macromolecule pipeline and switches
+   * the editor to macromolecule mode when called from molecules mode.
+   */
   async setMolecule(
     structStr: string,
     options?: SetMoleculeOptions,
@@ -492,7 +497,7 @@ export class Ketcher {
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
-      const format = identifyStructFormat(structStr, true);
+      const format = identifyStructFormat(structStr);
       const shouldLoadAsMacromolecule = format === SupportedFormat.idt;
 
       if (shouldLoadAsMacromolecule && !window.isPolymerEditorTurnedOn) {
@@ -501,7 +506,12 @@ export class Ketcher {
 
       if (window.isPolymerEditorTurnedOn || shouldLoadAsMacromolecule) {
         deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        await parseAndAddMacromoleculesOnCanvas(
+          structStr,
+          this.structService,
+          false,
+          format,
+        );
 
         if (options?.needZoom !== false) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();

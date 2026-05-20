@@ -81,7 +81,7 @@ You can find the instruction for service installation
 ## Packages
 
 | Project                                                                                               | Status                                                                                                                      | Description                                                                       |
-|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)                     | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)                     | Core functionality: domain, shared services, functions and interface declarations |
 | [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone)         | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone)         | Contains only the functionality necessary to start Ketcher in standalone mode     |
 | [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)                   | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)                   | Package contains only the functionality necessary to define components.           |
@@ -95,6 +95,7 @@ You can find the latest version of Miew-React [here](https://github.com/epam/mie
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
 
 ## Macromolecules mode
+
 Starting with version 3.0, Ketcher supports a new control in the top toolbar that allows switching to macromolecules editing mode. If you prefer having only small molecules editing mode available, you can remove the mode switcher from the toolbar by passing `disableMacromoleculesEditor` property to the `Editor` component.
 
 ```js
@@ -111,7 +112,6 @@ const App = () => {
 ```
 
 Please refer to the `example/src/App.tsx` file for a complete example of how to integrate Ketcher editor into your application.
-
 
 ## Ketcher API
 
@@ -142,11 +142,13 @@ getSmiles(isExtended?: boolean): Promise<string>
 Returns SMILES (Simplified Molecular Input Line Entry System) representation.
 
 **Parameters:**
+
 - `isExtended` (optional) - Use extended SMILES format (default: `false`)
 
 **Throws:** Error in macromolecules mode
 
 **Example:**
+
 ```javascript
 const smiles = await ketcher.getSmiles();
 // Returns: "C1=CC=CC=C1"
@@ -176,11 +178,13 @@ getMolfile(molfileFormat?: 'v2000' | 'v3000'): Promise<string>
 Returns MDL MOL file format.
 
 **Parameters:**
+
 - `molfileFormat` (optional) - MOL file version: `'v2000'`, `'v3000'`, or auto-detect
 
 **Throws:** Error if structure contains reaction arrows (use `getRxn` instead)
 
 **Example:**
+
 ```javascript
 const mol = await ketcher.getMolfile('v3000');
 ```
@@ -196,13 +200,16 @@ getRxn(molfileFormat?: 'v2000' | 'v3000'): Promise<string>
 Returns RXN (Reaction) file format.
 
 **Parameters:**
+
 - `molfileFormat` (optional) - RXN file version (default: `'v2000'`)
 
 **Throws:**
+
 - Error if no reaction arrows present
 - Error in macromolecules mode
 
 **Example:**
+
 ```javascript
 const rxn = await ketcher.getRxn('v3000');
 ```
@@ -220,6 +227,7 @@ Returns KET (Ketcher JSON) format - the native internal format.
 **Works in both micro and macromolecules modes.**
 
 **Example:**
+
 ```javascript
 const ket = await ketcher.getKet();
 const ketObj = JSON.parse(ket);
@@ -260,6 +268,7 @@ getSdf(molfileFormat?: 'v2000' | 'v3000'): Promise<string>
 Returns SDF (Structure-Data File) format.
 
 **Parameters:**
+
 - `molfileFormat` (optional) - Version (default: `'v2000'`)
 
 **Throws:** Error in macromolecules mode
@@ -275,6 +284,7 @@ getRdf(molfileFormat?: 'v2000' | 'v3000'): Promise<string>
 Returns RDF (Reaction Data File) format.
 
 **Parameters:**
+
 - `molfileFormat` (optional) - Version (default: `'v2000'`)
 
 **Throws:** Error in macromolecules mode
@@ -314,9 +324,11 @@ getInchi(withAuxInfo?: boolean): Promise<string>
 Returns InChI (IUPAC International Chemical Identifier) representation.
 
 **Parameters:**
+
 - `withAuxInfo` (optional) - Include auxiliary information (default: `false`)
 
 **Example:**
+
 ```javascript
 const inchi = await ketcher.getInchi();
 // Returns: "InChI=1S/C6H6/c1-2-4-6-5-3-1/h1-6H"
@@ -333,6 +345,7 @@ getInChIKey(): Promise<string>
 Returns InChI Key (hashed InChI).
 
 **Example:**
+
 ```javascript
 const key = await ketcher.getInChIKey();
 // Returns: "UHOVQNZJYSORNB-UHFFFAOYSA-N"
@@ -361,9 +374,11 @@ getSequence(format: '1-letter' | '3-letter'): Promise<string>
 Returns sequence in 1-letter or 3-letter amino acid/nucleotide format.
 
 **Parameters:**
+
 - `format` - Sequence format: `'1-letter'` or `'3-letter'`
 
 **Example:**
+
 ```javascript
 const seq = await ketcher.getSequence('1-letter');
 // Returns: "ACDEFG"
@@ -401,21 +416,27 @@ setMolecule(structure: string, options?: SetMoleculeOptions): Promise<void>
 
 Loads structure onto canvas, **replacing existing structure**.
 
+When an IDT string is detected, Ketcher loads it through the macromolecule
+pipeline and switches to macromolecule mode if needed.
+
 **Parameters:**
+
 - `structure` - Structure string (format auto-detected)
 - `options` (optional) - Import options
 
 **SetMoleculeOptions:**
+
 ```typescript
 interface SetMoleculeOptions {
-  position?: { x: number; y: number };  // Top-left corner in Angstroms (Y increases upward)
-  needZoom?: boolean;                   // Zoom to fit (default: true)
+  position?: { x: number; y: number }; // Top-left corner in Angstroms (Y increases upward)
+  needZoom?: boolean; // Zoom to fit (default: true)
 }
 ```
 
 **Automatically centers and zooms to fit structure.**
 
 **Example:**
+
 ```javascript
 // Load SMILES
 await ketcher.setMolecule('C1=CC=CC=C1');
@@ -448,6 +469,7 @@ Adds structure to canvas **without removing existing content**.
 **Parameters:** Same as `setMolecule`
 
 **Example:**
+
 ```javascript
 await ketcher.setMolecule('C1=CC=CC=C1');
 await ketcher.addFragment('CCO', { position: { x: 10, y: 0 } });
@@ -464,6 +486,7 @@ setHelm(helmStr: string): Promise<void>
 Loads HELM (Hierarchical Editing Language for Macromolecules) notation structure.
 
 **Example:**
+
 ```javascript
 await ketcher.setHelm('PEPTIDE1{A.G.F}$$$$V2.0');
 ```
@@ -483,6 +506,7 @@ Performs automatic layout algorithm using Indigo service for smart positioning.
 **Throws:** Error in macromolecules mode
 
 **Example:**
+
 ```javascript
 await ketcher.layout();
 ```
@@ -510,12 +534,13 @@ calculate(options?: CalculateData): Promise<CalculateResult>
 Calculates molecular properties.
 
 **Returns:**
+
 ```typescript
 interface CalculateResult {
   'molecular-weight': string;
   'most-abundant-mass': string;
   'monoisotopic-mass': string;
-  'gross': string;                    // Molecular formula
+  gross: string; // Molecular formula
   'mass-composition': string;
 }
 ```
@@ -523,6 +548,7 @@ interface CalculateResult {
 **Throws:** Error in macromolecules mode
 
 **Example:**
+
 ```javascript
 const props = await ketcher.calculate();
 console.log('Molecular weight:', props['molecular-weight']);
@@ -540,6 +566,7 @@ recognize(image: Blob, version?: string): Promise<Struct>
 OCR: Recognizes chemical structure from image.
 
 **Parameters:**
+
 - `image` - Image blob (PNG, JPG, etc.)
 - `version` (optional) - OCR version
 
@@ -548,6 +575,7 @@ OCR: Recognizes chemical structure from image.
 **Throws:** Error in macromolecules mode
 
 **Example:**
+
 ```javascript
 const fileInput = document.querySelector('input[type="file"]');
 const file = fileInput.files[0];
@@ -565,24 +593,27 @@ generateImage(data: string, options: GenerateImageOptions): Promise<Blob>
 Generates image from structure string.
 
 **Parameters:**
+
 - `data` - Structure string (any supported format)
 - `options` - Image generation options
 
 **GenerateImageOptions:**
+
 ```typescript
 interface GenerateImageOptions {
   outputFormat: 'png' | 'svg';
-  backgroundColor?: string;           // Hex color (default: transparent)
-  bondThickness?: number;             // Line thickness in pixels
+  backgroundColor?: string; // Hex color (default: transparent)
+  bondThickness?: number; // Line thickness in pixels
 }
 ```
 
 **Example:**
+
 ```javascript
 const blob = await ketcher.generateImage('C1=CC=CC=C1', {
   outputFormat: 'png',
   backgroundColor: '#FFFFFF',
-  bondThickness: 2
+  bondThickness: 2,
 });
 
 // Create download link
@@ -604,17 +635,20 @@ exportImage(format: 'svg', params?: ExportImageParams): void
 Exports current canvas as image file (downloads automatically).
 
 **Parameters:**
+
 - `format` - Currently only `'svg'` supported
 - `params` (optional) - Export parameters
 
 **ExportImageParams:**
+
 ```typescript
 interface ExportImageParams {
-  margin?: number;  // Margin around structure in pixels
+  margin?: number; // Margin around structure in pixels
 }
 ```
 
 **Example:**
+
 ```javascript
 ketcher.exportImage('svg', { margin: 10 });
 ```
@@ -632,11 +666,13 @@ setZoom(value: number): void
 Sets zoom level.
 
 **Parameters:**
+
 - `value` - Zoom level (range: 0.2 to 4.0)
 
 **Example:**
+
 ```javascript
-ketcher.setZoom(1.5);  // 150% zoom
+ketcher.setZoom(1.5); // 150% zoom
 ```
 
 ---
@@ -650,14 +686,16 @@ setMode(mode: 'flex' | 'snake' | 'sequence'): void
 Sets macromolecules layout mode.
 
 **Parameters:**
+
 - `mode` - Layout mode:
-    - `'flex'` - Flexible layout (default)
-    - `'snake'` - Snake (linear) layout
-    - `'sequence'` - Sequence editor mode
+  - `'flex'` - Flexible layout (default)
+  - `'snake'` - Snake (linear) layout
+  - `'sequence'` - Sequence editor mode
 
 **Only available in macromolecules mode.**
 
 **Example:**
+
 ```javascript
 ketcher.setMode('sequence');
 ```
@@ -676,22 +714,23 @@ Updates editor settings.
 
 **Supported Settings:**
 
-| Setting | Type | Description |
-|---------|------|-------------|
-| `general.dearomatize-on-load` | `boolean` | Dearomatize structures on load |
-| `ignoreChiralFlag` | `boolean` | Ignore chiral flag from MOL files |
-| `disableQueryElements` | `string[]` | Array of query elements to disable (e.g., `['Pol', 'CYH']`) |
-| `bondThickness` | `number` | Bond line thickness in pixels |
-| `disableCustomQuery` | `boolean` | Disable custom query features |
-| `persistMonomerLibraryUpdates` | `boolean` | Persist monomer library changes to localStorage |
+| Setting                        | Type       | Description                                                 |
+| ------------------------------ | ---------- | ----------------------------------------------------------- |
+| `general.dearomatize-on-load`  | `boolean`  | Dearomatize structures on load                              |
+| `ignoreChiralFlag`             | `boolean`  | Ignore chiral flag from MOL files                           |
+| `disableQueryElements`         | `string[]` | Array of query elements to disable (e.g., `['Pol', 'CYH']`) |
+| `bondThickness`                | `number`   | Bond line thickness in pixels                               |
+| `disableCustomQuery`           | `boolean`  | Disable custom query features                               |
+| `persistMonomerLibraryUpdates` | `boolean`  | Persist monomer library changes to localStorage             |
 
 **Example:**
+
 ```javascript
 ketcher.setSettings({
   'general.dearomatize-on-load': false,
-  'ignoreChiralFlag': true,
-  'bondThickness': 2,
-  'disableQueryElements': ['Pol', 'CYH']
+  ignoreChiralFlag: true,
+  bondThickness: 2,
+  disableQueryElements: ['Pol', 'CYH'],
 });
 ```
 
@@ -706,6 +745,7 @@ get settings(): Record<string, any>
 Returns current allowed settings.
 
 **Example:**
+
 ```javascript
 const currentSettings = ketcher.settings;
 console.log(currentSettings);
@@ -713,8 +753,8 @@ console.log(currentSettings);
 
 ---
 
-
 ## Events
+
 Ketcher allows to subscribe on events to react to changes in the editor.
 
 ---
@@ -722,6 +762,7 @@ Ketcher allows to subscribe on events to react to changes in the editor.
 `Subscribe()` - method that allows you to attach an event handler function for event.
 
 #### Syntax:
+
 `ketcher.editor.subscribe(eventName, handler)`
 
 #### Parameters:
@@ -730,16 +771,16 @@ Ketcher allows to subscribe on events to react to changes in the editor.
 
 `handler: function` - a function to execute when the event is triggered.
 
-
 #### Return value:
 
 A new object that has one field 'handler'.
 
---- 
+---
 
 `Unsubscribe()` - method that removes event handler.
 
 #### Syntax:
+
 `ketcher.editor.unsubscribe(eventName, subscriber)`
 
 #### Parameters:
@@ -749,7 +790,6 @@ A new object that has one field 'handler'.
 `subscriber: object` - an object that is returned from the subscriber function.
 
 #### Return value:
-
 
 undefined
 
@@ -785,54 +825,53 @@ The event data contains operation details:
 
 ```typescript
 interface ChangeEvent {
-  operation: string;      // Operation type (see below)
-  [key: string]: any;     // Additional operation-specific data
+  operation: string; // Operation type (see below)
+  [key: string]: any; // Additional operation-specific data
 }
 ```
 
-
-| Operation                | Example                                                                     |
-|:---------------------------------|:----------------------------------------------------------------------------|
-| Add atom                         | {operation: 'Add atom',id: 1,label: 'C',position: { x:  3.37, y: 6.03 }}    |
-| Move atom                        | {operation: 'Move atom',id: 1,position: { x:  0.02, y: 2.4 }}               |
-| Set atom attribute               | {operation: 'Set atom attribute',id: 22,from: 0,to: 1,attribute: 'charge'}  |
-| Delete atom                      | {operation: 'Delete atom',id: 1,label: 'C',position: { x:  3.37, y: 6.03 }} |
-| Add bond                         | {operation: 'Add bond',id: 31}                                              |
-| Move bond                        | {operation: 'Move bond'}                                                    |
-| Set bond attribute               | {operation: 'Set bond attribute'}                                           |
-| Delete bond                      | {operation: 'Delete bond',id: 31}                                           |
-| Move loop                        | {operation: 'Move loop'}                                                    |
-| Add atom to s-group              | {operation: 'Add atom to s-group',sGroupId: 0,atomId: 16}                   |
-| Remove atom from s-group         | {operation: 'Remove atom from s-group'}                                     |
-| Create s-group                   | {operation: 'Create s-group',sGroupId: 0,type: 'GEN'}                       |
-| Set s-group attribute            | {operation: 'Set s-group attribute'}                                        |
-| Delete s-group                   | {operation: 'Delete s-group',sGroupId: 0,type: 'GEN'}                       |
-| Add s-group to hierarchy         | {operation: 'Add s-group to hierarchy'}                                     |
-| Delete s-group from hierarchy    | {operation: 'Delete s-group to hierarchy'}                                  |
-| Set r-group attribute            | {operation: 'Set r-group attribute'}                                        |
-| R-group fragment                 | {operation: 'R-group fragment',id: 1}                                       |
-| Update                           | {operation: 'Update'}                                                       |
-| Restore                          | {operation: 'Restore'}                                                      |
-| Add rxn arrow                    | {operation: 'Add rxn arrow',id: 1,position: { x:  4.02, y: 4.83 }}          |
-| Delete rxn arrow                 | {operation: 'Delete rxn arrow',id: 1,position: { x:  4.02, y: 4.83 }}       |
-| Move rxn arrow                   | {operation: 'Move rxn arrow',id: 1,position: { x:  0.07, y: 1.18 }}         |
-| Add rxn plus                     | {operation: 'Add rxn plus'}                                                 |
-| Delete rxn plus                  | {operation: 'Delete rxn plus'}                                              |
-| Move rxn plus                    | {operation: 'Move rxn plus'}                                                |
-| Move s-group data                | {operation: 'Move s-group data'}                                            |
-| Load canvas                      | {operation: 'Load canvas'}                                                  |
-| Align descriptors                | {operation: 'Align descriptors'}                                            |
-| Add simple object                | {operation: 'Add simple object',id: 1,type: 'circle'}                       |
-| Move simple object               | {operation: 'Move simple object',id: 1,position: { x:  0.07, y: 1.18 }}     |
-| Resize simple object             | {operation: 'Resize simple object',id: 1}                                   |
-| Delete simple object             | {operation: 'Delete simple object',id: 1,type: 'circle'}                    |
-| Restore descriptors position     | {operation: 'Restore descriptors position'}                                 |
-| Add fragment                     | {operation: 'Add fragment',id: 1}                                           |
-| Delete fragment                  | {operation: 'Delete fragment',id: 1}                                        |
-| Add fragment stereo flag         | {operation: 'Add fragment stereo flag'}                                     |
-| Add stereo atom to fragment      | {operation: 'Add stereo atom to fragment',atomId: 1,fragId: 2}              |
-| Delete stereo atom from fragment | {operation: 'Delete stereo atom from fragment',atomId: 1,fragId: 2}         |
-| Move enhanced flag               | {operation: 'Move enhanced flag'}                                           |
+| Operation                        | Example                                                                    |
+| :------------------------------- | :------------------------------------------------------------------------- |
+| Add atom                         | {operation: 'Add atom',id: 1,label: 'C',position: { x: 3.37, y: 6.03 }}    |
+| Move atom                        | {operation: 'Move atom',id: 1,position: { x: 0.02, y: 2.4 }}               |
+| Set atom attribute               | {operation: 'Set atom attribute',id: 22,from: 0,to: 1,attribute: 'charge'} |
+| Delete atom                      | {operation: 'Delete atom',id: 1,label: 'C',position: { x: 3.37, y: 6.03 }} |
+| Add bond                         | {operation: 'Add bond',id: 31}                                             |
+| Move bond                        | {operation: 'Move bond'}                                                   |
+| Set bond attribute               | {operation: 'Set bond attribute'}                                          |
+| Delete bond                      | {operation: 'Delete bond',id: 31}                                          |
+| Move loop                        | {operation: 'Move loop'}                                                   |
+| Add atom to s-group              | {operation: 'Add atom to s-group',sGroupId: 0,atomId: 16}                  |
+| Remove atom from s-group         | {operation: 'Remove atom from s-group'}                                    |
+| Create s-group                   | {operation: 'Create s-group',sGroupId: 0,type: 'GEN'}                      |
+| Set s-group attribute            | {operation: 'Set s-group attribute'}                                       |
+| Delete s-group                   | {operation: 'Delete s-group',sGroupId: 0,type: 'GEN'}                      |
+| Add s-group to hierarchy         | {operation: 'Add s-group to hierarchy'}                                    |
+| Delete s-group from hierarchy    | {operation: 'Delete s-group to hierarchy'}                                 |
+| Set r-group attribute            | {operation: 'Set r-group attribute'}                                       |
+| R-group fragment                 | {operation: 'R-group fragment',id: 1}                                      |
+| Update                           | {operation: 'Update'}                                                      |
+| Restore                          | {operation: 'Restore'}                                                     |
+| Add rxn arrow                    | {operation: 'Add rxn arrow',id: 1,position: { x: 4.02, y: 4.83 }}          |
+| Delete rxn arrow                 | {operation: 'Delete rxn arrow',id: 1,position: { x: 4.02, y: 4.83 }}       |
+| Move rxn arrow                   | {operation: 'Move rxn arrow',id: 1,position: { x: 0.07, y: 1.18 }}         |
+| Add rxn plus                     | {operation: 'Add rxn plus'}                                                |
+| Delete rxn plus                  | {operation: 'Delete rxn plus'}                                             |
+| Move rxn plus                    | {operation: 'Move rxn plus'}                                               |
+| Move s-group data                | {operation: 'Move s-group data'}                                           |
+| Load canvas                      | {operation: 'Load canvas'}                                                 |
+| Align descriptors                | {operation: 'Align descriptors'}                                           |
+| Add simple object                | {operation: 'Add simple object',id: 1,type: 'circle'}                      |
+| Move simple object               | {operation: 'Move simple object',id: 1,position: { x: 0.07, y: 1.18 }}     |
+| Resize simple object             | {operation: 'Resize simple object',id: 1}                                  |
+| Delete simple object             | {operation: 'Delete simple object',id: 1,type: 'circle'}                   |
+| Restore descriptors position     | {operation: 'Restore descriptors position'}                                |
+| Add fragment                     | {operation: 'Add fragment',id: 1}                                          |
+| Delete fragment                  | {operation: 'Delete fragment',id: 1}                                       |
+| Add fragment stereo flag         | {operation: 'Add fragment stereo flag'}                                    |
+| Add stereo atom to fragment      | {operation: 'Add stereo atom to fragment',atomId: 1,fragId: 2}             |
+| Delete stereo atom from fragment | {operation: 'Delete stereo atom from fragment',atomId: 1,fragId: 2}        |
+| Move enhanced flag               | {operation: 'Move enhanced flag'}                                          |
 
 **Example:**
 
@@ -856,12 +895,14 @@ ketcher.editor.unsubscribe('change', subscription);
 ---
 
 ### Monomers library update event
+
 The 'libraryUpdate' event is triggered when some change in monomers library happens. For example when user creates new monomer using "Create monomer" tool, or library changes after the specific [API call](https://github.com/epam/ketcher/issues/7674).
 
 #### Example:
+
 ```js
 ketcher.editor.subscribe('libraryUpdate', (eventData) => {
-    console.log('Library updated:', eventData);
+  console.log('Library updated:', eventData);
 });
 ```
 
@@ -911,8 +952,8 @@ import 'ketcher-react/dist/index.css';
 
 ```typescript
 interface EditorProps {
-  staticResourcesUrl: string;                       // Required
-  structServiceProvider: StructServiceProvider;     // Required
+  staticResourcesUrl: string; // Required
+  structServiceProvider: StructServiceProvider; // Required
   onInit?: (ketcher: Ketcher) => void;
   errorHandler?: (message: string) => void;
   buttons?: ButtonsConfig;
@@ -953,7 +994,6 @@ type ButtonsConfig = {
 **Button Names:** `'clear'`, `'open'`, `'save'`, `'undo'`, `'redo'`, `'cut'`, `'copy'`, `'paste'`, `'zoom-in'`, `'zoom-out'`, `'layout'`, `'clean'`, `'arom'`, `'dearom'`, `'cip'`, `'check'`, `'analyse'`, `'recognize'`, `'miew'`, `'settings'`, `'help'`, `'about'`, etc.
 (See ketcher-react/src/script/ui/buttonsConfig.ts in the repo for an up-to-date list.)
 
-
 **Example:**
 
 ```javascript
@@ -962,7 +1002,7 @@ type ButtonsConfig = {
   structServiceProvider={provider}
   buttons={{
     clear: { hidden: true },
-    miew: { hidden: true }
+    miew: { hidden: true },
   }}
 />
 ```
@@ -975,9 +1015,9 @@ Add custom toolbar buttons:
 
 ```typescript
 interface CustomButton {
-  id: string;         // Unique button identifier
-  imageLink: string;  // Path to button icon (SVG recommended)
-  title: string;      // Tooltip text
+  id: string; // Unique button identifier
+  imageLink: string; // Path to button icon (SVG recommended)
+  title: string; // Tooltip text
 }
 ```
 
@@ -991,13 +1031,13 @@ interface CustomButton {
     {
       id: 'export-to-db',
       imageLink: '/icons/database.svg',
-      title: 'Export to Database'
+      title: 'Export to Database',
     },
     {
       id: 'custom-tool',
       imageLink: '/icons/tool.svg',
-      title: 'Custom Tool'
-    }
+      title: 'Custom Tool',
+    },
   ]}
   onInit={(ketcher) => {
     ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', (id) => {
@@ -1052,9 +1092,9 @@ updateMonomersLibrary(
 
 ```typescript
 interface UpdateMonomersLibraryParams {
-  format?: 'ket' | 'sdf';                         // Input format (default: auto-detect)
-  shouldPersist?: boolean;                        // Save to localStorage (default: false)
-  needDispatchLibraryUpdateEvent?: boolean;       // Trigger library update event (default: true)
+  format?: 'ket' | 'sdf'; // Input format (default: auto-detect)
+  shouldPersist?: boolean; // Save to localStorage (default: false)
+  needDispatchLibraryUpdateEvent?: boolean; // Trigger library update event (default: true)
 }
 ```
 
@@ -1092,7 +1132,7 @@ replaceMonomersLibrary(
 ```javascript
 await ketcher.replaceMonomersLibrary(monomersKet, {
   format: 'ket',
-  shouldPersist: true
+  shouldPersist: true,
 });
 ```
 
@@ -1139,12 +1179,12 @@ const provider = new RemoteStructServiceProvider(
   'http://localhost:8002',
   {
     'smart-layout': true,
-    'ignore-stereochemistry-errors': true
+    'ignore-stereochemistry-errors': true,
   },
   {
-    'Authorization': 'Bearer token123',
-    'Custom-Header': 'value'
-  }
+    Authorization: 'Bearer token123',
+    'Custom-Header': 'value',
+  },
 );
 ```
 
@@ -1173,7 +1213,7 @@ Uses **Indigo WASM** (client-side) for chemical operations without server depend
 **Constructor:**
 
 ```typescript
-constructor()
+constructor();
 ```
 
 **Example:**
@@ -1232,7 +1272,7 @@ await ketcher.setMolecule('C1=CC=CC=C1');
 
 // Export to different formats
 const smiles = await ketcher.getSmiles();
-console.log('SMILES:', smiles);  // "c1ccccc1"
+console.log('SMILES:', smiles); // "c1ccccc1"
 
 const mol = await ketcher.getMolfile('v3000');
 console.log('MOL:', mol);
@@ -1250,13 +1290,13 @@ console.log('KET:', ketObj);
 // Load first molecule
 await ketcher.setMolecule('C1=CC=CC=C1', {
   position: { x: 0, y: 0 },
-  needZoom: false
+  needZoom: false,
 });
 
 // Add second molecule
 await ketcher.addFragment('CCO', {
   position: { x: 10, y: 0 },
-  needZoom: false
+  needZoom: false,
 });
 
 // Add reaction arrow at x=15
@@ -1268,7 +1308,7 @@ await ketcher.addFragment('CCO', {
 ### Example 3: Property Calculation
 
 ```javascript
-await ketcher.setMolecule('C6H12O6');  // Glucose
+await ketcher.setMolecule('C6H12O6'); // Glucose
 
 const props = await ketcher.calculate();
 
@@ -1310,12 +1350,12 @@ ketcher.editor.unsubscribe('change', subscription);
 ### Example 5: Image Generation
 
 ```javascript
-const smiles = 'CC(C)C1=CC=C(C=C1)C(C)C(=O)O';  // Ibuprofen
+const smiles = 'CC(C)C1=CC=C(C=C1)C(C)C(=O)O'; // Ibuprofen
 
 const imageBlob = await ketcher.generateImage(smiles, {
   outputFormat: 'png',
   backgroundColor: '#FFFFFF',
-  bondThickness: 2
+  bondThickness: 2,
 });
 
 // Display in browser
@@ -1362,7 +1402,7 @@ ketcher.switchToMacromoleculesMode();
 
 // Load peptide sequence
 await ketcher.setMolecule('ACDEFGHIKLMNPQRSTVWY', {
-  needZoom: true
+  needZoom: true,
 });
 
 // Change layout
@@ -1398,29 +1438,29 @@ const customMonomers = {
     name: 'Custom Monomer',
     fullName: 'My Custom Amino Acid',
     naturalAnalogShort: 'A',
-    atoms: [/* ... */],
-    bonds: [/* ... */],
-    attachmentPoints: [/* ... */]
-  }
+    atoms: [
+      /* ... */
+    ],
+    bonds: [
+      /* ... */
+    ],
+    attachmentPoints: [
+      /* ... */
+    ],
+  },
 };
 
 // Update library (upsert)
-await ketcher.updateMonomersLibrary(
-  JSON.stringify(customMonomers),
-  {
-    format: 'ket',
-    shouldPersist: true  // Save to localStorage
-  }
-);
+await ketcher.updateMonomersLibrary(JSON.stringify(customMonomers), {
+  format: 'ket',
+  shouldPersist: true, // Save to localStorage
+});
 
 // Or replace entire library
-await ketcher.replaceMonomersLibrary(
-  JSON.stringify(customMonomers),
-  {
-    format: 'ket',
-    shouldPersist: true
-  }
-);
+await ketcher.replaceMonomersLibrary(JSON.stringify(customMonomers), {
+  format: 'ket',
+  shouldPersist: true,
+});
 ```
 
 ---
@@ -1431,10 +1471,10 @@ await ketcher.replaceMonomersLibrary(
 // Configure editor settings
 ketcher.setSettings({
   'general.dearomatize-on-load': false,
-  'ignoreChiralFlag': true,
-  'bondThickness': 2,
-  'disableQueryElements': ['Pol', 'CYH'],
-  'disableCustomQuery': false
+  ignoreChiralFlag: true,
+  bondThickness: 2,
+  disableQueryElements: ['Pol', 'CYH'],
+  disableCustomQuery: false,
 });
 
 // Get current settings
@@ -1455,13 +1495,13 @@ console.log('Current settings:', settings);
     {
       id: 'save-to-db',
       imageLink: '/icons/database.svg',
-      title: 'Save to Database'
+      title: 'Save to Database',
     },
     {
       id: 'validate',
       imageLink: '/icons/check.svg',
-      title: 'Validate Structure'
-    }
+      title: 'Validate Structure',
+    },
   ]}
   onInit={(ketcher) => {
     ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', async (buttonId) => {
@@ -1508,7 +1548,7 @@ if (hasQuery) {
 
 ```javascript
 // Set zoom level
-ketcher.setZoom(1.5);  // 150%
+ketcher.setZoom(1.5); // 150%
 
 // Minimum and maximum zoom
 // ZoomTool.MINZOOMSCALE = 0.2
@@ -1534,19 +1574,25 @@ The `ketcher.structService` provides low-level access to chemical operations:
 
 ```typescript
 interface StructService {
-  convert(data: ConvertData, options: any): Promise<ConvertResult>
-  layout(data: LayoutData, options: any): Promise<LayoutResult>
-  clean(data: CleanData, options: any): Promise<CleanResult>
-  aromatize(data: AromatizeData, options: any): Promise<AromatizeResult>
-  dearomatize(data: DearomatizeData, options: any): Promise<DearomatizeResult>
-  calculateCip(data: CalculateCipData, options: any): Promise<CalculateCipResult>
-  automap(data: AutomapData, options: any): Promise<AutomapResult>
-  check(data: CheckData, options: any): Promise<CheckResult>
-  calculate(data: CalculateData, options: any): Promise<CalculateResult>
-  recognize(image: Blob, options: any): Promise<RecognizeResult>
-  generateImageAsBase64(data: string, options: GenerateImageOptions): Promise<string>
-  getInChIKey(struct: Struct): Promise<string>
-  toggleExplicitHydrogens(data: any, options: any): Promise<any>
+  convert(data: ConvertData, options: any): Promise<ConvertResult>;
+  layout(data: LayoutData, options: any): Promise<LayoutResult>;
+  clean(data: CleanData, options: any): Promise<CleanResult>;
+  aromatize(data: AromatizeData, options: any): Promise<AromatizeResult>;
+  dearomatize(data: DearomatizeData, options: any): Promise<DearomatizeResult>;
+  calculateCip(
+    data: CalculateCipData,
+    options: any,
+  ): Promise<CalculateCipResult>;
+  automap(data: AutomapData, options: any): Promise<AutomapResult>;
+  check(data: CheckData, options: any): Promise<CheckResult>;
+  calculate(data: CalculateData, options: any): Promise<CalculateResult>;
+  recognize(image: Blob, options: any): Promise<RecognizeResult>;
+  generateImageAsBase64(
+    data: string,
+    options: GenerateImageOptions,
+  ): Promise<string>;
+  getInChIKey(struct: Struct): Promise<string>;
+  toggleExplicitHydrogens(data: any, options: any): Promise<any>;
 }
 ```
 
@@ -1574,7 +1620,7 @@ try {
     console.error('Ketcher error:', message);
     showErrorNotification(message);
   }}
-/>
+/>;
 ```
 
 **Common Errors:**
@@ -1595,12 +1641,12 @@ Ketcher supports modern browsers:
 - Safari (latest 2 versions)
 
 **Requirements:**
+
 - ES6+ JavaScript support
 - WebAssembly support (for standalone mode)
 - SVG rendering
 
 ---
-
 
 ## Contribution
 

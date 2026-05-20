@@ -750,7 +750,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       this.tailsYOffset,
       this.height,
       this.center(),
-      this.getInitiallySelected(),
+      this.getInitiallySelectedForSerialization(),
     );
   }
 }

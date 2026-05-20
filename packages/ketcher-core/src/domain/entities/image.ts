@@ -153,7 +153,7 @@ export class Image extends BaseMicromoleculeEntity {
         height: this.halfSize.y * 2,
       },
       data: base64Data,
-      selected: this.getInitiallySelected(),
+      selected: this.getInitiallySelectedForSerialization(),
     };
   }
 

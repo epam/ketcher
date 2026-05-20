@@ -39,12 +39,6 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
-import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
-
-type EntityWithInitialSelection = {
-  initiallySelected?: boolean | typeof INVALID;
-  resetInitiallySelected?: (invalidate?: boolean) => void;
-};
 
 type StructBondEndpoint = {
   atom: MicromoleculesAtom;
@@ -53,22 +47,6 @@ type StructBondEndpoint = {
 };
 
 export class MacromoleculesConverter {
-  // Clear only INVALID serialization sentinels; using enableInitiallySelected()
-  // here would also drop legitimate selected=true values.
-  private static resetInvalidInitiallySelected(struct: Struct) {
-    const reset = (entity: EntityWithInitialSelection) => {
-      if (entity.initiallySelected === INVALID) {
-        entity.resetInitiallySelected?.();
-      }
-    };
-
-    struct.atoms.forEach(reset);
-    struct.bonds.forEach(reset);
-    struct.rxnPluses.forEach(reset);
-    struct.rxnArrows.forEach(reset);
-    struct.texts.forEach(reset);
-  }
-
   public static convertMonomerToMonomerMicromolecule(
     monomer: BaseMonomer,
     struct: Struct,
@@ -670,8 +648,6 @@ export class MacromoleculesConverter {
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
-    this.resetInvalidInitiallySelected(struct);
-
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();

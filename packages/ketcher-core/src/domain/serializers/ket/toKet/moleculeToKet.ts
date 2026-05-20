@@ -109,7 +109,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', source.getInitiallySelectedForSerialization());
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
   ifDef(result, 'stereoParity', source.stereoCare, 0);
@@ -148,7 +148,7 @@ function rglabelToKet(source) {
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', source.getInitiallySelectedForSerialization());
 
   return result;
 }
@@ -166,7 +166,7 @@ function bondToKet(source) {
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
   }
-  ifDef(result, 'selected', source.getInitiallySelected());
+  ifDef(result, 'selected', source.getInitiallySelectedForSerialization());
   return result;
 }
 

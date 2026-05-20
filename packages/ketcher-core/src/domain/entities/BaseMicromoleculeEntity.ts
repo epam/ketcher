@@ -16,6 +16,7 @@
 
 export const INVALID = 'invalid';
 export type initiallySelectedType = boolean | 'invalid';
+
 export abstract class BaseMicromoleculeEntity {
   initiallySelected?: initiallySelectedType;
 
@@ -30,6 +31,12 @@ export abstract class BaseMicromoleculeEntity {
       );
     }
     return this.initiallySelected;
+  }
+
+  getInitiallySelectedForSerialization(): boolean | undefined {
+    return this.initiallySelected === INVALID
+      ? undefined
+      : this.initiallySelected;
   }
 
   setInitiallySelected(value?: boolean): void {

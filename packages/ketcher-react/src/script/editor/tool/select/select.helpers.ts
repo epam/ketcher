@@ -52,6 +52,21 @@ export function mapBondIdsToBonds(bondsIds: number[], molecule): Bond[] {
 }
 
 type ClosestItem = { map: string; id: number };
+type FragSelection = { atoms: number[]; bonds: number[] };
+
+export function getFragSelection(
+  ctab: ReStruct,
+  fragId: number,
+): FragSelection | null {
+  const frag = ctab.frags.get(fragId);
+
+  return frag
+    ? {
+        atoms: frag.fragGetAtoms(ctab, fragId),
+        bonds: frag.fragGetBonds(ctab, fragId),
+      }
+    : null;
+}
 
 /**
  * Returns true when the given closest item is part of the current selection.

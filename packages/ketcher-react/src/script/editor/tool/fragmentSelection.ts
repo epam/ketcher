@@ -13,7 +13,7 @@ import { ClosestItemWithMap } from '../shared/closest.types';
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
-import { selMerge } from './select';
+import { getFragSelection, selMerge } from './select';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';
 
@@ -96,12 +96,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (ci.map === 'frags') {
       const ctab = this.editor.render.ctab;
-      const frag = ctab.frags.get(ci.id);
-
-      sel = {
-        atoms: frag.fragGetAtoms(ctab, ci.id),
-        bonds: frag.fragGetBonds(ctab, ci.id),
-      };
+      sel = getFragSelection(ctab, ci.id) ?? sel;
     }
     const selection = this.editor.selection();
     this.editor.selection(selMerge(sel, selection, true));
@@ -243,6 +238,7 @@ export default class FragmentSelectionTool implements Tool {
     this.editor.hover(
       {
         map: 'merge',
+        id: +Date.now(),
         items: { atoms: preview.atoms, bonds: preview.bonds },
       },
       this,

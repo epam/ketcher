@@ -47,7 +47,7 @@ import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
-import { Tool } from '../Tool';
+import { HoverTarget, Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';
 import { getItemCursor } from '../../utils/getItemCursor';
 import {
@@ -58,7 +58,9 @@ import {
 import { CommonArrowTool } from '../arrow/commonArrow';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
+import { ClosestItemWithMap } from '../../shared/closest.types';
 import {
+  getFragSelection,
   getNewSelectedItems,
   getSelectedAtoms,
   getSelectedBonds,
@@ -97,6 +99,8 @@ class SelectTool implements Tool {
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
+  private lastHoveredFragmentId?: number;
+  private lastHoveredFragmentTarget: HoverTarget | null = null;
   private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
@@ -183,11 +187,7 @@ class SelectTool implements Tool {
     const sgroups = ctab.sgroups.get(ci.id);
     const selection = this.editor.selection();
     if (ci.map === 'frags') {
-      const frag = ctab.frags.get(ci.id);
-      sel = {
-        atoms: frag.fragGetAtoms(ctab, ci.id),
-        bonds: frag.fragGetBonds(ctab, ci.id),
-      };
+      sel = getFragSelection(ctab, ci.id) ?? sel;
     } else if (
       (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
       sgroups
@@ -354,7 +354,20 @@ class SelectTool implements Tool {
           this.#lassoHelper.fragment || event.altKey,
         );
         const item = editor.findItem(event, maps, null);
-        editor.hover(getHoverTarget(item, editor), null, event);
+        let hoverTarget: HoverTarget | null = item;
+
+        if (item?.map === 'frags') {
+          if (this.lastHoveredFragmentId !== item.id) {
+            this.lastHoveredFragmentId = item.id;
+            this.lastHoveredFragmentTarget = getHoverTarget(item, editor);
+          }
+          hoverTarget = this.lastHoveredFragmentTarget;
+        } else {
+          this.lastHoveredFragmentId = undefined;
+          this.lastHoveredFragmentTarget = null;
+        }
+
+        editor.hover(hoverTarget, null, event);
         handleMovingPosibilityCursor(
           item,
           this.editor.render.paper.canvas,
@@ -573,6 +586,8 @@ class SelectTool implements Tool {
     onSelectionLeave(this.editor, this.#lassoHelper);
 
     this.dragCtx = null;
+    this.lastHoveredFragmentId = undefined;
+    this.lastHoveredFragmentTarget = null;
 
     this.editor.hover(null);
   }
@@ -689,25 +704,22 @@ function isSelected(selection, item) {
   return selection?.[item.map]?.includes(item.id) ?? false;
 }
 
-function getHoverTarget(item, editor: Editor) {
+function getHoverTarget(item: ClosestItemWithMap | null, editor: Editor) {
   if (item?.map !== 'frags') {
     return item;
   }
 
   const ctab = editor.render.ctab;
-  const frag = ctab.frags.get(item.id);
+  const fragSelection = getFragSelection(ctab, item.id);
 
-  if (!frag) {
+  if (!fragSelection) {
     return item;
   }
 
   return {
     map: 'merge',
     id: item.id,
-    items: {
-      atoms: frag.fragGetAtoms(ctab, item.id),
-      bonds: frag.fragGetBonds(ctab, item.id),
-    },
+    items: fragSelection,
   };
 }
 

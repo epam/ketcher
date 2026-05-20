@@ -20,7 +20,7 @@ interface ToolEventHandler {
 
 export type HoverTarget =
   | { id: number; map: string }
-  | { id?: number; map: 'merge'; items: Record<string, number[]> };
+  | { id: number; map: 'merge'; items: Record<string, number[]> };
 
 export interface Tool extends ToolEventHandler {
   cancel?(): void;

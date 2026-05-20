@@ -673,7 +673,6 @@ export class KetSerializer implements Serializer<Struct> {
       aliasHELM: monomer.monomerItem.props.aliasHELM,
       aliasBILN: monomer.monomerItem.props.aliasBILN,
       aliasAxoLabs: monomer.monomerItem.props.aliasAxoLabs,
-      aliasBILN: monomer.monomerItem.props.aliasBILN,
       attachmentPoints: monomer.monomerItem.attachmentPoints,
       idtAliases: monomer.monomerItem.props.idtAliases,
       unresolved: monomer.monomerItem.props.unresolved ? true : undefined,

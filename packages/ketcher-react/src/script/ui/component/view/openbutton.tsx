@@ -46,6 +46,7 @@ type OpenButtonState = {
 class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
   private btn: HTMLInputElement | null = null;
   private isMounted = false;
+  private initOpenerRequestId = 0;
 
   constructor(props: OpenButtonProps) {
     super(props);
@@ -68,9 +69,10 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
   }
 
   initOpener(server?: unknown) {
+    const requestId = ++this.initOpenerRequestId;
     if (server) {
       fileOpener(server).then((opener: OpenerFunction) => {
-        if (!this.isMounted) return;
+        if (!this.isMounted || requestId !== this.initOpenerRequestId) return;
         this.setState({ opener });
       });
     } else {

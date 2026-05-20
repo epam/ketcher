@@ -85,6 +85,8 @@ function setupEditor(
   if (oldProps.options && options !== oldProps.options) {
     editor.options(options);
     editor.setServerSettings(props.serverSettings);
+  } else if (props.serverSettings !== oldProps.serverSettings) {
+    editor.setServerSettings(props.serverSettings);
   }
 
   Object.keys(editor.event).forEach((name) => {
@@ -113,30 +115,6 @@ function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
 
     if (props[eventName]) editor.event[name].remove(props[eventName]);
   });
-}
-
-function shouldUpdateEditor(
-  editor: Editor | undefined,
-  props: StructEditorProps,
-  nextProps: StructEditorProps,
-) {
-  if (
-    props.struct !== nextProps.struct ||
-    props.tool !== nextProps.tool ||
-    props.toolOpts !== nextProps.toolOpts ||
-    props.options !== nextProps.options ||
-    props.serverSettings !== nextProps.serverSettings
-  ) {
-    return true;
-  }
-
-  return editor
-    ? Object.keys(editor.event).some((name) => {
-        const eventName = `on${upperFirst(name)}`;
-
-        return props[eventName] !== nextProps[eventName];
-      })
-    : false;
 }
 
 class StructEditor extends Component<StructEditorProps, StructEditorState> {
@@ -217,15 +195,17 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     nextState: StructEditorState,
   ) {
     return (
-      shouldUpdateEditor(this.editor, this.props, nextProps) ||
       this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor ||
       nextState.tooltip !== this.state.tooltip
     );
   }
 
-  componentDidUpdate(prevProps: StructEditorProps) {
-    setupEditor(this.editor, this.props, prevProps);
+  // NOSONAR - canvas editor must be updated before React renders to prevent
+  // white-screen states during struct changes; componentDidUpdate fires too late.
+  UNSAFE_componentWillReceiveProps(props: StructEditorProps) {
+    // NOSONAR
+    setupEditor(this.editor, props, this.props);
   }
 
   componentDidMount() {

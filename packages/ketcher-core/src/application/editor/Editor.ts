@@ -607,19 +607,6 @@ export class CoreEditor {
           KetcherLogger.error(errorMessage);
           return;
         }
-
-        const tooLongEntries = getTooLongIdtAliasEntries(
-          newMonomer.props.idtAliases,
-        );
-
-        if (tooLongEntries.length > 0) {
-          const offenders = tooLongEntries
-            .map(({ alias: field, value }) => `${field}="${value}"`)
-            .join(', ');
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
-          return;
-        }
       }
 
       const existingMonomerIndex = this._monomersLibrary.findIndex((monomer) =>

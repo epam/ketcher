@@ -40,7 +40,11 @@ export const CommonTopLeftToolbar = (page: Page) => {
 
       while (attempts < maxAttempts) {
         try {
-          await locators.clearCanvasButton.click({
+          // Get the button dynamically to ensure fresh locator
+          const button = page.getByTestId('Clear Canvas');
+          // Wait for button to be visible before clicking
+          await button.waitFor({ state: 'visible', timeout: 1000 });
+          await button.click({
             force: false,
             timeout: 1000,
           });

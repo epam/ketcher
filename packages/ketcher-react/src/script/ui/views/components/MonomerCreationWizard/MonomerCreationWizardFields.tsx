@@ -53,6 +53,29 @@ interface ModificationTypeItem {
   value: string;
 }
 
+const getAliasFieldsVisibility = (
+  type: KetMonomerClass | 'rnaPreset' | undefined,
+) => {
+  const displayAliases =
+    type &&
+    [
+      KetMonomerClass.AminoAcid,
+      KetMonomerClass.Base,
+      KetMonomerClass.Sugar,
+      KetMonomerClass.Phosphate,
+      KetMonomerClass.CHEM,
+    ].includes(type as KetMonomerClass);
+
+  return {
+    displayAliases,
+    // CHEM monomers support BILN aliases, while HELM remains unavailable for CHEM.
+    displayHelmAlias: displayAliases && type !== KetMonomerClass.CHEM,
+    // BILN aliases are defined only for amino-acid and CHEM monomers.
+    displayBilnAlias:
+      type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM,
+  };
+};
+
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
 ) => {
@@ -69,7 +92,7 @@ const MonomerCreationWizardFields = (
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >([]);
@@ -135,14 +158,8 @@ const MonomerCreationWizardFields = (
   }
 
   const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-    ].includes(type as KetMonomerClass);
+  const { displayAliases, displayHelmAlias, displayBilnAlias } =
+    getAliasFieldsVisibility(type);
 
   return (
     <div>
@@ -342,27 +359,56 @@ const MonomerCreationWizardFields = (
                 Aliases
               </AccordionSummary>
               <AccordionDetails>
-                <p className={styles.inputLabel}>HELM</p>
-                <Autocomplete
-                  freeSolo
-                  options={[]}
-                  value={aliasHELM}
-                  onInputChange={(_event, newValue) =>
-                    onFieldChange('aliasHELM', newValue)
-                  }
-                  data-testid="helm-alias-input"
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      className={clsx(
-                        styles.inputField,
-                        errors.aliasHELM && styles.error,
+                {displayHelmAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>HELM</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasHELM}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasHELM', newValue)
+                      }
+                      data-testid="helm-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasHELM && styles.error,
+                          )}
+                          error={Boolean(errors.aliasHELM)}
+                        />
                       )}
-                      error={Boolean(errors.aliasHELM)}
                     />
-                  )}
-                />
+                  </div>
+                )}
+                {displayBilnAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>BILN</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasBILN}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasBILN', newValue)
+                      }
+                      data-testid="biln-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasBILN && styles.error,
+                          )}
+                          error={Boolean(errors.aliasBILN)}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
               </AccordionDetails>
             </Accordion>
           </div>

@@ -402,6 +402,12 @@ export class ZoomTool implements BaseTool {
   }
 
   public resetZoom() {
+    const canvasWrapperNode = this.canvasWrapper.node();
+
+    if (!canvasWrapperNode?.transform?.baseVal) {
+      return;
+    }
+
     this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
   }
 

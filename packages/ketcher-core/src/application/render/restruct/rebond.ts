@@ -719,10 +719,16 @@ function findIncomingUpBonds(
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
 
-  bond.neihbid1 = restruct.atoms.get(bond.b.begin)?.showLabel
-    ? -1
-    : halfbonds[0];
-  bond.neihbid2 = restruct.atoms.get(bond.b.end)?.showLabel ? -1 : halfbonds[1];
+  // Keep bold stereo rendering independent from endpoint label visibility:
+  // half-bond coordinates are already shifted away from visible labels.
+  bond.neihbid1 =
+    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[0];
+  bond.neihbid2 =
+    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[1];
 }
 
 function checkStereoBold(bid0, bond, restruct) {

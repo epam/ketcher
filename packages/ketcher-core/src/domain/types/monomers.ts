@@ -53,6 +53,7 @@ export type MonomerItemType = MonomerItemBase & {
     MonomerFullName?: string;
     Name: string;
     aliasHELM?: string;
+    aliasBILN?: string;
     aliasAxoLabs?: string;
     aliasBILN?: string;
     // TODO determine whenever these props are optional or not

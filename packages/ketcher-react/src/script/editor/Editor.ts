@@ -1363,6 +1363,7 @@ class Editor implements KetcherEditor {
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
+      aliasBILN,
       hidden,
     } = data;
 
@@ -1411,6 +1412,7 @@ class Editor implements KetcherEditor {
       naturalAnalogShort: naturalAnalogueToUse,
       modificationTypes,
       aliasHELM,
+      aliasBILN,
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,

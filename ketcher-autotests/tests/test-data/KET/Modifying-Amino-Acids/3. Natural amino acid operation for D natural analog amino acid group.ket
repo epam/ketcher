@@ -260,6 +260,7 @@
         "fullName": "Aspartic acid",
         "alias": "D",
         "aliasHELM": "D",
+        "aliasBILN": "D",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

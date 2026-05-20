@@ -482,7 +482,7 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
   ).toBeTruthy();
   expect(
     await Library(page).getMonomerIDTAliasBase(Nucleotide._Nucleotide1),
-  ).toContain('_nucleotide1IDT');
+  ).toContain('_nuc1IDT');
   expect(
     await Library(page).getMonomerIDTAliasEp3(Nucleotide._Nucleotide1),
   ).toContain('/nuc1ep3/');
@@ -847,17 +847,23 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
   const IDT_LENGTH_ERROR =
     'The maximum number of characters of an IDT alias without slashes (/) is 10';
 
-  // Intercept console.error in the browser synchronously before loading the
-  // invalid monomer, so no timing race with CDP event delivery.
-  // The original is saved on window so it can be restored after the test.
-  await page.evaluate(`
-    window.__ktCapturedErrors = [];
-    window.__ktOrigConsoleError = console.error;
-    console.error = function(...args) {
-      window.__ktCapturedErrors.push(JSON.stringify(args));
-      window.__ktOrigConsoleError.apply(console, args);
+  // Enable KetcherLogger and intercept console.error before loading the invalid
+  // monomer. KetcherLogger.error is gated on window.ketcher.logging.enabled,
+  // so we must turn it on here, then restore both after the test.
+  await page.evaluate(() => {
+    const w = window as unknown as Record<string, unknown>;
+    const ketcher = w.ketcher as Record<string, unknown> | undefined;
+    if (ketcher) ketcher.logging = { enabled: true, level: 0 };
+    w.__ktCapturedErrors = [];
+    w.__ktOrigConsoleError = console.error;
+    console.error = function (...args: unknown[]) {
+      (w.__ktCapturedErrors as string[]).push(JSON.stringify(args));
+      (w.__ktOrigConsoleError as typeof console.error).apply(
+        console,
+        args as Parameters<typeof console.error>,
+      );
     };
-  `);
+  });
 
   // Use a unique monomer name that no prior test adds to the shared library;
   // _Nucleotide1 is already present from Case 3, so isMonomerExist would always
@@ -870,12 +876,14 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
   const capturedErrors = await page.evaluate<string[]>(
     () => (window as unknown as Record<string, string[]>).__ktCapturedErrors,
   );
-  expect(capturedErrors.some((e) => e.includes(IDT_LENGTH_ERROR))).toBeTruthy();
+  expect(
+    capturedErrors.some((e: string) => e.includes(IDT_LENGTH_ERROR)),
+  ).toBeTruthy();
   expect(
     await Library(page).isMonomerExist(Nucleotide._NucleotideIDTTooLong),
   ).toBeFalsy();
 
-  // Restore console.error so later tests in this file are not affected.
+  // Restore console.error and disable logging so later tests are not affected.
   await page.evaluate(() => {
     const w = window as unknown as Record<string, unknown>;
     if (typeof w.__ktOrigConsoleError === 'function') {
@@ -883,5 +891,7 @@ test('Case 29: Verify that IDT alias without slashes longer than 10 characters i
       delete w.__ktOrigConsoleError;
       delete w.__ktCapturedErrors;
     }
+    const ketcher = w.ketcher as Record<string, unknown> | undefined;
+    if (ketcher) ketcher.logging = { enabled: false };
   });
 });

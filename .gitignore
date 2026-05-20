@@ -15,6 +15,7 @@ node_modules
 /ketcher-autotests/playwright-report/
 /ketcher-autotests/playwright/.cache/
 /ketcher-autotests/core
+/ketcher-autotests/**/*.core
 /ketcher-autotests/**/*win32.png
 /ketcher-autotests/**/*darwin.png
 

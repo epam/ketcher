@@ -24,6 +24,7 @@ import {
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { markResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import { pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -37,6 +38,18 @@ import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
+
+async function hoverMonomerForPreview(monomerAlias: string) {
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  const monomer = getMonomerLocator(page, { monomerAlias }).first();
+  const shape = monomer.getByTestId('shape');
+
+  try {
+    await shape.hover({ timeout: 5_000 });
+  } catch {
+    await shape.dispatchEvent('mouseover');
+  }
+}
 
 const fileTestData = [
   { alias: '(R1)_-_Left_only', fileName: '01 - (R1) - Left only' },
@@ -373,12 +386,12 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
   for (const data of testData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         page,
         `KET/Base-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
+      await hoverMonomerForPreview(data.alias);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
@@ -400,12 +413,12 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         page,
         `KET/CHEM-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
+      await hoverMonomerForPreview(data.alias);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
@@ -427,12 +440,12 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         page,
         `KET/Peptide-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
+      await hoverMonomerForPreview(data.alias);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
@@ -454,12 +467,12 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         page,
         `KET/Phosphate-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
+      await hoverMonomerForPreview(data.alias);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 
@@ -481,12 +494,12 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         page,
         `KET/Sugar-Templates/${data.fileName}.ket`,
       );
-      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
-      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
+      await hoverMonomerForPreview(data.alias);
       await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
 

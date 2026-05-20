@@ -259,7 +259,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error message appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidRnaPresetStructure,
+      ErrorMessage.rnaPresetAtomsOutsideComponents,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -454,7 +454,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidRnaPresetStructure,
+      ErrorMessage.rnaPresetAtomsOutsideComponents,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -521,7 +521,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidRnaPresetStructure,
+      ErrorMessage.incontinuousStructure,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -646,7 +646,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error about unassigned structure
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidRnaPresetStructure,
+      ErrorMessage.rnaPresetAtomsOutsideComponents,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 

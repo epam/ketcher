@@ -317,7 +317,7 @@ test.describe('Copolymer S-Group Type: ', () => {
       // Use verifyFileExport to check round-trip consistency
       await verifyFileExport(
         page,
-        `Molfiles-V2000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/${expectedFile}.mol`,
+        `Molfiles-V3000/Chromium-popup/3227-Introducing-Copolymer-S-group-type/${expectedFile}.mol`,
         FileType.MOL,
         MolFileFormat.v3000,
       );
@@ -402,7 +402,7 @@ test.describe('Copolymer S-Group Type: ', () => {
       // Use verifyFileExport to check round-trip consistency
       await verifyFileExport(
         page,
-        `SMILES/Chromium-popup/3227-Introducing-Copolymer-S-group-type/${expectedFile}.smiles`,
+        `SMILES/Chromium-popup/3227-Introducing-Copolymer-S-group-type/${expectedFile}.smi`,
         FileType.SMILES,
       );
 

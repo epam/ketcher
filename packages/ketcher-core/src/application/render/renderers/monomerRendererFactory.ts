@@ -29,6 +29,7 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
+import { KetcherLogger } from 'utilities';
 import { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { ChemRenderer } from './ChemRenderer';
 import { PeptideRenderer } from './PeptideRenderer';
@@ -44,6 +45,7 @@ const entityToRenderer = new Map<
   ConcreteMonomerEntityClass,
   DerivedRendererClass
 >([
+  // TODO: refactoring for more elegant type casting
   [Chem, ChemRenderer as unknown as DerivedRendererClass],
   [Peptide, PeptideRenderer as unknown as DerivedRendererClass],
   [Phosphate, PhosphateRenderer as unknown as DerivedRendererClass],
@@ -73,12 +75,6 @@ export const monomerRendererFactory = (
 ] => {
   const [EntityClass, ketMonomerClass] = monomerEntityFactory(monomer);
   const RendererClass = entityToRenderer.get(EntityClass);
-  if (!RendererClass) {
-    throw new Error(
-      `monomerRendererFactory: no renderer found for entity "${String(
-        EntityClass,
-      )}"`,
-    );
-  }
-  return [EntityClass, RendererClass, ketMonomerClass];
+  // 'RendererClass as DerivedRendererClass' - to satisfy the return type, but it should always be defined since the map is exhaustive
+  return [EntityClass, RendererClass as DerivedRendererClass, ketMonomerClass];
 };

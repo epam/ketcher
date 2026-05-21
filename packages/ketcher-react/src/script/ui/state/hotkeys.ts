@@ -225,8 +225,13 @@ function handleHotkeyGroup(
   if (clipArea.actions.indexOf(actName) === -1) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
+    const { atoms, bonds } = editor.selection() ?? {};
+    const hasSelection = Boolean(atoms?.length) || Boolean(bonds?.length);
 
-    if (shouldHandleItemDirectly(hoveredItem, newAction)) {
+    // For erase action, prioritize selected items over hovered item
+    if (actName === 'erase' && hasSelection) {
+      dispatch(onAction(newAction));
+    } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
       newAction = getCurrentAction(group[index]) || newAction;
       handleHotkeyOverItem({
         hoveredItem,

@@ -20,6 +20,8 @@ import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+const CARET_X_OFFSET_BEFORE_NODE = -17;
+const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -587,7 +589,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
   }
 
-  public showCaret(xOffset = -17) {
+  public showCaret(xOffset = CARET_X_OFFSET_BEFORE_NODE) {
     this.caretElement = this.spacerElement?.append('g');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
@@ -626,7 +628,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaretAfterNode() {
-    this.showCaret(3);
+    this.showCaret(CARET_X_OFFSET_AFTER_NODE);
   }
 
   public removeCaret() {

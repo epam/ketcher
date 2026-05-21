@@ -466,8 +466,11 @@ export class SequenceRenderer {
     this.isCaretAfterRowEndValue = value;
   }
 
-  public static setCaretPosition(caretPosition: number) {
-    this.isCaretAfterRowEnd = false;
+  public static setCaretPosition(
+    caretPosition: number,
+    options?: { afterRowEnd?: boolean },
+  ) {
+    this.isCaretAfterRowEnd = options?.afterRowEnd ?? false;
     const editor = provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -767,18 +770,29 @@ export class SequenceRenderer {
     return operation;
   }
 
-  private static showCaretAfterNode(node: ITwoStrandedChainItem) {
-    this.isCaretAfterRowEnd = true;
+  private static redrawCaretOnBothStrands(
+    node: ITwoStrandedChainItem,
+    afterRowEnd: boolean,
+  ) {
+    this.isCaretAfterRowEnd = afterRowEnd;
     const renderer = node.senseNode?.renderer;
 
-    if (renderer instanceof BaseSequenceItemRenderer) {
-      renderer.removeCaret();
-      renderer.showCaretAfterNode();
+    if (!(renderer instanceof BaseSequenceItemRenderer)) {
+      return;
+    }
 
-      if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer.removeCaret();
-        renderer.antisenseNodeRenderer.showCaretAfterNode();
+    const redraw = (r: BaseSequenceItemRenderer) => {
+      r.removeCaret();
+      if (afterRowEnd) {
+        r.showCaretAfterNode();
+      } else {
+        r.showCaret();
       }
+    };
+
+    redraw(renderer);
+    if (renderer.antisenseNodeRenderer) {
+      redraw(renderer.antisenseNodeRenderer);
     }
   }
 
@@ -810,7 +824,7 @@ export class SequenceRenderer {
         return;
       }
 
-      this.showCaretAfterNode(lastNodeInRow);
+      this.redrawCaretOnBothStrands(lastNodeInRow, true);
     } else {
       this.moveCaretForward();
     }
@@ -818,19 +832,10 @@ export class SequenceRenderer {
 
   public static moveCaretBackOrFromRowEnd() {
     if (this.isCaretAfterRowEnd) {
-      this.isCaretAfterRowEnd = false;
-
       const currentNode = this.currentEdittingNode;
-      const renderer = currentNode?.senseNode?.renderer;
 
-      if (renderer instanceof BaseSequenceItemRenderer) {
-        renderer.removeCaret();
-        renderer.showCaret();
-
-        if (renderer.antisenseNodeRenderer) {
-          renderer.antisenseNodeRenderer.removeCaret();
-          renderer.antisenseNodeRenderer.showCaret();
-        }
+      if (currentNode) {
+        this.redrawCaretOnBothStrands(currentNode, false);
       }
 
       return;
@@ -856,7 +861,7 @@ export class SequenceRenderer {
           return;
         }
 
-        this.showCaretAfterNode(lastNodeInRow);
+        this.redrawCaretOnBothStrands(lastNodeInRow, true);
       }
 
       return;
@@ -900,11 +905,9 @@ export class SequenceRenderer {
 
     const offset = currentRow.length - 1 - currentNodeIndexInRow;
 
-    SequenceRenderer.setCaretPosition(this.caretPosition + offset);
-
-    if (!isPartialRow) {
-      SequenceRenderer.showCaretAfterNode(lastNodeInRow);
-    }
+    SequenceRenderer.setCaretPosition(this.caretPosition + offset, {
+      afterRowEnd: !isPartialRow,
+    });
 
     SequenceRenderer.resetLastUserDefinedCaretPosition();
   }

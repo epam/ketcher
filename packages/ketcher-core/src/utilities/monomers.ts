@@ -18,6 +18,9 @@ export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE = `The monomer group template name must not exceed ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH} characters.`;
 
+export const MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE =
+  'Empty value for "type" is provided.';
+
 const HELM_ALIAS_REGEX = /^(?!.*\s)[A-Za-z0-9_*.[\]()-]+$/;
 const BILN_ALIAS_REGEX = /^[A-Za-z0-9_*-]+$/;
 

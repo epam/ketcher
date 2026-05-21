@@ -11,6 +11,7 @@ import {
   KetcherLogger,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE,
 } from 'utilities';
 
 describe('CoreEditor', () => {
@@ -596,6 +597,62 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount + 1,
       );
+    });
+
+    it('should reject monomer template with an empty type', () => {
+      const monomerWithEmptyType = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-_Base2',
+            },
+          ],
+        },
+        'monomerTemplate-_Base2': {
+          type: '',
+          id: '_Base2',
+          name: '_Base2',
+          class: 'Base',
+          classHELM: 'RNA',
+          naturalAnalogShort: 'A',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithEmptyType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should reject monomer template with a whitespace-only type', () => {
+      const monomerWithWhitespaceType = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-_Base2',
+            },
+          ],
+        },
+        'monomerTemplate-_Base2': {
+          type: '   ',
+          id: '_Base2',
+          name: '_Base2',
+          class: 'Base',
+          classHELM: 'RNA',
+          naturalAnalogShort: 'A',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithWhitespaceType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
   });
 

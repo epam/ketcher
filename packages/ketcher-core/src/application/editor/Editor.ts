@@ -80,6 +80,7 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidIdtAlias,
@@ -424,6 +425,32 @@ export class CoreEditor {
       ]
         .filter((value): value is string => Boolean(value))
         .join(', ');
+
+    // Reject templates that declare a present-but-empty `type`. They are
+    // already excluded from loading — `convertMonomersLibrary` only converts
+    // `monomerTemplate`/`ambiguousMonomerTemplate` entries, and the monomer
+    // group template loop below only handles `monomerGroupTemplate` — so this
+    // pass exists to surface the otherwise-silent skip as an explicit error.
+    // An absent (`undefined`) `type` is intentionally left untouched: the
+    // library schema treats it as optional with a `monomerTemplate` default.
+    newMonomersLibraryChunkParsedJson.root.templates.forEach((templateRef) => {
+      const templateDefinition =
+        newMonomersLibraryChunkParsedJson[templateRef.$ref];
+
+      if (
+        templateDefinition?.type !== undefined &&
+        !templateDefinition.type.trim()
+      ) {
+        const monomerName =
+          templateDefinition.name ??
+          templateDefinition.alias ??
+          templateDefinition.id ??
+          templateRef.$ref;
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: ${MONOMER_TEMPLATE_TYPE_EMPTY_ERROR_MESSAGE} "${monomerName}" monomer hasn't been added to the library.`,
+        );
+      }
+    });
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {

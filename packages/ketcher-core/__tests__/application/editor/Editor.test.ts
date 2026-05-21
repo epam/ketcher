@@ -443,15 +443,18 @@ describe('CoreEditor', () => {
       };
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBilnAlias));
-      editor.updateMonomersLibrary(
-        JSON.stringify(monomerWithBilnAliasCollision),
-      );
+
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomerWithBilnAliasCollision),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected'),
-      );
-      expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('BILN alias "BilnAlias1"'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining(
+          'Alias collision detected (BILN alias "BilnAlias1")',
+        ),
       );
     });
 

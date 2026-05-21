@@ -67,7 +67,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
-import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 

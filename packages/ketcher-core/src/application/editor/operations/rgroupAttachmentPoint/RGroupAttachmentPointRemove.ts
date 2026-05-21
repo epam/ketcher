@@ -51,4 +51,3 @@ class RGroupAttachmentPointRemove extends BaseOperation {
 }
 
 export { RGroupAttachmentPointRemove };
-

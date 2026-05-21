@@ -13,11 +13,17 @@ type Data = {
   attachmentPointId?: number;
 };
 
+const INITIAL_DATA: Data = {
+  atomId: 0,
+  attachmentPointType: 'primary',
+  attachmentPointId: undefined,
+};
+
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
   static InverseConstructor: new () => BaseOperation;
 
-  constructor(data: Data) {
+  constructor(data: Data = INITIAL_DATA) {
     super(
       OperationType.R_GROUP_ATTACHMENT_POINT_ADD,
       OperationPriority.R_GROUP_ATTACHMENT_POINT_ADD,

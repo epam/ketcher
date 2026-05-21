@@ -8,6 +8,7 @@ import {
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
@@ -217,7 +218,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomLeftMonomerPosition(): Vec2 {
-    const bbox = DrawingEntitiesManager.getStructureBbox(this.monomersArray);
+    const bbox = getStructureBbox(this.monomersArray);
 
     return new Vec2(bbox.left, bbox.bottom);
   }
@@ -862,7 +863,7 @@ export class DrawingEntitiesManager {
     if (selectedEntities.length === 0) {
       return null;
     }
-    return DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    return getStructureBbox(selectedEntities);
   }
 
   public getSelectedEntitiesCenter(): Vec2 | null {
@@ -2085,7 +2086,7 @@ export class DrawingEntitiesManager {
 
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
-              const moleculeBbox = DrawingEntitiesManager.getStructureBbox(
+              const moleculeBbox = getStructureBbox(
                 twoStrandedSnakeLayoutNode.molecule,
               );
               const offset = Vec2.diff(
@@ -3247,32 +3248,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  // TODO create separate class for BoundingBox
-  public static getStructureBbox(drawingEntities: DrawingEntity[]) {
-    let left = 0;
-    let right = 0;
-    let top = 0;
-    let bottom = 0;
-
-    drawingEntities.forEach((drawingEntity) => {
-      const monomerPosition = drawingEntity.position;
-
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-    });
-
-    return {
-      left,
-      right,
-      top,
-      bottom,
-      width: right - left,
-      height: bottom - top,
-    };
-  }
-
   private static antisenseChainBasesMap(isDnaAntisense: boolean) {
     const antisenseMap = {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
@@ -3416,7 +3391,7 @@ export class DrawingEntitiesManager {
         });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
+          const chainBbox = getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,

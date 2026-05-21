@@ -1,6 +1,5 @@
 import { ReStruct } from 'application/render';
 import assert from 'assert';
-import { RGroupAttachmentPointAdd } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 
@@ -14,8 +13,9 @@ const INITIAL_DATA = {
 
 class RGroupAttachmentPointRemove extends BaseOperation {
   readonly data: Data;
+  static InverseConstructor: new () => BaseOperation;
 
-  constructor(attachmentPointId: number) {
+  constructor(attachmentPointId = INITIAL_DATA.attachmentPointId) {
     super(
       OperationType.R_GROUP_ATTACHMENT_POINT_REMOVE,
       OperationPriority.R_GROUP_ATTACHMENT_POINT_REMOVE,
@@ -44,7 +44,9 @@ class RGroupAttachmentPointRemove extends BaseOperation {
   }
 
   invert() {
-    return new RGroupAttachmentPointAdd(this.data);
+    const inverted = new RGroupAttachmentPointRemove.InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 

@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 

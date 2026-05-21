@@ -4,7 +4,6 @@ import {
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
 } from 'domain/entities';
-import { RGroupAttachmentPointRemove } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 
@@ -16,6 +15,7 @@ type Data = {
 
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
+  static InverseConstructor: new () => BaseOperation;
 
   constructor(data: Data) {
     super(
@@ -56,7 +56,9 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     if (this.data.attachmentPointId === undefined) {
       throw Error(`Inverted attachmentPointId doesn't exist`);
     }
-    return new RGroupAttachmentPointRemove(this.data.attachmentPointId);
+    const inverted = new RGroupAttachmentPointAdd.InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 

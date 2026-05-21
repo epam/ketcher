@@ -1,5 +1,5 @@
 import { getPeptideLibraryItem, getRnaPartLibraryItem } from '../rna';
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 describe('RNA/Peptide Helper Functions', () => {

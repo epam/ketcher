@@ -5,7 +5,6 @@ import * as path from 'path';
 import { Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheCanvas,
-  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacroFileType,
   StructureFormat,
@@ -210,7 +209,7 @@ export async function openImageAndAddToCanvas(
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
   } else {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   }
 
   await waitForRender(page, async () => {

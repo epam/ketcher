@@ -962,6 +962,42 @@ export class Struct {
     );
   }
 
+  scaleForModeTransition(scale: number) {
+    if (scale === 1) return;
+
+    this.atoms.forEach((atom) => {
+      atom.pp = atom.pp.scaled(scale);
+    });
+
+    this.sgroups.forEach((item) => {
+      if (item.pp) {
+        item.pp = item.pp.scaled(scale);
+      }
+    });
+
+    this.rxnPluses.forEach((item) => {
+      item.pp = item.pp.scaled(scale);
+    });
+
+    this.rxnArrows.forEach((item) => {
+      item.pos = item.pos.map((p) => p.scaled(scale));
+    });
+
+    this.texts.forEach((item) => {
+      item.pos = item.pos.map((p) => p.scaled(scale));
+      item.position = item.position.scaled(scale);
+    });
+
+    this.simpleObjects.forEach((simpleObjects) => {
+      simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
+    });
+
+    this.images.forEach((image) => image.rescaleSize(scale));
+    this.multitailArrows.forEach((multitailArrow) =>
+      multitailArrow.rescaleSize(scale),
+    );
+  }
+
   rescale() {
     let avg = this.getAvgBondLength();
     if (avg <= 0) {

@@ -2095,6 +2095,15 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
 
+    const microModeScale =
+      this.micromoleculesEditor?.render?.options?.microModeScale;
+    const macroModeScale = provideEditorSettings().macroModeScale;
+
+    if (microModeScale && microModeScale !== macroModeScale) {
+      const scaleFactor = macroModeScale / microModeScale;
+      struct.scaleForModeTransition(scaleFactor);
+    }
+
     history.destroy();
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
@@ -2131,6 +2140,15 @@ export class CoreEditor {
     this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
+    const microModeScale =
+      this.micromoleculesEditor?.render?.options?.microModeScale;
+    const macroModeScale = provideEditorSettings().macroModeScale;
+
+    if (microModeScale && microModeScale !== macroModeScale) {
+      const scaleFactor = microModeScale / macroModeScale;
+      struct.scaleForModeTransition(scaleFactor);
+    }
+
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(

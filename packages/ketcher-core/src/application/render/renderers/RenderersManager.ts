@@ -1,5 +1,5 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';

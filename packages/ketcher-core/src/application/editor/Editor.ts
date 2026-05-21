@@ -77,12 +77,14 @@ import {
   EditorLineLength,
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  HELM_ALIAS_LENGTH_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
+  isValidHelmAliasLength,
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
@@ -444,6 +446,15 @@ export class CoreEditor {
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
+      if (
+        newMonomer.props?.aliasHELM &&
+        !isValidHelmAliasLength(newMonomer.props.aliasHELM)
+      ) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
         return;
       }

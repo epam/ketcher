@@ -7,7 +7,7 @@ import {
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 
-export type Data = {
+type Data = {
   atomId: number;
   attachmentPointType: RGroupAttachmentPointType;
   attachmentPointId?: number;
@@ -15,9 +15,9 @@ export type Data = {
 
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
-  static InverseConstructor: new (attachmentPointId?: number) => BaseOperation;
+  static InverseConstructor: new () => BaseOperation;
 
-  constructor(data: Data = {} as Data) {
+  constructor(data: Data) {
     super(
       OperationType.R_GROUP_ATTACHMENT_POINT_ADD,
       OperationPriority.R_GROUP_ATTACHMENT_POINT_ADD,

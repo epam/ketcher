@@ -1,34 +1,28 @@
 import { ReStruct } from 'application/render';
 import assert from 'assert';
-import { RGroupAttachmentPointType } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
-import type { Data as AddData } from './RGroupAttachmentPointAdd';
 
-type RemoveData = {
-  atomId: number;
-  attachmentPointType: RGroupAttachmentPointType;
-  attachmentPointId: number;
-};
+type Data = { atomId: number; attachmentPointType; attachmentPointId: number };
 
-const INITIAL_DATA: RemoveData = {
+const INITIAL_DATA = {
   atomId: 0,
-  attachmentPointType: 'primary',
+  attachmentPointType: 1,
   attachmentPointId: 0,
 };
 
 class RGroupAttachmentPointRemove extends BaseOperation {
-  readonly data: RemoveData;
-  static InverseConstructor: new (data?: AddData) => BaseOperation;
+  readonly data: Data;
+  static InverseConstructor: new () => BaseOperation;
 
-  constructor(attachmentPointId?: number) {
+  constructor(attachmentPointId = INITIAL_DATA.attachmentPointId) {
     super(
       OperationType.R_GROUP_ATTACHMENT_POINT_REMOVE,
       OperationPriority.R_GROUP_ATTACHMENT_POINT_REMOVE,
     );
     this.data = {
       ...INITIAL_DATA,
-      attachmentPointId: attachmentPointId ?? 0,
+      attachmentPointId,
     };
   }
 

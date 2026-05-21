@@ -75,6 +75,10 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
 
     async isOptionVisible(optionId: ContextMenuOption): Promise<boolean> {
       await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 3000,
+      });
       const option = getOption(optionId).first();
       const isVisible = await option.isVisible();
       await page.keyboard.press('Escape');
@@ -87,6 +91,10 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
 
     async isOptionEnabled(optionId: ContextMenuOption): Promise<boolean> {
       await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 3000,
+      });
       const option = getOption(optionId).first();
       const isEnabled = await option.isEnabled();
       await page.keyboard.press('Escape');

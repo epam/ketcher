@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Page } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   MacroFileType,
   StructureFormat,
@@ -149,7 +149,7 @@ export async function openFileAndAddToCanvas(
       from: 'pageCenter',
     });
   } else {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   }
 }
 
@@ -209,7 +209,7 @@ export async function openImageAndAddToCanvas(
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
   } else {
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
   }
 
   await waitForRender(page, async () => {

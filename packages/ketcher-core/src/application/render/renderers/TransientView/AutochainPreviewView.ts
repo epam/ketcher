@@ -1,12 +1,10 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import {
-  Coordinates,
-  getRnaPresetPhosphatePosition,
-  IRnaPreset,
-  monomerFactory,
-} from 'application/editor';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { getRnaPresetPhosphatePosition } from 'application/editor/tools/rnaPresetConnections';
+import { IRnaPreset } from 'application/editor/tools/Tool';
+import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import { MonomerItemType } from 'domain/types';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { SnakeLayoutCellWidth } from 'domain/constants';

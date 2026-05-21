@@ -3,7 +3,7 @@ import { KetItem } from 'domain/serializers/ket/fromKet/types';
 import {
   atomToStruct,
   bondToStruct,
-} from 'domain/serializers/ket/fromKet/moleculeToStruct';
+} from 'domain/serializers/ket/fromKet/atomBondToStruct';
 import { mergeFragmentsToStruct } from 'domain/serializers/ket/fromKet/mergeFragmentsToStruct';
 
 describe('mergeFragmentsToStruct', () => {

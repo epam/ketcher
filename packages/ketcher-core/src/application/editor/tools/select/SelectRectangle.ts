@@ -15,7 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { CoreEditor } from 'application/editor/Editor';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import { Vec2 } from 'domain/entities';
 import { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';

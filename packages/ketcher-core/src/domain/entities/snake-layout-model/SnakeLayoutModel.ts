@@ -13,7 +13,8 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
-import { provideEditorSettings } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { SettingsManager } from 'utilities';
 import {
   ISnakeLayoutModelRow,
@@ -22,7 +23,7 @@ import {
   ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
 import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
@@ -475,8 +476,7 @@ export class SnakeLayoutModel {
 
         nodeIndexToMolecules.forEach((molecules) => {
           molecules.forEach((molecule) => {
-            const moleculeBbox =
-              DrawingEntitiesManager.getStructureBbox(molecule);
+            const moleculeBbox = getStructureBbox(molecule);
             const cellsNeededHorizontally = Math.ceil(
               (moleculeBbox.width + cellSizeInAngstroms / 2) /
                 cellSizeInAngstroms,

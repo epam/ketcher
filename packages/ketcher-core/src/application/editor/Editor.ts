@@ -64,6 +64,7 @@ import {
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   AmbiguousMonomerType,
@@ -1291,9 +1292,7 @@ export class CoreEditor {
       ]);
       const monomersInChainUsedForAutochain =
         chainsCollection.chains[0].monomers;
-      const chainBbox = DrawingEntitiesManager.getStructureBbox(
-        monomersInChainUsedForAutochain,
-      );
+      const chainBbox = getStructureBbox(monomersInChainUsedForAutochain);
       const canvasWrapperSize = this.zoomTool.canvasWrapperSize;
       const MIN_OFFSET_FROM_RIGHT =
         oneLayoutCellInAngstroms * 5 * editorSettings.macroModeScale;

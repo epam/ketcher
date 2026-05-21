@@ -29,7 +29,6 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { KetcherLogger } from 'utilities';
 import { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { ChemRenderer } from './ChemRenderer';
 import { PeptideRenderer } from './PeptideRenderer';

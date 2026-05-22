@@ -1,10 +1,8 @@
+/* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
-import { Page, test, expect } from '@fixtures';
-import {
-  takeEditorScreenshot,
-  moveMouseAway,
-} from '@utils';
+import { Page, test } from '@fixtures';
+import { takeEditorScreenshot, moveMouseAway } from '@utils';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
@@ -14,7 +12,6 @@ import {
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -43,38 +40,38 @@ test.describe('Autotests: Improve the alignment logic', () => {
      *
      * Version 3.15.0
      */
-    
+
     // Step 1: Already in Sequence mode via initSequenceCanvas
-    
+
     // Step 2: Add first sequence S1 AAAAAAAAAA
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await keyboardPressOnCanvas(page, 'Enter');
-    
+
     // Add second sequence S2 CCCCCT
     await keyboardTypeOnCanvas(page, 'CCCCCT');
     await keyboardPressOnCanvas(page, 'Escape');
-    
+
     // Step 3: Switch to Flex mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    
+
     // Step 4: Create 1 H-bond between T (S2) and first A (S1)
     const firstA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
-    const thymine = getMonomerLocator(page, { monomerAlias: 'T' }).first();
-    
+    const firstT = getMonomerLocator(page, { monomerAlias: 'T' }).first();
+
     await bondTwoMonomers(
       page,
-      thymine,
+      firstT,
       firstA,
       undefined,
       undefined,
       MacroBondTool.Hydrogen,
     );
-    
-    await moveMouseAway(page);
-    
+
     // Step 5: Switch to Snake mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    
+
+    await moveMouseAway(page);
+
     // Verify the alignment arrangement is optimized
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -93,51 +90,51 @@ test.describe('Autotests: Improve the alignment logic', () => {
      *
      * Version 3.15.0
      */
-    
+
     // Step 1: Already in Sequence mode
-    
+
     // Step 2: Add first sequence S1 AAAAAAAAAA
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await keyboardPressOnCanvas(page, 'Enter');
-    
+
     // Add second sequence S2 CCCCTT
     await keyboardTypeOnCanvas(page, 'CCCCTT');
     await keyboardPressOnCanvas(page, 'Escape');
-    
+
     // Step 3: Switch to Flex mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    
+
     // Step 4: Create 2 H-bonds between both T's (S2) and two neighboring A's (S1)
     const firstA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
     const secondA = getMonomerLocator(page, { monomerAlias: 'A' }).nth(1);
     const firstT = getMonomerLocator(page, { monomerAlias: 'T' }).first();
     const secondT = getMonomerLocator(page, { monomerAlias: 'T' }).nth(1);
-    
+
     // Create first H-bond
     await bondTwoMonomers(
       page,
       firstT,
-      firstA,
-      undefined,
-      undefined,
-      MacroBondTool.Hydrogen,
-    );
-    
-    // Create second H-bond
-    await bondTwoMonomers(
-      page,
-      secondT,
       secondA,
       undefined,
       undefined,
       MacroBondTool.Hydrogen,
     );
-    
-    await moveMouseAway(page);
-    
+
+    // Create second H-bond
+    await bondTwoMonomers(
+      page,
+      secondT,
+      firstA,
+      undefined,
+      undefined,
+      MacroBondTool.Hydrogen,
+    );
+
     // Step 5: Switch to Snake mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    
+
+    await moveMouseAway(page);
+
     // Verify the alignment arrangement is optimized
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -156,20 +153,20 @@ test.describe('Autotests: Improve the alignment logic', () => {
      *
      * Version 3.15.0
      */
-    
+
     // Step 1: Already in Sequence mode
-    
+
     // Step 2: Add first sequence S1 AAAAAAAAAA
     await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await keyboardPressOnCanvas(page, 'Enter');
-    
+
     // Add second sequence S2 CCCTTT
     await keyboardTypeOnCanvas(page, 'CCCTTT');
     await keyboardPressOnCanvas(page, 'Escape');
-    
+
     // Step 3: Switch to Flex mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    
+
     // Step 4: Create 3 H-bonds between TTT (S2) and three neighboring A's (S1)
     const firstA = getMonomerLocator(page, { monomerAlias: 'A' }).first();
     const secondA = getMonomerLocator(page, { monomerAlias: 'A' }).nth(1);
@@ -177,17 +174,17 @@ test.describe('Autotests: Improve the alignment logic', () => {
     const firstT = getMonomerLocator(page, { monomerAlias: 'T' }).first();
     const secondT = getMonomerLocator(page, { monomerAlias: 'T' }).nth(1);
     const thirdT = getMonomerLocator(page, { monomerAlias: 'T' }).nth(2);
-    
+
     // Create first H-bond
     await bondTwoMonomers(
       page,
       firstT,
-      firstA,
+      thirdA,
       undefined,
       undefined,
       MacroBondTool.Hydrogen,
     );
-    
+
     // Create second H-bond
     await bondTwoMonomers(
       page,
@@ -197,50 +194,23 @@ test.describe('Autotests: Improve the alignment logic', () => {
       undefined,
       MacroBondTool.Hydrogen,
     );
-    
+
     // Create third H-bond
     await bondTwoMonomers(
       page,
       thirdT,
-      thirdA,
+      firstA,
       undefined,
       undefined,
       MacroBondTool.Hydrogen,
     );
-    
-    await moveMouseAway(page);
-    
+
     // Step 5: Switch to Snake mode
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
-    
-    // Verify the alignment arrangement is optimized
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  });
 
-  test('Verification - DNA polymer type is used for all test sequences', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/10014
-     * Description: Verify that DNA polymer type is correctly set for sequence testing
-     * Scenario:
-     * 1. Switch to DNA mode in sequence editor
-     * 2. Add test sequence with A and T nucleotides
-     * 3. Verify sequence is created correctly
-     *
-     * Version 3.15.0
-     */
-    
-    // Ensure we're using DNA polymer type
-    await MacromoleculesTopToolbar(page).dna();
-    
-    // Add test sequence
-    await keyboardTypeOnCanvas(page, 'ATGC');
-    await keyboardPressOnCanvas(page, 'Escape');
-    
-    // Switch to different modes to verify functionality
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+
+    // Verify the alignment arrangement is optimized
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 });

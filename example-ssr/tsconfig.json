@@ -18,9 +18,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "react": ["./node_modules/@types/react"]
     },
-    "target": "ES2017"
+    "target": "esnext"
   },
   "include": [
     "next-env.d.ts",

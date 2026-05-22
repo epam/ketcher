@@ -6,7 +6,10 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { MonomerType as MonomerTypeInDropdown } from '@tests/pages/constants/createMonomerDialog/Constants';
+import {
+  MonomerType as MonomerTypeInDropdown,
+  NucleotideNaturalAnalogue,
+} from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
@@ -15,11 +18,26 @@ import { shiftCanvas } from '@utils/index';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
-import { NucleotideNaturalAnalogue } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { MonomerType, PresetType } from '@utils/types';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
 let presetSection: ReturnType<typeof NucleotidePresetSection>;
+
+const buildCustomPreset = (alias: string): PresetType => ({
+  alias,
+  testId: `${alias}-button`,
+  monomerType: MonomerType.Preset,
+  sugar: Sugar.R,
+  base: Base.A,
+  phosphate: Phosphate.P,
+});
+
+const buildCustomMonomer = (alias: string, monomerType: MonomerType) => ({
+  alias,
+  testId: `${alias}-button`,
+  monomerType,
+});
 
 test.describe('Autotests: Monomer saving - presets in the monomer creation wizard', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -32,14 +50,12 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await closePage();
   });
 
-  test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
-
   test('Case 1 - Verify that all monomers composing a preset are saved as hidden entries in the monomer library', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10012
-     * Description: Create nucleotide preset with new Sugar/Base/Phosphate components 
+     * Description: Create nucleotide preset with new Sugar/Base/Phosphate components
      * and verify that component monomers are saved internally but hidden from UI
-     * 
+     *
      * Scenario:
      * 1. Open Molecules canvas
      * 2. Load structure on canvas
@@ -72,7 +88,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       HELMAlias: 'HSugar',
     });
 
-    // Define new Base component (not existing in library)  
+    // Define new Base component (not existing in library)
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -95,34 +111,36 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Verify preset is visible in library
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
 
     // Verify component monomers are hidden from UI
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenSugar-button',
-      alias: 'HiddenSugar',
-    })).toBeFalsy();
-    
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenBase-button', 
-      alias: 'HiddenBase',
-    })).toBeFalsy();
-    
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenPhosphate-button',
-      alias: 'HiddenPhosphate', 
-    })).toBeFalsy();
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSugar', MonomerType.Sugar),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenBase', MonomerType.Base),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenPhosphate', MonomerType.Phosphate),
+      ),
+    ).toBeFalsy();
   });
 
   test('Case 2 - Verify that presets composed only of existing visible monomers do not create additional visible monomer entries', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10012
-     * Description: Create preset using existing visible monomers and verify 
+     * Description: Create preset using existing visible monomers and verify
      * no new visible monomer entries are created
-     * 
+     *
      * Scenario:
      * 1. Switch to Macromolecules mode to check existing monomer count
      * 2. Switch back to Molecules canvas
@@ -135,12 +153,12 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * Version 3.14.0
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    
+
     // Check that standard monomers exist
     const existsR = await Library(page).isMonomerExist(Sugar.R);
-    const existsA = await Library(page).isMonomerExist(Base.A);  
+    const existsA = await Library(page).isMonomerExist(Base.A);
     const existsP = await Library(page).isMonomerExist(Phosphate.P);
-    
+
     expect(existsR).toBeTruthy();
     expect(existsA).toBeTruthy();
     expect(existsP).toBeTruthy();
@@ -155,14 +173,14 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     const presetName = 'ExistingComponentsPreset';
     await presetSection.setName(presetName);
 
-    // Use existing library aliases 
+    // Use existing library aliases
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
       symbol: Sugar.R.alias,
       name: 'Existing Sugar Name',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -170,7 +188,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       name: 'Existing Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
@@ -182,10 +200,9 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Verify preset is visible
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
 
     // Verify original monomers are still visible (not duplicated)
     expect(await Library(page).isMonomerExist(Sugar.R)).toBeTruthy();
@@ -198,7 +215,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * Test task: https://github.com/epam/ketcher/issues/10012
      * Description: Create hidden monomer with same code/name as existing visible monomer
      * and verify no uniqueness error is raised
-     * 
+     *
      * Scenario:
      * 1. Load structure on canvas
      * 2. Create preset with hidden monomer using same code/name as existing visible monomer
@@ -219,33 +236,32 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias, // Same as existing
+      symbol: Sugar.R.alias,
       name: 'Duplicate Sugar Name',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias, // Same as existing
+      symbol: Base.A.alias,
       name: 'Duplicate Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias, // Same as existing
+      symbol: Phosphate.P.alias,
       name: 'Duplicate Phosphate Name',
     });
 
     // Should submit successfully without uniqueness error
     await dialog.submit();
-    
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
   });
 
   test('Case 4 - Verify that hidden monomer properties are not checked for uniqueness across different presets', async () => {
@@ -253,7 +269,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * Test task: https://github.com/epam/ketcher/issues/10012
      * Description: Create two presets with hidden monomers having same codes/names
      * and verify both save successfully without uniqueness errors
-     * 
+     *
      * Scenario:
      * 1. Create first preset with specific hidden monomer codes/names
      * 2. Create second preset with same hidden monomer codes/names
@@ -277,7 +293,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       symbol: 'DuplicateCode',
       name: 'Duplicate Name',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -285,7 +301,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       name: 'Duplicate Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
@@ -306,40 +322,38 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'DuplicateCode', // Same as first preset
-      name: 'Duplicate Name',   // Same as first preset
+      symbol: 'DuplicateCode',
+      name: 'Duplicate Name',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'DuplicateBase',  // Same as first preset
-      name: 'Duplicate Base',   // Same as first preset
+      symbol: 'DuplicateBase',
+      name: 'Duplicate Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'DuplicatePhosphate', // Same as first preset
-      name: 'Duplicate Phosphate',  // Same as first preset
+      symbol: 'DuplicatePhosphate',
+      name: 'Duplicate Phosphate',
     });
 
     // Should submit successfully without uniqueness error
     await dialog.submit();
-    
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    
+
     // Both presets should exist
-    expect(await Library(page).isMonomerExist({
-      testId: `${preset1Name}-button`,
-      alias: preset1Name,
-    })).toBeTruthy();
-    
-    expect(await Library(page).isMonomerExist({
-      testId: `${preset2Name}-button`,
-      alias: preset2Name,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(preset1Name)),
+    ).toBeTruthy();
+
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(preset2Name)),
+    ).toBeTruthy();
   });
 
   test('Case 5 - Verify that hidden monomer properties are still validated for formatting', async () => {
@@ -347,7 +361,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * Test task: https://github.com/epam/ketcher/issues/10012
      * Description: Enter invalid characters in hidden monomer properties
      * and verify formatting validation error blocks saving
-     * 
+     *
      * Scenario:
      * 1. Load structure on canvas
      * 2. Create preset with invalid characters in hidden monomer properties
@@ -368,22 +382,22 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: '<InvalidSugar>', // Invalid characters
+      symbol: '<InvalidSugar>',
       name: 'Format Test Sugar',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: '<InvalidBase>', // Invalid characters
+      symbol: '<InvalidBase>',
       name: 'Format Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: '<InvalidPhosphate>', // Invalid characters
+      symbol: '<InvalidPhosphate>',
       name: 'Format Test Phosphate',
     });
 
@@ -401,16 +415,26 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     // Verify error states on tabs
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(/inputError/);
-    await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(/errorTab/);
+    await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(
+      /inputError/,
+    );
+    await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
+      /errorTab/,
+    );
 
     await presetSection.openTab(NucleotidePresetTab.Base);
     await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
-    await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(/errorTab/);
+    await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
+      /errorTab/,
+    );
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(/inputError/);
-    await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(/errorTab/);
+    await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+      /inputError/,
+    );
+    await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
+      /errorTab/,
+    );
 
     await dialog.discard();
   });
@@ -419,7 +443,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     /*
      * Test task: https://github.com/epam/ketcher/issues/10012
      * Description: Correct formatting errors and verify preset saves successfully after correction
-     * 
+     *
      * Scenario:
      * 1. Create preset with invalid formatting (from previous scenario)
      * 2. Fix formatting errors in all component properties
@@ -443,7 +467,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       symbol: '<InvalidSugar>',
       name: 'Format Fix Sugar',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -451,7 +475,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       name: 'Format Fix Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
@@ -484,19 +508,18 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     // Now submit should succeed
     await dialog.submit();
-    
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
   });
 
   test('Case 7 - Verify that visible monomer creation still enforces uniqueness while hidden monomers do not', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10012
      * Description: Test uniqueness validation for visible monomers vs hidden monomers
-     * 
+     *
      * Scenario:
      * 1. Create visible monomer with existing code (should fail)
      * 2. Create preset with hidden monomer using same code (should succeed)
@@ -510,7 +533,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Sugar);
-    await dialog.symbolEditbox.fill(Sugar.R.alias); // Use existing code
+    await dialog.symbolEditbox.fill(Sugar.R.alias);
     await dialog.nameEditbox.fill('Duplicate Visible Sugar');
 
     // This should trigger uniqueness validation error for visible monomers
@@ -521,7 +544,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.discard();
 
     // Now create preset with hidden monomer using same code - should succeed
-    await LeftToolbar(page).createMonomer(); 
+    await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
@@ -532,10 +555,10 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias, // Same as existing visible monomer
+      symbol: Sugar.R.alias,
       name: 'Hidden Sugar with Duplicate Code',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -543,7 +566,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       name: 'Uniqueness Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
@@ -553,24 +576,23 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     // This should succeed because hidden monomers bypass uniqueness checks
     await dialog.submit();
-    
+
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
   });
 
   test('Case 8 - Verify that hidden monomers created with a preset are not selectable as components', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10012
-     * Description: Create preset with hidden monomers and verify hidden monomers 
+     * Description: Create preset with hidden monomers and verify hidden monomers
      * don't appear in component selection UI
-     * 
+     *
      * Scenario:
      * 1. Create preset with hidden monomers
      * 2. Save preset successfully
-     * 3. Try to create another preset and verify hidden monomers don't appear 
+     * 3. Try to create another preset and verify hidden monomers don't appear
      *    in component selection UI
      * 4. Verify only visible monomers appear in selection dropdowns
      *
@@ -592,7 +614,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       symbol: 'HiddenSelectSugar',
       name: 'Hidden Selectable Sugar',
     });
-    
+
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
@@ -600,7 +622,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       name: 'Hidden Selectable Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
@@ -612,26 +634,28 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     // Now switch to macro mode to verify preset exists but components are hidden
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    expect(await Library(page).isMonomerExist({
-      testId: `${presetName}-button`,
-      alias: presetName,
-    })).toBeTruthy();
+    expect(
+      await Library(page).isMonomerExist(buildCustomPreset(presetName)),
+    ).toBeTruthy();
 
     // Verify hidden components are not selectable in library
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenSelectSugar-button',
-      alias: 'HiddenSelectSugar',
-    })).toBeFalsy();
-    
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenSelectBase-button',
-      alias: 'HiddenSelectBase',
-    })).toBeFalsy();
-    
-    expect(await Library(page).isMonomerExist({
-      testId: 'HiddenSelectPhosphate-button',
-      alias: 'HiddenSelectPhosphate',
-    })).toBeFalsy();
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectSugar', MonomerType.Sugar),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectBase', MonomerType.Base),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectPhosphate', MonomerType.Phosphate),
+      ),
+    ).toBeFalsy();
 
     // Go back to molecules mode and try creating another preset
     // to verify hidden monomers don't appear in component selection

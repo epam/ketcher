@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Input, Icon } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
@@ -71,7 +72,9 @@ export const MonomerLibraryToggle = styled.button`
   color: ${({ theme }) => theme.ketcher.color.text.secondary};
 `;
 
-export const MonomerLibrarySearchIcon = styled(Icon)`
+export const MonomerLibrarySearchIcon: ComponentType<
+  ComponentProps<typeof Icon>
+> = styled(Icon)`
   height: 16px;
   width: 16px;
   color: ${({ theme }) => theme.ketcher.color.text.secondary};

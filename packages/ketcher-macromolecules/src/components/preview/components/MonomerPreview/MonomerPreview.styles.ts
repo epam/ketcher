@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { StructRender } from 'ketcher-react';
 
 export const Container = styled.div<{ isLongName?: boolean }>`
@@ -53,7 +54,9 @@ export const MonomerName = styled.p<{ isLongName?: boolean }>`
   `}
 `;
 
-export const StyledStructRender = styled(StructRender)`
+export const StyledStructRender: ComponentType<
+  ComponentProps<typeof StructRender>
+> = styled(StructRender)`
   flex: 1 1 auto;
   min-height: 80px;
   width: 100%;

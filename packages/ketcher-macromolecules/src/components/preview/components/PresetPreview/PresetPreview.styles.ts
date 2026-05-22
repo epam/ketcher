@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Icon } from 'ketcher-react';
 
 export const PresetContainer = styled.div`
@@ -58,7 +59,9 @@ export const PresetName = styled.p`
   margin-bottom: 8px;
 `;
 
-export const PresetIcon = styled(Icon)`
+export const PresetIcon: ComponentType<ComponentProps<typeof Icon>> = styled(
+  Icon,
+)`
   height: 14px;
   width: 14px;
   margin-right: 4px;
@@ -70,7 +73,9 @@ export const PresetIcon = styled(Icon)`
 // phosphate position selector. Reuses the same SVG (`preset-left-phosphate` /
 // `preset-right-phosphate`) so the indicator on the preset preview is
 // visually consistent with the selector, just smaller.
-export const PhosphatePositionIcon = styled(Icon)`
+export const PhosphatePositionIcon: ComponentType<
+  ComponentProps<typeof Icon>
+> = styled(Icon)`
   height: 15px;
   width: 15px;
   flex-shrink: 0;

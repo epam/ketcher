@@ -15,12 +15,15 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Collapse } from '@mui/material';
 import { Icon } from 'ketcher-react';
 
 import { IStyledDropdownIconProps, OptionsContainerProps } from './types';
 
-export const StyledDropdownIcon = styled(Icon, {
+export const StyledDropdownIcon: ComponentType<
+  ComponentProps<typeof Icon> & IStyledDropdownIconProps
+> = styled(Icon, {
   shouldForwardProp: (prop) => prop !== 'isActive',
 })<IStyledDropdownIconProps>`
   position: absolute;

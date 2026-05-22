@@ -5,11 +5,16 @@ declare module '*.module.less' {
   export default classes;
 }
 
+declare module '*.less';
+
 declare namespace NodeJS {
   export interface ProcessEnv {
     VERSION: string;
     BUILD_DATE: string;
     BUILD_NUMBER: string;
+    HELP_LINK: string;
+    INDIGO_VERSION: string;
+    INDIGO_MACHINE: string;
   }
 }
 

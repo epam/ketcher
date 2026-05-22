@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { Accordion, Button } from 'ketcher-react';
 import { Tab } from '@mui/material';
 import { ActionButton } from 'components/shared/actionButton';
@@ -27,7 +28,9 @@ export const RnaAccordionContainer = styled.div`
   height: 100%;
 `;
 
-export const StyledAccordion = styled(Accordion)`
+export const StyledAccordion: ComponentType<
+  ComponentProps<typeof Accordion>
+> = styled(Accordion)`
   min-height: 32px;
 `;
 

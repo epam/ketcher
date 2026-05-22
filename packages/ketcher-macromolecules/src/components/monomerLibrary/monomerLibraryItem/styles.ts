@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
+import type { ComponentProps, ComponentType } from 'react';
 import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 import { Icon } from 'ketcher-react';
 
@@ -162,7 +163,9 @@ export const CardTitle = styled.span`
   font-size: 12px;
 `;
 
-export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
+export const AutochainIcon: ComponentType<
+  ComponentProps<typeof Icon> & { disabled?: boolean }
+> = styled(Icon)<{ disabled?: boolean }>`
   color: #cad3dd;
   stroke-width: 0;
   opacity: 0;

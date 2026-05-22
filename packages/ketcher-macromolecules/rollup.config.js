@@ -10,35 +10,25 @@ import path from 'node:path';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
-import type { Plugin, RollupOptions } from 'rollup';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import ttypescript from 'ttypescript';
+import ts from 'typescript';
 import { string } from 'rollup-plugin-string';
 
-type PackageJson = {
-  main: string;
-  module: string;
-  source: string;
-  version: string;
-};
-
 const require = createRequire(import.meta.url);
-const pkg = require('./package.json') as PackageJson;
-
-const asPlugin = (plugin: unknown): Plugin => plugin as Plugin;
+const pkg = require('./package.json');
 
 const mode = {
   PRODUCTION: 'production',
   DEVELOPMENT: 'development',
-} as const;
+};
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
-export const valuesToReplace: Record<string, string> = {
+export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
@@ -57,7 +47,7 @@ export const valuesToReplace: Record<string, string> = {
   ),
 };
 
-const config: RollupOptions = {
+const config = {
   input: pkg.source,
   output: [
     {
@@ -85,21 +75,21 @@ const config: RollupOptions = {
       sourceMap: true,
       include: includePattern,
     }),
-    asPlugin(svgr({ include: includePattern })),
+    svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
+    json(),
+    typescript({
+      typescript: ts,
+      tsconfigOverride: {
+        exclude: ['*.test.ts'],
+      },
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
-    }),
-    json(),
-    typescript({
-      typescript: ttypescript,
-      tsconfigOverride: {
-        exclude: ['*.test.ts'],
-      },
     }),
     babel({
       extensions,
@@ -111,11 +101,9 @@ const config: RollupOptions = {
       comments: 'none',
       include: includePattern,
     }),
-    asPlugin(
-      string({
-        include: '**/*.ket',
-      }),
-    ),
+    string({
+      include: '**/*.ket',
+    }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };

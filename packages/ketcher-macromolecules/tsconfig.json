@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "src",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "sourceMap": true,
@@ -21,6 +22,7 @@
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["jest", "node", "react", "react-dom"],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -43,5 +45,5 @@
       }
     ]
   },
-  "include": ["src", "rollup.config.ts"]
+  "include": ["src"]
 }

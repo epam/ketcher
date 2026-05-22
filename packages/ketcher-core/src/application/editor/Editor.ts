@@ -2095,14 +2095,9 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
 
-    const microModeScale =
-      this.micromoleculesEditor?.render?.options?.microModeScale;
-    const macroModeScale = provideEditorSettings().macroModeScale;
-
-    if (microModeScale && microModeScale !== macroModeScale) {
-      const scaleFactor = macroModeScale / microModeScale;
-      struct.scaleForModeTransition(scaleFactor);
-    }
+    // Rescale coords from macro to micro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    this.rescaleStructForModeTransition(struct, 'macroToMicro');
 
     history.destroy();
     this.drawingEntitiesManager.clearCanvas();
@@ -2140,14 +2135,10 @@ export class CoreEditor {
     this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
-    const microModeScale =
-      this.micromoleculesEditor?.render?.options?.microModeScale;
-    const macroModeScale = provideEditorSettings().macroModeScale;
 
-    if (microModeScale && microModeScale !== macroModeScale) {
-      const scaleFactor = microModeScale / macroModeScale;
-      struct.scaleForModeTransition(scaleFactor);
-    }
+    // Rescale coords from micro to macro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    this.rescaleStructForModeTransition(struct, 'microToMacro');
 
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
@@ -2173,6 +2164,26 @@ export class CoreEditor {
     ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
+  }
+
+  private rescaleStructForModeTransition(
+    struct: Struct,
+    direction: 'microToMacro' | 'macroToMicro',
+  ) {
+    const microModeScale =
+      this.micromoleculesEditor?.render?.options?.microModeScale;
+    const macroModeScale = provideEditorSettings().macroModeScale;
+
+    if (microModeScale == null || microModeScale === macroModeScale) {
+      return;
+    }
+
+    const scaleFactor =
+      direction === 'microToMacro'
+        ? microModeScale / macroModeScale
+        : macroModeScale / microModeScale;
+
+    struct.scale(scaleFactor, { includeMonomerSgroups: true });
   }
 
   public isCurrentModeWithAutozoom(): boolean {

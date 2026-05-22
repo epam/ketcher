@@ -28,10 +28,17 @@ export const NotificationMessageBanner = (
     async isVisible() {
       return await locators.notificationMessageBanner.isVisible();
     },
-
     async ok() {
-      await locators.notificationMessageOkButton.click();
-      await locators.notificationMessageOkButton.waitFor({ state: 'detached' });
+      const button = locators.notificationMessageOkButton;
+      // Wait for button to be ready and visible
+      await button.waitFor({ state: 'visible', timeout: 5000 });
+      // Click with explicit force to overcome state issues
+      await button.click({ force: true });
+      // Wait for banner to detach with reasonable timeout
+      await locators.notificationMessageBanner.waitFor({
+        state: 'hidden',
+        timeout: 5000,
+      });
     },
 
     async getNotificationMessage() {

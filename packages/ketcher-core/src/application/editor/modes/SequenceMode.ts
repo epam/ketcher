@@ -67,7 +67,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
-import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 
@@ -545,6 +546,7 @@ export class SequenceMode extends BaseMode {
       const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
         this.selectionStartCaretPosition,
         SequenceRenderer.caretPosition,
+        (position) => SequenceRenderer.setCaretPosition(position),
       );
       modelChanges.addOperation(moveCaretOperation);
       editor.renderersContainer.update(modelChanges);
@@ -778,6 +780,7 @@ export class SequenceMode extends BaseMode {
       isNumber(newCaretPosition)
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
+      (position) => SequenceRenderer.setCaretPosition(position),
     );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -1820,6 +1823,7 @@ export class SequenceMode extends BaseMode {
       new RestoreSequenceCaretPositionOperation(
         SequenceRenderer.caretPosition,
         nextCaretPosition,
+        (position) => SequenceRenderer.setCaretPosition(position),
       ),
     );
 
@@ -2387,7 +2391,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
     let monomerForSideConnections = newPresetNode.monomer;
 
     if (newPresetNode instanceof Nucleotide) {

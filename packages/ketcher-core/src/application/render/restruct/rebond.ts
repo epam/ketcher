@@ -687,23 +687,31 @@ function findIncomingStereoUpBond(
     const neibond = restruct.bonds.get(hb.bid);
 
     if (!neibond) return false;
+
     const singleUp =
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (singleUp) {
+      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
+        return false;
+      }
       return (
         neibond.b.end === hb.begin ||
         (neibond.boldStereo && includeBoldStereoBond)
       );
     }
 
-    return !!(
+    if (
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
       includeBoldStereoBond &&
       neibond.boldStereo
-    );
+    ) {
+      return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
+    }
+
+    return false;
   });
 }
 
@@ -719,10 +727,16 @@ function findIncomingUpBonds(
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
 
-  bond.neihbid1 = restruct.atoms.get(bond.b.begin)?.showLabel
-    ? -1
-    : halfbonds[0];
-  bond.neihbid2 = restruct.atoms.get(bond.b.end)?.showLabel ? -1 : halfbonds[1];
+  // Keep bold stereo rendering independent from endpoint label visibility:
+  // half-bond coordinates are already shifted away from visible labels.
+  bond.neihbid1 =
+    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[0];
+  bond.neihbid2 =
+    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[1];
 }
 
 function checkStereoBold(bid0, bond, restruct) {
@@ -943,8 +957,23 @@ function getBondSingleUpPath(
   // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
-  const n = hb1.norm;
   const options = render.options;
+  // Prefer the stored half-bond normal; fall back to a normal derived from
+  // the actual rendered endpoints when hb1.norm is degenerate.
+  // Root cause fixed in struct.ts: halfBondUpdate now runs before
+  // atomAddNeighbor so hb.norm is always populated. This fallback is kept
+  // as a safety net for any future re-init path that skips halfBondUpdate.
+  const DEGENERATE_LENGTH = 1e-4;
+  let n = hb1.norm;
+  if (!n || n.length() < DEGENERATE_LENGTH) {
+    const renderedDir = b.sub(a);
+    if (renderedDir.length() < DEGENERATE_LENGTH) {
+      // Both the stored normal and the rendered direction are degenerate —
+      // the bond has zero length; skip drawing to avoid a zero-width wedge.
+      return null;
+    }
+    n = renderedDir.normalized().rotateSC(1, 0);
+  }
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
   let b3 = b.addScaled(n, -bsp);

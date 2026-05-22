@@ -20,7 +20,7 @@ import {
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   getMonomerSize,
@@ -391,7 +391,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    const [, , monomerClass] = monomerFactory(
+    const [, monomerClass] = monomerEntityFactory(
       this.monomer instanceof AmbiguousMonomer
         ? this.monomer.variantMonomerItem
         : this.monomer.monomerItem,

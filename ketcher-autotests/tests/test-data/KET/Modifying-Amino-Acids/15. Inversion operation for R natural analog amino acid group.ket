@@ -420,6 +420,7 @@
         "fullName": "D-Arginine",
         "alias": "dR",
         "aliasHELM": "dR",
+        "aliasBILN": "dR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -2,7 +2,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { editorEvents } from 'application/editor';
+import { editorEvents } from 'application/editor/editorEvents';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
@@ -17,6 +17,10 @@ import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+
+// Extra clearance in canvas units that keeps labels away from the atom bbox.
+const LABEL_CLEARANCE_OFFSET = 5;
+const STEREO_CIP_GAP = 2;
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -613,8 +617,9 @@ export class AtomRenderer extends BaseRenderer {
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
-    this.appendCIPLabel();
+    // Must come before appendCIPLabel: CIP positioning depends on the stereo bbox.
     this.appendStereoLabel();
+    this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }
@@ -662,30 +667,47 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const { width, height } = this.cipTextElementBBox;
-
-    const modifiedTextBBox = {
-      x: this.scaledPosition.x - width / 2,
-      y: this.scaledPosition.y - height / 2,
-      width,
-      height,
-    };
     const direction = this.bisectLargestSector();
+    let projectedDistance = this.getProjectedLabelDistance(
+      this.cipTextElementBBox.width,
+      this.cipTextElementBBox.height,
+      direction,
+    );
 
-    const baseDistance = 3;
-    const shiftDistance =
-      baseDistance +
-      util.shiftRayBox(
-        this.scaledPosition,
-        direction.negated(),
-        Box2Abs.fromRelBox(modifiedTextBBox),
+    if (this.stereoTextElementBBox) {
+      const stereoProjectedDistance = this.getProjectedLabelDistance(
+        this.stereoTextElementBBox.width,
+        this.stereoTextElementBBox.height,
+        direction,
       );
-    const shiftVector = direction.scaled(3 + shiftDistance);
+      const stereoProjectionRadius = this.getLabelProjectionRadius(
+        this.stereoTextElementBBox.width,
+        this.stereoTextElementBBox.height,
+        direction,
+      );
+      const cipProjectionRadius = this.getLabelProjectionRadius(
+        this.cipTextElementBBox.width,
+        this.cipTextElementBBox.height,
+        direction,
+      );
+
+      projectedDistance = Math.max(
+        projectedDistance,
+        stereoProjectedDistance +
+          stereoProjectionRadius +
+          cipProjectionRadius +
+          STEREO_CIP_GAP,
+      );
+    }
+
+    const shiftVector = direction.scaled(projectedDistance);
 
     const cipPosition = this.scaledPosition.add(
       new Vec2(
-        shiftVector.x - this.cipLabelElementBBox.width / 2,
-        shiftVector.y + this.cipLabelElementBBox.height / 2,
+        shiftVector.x -
+          (this.cipLabelElementBBox.x + this.cipLabelElementBBox.width / 2),
+        shiftVector.y -
+          (this.cipLabelElementBBox.y + this.cipLabelElementBBox.height / 2),
       ),
     );
 
@@ -773,36 +795,62 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const { width, height } = this.stereoTextElementBBox;
-
-    const modifiedTextBBox = {
-      x: this.scaledPosition.x - width / 2,
-      y: this.scaledPosition.y - height / 2,
-      width,
-      height,
-    };
     const direction = this.bisectLargestSector();
 
-    const baseDistance = 3;
-    const shiftDistance =
-      baseDistance +
-      util.shiftRayBox(
-        this.scaledPosition,
-        direction.negated(),
-        Box2Abs.fromRelBox(modifiedTextBBox),
-      );
-    const shiftVector = direction.scaled(baseDistance + shiftDistance);
+    const projectedDistance = this.getProjectedLabelDistance(
+      this.stereoTextElementBBox.width,
+      this.stereoTextElementBBox.height,
+      direction,
+    );
+
+    const shiftVector = direction.scaled(projectedDistance);
 
     const stereoPosition = this.scaledPosition.add(
       new Vec2(
-        shiftVector.x - this.stereoLabelElementBBox.width / 2,
-        shiftVector.y + this.stereoLabelElementBBox.height / 2,
+        shiftVector.x -
+          (this.stereoLabelElementBBox.x +
+            this.stereoLabelElementBBox.width / 2),
+        shiftVector.y -
+          (this.stereoLabelElementBBox.y +
+            this.stereoLabelElementBBox.height / 2),
       ),
     );
 
     this.stereoLabelElement?.attr(
       'transform',
       `translate(${stereoPosition.x}, ${stereoPosition.y})`,
+    );
+  }
+
+  private getProjectedLabelDistance(
+    width: number,
+    height: number,
+    direction: Vec2,
+  ): number {
+    const baseDistance = 3;
+    const labelBox = {
+      x: this.scaledPosition.x - width / 2,
+      y: this.scaledPosition.y - height / 2,
+      width,
+      height,
+    };
+
+    const backwardShift = util.shiftRayBox(
+      this.scaledPosition,
+      direction.negated(),
+      Box2Abs.fromRelBox(labelBox),
+    );
+
+    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+  }
+
+  private getLabelProjectionRadius(
+    width: number,
+    height: number,
+    direction: Vec2,
+  ): number {
+    return (
+      Math.abs(direction.x) * (width / 2) + Math.abs(direction.y) * (height / 2)
     );
   }
 

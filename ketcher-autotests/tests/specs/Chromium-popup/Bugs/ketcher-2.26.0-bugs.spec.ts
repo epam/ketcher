@@ -359,7 +359,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     },
   );
 
-  test('Case 11: Export to SDF V3000 not returns SDF V2000', async () => {
+  test('Case 11: Export to SDF V3000 not returns SDF V2000', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5652
@@ -369,7 +371,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 2. Load from file
      * 3. Save to SDF V3000
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Chromium-popup/one-attachment-point-added-in-micro-mode.ket',
@@ -488,7 +489,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   test(
     'Case 16: No overlapping UI elements in Query Properties right-click menu',
     { tag: ['@chromium-popup'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6947
        * Bug: https://github.com/epam/ketcher/issues/5615
@@ -498,7 +499,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
        * 2. Right-click and select Query Properties -> H count or Substitution count (in my case)
        * 3. Take screenshot
        */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await drawBenzeneRing(page);
       await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
       await ContextMenu(
@@ -707,7 +707,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await moveMouseAway(page);
   });
 
-  test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async () => {
+  test('Case 25: The tail of Multi-Tailed Arrow is added to the proper place on the Spine after the Redo action of removing the tail if the length of the spine were changed', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/ketcher/issues/5548
@@ -720,7 +722,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 5. Click on Remove tail - tail is removed
      * 6. Click on Undo
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await LeftToolbar(page).selectArrowTool(ArrowTool.MultiTailedArrow);
     await clickInTheMiddleOfTheCanvas(page);
     const middleOfTheScreen = await getCachedBodyCenter(page);
@@ -919,7 +920,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   test(
     'Case 32: Atoms and bonds is highlighted when the whole molecule with atoms is choosen',
     { tag: ['@chromium-popup'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6947
        * Bug: https://github.com/epam/ketcher/issues/5668
@@ -931,7 +932,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
        * 4. Highlight the selected structure
        * 5. Take screenshot
        */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvasAsNewProjectMacro(
         page,
         'KET/Chromium-popup/benzene-ring-with-atoms.ket',
@@ -1385,7 +1385,9 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await SaveStructureDialog(page).cancel();
   });
 
-  test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async () => {
+  test('Case 49: The reaction with reverse retrosynthetic arrow is displayed correct after clicking on Aromatize, Dearomatize, Calculate CIP, Add explicit hydrogens', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6947
      * Bug: https://github.com/epam/Indigo/issues/2409
@@ -1400,7 +1402,6 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 6. Click on Add explicit hydrogens
      * 7. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Chromium-popup/error with aromatize v2.ket',

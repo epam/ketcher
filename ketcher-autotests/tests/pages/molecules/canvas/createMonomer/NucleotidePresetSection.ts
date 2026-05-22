@@ -91,6 +91,11 @@ export const NucleotidePresetSection = (page: Page) => {
   return {
     ...locators,
 
+    async setPhosphatePosition(position: '3' | '5') {
+      await this.openTab(NucleotidePresetTab.Phosphate);
+      await page.getByTestId(`phosphate-position-${position}-button`).click();
+    },
+
     async isTabOpened(tab: NucleotidePresetTab) {
       const tabButton = page.getByTestId(tab);
       const ariaSelected = await tabButton.getAttribute('aria-selected');

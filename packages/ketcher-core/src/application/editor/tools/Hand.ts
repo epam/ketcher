@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ZoomTool } from 'application/editor/tools/Zoom';
 import { D3DragEvent, drag, DragBehavior, select } from 'd3';

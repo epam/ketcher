@@ -88,6 +88,21 @@ async function getFileContent(
   return fileContent;
 }
 
+// Filter file lines: by default drop lines containing '-INDIGO-', 'Ketcher',
+// '$DATM', or '$MDL'. When indexes are provided, exclude those line indexes.
+function filterExportLines(lines: string[], indexes: number[]): string[] {
+  if (indexes.length === 0) {
+    return lines.filter(
+      (line) =>
+        !line.includes('-INDIGO-') &&
+        !line.includes('$DATM') &&
+        !line.includes('$MDL') &&
+        !line.includes('Ketcher'),
+    );
+  }
+  return filterByIndexes(lines, indexes);
+}
+
 export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
@@ -109,24 +124,9 @@ export async function verifyFileExport(
     fileFormat: format,
     metaDataIndexes,
   });
-  // Function to filter lines
-  const filterLines = (lines: string[], indexes: number[]) => {
-    if (indexes.length === 0) {
-      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
-      return lines.filter(
-        (line) =>
-          !line.includes('-INDIGO-') &&
-          !line.includes('$DATM') &&
-          !line.includes('$MDL') &&
-          !line.includes('Ketcher'),
-      );
-    }
-    // If indexes are specified, filter lines by indexes
-    return filterByIndexes(lines, indexes);
-  };
   // Apply filtering to both files
-  const filteredFile = filterLines(file, metaDataIndexes);
-  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  const filteredFile = filterExportLines(file, metaDataIndexes);
+  const filteredFileExpected = filterExportLines(fileExpected, metaDataIndexes);
   // Compare the filtered files
   expect(filteredFile).toEqual(filteredFileExpected);
 }
@@ -146,26 +146,11 @@ export async function verifyConsoleExport(
   // and file content from memory (named as file) from unnessusary data
   const fileExpected = (await readFileContent(expectedFilename)).split('\n');
 
-  // Function to filter lines
-  const filterLines = (lines: string[], indexes: number[]) => {
-    if (indexes.length === 0) {
-      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
-      return lines.filter(
-        (line) =>
-          !line.includes('-INDIGO-') &&
-          !line.includes('$DATM') &&
-          !line.includes('$MDL') &&
-          !line.includes('Ketcher'),
-      );
-    }
-    // If indexes are specified, filter lines by indexes
-    return filterByIndexes(lines, indexes);
-  };
-  const filteredConsoleContent = filterLines(
+  const filteredConsoleContent = filterExportLines(
     consoleContent.split('\n'),
     metaDataIndexes,
   );
-  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  const filteredFileExpected = filterExportLines(fileExpected, metaDataIndexes);
   // Compare the filtered files
   expect(filteredConsoleContent).toEqual(filteredFileExpected);
 }

@@ -9,7 +9,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities/vec2';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import {
@@ -112,7 +112,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       return;
     }
 
-    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+    const subStructureBBox = getStructureBbox([
       this.polymerBond.firstMonomer,
       this.polymerBond.secondMonomer,
     ]);

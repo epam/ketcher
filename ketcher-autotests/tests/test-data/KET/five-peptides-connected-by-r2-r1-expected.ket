@@ -244,6 +244,7 @@
         "id": "C___Cysteine",
         "fullName": "Cysteine",
         "alias": "C",
+        "aliasBILN": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -426,6 +427,7 @@
         "id": "dC___D-Cysteine",
         "fullName": "D-Cysteine",
         "alias": "dC",
+        "aliasBILN": "dC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -623,6 +625,7 @@
         "id": "Hcy___homocysteine",
         "fullName": "homocysteine",
         "alias": "Hcy",
+        "aliasBILN": "Hcy",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -820,6 +823,7 @@
         "id": "meC___N-Methyl-Cysteine",
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
+        "aliasBILN": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -1032,6 +1036,7 @@
         "id": "meD___N-Methyl-Aspartic acid",
         "fullName": "N-Methyl-Aspartic acid",
         "alias": "meD",
+        "aliasBILN": "meD",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,

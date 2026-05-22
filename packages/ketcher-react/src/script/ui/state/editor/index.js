@@ -187,7 +187,10 @@ export default function initEditor(dispatch, getState) {
         .then(() =>
           openDialog(dispatch, 'sgroup', {
             ...fromSgroup(sgroup),
-            selectedSruCount: getSelectedSruCount(),
+            selectedSruCount:
+              sgroup.type === 'COP'
+                ? Math.max(2, getSelectedSruCount())
+                : getSelectedSruCount(),
           }),
         )
         .then(toSgroup),

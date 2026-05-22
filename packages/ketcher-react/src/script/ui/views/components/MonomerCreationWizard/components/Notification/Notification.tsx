@@ -2,18 +2,15 @@ import styles from './Notification.module.less';
 import { Icon, IconName } from 'components';
 import clsx from 'clsx';
 import {
-  RnaPresetWizardAction,
-  WizardAction,
   WizardNotificationId,
   WizardNotificationType,
 } from '../../MonomerCreationWizard.types';
-import { Dispatch } from 'react';
 
 type Props = {
   id: WizardNotificationId;
   type: WizardNotificationType;
   message: string;
-  wizardStateDispatch: Dispatch<WizardAction> | Dispatch<RnaPresetWizardAction>;
+  onDismiss?: (id: WizardNotificationId) => void;
 };
 
 const iconMap: Record<WizardNotificationType, IconName> = {
@@ -22,13 +19,11 @@ const iconMap: Record<WizardNotificationType, IconName> = {
   warning: 'warningFilled',
 };
 
-const Notification = ({ id, type, message, wizardStateDispatch }: Props) => {
+const Notification = ({ id, type, message, onDismiss }: Props) => {
   const handleButtonClick = () => {
-    wizardStateDispatch({
-      type: 'RemoveNotification',
-      id,
-    });
+    onDismiss?.(id);
   };
+  const isDismissible = type === 'info' && onDismiss;
 
   return (
     <div
@@ -47,13 +42,15 @@ const Notification = ({ id, type, message, wizardStateDispatch }: Props) => {
       >
         {message}
       </p>
-      <button
-        className={styles.notificationButton}
-        onClick={handleButtonClick}
-        data-testid={`notification-message-ok-button`}
-      >
-        OK
-      </button>
+      {isDismissible && (
+        <button
+          className={styles.notificationButton}
+          onClick={handleButtonClick}
+          data-testid={`notification-message-ok-button`}
+        >
+          OK
+        </button>
+      )}
     </div>
   );
 };

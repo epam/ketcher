@@ -48,6 +48,7 @@ import {
   WizardFormFieldId,
   WizardNotification,
   WizardNotificationId,
+  WizardNotifications,
   WizardState,
   WizardValues,
 } from './MonomerCreationWizard.types';
@@ -94,6 +95,18 @@ const getInitialWizardState = (
 const initialWizardState: WizardState = getInitialWizardState();
 // BILN alias errors remain visible until the next submit attempt.
 const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
+
+const keepInfoNotifications = (notifications: WizardNotifications) =>
+  new Map(
+    Array.from(notifications.entries()).filter(
+      ([, notification]) => notification.type === 'info',
+    ),
+  );
+
+const mergeValidationNotifications = (
+  currentNotifications: WizardNotifications,
+  validationNotifications: WizardNotifications,
+) => new Map([...currentNotifications, ...validationNotifications]);
 
 const initialRnaPresetWizardState: RnaPresetWizardState = {
   base: getInitialWizardState(KetMonomerClass.Base, NO_NATURAL_ANALOGUE),
@@ -169,10 +182,10 @@ const wizardReducer = (
     case 'SetNotifications': {
       return {
         ...state,
-        notifications: new Map([
-          ...state.notifications,
-          ...action.notifications,
-        ]),
+        notifications: mergeValidationNotifications(
+          state.notifications,
+          action.notifications,
+        ),
       };
     }
 
@@ -196,6 +209,13 @@ const wizardReducer = (
       return {
         ...state,
         errors: {},
+      };
+    }
+
+    case 'ResetValidationNotifications': {
+      return {
+        ...state,
+        notifications: keepInfoNotifications(state.notifications),
       };
     }
 
@@ -228,6 +248,28 @@ const rnaPresetWizardReducer = (
       preset: {
         ...state.preset,
         errors: {},
+      },
+    };
+  }
+
+  if (action.type === 'ResetValidationNotifications') {
+    return {
+      ...state,
+      preset: {
+        ...state.preset,
+        notifications: keepInfoNotifications(state.preset.notifications),
+      },
+      sugar: {
+        ...state.sugar,
+        notifications: keepInfoNotifications(state.sugar.notifications),
+      },
+      base: {
+        ...state.base,
+        notifications: keepInfoNotifications(state.base.notifications),
+      },
+      phosphate: {
+        ...state.phosphate,
+        notifications: keepInfoNotifications(state.phosphate.notifications),
       },
     };
   }
@@ -293,7 +335,10 @@ const rnaPresetWizardReducer = (
       ...state,
       [action.rnaComponentKey]: {
         ...state[action.rnaComponentKey],
-        notifications: action.notifications,
+        notifications: mergeValidationNotifications(
+          state[action.rnaComponentKey].notifications,
+          action.notifications,
+        ),
       },
     };
   }
@@ -800,6 +845,17 @@ const MonomerCreationWizard = () => {
         ...(rnaPresetWizardState.phosphate.notifications || []),
       ])
     : monomerWizardNotifications;
+  const handleNotificationDismiss = useCallback(
+    (id: WizardNotificationId) => {
+      if (isRnaPresetType) {
+        rnaPresetWizardStateDispatch({ type: 'RemoveNotification', id });
+        return;
+      }
+
+      wizardStateDispatch({ type: 'RemoveNotification', id });
+    },
+    [isRnaPresetType, rnaPresetWizardStateDispatch, wizardStateDispatch],
+  );
 
   useEffect(() => {
     const externalNotificationEventListener = (event: Event) => {
@@ -1518,6 +1574,8 @@ const MonomerCreationWizard = () => {
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
+    wizardStateDispatch({ type: 'ResetValidationNotifications' });
+    rnaPresetWizardStateDispatch({ type: 'ResetValidationNotifications' });
     editor.setProblematicAttachmentPoints(new Set());
     editor.setProblematicAtoms(new Set());
     setHasActiveRnaPresetAtomValidationErrors(false);
@@ -1842,11 +1900,7 @@ const MonomerCreationWizard = () => {
                 type={type}
                 message={message}
                 key={id}
-                wizardStateDispatch={
-                  isRnaPresetType
-                    ? rnaPresetWizardStateDispatch
-                    : wizardStateDispatch
-                }
+                onDismiss={handleNotificationDismiss}
               />
             ),
           )}

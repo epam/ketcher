@@ -604,7 +604,7 @@ test(`9. Check that mandatory fields validation is shown when submitting empty w
       ErrorMessage.emptyMandatoryFields,
     ).getNotificationMessage(),
   ).toEqual('Mandatory fields must be filled.');
-  await takeElementScreenshot(page, CreateMonomerDialog(page).symbolEditbox);
+  await takeElementScreenshot(page, CreateMonomerDialog(page).codeEditbox);
   await CreateMonomerDialog(page).discard();
 });
 
@@ -633,7 +633,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
 
   await LeftToolbar(page).createMonomer();
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
-  await CreateMonomerDialog(page).setSymbol(testSymbol);
+  await CreateMonomerDialog(page).setCode(testSymbol);
   await expect(CreateMonomerDialog(page).nameEditbox).toContainText('');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     AminoAcidNaturalAnalogue.A,
@@ -1172,7 +1172,7 @@ for (const nonEligableSymbol of nonEligableSymbols) {
 
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(nonEligableSymbol.type);
-    await createMonomerDialog.setSymbol(nonEligableSymbol.symbol);
+    await createMonomerDialog.setCode(nonEligableSymbol.symbol);
     await createMonomerDialog.setName('Temp');
     if (nonEligableSymbol.naturalAnalogue) {
       await createMonomerDialog.selectNaturalAnalogue(
@@ -1209,7 +1209,7 @@ test(`15. Check that when selected amino acids in wizard Monomer natural analogu
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
-  await createMonomerDialog.setSymbol('AminoAcid');
+  await createMonomerDialog.setCode('AminoAcid');
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
@@ -1250,7 +1250,7 @@ test(`16. Check that when selected Base in wizard Monomer natural analogue field
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
-  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setCode('Base');
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
@@ -1291,7 +1291,7 @@ test(`17. Check that when selected Nucleotide in wizard Monomer natural analogue
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('Nucleotide');
+  await createMonomerDialog.setCode('Nucleotide');
   await createMonomerDialog.setName('Temp');
 
   await createMonomerDialog.submit();
@@ -1330,7 +1330,7 @@ test(`18. Check drop-down grid for Natural analogue for Amino acid`, async () =>
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.AminoAcid);
-  await createMonomerDialog.setSymbol('AminoAcid');
+  await createMonomerDialog.setCode('AminoAcid');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.naturalAnalogueCombobox.click();
   await Promise.all(
@@ -1364,7 +1364,7 @@ test(`19. Check drop-down grid for Natural analogue for Base`, async () => {
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.Base);
-  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setCode('Base');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.naturalAnalogueCombobox.click();
   await Promise.all(
@@ -1398,7 +1398,7 @@ test(`20. Check drop-down grid for Natural analogue for Nucleotide`, async () =>
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setCode('Base');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.naturalAnalogueCombobox.click();
   await Promise.all(
@@ -1433,7 +1433,7 @@ test(`21. Check that if the user changes the monomer type after they've set a na
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('Base');
+  await createMonomerDialog.setCode('Base');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await createMonomerDialog.selectType(MonomerType.Base);
@@ -1566,7 +1566,7 @@ test(`23. Check that if the user selects Discard/Cancel, the wizard is exited, a
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
-  await createMonomerDialog.setSymbol('Nucleotide');
+  await createMonomerDialog.setCode('Nucleotide');
   await createMonomerDialog.setName('Temp');
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);
   await CreateMonomerDialog(page).discard();

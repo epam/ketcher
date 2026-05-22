@@ -350,7 +350,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.AminoAcid);
-    await createMonomerDialog.setSymbol('CHEM2');
+    await createMonomerDialog.setCode('CHEM2');
     await createMonomerDialog.selectNaturalAnalogue(
       NucleotideNaturalAnalogue.A,
     );
@@ -396,7 +396,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.AminoAcid);
-    await createMonomerDialog.setSymbol('CHEM1');
+    await createMonomerDialog.setCode('CHEM1');
     await createMonomerDialog.selectNaturalAnalogue(
       NucleotideNaturalAnalogue.A,
     );

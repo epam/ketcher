@@ -2,12 +2,20 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { takeElementScreenshot } from '@utils';
+import {
+  AminoAcidNaturalAnalogue,
+  MonomerType,
+} from '@tests/pages/constants/createMonomerDialog/Constants';
+import {
+  pasteFromClipboardAndOpenAsNewProject,
+  takeElementScreenshot,
+} from '@utils';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 
 let page: Page;
 
-test.describe('Rename monomer symbol to monomer code in the monomer creation wizard', () => {
+test.describe('Rename monomer symbol to monomer code:', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
@@ -25,23 +33,24 @@ test.describe('Rename monomer symbol to monomer code in the monomer creation wiz
      * 2. Verify the field is now labeled as "Code" instead of "Symbol"
      * 3. Take screenshot to verify the field label
      *
-     * Version 3.16.0
+     * Version 3.12.0
      */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
     const createMonomerDialog = CreateMonomerDialog(page);
-    
+
     // Open the monomer creation wizard
     await LeftToolbar(page).createMonomer();
-    
+
     // Wait for dialog to be visible
     await expect(createMonomerDialog.window).toBeVisible();
-    
+
     // Check that the field is accessible (which means it exists with the expected test id)
-    await expect(createMonomerDialog.symbolEditbox).toBeVisible();
-    
+    await expect(createMonomerDialog.codeEditbox).toBeVisible();
+
     // Take a screenshot to verify the field label shows "Code"
     await takeElementScreenshot(page, createMonomerDialog.window);
-    
+
     await createMonomerDialog.discard();
   });
 
@@ -56,32 +65,39 @@ test.describe('Rename monomer symbol to monomer code in the monomer creation wiz
      * 4. Verify error message: "The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*)."
      * 5. Take screenshot of error message
      *
-     * Version 3.16.0
+     * Version 3.12.0
      */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
     const createMonomerDialog = CreateMonomerDialog(page);
-    
+
     // Open the monomer creation wizard
     await LeftToolbar(page).createMonomer();
     await expect(createMonomerDialog.window).toBeVisible();
-    
+
     // Select a monomer type
-    await createMonomerDialog.selectType(MonomerType.Peptide);
-    
+    await createMonomerDialog.selectType(MonomerType.AminoAcid);
+
     // Enter invalid characters in the Code field
-    await createMonomerDialog.setSymbol('Test@#$%');
+    await createMonomerDialog.setCode('Test@#$%');
     await createMonomerDialog.setName('Test Monomer');
-    
+
     // Try to submit to trigger validation
     await createMonomerDialog.submit();
-    
+
     // Verify the specific error message is displayed
-    const errorMessage = page.locator(':has-text("The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*)."), :has-text("The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*)")');
-    await expect(errorMessage).toBeVisible();
-    
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.invalidSymbol,
+      ).getNotificationMessage(),
+    ).toEqual(
+      'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    );
+
     // Take screenshot of the error message
     await takeElementScreenshot(page, createMonomerDialog.window);
-    
+
     await createMonomerDialog.discard();
   });
 
@@ -97,33 +113,41 @@ test.describe('Rename monomer symbol to monomer code in the monomer creation wiz
      * 5. Try to submit and verify duplicate error message is displayed
      * 6. Take screenshot of error message
      *
-     * Version 3.16.0
+     * Version 3.12.0
      */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
     const createMonomerDialog = CreateMonomerDialog(page);
-    
+
     // Open the monomer creation wizard
     await LeftToolbar(page).createMonomer();
     await expect(createMonomerDialog.window).toBeVisible();
-    
+
     // Select a monomer type
-    await createMonomerDialog.selectType(MonomerType.Peptide);
-    
+    await createMonomerDialog.selectType(MonomerType.AminoAcid);
+
     // Enter a duplicate code that already exists (A is a common amino acid code)
-    await createMonomerDialog.setSymbol('A');
+    await createMonomerDialog.setCode('A');
     await createMonomerDialog.setName('Test Duplicate Monomer');
-    
+    await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
+
     // Try to submit to trigger validation
     await createMonomerDialog.submit();
-    
+
     // Verify that an error message appears (the exact text may vary, but should indicate duplicate)
     // We'll look for common duplicate-related error message patterns
-    const duplicateErrorMessage = page.locator(':has-text("already exists"), :has-text("duplicate"), :has-text("used"), :has-text("taken")');
-    await expect(duplicateErrorMessage.first()).toBeVisible();
-    
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.symbolExists,
+      ).getNotificationMessage(),
+    ).toEqual(
+      'The code must be unique amongst peptide, RNA, or CHEM monomers.',
+    );
+
     // Take screenshot of the error message
     await takeElementScreenshot(page, createMonomerDialog.window);
-    
+
     await createMonomerDialog.discard();
   });
 
@@ -139,25 +163,27 @@ test.describe('Rename monomer symbol to monomer code in the monomer creation wiz
      * 5. Verify no error messages appear
      * 6. Successfully submit the monomer creation
      *
-     * Version 3.16.0
+     * Version 3.12.0
      */
+    await pasteFromClipboardAndOpenAsNewProject(page, '[*:1]CC |$_R1;;$|');
 
     const createMonomerDialog = CreateMonomerDialog(page);
-    
+
     // Open the monomer creation wizard
     await LeftToolbar(page).createMonomer();
     await expect(createMonomerDialog.window).toBeVisible();
-    
+
     // Select a monomer type
-    await createMonomerDialog.selectType(MonomerType.Peptide);
-    
+    await createMonomerDialog.selectType(MonomerType.AminoAcid);
+
     // Enter valid Code with all allowed character types
-    await createMonomerDialog.setSymbol('Test_Code-123*');
+    await createMonomerDialog.setCode('Test_Code-123*');
     await createMonomerDialog.setName('Test Valid Code Monomer');
-    
+    await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
+
     // Submit should succeed without validation errors
     await createMonomerDialog.submit({ ignoreWarning: true });
-    
+
     // Verify the dialog is closed (successful submission)
     await expect(createMonomerDialog.window).not.toBeVisible();
   });

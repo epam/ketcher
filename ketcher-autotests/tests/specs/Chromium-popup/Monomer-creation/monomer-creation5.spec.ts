@@ -366,7 +366,7 @@ test(`6. Check that if the user changes the monomer type after they've entered a
     dropdown: ModificationTypeDropdown.First,
     type: ModificationType.Citrullination,
   });
-  await createMonomerDialog.setSymbol(Base.Base.alias);
+  await createMonomerDialog.setCode(Base.Base.alias);
   await createMonomerDialog.setName('Base Test monomer');
   await createMonomerDialog.selectType(MonomerType.Base);
   await createMonomerDialog.selectNaturalAnalogue(NucleotideNaturalAnalogue.A);

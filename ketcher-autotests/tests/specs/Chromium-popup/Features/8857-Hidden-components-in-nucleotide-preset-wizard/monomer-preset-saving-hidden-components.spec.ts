@@ -557,11 +557,13 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.symbolEditbox.fill(Sugar.R.alias);
     await dialog.nameEditbox.fill('Duplicate Visible Sugar');
 
-    // This should trigger uniqueness validation error for visible monomers
     await dialog.submit();
-
-    // Expect uniqueness error (this behavior may vary based on implementation)
-    // The test verifies that visible monomers have stricter uniqueness rules
+    const symbolExistsMessageBanner = NotificationMessageBanner(
+      page,
+      ErrorMessage.symbolExists,
+    );
+    expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
+    await symbolExistsMessageBanner.ok();
     await dialog.discard();
 
     // Now create preset with hidden monomer using same code - should succeed
@@ -684,17 +686,64 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
       ),
     ).toBeFalsy();
 
-    // Go back to molecules mode and try creating another preset
-    // to verify hidden monomers don't appear in component selection
+    // Try to create another preset and use visible monomers as components.
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
 
-    // The hidden monomers should not be available for selection in new preset creation.
-    // This is covered indirectly by the previous visibility checks.
+    await presetSection.setName('SelectabilityVisiblePreset');
+    await presetSection.setupSugar({
+      atomIds: [2, 3],
+      bondIds: [2],
+      symbol: Sugar.R.alias,
+      name: 'Visible Sugar Component',
+    });
 
-    await dialog.discard();
+    await presetSection.setupBase({
+      atomIds: [0, 1],
+      bondIds: [0],
+      symbol: Base.A.alias,
+      name: 'Visible Base Component',
+      naturalAnalogue: NucleotideNaturalAnalogue.A,
+    });
+
+    await presetSection.setupPhosphate({
+      atomIds: [4, 5],
+      bondIds: [4],
+      symbol: Phosphate.P.alias,
+      name: 'Visible Phosphate Component',
+    });
+
+    await dialog.submit();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Presets);
+    await Library(page).rnaBuilder.expand();
+    await expect(
+      page
+        .getByTestId('rna-preset-group')
+        .getByText('SelectabilityVisiblePreset'),
+    ).toBeVisible();
+
+    // Hidden components from the first preset remain unavailable in UI.
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectSugar', MonomerType.Sugar),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectBase', MonomerType.Base),
+      ),
+    ).toBeFalsy();
+
+    expect(
+      await Library(page).isMonomerExist(
+        buildCustomMonomer('HiddenSelectPhosphate', MonomerType.Phosphate),
+      ),
+    ).toBeFalsy();
   });
 });

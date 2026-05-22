@@ -9,6 +9,14 @@ on:
       - master
       - 'release/**'
   workflow_dispatch:
+    inputs:
+      update_snapshots:
+        description: 'Regenerate and commit linux PNG snapshots'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 env:
   # Warnings breaks build on CI
@@ -83,7 +91,25 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --project=chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          UPDATE_FLAG=""
+          if [ "${{ github.event.inputs.update_snapshots }}" = "true" ]; then
+            UPDATE_FLAG="--update-snapshots"
+          fi
+          npx playwright test --project=chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $UPDATE_FLAG
+      - name: Commit updated snapshots
+        if: ${{ github.event.inputs.update_snapshots == 'true' }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global --add safe.directory '*'
+          cd ketcher-autotests
+          git add tests/specs/**/__screenshots__/**/*linux.png
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "chore: update linux playwright snapshots [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()

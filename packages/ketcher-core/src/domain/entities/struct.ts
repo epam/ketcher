@@ -1687,6 +1687,11 @@ export class Struct {
     this.bondInitHalfBonds(bondId);
     const newBondObj = this.bonds.get(bondId);
     if (newBondObj?.hb1 && newBondObj?.hb2) {
+      // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
+      // by hb.ang — inserting with ang=0 (the HalfBond default) would place
+      // the half-bond in the wrong position in the neighbor list.
+      this.halfBondUpdate(newBondObj.hb1);
+      this.halfBondUpdate(newBondObj.hb2);
       this.atomAddNeighbor(newBondObj.hb1);
       this.atomAddNeighbor(newBondObj.hb2);
     }

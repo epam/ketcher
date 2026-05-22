@@ -45,6 +45,7 @@ const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
 const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
+const R2_R2_OUTER_RIGHT_EXTRA_MARGIN = SnakeLayoutCellWidth / 2;
 
 // TODO?: Can it be moved to `SideChainConnectionBondRendererUtility`?
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
@@ -230,6 +231,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
+    this.sideConnectionBondTurnPoint = undefined;
+
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find(
       (connection: Connection): boolean => {
@@ -261,8 +264,72 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
+    const startMonomer = isFirstMonomerOfBondInFirstCell
+      ? this.polymerBond.firstMonomer
+      : this.polymerBond.secondMonomer;
+    const endMonomer = isFirstMonomerOfBondInFirstCell
+      ? this.polymerBond.secondMonomer
+      : this.polymerBond.firstMonomer;
+    const firstAttachmentPoint =
+      this.polymerBond.firstMonomer.getAttachmentPointByBond(
+        this.polymerBond,
+      ) ??
+      this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      );
+    const secondAttachmentPoint =
+      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+        this.polymerBond,
+      ) ??
+      this.polymerBond.secondMonomer?.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      );
+    const isR2ToR2Connection =
+      firstAttachmentPoint === 'R2' && secondAttachmentPoint === 'R2';
+    const shouldForceOuterRightRouting = isR2ToR2Connection;
+
+    if (isR2ToR2Connection) {
+      if (shouldForceOuterRightRouting) {
+        const editor = provideEditorInstance();
+        const rightmostRenderedMonomerX = Array.from(
+          editor.drawingEntitiesManager.monomers.values(),
+        ).reduce((maxX, monomer) => {
+          const monomerRenderer = monomer.renderer as
+            | {
+                scaledMonomerPosition?: { x: number };
+                monomerSize?: { width: number };
+              }
+            | undefined;
+          const monomerLeftX = monomerRenderer?.scaledMonomerPosition?.x;
+
+          if (!isNumber(monomerLeftX)) {
+            return maxX;
+          }
+
+          const monomerWidth = monomerRenderer?.monomerSize?.width ?? 0;
+
+          return Math.max(maxX, monomerLeftX + monomerWidth);
+        }, Math.max(startPosition.x, endPosition.x));
+
+        this.sideConnectionBondTurnPoint =
+          rightmostRenderedMonomerX +
+          LINE_FROM_MONOMER_LENGTH +
+          CORNER_LENGTH +
+          R2_R2_OUTER_RIGHT_EXTRA_MARGIN;
+      } else {
+        this.sideConnectionBondTurnPoint = undefined;
+      }
+    }
+
+    const xDirectionReference =
+      this.sideConnectionBondTurnPoint ?? endPosition.x;
+    const areEndpointsAlignedHorizontally =
+      Math.abs(startPosition.x - xDirectionReference) < 0.001;
     const xDirection =
-      startPosition.x >= (this.sideConnectionBondTurnPoint ?? endPosition.x)
+      // Keep R2-R2 end-to-end links on the outer side in tie cases
+      // (equal X), otherwise they can run through the chain and cross bonds.
+      startPosition.x > xDirectionReference ||
+      (areEndpointsAlignedHorizontally && !isR2ToR2Connection)
         ? 180
         : 0;
     let pathDAttributeValue =
@@ -270,6 +337,110 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         startPosition.x,
         startPosition.y,
       ) + ' ';
+
+    if (isR2ToR2Connection && startMonomer && endMonomer) {
+      const startMonomerRenderer = startMonomer.renderer as
+        | {
+            scaledMonomerPosition?: { x: number; y: number };
+            monomerSize?: { width: number; height: number };
+          }
+        | undefined;
+      const endMonomerRenderer = endMonomer.renderer as
+        | {
+            scaledMonomerPosition?: { x: number; y: number };
+            monomerSize?: { width: number; height: number };
+          }
+        | undefined;
+
+      const startCenterX = startMonomerRenderer?.scaledMonomerPosition?.x;
+      const startTopY = startMonomerRenderer?.scaledMonomerPosition?.y;
+      const endCenterX = endMonomerRenderer?.scaledMonomerPosition?.x;
+      const endTopY = endMonomerRenderer?.scaledMonomerPosition?.y;
+      const startMonomerWidth = startMonomerRenderer?.monomerSize?.width ?? 0;
+      const startMonomerHeight = startMonomerRenderer?.monomerSize?.height ?? 0;
+      const endMonomerWidth = endMonomerRenderer?.monomerSize?.width ?? 0;
+      const endMonomerHeight = endMonomerRenderer?.monomerSize?.height ?? 0;
+
+      const startRightAnchorX = isNumber(startCenterX)
+        ? startCenterX + startMonomerWidth
+        : startPosition.x;
+      const startRightAnchorY = isNumber(startTopY)
+        ? startTopY + startMonomerHeight / 2
+        : startPosition.y;
+      const endRightAnchorX = isNumber(endCenterX)
+        ? endCenterX + endMonomerWidth
+        : endPosition.x;
+      const endRightAnchorY = isNumber(endTopY)
+        ? endTopY + endMonomerHeight / 2
+        : endPosition.y;
+
+      const outerRightX = Math.max(
+        this.sideConnectionBondTurnPoint ?? 0,
+        startRightAnchorX + CORNER_LENGTH,
+        endRightAnchorX + CORNER_LENGTH,
+      );
+
+      pathDAttributeValue =
+        SVGPathDAttributeUtility.generateMoveTo(
+          startRightAnchorX,
+          startRightAnchorY,
+        ) + ' ';
+      pathDAttributeValue +=
+        SVGPathDAttributeUtility.generateAbsoluteLine(
+          outerRightX,
+          startRightAnchorY,
+        ) + ' ';
+      pathDAttributeValue +=
+        SVGPathDAttributeUtility.generateAbsoluteLine(
+          outerRightX,
+          endRightAnchorY,
+        ) + ' ';
+      pathDAttributeValue +=
+        SVGPathDAttributeUtility.generateAbsoluteLine(
+          endRightAnchorX,
+          endRightAnchorY,
+        ) + ' ';
+
+      this.bodyElement = rootElement
+        .append('path')
+        .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
+        .attr(
+          'stroke',
+          this.isHydrogenBond || this.isSideChainLikeBackbone
+            ? '#333333'
+            : '#43B5C0',
+        )
+        .attr('stroke-width', 1)
+        .attr('d', pathDAttributeValue)
+        .attr('fill', 'none')
+        .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+        .attr('pointer-events', 'all')
+        .attr('data-testid', 'bond')
+        .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+        .attr('data-bondid', this.polymerBond.id)
+        .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+        .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
+
+      if (!this.isHydrogenBond && this.bodyElement) {
+        this.bodyElement
+          .attr(
+            'data-fromattachmentpoint',
+            this.polymerBond.firstMonomer.getAttachmentPointByBond(
+              this.polymerBond,
+            ) ?? '',
+          )
+          .attr(
+            'data-toattachmentpoint',
+            this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+              this.polymerBond,
+            ) ?? '',
+          );
+      }
+
+      this.path = pathDAttributeValue;
+
+      return this.bodyElement;
+    }
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 

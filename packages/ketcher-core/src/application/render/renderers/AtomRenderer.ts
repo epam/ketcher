@@ -18,7 +18,9 @@ import {
   SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
 
+// Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
+const STEREO_CIP_GAP = 2;
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -615,6 +617,7 @@ export class AtomRenderer extends BaseRenderer {
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
+    // Must come before appendCIPLabel: CIP positioning depends on the stereo bbox.
     this.appendStereoLabel();
     this.appendCIPLabel();
     this.hoverElement = this.appendHover();
@@ -693,7 +696,7 @@ export class AtomRenderer extends BaseRenderer {
         stereoProjectedDistance +
           stereoProjectionRadius +
           cipProjectionRadius +
-          2,
+          STEREO_CIP_GAP,
       );
     }
 

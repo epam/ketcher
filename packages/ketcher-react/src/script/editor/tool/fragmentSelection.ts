@@ -28,6 +28,9 @@ type FragmentPreview = {
   bonds: number[];
 };
 
+const getFragmentPreviewId = (bondId: number, startAtomId: number) =>
+  `${bondId}:${startAtomId}`;
+
 export default class FragmentSelectionTool implements Tool {
   private readonly editor: Editor;
   private preview: FragmentPreview | null = null;
@@ -238,7 +241,7 @@ export default class FragmentSelectionTool implements Tool {
     this.editor.hover(
       {
         map: 'merge',
-        id: +Date.now(),
+        id: getFragmentPreviewId(bondItem.id, startAtomId),
         items: { atoms: preview.atoms, bonds: preview.bonds },
       },
       this,

@@ -60,12 +60,12 @@ export function getFragSelection(
 ): FragSelection | null {
   const frag = ctab.frags.get(fragId);
 
-  return frag
-    ? {
-        atoms: frag.fragGetAtoms(ctab, fragId),
-        bonds: frag.fragGetBonds(ctab, fragId),
-      }
-    : null;
+  if (!frag) return null;
+
+  return {
+    atoms: frag.fragGetAtoms(ctab, fragId),
+    bonds: frag.fragGetBonds(ctab, fragId),
+  };
 }
 
 /**

@@ -385,21 +385,50 @@ export class CoreEditor {
   public async initializeMonomersLibraryFromKetcher(
     monomersLibraryUpdate?: string | JSON,
     monomersLibraryReplace?: string | JSON,
+    onError?: (err: unknown) => void,
   ): Promise<void> {
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
     if (!monomersLibraryUpdateData) {
       return;
     }
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
-    if (monomersLibraryReplace) {
-      this.clearMonomersLibrary();
-    }
-    const monomersLibraryUpdateInKetFormat =
-      await ketcher.ensureMonomersLibraryDataInKetFormat(
-        monomersLibraryUpdateData,
+
+    try {
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+      if (monomersLibraryReplace) {
+        this.clearMonomersLibrary();
+      }
+      const monomersLibraryUpdateInKetFormat =
+        await ketcher.ensureMonomersLibraryDataInKetFormat(
+          monomersLibraryUpdateData,
+        );
+      this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+    } catch (err) {
+      KetcherLogger.error(
+        'Editor::initializeMonomersLibraryFromKetcher failed:',
+        err,
       );
-    this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+
+      let errorMessage: string;
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else {
+        errorMessage = 'Failed to load monomers library';
+      }
+
+      const errorTitle =
+        err instanceof MonomerLibraryConvertError
+          ? 'Monomer library conversion failed'
+          : 'Monomer library update failed';
+
+      this.events.openErrorModal.dispatch({
+        errorMessage,
+        errorTitle,
+      });
+      onError?.(err);
+    }
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {

@@ -758,22 +758,6 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
-  private static validateMonomerGroupTemplateGroupNames(
-    sdfString: string,
-  ): void {
-    const groupNamePattern = />\s*<groupName>\r?\n([^\r\n]*)/g;
-    let match: RegExpExecArray | null;
-    while ((match = groupNamePattern.exec(sdfString)) !== null) {
-      const groupName = match[1];
-      if (groupName.includes('\\') || groupName.includes('//')) {
-        throw new Error(
-          `Group name "${groupName}" contains invalid characters. ` +
-            `Backslash and consecutive forward-slashes are not allowed in group names.`,
-        );
-      }
-    }
-  }
-
   /**
    * Converts raw monomer data to KET format before it is sent to the editor.
    *
@@ -795,7 +779,6 @@ export class Ketcher {
       dataInKetFormat = rawMonomersDataString;
     } else {
       try {
-        Ketcher.validateMonomerGroupTemplateGroupNames(rawMonomersDataString);
         const convertResult = await this.structService.convert(
           {
             struct: rawMonomersDataString,

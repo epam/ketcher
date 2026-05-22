@@ -17,8 +17,6 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
-  KetcherLogger,
-  MonomerLibraryConvertError,
   RenderersManager,
   type LayoutMode,
   SettingsManager,
@@ -154,32 +152,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
         }),
       });
 
-      editor
-        .initializeMonomersLibraryFromKetcher(
-          action.payload.monomersLibraryUpdate,
-          action.payload.monomersLibraryReplace,
-        )
-        .catch((err) => {
-          KetcherLogger.error(
-            'Editor::initializeMonomersLibraryFromKetcher failed:',
-            err,
-          );
-          const errorMessage =
-            err instanceof Error
-              ? err.message
-              : typeof err === 'string'
-              ? err
-              : 'Failed to load monomers library';
-          const errorTitle =
-            err instanceof MonomerLibraryConvertError
-              ? 'Monomer library conversion failed'
-              : 'Monomer library update failed';
-          editor.events.openErrorModal.dispatch({
-            errorMessage,
-            errorTitle,
-          });
-          action.payload.onLibraryError?.(err);
-        });
+      editor.initializeMonomersLibraryFromKetcher(
+        action.payload.monomersLibraryUpdate,
+        action.payload.monomersLibraryReplace,
+        action.payload.onLibraryError,
+      );
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

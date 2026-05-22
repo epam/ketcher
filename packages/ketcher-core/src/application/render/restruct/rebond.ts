@@ -693,8 +693,9 @@ function findIncomingStereoUpBond(
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (singleUp) {
-      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b))
+      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
         return false;
+      }
       return (
         neibond.b.end === hb.begin ||
         (neibond.boldStereo && includeBoldStereoBond)

@@ -19,23 +19,14 @@ import { shiftCanvas } from '@utils/index';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
-import { Monomer, MonomerType } from '@utils/types';
+import { MonomerType } from '@utils/types';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
 let presetSection: ReturnType<typeof NucleotidePresetSection>;
 
-const buildCustomMonomer = (
-  alias: string,
-  monomerType: MonomerType,
-): Monomer => ({
-  alias,
-  testId: `${alias}-button`,
-  monomerType,
-});
-
-test.describe('Autotests: Monomer saving - presets in the monomer creation wizard', () => {
+test.describe('Monomer saving - presets in the monomer creation wizard: ', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
     dialog = CreateMonomerDialog(page);
@@ -110,32 +101,39 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
 
     // Verify preset is visible in library
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `HiddenTestPreset_HiddenBase_HiddenSugar_HiddenPhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
 
     // Verify component monomers are hidden from UI
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSugar', MonomerType.Sugar),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSugar',
+        testId: 'HiddenSugar___Hidden Sugar Test Monomer',
+        monomerType: MonomerType.Sugar,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenBase', MonomerType.Base),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenBase',
+        testId: 'HiddenBase___Hidden Base Test Monomer',
+        monomerType: MonomerType.Base,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenPhosphate', MonomerType.Phosphate),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenPhosphate',
+        testId: 'HiddenPhosphate___Hidden Phosphate Test Monomer',
+        monomerType: MonomerType.Phosphate,
+      }),
     ).toBeFalsy();
   });
 
@@ -202,14 +200,15 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
 
     // Verify preset is visible
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `ExistingComponentsPreset_A_R_P`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
 
     // Verify original monomers are still visible (not duplicated)
     expect(await Library(page).isMonomerExist(Sugar.R)).toBeTruthy();
@@ -266,11 +265,14 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `DuplicateCodePreset_A_R_P`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
   });
 
   test('Case 4 - Verify that hidden monomer properties are not checked for uniqueness across different presets', async () => {
@@ -321,12 +323,13 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(preset1Name),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: preset1Name,
+        testId: `FirstPreset_DuplicateBase_DuplicateCode_DuplicatePhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
 
     // Create second preset with same codes/names
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -369,9 +372,13 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await Library(page).rnaBuilder.expand();
 
     // The second preset should also be saved without uniqueness errors.
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(preset2Name),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: preset2Name,
+        testId: `SecondPreset_DuplicateBase_DuplicateCode_DuplicatePhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
   });
 
   test('Case 5 - Verify that hidden monomer properties are still validated for formatting', async () => {
@@ -528,12 +535,14 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `FixedFormatPreset_ValidBase_ValidSugar_ValidPhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
   });
 
   test('Case 7 - Verify that visible monomer creation still enforces uniqueness while hidden monomers do not', async () => {
@@ -601,12 +610,13 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `UniquenessTestPreset_UniquenessTestBase_R_UniquenessTestPhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
   });
 
   test('Case 8 - Verify that hidden monomers created with a preset are not selectable as components', async () => {
@@ -660,30 +670,37 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     // Now switch to macro mode to verify preset exists but components are hidden
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
-    await expect(
-      page.getByTestId('rna-preset-group').getByText(presetName),
-    ).toBeVisible();
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `SelectabilityTestPreset_HiddenSelectBase_HiddenSelectSugar_HiddenSelectPhosphate`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
 
     // Verify hidden components are not selectable in library
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectSugar', MonomerType.Sugar),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectSugar',
+        testId: `HiddenSelectSugar___Hidden Selectable Sugar`,
+        monomerType: MonomerType.Sugar,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectBase', MonomerType.Base),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectBase',
+        testId: `HiddenSelectBase___Hidden Selectable Base`,
+        monomerType: MonomerType.Base,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectPhosphate', MonomerType.Phosphate),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectPhosphate',
+        testId: `HiddenSelectPhosphate___Hidden Selectable Phosphate`,
+        monomerType: MonomerType.Phosphate,
+      }),
     ).toBeFalsy();
 
     // Try to create another preset and use visible monomers as components.
@@ -718,32 +735,38 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
 
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
-    await Library(page).openRNASection(RNASection.Presets);
-    await Library(page).rnaBuilder.expand();
-    await expect(
-      page
-        .getByTestId('rna-preset-group')
-        .getByText('SelectabilityVisiblePreset'),
-    ).toBeVisible();
+
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `SelectabilityVisiblePreset_A_R_P`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
 
     // Hidden components from the first preset remain unavailable in UI.
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectSugar', MonomerType.Sugar),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectSugar',
+        testId: `HiddenSelectSugar___Hidden Selectable Sugar`,
+        monomerType: MonomerType.Sugar,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectBase', MonomerType.Base),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectBase',
+        testId: `HiddenSelectBase___Hidden Selectable Base`,
+        monomerType: MonomerType.Base,
+      }),
     ).toBeFalsy();
 
     expect(
-      await Library(page).isMonomerExist(
-        buildCustomMonomer('HiddenSelectPhosphate', MonomerType.Phosphate),
-      ),
+      await Library(page).isMonomerExist({
+        alias: 'HiddenSelectPhosphate',
+        testId: `HiddenSelectPhosphate___Hidden Selectable Phosphate`,
+        monomerType: MonomerType.Phosphate,
+      }),
     ).toBeFalsy();
   });
 });

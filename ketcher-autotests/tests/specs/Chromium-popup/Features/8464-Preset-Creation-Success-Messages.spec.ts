@@ -103,12 +103,11 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
      * Test task: https://github.com/epam/ketcher/issues/10010
      * Description: Verify success message text when creating a preset from an alternative entry point
      * Scenario:
-     * 1. Open the Monomer Library panel
-     * 2. Use an alternative entry point to start preset creation (e.g., 'Create monomer' in context menu)
-     * 3. Ensure 'Nucleotide (preset)' flow is used
-     * 4. Fill in all mandatory preset fields
-     * 5. Click 'Finish' / 'Save' and exit the wizard
-     * 6. Observe the confirmation message
+     * 1. Use an alternative entry point to start preset creation (e.g., 'Create monomer' in context menu)
+     * 2. Ensure 'Nucleotide (preset)' flow is used
+     * 3. Fill in all mandatory preset fields
+     * 4. Click 'Finish' / 'Save' and exit the wizard
+     * 5. Observe the confirmation message
      *
      * Expected: Regardless of how the preset creation wizard was opened,
      * after a successful save the confirmation text is exactly:
@@ -243,7 +242,7 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
      * Description: Verify validation errors prevent showing preset success message
      * Scenario:
      * 1. Open the preset creation wizard
-     * 2. Leave at least one required field invalid or empty (e.g., Code field empty)
+     * 2. Leave at least one required field invalid or empty (e.g., preset name field empty)
      * 3. Click 'Finish' / 'Save'
      * 4. Observe wizard behavior and messages
      * 5. Fix all validation errors and save again successfully

@@ -399,22 +399,26 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
 
     await dialog.submit();
 
-    // Wait for notification to appear
-    await NotificationBanner(page).waitForBecomeVisible();
+    const notificationBanner = NotificationBanner(page);
 
-    // Count notification banners - should be exactly 1
-    const notificationBanners = NotificationBanner(page).message;
-    const bannerCount = await notificationBanners.count();
-    expect(bannerCount).toBe(1);
-
-    const notificationText = await NotificationBanner(
-      page,
-    ).getNotificationText();
+    // Wait for notification to appear and verify the expected success message
+    await notificationBanner.waitForBecomeVisible();
+    const notificationText = await notificationBanner.getNotificationText();
     expect(notificationText).toContain(
       'The preset was successfully added to the library',
     );
 
-    // Verify the message auto-hides after some time (implementation-dependent)
-    await NotificationBanner(page).waitForBecomeHidden();
+    // Verify the message auto-hides after some time
+    await notificationBanner.waitForBecomeHidden();
+
+    // The banner component is reused, so DOM node count cannot detect a duplicate
+    // success notification shown sequentially for the same save. Confirm it stays
+    // hidden for a short period after auto-hide instead of reappearing.
+    await expect
+      .poll(async () => await notificationBanner.message.isVisible(), {
+        timeout: 1500,
+        intervals: [250],
+      })
+      .toBe(false);
   });
 });

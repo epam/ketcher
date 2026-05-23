@@ -1,12 +1,7 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
-import {
-  AtomLabel,
-  AttachmentPointName,
-  ketcherProvider,
-  KetMonomerClass,
-} from 'ketcher-core';
+import { AtomLabel, AttachmentPointName, ketcherProvider } from 'ketcher-core';
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
@@ -30,6 +25,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
+import { getMonomerAttributeFieldVisibility } from './MonomerCreationWizardFields.utils';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
@@ -53,29 +49,6 @@ interface ModificationTypeItem {
   value: string;
 }
 
-const getAliasFieldsVisibility = (
-  type: KetMonomerClass | 'rnaPreset' | undefined,
-) => {
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-      KetMonomerClass.CHEM,
-    ].includes(type as KetMonomerClass);
-
-  return {
-    displayAliases,
-    // CHEM monomers support BILN aliases, while HELM remains unavailable for CHEM.
-    displayHelmAlias: displayAliases && type !== KetMonomerClass.CHEM,
-    // BILN aliases are defined only for amino-acid and CHEM monomers.
-    displayBilnAlias:
-      type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM,
-  };
-};
-
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
 ) => {
@@ -92,7 +65,7 @@ const MonomerCreationWizardFields = (
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >([]);
@@ -157,9 +130,12 @@ const MonomerCreationWizardFields = (
     return null;
   }
 
-  const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const { displayAliases, displayHelmAlias, displayBilnAlias } =
-    getAliasFieldsVisibility(type);
+  const {
+    displayNaturalAnalogue,
+    displayModificationTypes,
+    displayAliases,
+    displayHelmAlias,
+  } = getMonomerAttributeFieldVisibility(type);
 
   return (
     <div>
@@ -201,7 +177,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
+        {props.showNaturalAnalogue !== false && displayNaturalAnalogue && (
           <AttributeField
             title="Natural analogue"
             control={
@@ -379,31 +355,6 @@ const MonomerCreationWizardFields = (
                             errors.aliasHELM && styles.error,
                           )}
                           error={Boolean(errors.aliasHELM)}
-                        />
-                      )}
-                    />
-                  </div>
-                )}
-                {displayBilnAlias && (
-                  <div className={styles.aliasField}>
-                    <p className={styles.inputLabel}>BILN</p>
-                    <Autocomplete
-                      freeSolo
-                      options={[]}
-                      value={aliasBILN}
-                      onInputChange={(_event, newValue) =>
-                        onFieldChange('aliasBILN', newValue)
-                      }
-                      data-testid="biln-alias-input"
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="standard"
-                          className={clsx(
-                            styles.inputField,
-                            errors.aliasBILN && styles.error,
-                          )}
-                          error={Boolean(errors.aliasBILN)}
                         />
                       )}
                     />

@@ -767,14 +767,14 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupSugar({
     atomIds: [2, 3],
     bondIds: [2],
-    symbol: 'SugSym',
+    code: 'SugSym',
     name: 'SugarName',
     HELMAlias: 'SugAlias',
   });
   await presetSection.setupBase({
     atomIds: [0, 1],
     bondIds: [0],
-    symbol: 'BaseSym',
+    code: 'BaseSym',
     name: 'BaseName',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseAlias',
@@ -782,7 +782,7 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupPhosphate({
     atomIds: [4, 5],
     bondIds: [4],
-    symbol: 'PhosSym',
+    code: 'PhosSym',
     name: 'PhosphateName',
     HELMAlias: 'PhosAlias',
   });
@@ -857,18 +857,18 @@ test(`14. Component tab is highlighted red when its property is invalid after su
   await presetSection.setupSugar({
     atomIds: [2, 3],
     bondIds: [2],
-    symbol: '<invalid name>',
+    code: '<invalid name>',
   });
   await presetSection.setupBase({
     atomIds: [0, 1],
     bondIds: [0],
-    symbol: '<invalid name>',
+    code: '<invalid name>',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   });
   await presetSection.setupPhosphate({
     atomIds: [4, 5],
     bondIds: [4],
-    symbol: '<invalid name>',
+    code: '<invalid name>',
   });
 
   await dialog.submit();
@@ -1840,40 +1840,40 @@ const monomersToCreate27 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid27',
+    code: 'AminoAcid27',
     name: 'Amino Acid Test monomer for test 27',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar27',
+    code: 'Sugar27',
     name: 'Sugar Test monomer for test 27',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base27',
+    code: 'Base27',
     name: 'Base Test monomer for test 27',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate27',
+    code: 'Phosphate27',
     name: 'Phosphate Test monomer for test 27',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide27',
+    code: 'Nucleotide27',
     name: 'Nucleotide Test monomer for test 27',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM27',
+    code: 'CHEM27',
     name: 'CHEM Test monomer for test 27',
   },
 ];
@@ -1921,40 +1921,40 @@ const monomersToCreate28 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid28',
+    code: 'AminoAcid28',
     name: 'Amino Acid Test monomer for test 28',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar28',
+    code: 'Sugar28',
     name: 'Sugar Test monomer for test 28',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base28',
+    code: 'Base28',
     name: 'Base Test monomer for test 28',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate28',
+    code: 'Phosphate28',
     name: 'Phosphate Test monomer for test 28',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide28',
+    code: 'Nucleotide28',
     name: 'Nucleotide Test monomer for test 28',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM28',
+    code: 'CHEM28',
     name: 'CHEM Test monomer for test 28',
   },
 ];
@@ -2003,40 +2003,40 @@ const monomersToCreate29 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid29',
+    code: 'AminoAcid29',
     name: 'Amino Acid Test monomer for test 29',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar29',
+    code: 'Sugar29',
     name: 'Sugar Test monomer for test 29',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base29',
+    code: 'Base29',
     name: 'Base Test monomer for test 29',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate29',
+    code: 'Phosphate29',
     name: 'Phosphate Test monomer for test 29',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide29',
+    code: 'Nucleotide29',
     name: 'Nucleotide Test monomer for test 29',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM29',
+    code: 'CHEM29',
     name: 'CHEM Test monomer for test 29',
   },
 ];
@@ -2088,40 +2088,40 @@ const monomersToCreate30 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid30',
+    code: 'AminoAcid30',
     name: 'Amino Acid Test monomer for test 30',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar30',
+    code: 'Sugar30',
     name: 'Sugar Test monomer for test 30',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base30',
+    code: 'Base30',
     name: 'Base Test monomer for test 30',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate30',
+    code: 'Phosphate30',
     name: 'Phosphate Test monomer for test 30',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide30',
+    code: 'Nucleotide30',
     name: 'Nucleotide Test monomer for test 30',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM30',
+    code: 'CHEM30',
     name: 'CHEM Test monomer for test 30',
   },
 ];
@@ -2173,40 +2173,40 @@ const monomersToCreate31 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid31',
+    code: 'AminoAcid31',
     name: 'Amino Acid Test monomer for test 31',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar31',
+    code: 'Sugar31',
     name: 'Sugar Test monomer for test 31',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base31',
+    code: 'Base31',
     name: 'Base Test monomer for test 31',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate31',
+    code: 'Phosphate31',
     name: 'Phosphate Test monomer for test 31',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide31',
+    code: 'Nucleotide31',
     name: 'Nucleotide Test monomer for test 31',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM31',
+    code: 'CHEM31',
     name: 'CHEM Test monomer for test 31',
   },
 ];
@@ -2246,7 +2246,7 @@ for (const monomerToCreate of monomersToCreate31) {
       `CML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cml`,
     );
     const monomer = getAbbreviationLocator(page, {
-      name: monomerToCreate.symbol,
+      name: monomerToCreate.code,
     }).first();
     await takeElementScreenshot(page, monomer, { padding: 50 });
   });
@@ -2256,40 +2256,40 @@ const monomersToCreate32 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid32',
+    code: 'AminoAcid32',
     name: 'Amino Acid Test monomer for test 32',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar32',
+    code: 'Sugar32',
     name: 'Sugar Test monomer for test 32',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base32',
+    code: 'Base32',
     name: 'Base Test monomer for test 32',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate32',
+    code: 'Phosphate32',
     name: 'Phosphate Test monomer for test 32',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide32',
+    code: 'Nucleotide32',
     name: 'Nucleotide Test monomer for test 32',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM32',
+    code: 'CHEM32',
     name: 'CHEM Test monomer for test 32',
   },
 ];
@@ -2324,40 +2324,40 @@ const monomersToCreate33 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid33',
+    code: 'AminoAcid33',
     name: 'Amino Acid Test monomer for test 33',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar33',
+    code: 'Sugar33',
     name: 'Sugar Test monomer for test 33',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base33',
+    code: 'Base33',
     name: 'Base Test monomer for test 33',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate33',
+    code: 'Phosphate33',
     name: 'Phosphate Test monomer for test 33',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide33',
+    code: 'Nucleotide33',
     name: 'Nucleotide Test monomer for test 33',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM33',
+    code: 'CHEM33',
     name: 'CHEM Test monomer for test 33',
   },
 ];
@@ -2392,40 +2392,40 @@ const monomersToCreate34 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid34',
+    code: 'AminoAcid34',
     name: 'Amino Acid Test monomer for test 34',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar34',
+    code: 'Sugar34',
     name: 'Sugar Test monomer for test 34',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base34',
+    code: 'Base34',
     name: 'Base Test monomer for test 34',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate34',
+    code: 'Phosphate34',
     name: 'Phosphate Test monomer for test 34',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide34',
+    code: 'Nucleotide34',
     name: 'Nucleotide Test monomer for test 34',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM34',
+    code: 'CHEM34',
     name: 'CHEM Test monomer for test 34',
   },
 ];
@@ -2465,7 +2465,7 @@ for (const monomerToCreate of monomersToCreate34) {
       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-expected.cdxml`,
     );
     const monomer = getAbbreviationLocator(page, {
-      name: monomerToCreate.symbol,
+      name: monomerToCreate.code,
     }).first();
     await takeElementScreenshot(page, monomer, { padding: 50 });
   });
@@ -2475,40 +2475,40 @@ const monomersToCreate36 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid36',
+    code: 'AminoAcid36',
     name: 'Amino Acid Test monomer for test 36',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar36',
+    code: 'Sugar36',
     name: 'Sugar Test monomer for test 36',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base36',
+    code: 'Base36',
     name: 'Base Test monomer for test 36',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate36',
+    code: 'Phosphate36',
     name: 'Phosphate Test monomer for test 36',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide36',
+    code: 'Nucleotide36',
     name: 'Nucleotide Test monomer for test 36',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM36',
+    code: 'CHEM36',
     name: 'CHEM Test monomer for test 36',
   },
 ];
@@ -2556,40 +2556,40 @@ const monomersToCreate37 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid37',
+    code: 'AminoAcid37',
     name: 'Amino Acid Test monomer for test 37',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar37',
+    code: 'Sugar37',
     name: 'Sugar Test monomer for test 37',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base37',
+    code: 'Base37',
     name: 'Base Test monomer for test 37',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate37',
+    code: 'Phosphate37',
     name: 'Phosphate Test monomer for test 37',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide37',
+    code: 'Nucleotide37',
     name: 'Nucleotide Test monomer for test 37',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM37',
+    code: 'CHEM37',
     name: 'CHEM Test monomer for test 37',
   },
 ];
@@ -2637,40 +2637,40 @@ const monomersToCreate38 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid38',
+    code: 'AminoAcid38',
     name: 'Amino Acid Test monomer for test 38',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar38',
+    code: 'Sugar38',
     name: 'Sugar Test monomer for test 38',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base38',
+    code: 'Base38',
     name: 'Base Test monomer for test 38',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate38',
+    code: 'Phosphate38',
     name: 'Phosphate Test monomer for test 38',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide38',
+    code: 'Nucleotide38',
     name: 'Nucleotide Test monomer for test 38',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM38',
+    code: 'CHEM38',
     name: 'CHEM Test monomer for test 38',
   },
 ];
@@ -2720,40 +2720,40 @@ const monomersToCreate39 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid39',
+    code: 'AminoAcid39',
     name: 'Amino Acid Test monomer for test 39',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar39',
+    code: 'Sugar39',
     name: 'Sugar Test monomer for test 39',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base39',
+    code: 'Base39',
     name: 'Base Test monomer for test 39',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate39',
+    code: 'Phosphate39',
     name: 'Phosphate Test monomer for test 39',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide39',
+    code: 'Nucleotide39',
     name: 'Nucleotide Test monomer for test 39',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM39',
+    code: 'CHEM39',
     name: 'CHEM Test monomer for test 39',
   },
 ];
@@ -2803,40 +2803,40 @@ const monomersToCreate40 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid40',
+    code: 'AminoAcid40',
     name: 'Amino Acid Test monomer for test 40',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar40',
+    code: 'Sugar40',
     name: 'Sugar Test monomer for test 40',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base40',
+    code: 'Base40',
     name: 'Base Test monomer for test 40',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate40',
+    code: 'Phosphate40',
     name: 'Phosphate Test monomer for test 40',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide40',
+    code: 'Nucleotide40',
     name: 'Nucleotide Test monomer for test 40',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM40',
+    code: 'CHEM40',
     name: 'CHEM Test monomer for test 40',
   },
 ];
@@ -2886,40 +2886,40 @@ const monomersToCreate41 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid41',
+    code: 'AminoAcid41',
     name: 'Amino Acid Test monomer for test 41',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar41',
+    code: 'Sugar41',
     name: 'Sugar Test monomer for test 41',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base41',
+    code: 'Base41',
     name: 'Base Test monomer for test 41',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate41',
+    code: 'Phosphate41',
     name: 'Phosphate Test monomer for test 41',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide41',
+    code: 'Nucleotide41',
     name: 'Nucleotide Test monomer for test 41',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM41',
+    code: 'CHEM41',
     name: 'CHEM Test monomer for test 41',
   },
 ];
@@ -2969,40 +2969,40 @@ const monomersToCreate42 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid42',
+    code: 'AminoAcid42',
     name: 'Amino Acid Test monomer for test 42',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar42',
+    code: 'Sugar42',
     name: 'Sugar Test monomer for test 42',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base42',
+    code: 'Base42',
     name: 'Base Test monomer for test 42',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate42',
+    code: 'Phosphate42',
     name: 'Phosphate Test monomer for test 42',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide42',
+    code: 'Nucleotide42',
     name: 'Nucleotide Test monomer for test 42',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM42',
+    code: 'CHEM42',
     name: 'CHEM Test monomer for test 42',
   },
 ];
@@ -3039,40 +3039,40 @@ const monomersToCreate43 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid43',
+    code: 'AminoAcid43',
     name: 'Amino Acid Test monomer for test 43',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar43',
+    code: 'Sugar43',
     name: 'Sugar Test monomer for test 43',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base43',
+    code: 'Base43',
     name: 'Base Test monomer for test 43',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate43',
+    code: 'Phosphate43',
     name: 'Phosphate Test monomer for test 43',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide43',
+    code: 'Nucleotide43',
     name: 'Nucleotide Test monomer for test 43',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM43',
+    code: 'CHEM43',
     name: 'CHEM Test monomer for test 43',
   },
 ];
@@ -3109,40 +3109,40 @@ const monomersToCreate44 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid44',
+    code: 'AminoAcid44',
     name: 'Amino Acid Test monomer for test 44',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar44',
+    code: 'Sugar44',
     name: 'Sugar Test monomer for test 44',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base44',
+    code: 'Base44',
     name: 'Base Test monomer for test 44',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate44',
+    code: 'Phosphate44',
     name: 'Phosphate Test monomer for test 44',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide44',
+    code: 'Nucleotide44',
     name: 'Nucleotide Test monomer for test 44',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM44',
+    code: 'CHEM44',
     name: 'CHEM Test monomer for test 44',
   },
 ];
@@ -3183,7 +3183,7 @@ for (const monomerToCreate of monomersToCreate44) {
       `CDXML/Chromium-popup/Create-monomer/${monomerToCreate.description}-collapsed-expected.cdxml`,
     );
     const monomer = getAbbreviationLocator(page, {
-      name: monomerToCreate.symbol,
+      name: monomerToCreate.code,
     }).first();
     await takeElementScreenshot(page, monomer, { padding: 50 });
   });
@@ -3193,40 +3193,40 @@ const monomersToCreate46 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid46',
+    code: 'AminoAcid46',
     name: 'Amino Acid Test monomer for test 46',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar46',
+    code: 'Sugar46',
     name: 'Sugar Test monomer for test 46',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base46',
+    code: 'Base46',
     name: 'Base Test monomer for test 46',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate46',
+    code: 'Phosphate46',
     name: 'Phosphate Test monomer for test 46',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide46',
+    code: 'Nucleotide46',
     name: 'Nucleotide Test monomer for test 46',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM46',
+    code: 'CHEM46',
     name: 'CHEM Test monomer for test 46',
   },
 ];
@@ -3281,40 +3281,40 @@ const monomersToCreate47 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid47',
+    code: 'AminoAcid47',
     name: 'Amino Acid Test monomer for test 47',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar47',
+    code: 'Sugar47',
     name: 'Sugar Test monomer for test 47',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base47',
+    code: 'Base47',
     name: 'Base Test monomer for test 47',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate47',
+    code: 'Phosphate47',
     name: 'Phosphate Test monomer for test 47',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide47',
+    code: 'Nucleotide47',
     name: 'Nucleotide Test monomer for test 47',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM47',
+    code: 'CHEM47',
     name: 'CHEM Test monomer for test 47',
   },
 ];
@@ -3366,14 +3366,14 @@ const monomersToCreate48 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid48',
+    code: 'AminoAcid48',
     name: 'Amino Acid Test monomer for test 48',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide48',
+    code: 'Nucleotide48',
     name: 'Nucleotide Test monomer for test 48',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
@@ -3443,7 +3443,7 @@ const monomersToCreate49 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid49',
+    code: 'AminoAcid49',
     name: 'Amino Acid Test monomer for test 49',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
@@ -3506,14 +3506,14 @@ const monomersToCreate50 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid50',
+    code: 'AminoAcid50',
     name: 'Amino Acid Test monomer for test 50',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide50',
+    code: 'Nucleotide50',
     name: 'Nucleotide Test monomer for test 50',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
@@ -3580,40 +3580,40 @@ const monomersToCreate51 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid51',
+    code: 'AminoAcid51',
     name: 'Amino Acid Test monomer for test 51',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar51',
+    code: 'Sugar51',
     name: 'Sugar Test monomer for test 51',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base51',
+    code: 'Base51',
     name: 'Base Test monomer for test 51',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate51',
+    code: 'Phosphate51',
     name: 'Phosphate Test monomer for test 51',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide51',
+    code: 'Nucleotide51',
     name: 'Nucleotide Test monomer for test 51',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM51',
+    code: 'CHEM51',
     name: 'CHEM Test monomer for test 51',
   },
 ];
@@ -3661,40 +3661,40 @@ const monomersToCreate52 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid52',
+    code: 'AminoAcid52',
     name: 'Amino Acid Test monomer for test 52',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar52',
+    code: 'Sugar52',
     name: 'Sugar Test monomer for test 52',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base52',
+    code: 'Base52',
     name: 'Base Test monomer for test 52',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate52',
+    code: 'Phosphate52',
     name: 'Phosphate Test monomer for test 52',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide52',
+    code: 'Nucleotide52',
     name: 'Nucleotide Test monomer for test 52',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM52',
+    code: 'CHEM52',
     name: 'CHEM Test monomer for test 52',
   },
 ];
@@ -3730,7 +3730,7 @@ const monomersToCreate53 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid',
+    code: 'AminoAcid',
     name: 'Amino Acid Test monomer for test 53',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     libraryCard: Peptide.AminoAcid,
@@ -3739,7 +3739,7 @@ const monomersToCreate53 = [
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar',
+    code: 'Sugar',
     name: 'Sugar Test monomer for test 53',
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
@@ -3747,7 +3747,7 @@ const monomersToCreate53 = [
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base',
+    code: 'Base',
     name: 'Base Test monomer for test 53',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     libraryCard: Base.Base,
@@ -3755,7 +3755,7 @@ const monomersToCreate53 = [
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate',
+    code: 'Phosphate',
     name: 'Phosphate Test monomer for test 53',
     libraryCard: Phosphate.Phosphate,
     helm: 'RNA1{[Phosphate]}$$$$V2.0',
@@ -3763,7 +3763,7 @@ const monomersToCreate53 = [
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide',
+    code: 'Nucleotide',
     name: 'Nucleotide Test monomer for test 53',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     libraryCard: Nucleotide.Nucleotide,
@@ -3772,7 +3772,7 @@ const monomersToCreate53 = [
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM',
+    code: 'CHEM',
     name: 'CHEM Test monomer for test 53',
     libraryCard: Chem.CHEM,
     helm: 'CHEM1{[CHEM]}$$$$V2.0',
@@ -3826,40 +3826,40 @@ const monomersToCreate54 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid54',
+    code: 'AminoAcid54',
     name: 'Amino Acid Test monomer for test 54',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar54',
+    code: 'Sugar54',
     name: 'Sugar Test monomer for test 54',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base54',
+    code: 'Base54',
     name: 'Base Test monomer for test 54',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate54',
+    code: 'Phosphate54',
     name: 'Phosphate Test monomer for test 54',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide54',
+    code: 'Nucleotide54',
     name: 'Nucleotide Test monomer for test 54',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM54',
+    code: 'CHEM54',
     name: 'CHEM Test monomer for test 54',
   },
 ];
@@ -3893,7 +3893,7 @@ for (const monomerToCreate of monomersToCreate54) {
     await clickOnCanvas(page, 0, 0);
     await collapseMonomer(page, getAtomLocator(page, { atomId: 2 }));
     const monomerOnMicro = getAbbreviationLocator(page, {
-      name: monomerToCreate.symbol,
+      name: monomerToCreate.code,
     });
     await expect(monomerOnMicro).toBeVisible();
 
@@ -3907,40 +3907,40 @@ const monomersToCreate55 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid55',
+    code: 'AminoAcid55',
     name: 'Amino Acid Test monomer for test 55',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar55',
+    code: 'Sugar55',
     name: 'Sugar Test monomer for test 55',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base55',
+    code: 'Base55',
     name: 'Base Test monomer for test 55',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate55',
+    code: 'Phosphate55',
     name: 'Phosphate Test monomer for test 55',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide55',
+    code: 'Nucleotide55',
     name: 'Nucleotide Test monomer for test 55',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM55',
+    code: 'CHEM55',
     name: 'CHEM Test monomer for test 55',
   },
 ];
@@ -3973,7 +3973,7 @@ for (const monomerToCreate of monomersToCreate55) {
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomerOnMacro = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
+      monomerAlias: monomerToCreate.code,
     });
     await expect(monomerOnMacro).toBeVisible();
 
@@ -3987,40 +3987,40 @@ const monomersToCreate56 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid56',
+    code: 'AminoAcid56',
     name: 'Amino Acid Test monomer for test 56',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar56',
+    code: 'Sugar56',
     name: 'Sugar Test monomer for test 56',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base56',
+    code: 'Base56',
     name: 'Base Test monomer for test 56',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate56',
+    code: 'Phosphate56',
     name: 'Phosphate Test monomer for test 56',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide56',
+    code: 'Nucleotide56',
     name: 'Nucleotide Test monomer for test 56',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM56',
+    code: 'CHEM56',
     name: 'CHEM Test monomer for test 56',
   },
 ];
@@ -4057,7 +4057,7 @@ for (const monomerToCreate of monomersToCreate56) {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomerOnMacro = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
+      monomerAlias: monomerToCreate.code,
     });
     await takeElementScreenshot(page, monomerOnMacro);
 

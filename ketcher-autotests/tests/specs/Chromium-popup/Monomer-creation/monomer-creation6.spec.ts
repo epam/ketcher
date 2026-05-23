@@ -766,14 +766,14 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupSugar({
     atomIds: [2, 3],
     bondIds: [2],
-    symbol: Sugar.Sugar.alias,
+    code: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'SugAlias',
   });
   await presetSection.setupBase({
     atomIds: [0, 1],
     bondIds: [0],
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'BaseAlias',
@@ -781,7 +781,7 @@ test(`16. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   await presetSection.setupPhosphate({
     atomIds: [4, 5],
     bondIds: [4],
-    symbol: Phosphate.Phosphate.alias,
+    code: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'PhosAlias',
   });

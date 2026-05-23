@@ -82,14 +82,14 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.Sugar.alias,
+      code: Sugar.Sugar.alias,
       name: 'Sugar Test monomer',
       HELMAlias: 'SugAlias',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.Base.alias,
+      code: Base.Base.alias,
       name: 'Base Test monomer',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
@@ -97,7 +97,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.Phosphate.alias,
+      code: Phosphate.Phosphate.alias,
       name: 'Phosphate Test monomer',
       HELMAlias: 'PhosAlias',
     });
@@ -262,20 +262,20 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Sugar Name',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias,
+      code: Base.A.alias,
       name: 'Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias,
+      code: Phosphate.P.alias,
       name: 'Phosphate Name',
     });
 
@@ -318,20 +318,20 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Sugar Name',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Phosphate Name',
     });
 

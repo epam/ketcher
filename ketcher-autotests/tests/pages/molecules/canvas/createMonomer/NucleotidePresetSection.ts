@@ -165,7 +165,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupBase(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       naturalAnalogue?: NucleotideNaturalAnalogue;
       HELMAlias?: string;
@@ -177,8 +177,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsBase();
 
-      if (options.symbol) {
-        await locators.baseTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.baseTab.symbolEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.baseTab.nameEditbox.fill(options.name);
@@ -197,7 +197,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupSugar(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       HELMAlias?: string;
     }) {
@@ -208,8 +208,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsSugar();
 
-      if (options.symbol) {
-        await locators.sugarTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.sugarTab.symbolEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.sugarTab.nameEditbox.fill(options.name);
@@ -224,7 +224,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupPhosphate(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       HELMAlias?: string;
     }) {
@@ -235,8 +235,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsPhosphate();
 
-      if (options.symbol) {
-        await locators.phosphateTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.phosphateTab.symbolEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.phosphateTab.nameEditbox.fill(options.name);

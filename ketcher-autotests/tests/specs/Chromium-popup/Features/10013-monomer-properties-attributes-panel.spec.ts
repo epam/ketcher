@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
@@ -5,19 +6,21 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   AminoAcidNaturalAnalogue,
   MonomerType,
-  NucleotideNaturalAnalogue,
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import {
   pasteFromClipboardAndOpenAsNewProject,
   takeElementScreenshot,
 } from '@utils';
+import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
 
 let page: Page;
 
-test.describe('Monomer properties attributes panel visibility rules:', () => {
+test.describe('Monomer properties attributes panel visibility rules: ', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
+
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -26,8 +29,8 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
   test('Case 1 - CHEM monomer type shows only appropriate properties', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10013
-     * Description: CHEM monomer type should show Name and Code fields, 
-     * BILN aliases (no HELM), and Attachment points section. 
+     * Description: CHEM monomer type should show Name and Code fields,
+     * BILN aliases (no HELM), and Attachment points section.
      * Natural analogue and Modification sections should not be shown.
      * Scenario:
      * 1. Open monomer creation wizard
@@ -38,7 +41,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 6. Verify Aliases section is shown with BILN alias only (no HELM)
      * 7. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -68,8 +71,12 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     await createMonomerDialog.expandAliasesSection();
 
     // For CHEM monomers, only BILN alias should be available (no HELM)
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).not.toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -91,7 +98,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 5. Verify Aliases section IS present and contains HELM alias only (no BILN)
      * 6. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -118,8 +125,12 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     await createMonomerDialog.expandAliasesSection();
 
     // For Amino acid monomers, both HELM and BILN aliases are available
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -142,7 +153,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 6. Verify Aliases section IS present and only HELM alias is available
      * 7. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -171,8 +182,12 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     await createMonomerDialog.expandAliasesSection();
 
     // For Sugar monomers, only HELM alias should be available
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).not.toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -194,7 +209,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 5. Verify Aliases section IS present and contains HELM alias only
      * 6. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -221,8 +236,12 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     await createMonomerDialog.expandAliasesSection();
 
     // For Base monomers, only HELM alias should be available
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).not.toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -235,7 +254,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10013
      * Description: Phosphate monomer type should show Name and Code fields,
-     * no Natural analogue, no Modification section, HELM alias (and BILN where implemented), 
+     * no Natural analogue, no Modification section, HELM alias (and BILN where implemented),
      * and Attachment points section.
      * Scenario:
      * 1. Open monomer creation wizard
@@ -246,7 +265,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 6. Verify Aliases section IS present and supports HELM alias
      * 7. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -275,9 +294,11 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     await createMonomerDialog.expandAliasesSection();
 
     // For Phosphate monomers, HELM alias should be available
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
     // BILN aliases may or may not be available depending on implementation
-    
+
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
 
@@ -298,7 +319,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 5. Verify Aliases section IS present, but only BILN alias fields are shown (no HELM)
      * 6. Verify Attachment points section is present
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -326,7 +347,9 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
 
     // For Nucleotide (monomer), based on current implementation both aliases might be visible
     // This needs to be verified against actual requirements
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -347,11 +370,12 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 4. Verify component-specific properties are NOT shown at preset level
      * 5. Take screenshot for visual verification
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
     const createMonomerDialog = CreateMonomerDialog(page);
+    const nucleotidePresetSection = NucleotidePresetSection(page);
 
     await LeftToolbar(page).createMonomer();
     await expect(createMonomerDialog.window).toBeVisible();
@@ -361,7 +385,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
 
     // For preset type, the UI layout is different and needs verification
     // The preset has its own section with separate component tabs
-    await expect(createMonomerDialog.nucleotidePresetSection).toBeVisible();
+    await expect(nucleotidePresetSection.presetTab).toBeVisible();
 
     // Component-specific properties should not be shown at the main preset level
     // (They would be in individual component tabs within the preset section)
@@ -382,7 +406,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 4. Switch to CHEM type and verify sections change appropriately
      * 5. Verify dynamic behavior works correctly
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -417,10 +441,14 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
 
     // Verify alias types change by checking the aliases section content
     await createMonomerDialog.expandAliasesSection();
-    
+
     // For CHEM, HELM should not be visible but BILN should be
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).not.toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).toBeVisible();
 
     await takeElementScreenshot(page, createMonomerDialog.window);
     await createMonomerDialog.discard();
@@ -437,7 +465,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 3. Verify prohibited fields are hidden
      * 4. Document any deviations from requirements
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -539,7 +567,9 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
       if (testCase.shouldShow.naturalAnalogue) {
         await expect(createMonomerDialog.naturalAnalogueCombobox).toBeVisible();
       } else {
-        await expect(createMonomerDialog.naturalAnalogueCombobox).not.toBeVisible();
+        await expect(
+          createMonomerDialog.naturalAnalogueCombobox,
+        ).not.toBeVisible();
       }
 
       if (testCase.shouldShow.modification) {
@@ -555,15 +585,23 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
         await createMonomerDialog.expandAliasesSection();
 
         if (testCase.shouldShow.helmAlias) {
-          await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
+          await expect(
+            createMonomerDialog.aliasesSection.helmAliasEditbox,
+          ).toBeVisible();
         } else {
-          await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).not.toBeVisible();
+          await expect(
+            createMonomerDialog.aliasesSection.helmAliasEditbox,
+          ).not.toBeVisible();
         }
 
         if (testCase.shouldShow.bilnAlias) {
-          await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).toBeVisible();
+          await expect(
+            createMonomerDialog.aliasesSection.bilnAliasEditbox,
+          ).toBeVisible();
         } else {
-          await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).not.toBeVisible();
+          await expect(
+            createMonomerDialog.aliasesSection.bilnAliasEditbox,
+          ).not.toBeVisible();
         }
 
         await createMonomerDialog.collapseAliasesSection();
@@ -591,7 +629,7 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
      * 3. Test backward compatibility
      * 4. Verify no regression in existing functionality
      *
-     * Version 3.13.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, '[*:1]CC |$_R1;;$|');
 
@@ -608,10 +646,14 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     // Verify CHEM-specific visibility during creation
     await expect(createMonomerDialog.naturalAnalogueCombobox).not.toBeVisible();
     await expect(createMonomerDialog.modificationSection).not.toBeVisible();
-    
+
     await createMonomerDialog.expandAliasesSection();
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).not.toBeVisible();
-    await expect(createMonomerDialog.aliasesSection.bilnAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).not.toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.bilnAliasEditbox,
+    ).toBeVisible();
 
     await createMonomerDialog.submit({ ignoreWarning: true });
     await expect(createMonomerDialog.window).not.toBeVisible();
@@ -628,9 +670,11 @@ test.describe('Monomer properties attributes panel visibility rules:', () => {
     // Verify amino acid-specific visibility
     await expect(createMonomerDialog.naturalAnalogueCombobox).toBeVisible();
     await expect(createMonomerDialog.modificationSection).toBeVisible();
-    
+
     await createMonomerDialog.expandAliasesSection();
-    await expect(createMonomerDialog.aliasesSection.helmAliasEditbox).toBeVisible();
+    await expect(
+      createMonomerDialog.aliasesSection.helmAliasEditbox,
+    ).toBeVisible();
 
     await createMonomerDialog.submit({ ignoreWarning: true });
     await expect(createMonomerDialog.window).not.toBeVisible();

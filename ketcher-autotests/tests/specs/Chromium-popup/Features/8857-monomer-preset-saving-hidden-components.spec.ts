@@ -68,7 +68,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 8. Verify preset is visible in library
      * 9. Verify component monomers are not visible in library (hidden)
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -154,7 +154,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 6. Verify preset is visible
      * 7. Verify original monomers are still visible (no additional entries)
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
@@ -228,7 +228,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 2. Create preset with hidden monomer using same code/name as existing visible monomer
      * 3. Verify preset saves successfully without uniqueness errors
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -284,7 +284,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 2. Create second preset with same hidden monomer codes/names
      * 3. Verify both presets save successfully without uniqueness errors
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -386,7 +386,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 3. Attempt to save
      * 4. Verify formatting validation error appears and blocks saving
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -467,7 +467,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 2. Fix formatting errors in all component properties
      * 3. Verify preset saves successfully after correction
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -546,7 +546,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      * 2. Create preset with hidden monomer using same code (should succeed)
      * 3. Verify different behavior between visible and hidden monomers
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -622,7 +622,7 @@ test.describe('Autotests: Monomer saving - presets in the monomer creation wizar
      *    in component selection UI
      * 4. Verify only visible monomers appear in selection dropdowns
      *
-     * Version 3.14.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 

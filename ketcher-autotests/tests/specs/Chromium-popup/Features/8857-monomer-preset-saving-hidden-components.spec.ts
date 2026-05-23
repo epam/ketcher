@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 /* eslint-disable max-len */
 import { Page, test, expect } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
@@ -37,10 +37,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await closePage();
   });
 
-  test.afterEach(async () => {
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
 
   test('Case 1 - Verify that all monomers composing a preset are saved as hidden entries in the monomer library', async () => {
     /*
@@ -75,7 +72,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'HiddenSugar',
+      code: 'HiddenSugar',
       name: 'Hidden Sugar Test Monomer',
       HELMAlias: 'HSugar',
     });
@@ -84,7 +81,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'HiddenBase',
+      code: 'HiddenBase',
       name: 'Hidden Base Test Monomer',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'HBase',
@@ -94,7 +91,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'HiddenPhosphate',
+      code: 'HiddenPhosphate',
       name: 'Hidden Phosphate Test Monomer',
       HELMAlias: 'HPhos',
     });
@@ -179,14 +176,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Existing Sugar Name',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias,
+      code: Base.A.alias,
       name: 'Existing Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -194,7 +191,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias,
+      code: Phosphate.P.alias,
       name: 'Existing Phosphate Name',
     });
 
@@ -242,14 +239,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Duplicate Sugar Name',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias,
+      code: Base.A.alias,
       name: 'Duplicate Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -257,7 +254,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias,
+      code: Phosphate.P.alias,
       name: 'Duplicate Phosphate Name',
     });
 
@@ -301,14 +298,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'DuplicateCode',
+      code: 'DuplicateCode',
       name: 'Duplicate Name',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'DuplicateBase',
+      code: 'DuplicateBase',
       name: 'Duplicate Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -316,7 +313,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'DuplicatePhosphate',
+      code: 'DuplicatePhosphate',
       name: 'Duplicate Phosphate',
     });
 
@@ -344,14 +341,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'DuplicateCode',
+      code: 'DuplicateCode',
       name: 'Duplicate Name',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'DuplicateBase',
+      code: 'DuplicateBase',
       name: 'Duplicate Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -359,7 +356,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'DuplicatePhosphate',
+      code: 'DuplicatePhosphate',
       name: 'Duplicate Phosphate',
     });
 
@@ -407,14 +404,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: '<InvalidSugar>',
+      code: '<InvalidSugar>',
       name: 'Format Test Sugar',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: '<InvalidBase>',
+      code: '<InvalidBase>',
       name: 'Format Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -422,7 +419,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: '<InvalidPhosphate>',
+      code: '<InvalidPhosphate>',
       name: 'Format Test Phosphate',
     });
 
@@ -440,21 +437,19 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     // Verify error states on tabs
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(
-      /inputError/,
-    );
+    await expect(presetSection.sugarTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
+    await expect(presetSection.baseTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveClass(
       /inputError/,
     );
     await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
@@ -489,14 +484,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: '<InvalidSugar>',
+      code: '<InvalidSugar>',
       name: 'Format Fix Sugar',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: '<InvalidBase>',
+      code: '<InvalidBase>',
       name: 'Format Fix Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -504,7 +499,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: '<InvalidPhosphate>',
+      code: '<InvalidPhosphate>',
       name: 'Format Fix Phosphate',
     });
 
@@ -523,13 +518,13 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
 
     // Fix the formatting errors
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await presetSection.sugarTab.symbolEditbox.fill('ValidSugar');
+    await presetSection.sugarTab.codeEditbox.fill('ValidSugar');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await presetSection.baseTab.symbolEditbox.fill('ValidBase');
+    await presetSection.baseTab.codeEditbox.fill('ValidBase');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await presetSection.phosphateTab.symbolEditbox.fill('ValidPhosphate');
+    await presetSection.phosphateTab.codeEditbox.fill('ValidPhosphate');
 
     // Now submit should succeed
     await dialog.submit();
@@ -563,7 +558,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Sugar);
-    await dialog.symbolEditbox.fill(Sugar.R.alias);
+    await dialog.codeEditbox.fill(Sugar.R.alias);
     await dialog.nameEditbox.fill('Duplicate Visible Sugar');
 
     await dialog.submit();
@@ -587,14 +582,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Hidden Sugar with Duplicate Code',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'UniquenessTestBase',
+      code: 'UniquenessTestBase',
       name: 'Uniqueness Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -602,7 +597,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'UniquenessTestPhosphate',
+      code: 'UniquenessTestPhosphate',
       name: 'Uniqueness Test Phosphate',
     });
 
@@ -647,14 +642,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'HiddenSelectSugar',
+      code: 'HiddenSelectSugar',
       name: 'Hidden Selectable Sugar',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'HiddenSelectBase',
+      code: 'HiddenSelectBase',
       name: 'Hidden Selectable Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -662,7 +657,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'HiddenSelectPhosphate',
+      code: 'HiddenSelectPhosphate',
       name: 'Hidden Selectable Phosphate',
     });
 
@@ -714,14 +709,14 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Visible Sugar Component',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias,
+      code: Base.A.alias,
       name: 'Visible Base Component',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -729,7 +724,7 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias,
+      code: Phosphate.P.alias,
       name: 'Visible Phosphate Component',
     });
 

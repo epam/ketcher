@@ -348,21 +348,19 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
 
     // Verify tab and field error states are shown for components
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(
-      /inputError/,
-    );
+    await expect(presetSection.sugarTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
+    await expect(presetSection.baseTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveClass(
       /inputError/,
     );
     await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
@@ -485,13 +483,13 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(presetSection.presetTab.nameEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('');
 
     await dialog.discard();
   });
@@ -528,15 +526,13 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('PresetS');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('PresetB');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
-      'PresetP',
-    );
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('PresetP');
 
     await dialog.discard();
   });
@@ -729,15 +725,13 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('Preset');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('PresetS');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('PresetB');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
-      'PresetP',
-    );
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('PresetP');
 
     await dialog.discard();
   });
@@ -766,19 +760,19 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('Preset');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await presetSection.sugarTab.symbolEditbox.fill('MySugar');
+    await presetSection.sugarTab.codeEditbox.fill('MySugar');
 
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('Preset2');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('MySugar');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('MySugar');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('Preset2B');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('Preset2B');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue(
       'Preset2P',
     );
 

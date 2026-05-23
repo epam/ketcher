@@ -793,7 +793,7 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   );
 
   await presetSection.openTab(NucleotidePresetTab.Sugar);
-  await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('SugSym');
+  await expect(presetSection.sugarTab.codeEditbox).toHaveValue('SugSym');
   await expect(presetSection.sugarTab.nameEditbox).toHaveValue('SugarName');
   await presetSection.openAliasesSection(NucleotidePresetTab.Sugar);
   await expect(
@@ -803,7 +803,7 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   ).toHaveValue('SugAlias');
 
   await presetSection.openTab(NucleotidePresetTab.Base);
-  await expect(presetSection.baseTab.symbolEditbox).toHaveValue('BaseSym');
+  await expect(presetSection.baseTab.codeEditbox).toHaveValue('BaseSym');
   await expect(presetSection.baseTab.nameEditbox).toHaveValue('BaseName');
   await expect(presetSection.baseTab.naturalAnalogueCombobox).toContainText(
     'A',
@@ -815,7 +815,7 @@ test(`13. Check preset Sugar/Base/Phosphate tabs allow editing monomer propertie
   ).toHaveValue('BaseAlias');
 
   await presetSection.openTab(NucleotidePresetTab.Phosphate);
-  await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('PhosSym');
+  await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('PhosSym');
   await expect(presetSection.phosphateTab.nameEditbox).toHaveValue(
     'PhosphateName',
   );
@@ -896,18 +896,18 @@ test(`14. Component tab is highlighted red when its property is invalid after su
   );
 
   await presetSection.openTab(NucleotidePresetTab.Base);
-  await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
+  await expect(presetSection.baseTab.codeEditbox).toHaveClass(/inputError/);
   await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
     /errorTab/,
   );
 
   await presetSection.openTab(NucleotidePresetTab.Sugar);
-  await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(/inputError/);
+  await expect(presetSection.sugarTab.codeEditbox).toHaveClass(/inputError/);
   await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
     /errorTab/,
   );
   await presetSection.openTab(NucleotidePresetTab.Phosphate);
-  await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+  await expect(presetSection.phosphateTab.codeEditbox).toHaveClass(
     /inputError/,
   );
   await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
@@ -1034,7 +1034,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
   });
 }
 
-const eligableSymbols = [
+const eligableCodes = [
   {
     description: '1. Longest Symbol (uppercase and lowercase letters, numbers)',
     value:
@@ -1051,8 +1051,8 @@ const eligableSymbols = [
   },
 ];
 
-for (const eligableSymbol of eligableSymbols) {
-  test(`13. Create monomer with ${eligableSymbol.description}`, async () => {
+for (const eligableCode of eligableCodes) {
+  test(`13. Create monomer with ${eligableCode.description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
      * Description: Entering a valid monomer name allows saving
@@ -1063,7 +1063,7 @@ for (const eligableSymbol of eligableSymbols) {
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
      *      4. Create monomer with eligable symbol value
      *      5. Switch to Macromolecules editor
-     *      7. Validate that monomer with ${eligableSymbol.value} present on the canvas
+     *      7. Validate that monomer with ${eligableCode.value} present on the canvas
      *
      * Version 3.7
      */
@@ -1072,34 +1072,34 @@ for (const eligableSymbol of eligableSymbols) {
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      code: eligableSymbol.value,
+      code: eligableCode.value,
       name: 'Temp',
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomer = getMonomerLocator(page, {
-      monomerAlias: eligableSymbol.value,
+      monomerAlias: eligableCode.value,
     });
     expect(await monomer.count()).toEqual(1);
   });
 }
 
-const nonEligableSymbols = [
+const nonEligableCodes = [
   {
     description: '1. Spaces only',
-    symbol: '   ',
+    code: '   ',
     type: MonomerType.CHEM,
     errorMessage: 'Mandatory fields must be filled.',
   },
   {
     description: '2. Incorrect characters',
-    symbol: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
+    code: '!@#$%^&*()_-+{}[]~}<>;,.\\|/:',
     type: MonomerType.CHEM,
     errorMessage:
       'The monomer code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
   },
   {
     description: '3. Non-unique for one HELM class (Peptides-Amino Acids)',
-    symbol: '1Nal',
+    code: '1Nal',
     type: MonomerType.AminoAcid,
     naturalAnalogue: AminoAcidNaturalAnalogue.C,
     errorMessage:
@@ -1107,14 +1107,14 @@ const nonEligableSymbols = [
   },
   {
     description: '4. Non-unique for one HELM class (RNA-Sugars)',
-    symbol: '12ddR',
+    code: '12ddR',
     type: MonomerType.Sugar,
     errorMessage:
       'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '5. Non-unique for one HELM class (RNA-Bases)',
-    symbol: '2imen2',
+    code: '2imen2',
     type: MonomerType.Base,
     naturalAnalogue: NucleotideNaturalAnalogue.C,
     errorMessage:
@@ -1122,61 +1122,61 @@ const nonEligableSymbols = [
   },
   {
     description: '6. Non-unique for one HELM class (RNA-Phosphates)',
-    symbol: 'AmC12',
+    code: 'AmC12',
     type: MonomerType.Phosphate,
     errorMessage:
       'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '7. Non-unique for one HELM class (RNA-Nucleotides)',
-    symbol: '3Puro',
+    code: '3Puro',
     type: MonomerType.NucleotideMonomer,
     errorMessage:
       'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
     description: '8. Non-unique for one HELM class (RNA-CHEM)',
-    symbol: '2-Bio',
+    code: '2-Bio',
     type: MonomerType.CHEM,
     errorMessage:
       'The code must be unique amongst peptide, RNA, or CHEM monomers.',
   },
   {
-    description: '9. No symbol entered',
-    symbol: '',
+    description: '9. No code entered',
+    code: '',
     type: MonomerType.CHEM,
     errorMessage: 'Mandatory fields must be filled.',
   },
 ];
 
-for (const nonEligableSymbol of nonEligableSymbols) {
-  test(`14. Create monomer with ${nonEligableSymbol.description}`, async () => {
+for (const nonEligableCode of nonEligableCodes) {
+  test(`14. Create monomer with ${nonEligableCode.description}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Entering a invalid monomer symbol causes an error
+     * Description: Entering a invalid monomer code causes an error
      *
      * Case:
      *      1. Open Molecules canvas
      *      2. Load molecule on canvas
      *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Try to create monomer with non-eligible name
+     *      4. Try to create monomer with non-eligible code
      *      5. Validate error message is shown
      *
      * Version 3.7
      */
-    const errorMessage = page.getByText(nonEligableSymbol.errorMessage);
+    const errorMessage = page.getByText(nonEligableCode.errorMessage);
     const createMonomerDialog = CreateMonomerDialog(page);
 
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
     await deselectAtomAndBonds(page, ['0']);
 
     await LeftToolbar(page).createMonomer();
-    await createMonomerDialog.selectType(nonEligableSymbol.type);
-    await createMonomerDialog.setCode(nonEligableSymbol.symbol);
+    await createMonomerDialog.selectType(nonEligableCode.type);
+    await createMonomerDialog.setCode(nonEligableCode.code);
     await createMonomerDialog.setName('Temp');
-    if (nonEligableSymbol.naturalAnalogue) {
+    if (nonEligableCode.naturalAnalogue) {
       await createMonomerDialog.selectNaturalAnalogue(
-        nonEligableSymbol.naturalAnalogue,
+        nonEligableCode.naturalAnalogue,
       );
     }
     await createMonomerDialog.submit();

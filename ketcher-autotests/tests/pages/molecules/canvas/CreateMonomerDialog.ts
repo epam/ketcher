@@ -58,6 +58,8 @@ type ModificationSectionLocators = {
 type AliasesSectionLocators = {
   helmAliasEditbox: Locator;
   helmAliasEditboxClearButton: Locator;
+  bilnAliasEditbox: Locator;
+  bilnAliasEditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
@@ -221,6 +223,10 @@ export const CreateMonomerDialog = (page: Page) => {
       helmAliasEditbox: page.getByTestId('helm-alias-input'),
       helmAliasEditboxClearButton: page
         .getByTestId('helm-alias-input')
+        .getByTestId('CloseIcon'),
+      bilnAliasEditbox: page.getByTestId('biln-alias-input'),
+      bilnAliasEditboxClearButton: page
+        .getByTestId('biln-alias-input')
         .getByTestId('CloseIcon'),
     },
   );
@@ -471,6 +477,26 @@ export const CreateMonomerDialog = (page: Page) => {
       await helmAliasEditbox.click();
       await page.keyboard.type(helmAlias);
       // to avoid helm alias lost on submit due to async validation
+      await this.collapseAliasesSection();
+      await this.expandAliasesSection();
+      await page.waitForTimeout(0.3 * 1000);
+    },
+
+    async clearBILNAlias() {
+      await this.expandAliasesSection();
+      const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
+      await bilnAliasEditbox.click();
+      const clearButton = aliasesSection.bilnAliasEditboxClearButton;
+      await clearButton.click();
+    },
+
+    async setBILNAlias(bilnAlias: string) {
+      await this.expandAliasesSection();
+      await this.clearBILNAlias();
+      const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
+      await bilnAliasEditbox.click();
+      await page.keyboard.type(bilnAlias);
+      // to avoid alias lost on submit due to async validation
       await this.collapseAliasesSection();
       await this.expandAliasesSection();
       await page.waitForTimeout(0.3 * 1000);

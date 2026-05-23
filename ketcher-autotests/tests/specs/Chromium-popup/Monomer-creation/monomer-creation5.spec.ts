@@ -108,7 +108,7 @@ test(`1. Check that the user can set one modification type for amino acids by cl
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -163,7 +163,7 @@ test(`2. Check that the user can set few modification types for amino acids by c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide2.alias,
+    code: Peptide.Peptide2.alias,
     name: 'Peptide2 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.D,
     modificationTypes: [
@@ -295,7 +295,7 @@ test(`5. Check that the modification type must be unique for one natural analogu
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -503,7 +503,7 @@ test(`9. Check that if a monomer with a new modification type is saved, that new
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     modificationTypes: [
@@ -558,7 +558,7 @@ test(`10. Check that the user can set a HELM alias for amino acids by clicking o
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide3.alias,
+    code: Peptide.Peptide3.alias,
     name: 'Peptide3 Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
@@ -607,7 +607,7 @@ test(`11. Check that the user can set a HELM alias for sugars by clicking on + A
 
   await createMonomer(page, {
     type: MonomerType.Sugar,
-    symbol: Sugar.Sugar.alias,
+    code: Sugar.Sugar.alias,
     name: 'Sugar Test monomer',
     HELMAlias: 'CustomHELMAliasSugar',
   });
@@ -655,7 +655,7 @@ test(`12. Check that the user can set a HELM alias for bases by clicking on + Ad
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasBase',
@@ -704,7 +704,7 @@ test(`13. Check that the user can set a HELM alias for  phosphates by clicking o
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate.alias,
+    code: Phosphate.Phosphate.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'CustomHELMAliasPhosphate',
   });
@@ -790,7 +790,7 @@ test(`15. Check that the HELM symbol must be a string of uppercase and lowercase
 
   await createMonomer(page, {
     type: MonomerType.Phosphate,
-    symbol: Phosphate.Phosphate2.alias,
+    code: Phosphate.Phosphate2.alias,
     name: 'Phosphate Test monomer',
     HELMAlias: 'ABCdef-123_*',
   });
@@ -838,7 +838,7 @@ test(`16. Check add prohibited HELM symbols`, async () => {
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '$#@',
@@ -887,7 +887,7 @@ test(`17. Check that the HELM alias string must be unique for one HELM class (pe
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -935,7 +935,7 @@ test(`18. Check when the HELM alias string NOT unique for one HELM class (peptid
 
   await createMonomer(page, {
     type: MonomerType.Base,
-    symbol: Base.Base.alias,
+    code: Base.Base.alias,
     name: 'Base Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -988,7 +988,7 @@ test(`19. Check if an issue with the HELM alias exists the HELM alias field is h
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Nucleotide.Nucleotide.alias,
+    code: Nucleotide.Nucleotide.alias,
     name: 'Nucleotide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',
@@ -1047,7 +1047,7 @@ test(`20. Check that the user can remove a HELM alias after it is set`, async ()
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: '1Nal',

@@ -617,7 +617,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await selectAllStructuresOnCanvas(page);
     await createMonomer(page, {
       type: MonomerType.AminoAcid,
-      symbol: 'RNA',
+      code: 'RNA',
       name: 'GLY',
       naturalAnalogue: AminoAcidNaturalAnalogue.A,
     });
@@ -652,7 +652,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await deselectAtomAndBonds(page, ['5']);
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      symbol: 'LongName',
+      code: 'LongName',
       name: monomerName,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({

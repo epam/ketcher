@@ -679,7 +679,7 @@ test(`14. Verify that by default the functionality of saving new monomers from c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',
@@ -721,7 +721,7 @@ test(`15. Verify that by default the functionality of saving new monomers from c
 
   await createMonomer(page, {
     type: MonomerType.AminoAcid,
-    symbol: Peptide.Peptide.alias,
+    code: Peptide.Peptide.alias,
     name: 'Peptide Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     HELMAlias: 'CustomHELMAliasPeptide',

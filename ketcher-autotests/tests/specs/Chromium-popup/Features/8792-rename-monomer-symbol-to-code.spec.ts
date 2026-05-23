@@ -134,8 +134,7 @@ test.describe('Rename monomer symbol to monomer code:', () => {
     // Try to submit to trigger validation
     await createMonomerDialog.submit();
 
-    // Verify that an error message appears (the exact text may vary, but should indicate duplicate)
-    // We'll look for common duplicate-related error message patterns
+    // Verify that an error message appears (should indicate duplicate)
     expect(
       await NotificationMessageBanner(
         page,

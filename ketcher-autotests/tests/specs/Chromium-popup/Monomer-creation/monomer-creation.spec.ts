@@ -588,7 +588,7 @@ test(`9. Check that mandatory fields validation is shown when submitting empty w
    *      5. Validate that Type drop-down is prefilled with CHEM
    *      6. Press Submit button
    *      7. Verify that the error message is displayed
-   *      8. Take screenshot to validate that Symbol field is highlighted as mandatory
+   *      8. Take screenshot to validate that Code field is highlighted as mandatory
    *
    * Version 3.11
    */
@@ -1014,7 +1014,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      symbol: `Test11-${index}`,
+      code: `Test11-${index}`,
       name: eligableName.value,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1072,7 +1072,7 @@ for (const eligableSymbol of eligableSymbols) {
 
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      symbol: eligableSymbol.value,
+      code: eligableSymbol.value,
       name: 'Temp',
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1447,7 +1447,7 @@ const monomersToCreate = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid',
+    code: 'AminoAcid',
     name: 'Amino Acid Test monomer',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
     libraryCard: Peptide.AminoAcid,
@@ -1456,7 +1456,7 @@ const monomersToCreate = [
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar',
+    code: 'Sugar',
     name: 'Sugar Test monomer',
     libraryCard: Sugar.Sugar,
     helm: 'RNA1{[Sugar]}$$$$V2.0',
@@ -1464,7 +1464,7 @@ const monomersToCreate = [
   // {
   //   description: '3. Base',
   //   type: MonomerType.Base,
-  //   symbol: 'Base',
+  //   code: 'Base',
   //   name: 'Base Test monomer',
   //   naturalAnalogue: NucleotideNaturalAnalogue.A,
   //   libraryCard: Base.Base,
@@ -1472,7 +1472,7 @@ const monomersToCreate = [
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate',
+    code: 'Phosphate',
     name: 'Phosphate Test monomer',
     libraryCard: Phosphate.Phosphate,
     helm: 'RNA1{[Phosphate]}$$$$V2.0',
@@ -1480,7 +1480,7 @@ const monomersToCreate = [
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide',
+    code: 'Nucleotide',
     name: 'Nucleotide Test monomer',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
     libraryCard: Nucleotide.Nucleotide,
@@ -1489,7 +1489,7 @@ const monomersToCreate = [
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM',
+    code: 'CHEM',
     name: 'CHEM Test monomer',
     libraryCard: Chem.CHEM,
     helm: 'CHEM1{[CHEM]}$$$$V2.0',
@@ -1527,7 +1527,7 @@ for (const monomerToCreate of monomersToCreate) {
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const monomer = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
+      monomerAlias: monomerToCreate.code,
     });
     expect(await monomer.count()).toEqual(1);
 
@@ -1616,7 +1616,7 @@ for (const monomerToCreate of monomersToCreate) {
     await Library(page).clickMonomerAutochain(monomerToCreate.libraryCard);
 
     const monomer = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
+      monomerAlias: monomerToCreate.code,
     });
     expect(await monomer.count()).toEqual(1);
   });
@@ -1667,7 +1667,7 @@ for (const monomerToCreate of monomersToCreate) {
     });
 
     const monomer = getMonomerLocator(page, {
-      monomerAlias: monomerToCreate.symbol,
+      monomerAlias: monomerToCreate.code,
     });
     expect(await monomer.count()).toEqual(1);
   });
@@ -1677,40 +1677,40 @@ const monomersToCreate25 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid25',
+    code: 'AminoAcid25',
     name: 'Amino Acid Test monomer for test 25',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar25',
+    code: 'Sugar25',
     name: 'Sugar Test monomer for test 25',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base25',
+    code: 'Base25',
     name: 'Base Test monomer for test 25',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate25',
+    code: 'Phosphate25',
     name: 'Phosphate Test monomer for test 25',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide25',
+    code: 'Nucleotide25',
     name: 'Nucleotide Test monomer for test 25',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM25',
+    code: 'CHEM25',
     name: 'CHEM Test monomer for test 25',
   },
 ];
@@ -1746,7 +1746,7 @@ for (const monomerToCreate of monomersToCreate25) {
     await CommonLeftToolbar(page).erase();
 
     const monomerOnMicro = getAbbreviationLocator(page, {
-      name: monomerToCreate.symbol,
+      name: monomerToCreate.code,
     });
     expect(await monomerOnMicro.count()).toEqual(1);
 
@@ -1760,40 +1760,40 @@ const monomersToCreate26 = [
   {
     description: '1. Amino Acid',
     type: MonomerType.AminoAcid,
-    symbol: 'AminoAcid26',
+    code: 'AminoAcid26',
     name: 'Amino Acid Test monomer for test 26',
     naturalAnalogue: AminoAcidNaturalAnalogue.A,
   },
   {
     description: '2. Sugar',
     type: MonomerType.Sugar,
-    symbol: 'Sugar26',
+    code: 'Sugar26',
     name: 'Sugar Test monomer for test 26',
   },
   {
     description: '3. Base',
     type: MonomerType.Base,
-    symbol: 'Base26',
+    code: 'Base26',
     name: 'Base Test monomer for test 26',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '4. Phosphate',
     type: MonomerType.Phosphate,
-    symbol: 'Phosphate26',
+    code: 'Phosphate26',
     name: 'Phosphate Test monomer for test 26',
   },
   {
     description: '5. Nucleotide',
     type: MonomerType.NucleotideMonomer,
-    symbol: 'Nucleotide26',
+    code: 'Nucleotide26',
     name: 'Nucleotide Test monomer for test 26',
     naturalAnalogue: NucleotideNaturalAnalogue.A,
   },
   {
     description: '6. CHEM',
     type: MonomerType.CHEM,
-    symbol: 'CHEM26',
+    code: 'CHEM26',
     name: 'CHEM Test monomer for test 26',
   },
 ];
@@ -4145,7 +4145,7 @@ for (const monomerToCreate of monomersToCreate) {
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
-        monomerAlias: monomerToCreate.symbol,
+        monomerAlias: monomerToCreate.code,
       });
       await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
         x: 100,
@@ -4207,7 +4207,7 @@ for (const monomerToCreate of monomersToCreate) {
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {
-        monomerAlias: monomerToCreate.symbol,
+        monomerAlias: monomerToCreate.code,
       });
       await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
         x: 100,
@@ -4269,7 +4269,7 @@ for (const monomerToCreate of monomersToCreate) {
         LayoutMode.Flex,
       );
       const monomerOnMacro = getMonomerLocator(page, {
-        monomerAlias: monomerToCreate.symbol,
+        monomerAlias: monomerToCreate.code,
       });
       await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
         x: 100,
@@ -4337,7 +4337,7 @@ for (const monomerToCreate of monomersToCreate) {
         LayoutMode.Snake,
       );
       const monomerOnMacro = getMonomerLocator(page, {
-        monomerAlias: monomerToCreate.symbol,
+        monomerAlias: monomerToCreate.code,
       });
       await Library(page).dragMonomerOnCanvas(monomerConnectTo.monomer, {
         x: 100,

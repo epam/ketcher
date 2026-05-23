@@ -501,7 +501,7 @@ export async function createMonomer(
   page: Page,
   options: {
     type: MonomerType;
-    symbol: string;
+    code: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
     modificationTypes?: (
@@ -521,7 +521,7 @@ export async function createMonomer(
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(options.type);
-  await createMonomerDialog.setCode(options.symbol);
+  await createMonomerDialog.setCode(options.code);
   await createMonomerDialog.setName(options.name);
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);

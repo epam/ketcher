@@ -53,26 +53,36 @@ interface ModificationTypeItem {
   value: string;
 }
 
+const MONOMER_TYPES_WITH_NATURAL_ANALOGUE = [
+  KetMonomerClass.AminoAcid,
+  KetMonomerClass.Base,
+  KetMonomerClass.RNA,
+];
+const MONOMER_TYPES_WITH_HELM_ALIAS = [
+  KetMonomerClass.AminoAcid,
+  KetMonomerClass.Base,
+  KetMonomerClass.Sugar,
+  KetMonomerClass.Phosphate,
+];
+const MONOMER_TYPES_WITH_BILN_ALIAS = [
+  KetMonomerClass.AminoAcid,
+  KetMonomerClass.CHEM,
+];
+
 const getAliasFieldsVisibility = (
   type: KetMonomerClass | 'rnaPreset' | undefined,
 ) => {
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-      KetMonomerClass.CHEM,
-    ].includes(type as KetMonomerClass);
+  const displayHelmAlias = MONOMER_TYPES_WITH_HELM_ALIAS.includes(
+    type as KetMonomerClass,
+  );
+  const displayBilnAlias = MONOMER_TYPES_WITH_BILN_ALIAS.includes(
+    type as KetMonomerClass,
+  );
 
   return {
-    displayAliases,
-    // CHEM monomers support BILN aliases, while HELM remains unavailable for CHEM.
-    displayHelmAlias: displayAliases && type !== KetMonomerClass.CHEM,
-    // BILN aliases are defined only for amino-acid and CHEM monomers.
-    displayBilnAlias:
-      type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM,
+    displayAliases: displayHelmAlias || displayBilnAlias,
+    displayHelmAlias,
+    displayBilnAlias,
   };
 };
 
@@ -157,7 +167,11 @@ const MonomerCreationWizardFields = (
     return null;
   }
 
+  const displayNaturalAnalogue =
+    props.showNaturalAnalogue !== false &&
+    MONOMER_TYPES_WITH_NATURAL_ANALOGUE.includes(type as KetMonomerClass);
   const displayModificationTypes = type === KetMonomerClass.AminoAcid;
+  const displayAttachmentPoints = type !== KetMonomerClass.Phosphate;
   const { displayAliases, displayHelmAlias, displayBilnAlias } =
     getAliasFieldsVisibility(type);
 
@@ -201,7 +215,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
+        {displayNaturalAnalogue && (
           <AttributeField
             title="Natural analogue"
             control={
@@ -220,55 +234,68 @@ const MonomerCreationWizardFields = (
         )}
       </div>
 
-      <div className={styles.divider} />
+      {(displayAttachmentPoints || attachmentPointsExtra) && (
+        <div className={styles.divider} />
+      )}
 
-      <div
-        className={clsx(styles.attributesFields, selectStyles.selectContainer)}
-      >
-        {attachmentPointsExtra && (
-          <div className={styles.attachmentPointsExtra}>
-            {attachmentPointsExtra}
-          </div>
-        )}
-        <div className={styles.attachmentPointsHeader}>
-          <p className={styles.attachmentPointsTitle}>Attachment points</p>
-          <span
-            className={styles.attachmentPointInfoIcon}
-            title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
-            data-testid="attachment-point-info-icon"
-          >
-            <Icon name="about" />
-          </span>
+      {(displayAttachmentPoints || attachmentPointsExtra) && (
+        <div
+          className={clsx(
+            styles.attributesFields,
+            selectStyles.selectContainer,
+          )}
+        >
+          {attachmentPointsExtra && (
+            <div className={styles.attachmentPointsExtra}>
+              {attachmentPointsExtra}
+            </div>
+          )}
+          {displayAttachmentPoints && (
+            <>
+              <div className={styles.attachmentPointsHeader}>
+                <p className={styles.attachmentPointsTitle}>
+                  Attachment points
+                </p>
+                <span
+                  className={styles.attachmentPointInfoIcon}
+                  title="To add new attachment points, right-click and mark atoms as leaving groups or connection points."
+                  data-testid="attachment-point-info-icon"
+                >
+                  <Icon name="about" />
+                </span>
+              </div>
+              {(assignedAttachmentPoints.size > 0 ||
+                readonlyAttachmentPoints.length > 0) && (
+                <div className={styles.attachmentPoints}>
+                  {Array.from(assignedAttachmentPoints.entries()).map(
+                    ([name, atomPair]) => (
+                      <AttachmentPoint
+                        name={name}
+                        editor={editor}
+                        onNameChange={handleAttachmentPointNameChange}
+                        onLeavingAtomChange={handleLeavingAtomChange}
+                        onRemove={handleAttachmentPointRemove}
+                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                      />
+                    ),
+                  )}
+                  {readonlyAttachmentPoints.map(
+                    ({ name: attachmentPointName, leavingAtomLabel }) => (
+                      <ReadonlyAttachmentPoint
+                        key={`readonly-${attachmentPointName}`}
+                        name={attachmentPointName}
+                        leavingAtomLabel={leavingAtomLabel}
+                        editor={editor}
+                        onLeavingAtomChange={onReadonlyLeavingAtomChange}
+                      />
+                    ),
+                  )}
+                </div>
+              )}
+            </>
+          )}
         </div>
-        {(assignedAttachmentPoints.size > 0 ||
-          readonlyAttachmentPoints.length > 0) && (
-          <div className={styles.attachmentPoints}>
-            {Array.from(assignedAttachmentPoints.entries()).map(
-              ([name, atomPair]) => (
-                <AttachmentPoint
-                  name={name}
-                  editor={editor}
-                  onNameChange={handleAttachmentPointNameChange}
-                  onLeavingAtomChange={handleLeavingAtomChange}
-                  onRemove={handleAttachmentPointRemove}
-                  key={`${name}-${atomPair[0]}-${atomPair[1]}`}
-                />
-              ),
-            )}
-            {readonlyAttachmentPoints.map(
-              ({ name: attachmentPointName, leavingAtomLabel }) => (
-                <ReadonlyAttachmentPoint
-                  key={`readonly-${attachmentPointName}`}
-                  name={attachmentPointName}
-                  leavingAtomLabel={leavingAtomLabel}
-                  editor={editor}
-                  onLeavingAtomChange={onReadonlyLeavingAtomChange}
-                />
-              ),
-            )}
-          </div>
-        )}
-      </div>
+      )}
 
       {displayModificationTypes && (
         <>

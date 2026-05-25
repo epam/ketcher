@@ -663,6 +663,37 @@ describe('CoreEditor', () => {
       rootElement.remove();
     });
 
+    it('should ignore right click on element outside ketcherRootElement', () => {
+      const outsideElement = document.createElement('div');
+      document.body.appendChild(outsideElement);
+
+      const preventDefaultSpy = jest.fn();
+      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        clientX: 0,
+        clientY: 0,
+        cancelable: true,
+      });
+      Object.defineProperty(event, 'preventDefault', {
+        value: preventDefaultSpy,
+        writable: true,
+      });
+      outsideElement.dispatchEvent(event);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(rightClickSelectedMonomersHandler).not.toHaveBeenCalled();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+      outsideElement.remove();
+    });
+
     it('should select monomer on right click when it was not selected', () => {
       const svgElementWithBBox = SVGElement.prototype as SVGElement & {
         getBBox?: () => DOMRect;

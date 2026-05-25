@@ -799,6 +799,7 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
       const target = event.target as Node | null;
+      // Guard: only handle events whose target is inside this editor's root element
       if (
         !this.ketcherRootElement ||
         !target ||

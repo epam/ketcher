@@ -194,6 +194,7 @@
         "id": "D___Aspartic acid",
         "fullName": "Aspartic acid",
         "alias": "D",
+        "aliasBILN": "D",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,

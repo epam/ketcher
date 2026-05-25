@@ -34,6 +34,8 @@ import { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class BondTool implements Tool {
+  private static readonly DRAG_START_THRESHOLD_PX = 10;
+
   private readonly editor: Editor;
   private readonly atomProps: { label: string };
   private readonly bondProps: any;
@@ -45,11 +47,31 @@ class BondTool implements Tool {
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;
     if (editor.selection()?.bonds) {
-      const action = fromBondsAttrs(
-        editor.render.ctab,
-        editor.selection().bonds,
-        bondProps,
-      );
+      const struct = editor.render.ctab;
+      const molecule = struct.molecule;
+      const functionalGroups = molecule.functionalGroups;
+      const selectedBonds = editor.selection().bonds;
+
+      if (functionalGroups.size) {
+        const fgIds = new Set<number>();
+        for (const bondId of selectedBonds) {
+          const fgId = FunctionalGroup.findFunctionalGroupByBond(
+            molecule,
+            functionalGroups,
+            bondId,
+          );
+          if (fgId !== null) {
+            fgIds.add(fgId);
+          }
+        }
+        if (fgIds.size) {
+          this.editor.event.removeFG.dispatch({ fgIds: [...fgIds] });
+          this.isNotActiveTool = true;
+          return;
+        }
+      }
+
+      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;
@@ -129,6 +151,9 @@ class BondTool implements Tool {
     this.editor.selection(null);
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, rnd),
+      pageX0: event.clientX,
+      pageY0: event.clientY,
+      hasStartedDragging: false,
       item:
         attachmentAtomId === undefined
           ? ci
@@ -149,6 +174,9 @@ class BondTool implements Tool {
       return true;
     }
     if (this.dragCtx) {
+      if (!this.isDragStartThresholdReached(event, this.dragCtx)) {
+        return true;
+      }
       return this.handleDragMove(event);
     }
     this.editor.hover(
@@ -156,6 +184,22 @@ class BondTool implements Tool {
       null,
       event,
     );
+    return true;
+  }
+
+  private isDragStartThresholdReached(event, dragCtx) {
+    if (dragCtx.hasStartedDragging) {
+      return true;
+    }
+
+    const dx = event.clientX - dragCtx.pageX0;
+    const dy = event.clientY - dragCtx.pageY0;
+    const distance = Math.hypot(dx, dy);
+    if (distance < BondTool.DRAG_START_THRESHOLD_PX) {
+      return false;
+    }
+
+    dragCtx.hasStartedDragging = true;
     return true;
   }
 

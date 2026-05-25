@@ -137,4 +137,4 @@ export const MultiTailedArrow = async (
   return multiTailedArrow;
 };
 
-export type MultiTailedArrowType = ReturnType<typeof MultiTailedArrow>;
+export type MultiTailedArrowType = Awaited<ReturnType<typeof MultiTailedArrow>>;

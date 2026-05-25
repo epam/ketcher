@@ -471,7 +471,7 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
     'monomerTemplate' +
     _betweenEntries +
     _idtAliases +
-    'base=_nucleotide1IDT,ep3=/nucleotide1_ep3/,ep5=/nucleotide1_ep5/,internal=/nucleotide1_internal/' +
+    'base=_nuc1IDT,ep3=/nuc1ep3/,ep5=/nuc1ep5/,internal=/nuc1int/' +
     _betweenEntries +
     _endToken;
 
@@ -482,16 +482,16 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
   ).toBeTruthy();
   expect(
     await Library(page).getMonomerIDTAliasBase(Nucleotide._Nucleotide1),
-  ).toContain('_nucleotide1IDT');
+  ).toContain('_nuc1IDT');
   expect(
     await Library(page).getMonomerIDTAliasEp3(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep3/');
+  ).toContain('/nuc1ep3/');
   expect(
     await Library(page).getMonomerIDTAliasEp5(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep5/');
+  ).toContain('/nuc1ep5/');
   expect(
     await Library(page).getMonomerIDTAliasInternal(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_internal/');
+  ).toContain('/nuc1int/');
 });
 
 test.fail(
@@ -829,3 +829,53 @@ test.fail(
     expect(await Library(page).isMonomerExist(Preset._A3)).toBeTruthy();
   },
 );
+
+test('Case 29: Update Library item with HELM alias longer than 23 symbols logs an error', async () => {
+  /*
+   * AUTOTEST_REQUEST_URL: N/A
+   * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
+   * 3. Verify that API logs an error
+   *
+   * Version 3.16
+   */
+  const sdfFile =
+    _Base1Body +
+    _type +
+    'monomerTemplate' +
+    _betweenEntries +
+    _aliasHELM +
+    '123456789012345678901234' +
+    _betweenEntries +
+    _endToken;
+  type ConsoleCaptureWindow = typeof window & {
+    capturedConsoleErrors: string[];
+    originalConsoleError: typeof console.error;
+  };
+
+  await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
+
+    window.ketcher.logging.enabled = true;
+    testWindow.capturedConsoleErrors = [];
+    testWindow.originalConsoleError = console.error;
+    console.error = (...args) => {
+      testWindow.capturedConsoleErrors.push(args.flat().join(' '));
+    };
+  });
+
+  const error = await updateMonomersLibrary(page, sdfFile);
+  const consoleMessages = await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
+
+    console.error = testWindow.originalConsoleError;
+    return testWindow.capturedConsoleErrors;
+  });
+
+  expect(error).toBeNull();
+  expect(consoleMessages.join('\n')).toContain(
+    'The HELM alias must be no more than 23 symbols long.',
+  );
+});

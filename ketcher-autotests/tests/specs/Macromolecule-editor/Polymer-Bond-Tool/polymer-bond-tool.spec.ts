@@ -797,7 +797,9 @@ const connectionVariants = [
 ];
 
 connectionVariants.forEach(({ from, to }) => {
-  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Flex, Sequence)`, async () => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Flex, Sequence)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Flex and Sequence modes.
@@ -809,7 +811,6 @@ connectionVariants.forEach(({ from, to }) => {
       5. Switch to Sequence mode
       6. Take another screenshot
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     const firstMonomer = getMonomerLocator(page, Peptide.C);
     const secondMonomer = getMonomerLocator(page, Peptide.dC);
@@ -845,7 +846,9 @@ const connectionVariants2 = [
 ];
 
 connectionVariants2.forEach(({ from, to }) => {
-  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Snake, Sequence)`, async () => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Snake, Sequence)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Snake and Sequence modes.
@@ -856,7 +859,6 @@ connectionVariants2.forEach(({ from, to }) => {
       4. Switch to Sequence mode
       5. Take another screenshot
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     const firstMonomer = getMonomerLocator(page, Peptide.C);
     const secondMonomer = getMonomerLocator(page, Peptide.dC);
     await openFileAndAddToCanvasMacro(
@@ -883,7 +885,9 @@ connectionVariants2.forEach(({ from, to }) => {
   });
 });
 
-test('Save and Open structure with long bonds to/from KET', async () => {
+test('Save and Open structure with long bonds to/from KET', async ({
+  FlexCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6167
     Description: Long bond can be saved and opened to/from KET.
@@ -894,7 +898,6 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const firstMonomer = getMonomerLocator(page, Peptide.C);
   const secondMonomer = getMonomerLocator(page, Peptide.dC);
   await openFileAndAddToCanvasMacro(
@@ -1107,7 +1110,9 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
   }
 });
 
-test('Check that for snake mode, snapping should only happen at 4 radial lines (every 90 degrees)', async () => {
+test('Check that for snake mode, snapping should only happen at 4 radial lines (every 90 degrees)', async ({
+  SnakeCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6215
     Description: For snake mode, snapping only happen at 4 radial lines (every 90 degrees).
@@ -1116,7 +1121,6 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/two-peptides-connected.ket',
@@ -1140,7 +1144,9 @@ test('Check that for snake mode, snapping should only happen at 4 radial lines (
   }
 });
 
-test('Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle', async () => {
+test('Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle', async ({
+  FlexCanvas: _,
+}) => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6215
     Description: Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle.
@@ -1149,7 +1155,6 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/three-monomer-connected-by-bond.ket',

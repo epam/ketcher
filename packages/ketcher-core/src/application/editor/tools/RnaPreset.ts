@@ -17,7 +17,8 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -73,6 +74,20 @@ class RnaPresetTool implements Tool {
       return;
     }
 
+    let phosphatePosition: Vec2 | undefined;
+    if (this.phosphatePreviewRenderer) {
+      const phosphateOffset =
+        getRnaPresetPhosphatePosition(this) === 'left'
+          ? -SnakeLayoutCellWidth
+          : SnakeLayoutCellWidth;
+      phosphatePosition = Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPositionOfCanvas.x + phosphateOffset,
+          this.editor.lastCursorPositionOfCanvas.y,
+        ),
+      );
+    }
+
     const { command: modelChanges, monomers } =
       this.editor.drawingEntitiesManager.addRnaPreset({
         sugar: this.sugar,
@@ -83,17 +98,7 @@ class RnaPresetTool implements Tool {
           ),
         ),
         phosphate: this.phosphate,
-        phosphatePosition: this.phosphatePreviewRenderer
-          ? Coordinates.canvasToModel(
-              new Vec2(
-                this.editor.lastCursorPositionOfCanvas.x +
-                  (getRnaPresetPhosphatePosition(this) === 'left'
-                    ? -SnakeLayoutCellWidth
-                    : SnakeLayoutCellWidth),
-                this.editor.lastCursorPositionOfCanvas.y,
-              ),
-            )
-          : undefined,
+        phosphatePosition,
         rnaBase: this.rnaBase,
         rnaBasePosition: this.rnaBasePreviewRenderer
           ? Coordinates.canvasToModel(

@@ -13,24 +13,20 @@ export type AttachmentPointSelectData = {
   currentLeavingAtomOption?: Option;
 };
 
+// Unicode subscript digits — used instead of <sub> so the subscript renders
+// correctly inside the MUI Select dropdown regardless of dropdown styling.
+// implicitH is always a single digit (atoms can have at most 9 implicit H).
+const SUBSCRIPT_DIGITS = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+
 // Helper to get the display label with hydrogens for an atom type
 const getAtomTypeDisplayLabel = (
   label: string,
   implicitH: number,
 ): React.ReactNode => {
   if (implicitH > 0) {
-    return implicitH > 1 ? (
-      <>
-        {label}
-        {AtomLabel.H}
-        <sub>{implicitH}</sub>
-      </>
-    ) : (
-      <>
-        {label}
-        {AtomLabel.H}
-      </>
-    );
+    return implicitH > 1
+      ? `${label}${AtomLabel.H}${SUBSCRIPT_DIGITS[implicitH]}`
+      : `${label}${AtomLabel.H}`;
   }
   return label;
 };

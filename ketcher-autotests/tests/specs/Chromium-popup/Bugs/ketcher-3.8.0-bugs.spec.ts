@@ -449,7 +449,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -549,6 +549,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await takeEditorScreenshot(page);
+    await TextEditorDialog(page).cancel();
   });
 
   test('Case 20: Unnecessary leaving groups (R-groups) not appear upon "Removing Abbreviation" of expanded monomer when an attachment point is occupied', async ({

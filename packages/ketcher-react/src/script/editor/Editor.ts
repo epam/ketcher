@@ -1368,6 +1368,7 @@ class Editor implements KetcherEditor {
       naturalAnalogue,
       modificationTypes,
       aliasHELM,
+      aliasBILN,
       hidden,
     } = data;
 
@@ -1416,6 +1417,7 @@ class Editor implements KetcherEditor {
       naturalAnalogShort: naturalAnalogueToUse,
       modificationTypes,
       aliasHELM,
+      aliasBILN,
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,
@@ -1605,17 +1607,18 @@ class Editor implements KetcherEditor {
     });
 
     // Collect external bonds (bonds crossing the selection boundary)
+    const selectedOriginalAtoms = new Set(this.originalSelection.atoms ?? []);
     const externalBonds: Bond[] = [];
     this.originalStruct.bonds.forEach((bond) => {
       if (
-        this.originalSelection.atoms?.includes(bond.begin) &&
-        !this.originalSelection.atoms?.includes(bond.end)
+        selectedOriginalAtoms.has(bond.begin) &&
+        !selectedOriginalAtoms.has(bond.end)
       ) {
         externalBonds.push(bond);
       }
       if (
-        this.originalSelection.atoms?.includes(bond.end) &&
-        !this.originalSelection.atoms?.includes(bond.begin)
+        selectedOriginalAtoms.has(bond.end) &&
+        !selectedOriginalAtoms.has(bond.begin)
       ) {
         externalBonds.push(bond);
       }
@@ -1708,10 +1711,8 @@ class Editor implements KetcherEditor {
 
       // Re-add external bonds (crossing the selection boundary).
       externalBonds.forEach((bond) => {
-        const isBeginSelected = this.originalSelection.atoms?.includes(
-          bond.begin,
-        );
-        const isEndSelected = this.originalSelection.atoms?.includes(bond.end);
+        const isBeginSelected = selectedOriginalAtoms.has(bond.begin);
+        const isEndSelected = selectedOriginalAtoms.has(bond.end);
 
         if (isBeginSelected && !isEndSelected) {
           const wizardId = originalToSelectedAtomsIdMap.get(bond.begin);
@@ -1781,6 +1782,34 @@ class Editor implements KetcherEditor {
           true,
         ),
       );
+
+      const createdMonomers = new Set(
+        monomersData.map(({ monomer }) => monomer),
+      );
+      const selectedAtoms = new Set<number>();
+      const selectedBonds = new Set<number>();
+      const finalStruct = this.struct();
+
+      finalStruct.sgroups.forEach((sgroup) => {
+        const sgroupMonomer = (sgroup as { monomer?: unknown }).monomer;
+        if (!sgroup.isMonomer || !createdMonomers.has(sgroupMonomer)) {
+          return;
+        }
+
+        SGroup.getAtoms(finalStruct, sgroup).forEach((atomId) => {
+          selectedAtoms.add(atomId);
+        });
+        SGroup.getBonds(finalStruct, sgroup).forEach((bondId) => {
+          selectedBonds.add(bondId);
+        });
+      });
+
+      if (selectedAtoms.size > 0 || selectedBonds.size > 0) {
+        this.selection({
+          atoms: Array.from(selectedAtoms),
+          bonds: Array.from(selectedBonds),
+        });
+      }
     }, 0);
   }
 
@@ -1913,6 +1942,20 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.render.update(true);
+  }
+
+  setProblematicAtoms(problematicAtoms: Set<number>) {
+    if (!this.monomerCreationState) {
+      KetcherLogger.error(
+        'Can not set problematic atoms. There is no monomerCreationState',
+      );
+
+      return;
+    }
+
+    this.monomerCreationState.problematicAtoms = problematicAtoms;
     this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
     this.render.update(true);
   }
@@ -2657,11 +2700,13 @@ class Editor implements KetcherEditor {
         this.explicitSelected().atoms,
       );
       if (stereoFlags.length !== 0) {
-        this._selection?.enhancedFlags
-          ? (this._selection.enhancedFlags = Array.from(
-              new Set([...this._selection.enhancedFlags, ...stereoFlags]),
-            ))
-          : (res.enhancedFlags = stereoFlags);
+        if (this._selection?.enhancedFlags) {
+          this._selection.enhancedFlags = Array.from(
+            new Set([...this._selection.enhancedFlags, ...stereoFlags]),
+          );
+        } else {
+          res.enhancedFlags = stereoFlags;
+        }
       }
     }
 

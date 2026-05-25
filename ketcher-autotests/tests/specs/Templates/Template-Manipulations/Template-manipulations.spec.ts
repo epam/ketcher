@@ -378,6 +378,7 @@ test.describe('Template Manupulations', () => {
     await takeEditorScreenshot(page);
     await zoomSelector.click();
     await takeEditorScreenshot(page);
+    await page.keyboard.press('Escape');
   });
 
   test('Save as *.mol file', async () => {

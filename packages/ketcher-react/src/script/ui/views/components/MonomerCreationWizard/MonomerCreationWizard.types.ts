@@ -16,7 +16,8 @@ export type WizardFormFieldId =
   | 'symbol'
   | 'name'
   | 'naturalAnalogue'
-  | 'aliasHELM';
+  | 'aliasHELM'
+  | 'aliasBILN';
 
 export type RnaPresetWizardStateFieldId =
   | 'base'
@@ -57,7 +58,16 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
+  | 'notUniqueBILNAlias'
+  | 'invalidBILNAlias'
   | 'invalidRnaPresetStructure'
+  | 'rnaPresetAtomsOutsideComponents'
+  | 'rnaPresetAtomsInMultipleComponents'
+  | 'rnaPresetMissingComponents'
+  | 'rnaPresetInvalidSugarConnectionBonds'
+  | 'rnaPresetUnexpectedBasePhosphateBond'
+  | 'rnaPresetInvalidSugarBaseConnectionAttachmentPoints'
+  | 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints'
   | 'notUniquePresetCode'
   | 'invalidPresetCode'
   | 'invalidPhosphatePositionAttachmentPoints'
@@ -94,6 +104,7 @@ export type RnaPresetWizardStatePresetFieldValue = {
   errors: {
     name?: boolean;
     phosphatePosition?: boolean;
+    components?: boolean;
   };
   notifications: WizardNotifications;
   manuallyModifiedSymbols: {
@@ -167,6 +178,7 @@ export type RnaPresetWizardAction =
       errors: {
         name?: boolean;
         phosphatePosition?: boolean;
+        components?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
     }

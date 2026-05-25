@@ -2,13 +2,13 @@ import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerRendererFactory } from './monomerRendererFactory';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import { UsageInMacromolecule } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -38,7 +38,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       scale,
     );
 
-    const [, MonomerRenderer] = monomerFactory(
+    const [, MonomerRenderer] = monomerRendererFactory(
       this.monomer.monomers[0].monomerItem,
     );
 

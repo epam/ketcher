@@ -150,10 +150,8 @@ function postLoadMer(_sgroup: SGroup): void {
 }
 
 function postLoadCop(sgroup: SGroup): void {
-  sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
-    .trim()
-    .toLowerCase();
-  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
+  // COP post-load is identical to GEN.
+  postLoadGen(sgroup);
 }
 
 function postLoadCro(_sgroup: SGroup): void {

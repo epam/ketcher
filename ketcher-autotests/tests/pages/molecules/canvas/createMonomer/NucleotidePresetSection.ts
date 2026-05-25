@@ -15,7 +15,7 @@ type PresetTabLocators = {
 
 type BaseTabLocators = {
   maskAsBaseButton: Locator;
-  symbolEditbox: Locator;
+  codeEditbox: Locator;
   nameEditbox: Locator;
   naturalAnalogueCombobox: Locator;
   aliasesSection: Locator & AliasesSectionLocators;
@@ -23,13 +23,13 @@ type BaseTabLocators = {
 
 type SugarTabLocators = {
   maskAsSugarButton: Locator;
-  symbolEditbox: Locator;
+  codeEditbox: Locator;
   nameEditbox: Locator;
   aliasesSection: Locator & AliasesSectionLocators;
 };
 type PhosphateTabLocators = {
   maskAsPhosphateButton: Locator;
-  symbolEditbox: Locator;
+  codeEditbox: Locator;
   nameEditbox: Locator;
   aliasesSection: Locator & AliasesSectionLocators;
 };
@@ -49,7 +49,7 @@ export const NucleotidePresetSection = (page: Page) => {
 
     baseTab: Object.assign(page.getByTestId(NucleotidePresetTab.Base), {
       maskAsBaseButton: page.getByTestId('Mark-as-base-button'),
-      symbolEditbox: page.getByTestId('symbol-input'),
+      codeEditbox: page.getByTestId('symbol-input'),
       nameEditbox: page.getByTestId('name-input'),
       naturalAnalogueCombobox: page.getByTestId('natural-analogue-picker'),
       aliasesSection: Object.assign(page.getByTestId('aliases-accordion'), {
@@ -62,7 +62,7 @@ export const NucleotidePresetSection = (page: Page) => {
 
     sugarTab: Object.assign(page.getByTestId(NucleotidePresetTab.Sugar), {
       maskAsSugarButton: page.getByTestId('Mark-as-sugar-button'),
-      symbolEditbox: page.getByTestId('symbol-input'),
+      codeEditbox: page.getByTestId('symbol-input'),
       nameEditbox: page.getByTestId('name-input'),
       aliasesSection: Object.assign(page.getByTestId('aliases-accordion'), {
         helmAliasEditbox: page.getByTestId('helm-alias-input'),
@@ -76,7 +76,7 @@ export const NucleotidePresetSection = (page: Page) => {
       page.getByTestId(NucleotidePresetTab.Phosphate),
       {
         maskAsPhosphateButton: page.getByTestId('Mark-as-phosphate-button'),
-        symbolEditbox: page.getByTestId('symbol-input'),
+        codeEditbox: page.getByTestId('symbol-input'),
         nameEditbox: page.getByTestId('name-input'),
         aliasesSection: Object.assign(page.getByTestId('aliases-accordion'), {
           helmAliasEditbox: page.getByTestId('helm-alias-input'),
@@ -90,6 +90,11 @@ export const NucleotidePresetSection = (page: Page) => {
 
   return {
     ...locators,
+
+    async setPhosphatePosition(position: '3' | '5') {
+      await this.openTab(NucleotidePresetTab.Phosphate);
+      await page.getByTestId(`phosphate-position-${position}-button`).click();
+    },
 
     async isTabOpened(tab: NucleotidePresetTab) {
       const tabButton = page.getByTestId(tab);
@@ -160,7 +165,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupBase(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       naturalAnalogue?: NucleotideNaturalAnalogue;
       HELMAlias?: string;
@@ -172,8 +177,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsBase();
 
-      if (options.symbol) {
-        await locators.baseTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.baseTab.codeEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.baseTab.nameEditbox.fill(options.name);
@@ -192,7 +197,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupSugar(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       HELMAlias?: string;
     }) {
@@ -203,8 +208,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsSugar();
 
-      if (options.symbol) {
-        await locators.sugarTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.sugarTab.codeEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.sugarTab.nameEditbox.fill(options.name);
@@ -219,7 +224,7 @@ export const NucleotidePresetSection = (page: Page) => {
     async setupPhosphate(options: {
       atomIds: number[];
       bondIds: number[];
-      symbol?: string;
+      code?: string;
       name?: string;
       HELMAlias?: string;
     }) {
@@ -230,8 +235,8 @@ export const NucleotidePresetSection = (page: Page) => {
       });
       await this.markAsPhosphate();
 
-      if (options.symbol) {
-        await locators.phosphateTab.symbolEditbox.fill(options.symbol);
+      if (options.code) {
+        await locators.phosphateTab.codeEditbox.fill(options.code);
       }
       if (options.name) {
         await locators.phosphateTab.nameEditbox.fill(options.name);

@@ -19,7 +19,7 @@ import {
   ReRxnPlus,
   ReSGroup,
   ReStruct,
-} from 'application/render';
+} from 'application/render/restruct';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';

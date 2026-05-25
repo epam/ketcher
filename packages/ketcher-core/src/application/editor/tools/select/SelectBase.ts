@@ -38,7 +38,7 @@ import {
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
 
@@ -198,11 +198,13 @@ abstract class SelectBase implements BaseTool {
       width: number;
       height: number;
     },
+    startAngle?: number,
   ) {
     return {
       center: Coordinates.modelToCanvas(center),
       boundingBox: this.getCanvasBbox(bbox),
       cursor: this.editor.lastCursorPosition,
+      startAngle,
     };
   }
 
@@ -242,6 +244,7 @@ abstract class SelectBase implements BaseTool {
       const viewParams = this.buildRotationViewParams(
         this.rotationCenter,
         bbox,
+        this.rotationStartAngle,
       );
       this.editor.transientDrawingView.showRotation({
         ...viewParams,
@@ -470,8 +473,7 @@ abstract class SelectBase implements BaseTool {
     movementDelta: Vec2,
   ) {
     const results: GroupCenterSnapResult[] = [];
-    const selectedEntitiesBbox =
-      DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    const selectedEntitiesBbox = getStructureBbox(selectedEntities);
     const selectedEntitiesCenter = new Vec2(
       selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
       selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
@@ -483,10 +485,7 @@ abstract class SelectBase implements BaseTool {
       for (let j = i + 1; j < connectedMonomers.length; j++) {
         const monomerA = connectedMonomers[i];
         const monomerB = connectedMonomers[j];
-        const pairBbox = DrawingEntitiesManager.getStructureBbox([
-          monomerA,
-          monomerB,
-        ]);
+        const pairBbox = getStructureBbox([monomerA, monomerB]);
         const pairCenter = new Vec2(
           pairBbox.left + pairBbox.width / 2,
           pairBbox.top + pairBbox.height / 2,
@@ -1301,6 +1300,7 @@ abstract class SelectBase implements BaseTool {
         const viewParams = this.buildRotationViewParams(
           this.rotationCenter,
           bbox,
+          this.rotationStartAngle,
         );
         this.editor.transientDrawingView.showRotation({
           ...viewParams,

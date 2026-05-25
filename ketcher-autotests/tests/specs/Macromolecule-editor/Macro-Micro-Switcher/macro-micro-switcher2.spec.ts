@@ -63,7 +63,7 @@ import {
 import {
   getArrowLocator,
   getPlusLocator,
-} from '@utils/canvas/arrow-signes/getArrow';
+} from '@utils/canvas/arrow-signes/getArrowLocator';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';

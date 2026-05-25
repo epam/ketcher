@@ -86,13 +86,13 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10013
      * Description: Amino acid monomer type should show Name, Code, and Natural analogue fields,
-     * Modification section, HELM alias only (no BILN), and Attachment points section.
+     * Modification section, HELM alias and BILN alias, and Attachment points section.
      * Scenario:
      * 1. Open monomer creation wizard
      * 2. Select Amino acid monomer type
      * 3. Verify Name, Code, and Natural analogue fields are present
      * 4. Verify Modification section IS present
-     * 5. Verify Aliases section IS present and contains HELM alias only (no BILN)
+     * 5. Verify Aliases section IS present and contains HELM alias and BILN alias
      * 6. Verify Attachment points section is present
      *
      * Version 3.12.0
@@ -313,7 +313,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 2. Select Nucleotide (monomer) type
      * 3. Verify Name, Code, and Natural analogue fields are present
      * 4. Verify Modification section is NOT shown
-     * 5. Verify Aliases section IS present, but only BILN alias fields are shown (no HELM)
+     * 5. Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
      * 6. Verify Attachment points section is present
      *
      * Version 3.12.0
@@ -338,15 +338,6 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
 
     // Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
     await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
-
-    // Expand aliases section to check available aliases
-    // await createMonomerDialog.expandAliasesSection();
-
-    // For Nucleotide (monomer), based on current implementation both aliases might be visible
-    // This needs to be verified against actual requirements
-    // await expect(
-    //   createMonomerDialog.aliasesSection.helmAliasEditbox,
-    // ).toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();

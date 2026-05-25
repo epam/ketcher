@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
   ModificationType,
@@ -389,7 +389,7 @@ export const CreateMonomerDialog = (page: Page) => {
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
-      // await aliasesSection.helmAliasEditbox.waitFor();
+      await expect(aliasesSection).toHaveAttribute('aria-expanded', 'true');
     },
 
     async collapseAliasesSection() {

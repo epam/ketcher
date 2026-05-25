@@ -42,7 +42,7 @@ import {
   UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { AttachmentPointName, attachmentPointNames } from 'domain/types';
+import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
@@ -138,32 +138,26 @@ class ReAtom extends ReObject {
 
     const attachmentPointEntry = Array.from(
       assignedAttachmentPoints.entries(),
-    ).find(([, atomsPair]) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
-      return attachmentAtomId === atomId || leavingAtomId === atomId;
-    });
+    ).find(
+      ([, { attachmentAtomId, leavingAtomId }]) =>
+        attachmentAtomId === atomId || leavingAtomId === atomId,
+    );
 
     if (attachmentPointEntry) {
-      const [attachmentPointName] = attachmentPointEntry;
+      const [attachmentPointId] = attachmentPointEntry;
       hoverElement.hover(
         () => {
           window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'highlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
+            new CustomEvent<string>('highlightAttachmentPointControls', {
+              detail: attachmentPointId,
+            }),
           );
         },
         () => {
           window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'resetHighlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
+            new CustomEvent<string>('resetHighlightAttachmentPointControls', {
+              detail: attachmentPointId,
+            }),
           );
         },
       );
@@ -192,10 +186,10 @@ class ReAtom extends ReObject {
 
     const isAtomInAssignedAttachmentPoint = Array.from(
       assignedAttachmentPoints.values(),
-    ).some((atomsPair) => {
-      const [attachmentAtomId, leavingAtomId] = atomsPair;
-      return attachmentAtomId === atomId || leavingAtomId === atomId;
-    });
+    ).some(
+      ({ attachmentAtomId, leavingAtomId }) =>
+        attachmentAtomId === atomId || leavingAtomId === atomId,
+    );
 
     if (isAtomInAssignedAttachmentPoint) {
       return;
@@ -720,13 +714,13 @@ class ReAtom extends ReObject {
         ).reduce(
           (acc, currentPair) => {
             let attachmentAtomsIds = acc[0];
-            const attachmentAtomId = currentPair[0];
+            const { attachmentAtomId } = currentPair;
             if (!attachmentAtomsIds.includes(attachmentAtomId)) {
               attachmentAtomsIds = attachmentAtomsIds.concat(attachmentAtomId);
             }
 
             let leavingAtomsIds = acc[1];
-            const leavingAtomId = currentPair[1];
+            const { leavingAtomId } = currentPair;
             if (!leavingAtomsIds.includes(leavingAtomId)) {
               leavingAtomsIds = leavingAtomsIds.concat(leavingAtomId);
             }
@@ -765,21 +759,20 @@ class ReAtom extends ReObject {
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
-        const attachmentPointName = Array.from(
-          assignedAttachmentPoints.keys(),
-        ).find((key) => {
-          const atomsPair = assignedAttachmentPoints.get(key);
-          assert(atomsPair);
-          return atomsPair[1] === aid;
-        });
+        const attachmentPointEntry = Array.from(
+          assignedAttachmentPoints.entries(),
+        ).find(([, attachmentPoint]) => attachmentPoint.leavingAtomId === aid);
 
-        if (attachmentPointName) {
-          const atomsPair = assignedAttachmentPoints.get(attachmentPointName);
-          assert(atomsPair);
-          const [attachmentAtomId, leavingGroupAtomId] = atomsPair;
+        if (attachmentPointEntry) {
+          const [attachmentPointId, attachmentPoint] = attachmentPointEntry;
+          const {
+            name: attachmentPointName,
+            attachmentAtomId,
+            leavingAtomId,
+          } = attachmentPoint;
 
           const attachmentAtom = struct.atoms.get(attachmentAtomId);
-          const leavingGroupAtom = struct.atoms.get(leavingGroupAtomId);
+          const leavingGroupAtom = struct.atoms.get(leavingAtomId);
 
           assert(attachmentAtom);
           assert(leavingGroupAtom);
@@ -797,7 +790,7 @@ class ReAtom extends ReObject {
           const labelPos = shiftedPos.addScaled(direction, 8);
 
           const isProblematic =
-            problematicAttachmentPoints.has(attachmentPointName);
+            problematicAttachmentPoints.has(attachmentPointId);
 
           const rLabelElement = render.paper
             .text(labelPos.x, labelPos.y, attachmentPointName)
@@ -853,6 +846,10 @@ class ReAtom extends ReObject {
               attachmentPointName,
             );
             element.node?.setAttribute(
+              'data-attachment-point-id',
+              attachmentPointId,
+            );
+            element.node?.setAttribute(
               'data-testid',
               'monomer-attachment-point',
             );
@@ -866,7 +863,7 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
+                  attachmentPointId ||
                 isProblematic
               ) {
                 return;
@@ -876,12 +873,9 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#ffffff' });
 
               window.dispatchEvent(
-                new CustomEvent<AttachmentPointName>(
-                  'highlightAttachmentPointControls',
-                  {
-                    detail: attachmentPointName,
-                  },
-                ),
+                new CustomEvent<string>('highlightAttachmentPointControls', {
+                  detail: attachmentPointId,
+                }),
               );
             },
             // Mouse leave
@@ -890,7 +884,7 @@ class ReAtom extends ReObject {
 
               if (
                 render.monomerCreationState.clickedAttachmentPoint ===
-                  attachmentPointName ||
+                  attachmentPointId ||
                 isProblematic
               ) {
                 return;
@@ -900,10 +894,10 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#333333' });
 
               window.dispatchEvent(
-                new CustomEvent<AttachmentPointName>(
+                new CustomEvent<string>(
                   'resetHighlightAttachmentPointControls',
                   {
-                    detail: attachmentPointName,
+                    detail: attachmentPointId,
                   },
                 ),
               );
@@ -921,7 +915,7 @@ class ReAtom extends ReObject {
             assert(render.monomerCreationState);
 
             render.monomerCreationState.clickedAttachmentPoint =
-              attachmentPointName;
+              attachmentPointId;
 
             background.attr({ opacity: 1 });
             rLabelElement.attr({ fill: '#ffffff' });
@@ -942,7 +936,7 @@ class ReAtom extends ReObject {
         if (connectionAttachmentPoints) {
           const isConnectionAtom = Array.from(
             connectionAttachmentPoints.values(),
-          ).some(([connectionAtomId]) => connectionAtomId === aid);
+          ).some(({ attachmentAtomId }) => attachmentAtomId === aid);
 
           if (isConnectionAtom) {
             // Draw the same blue outline ring used for regular attachment atoms
@@ -970,28 +964,28 @@ class ReAtom extends ReObject {
             const connectionApNames = Array.from(
               connectionAttachmentPoints.entries(),
             )
-              .filter(([, [caid]]) => caid === aid)
-              .map(([apName]) => apName);
+              .filter(([, { attachmentAtomId }]) => attachmentAtomId === aid)
+              .map(([apId]) => apId);
 
             hitArea.hover(
               () => {
                 hitArea.attr({ opacity: 0.15 });
-                connectionApNames.forEach((apName) => {
+                connectionApNames.forEach((apId) => {
                   window.dispatchEvent(
-                    new CustomEvent<AttachmentPointName>(
+                    new CustomEvent<string>(
                       'highlightAttachmentPointControls',
-                      { detail: apName },
+                      { detail: apId },
                     ),
                   );
                 });
               },
               () => {
                 hitArea.attr({ opacity: 0 });
-                connectionApNames.forEach((apName) => {
+                connectionApNames.forEach((apId) => {
                   window.dispatchEvent(
-                    new CustomEvent<AttachmentPointName>(
+                    new CustomEvent<string>(
                       'resetHighlightAttachmentPointControls',
-                      { detail: apName },
+                      { detail: apId },
                     ),
                   );
                 });

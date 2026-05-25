@@ -1,7 +1,14 @@
 import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
-import { AtomLabel, AttachmentPointName, ketcherProvider } from 'ketcher-core';
+import {
+  AtomLabel,
+  AssignedAttachmentPoints,
+  AttachmentPointId,
+  AttachmentPointName,
+  ketcherProvider,
+  KetMonomerClass,
+} from 'ketcher-core';
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
@@ -29,9 +36,11 @@ import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.util
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  assignedAttachmentPoints: AssignedAttachmentPoints;
   readonlyAttachmentPoints?: Array<{
+    id?: AttachmentPointId;
     name: AttachmentPointName;
+    atomId?: number;
     leavingAtomLabel: AtomLabel;
   }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
@@ -107,21 +116,23 @@ const MonomerCreationWizardFields = (
   };
 
   const handleAttachmentPointNameChange = (
-    currentName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    editor.reassignAttachmentPoint(attachmentPointId, newName);
   };
 
   const handleLeavingAtomChange = (
-    apName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+    editor.changeLeavingAtomLabel(attachmentPointId, newLeavingAtomLabel);
   };
 
-  const handleAttachmentPointRemove = (name: AttachmentPointName) => {
-    editor.removeAttachmentPoint(name);
+  const handleAttachmentPointRemove = (
+    attachmentPointId: AttachmentPointId,
+  ) => {
+    editor.removeAttachmentPoint(attachmentPointId);
   };
 
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
@@ -221,22 +232,25 @@ const MonomerCreationWizardFields = (
           readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
             {Array.from(assignedAttachmentPoints.entries()).map(
-              ([name, atomPair]) => (
+              ([attachmentPointId, attachmentPoint]) => (
                 <AttachmentPoint
-                  name={name}
+                  id={attachmentPointId}
+                  name={attachmentPoint.name}
                   editor={editor}
                   onNameChange={handleAttachmentPointNameChange}
                   onLeavingAtomChange={handleLeavingAtomChange}
                   onRemove={handleAttachmentPointRemove}
-                  key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                  key={attachmentPointId}
                 />
               ),
             )}
             {readonlyAttachmentPoints.map(
-              ({ name: attachmentPointName, leavingAtomLabel }) => (
+              ({ id, name: attachmentPointName, atomId, leavingAtomLabel }) => (
                 <ReadonlyAttachmentPoint
-                  key={`readonly-${attachmentPointName}`}
+                  key={`readonly-${id ?? attachmentPointName}`}
+                  id={id}
                   name={attachmentPointName}
+                  atomId={atomId}
                   leavingAtomLabel={leavingAtomLabel}
                   editor={editor}
                   onLeavingAtomChange={onReadonlyLeavingAtomChange}

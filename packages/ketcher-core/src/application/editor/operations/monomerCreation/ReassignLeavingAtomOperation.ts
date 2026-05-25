@@ -1,13 +1,16 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { MonomerCreationState, ReStruct } from 'application/render';
+import {
+  AttachmentPointId,
+  MonomerCreationState,
+  ReStruct,
+} from 'application/render';
 import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
 
 export class ReassignLeavingAtomOperation extends BaseOperation {
   constructor(
     private monomerCreationState: MonomerCreationState,
-    private readonly attachmentPointName: AttachmentPointName,
+    private readonly attachmentPointId: AttachmentPointId,
     private readonly attachmentAtomId: number,
     private readonly newLeavingAtomId: number,
     private readonly previousLeavingAtomId: number,
@@ -18,14 +21,19 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const newAtomPair: [number, number] = [
-      this.attachmentAtomId,
-      this.newLeavingAtomId,
-    ];
+    const attachmentPoint =
+      this.monomerCreationState.assignedAttachmentPoints.get(
+        this.attachmentPointId,
+      );
+    assert(attachmentPoint);
 
     this.monomerCreationState.assignedAttachmentPoints.set(
-      this.attachmentPointName,
-      newAtomPair,
+      this.attachmentPointId,
+      {
+        ...attachmentPoint,
+        attachmentAtomId: this.attachmentAtomId,
+        leavingAtomId: this.newLeavingAtomId,
+      },
     );
 
     this.monomerCreationState = { ...(this.monomerCreationState || {}) };
@@ -38,7 +46,7 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
   invert(): BaseOperation {
     return new ReassignLeavingAtomOperation(
       this.monomerCreationState,
-      this.attachmentPointName,
+      this.attachmentPointId,
       this.attachmentAtomId,
       this.previousLeavingAtomId,
       this.newLeavingAtomId,

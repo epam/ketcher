@@ -105,11 +105,15 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           const attachmentPointName = rLabelElement.getAttribute(
             'data-attachment-point-alias',
           );
-          if (attachmentPointName) {
+          const attachmentPointId = rLabelElement.getAttribute(
+            'data-attachment-point-id',
+          );
+          if (attachmentPointName && attachmentPointId) {
             show({
               id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
               event,
               props: {
+                attachmentPointId,
                 attachmentPointName,
                 ketcherId,
               },

@@ -1,4 +1,8 @@
-import { AttachmentPointName, FunctionalGroup } from 'ketcher-core';
+import {
+  AttachmentPointId,
+  AttachmentPointName,
+  FunctionalGroup,
+} from 'ketcher-core';
 import type { TriggerEvent, PredicateParams } from 'react-contexify';
 import { Selection } from '../../../../editor/Editor';
 
@@ -71,6 +75,7 @@ export interface MultitailArrowContextMenuProps {
 export interface AttachmentPointLabelContextMenuProps
   extends BaseContextMenuProps {
   id: string;
+  attachmentPointId: AttachmentPointId;
   attachmentPointName: AttachmentPointName;
 }
 

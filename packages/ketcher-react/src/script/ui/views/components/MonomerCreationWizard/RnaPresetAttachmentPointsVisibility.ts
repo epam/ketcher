@@ -1,4 +1,5 @@
 import {
+  AssignedAttachmentPoints,
   AttachmentPointName,
   RnaPresetComponentKey,
   Struct,
@@ -11,7 +12,7 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
-type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type AttachmentPointMap = AssignedAttachmentPoints;
 type ComponentAttachmentPointNames = Record<
   RnaPresetComponentKey,
   AttachmentPointName[]
@@ -63,7 +64,7 @@ export const getAttachmentPointsForRnaPresetComponent = (
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([, [attachmentAtomId]]) => componentAtomIds.has(attachmentAtomId),
+      ([, { attachmentAtomId }]) => componentAtomIds.has(attachmentAtomId),
     ),
   );
 };
@@ -142,8 +143,17 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
   struct: Struct,
   componentKey: RnaPresetComponentKey,
   phosphatePosition?: PhosphatePosition,
-): Map<AttachmentPointName, [number, number]> => {
-  const result = new Map<AttachmentPointName, [number, number]>();
+): AttachmentPointMap => {
+  const result: AttachmentPointMap = new Map();
+
+  const addConnectionAttachmentPoint = (
+    id: string,
+    name: AttachmentPointName,
+    attachmentAtomId: number,
+    leavingAtomId: number,
+  ) => {
+    result.set(id, { name, attachmentAtomId, leavingAtomId });
+  };
 
   const baseAtoms = wizardState.base.structure?.atoms ?? [];
   const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
@@ -163,9 +173,19 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
       const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
 
       if (componentKey === 'sugar') {
-        result.set(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
+        addConnectionAttachmentPoint(
+          'sugar-base',
+          AttachmentPointName.R3,
+          sugarAtomId,
+          baseAtomId,
+        );
       } else if (componentKey === 'base') {
-        result.set(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
+        addConnectionAttachmentPoint(
+          'base-sugar',
+          AttachmentPointName.R1,
+          baseAtomId,
+          sugarAtomId,
+        );
       }
     }
   }
@@ -189,9 +209,19 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
         getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
 
       if (componentKey === 'sugar') {
-        result.set(sugarApName, [sugarAtomId, phosphateAtomId]);
+        addConnectionAttachmentPoint(
+          'sugar-phosphate',
+          sugarApName,
+          sugarAtomId,
+          phosphateAtomId,
+        );
       } else if (componentKey === 'phosphate') {
-        result.set(phosphateApName, [phosphateAtomId, sugarAtomId]);
+        addConnectionAttachmentPoint(
+          'phosphate-sugar',
+          phosphateApName,
+          phosphateAtomId,
+          sugarAtomId,
+        );
       }
     }
   }
@@ -207,48 +237,45 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   const atomToComponentMap = getAtomToComponentMap(wizardState);
   const occupiedAttachmentPoints = new Set<AttachmentPointName>();
 
-  assignedAttachmentPoints.forEach(
-    ([attachmentAtomId], attachmentPointName) => {
-      const componentKey = atomToComponentMap.get(attachmentAtomId);
+  assignedAttachmentPoints.forEach(({ name, attachmentAtomId }) => {
+    const componentKey = atomToComponentMap.get(attachmentAtomId);
 
-      if (!componentKey) {
-        return;
-      }
+    if (!componentKey) {
+      return;
+    }
 
-      const atom = struct.atoms.get(attachmentAtomId);
+    const atom = struct.atoms.get(attachmentAtomId);
 
-      if (!atom) {
-        return;
-      }
+    if (!atom) {
+      return;
+    }
 
-      const isOccupiedByPresetComponentConnection = atom.neighbors.some(
-        (halfBondId) => {
-          const halfBond = struct.halfBonds.get(halfBondId);
+    const isOccupiedByPresetComponentConnection = atom.neighbors.some(
+      (halfBondId) => {
+        const halfBond = struct.halfBonds.get(halfBondId);
 
-          if (!halfBond) {
-            return false;
-          }
+        if (!halfBond) {
+          return false;
+        }
 
-          const neighbourAtomId =
-            halfBond.begin === attachmentAtomId ? halfBond.end : halfBond.begin;
-          const neighbourComponentKey = atomToComponentMap.get(neighbourAtomId);
+        const neighbourAtomId =
+          halfBond.begin === attachmentAtomId ? halfBond.end : halfBond.begin;
+        const neighbourComponentKey = atomToComponentMap.get(neighbourAtomId);
 
-          return Boolean(
-            neighbourComponentKey && neighbourComponentKey !== componentKey,
-          );
-        },
-      );
+        return Boolean(
+          neighbourComponentKey && neighbourComponentKey !== componentKey,
+        );
+      },
+    );
 
-      if (isOccupiedByPresetComponentConnection) {
-        occupiedAttachmentPoints.add(attachmentPointName);
-      }
-    },
-  );
+    if (isOccupiedByPresetComponentConnection) {
+      occupiedAttachmentPoints.add(name);
+    }
+  });
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([attachmentPointName]) =>
-        !occupiedAttachmentPoints.has(attachmentPointName),
+      ([, { name }]) => !occupiedAttachmentPoints.has(name),
     ),
   );
 };

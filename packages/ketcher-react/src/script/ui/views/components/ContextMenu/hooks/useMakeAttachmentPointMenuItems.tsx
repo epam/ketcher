@@ -31,19 +31,14 @@ const useMakeAttachmentPointMenuItems = ({
 
   const isAtomInAssignedAttachmentPoint = Array.from(
     assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [attachmentAtomId, leavingAtomId] = atomPair;
-    return (
-      selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId
-    );
-  });
+  ).some(
+    ({ attachmentAtomId, leavingAtomId }) =>
+      selectedAtomId === attachmentAtomId || selectedAtomId === leavingAtomId,
+  );
 
   const isAtomAlreadyLeavingAtom = Array.from(
     assignedAttachmentPoints.values(),
-  ).some((atomPair) => {
-    const [, leavingAtomId] = atomPair;
-    return selectedAtomId === leavingAtomId;
-  });
+  ).some(({ leavingAtomId }) => selectedAtomId === leavingAtomId);
 
   const implicitHydrogen = editor.struct().atoms.get(selectedAtomId)?.implicitH;
 

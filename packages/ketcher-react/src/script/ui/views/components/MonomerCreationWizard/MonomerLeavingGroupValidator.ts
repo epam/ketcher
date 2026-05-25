@@ -1,4 +1,4 @@
-import { KetMonomerClass, AttachmentPointName } from 'ketcher-core';
+import { AssignedAttachmentPoints, KetMonomerClass } from 'ketcher-core';
 import { getValidationRuleForMonomerType } from './MonomerValidationRules';
 import { WizardNotification } from './MonomerCreationWizard.types';
 import { Editor } from 'src/script/editor/Editor';
@@ -25,7 +25,7 @@ const getNotificationIdForMonomerType = (
 export const validateMonomerLeavingGroups = (
   editor: Editor,
   monomerType: KetMonomerClass | 'rnaPreset',
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+  assignedAttachmentPoints: AssignedAttachmentPoints,
 ): Map<string, WizardNotification> => {
   const notifications = new Map<string, WizardNotification>();
   const validationRule = getValidationRuleForMonomerType(monomerType);
@@ -38,12 +38,12 @@ export const validateMonomerLeavingGroups = (
   let hasWarning = false;
 
   for (const requirement of validationRule.requirements) {
-    const attachmentPoint = assignedAttachmentPoints.get(
-      requirement.attachmentPoint,
+    const attachmentPoint = Array.from(assignedAttachmentPoints.values()).find(
+      ({ name }) => name === requirement.attachmentPoint,
     );
 
     if (attachmentPoint) {
-      const [, leavingAtomId] = attachmentPoint;
+      const { leavingAtomId } = attachmentPoint;
       const leavingAtom = struct.atoms.get(leavingAtomId);
 
       if (

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import {
   AtomLabel,
+  AttachmentPointId,
   AttachmentPointClickData,
   AttachmentPointName,
 } from 'ketcher-core';
@@ -16,11 +17,11 @@ import assert from 'assert';
 type Props = {
   data: AttachmentPointClickData;
   onNameChange: (
-    currentName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newName: AttachmentPointName,
   ) => void;
   onLeavingAtomChange: (
-    apName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
   onClose: VoidFunction;
@@ -81,16 +82,13 @@ const AttachmentPointEditPopup = ({
     };
   }, [onClose]);
 
-  const { attachmentPointName, position } = data;
+  const { attachmentPointId, attachmentPointName, position } = data;
 
   assert(editor.monomerCreationState);
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const selectsData = useAttachmentPointSelectsData(
-    editor,
-    attachmentPointName,
-  );
+  const selectsData = useAttachmentPointSelectsData(editor, attachmentPointId);
 
   if (!selectsData) {
     return null;
@@ -98,24 +96,24 @@ const AttachmentPointEditPopup = ({
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== attachmentPointName) {
-      onNameChange(attachmentPointName, newName);
+      onNameChange(attachmentPointId, newName);
     }
     onClose();
   };
 
   const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
-    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointName);
+    const currentAtomPair = assignedAttachmentPoints.get(attachmentPointId);
 
     assert(currentAtomPair);
 
-    const leavingAtomId = currentAtomPair[1];
+    const { leavingAtomId } = currentAtomPair;
     const leavingAtom = editor.struct().atoms.get(leavingAtomId);
     assert(leavingAtom);
 
     const currentLeavingAtomLabel = leavingAtom.label;
 
     if (newLeavingAtomLabel !== currentLeavingAtomLabel) {
-      onLeavingAtomChange(attachmentPointName, newLeavingAtomLabel);
+      onLeavingAtomChange(attachmentPointId, newLeavingAtomLabel);
     }
     onClose();
   };

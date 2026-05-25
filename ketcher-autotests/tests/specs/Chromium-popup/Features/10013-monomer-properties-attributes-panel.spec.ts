@@ -376,7 +376,19 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     await expect(nucleotidePresetSection.presetTab).toBeVisible();
 
     // Component-specific properties should not be shown at the main preset level
-    // (They would be in individual component tabs within the preset section)
+    // (They would be available only in the relevant component tabs within the preset section)
+    const hiddenAtPresetLevelFields = [
+      'Natural analogue',
+      'Modification',
+      'Aliases',
+      'Attachment points',
+    ];
+
+    for (const fieldLabel of hiddenAtPresetLevelFields) {
+      await expect(
+        createMonomerDialog.window.getByText(fieldLabel, { exact: true }),
+      ).not.toBeVisible();
+    }
 
     await takeElementScreenshot(page, createMonomerDialog.window);
     await createMonomerDialog.discard();

@@ -30,7 +30,9 @@ import { isFlipDisabled } from './flips';
 import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
 import { UiAction } from './action.types';
 
-type ToolActionEntry = Partial<UiAction>;
+type ToolActionEntry = Omit<UiAction, 'action'> & {
+  action?: UiAction['action'];
+};
 
 const toolActions: Record<string, ToolActionEntry> = {
   hand: {

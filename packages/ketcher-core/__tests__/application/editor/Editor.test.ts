@@ -1,4 +1,4 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,
@@ -642,9 +642,14 @@ describe('CoreEditor', () => {
   describe('context menu handling', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
+    let rootElement: HTMLDivElement;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
+      rootElement = document.createElement('div');
+      rootElement.classList.add(EditorClassName);
+      document.body.appendChild(rootElement);
+      rootElement.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
         theme: polymerEditorTheme,
@@ -655,6 +660,7 @@ describe('CoreEditor', () => {
     afterEach(() => {
       editor.destroy();
       canvas.remove();
+      rootElement.remove();
     });
 
     it('should select monomer on right click when it was not selected', () => {
@@ -680,7 +686,7 @@ describe('CoreEditor', () => {
       const monomerDomElement = document.createElement('div');
       (monomerDomElement as unknown as { __data__: unknown }).__data__ =
         monomer.renderer;
-      document.body.appendChild(monomerDomElement);
+      rootElement.appendChild(monomerDomElement);
 
       expect(monomer.selected).toBeFalsy();
       monomerDomElement.dispatchEvent(

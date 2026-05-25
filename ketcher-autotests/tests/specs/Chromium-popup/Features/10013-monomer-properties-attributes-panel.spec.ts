@@ -454,16 +454,16 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     await createMonomerDialog.discard();
   });
 
-  test('Case 9 - Fields visibility validation for all monomer types', async () => {
+  test('Case 9 - Fields visibility validation for covered monomer types', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10013
-     * Description: Comprehensive validation that each monomer type shows exactly the required fields
-     * and hides the ones that should not be visible according to the requirements table.
+     * Description: Validation that the covered monomer types show exactly the required fields
+     * and hide the ones that should not be visible according to the requirements table.
      * Scenario:
-     * 1. Test each monomer type systematically
+     * 1. Test each monomer type listed in monomerTypeTests
      * 2. Verify required fields are present
      * 3. Verify prohibited fields are hidden
-     * 4. Document any deviations from requirements
+     * 4. Document any deviations from requirements for the covered types
      *
      * Version 3.12.0
      */

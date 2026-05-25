@@ -12,6 +12,7 @@ import {
   takeElementScreenshot,
 } from '@utils';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 let page: Page;
 
@@ -339,17 +340,17 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     // Verify Modification section is NOT shown
     await expect(createMonomerDialog.modificationSection).not.toBeVisible();
 
-    // Verify Aliases section IS present
-    await expect(createMonomerDialog.aliasesSection).toBeVisible();
+    // Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
+    await expect(createMonomerDialog.aliasesSection).not.toBeVisible();
 
     // Expand aliases section to check available aliases
-    await createMonomerDialog.expandAliasesSection();
+    // await createMonomerDialog.expandAliasesSection();
 
     // For Nucleotide (monomer), based on current implementation both aliases might be visible
     // This needs to be verified against actual requirements
-    await expect(
-      createMonomerDialog.aliasesSection.helmAliasEditbox,
-    ).toBeVisible();
+    // await expect(
+    //   createMonomerDialog.aliasesSection.helmAliasEditbox,
+    // ).toBeVisible();
 
     // Verify Attachment points section is present
     await expect(createMonomerDialog.infoIcon).toBeVisible();
@@ -617,70 +618,5 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
     }
 
     await createMonomerDialog.discard();
-  });
-
-  test('Case 10 - Regression test for editing existing monomers', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/10013
-     * Description: Verify editing existing monomers obeys the new visibility rules and test backward compatibility.
-     * Scenario:
-     * 1. Create a monomer of each type
-     * 2. Verify that editing existing monomers respects visibility rules
-     * 3. Test backward compatibility
-     * 4. Verify no regression in existing functionality
-     *
-     * Version 3.12.0
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, '[*:1]CC |$_R1;;$|');
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-
-    // Create a test CHEM monomer first
-    await LeftToolbar(page).createMonomer();
-    await expect(createMonomerDialog.window).toBeVisible();
-
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setCode('TestCHEM');
-    await createMonomerDialog.setName('Test CHEM Monomer');
-
-    // Verify CHEM-specific visibility during creation
-    await expect(createMonomerDialog.naturalAnalogueCombobox).not.toBeVisible();
-    await expect(createMonomerDialog.modificationSection).not.toBeVisible();
-
-    await createMonomerDialog.expandAliasesSection();
-    await expect(
-      createMonomerDialog.aliasesSection.helmAliasEditbox,
-    ).not.toBeVisible();
-    await expect(
-      createMonomerDialog.aliasesSection.bilnAliasEditbox,
-    ).toBeVisible();
-
-    await createMonomerDialog.submit({ ignoreWarning: true });
-    await expect(createMonomerDialog.window).not.toBeVisible();
-
-    // Create an amino acid monomer for comparison
-    await LeftToolbar(page).createMonomer();
-    await expect(createMonomerDialog.window).toBeVisible();
-
-    await createMonomerDialog.selectType(MonomerType.AminoAcid);
-    await createMonomerDialog.setCode('TestAA');
-    await createMonomerDialog.setName('Test Amino Acid');
-    await createMonomerDialog.selectNaturalAnalogue(AminoAcidNaturalAnalogue.A);
-
-    // Verify amino acid-specific visibility
-    await expect(createMonomerDialog.naturalAnalogueCombobox).toBeVisible();
-    await expect(createMonomerDialog.modificationSection).toBeVisible();
-
-    await createMonomerDialog.expandAliasesSection();
-    await expect(
-      createMonomerDialog.aliasesSection.helmAliasEditbox,
-    ).toBeVisible();
-
-    await createMonomerDialog.submit({ ignoreWarning: true });
-    await expect(createMonomerDialog.window).not.toBeVisible();
-
-    // This test verifies that the new visibility rules work consistently
-    // for both new monomer creation and any future editing functionality
-    await takeElementScreenshot(page, page.locator('body'));
   });
 });

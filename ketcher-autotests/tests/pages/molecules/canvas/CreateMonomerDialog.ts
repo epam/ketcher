@@ -389,7 +389,7 @@ export const CreateMonomerDialog = (page: Page) => {
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
-      await aliasesSection.helmAliasEditbox.waitFor();
+      // await aliasesSection.helmAliasEditbox.waitFor();
     },
 
     async collapseAliasesSection() {

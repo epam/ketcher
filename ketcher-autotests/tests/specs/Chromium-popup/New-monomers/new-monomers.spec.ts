@@ -475,7 +475,7 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
 
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(MonomerType.CHEM);
-  await createMonomerDialog.setSymbol(Chem.SCY5.alias);
+  await createMonomerDialog.setCode(Chem.SCY5.alias);
   await createMonomerDialog.submit();
   expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
 
@@ -511,7 +511,7 @@ test(`14. Verify that creating a duplicate of a new item is not allowed for newl
   await createMonomerDialog.selectType(MonomerType.Phosphate);
 
   for (const phosphate of newPhosphates) {
-    await createMonomerDialog.setSymbol(phosphate.alias);
+    await createMonomerDialog.setCode(phosphate.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
   }
@@ -547,7 +547,7 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
   await createMonomerDialog.selectType(MonomerType.NucleotideMonomer);
 
   for (const nucleotide of newNucleotides) {
-    await createMonomerDialog.setSymbol(nucleotide.alias);
+    await createMonomerDialog.setCode(nucleotide.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
   }
@@ -583,7 +583,7 @@ test(`16. Verify that creating a duplicate of a new item is not allowed for newl
   await createMonomerDialog.selectType(MonomerType.CHEM);
 
   for (const chem of newCHEMs) {
-    await createMonomerDialog.setSymbol(chem.alias);
+    await createMonomerDialog.setCode(chem.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
   }

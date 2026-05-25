@@ -416,6 +416,10 @@ class SelectTool implements Tool {
         this.editor.update(dragCtx.action);
         this.editor.update(true);
       }
+      this.dragCtx = null;
+      editor.event.message.dispatch({ info: false });
+      this.editor.rotateController.rerender();
+      return;
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {

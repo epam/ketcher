@@ -3,16 +3,12 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import {
-  AminoAcidNaturalAnalogue,
-  MonomerType,
-} from '@tests/pages/constants/createMonomerDialog/Constants';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import {
   pasteFromClipboardAndOpenAsNewProject,
   takeElementScreenshot,
 } from '@utils';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 let page: Page;
 

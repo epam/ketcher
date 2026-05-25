@@ -99,7 +99,7 @@ export function removeStructAction(): {
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
-export function load(struct: Struct, options?) {
+export function load(struct: string | Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
     const editor = state.editor as Editor;

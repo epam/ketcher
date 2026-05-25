@@ -64,6 +64,7 @@ import {
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   AmbiguousMonomerType,
@@ -76,12 +77,14 @@ import {
   EditorLineLength,
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  HELM_ALIAS_LENGTH_ERROR_MESSAGE,
   IDT_ALIAS_SLASH_ERROR_MESSAGE,
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
+  isValidHelmAliasLength,
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
@@ -542,6 +545,17 @@ export class CoreEditor {
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
         KetcherLogger.error(errorMessage);
+        return;
+      }
+
+      if (
+        newMonomer.props?.aliasHELM &&
+        !isValidHelmAliasLength(newMonomer.props.aliasHELM)
+      ) {
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -1411,9 +1425,7 @@ export class CoreEditor {
       ]);
       const monomersInChainUsedForAutochain =
         chainsCollection.chains[0].monomers;
-      const chainBbox = DrawingEntitiesManager.getStructureBbox(
-        monomersInChainUsedForAutochain,
-      );
+      const chainBbox = getStructureBbox(monomersInChainUsedForAutochain);
       const canvasWrapperSize = this.zoomTool.canvasWrapperSize;
       const MIN_OFFSET_FROM_RIGHT =
         oneLayoutCellInAngstroms * 5 * editorSettings.macroModeScale;

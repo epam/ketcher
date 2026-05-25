@@ -15,7 +15,8 @@
  ***************************************************************************/
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import {
   BaseMonomerRenderer,
   AmbiguousMonomerRenderer,

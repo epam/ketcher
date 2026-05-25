@@ -704,6 +704,7 @@ class ReAtom extends ReObject {
         assignedAttachmentPoints: allAssignedAttachmentPoints,
         visibleAssignedAttachmentPoints,
         problematicAttachmentPoints,
+        problematicAtoms,
         connectionAttachmentPoints,
       } = render.monomerCreationState;
       // Use the restricted set when a component tab is active, otherwise show all.
@@ -748,6 +749,19 @@ class ReAtom extends ReObject {
 
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
+          restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        if (problematicAtoms?.has(aid)) {
+          const path = this.makeHighlightePlate(
+            restruct,
+            {
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+            },
+            -4,
+          );
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 

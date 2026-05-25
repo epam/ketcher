@@ -67,6 +67,20 @@ export const NotificationMessages: WizardNotificationMessageMap = {
     'The BILN alias must be unique amongst peptide and CHEM monomers.',
   invalidRnaPresetStructure:
     'Structure of rna preset component contains issues. Please adjust the structure.',
+  rnaPresetAtomsOutsideComponents:
+    'Every atom in the loaded structure must belong to a sugar, base, or a phosphate.',
+  rnaPresetAtomsInMultipleComponents:
+    'Every atom in the loaded structure must belong only to one of the components (sugar, base, or phosphate).',
+  rnaPresetMissingComponents:
+    'Every preset must contain at least two components, with sugar being a mandatory component.',
+  rnaPresetInvalidSugarConnectionBonds:
+    'Sugar can only have one single bond with base and one single bond with phosphate.',
+  rnaPresetUnexpectedBasePhosphateBond:
+    "Phosphate and base mustn't have a bond.",
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints:
+    'The bond between sugar and base must be established between R3 of the sugar and R1 of the base.',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints:
+    'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
   notUniquePresetCode: 'The preset code must be unique amongst other presets.',
   invalidPresetCode:
     'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
@@ -99,6 +113,13 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   invalidBILNAlias: 'error',
   notUniqueBILNAlias: 'error',
   invalidRnaPresetStructure: 'error',
+  rnaPresetAtomsOutsideComponents: 'error',
+  rnaPresetAtomsInMultipleComponents: 'error',
+  rnaPresetMissingComponents: 'error',
+  rnaPresetInvalidSugarConnectionBonds: 'error',
+  rnaPresetUnexpectedBasePhosphateBond: 'error',
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints: 'error',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints: 'error',
   notUniquePresetCode: 'error',
   invalidPresetCode: 'error',
   invalidName: 'error',

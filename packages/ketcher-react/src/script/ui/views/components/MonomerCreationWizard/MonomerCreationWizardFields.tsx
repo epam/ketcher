@@ -7,7 +7,6 @@ import {
   AttachmentPointId,
   AttachmentPointName,
   ketcherProvider,
-  KetMonomerClass,
 } from 'ketcher-core';
 import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';

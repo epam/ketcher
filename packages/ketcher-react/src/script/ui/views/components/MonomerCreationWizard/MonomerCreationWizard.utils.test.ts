@@ -22,6 +22,7 @@ describe('getEditInstanceInitialValues', () => {
         Name: 'Cysteine',
         MonomerNaturalAnalogCode: 'C',
         aliasHELM: 'C',
+        aliasBILN: 'C',
         aliasAxoLabs: 'IgnoredAxoLabs',
         idtAliases: {
           base: 'IgnoredIDT',
@@ -36,6 +37,7 @@ describe('getEditInstanceInitialValues', () => {
       name: 'Cysteine_Copy',
       naturalAnalogue: 'C',
       aliasHELM: 'C_Copy',
+      aliasBILN: 'C_Copy',
     });
   });
 
@@ -48,6 +50,7 @@ describe('getEditInstanceInitialValues', () => {
         Name: 'Phosporothioate',
         MonomerNaturalAnalogCode: 'P',
         aliasHELM: 'sp',
+        aliasBILN: 'sp',
         aliasAxoLabs: 'sp',
       }),
     );
@@ -58,6 +61,7 @@ describe('getEditInstanceInitialValues', () => {
       name: 'Phosporothioate_Copy',
       naturalAnalogue: '',
       aliasHELM: 'sp_Copy',
+      aliasBILN: 'sp_Copy',
     });
   });
 });

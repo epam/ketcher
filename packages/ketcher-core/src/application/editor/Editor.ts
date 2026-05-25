@@ -481,6 +481,7 @@ export class CoreEditor {
       skippedItems.push({ name, reason });
     };
     let didCommitAnyItem = false;
+    const preExistingLibrarySize = this._monomersLibrary.length;
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -544,32 +545,34 @@ export class CoreEditor {
         return;
       }
 
-      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
-        if (areSameMonomers(monomer, newMonomer)) {
-          return false;
-        }
+      const aliasCollisionExists = this._monomersLibrary
+        .slice(0, preExistingLibrarySize)
+        .some((monomer) => {
+          if (areSameMonomers(monomer, newMonomer)) {
+            return false;
+          }
 
-        return (
-          (Boolean(newMonomer.props?.aliasHELM) &&
-            monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
-          (newMonomerHasBilnAliasUniquenessScope &&
-            Boolean(newMonomer.props?.aliasBILN) &&
-            hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
-            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
-          (Boolean(newMonomer.props?.idtAliases?.base) &&
-            monomer.props?.idtAliases?.base ===
-              newMonomer.props?.idtAliases?.base) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
-            monomer.props?.idtAliases?.modifications?.endpoint3 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
-            monomer.props?.idtAliases?.modifications?.endpoint5 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
-            monomer.props?.idtAliases?.modifications?.internal ===
-              newMonomer.props?.idtAliases?.modifications?.internal)
-        );
-      });
+          return (
+            (Boolean(newMonomer.props?.aliasHELM) &&
+              monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
+            (newMonomerHasBilnAliasUniquenessScope &&
+              Boolean(newMonomer.props?.aliasBILN) &&
+              hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
+              monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
+            (Boolean(newMonomer.props?.idtAliases?.base) &&
+              monomer.props?.idtAliases?.base ===
+                newMonomer.props?.idtAliases?.base) ||
+            (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
+              monomer.props?.idtAliases?.modifications?.endpoint3 ===
+                newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
+            (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
+              monomer.props?.idtAliases?.modifications?.endpoint5 ===
+                newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
+            (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
+              monomer.props?.idtAliases?.modifications?.internal ===
+                newMonomer.props?.idtAliases?.modifications?.internal)
+          );
+        });
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);

@@ -6,7 +6,12 @@ import { Item } from 'react-contexify';
 import useMonomerExpansionHandlers, {
   canExpandMonomer,
 } from '../hooks/useMonomerExpansionHandlers';
-import { Bond, ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import {
+  Bond,
+  isAmbiguousMonomerLibraryItem,
+  ketcherProvider,
+  MonomerMicromolecule,
+} from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import { getEditInstanceInitialValues } from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
@@ -17,7 +22,7 @@ const MacromoleculeMenuItems = (
   const { ketcherId } = useAppContext();
   const [action, hidden] = useMonomerExpansionHandlers();
   const functionalGroups = props.propsFromTrigger?.functionalGroups;
-
+  const sgroup = functionalGroups?.[0]?.relatedSGroup;
   const multipleMonomersSelected = (functionalGroups?.length ?? 0) > 1;
 
   const expandingDisabled =
@@ -31,7 +36,8 @@ const MacromoleculeMenuItems = (
     : 'Collapse monomer';
   const editInstanceDisabled =
     multipleMonomersSelected ||
-    !(functionalGroups?.[0]?.relatedSGroup instanceof MonomerMicromolecule);
+    !(sgroup instanceof MonomerMicromolecule) ||
+    isAmbiguousMonomerLibraryItem(sgroup.monomer.monomerItem);
 
   const handleEditInstance = () => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

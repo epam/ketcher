@@ -27,6 +27,14 @@ import type { Struct } from 'domain/entities/struct';
 import type ReStruct from './restruct';
 import type { RenderOptions } from '../render.types';
 
+function getFromMap<T>(map: Map<number, T>, key: number): T {
+  const value = map.get(key);
+  if (value === undefined) {
+    throw new Error(`Map entry not found for key ${key}`);
+  }
+  return value;
+}
+
 class ReLoop extends ReObject {
   loop: Loop;
   centre: Vec2;
@@ -52,10 +60,10 @@ class ReLoop extends ReObject {
 
     this.centre = new Vec2();
     hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid)!;
-      const bond = restruct.bonds.get(hb.bid)!;
+      const hb = getFromMap(molecule.halfBonds, hbid);
+      const bond = getFromMap(restruct.bonds, hb.bid);
       const apos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.begin)!.a.pp,
+        getFromMap(restruct.atoms, hb.begin).a.pp,
         options,
       );
       if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false;
@@ -65,8 +73,8 @@ class ReLoop extends ReObject {
 
     loop.convex = true;
     for (let k = 0; k < hbs.length; ++k) {
-      const hba = molecule.halfBonds.get(hbs[k])!;
-      const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length])!;
+      const hba = getFromMap(molecule.halfBonds, hbs[k]);
+      const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
       const angle = Math.atan2(
         Vec2.cross(hba.dir, hbb.dir),
         Vec2.dot(hba.dir, hbb.dir),
@@ -77,13 +85,13 @@ class ReLoop extends ReObject {
     this.centre = this.centre.scaled(1.0 / hbs.length);
     this.radius = -1;
     hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid)!;
+      const hb = getFromMap(molecule.halfBonds, hbid);
       const apos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.begin)!.a.pp,
+        getFromMap(restruct.atoms, hb.begin).a.pp,
         options,
       );
       const bpos = Scale.modelToCanvas(
-        restruct.atoms.get(hb.end)!.a.pp,
+        getFromMap(restruct.atoms, hb.end).a.pp,
         options,
       );
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
@@ -96,7 +104,7 @@ class ReLoop extends ReObject {
     // Skip rendering the aromatic circle when the loop sits entirely inside one contracted sgroup
     const atomIds = new Set<number>();
     hbs.forEach((hbid) => {
-      const hb = molecule.halfBonds.get(hbid)!;
+      const hb = getFromMap(molecule.halfBonds, hbid);
       atomIds.add(hb.begin);
       atomIds.add(hb.end);
     });
@@ -120,8 +128,8 @@ class ReLoop extends ReObject {
     } else {
       let pathStr = '';
       for (let k = 0; k < hbs.length; ++k) {
-        const hba = molecule.halfBonds.get(hbs[k])!;
-        const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length])!;
+        const hba = getFromMap(molecule.halfBonds, hbs[k]);
+        const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
         const angle = Math.atan2(
           Vec2.cross(hba.dir, hbb.dir),
           Vec2.dot(hba.dir, hbb.dir),
@@ -129,7 +137,7 @@ class ReLoop extends ReObject {
         const halfAngle = (Math.PI - angle) / 2;
         const dir = hbb.dir.rotate(halfAngle);
         const pi = Scale.modelToCanvas(
-          restruct.atoms.get(hbb.begin)!.a.pp,
+          getFromMap(restruct.atoms, hbb.begin).a.pp,
           options,
         );
         let sin = Math.sin(halfAngle);

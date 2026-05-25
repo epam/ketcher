@@ -70,6 +70,10 @@ export type TwoStrandedNodeSelection = BaseNodeSelection & {
 export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
+export type SetCaretPositionOptions = {
+  afterRowEnd?: boolean;
+};
+
 export class SequenceRenderer {
   private static caretPositionValue = -1;
   private static lastUserDefinedCaretPositionValue = 0;
@@ -468,7 +472,7 @@ export class SequenceRenderer {
 
   public static setCaretPosition(
     caretPosition: number,
-    options?: { afterRowEnd?: boolean },
+    options?: SetCaretPositionOptions,
   ) {
     this.isCaretAfterRowEnd = options?.afterRowEnd ?? false;
     const editor = provideEditorInstance();
@@ -770,6 +774,18 @@ export class SequenceRenderer {
     return operation;
   }
 
+  private static redrawCaretOnRenderer(
+    renderer: BaseSequenceItemRenderer,
+    afterRowEnd: boolean,
+  ) {
+    renderer.removeCaret();
+    if (afterRowEnd) {
+      renderer.showCaretAfterNode();
+    } else {
+      renderer.showCaret();
+    }
+  }
+
   private static redrawCaretOnBothStrands(
     node: ITwoStrandedChainItem,
     afterRowEnd: boolean,
@@ -781,18 +797,9 @@ export class SequenceRenderer {
       return;
     }
 
-    const redraw = (r: BaseSequenceItemRenderer) => {
-      r.removeCaret();
-      if (afterRowEnd) {
-        r.showCaretAfterNode();
-      } else {
-        r.showCaret();
-      }
-    };
-
-    redraw(renderer);
+    this.redrawCaretOnRenderer(renderer, afterRowEnd);
     if (renderer.antisenseNodeRenderer) {
-      redraw(renderer.antisenseNodeRenderer);
+      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, afterRowEnd);
     }
   }
 
@@ -802,7 +809,7 @@ export class SequenceRenderer {
     const lastNodeInRow = currentRow[currentRow.length - 1];
 
     return (
-      !!currentNode &&
+      Boolean(currentNode) &&
       currentNode === lastNodeInRow &&
       !(lastNodeInRow?.senseNode instanceof EmptySequenceNode)
     );

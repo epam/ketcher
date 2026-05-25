@@ -849,7 +849,10 @@ test('Case 29: Update Library item with HELM alias longer than 23 symbols logs a
     return testWindow.capturedConsoleErrors;
   });
 
-  expect(error).toBeNull();
+  expect(error).not.toBeNull();
+  expect(error).toContain(
+    'The HELM alias must be no more than 23 symbols long.',
+  );
   expect(consoleMessages.join('\n')).toContain(
     'The HELM alias must be no more than 23 symbols long.',
   );

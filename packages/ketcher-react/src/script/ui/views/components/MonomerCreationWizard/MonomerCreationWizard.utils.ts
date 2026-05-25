@@ -33,5 +33,6 @@ export const getEditInstanceInitialValues = (
     name: getCopiedValue(name),
     naturalAnalogue,
     aliasHELM: getCopiedValue(props.aliasHELM),
+    aliasBILN: getCopiedValue(props.aliasBILN),
   };
 };

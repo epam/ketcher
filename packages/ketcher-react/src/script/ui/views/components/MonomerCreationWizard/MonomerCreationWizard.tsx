@@ -979,6 +979,11 @@ const MonomerCreationWizard = () => {
       fieldId: 'aliasHELM',
       value: initialValues.aliasHELM,
     });
+    wizardStateDispatch({
+      type: 'SetFieldValue',
+      fieldId: 'aliasBILN',
+      value: initialValues.aliasBILN,
+    });
     setModificationTypes([]);
   }, [editor?.monomerCreationState?.editInstanceInitialValues]);
 

@@ -39,6 +39,7 @@ export type MonomerCreationInitialValues = {
   name: string;
   naturalAnalogue: string;
   aliasHELM: string;
+  aliasBILN: string;
 };
 
 export type RnaComponentAtoms = Map<

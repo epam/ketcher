@@ -187,6 +187,11 @@ export interface Selection {
   [MULTITAIL_ARROW_KEY]?: Array<number>;
 }
 
+export type FinishNewMonomersCreationOptions = {
+  rnaPresetName?: string;
+  phosphatePosition?: '3' | '5';
+};
+
 class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: any;
@@ -1449,10 +1454,7 @@ class Editor implements KetcherEditor {
 
   finishNewMonomersCreation(
     monomersData,
-    {
-      rnaPresetName,
-      phosphatePosition,
-    }: { rnaPresetName?: string; phosphatePosition?: '3' | '5' } = {},
+    { rnaPresetName, phosphatePosition }: FinishNewMonomersCreationOptions = {},
   ) {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);

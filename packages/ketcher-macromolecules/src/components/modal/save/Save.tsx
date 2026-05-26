@@ -101,6 +101,30 @@ export const Save = ({
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();
 
+  const getCanvasSvgElement = (): SVGSVGElement | undefined => {
+    if (editor?.canvas) {
+      return editor.canvas;
+    }
+
+    const canvasRoot = document.querySelector('[data-testid="ketcher-canvas"]');
+    if (!canvasRoot) {
+      return undefined;
+    }
+
+    if (canvasRoot instanceof SVGSVGElement) {
+      return canvasRoot;
+    }
+
+    const drawnStructures = canvasRoot.querySelector('.drawn-structures');
+    const svgFromDrawn = drawnStructures?.closest('svg');
+    if (svgFromDrawn instanceof SVGSVGElement) {
+      return svgFromDrawn;
+    }
+
+    const firstSvg = canvasRoot.querySelector('svg');
+    return firstSvg instanceof SVGSVGElement ? firstSvg : undefined;
+  };
+
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
@@ -114,15 +138,10 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const canvas = getCanvasSvgElement();
+      const svgData = canvas
+        ? getSvgFromDrawnStructures(canvas, 'preview', 10)
+        : undefined;
       setSvgData(svgData);
       return;
     }
@@ -181,15 +200,10 @@ export const Save = ({
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const canvas = getCanvasSvgElement();
+      const svgData = canvas
+        ? getSvgFromDrawnStructures(canvas, 'file', 10)
+        : undefined;
       if (!svgData) {
         onClose();
         return;

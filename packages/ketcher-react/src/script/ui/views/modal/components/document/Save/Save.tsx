@@ -37,7 +37,9 @@ import {
   StructServiceOptions,
   GenerateImageOptions,
   SupportedFormatProperties,
+  provideEditorInstance,
 } from 'ketcher-core';
+import { saveAs } from 'file-saver';
 
 import { Dialog } from '../../../../components';
 import Tabs from 'src/script/ui/component/view/Tabs';
@@ -87,9 +89,7 @@ interface LoadingStateProps {
 
 interface ImageContentProps {
   classes: typeof classes;
-  format: string;
   imageSrc: string;
-  isCleanStruct: boolean;
 }
 
 interface BinaryContentProps {
@@ -172,6 +172,9 @@ interface AppState {
   };
 }
 
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
+const DEFAULT_EXPORT_MARGIN = 10;
+
 // Extracted components for better performance and React best practices
 const LoadingState = ({ classes }: LoadingStateProps) => (
   <div className={classes.loadingCirclesContainer}>
@@ -179,20 +182,11 @@ const LoadingState = ({ classes }: LoadingStateProps) => (
   </div>
 );
 
-const ImageContent = ({
-  classes,
-  format,
-  imageSrc,
-  isCleanStruct,
-}: ImageContentProps) => (
+const ImageContent = ({ classes, imageSrc }: ImageContentProps) => (
   <div className={classes.imageContainer}>
-    {!isCleanStruct && (
-      <img
-        src={`data:image/${format}+xml;base64,${imageSrc}`}
-        alt={`${format} preview`}
-        data-testid="preview-area"
-      />
-    )}
+    {imageSrc ? (
+      <img src={imageSrc} alt="image preview" data-testid="preview-area" />
+    ) : null}
   </div>
 );
 
@@ -237,6 +231,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
+  private previewObjectUrl?: string;
 
   constructor(props: SaveDialogProps) {
     super(props);
@@ -305,8 +300,229 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   }
 
+  componentWillUnmount() {
+    if (this.previewObjectUrl) {
+      URL.revokeObjectURL(this.previewObjectUrl);
+      this.previewObjectUrl = undefined;
+    }
+  }
+
   isImageFormat = (format: string): format is OutputFormatType => {
     return !!getPropertiesByImgFormat(format);
+  };
+
+  private getCanvasSvgElement = (): SVGSVGElement | undefined => {
+    const renderCanvas = (this.props.editor as any)?.render?.paper?.canvas;
+    if (renderCanvas instanceof SVGSVGElement) {
+      return renderCanvas;
+    }
+
+    const testCanvas = document.querySelector('[data-testid="canvas"]');
+    if (testCanvas instanceof SVGSVGElement) {
+      return testCanvas;
+    }
+
+    const editor = provideEditorInstance();
+    if (editor?.canvas) {
+      return editor.canvas;
+    }
+
+    const canvasRoot = document.querySelector('[data-testid="ketcher-canvas"]');
+    if (!canvasRoot) {
+      return undefined;
+    }
+
+    if (canvasRoot instanceof SVGSVGElement) {
+      return canvasRoot;
+    }
+
+    const drawnStructures = canvasRoot.querySelector('.drawn-structures');
+    const svgFromDrawn = drawnStructures?.closest('svg');
+    if (svgFromDrawn instanceof SVGSVGElement) {
+      return svgFromDrawn;
+    }
+
+    const firstSvg = canvasRoot.querySelector('svg');
+    return firstSvg instanceof SVGSVGElement ? firstSvg : undefined;
+  };
+
+  private getCanvasExportBounds = (svg: SVGSVGElement) => {
+    const graphics = Array.from(svg.querySelectorAll('*')).filter((el) => {
+      if (!(el instanceof SVGGraphicsElement)) return false;
+      if (el.closest('defs')) return false;
+      if (el.id === 'rectangle-selection-area') return false;
+      return true;
+    });
+
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
+
+    graphics.forEach((el) => {
+      try {
+        const bbox = el.getBBox();
+        if (!bbox.width && !bbox.height) return;
+
+        const ctm = el.getCTM();
+        if (!ctm) return;
+
+        const corners = [
+          new DOMPoint(bbox.x, bbox.y),
+          new DOMPoint(bbox.x + bbox.width, bbox.y),
+          new DOMPoint(bbox.x, bbox.y + bbox.height),
+          new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
+        ].map((point) => point.matrixTransform(ctm));
+
+        corners.forEach((point) => {
+          minX = Math.min(minX, point.x);
+          minY = Math.min(minY, point.y);
+          maxX = Math.max(maxX, point.x);
+          maxY = Math.max(maxY, point.y);
+        });
+      } catch {
+        // Ignore elements that cannot provide bounds in current render state.
+      }
+    });
+
+    if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+      return undefined;
+    }
+
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  };
+
+  private getCanvasSvgSnapshot = (): string | undefined => {
+    const sourceSvg = this.getCanvasSvgElement();
+    if (!sourceSvg) {
+      return undefined;
+    }
+
+    const bounds = this.getCanvasExportBounds(sourceSvg);
+    if (!bounds) {
+      return undefined;
+    }
+
+    const clonedSvg = sourceSvg.cloneNode(true) as SVGSVGElement;
+    clonedSvg.querySelector('#rectangle-selection-area')?.remove();
+
+    const viewBoxX = bounds.x - DEFAULT_EXPORT_MARGIN;
+    const viewBoxY = bounds.y - DEFAULT_EXPORT_MARGIN;
+    const viewBoxWidth = bounds.width + DEFAULT_EXPORT_MARGIN * 2;
+    const viewBoxHeight = bounds.height + DEFAULT_EXPORT_MARGIN * 2;
+
+    return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}'>${clonedSvg.innerHTML}</svg>`;
+  };
+
+  getCanvasSvg = (): string | undefined => {
+    return this.getCanvasSvgSnapshot();
+  };
+
+  createSvgPreviewUrl = (svgData: string): string => {
+    if (this.previewObjectUrl) {
+      URL.revokeObjectURL(this.previewObjectUrl);
+      this.previewObjectUrl = undefined;
+    }
+
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    this.previewObjectUrl = URL.createObjectURL(svgBlob);
+    return this.previewObjectUrl;
+  };
+
+  convertSvgToPngDataUrl = (svgData: string): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const objectUrl = URL.createObjectURL(blob);
+      const image = new Image();
+
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.naturalWidth || image.width;
+        canvas.height = image.naturalHeight || image.height;
+        const context = canvas.getContext('2d');
+
+        if (!context) {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error('Cannot create canvas context for PNG export'));
+          return;
+        }
+
+        context.drawImage(image, 0, 0);
+        URL.revokeObjectURL(objectUrl);
+        resolve(canvas.toDataURL('image/png'));
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('Cannot convert SVG to PNG'));
+      };
+
+      image.src = objectUrl;
+    });
+  };
+
+  getServerImageDataUrl = async (
+    type: OutputFormatType,
+    structStr: string,
+    options: StructServiceOptions,
+  ): Promise<string> => {
+    const base64 = await this.props.server.generateImageAsBase64(structStr, {
+      ...options,
+      outputFormat: type,
+    } as GenerateImageOptions);
+
+    return type === 'svg'
+      ? `data:image/svg+xml;base64,${base64}`
+      : `data:image/png;base64,${base64}`;
+  };
+
+  saveImage = async (): Promise<void> => {
+    const { filename, format } = this.props.formState.result;
+
+    if (!(this.isValidStringFormat(format) && this.isImageFormat(format))) {
+      return;
+    }
+
+    try {
+      const svgData = this.getCanvasSvg();
+
+      if (svgData) {
+        if (format === 'svg') {
+          const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+          saveAs(svgBlob, `${filename}.svg`);
+          this.props.onOk();
+          return;
+        }
+
+        const pngDataUrl = await this.convertSvgToPngDataUrl(svgData);
+        const pngBlob = await fetch(pngDataUrl).then((response) =>
+          response.blob(),
+        );
+        saveAs(pngBlob, `${filename}.png`);
+        this.props.onOk();
+        return;
+      }
+
+      const { imageFormat, structStr } = this.state;
+      const imageDataUrl = await this.getServerImageDataUrl(
+        imageFormat as OutputFormatType,
+        structStr || '',
+        this.props.options,
+      );
+      const imageBlob = await fetch(imageDataUrl).then((response) =>
+        response.blob(),
+      );
+      saveAs(imageBlob, `${filename}.${imageFormat}`);
+      this.props.onOk();
+    } catch (e) {
+      KetcherLogger.error('Save.jsx::SaveDialog::saveImage', e);
+      this.context.errorHandler(e);
+    }
   };
 
   isBinaryCdxFormat = (format: string): format is SupportedFormat.binaryCdx => {
@@ -345,15 +561,24 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       });
       const serverOptions = { ...options };
 
-      serverOptions.outputFormat = type;
+      return Promise.resolve()
+        .then(() => {
+          const canvasSvg = this.getCanvasSvg();
 
-      return server
-        .generateImageAsBase64(structStr, serverOptions as GenerateImageOptions)
-        .then((base64) => {
+          if (canvasSvg) {
+            return type === 'svg'
+              ? this.createSvgPreviewUrl(canvasSvg)
+              : this.convertSvgToPngDataUrl(canvasSvg);
+          }
+
+          serverOptions.outputFormat = type;
+          return this.getServerImageDataUrl(type, structStr, serverOptions);
+        })
+        .then((imageSrc) => {
           this.setState({
             disableControls: false,
             tabIndex: 0,
-            imageSrc: base64,
+            imageSrc,
             isLoading: false,
           });
         })
@@ -567,14 +792,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     if (isLoading) return <LoadingState classes={classes} />;
 
     if (this.isValidStringFormat(format) && this.isImageFormat(format)) {
-      return (
-        <ImageContent
-          classes={classes}
-          format={format}
-          imageSrc={imageSrc || ''}
-          isCleanStruct={isCleanStruct}
-        />
-      );
+      return <ImageContent classes={classes} imageSrc={imageSrc || ''} />;
     }
     if (this.isValidStringFormat(format) && this.isBinaryCdxFormat(format)) {
       return <BinaryContent classes={classes} textAreaRef={this.textAreaRef} />;
@@ -611,12 +829,10 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   getButtons = (): JSX.Element[] => {
-    const { disableControls, imageFormat, isLoading, structStr } = this.state;
+    const { disableControls, isLoading, structStr } = this.state;
     const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
-
-    options.outputFormat = imageFormat;
 
     const savingStruct =
       this.isValidStringFormat(format) &&
@@ -653,25 +869,22 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     if (this.isValidStringFormat(format) && this.isImageFormat(format)) {
       buttons.push(
-        <SaveButton
-          mode="saveImage"
-          options={options as GenerateImageOptions}
-          data={structStr || ''}
-          filename={filename}
+        <button
           key="save-image-button"
-          type={`image/${format}+xml`}
-          onSave={this.props.onOk}
-          testId="save-button"
+          className={classes.ok}
+          onClick={this.saveImage}
+          type="button"
+          data-testid="save-button"
           disabled={
             disableControls ||
             !formState.valid ||
             isCleanStruct ||
-            !this.props.server
+            !this.props.server ||
+            isLoading
           }
-          className={classes.ok}
         >
           Save
-        </SaveButton>,
+        </button>,
       );
     } else {
       buttons.push(

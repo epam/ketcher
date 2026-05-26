@@ -10,6 +10,95 @@ type Margins = {
   vertical: number;
 };
 
+type ExportBounds = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  isClientRect: boolean;
+};
+
+const getExportBoundingRect = (canvas: SVGSVGElement): ExportBounds | null => {
+  const candidates = Array.from(canvas.querySelectorAll('*')).filter((el) => {
+    if (!(el instanceof SVGGraphicsElement)) return false;
+    if (el.closest('defs')) return false;
+    if (el.id === 'rectangle-selection-area') return false;
+
+    return true;
+  });
+
+  let minSvgX = Number.POSITIVE_INFINITY;
+  let minSvgY = Number.POSITIVE_INFINITY;
+  let maxSvgX = Number.NEGATIVE_INFINITY;
+  let maxSvgY = Number.NEGATIVE_INFINITY;
+
+  candidates.forEach((el) => {
+    if (!(el instanceof SVGGraphicsElement)) return;
+
+    try {
+      const bbox = el.getBBox();
+      if (!bbox.width && !bbox.height) return;
+
+      const ctm = el.getCTM();
+      if (!ctm) return;
+
+      const corners = [
+        new DOMPoint(bbox.x, bbox.y),
+        new DOMPoint(bbox.x + bbox.width, bbox.y),
+        new DOMPoint(bbox.x, bbox.y + bbox.height),
+        new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
+      ].map((point) => point.matrixTransform(ctm));
+
+      corners.forEach((point) => {
+        minSvgX = Math.min(minSvgX, point.x);
+        minSvgY = Math.min(minSvgY, point.y);
+        maxSvgX = Math.max(maxSvgX, point.x);
+        maxSvgY = Math.max(maxSvgY, point.y);
+      });
+    } catch {
+      // Some elements can throw on getBBox in specific states; handled by fallback below.
+    }
+  });
+
+  if (Number.isFinite(minSvgX) && Number.isFinite(minSvgY)) {
+    return {
+      x: minSvgX,
+      y: minSvgY,
+      width: maxSvgX - minSvgX,
+      height: maxSvgY - minSvgY,
+      isClientRect: false,
+    };
+  }
+
+  // Fallback for environments where getBBox/getCTM are not available.
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+
+  candidates.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (!rect.width && !rect.height) return;
+
+    minX = Math.min(minX, rect.x);
+    minY = Math.min(minY, rect.y);
+    maxX = Math.max(maxX, rect.x + rect.width);
+    maxY = Math.max(maxY, rect.y + rect.height);
+  });
+
+  if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+    return null;
+  }
+
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+    isClientRect: true,
+  };
+};
+
 export const getSvgFromDrawnStructures = (
   canvas: SVGSVGElement,
   type: 'preview' | 'file',
@@ -33,8 +122,7 @@ export const getSvgFromDrawnStructures = (
   wrapper.innerHTML = svgInnerHTML;
   // remove #rectangle-selection-area
   wrapper.querySelector('#rectangle-selection-area')?.remove();
-  // remove dynamic elements (scrolls, highlighters, attachment points...)
-  wrapper.querySelectorAll('.dynamic-element')?.forEach((el) => el.remove());
+  // keep all rendered elements in export to avoid losing structural annotations
   // set default cursor, mostly for sequence mode
   wrapper
     .querySelectorAll('text')
@@ -51,9 +139,7 @@ export const getSvgFromDrawnStructures = (
   // preserving other style properties on bond path elements (stroke, fill, stroke-width, etc.)
   svgInnerHTML = svgInnerHTML?.replace(/\bcursor:\s*pointer;\s*/g, '');
 
-  const drawStructureClientRect = canvas
-    ?.getElementsByClassName('drawn-structures')[0]
-    .getBoundingClientRect();
+  const drawStructureClientRect = getExportBoundingRect(canvas);
 
   if (!drawStructureClientRect || !svgInnerHTML) {
     const errorMessage = 'Cannot get drawn structures!';
@@ -63,10 +149,12 @@ export const getSvgFromDrawnStructures = (
 
   const viewBoxX =
     drawStructureClientRect.x -
-    ADDITIONAL_LEFT_MARGIN -
+    (drawStructureClientRect.isClientRect ? ADDITIONAL_LEFT_MARGIN : 0) -
     marginValues.horizontal;
   const viewBoxY =
-    drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
+    drawStructureClientRect.y -
+    (drawStructureClientRect.isClientRect ? ADDITIONAL_TOP_MARGIN : 0) -
+    marginValues.vertical;
   const viewBoxWidth =
     drawStructureClientRect.width + marginValues.horizontal * 2;
   const viewBoxHeight =

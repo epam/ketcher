@@ -13,6 +13,9 @@ import {
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
 type AttachmentPointMap = AssignedAttachmentPoints;
+type AttachmentPointId = AttachmentPointMap extends Map<infer Key, unknown>
+  ? Key
+  : never;
 type ComponentAttachmentPointNames = Record<
   RnaPresetComponentKey,
   AttachmentPointName[]
@@ -147,7 +150,7 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
   const result: AttachmentPointMap = new Map();
 
   const addConnectionAttachmentPoint = (
-    id: string,
+    id: 'sugar-base' | 'base-sugar' | 'sugar-phosphate' | 'phosphate-sugar',
     name: AttachmentPointName,
     attachmentAtomId: number,
     leavingAtomId: number,
@@ -235,47 +238,50 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   struct: Struct,
 ): AttachmentPointMap => {
   const atomToComponentMap = getAtomToComponentMap(wizardState);
-  const occupiedAttachmentPoints = new Set<AttachmentPointName>();
+  const occupiedAttachmentPointIds = new Set<AttachmentPointId>();
 
-  assignedAttachmentPoints.forEach(({ name, attachmentAtomId }) => {
-    const componentKey = atomToComponentMap.get(attachmentAtomId);
+  assignedAttachmentPoints.forEach(
+    ({ attachmentAtomId }, attachmentPointId) => {
+      const componentKey = atomToComponentMap.get(attachmentAtomId);
 
-    if (!componentKey) {
-      return;
-    }
+      if (!componentKey) {
+        return;
+      }
 
-    const atom = struct.atoms.get(attachmentAtomId);
+      const atom = struct.atoms.get(attachmentAtomId);
 
-    if (!atom) {
-      return;
-    }
+      if (!atom) {
+        return;
+      }
 
-    const isOccupiedByPresetComponentConnection = atom.neighbors.some(
-      (halfBondId) => {
-        const halfBond = struct.halfBonds.get(halfBondId);
+      const isOccupiedByPresetComponentConnection = atom.neighbors.some(
+        (halfBondId) => {
+          const halfBond = struct.halfBonds.get(halfBondId);
 
-        if (!halfBond) {
-          return false;
-        }
+          if (!halfBond) {
+            return false;
+          }
 
-        const neighbourAtomId =
-          halfBond.begin === attachmentAtomId ? halfBond.end : halfBond.begin;
-        const neighbourComponentKey = atomToComponentMap.get(neighbourAtomId);
+          const neighbourAtomId =
+            halfBond.begin === attachmentAtomId ? halfBond.end : halfBond.begin;
+          const neighbourComponentKey = atomToComponentMap.get(neighbourAtomId);
 
-        return Boolean(
-          neighbourComponentKey && neighbourComponentKey !== componentKey,
-        );
-      },
-    );
+          return Boolean(
+            neighbourComponentKey && neighbourComponentKey !== componentKey,
+          );
+        },
+      );
 
-    if (isOccupiedByPresetComponentConnection) {
-      occupiedAttachmentPoints.add(name);
-    }
-  });
+      if (isOccupiedByPresetComponentConnection) {
+        occupiedAttachmentPointIds.add(attachmentPointId);
+      }
+    },
+  );
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([, { name }]) => !occupiedAttachmentPoints.has(name),
+      ([attachmentPointId]) =>
+        !occupiedAttachmentPointIds.has(attachmentPointId),
     ),
   );
 };

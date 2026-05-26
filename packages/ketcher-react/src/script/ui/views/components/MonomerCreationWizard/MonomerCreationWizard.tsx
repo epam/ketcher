@@ -1140,8 +1140,7 @@ const MonomerCreationWizardInternal = ({
     handlePhosphatePositionChange(autoPhosphatePosition);
   }, [
     isRnaPresetType,
-    monomerCreationState,
-    monomerCreationState.assignedAttachmentPoints,
+    monomerCreationState?.assignedAttachmentPoints,
     rnaPresetWizardState.phosphate.structure,
     rnaPresetWizardState.sugar.structure,
     handlePhosphatePositionChange,

@@ -33,6 +33,15 @@ import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+};
+
 export type RnaComponentAtoms = Map<
   RnaPresetComponentKey,
   { atoms: number[]; bonds: number[] }
@@ -57,6 +66,7 @@ export type MonomerCreationState = {
   isRnaPresetMode?: boolean;
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
 } | null;
 
 export class Render {

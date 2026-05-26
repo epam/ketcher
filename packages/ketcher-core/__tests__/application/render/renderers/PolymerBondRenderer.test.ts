@@ -123,7 +123,7 @@ describe('Polymer Bond Renderer', () => {
     const r2r2 = renderBondPath(10, 10, 90, 100, 'R2', 'R2');
 
     expect(r2r2.bodyPath?.attr('d')).toMatch(
-      /^M 400,400 L 3649,400 L 3649,4000 L 3600,4000 /,
+      /^M 400,400 L 400,415 H 431 q 5,0 5,5 V 3975 q 0,5 5,5 H 3595 q 5,0 5,5 L 3600,4000/,
     );
   });
 

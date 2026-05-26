@@ -571,6 +571,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       <label className={styles.highlightCheckboxWrapper}>
         <input
           type="checkbox"
+          data-testid="highlight-toggle"
           checked={isHighlightEnabled}
           onChange={handleHighlightToggle}
           className={inputStyles.input}

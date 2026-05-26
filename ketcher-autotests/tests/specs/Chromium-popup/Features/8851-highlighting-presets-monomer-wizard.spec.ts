@@ -1,12 +1,10 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { expect, Page } from '@playwright/test';
 import { test } from '@fixtures';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { shiftCanvas, takeEditorScreenshot } from '@utils/index';
-import {
-  CreateMonomerDialog,
-  selectAtomAndBonds,
-} from '@tests/pages/molecules/canvas/CreateMonomerDialog';
+import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { MonomerType as MonomerTypeInDropdown } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
@@ -28,7 +26,7 @@ test.afterAll(async ({ closePage }) => {
 
 test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-test.describe('Autotests: Highlighting - presets in the monomer creation wizard', () => {
+test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
   test('Case 1 - Verify the Highlight checkbox is present and ON by default', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10017
@@ -43,24 +41,26 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Verify the highlight checkbox is present and checked by default
-    const highlightCheckbox = page.getByRole('checkbox');
+    const highlightCheckbox = presetSection.highlightCheckbox;
     await expect(highlightCheckbox).toBeVisible();
     await expect(highlightCheckbox).toBeChecked();
-    
+
     // Verify the label text is present
-    const highlightLabel = page.getByText('Highlight');
+    const highlightLabel = highlightCheckbox
+      .locator('..')
+      .getByText('Highlight');
     await expect(highlightLabel).toBeVisible();
-    
+
     await dialog.discard();
   });
 
-  test('Case 2 - Verify fluorescent blue outline of the defined component when the active tab is NOT the component\'s tab', async () => {
+  test("Case 2 - Verify fluorescent blue outline of the defined component when the active tab is NOT the component's tab", async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10017
      * Description: Verify that defined components show fluorescent blue outline when a different tab is active
@@ -74,32 +74,32 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Ensure Highlight checkbox is ON
-    const highlightCheckbox = page.getByRole('checkbox');
+    const highlightCheckbox = presetSection.highlightCheckbox;
     await expect(highlightCheckbox).toBeChecked();
-    
+
     // Define base component
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     // Switch to Sugar tab (different from Base tab)
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    
+
     // Take screenshot to verify fluorescent blue outline on base component
     // Since base is not the active tab, it should show inactive highlight color (fluorescent blue)
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
-  test('Case 3 - Verify pale blue shading of the defined component when the active tab IS the component\'s tab', async () => {
+  test("Case 3 - Verify pale blue shading of the defined component when the active tab IS the component's tab", async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10017
      * Description: Verify that defined components show pale blue shading when their own tab is active
@@ -113,28 +113,28 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Ensure Highlight checkbox is ON
-    const highlightCheckbox = page.getByRole('checkbox');
+    const highlightCheckbox = presetSection.highlightCheckbox;
     await expect(highlightCheckbox).toBeChecked();
-    
+
     // Define base component (this automatically switches to Base tab)
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     // Ensure we're on the Base tab
     await presetSection.openTab(NucleotidePresetTab.Base);
-    
+
     // Take screenshot to verify pale blue shading on base component
     // Since base tab is active, it should show active highlight color (pale blue)
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
@@ -153,41 +153,41 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Define multiple components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     // Ensure Highlight checkbox is ON and take screenshot with highlights
-    const highlightCheckbox = page.getByRole('checkbox');
+    const highlightCheckbox = presetSection.highlightCheckbox;
     await expect(highlightCheckbox).toBeChecked();
-    
+
     // Switch to Sugar tab to verify inactive highlighting of base
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     // Turn OFF highlight checkbox
     await highlightCheckbox.click();
     await expect(highlightCheckbox).not.toBeChecked();
-    
+
     // Take screenshot to verify all highlights are removed
     await takeEditorScreenshot(page);
-    
+
     // Switch to Base tab and verify highlights remain off
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
@@ -205,31 +205,31 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Ensure Highlight checkbox is ON
-    const highlightCheckbox = page.getByRole('checkbox');
+    const highlightCheckbox = presetSection.highlightCheckbox;
     await expect(highlightCheckbox).toBeChecked();
-    
+
     // Switch to Base tab without defining any component
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     // Switch to Sugar tab without defining any component
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     // Switch to Phosphate tab without defining any component
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await takeEditorScreenshot(page);
-    
+
     // Return to Preset tab
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 
@@ -246,56 +246,55 @@ test.describe('Autotests: Highlighting - presets in the monomer creation wizard'
      * Version 3.14
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-    
+
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.NucleotidePreset);
-    
+
     // Define all three components
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
     });
-    
+
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
     });
-    
+
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
     });
-    
+
     // Test highlighting on different tabs
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await takeEditorScreenshot(page);
-    
+
     // Turn off highlighting
-    const highlightCheckbox = page.getByRole('checkbox');
-    await highlightCheckbox.click();
-    await expect(highlightCheckbox).not.toBeChecked();
-    
+    await presetSection.setHighlight(false);
+    await expect(presetSection.highlightCheckbox).not.toBeChecked();
+
     // Verify no highlights across different tabs
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeEditorScreenshot(page);
-    
+
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeEditorScreenshot(page);
-    
+
     // Turn highlighting back on
-    await highlightCheckbox.click();
-    await expect(highlightCheckbox).toBeChecked();
-    
+    await presetSection.setHighlight(true);
+    await expect(presetSection.highlightCheckbox).toBeChecked();
+
     // Verify highlights return
     await takeEditorScreenshot(page);
-    
+
     await dialog.discard();
   });
 });

@@ -484,9 +484,11 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      renderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
+        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -500,8 +502,10 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      renderer?.redrawCaret(caretPosition);
-      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {

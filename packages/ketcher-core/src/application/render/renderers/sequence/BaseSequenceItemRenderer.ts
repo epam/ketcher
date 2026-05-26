@@ -8,7 +8,6 @@ import {
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
@@ -637,7 +636,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number) {
+  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -645,11 +644,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      const shouldRenderCaretAfterNode =
-        SequenceRenderer.isCaretAfterRowEnd &&
-        SequenceRenderer.isCurrentCaretAtLastInFullRow;
-
-      if (shouldRenderCaretAfterNode) {
+      if (afterRowEnd) {
         this.showCaretAfterNode();
       } else {
         this.showCaret();

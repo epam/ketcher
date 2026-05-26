@@ -243,8 +243,34 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
+    const editor = provideEditorInstance();
     const isTwoNeighborRowsConnection = cells.every(
       (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
+    );
+    const monomerPositions = Array.from(
+      editor.drawingEntitiesManager.monomers.values(),
+    )
+      .map((monomer) => monomer.renderer)
+      .filter(
+        (
+          renderer,
+        ): renderer is {
+          scaledMonomerPosition: { x: number; y: number };
+        } =>
+          renderer !== undefined &&
+          isNumber(renderer.scaledMonomerPosition?.x) &&
+          isNumber(renderer.scaledMonomerPosition?.y),
+      );
+    const monomerRows = new Map<number, number>();
+    const monomerXPositions = monomerPositions.map((renderer) =>
+      Math.round(renderer.scaledMonomerPosition.x),
+    );
+    monomerPositions.forEach((renderer) => {
+      const rowKey = Math.round(renderer.scaledMonomerPosition.y);
+      monomerRows.set(rowKey, (monomerRows.get(rowKey) ?? 0) + 1);
+    });
+    const isSingleMonomerPerRow = Array.from(monomerRows.values()).every(
+      (count) => count === 1,
     );
     const startPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.startPosition
@@ -253,7 +279,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
     const isStraightVerticalConnection =
-      isVerticalConnection && Math.abs(startPosition.x - endPosition.x) < 0.001;
+      isVerticalConnection &&
+      Math.abs(startPosition.x - endPosition.x) < 0.001 &&
+      isTwoNeighborRowsConnection &&
+      isSingleMonomerPerRow;
     const startMonomer = isFirstMonomerOfBondInFirstCell
       ? this.polymerBond.firstMonomer
       : this.polymerBond.secondMonomer;
@@ -276,20 +305,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       );
     const isR2ToR2Connection =
       firstAttachmentPoint === 'R2' && secondAttachmentPoint === 'R2';
-    const editor = provideEditorInstance();
-    const monomerCells = Array.from(
-      editor.drawingEntitiesManager.canvasMatrix?.polymerBondToCells.values() ??
-        [],
-    )
-      .flat()
-      .filter(
-        (cell, index, allCells) =>
-          cell.monomer &&
-          allCells.findIndex(
-            (currentCell) => currentCell.monomer === cell.monomer,
-          ) === index,
-      );
-    const monomerCellXPositions = monomerCells.map((cell) => cell.x);
+    const monomerCellXPositions = monomerPositions.map((renderer) =>
+      Math.round(renderer.scaledMonomerPosition.x),
+    );
     const isGloballyVerticalLayout =
       monomerCellXPositions.length > 1 &&
       monomerCellXPositions.every(
@@ -492,18 +510,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
-      if (
-        !isStraightVerticalConnection &&
-        !isSecondCellEmpty &&
-        !isTwoNeighborRowsConnection
-      ) {
+      if (!isTwoNeighborRowsConnection) {
         pathDAttributeValue +=
           SideChainConnectionBondRendererUtility.generateBend(0, 1, cos, 1) +
           ' ';
       }
     }
 
-    if (isVerticalConnection && !isStraightVerticalConnection) {
+    if (
+      isVerticalConnection &&
+      (!isStraightVerticalConnection || !isTwoNeighborRowsConnection)
+    ) {
       const direction =
         this.sideConnectionBondTurnPoint &&
         startPosition.x < this.sideConnectionBondTurnPoint

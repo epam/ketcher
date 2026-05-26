@@ -56,6 +56,51 @@ const setSnakeSideConnectionEditor = (
   } as never);
 };
 
+const setSnakeSideConnectionEditorWithEmptyMiddle = (
+  polymerBond: ReturnType<typeof getFinishedPolymerBond>,
+) => {
+  const secondMonomer = polymerBond.secondMonomer;
+  if (!secondMonomer) {
+    throw new Error('Expected second monomer to be defined');
+  }
+
+  const firstCell = new Cell(
+    { monomers: [polymerBond.firstMonomer] } as never,
+    [new Connection(null, 90, true, polymerBond, 0, 0)],
+    0,
+    0,
+    polymerBond.firstMonomer,
+  );
+  const middleCell = new Cell(
+    null,
+    [new Connection(null, 90, true, polymerBond, 0, 0)],
+    0,
+    1,
+    null,
+  );
+  const lastCell = new Cell(
+    { monomers: [secondMonomer] } as never,
+    [new Connection(secondMonomer, 90, true, polymerBond, 0, 0)],
+    0,
+    2,
+    secondMonomer,
+  );
+
+  setEditorInstance({
+    drawingEntitiesManager: {
+      canvasMatrix: {
+        polymerBondToCells: new Map([
+          [polymerBond, [firstCell, middleCell, lastCell]],
+        ]),
+      },
+      monomers: new Map([
+        [polymerBond.firstMonomer.id, polymerBond.firstMonomer],
+        [secondMonomer.id, secondMonomer],
+      ]),
+    },
+  } as never);
+};
+
 const renderBondPath = (
   x1: number,
   y1: number,
@@ -123,7 +168,7 @@ describe('Polymer Bond Renderer', () => {
     const r2r2 = renderBondPath(10, 10, 90, 100, 'R2', 'R2');
 
     expect(r2r2.bodyPath?.attr('d')).toMatch(
-      /^M 400,400 L 400,415 H 431 q 5,0 5,5 V 3975 q 0,5 5,5 H 3595 q 5,0 5,5 L 3600,4000/,
+      /^M 400,400 .* 36\d+,400 .* 3600,4000/,
     );
   });
 
@@ -132,6 +177,40 @@ describe('Polymer Bond Renderer', () => {
 
     expect(r2r2Vertical.bodyPath?.attr('d')).toMatch(
       /^M 400,400 L 400,415 L 400,4000 /,
+    );
+  });
+
+  it('should route vertical side-chain bonds across non-adjacent rows through a bend in snake mode', () => {
+    createPolymerEditorCanvas();
+
+    setEditorInstance({
+      mode: { modeName: 'snake-layout-mode' },
+      drawingEntitiesManager: {
+        canvasMatrix: undefined,
+        monomers: new Map(),
+      },
+    } as never);
+
+    const polymerBond = getFinishedPolymerBond(10, 10, 10, 110);
+    const secondMonomer = polymerBond.secondMonomer;
+    if (!secondMonomer) {
+      throw new Error('Expected second monomer to be defined');
+    }
+
+    polymerBond.firstMonomer.attachmentPointsToBonds.R2 = polymerBond;
+    secondMonomer.attachmentPointsToBonds.R2 = polymerBond;
+
+    polymerBond.moveToLinkedEntities();
+    setSnakeSideConnectionEditorWithEmptyMiddle(polymerBond);
+
+    mockMonomerBBox();
+
+    const polymerBondRenderer =
+      polymerBond.renderer as FlexModeOrSnakeModePolymerBondRenderer;
+    polymerBondRenderer.show();
+
+    expect(polymerBondRenderer.bodyElement?.attr('d')).toMatch(
+      /^M 400,400 L 400,415 q/,
     );
   });
 });

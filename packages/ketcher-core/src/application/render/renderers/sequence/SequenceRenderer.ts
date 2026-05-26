@@ -40,6 +40,7 @@ import { NewSequenceButton } from 'application/render/renderers/sequence/ui-cont
 import { isNumber } from 'lodash';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
@@ -79,7 +80,7 @@ export class SequenceRenderer {
   private static lastUserDefinedCaretPositionValue = 0;
   private static chainsCollectionValue: ChainsCollection;
   private static lastChainStartPositionValue: Vec2;
-  private static sequenceViewModelValue: SequenceViewModel;
+
   private static newSequenceButtons: NewSequenceButton[] = [];
   private static readonly sequenceBondRenderers =
     new Set<SequenceBondRenderer>();
@@ -117,11 +118,11 @@ export class SequenceRenderer {
   }
 
   public static get sequenceViewModel(): SequenceViewModel {
-    return this.sequenceViewModelValue;
+    return sequenceRendererStore.sequenceViewModel;
   }
 
   private static set sequenceViewModel(value: SequenceViewModel) {
-    this.sequenceViewModelValue = value;
+    sequenceRendererStore.setSequenceViewModel(value);
   }
 
   public static show(

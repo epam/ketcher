@@ -63,7 +63,7 @@ type AliasesSectionLocators = {
 type CreateMonomerDialogLocators = {
   window: Locator;
   typeCombobox: Locator;
-  symbolEditbox: Locator;
+  codeEditbox: Locator;
   nameEditbox: Locator;
   naturalAnalogueCombobox: Locator;
   infoIcon: Locator;
@@ -230,7 +230,7 @@ export const CreateMonomerDialog = (page: Page) => {
   const locators: CreateMonomerDialogLocators = {
     window: page.getByTestId('monomer-creation-wizard'),
     typeCombobox: page.getByTestId('type-select'),
-    symbolEditbox: page.getByTestId('symbol-input'),
+    codeEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
     naturalAnalogueCombobox: page.getByTestId('natural-analogue-picker'),
     infoIcon: page.getByTestId('attachment-point-info-icon'),
@@ -317,8 +317,8 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.getByTestId(option).click();
     },
 
-    async setSymbol(value: string) {
-      await locators.symbolEditbox.fill(value);
+    async setCode(value: string) {
+      await locators.codeEditbox.fill(value);
     },
 
     async setName(value: string) {
@@ -501,7 +501,7 @@ export async function createMonomer(
   page: Page,
   options: {
     type: MonomerType;
-    symbol: string;
+    code: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
     modificationTypes?: (
@@ -521,7 +521,7 @@ export async function createMonomer(
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(options.type);
-  await createMonomerDialog.setSymbol(options.symbol);
+  await createMonomerDialog.setCode(options.code);
   await createMonomerDialog.setName(options.name);
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);

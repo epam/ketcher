@@ -7,12 +7,16 @@ export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
 export const BILN_ALIAS_FORMAT_ERROR_MESSAGE =
   'The BILN alias must consist only of uppercase and lowercase letters, numbers, hyphens (`-`), underscores (`_`), and asterisks (`*`).';
 
+export const HELM_ALIAS_MAX_LENGTH = 23;
+
+export const HELM_ALIAS_LENGTH_ERROR_MESSAGE = `The HELM alias must be no more than ${HELM_ALIAS_MAX_LENGTH} symbols long.`;
+
 export const IDT_ALIAS_SLASH_ERROR_MESSAGE =
   'The slashes (`/`) can only be the first and last character of an IDT alias.';
 
-export const IDT_ALIAS_LENGTH_MAX = 12;
+export const IDT_ALIAS_LENGTH_MAX = 10;
 
-export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `IDT alias length must not exceed ${IDT_ALIAS_LENGTH_MAX} characters (including slashes).`;
+export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an IDT alias without slashes (/) is ${IDT_ALIAS_LENGTH_MAX}.`;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
@@ -33,7 +37,8 @@ export function isValidIdtAlias(alias: string): boolean {
 
 export function isValidIdtAliasLength(alias: string): boolean {
   if (!alias) return true;
-  return alias.length <= IDT_ALIAS_LENGTH_MAX;
+  const withoutSlashes = alias.replace(/^\//, '').replace(/\/$/, '');
+  return withoutSlashes.length <= IDT_ALIAS_LENGTH_MAX;
 }
 
 export function getTooLongIdtAliasEntries(
@@ -58,6 +63,10 @@ export function isValidHelmAlias(alias: string) {
 
 export function isValidBilnAlias(alias: string) {
   return BILN_ALIAS_REGEX.test(alias);
+}
+
+export function isValidHelmAliasLength(alias: string) {
+  return alias.length <= HELM_ALIAS_MAX_LENGTH;
 }
 
 export function isMonomerSgroupWithAttachmentPoints(monomer: BaseMonomer) {

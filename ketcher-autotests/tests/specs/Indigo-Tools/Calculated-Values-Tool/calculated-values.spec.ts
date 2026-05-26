@@ -158,10 +158,10 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('[C6H6]+[C2H4] > [C8H10]');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '[78.11]+[28.05] > [106.17]',
+      '[78.114]+[28.054] > [106.168]',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '[78.05]+[28.03] > [106.08]',
+      '[78.047]+[28.031] > [106.078]',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
@@ -176,6 +176,10 @@ test.describe('Calculated Values Tools', () => {
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
       '[78.0]+[28.0] > [106.1]',
     );
+
+    // Restore defaults to keep subsequent tests independent from decimal-place state.
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
   });
 
   test('One structure on canvas (Benzene ring)', async () => {

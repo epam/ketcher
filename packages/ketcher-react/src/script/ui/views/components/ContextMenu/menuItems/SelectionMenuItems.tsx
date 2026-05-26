@@ -147,7 +147,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               disabled={isDisabledForMonomerWizard}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title)}</span>
+              <span>{formatTitle(tools[name].title ?? '')}</span>
             </Item>
           );
         })}

@@ -9,6 +9,7 @@ import {
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
@@ -73,7 +74,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      sequenceRendererStore.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }

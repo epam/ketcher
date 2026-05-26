@@ -6,6 +6,8 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 import { dragMouseTo } from '@utils/clicks';
 import { emptyFunction } from '../common/helpers';
 import { waitForRender } from '../common/loaders/waitForRender';
@@ -22,7 +24,9 @@ import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
-const scrollBarHideCssPath = './tests/utils/hideScroll.css';
+const scrollBarHideCssPath = path.resolve(__dirname, '../hideScroll.css');
+
+export const getScrollBarHideCssPath = () => scrollBarHideCssPath;
 
 export async function takeElementScreenshot(
   page: Page,
@@ -153,6 +157,11 @@ export async function takeEditorScreenshot(
   if (options?.hideMacromoleculeEditorScrollBars) {
     // That works only for Macromolecule editor
     await page.keyboard.press(`ControlOrMeta+KeyB`);
+    if (!fs.existsSync(scrollBarHideCssPath)) {
+      throw new Error(
+        `Macromolecule scrollbar style was not found: ${scrollBarHideCssPath}`,
+      );
+    }
     options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
   await takeElementScreenshot(page, await getVisibleCanvas(page), options);

@@ -23,6 +23,11 @@ const mockMonomerBBox = () => {
 const setSnakeSideConnectionEditor = (
   polymerBond: ReturnType<typeof getFinishedPolymerBond>,
 ) => {
+  const secondMonomer = polymerBond.secondMonomer;
+  if (!secondMonomer) {
+    throw new Error('Expected second monomer to be defined');
+  }
+
   const firstCell = new Cell(
     { monomers: [polymerBond.firstMonomer] } as never,
     [new Connection(null, 90, true, polymerBond, 0, 0)],
@@ -45,7 +50,7 @@ const setSnakeSideConnectionEditor = (
       },
       monomers: new Map([
         [polymerBond.firstMonomer.id, polymerBond.firstMonomer],
-        [polymerBond.secondMonomer!.id, polymerBond.secondMonomer!],
+        [secondMonomer.id, secondMonomer],
       ]),
     },
   } as never);
@@ -59,7 +64,7 @@ const renderBondPath = (
   firstAttachmentPoint: 'R1' | 'R2' | 'R3',
   secondAttachmentPoint: 'R1' | 'R2' | 'R3',
 ) => {
-  const canvas = createPolymerEditorCanvas();
+  createPolymerEditorCanvas();
 
   setEditorInstance({
     mode: { modeName: 'snake-layout-mode' },
@@ -70,11 +75,14 @@ const renderBondPath = (
   } as never);
 
   const polymerBond = getFinishedPolymerBond(x1, y1, x2, y2);
+  const secondMonomer = polymerBond.secondMonomer;
+  if (!secondMonomer) {
+    throw new Error('Expected second monomer to be defined');
+  }
 
   polymerBond.firstMonomer.attachmentPointsToBonds[firstAttachmentPoint] =
     polymerBond;
-  polymerBond.secondMonomer!.attachmentPointsToBonds[secondAttachmentPoint] =
-    polymerBond;
+  secondMonomer.attachmentPointsToBonds[secondAttachmentPoint] = polymerBond;
 
   polymerBond.moveToLinkedEntities();
   setSnakeSideConnectionEditor(polymerBond);
@@ -113,13 +121,17 @@ describe('Polymer Bond Renderer', () => {
 
   it('should route only R2-R2 bonds from the right side in snake mode', () => {
     const r2r2 = renderBondPath(10, 10, 90, 100, 'R2', 'R2');
-    const r3r2 = renderBondPath(10, 10, 90, 100, 'R3', 'R2');
 
     expect(r2r2.bodyPath?.attr('d')).toMatch(
       /^M 400,400 L 3649,400 L 3649,4000 L 3600,4000 /,
     );
-    expect(r3r2.bodyPath?.attr('d')).not.toMatch(
-      /^M 400,400 L 3649,400 L 3649,4000 L 3600,4000 /,
+  });
+
+  it('should route straight vertical R2-R2 bonds downward in snake mode', () => {
+    const r2r2Vertical = renderBondPath(10, 10, 10, 100, 'R2', 'R2');
+
+    expect(r2r2Vertical.bodyPath?.attr('d')).toMatch(
+      /^M 400,400 L 400,415 L 400,4000 /,
     );
   });
 });

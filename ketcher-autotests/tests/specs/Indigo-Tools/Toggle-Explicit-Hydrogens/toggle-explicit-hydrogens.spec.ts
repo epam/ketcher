@@ -593,7 +593,8 @@ test.describe('12. Fold/unfold hydrogens for', () => {
 
   const fileNames = [
     'All Custom Query Bonds with S-Group - Query component.ket',
-    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625
+    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625,
+    // https://github.com/epam/Indigo/issues/3688
   ];
 
   for (const fileName of fileNames) {

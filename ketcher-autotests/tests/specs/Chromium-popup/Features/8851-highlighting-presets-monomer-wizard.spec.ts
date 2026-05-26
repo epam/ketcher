@@ -38,7 +38,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 4. Select "Nucleotide (preset)" type
      * 5. Verify Highlight checkbox is present and checked by default
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -71,7 +71,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 4. Switch to Sugar tab
      * 5. Verify base component shows fluorescent blue outline (inactive highlight color)
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -110,7 +110,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 4. Ensure Base tab is active
      * 5. Verify base component shows pale blue shading (active highlight color)
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -150,7 +150,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 5. Turn OFF highlight checkbox
      * 6. Verify all highlighting is removed for both components
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -202,7 +202,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 4. Switch between different component tabs without defining any components
      * 5. Verify no highlighting is applied to the structure
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -243,7 +243,7 @@ test.describe('Highlighting - presets in the monomer creation wizard: ', () => {
      * 3. Switch between tabs and verify active vs inactive highlighting
      * 4. Toggle highlight checkbox and verify behavior
      *
-     * Version 3.14
+     * Version 3.12
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 

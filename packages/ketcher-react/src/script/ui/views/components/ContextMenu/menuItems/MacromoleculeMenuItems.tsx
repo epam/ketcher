@@ -37,7 +37,8 @@ const MacromoleculeMenuItems = (
   const editInstanceDisabled =
     multipleMonomersSelected ||
     !(sgroup instanceof MonomerMicromolecule) ||
-    isAmbiguousMonomerLibraryItem(sgroup.monomer.monomerItem);
+    isAmbiguousMonomerLibraryItem(sgroup.monomer.monomerItem) ||
+    sgroup.monomer.monomerItem.props.unresolved;
 
   const handleEditInstance = () => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;

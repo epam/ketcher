@@ -252,19 +252,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     )
       .map((monomer) => monomer.renderer)
       .filter(
-        (
-          renderer,
-        ): renderer is {
-          scaledMonomerPosition: { x: number; y: number };
-        } =>
+        (renderer) =>
           renderer !== undefined &&
           isNumber(renderer.scaledMonomerPosition?.x) &&
           isNumber(renderer.scaledMonomerPosition?.y),
-      );
+      ) as Array<{ scaledMonomerPosition: { x: number; y: number } }>;
     const monomerRows = new Map<number, number>();
-    const monomerXPositions = monomerPositions.map((renderer) =>
-      Math.round(renderer.scaledMonomerPosition.x),
-    );
     monomerPositions.forEach((renderer) => {
       const rowKey = Math.round(renderer.scaledMonomerPosition.y);
       monomerRows.set(rowKey, (monomerRows.get(rowKey) ?? 0) + 1);
@@ -481,7 +474,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
-    const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
       {

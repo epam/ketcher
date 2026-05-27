@@ -77,6 +77,7 @@ import {
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   isValidHelmAlias,
   initHotKeys,
+  isEditableInputTarget,
   KetcherLogger,
   keyNorm,
   SettingsManager,
@@ -626,14 +627,11 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
-    const isClipAreaTarget = event.target.hasAttribute('data-cliparea');
-    const isInput =
-      !isClipAreaTarget &&
-      (event.target.nodeName === 'INPUT' ||
-        event.target.nodeName === 'TEXTAREA' ||
-        event.target.isContentEditable);
 
-    if (keySettings[shortcutKey]?.handler && !isInput) {
+    if (
+      keySettings[shortcutKey]?.handler &&
+      !isEditableInputTarget(event.target)
+    ) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }

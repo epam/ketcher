@@ -25,6 +25,7 @@ import {
   SupportedFormat,
   Editor,
   getStructure,
+  isEditableInputTarget,
   MolSerializer,
   runAsyncAction,
   SettingsManager,
@@ -99,21 +100,10 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   if (state.modal || selectIsAbbreviationLookupOpen(state)) {
     return true;
   }
-  if (!(event.target instanceof HTMLElement)) {
-    return false;
-  }
-
-  const isClipAreaTarget = event.target.hasAttribute('data-cliparea');
-
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
   // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
   // Ideally x2 – create a common event interception layer for both micro and macro editors
-  return (
-    !isClipAreaTarget &&
-    (event.target.nodeName === 'INPUT' ||
-      event.target.nodeName === 'TEXTAREA' ||
-      event.target.isContentEditable)
-  );
+  return isEditableInputTarget(event.target);
 }
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {

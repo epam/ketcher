@@ -38,7 +38,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 6. Verify Aliases section is shown with BILN alias only (no HELM)
      * 7. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -95,7 +95,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 5. Verify Aliases section IS present and contains HELM alias and BILN alias
      * 6. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -150,7 +150,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 6. Verify Aliases section IS present and only HELM alias is available
      * 7. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -206,7 +206,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 5. Verify Aliases section IS present and contains HELM alias only
      * 6. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -262,7 +262,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 6. Verify Aliases section IS present and supports HELM alias
      * 7. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -316,7 +316,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 5. Verify Aliases section is NOT present (until IDT alias or/and AxoLabs alias is implemented for nucleotides)
      * 6. Verify Attachment points section is present
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -358,7 +358,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 4. Verify component-specific properties are NOT shown at preset level
      * 5. Take screenshot for visual verification
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -405,7 +405,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 4. Switch to CHEM type and verify sections change appropriately
      * 5. Verify dynamic behavior works correctly
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 
@@ -464,7 +464,7 @@ test.describe('Monomer properties attributes panel visibility rules: ', () => {
      * 3. Verify prohibited fields are hidden
      * 4. Document any deviations from requirements for the covered types
      *
-     * Version 3.17.0
+     * Version 3.17
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
 

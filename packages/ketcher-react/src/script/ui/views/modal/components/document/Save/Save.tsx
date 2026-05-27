@@ -172,8 +172,8 @@ interface AppState {
   };
 }
 
-const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 const DEFAULT_EXPORT_MARGIN = 10;
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 
 // Extracted components for better performance and React best practices
 const LoadingState = ({ classes }: LoadingStateProps) => (
@@ -353,46 +353,102 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return firstSvg instanceof SVGSVGElement ? firstSvg : undefined;
   };
 
+  private getTransformedBounds = (el: SVGGraphicsElement) => {
+    const bbox = el.getBBox();
+    if (!bbox.width && !bbox.height) {
+      return undefined;
+    }
+
+    const ctm = el.getCTM();
+    if (!ctm) {
+      return undefined;
+    }
+
+    const corners = [
+      new DOMPoint(bbox.x, bbox.y),
+      new DOMPoint(bbox.x + bbox.width, bbox.y),
+      new DOMPoint(bbox.x, bbox.y + bbox.height),
+      new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
+    ].map((point) => point.matrixTransform(ctm));
+
+    const xs = corners.map((point) => point.x);
+    const ys = corners.map((point) => point.y);
+
+    return {
+      x: Math.min(...xs),
+      y: Math.min(...ys),
+      width: Math.max(...xs) - Math.min(...xs),
+      height: Math.max(...ys) - Math.min(...ys),
+    };
+  };
+
   private getCanvasExportBounds = (svg: SVGSVGElement) => {
-    const graphics = Array.from(svg.querySelectorAll('*')).filter(
-      (el): el is SVGGraphicsElement => {
-        if (!(el instanceof SVGGraphicsElement)) return false;
-        if (el.closest('defs')) return false;
-        if (el.id === 'rectangle-selection-area') return false;
-        return true;
-      },
-    );
+    const drawnStructures = svg.querySelector('.drawn-structures');
 
     let minX = Number.POSITIVE_INFINITY;
     let minY = Number.POSITIVE_INFINITY;
     let maxX = Number.NEGATIVE_INFINITY;
     let maxY = Number.NEGATIVE_INFINITY;
 
-    graphics.forEach((el) => {
+    const mergeBounds = (
+      bounds:
+        | {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+          }
+        | undefined,
+    ) => {
+      if (!bounds) {
+        return;
+      }
+
+      minX = Math.min(minX, bounds.x);
+      minY = Math.min(minY, bounds.y);
+      maxX = Math.max(maxX, bounds.x + bounds.width);
+      maxY = Math.max(maxY, bounds.y + bounds.height);
+    };
+
+    if (drawnStructures instanceof SVGGraphicsElement) {
       try {
-        const bbox = el.getBBox();
-        if (!bbox.width && !bbox.height) return;
-
-        const ctm = el.getCTM();
-        if (!ctm) return;
-
-        const corners = [
-          new DOMPoint(bbox.x, bbox.y),
-          new DOMPoint(bbox.x + bbox.width, bbox.y),
-          new DOMPoint(bbox.x, bbox.y + bbox.height),
-          new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
-        ].map((point) => point.matrixTransform(ctm));
-
-        corners.forEach((point) => {
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
-        });
+        mergeBounds(this.getTransformedBounds(drawnStructures));
       } catch {
-        // Ignore elements that cannot provide bounds in current render state.
+        // Fall through to per-element fallback below.
+      }
+    }
+
+    const externalTexts = Array.from(svg.querySelectorAll('text')).filter(
+      (el): el is SVGTextElement =>
+        el instanceof SVGTextElement && !el.closest('.drawn-structures'),
+    );
+
+    externalTexts.forEach((el) => {
+      try {
+        mergeBounds(this.getTransformedBounds(el));
+      } catch {
+        // Ignore labels that cannot provide bounds in current render state.
       }
     });
+
+    if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+      const graphics = Array.from(svg.querySelectorAll('*')).filter(
+        (el): el is SVGGraphicsElement => {
+          if (!(el instanceof SVGGraphicsElement)) return false;
+          if (el.closest('defs')) return false;
+          if (el.id === 'rectangle-selection-area') return false;
+          return true;
+        },
+      );
+
+      graphics.forEach((el) => {
+        try {
+          mergeBounds(this.getTransformedBounds(el));
+        } catch {
+          // Ignore elements that cannot provide bounds in current render state.
+        }
+      });
+    }
 
     if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
       return undefined;
@@ -419,13 +475,30 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
     const clonedSvg = sourceSvg.cloneNode(true) as SVGSVGElement;
     clonedSvg.querySelector('#rectangle-selection-area')?.remove();
+    clonedSvg.querySelectorAll('text').forEach((el) => {
+      el.setAttribute('cursor', 'default');
+    });
+    clonedSvg.querySelectorAll('rect').forEach((el) => {
+      if (el.getAttribute('cursor') === 'text') {
+        el.removeAttribute('cursor');
+      }
+    });
+    clonedSvg.querySelectorAll('g').forEach((el) => {
+      if (el.hasAttribute('opacity')) {
+        el.removeAttribute('opacity');
+      }
+    });
 
     const viewBoxX = bounds.x - DEFAULT_EXPORT_MARGIN;
     const viewBoxY = bounds.y - DEFAULT_EXPORT_MARGIN;
     const viewBoxWidth = bounds.width + DEFAULT_EXPORT_MARGIN * 2;
     const viewBoxHeight = bounds.height + DEFAULT_EXPORT_MARGIN * 2;
+    const svgInnerHTML = clonedSvg.innerHTML.replace(
+      /\bcursor:\s*pointer;\s*/g,
+      '',
+    );
 
-    return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}'>${clonedSvg.innerHTML}</svg>`;
+    return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}'>${svgInnerHTML}</svg>`;
   };
 
   getCanvasSvg = (): string | undefined => {

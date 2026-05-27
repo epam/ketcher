@@ -166,7 +166,7 @@ test.describe('Mark as... related cases: ', () => {
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
-    // Select non-continuous atoms (atoms 0 and 3 are not directly connected in benzene)
+    // Select non-continuous atoms (atoms 0 and 3 are not directly connected)
     await selectAtomAndBonds(page, { atomIds: [0, 3], bondIds: [] });
 
     // Verify "Mark as a..." is visible but disabled for non-continuous selection
@@ -387,7 +387,7 @@ test.describe('Mark as... related cases: ', () => {
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment
-    await selectAtomAndBonds(page, { atomIds: [4, 5], bondIds: [2] });
+    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
 
     await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Base);
     const setAsBaseButton =

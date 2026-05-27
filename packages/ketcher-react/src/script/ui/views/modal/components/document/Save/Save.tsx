@@ -185,7 +185,7 @@ const LoadingState = ({ classes }: LoadingStateProps) => (
 const ImageContent = ({ classes, imageSrc }: ImageContentProps) => (
   <div className={classes.imageContainer}>
     {imageSrc ? (
-      <img src={imageSrc} alt="image preview" data-testid="preview-area" />
+      <img src={imageSrc} alt="Preview" data-testid="preview-area" />
     ) : null}
   </div>
 );
@@ -312,7 +312,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   private getCanvasSvgElement = (): SVGSVGElement | undefined => {
-    const renderCanvas = (this.props.editor as any)?.render?.paper?.canvas;
+    const editorWithRender = this.props.editor as {
+      render?: {
+        paper?: {
+          canvas?: unknown;
+        };
+      };
+    };
+    const renderCanvas = editorWithRender?.render?.paper?.canvas;
     if (renderCanvas instanceof SVGSVGElement) {
       return renderCanvas;
     }

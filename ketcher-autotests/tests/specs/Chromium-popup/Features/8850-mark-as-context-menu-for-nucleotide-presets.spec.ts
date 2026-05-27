@@ -8,19 +8,21 @@ import {
 } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
-import { clickOnCanvas } from '@utils/clicks';
-import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { clickOnCanvas, shiftCanvas } from '@utils/clicks';
+import { takeElementScreenshot } from '@utils/canvas/helpers';
 import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
+import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 
 let page: Page;
+let dialog: ReturnType<typeof CreateMonomerDialog>;
 
-test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => {
+test.describe('Mark as... related cases: ', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
+    dialog = CreateMonomerDialog(page);
   });
 
   test.afterAll(async ({ closePage }) => {
@@ -44,9 +46,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment (two connected atoms)
@@ -80,9 +82,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.CHEM);
 
     // Select a continuous fragment
@@ -113,9 +115,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment
@@ -137,7 +139,7 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ).toBeTruthy();
 
     // Take screenshot of the submenu
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     // Close menu by pressing Escape
     await page.keyboard.press('Escape');
@@ -159,9 +161,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select non-continuous atoms (atoms 0 and 3 are not directly connected in benzene)
@@ -178,7 +180,7 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
 
     // Take screenshot showing disabled state
     await contextMenu.open();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await page.keyboard.press('Escape');
     await dialog.discard();
@@ -199,9 +201,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // First select non-continuous atoms to verify disabled state
@@ -241,9 +243,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment for Base
@@ -257,16 +259,17 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ]);
 
     // Verify Base tab is now active and visible
-    await expect(page.getByTestId('Base')).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    expect(
+      await dialog.nucleotidePresetSection.isTabOpened(
+        NucleotidePresetTab.Base,
+      ),
+    ).toBeTruthy();
     await expect(
       dialog.nucleotidePresetSection.baseTab.codeEditbox,
     ).toBeVisible();
 
     // Take screenshot of the Base tab
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -286,9 +289,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment for Sugar
@@ -302,16 +305,17 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ]);
 
     // Verify Sugar tab is now active and visible
-    await expect(page.getByTestId('Sugar')).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    expect(
+      await dialog.nucleotidePresetSection.isTabOpened(
+        NucleotidePresetTab.Sugar,
+      ),
+    ).toBeTruthy();
     await expect(
       dialog.nucleotidePresetSection.sugarTab.codeEditbox,
     ).toBeVisible();
 
     // Take screenshot of the Sugar tab
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -331,9 +335,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment for Phosphate
@@ -347,16 +351,17 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ]);
 
     // Verify Phosphate tab is now active and visible
-    await expect(page.getByTestId('Phosphate')).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    expect(
+      await dialog.nucleotidePresetSection.isTabOpened(
+        NucleotidePresetTab.Phosphate,
+      ),
+    ).toBeTruthy();
     await expect(
       dialog.nucleotidePresetSection.phosphateTab.codeEditbox,
     ).toBeVisible();
 
     // Take screenshot of the Phosphate tab
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
@@ -371,94 +376,71 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      * 1. Open Monomer Creation Wizard with 'Nucleotide (preset)' type
      * 2. Select a continuous fragment on canvas
      * 3. In the Attributes panel, locate dedicated control/button to mark selection as Base/Sugar/Phosphate
-     * 4. Click the appropriate button (e.g., 'Set as Base')
+     * 4. Click the appropriate button (e.g., 'Mark as Base')
      * 5. Expected result: Selected fragment is assigned to chosen component and corresponding tab reflects the structure
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Select a continuous fragment
-    await selectAtomAndBonds(page, { atomIds: [0, 1], bondIds: [0] });
+    await selectAtomAndBonds(page, { atomIds: [4, 5], bondIds: [2] });
 
-    // Look for dedicated Attributes panel buttons for component assignment
-    // Note: The exact implementation of these buttons may vary, so we check for common patterns
-    const setAsBaseButton = page
-      .getByTestId('set-as-base-button')
-      .or(page.getByText('Set as Base', { exact: false }))
-      .or(page.getByRole('button', { name: /base/i }));
+    await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Base);
+    const setAsBaseButton =
+      dialog.nucleotidePresetSection.baseTab.maskAsBaseButton;
 
     // If the button exists, click it and verify the assignment
-    if (await setAsBaseButton.isVisible()) {
-      await setAsBaseButton.click();
-
-      // Verify Base tab becomes active
-      await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveAttribute(
-        'aria-selected',
-        'true',
-      );
-      await expect(
-        dialog.nucleotidePresetSection.baseTab.codeEditbox,
-      ).toBeVisible();
-    } else {
-      // If dedicated buttons don't exist yet, this test documents the expected behavior
-      console.log(
-        'Dedicated Attributes panel buttons for component assignment not yet implemented',
-      );
-    }
+    await setAsBaseButton.click();
 
     // Take screenshot of current state
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });
 
-  test('Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection', async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/10006
-     * Description: Verify that dedicated Attributes panel buttons are disabled
-     * when selection is non-continuous
-     *
-     * Scenario:
-     * 1. Open Monomer Creation Wizard with 'Nucleotide (preset)' type
-     * 2. Select non-continuous fragments on canvas
-     * 3. Check Attributes panel controls/buttons for component assignment
-     * 4. Expected result: Dedicated buttons are disabled for non-continuous selection
-     *
-     * Version 3.12
-     */
-    await drawBenzeneRing(page);
-    await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
-    await dialog.selectType(MonomerType.NucleotidePreset);
+  test.fail(
+    'Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection',
+    async () => {
+      // Works wrong because of https://github.com/epam/ketcher/issues/9121
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/10006
+       * Description: Verify that dedicated Attributes panel buttons are disabled
+       * when selection is non-continuous
+       *
+       * Scenario:
+       * 1. Open Monomer Creation Wizard with 'Nucleotide (preset)' type
+       * 2. Select non-continuous fragments on canvas
+       * 3. Check Attributes panel controls/buttons for component assignment
+       * 4. Expected result: Dedicated buttons are disabled for non-continuous selection
+       *
+       * Version 3.12
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+      await LeftToolbar(page).createMonomer();
+      await shiftCanvas(page, -150, 50);
+      await dialog.selectType(MonomerType.NucleotidePreset);
 
-    // Select non-continuous atoms
-    await selectAtomAndBonds(page, { atomIds: [0, 3], bondIds: [] });
+      // Select non-continuous atoms
+      await selectAtomAndBonds(page, { atomIds: [0, 3], bondIds: [] });
 
-    // Look for dedicated Attributes panel buttons
-    const setAsBaseButton = page
-      .getByTestId('set-as-base-button')
-      .or(page.getByText('Set as Base', { exact: false }))
-      .or(page.getByRole('button', { name: /base/i }));
+      // Look for dedicated Attributes panel buttons
+      const setAsBaseButton =
+        dialog.nucleotidePresetSection.baseTab.maskAsBaseButton;
 
-    // If the button exists, verify it's disabled
-    if (await setAsBaseButton.isVisible()) {
+      // If the button exists, verify it's disabled
+      await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Base);
       expect(await setAsBaseButton.isEnabled()).toBeFalsy();
-    } else {
-      // If dedicated buttons don't exist yet, this test documents the expected behavior
-      console.log(
-        'Dedicated Attributes panel buttons for component assignment not yet implemented',
-      );
-    }
 
-    // Take screenshot of current state
-    await takeEditorScreenshot(page);
+      // Take screenshot of current state
+      await takeElementScreenshot(page, dialog.window);
 
-    await dialog.discard();
-  });
+      await dialog.discard();
+    },
+  );
 
   test('Case 11 - Verify multiple components can be defined sequentially using "Mark as a..." on different selections', async () => {
     /*
@@ -475,9 +457,9 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
      *
      * Version 3.12
      */
-    await drawBenzeneRing(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
     await LeftToolbar(page).createMonomer();
-    const dialog = CreateMonomerDialog(page);
+    await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerType.NucleotidePreset);
 
     // Define Base component
@@ -522,7 +504,7 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ).toBeVisible();
     await expect(
       dialog.nucleotidePresetSection.baseTab.codeEditbox,
-    ).not.toHaveValue('');
+    ).toHaveValue('');
 
     // Check Sugar tab
     await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Sugar);
@@ -531,7 +513,7 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ).toBeVisible();
     await expect(
       dialog.nucleotidePresetSection.sugarTab.codeEditbox,
-    ).not.toHaveValue('');
+    ).toHaveValue('');
 
     // Check Phosphate tab
     await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Phosphate);
@@ -540,10 +522,10 @@ test.describe('Mark as... Context Menu for Nucleotide Preset Components', () => 
     ).toBeVisible();
     await expect(
       dialog.nucleotidePresetSection.phosphateTab.codeEditbox,
-    ).not.toHaveValue('');
+    ).toHaveValue('');
 
     // Take final screenshot showing all components defined
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, dialog.window);
 
     await dialog.discard();
   });

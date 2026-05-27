@@ -27,14 +27,6 @@ import type { Struct } from 'domain/entities/struct';
 import type ReStruct from './restruct';
 import type { RenderOptions } from '../render.types';
 
-function getFromMap<T>(map: Map<number, T>, key: number): T {
-  const value = map.get(key);
-  if (value === undefined) {
-    throw new Error(`Map entry not found for key ${key}`);
-  }
-  return value;
-}
-
 class ReLoop extends ReObject {
   loop: Loop;
   centre: Vec2;
@@ -59,22 +51,24 @@ class ReLoop extends ReObject {
     const { hbs } = loop;
 
     this.centre = new Vec2();
-    hbs.forEach((hbid) => {
-      const hb = getFromMap(molecule.halfBonds, hbid);
-      const bond = getFromMap(restruct.bonds, hb.bid);
-      const apos = Scale.modelToCanvas(
-        getFromMap(restruct.atoms, hb.begin).a.pp,
-        options,
-      );
+    for (const hbid of hbs) {
+      const hb = molecule.halfBonds.get(hbid);
+      if (hb === undefined) return;
+      const bond = restruct.bonds.get(hb.bid);
+      if (bond === undefined) return;
+      const beginAtom = restruct.atoms.get(hb.begin);
+      if (beginAtom === undefined) return;
+      const apos = Scale.modelToCanvas(beginAtom.a.pp, options);
       if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false;
       // eslint-disable-next-line no-underscore-dangle
       this.centre.add_(apos);
-    });
+    }
 
     loop.convex = true;
     for (let k = 0; k < hbs.length; ++k) {
-      const hba = getFromMap(molecule.halfBonds, hbs[k]);
-      const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
+      const hba = molecule.halfBonds.get(hbs[k]);
+      const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length]);
+      if (hba === undefined || hbb === undefined) return;
       const angle = Math.atan2(
         Vec2.cross(hba.dir, hbb.dir),
         Vec2.dot(hba.dir, hbb.dir),
@@ -84,30 +78,29 @@ class ReLoop extends ReObject {
 
     this.centre = this.centre.scaled(1.0 / hbs.length);
     this.radius = -1;
-    hbs.forEach((hbid) => {
-      const hb = getFromMap(molecule.halfBonds, hbid);
-      const apos = Scale.modelToCanvas(
-        getFromMap(restruct.atoms, hb.begin).a.pp,
-        options,
-      );
-      const bpos = Scale.modelToCanvas(
-        getFromMap(restruct.atoms, hb.end).a.pp,
-        options,
-      );
+    for (const hbid of hbs) {
+      const hb = molecule.halfBonds.get(hbid);
+      if (hb === undefined) return;
+      const beginAtom = restruct.atoms.get(hb.begin);
+      const endAtom = restruct.atoms.get(hb.end);
+      if (beginAtom === undefined || endAtom === undefined) return;
+      const apos = Scale.modelToCanvas(beginAtom.a.pp, options);
+      const bpos = Scale.modelToCanvas(endAtom.a.pp, options);
       const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
       const dist = Vec2.dot(Vec2.diff(apos, this.centre), n);
       this.radius = this.radius < 0 ? dist : Math.min(this.radius, dist);
-    });
+    }
     this.radius *= 0.7;
     if (!loop.aromatic) return;
 
     // Skip rendering the aromatic circle when the loop sits entirely inside one contracted sgroup
     const atomIds = new Set<number>();
-    hbs.forEach((hbid) => {
-      const hb = getFromMap(molecule.halfBonds, hbid);
+    for (const hbid of hbs) {
+      const hb = molecule.halfBonds.get(hbid);
+      if (hb === undefined) return;
       atomIds.add(hb.begin);
       atomIds.add(hb.end);
-    });
+    }
 
     const firstAtomId = atomIds.values().next().value;
     if (firstAtomId === undefined) return;
@@ -128,18 +121,18 @@ class ReLoop extends ReObject {
     } else {
       let pathStr = '';
       for (let k = 0; k < hbs.length; ++k) {
-        const hba = getFromMap(molecule.halfBonds, hbs[k]);
-        const hbb = getFromMap(molecule.halfBonds, hbs[(k + 1) % hbs.length]);
+        const hba = molecule.halfBonds.get(hbs[k]);
+        const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length]);
+        if (hba === undefined || hbb === undefined) return;
         const angle = Math.atan2(
           Vec2.cross(hba.dir, hbb.dir),
           Vec2.dot(hba.dir, hbb.dir),
         );
         const halfAngle = (Math.PI - angle) / 2;
         const dir = hbb.dir.rotate(halfAngle);
-        const pi = Scale.modelToCanvas(
-          getFromMap(restruct.atoms, hbb.begin).a.pp,
-          options,
-        );
+        const hbbBeginAtom = restruct.atoms.get(hbb.begin);
+        if (hbbBeginAtom === undefined) return;
+        const pi = Scale.modelToCanvas(hbbBeginAtom.a.pp, options);
         let sin = Math.sin(halfAngle);
         const minSin = 0.1;
         if (Math.abs(sin) < minSin) sin = (sin * minSin) / Math.abs(sin);

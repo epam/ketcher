@@ -347,12 +347,14 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   };
 
   private getCanvasExportBounds = (svg: SVGSVGElement) => {
-    const graphics = Array.from(svg.querySelectorAll('*')).filter((el) => {
-      if (!(el instanceof SVGGraphicsElement)) return false;
-      if (el.closest('defs')) return false;
-      if (el.id === 'rectangle-selection-area') return false;
-      return true;
-    });
+    const graphics = Array.from(svg.querySelectorAll('*')).filter(
+      (el): el is SVGGraphicsElement => {
+        if (!(el instanceof SVGGraphicsElement)) return false;
+        if (el.closest('defs')) return false;
+        if (el.id === 'rectangle-selection-area') return false;
+        return true;
+      },
+    );
 
     let minX = Number.POSITIVE_INFINITY;
     let minY = Number.POSITIVE_INFINITY;
@@ -471,7 +473,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     structStr: string,
     options: StructServiceOptions,
   ): Promise<string> => {
-    const base64 = await this.props.server.generateImageAsBase64(structStr, {
+    const { server } = this.props;
+    if (!server) {
+      throw new Error('Server is not available for image generation');
+    }
+
+    const base64 = await server.generateImageAsBase64(structStr, {
       ...options,
       outputFormat: type,
     } as GenerateImageOptions);
@@ -521,7 +528,8 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.props.onOk();
     } catch (e) {
       KetcherLogger.error('Save.jsx::SaveDialog::saveImage', e);
-      this.context.errorHandler(e);
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      this.context.errorHandler(errorMessage);
     }
   };
 
@@ -787,7 +795,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     delete formState.moleculeErrors;
     const { format } = formState.result;
     const { structStr, imageSrc, isLoading } = this.state;
-    const isCleanStruct = this.props.struct.isBlank();
 
     if (isLoading) return <LoadingState classes={classes} />;
 
@@ -830,7 +837,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
   getButtons = (): JSX.Element[] => {
     const { disableControls, isLoading, structStr } = this.state;
-    const { options, formState } = this.props;
+    const { formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
 

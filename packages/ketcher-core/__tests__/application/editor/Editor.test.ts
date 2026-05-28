@@ -272,6 +272,90 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should reject duplicate HELM aliases within a single update payload', () => {
+      const payloadWithDuplicateAliases = {
+        root: {
+          templates: [
+            { $ref: 'monomerTemplate-PHOS1' },
+            { $ref: 'monomerTemplate-PHOS2' },
+            { $ref: 'monomerTemplate-PHOS3' },
+          ],
+        },
+        'monomerTemplate-PHOS1': {
+          type: 'monomerTemplate',
+          id: 'PHOS1',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 1',
+          name: 'PHOS1',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS1',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS1',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+        'monomerTemplate-PHOS2': {
+          type: 'monomerTemplate',
+          id: 'PHOS2',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 2',
+          name: 'PHOS2',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS2',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS2',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+        'monomerTemplate-PHOS3': {
+          type: 'monomerTemplate',
+          id: 'PHOS3',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 3',
+          name: 'PHOS3',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS3',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS3',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(
+          JSON.stringify(payloadWithDuplicateAliases),
+        );
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(true);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'PHOS2',
+          reason: expect.stringContaining('Alias collision detected'),
+        },
+        {
+          name: 'PHOS3',
+          reason: expect.stringContaining('Alias collision detected'),
+        },
+      ]);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
     it('should skip monomer with invalid HELM alias and still load valid aliases with brackets and dots', () => {
       const monomersWithMixedAliases = {
         root: {

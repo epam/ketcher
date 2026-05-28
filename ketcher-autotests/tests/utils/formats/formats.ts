@@ -211,7 +211,19 @@ export async function replaceMonomersLibrary(
 ): Promise<void> {
   return await page.evaluate(
     ({ rawMonomersData, params }) =>
-      window.ketcher.replaceMonomersLibrary(rawMonomersData, params),
+      window.ketcher
+        .replaceMonomersLibrary(rawMonomersData, params)
+        .catch((err: unknown) => {
+          if (
+            err &&
+            typeof err === 'object' &&
+            (err as { name?: string }).name === 'MonomerLibraryUpdateError' &&
+            (err as { partialSuccess?: boolean }).partialSuccess
+          ) {
+            return;
+          }
+          throw err;
+        }),
     { rawMonomersData, params },
   );
 }

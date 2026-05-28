@@ -30,7 +30,7 @@ import {
 
 import LassoHelper from './helper/lasso';
 import { isEqual } from 'lodash/fp';
-import { selMerge } from './select';
+import { selMerge } from './select/select.helpers';
 import Editor, { Selection } from '../Editor';
 import { Tool } from './Tool';
 import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';

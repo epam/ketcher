@@ -27,7 +27,7 @@ import {
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { MODES } from 'src/constants';
-import { getAngleFromEvent, getBondFlipSign } from './template';
+import { getAngleFromEvent, getBondFlipSign } from './template.helpers';
 
 const PREVIEW_DELAY = 300;
 type ClosestItemType = { map: string; id: number; dist: number };

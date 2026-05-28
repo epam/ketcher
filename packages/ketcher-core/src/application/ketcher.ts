@@ -25,7 +25,7 @@ import type {
   GenerateImageOptions,
   StructService,
   CalculateData,
-  type CalculateResult,
+  CalculateResult,
 } from 'domain/services';
 
 import { type Editor, getSelectionFromStruct } from './editor';

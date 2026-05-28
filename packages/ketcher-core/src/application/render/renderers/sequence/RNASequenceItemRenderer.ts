@@ -1,10 +1,10 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { Nucleoside } from 'domain/entities/Nucleoside';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Vec2 } from 'domain/entities/vec2';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { Nucleoside } from 'domain/entities/Nucleoside';
+import type { Nucleotide } from 'domain/entities/Nucleotide';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
   constructor(

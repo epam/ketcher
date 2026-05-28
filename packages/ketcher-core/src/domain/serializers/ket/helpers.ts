@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Axis, Axises } from 'domain/entities/Axis';
-import { Struct } from 'domain/entities/struct';
+import { type Axises, Axis } from 'domain/entities/Axis';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { cloneDeep, cloneDeepWith } from 'lodash';
-import { EditorSelection } from 'application/editor/editor.types';
+import type { EditorSelection } from 'application/editor/editor.types';
 import {
+  type MonomerTransformation,
   KetMonomerClass,
   KetTemplateType,
-  MonomerTransformation,
 } from 'application/formatters/types/ket';
 import { MONOMER_CONST, RNA_DNA_NON_MODIFIED_PART } from 'domain/constants';
-import { MonomerItemType } from 'domain/types';
+import type { MonomerItemType } from 'domain/types';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 
 const customizer = (value: any) => {

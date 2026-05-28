@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,

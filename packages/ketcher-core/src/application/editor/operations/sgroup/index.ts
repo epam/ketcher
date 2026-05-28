@@ -15,11 +15,11 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
-import { ReSGroup, ReStruct } from '../../../render';
+import { type ReStruct, ReSGroup } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';

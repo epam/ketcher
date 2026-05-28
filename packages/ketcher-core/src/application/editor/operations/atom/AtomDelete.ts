@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomAttributes, Point } from 'domain/entities';
-import { ReStruct } from '../../../render';
+import type { AtomAttributes, Point } from 'domain/entities';
+import type { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';

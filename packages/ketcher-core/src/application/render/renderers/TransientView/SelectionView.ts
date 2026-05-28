@@ -1,5 +1,5 @@
 import { TransientView } from 'application/render/renderers/TransientView/TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { line as d3Line } from 'd3';
 
 export type SelectionRectangleViewParams = {

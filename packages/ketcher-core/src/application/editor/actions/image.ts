@@ -1,6 +1,6 @@
-import { ReStruct } from 'application/render';
-import { Image, ImageReferencePositionInfo } from 'domain/entities/image';
-import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
+import { type ImageReferencePositionInfo, Image } from 'domain/entities/image';
+import type { Vec2 } from 'domain/entities/vec2';
 import {
   ImageDelete,
   ImageMove,

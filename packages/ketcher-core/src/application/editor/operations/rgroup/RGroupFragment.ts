@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReRGroup, ReStruct } from '../../../render';
+import { type ReStruct, ReRGroup } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';

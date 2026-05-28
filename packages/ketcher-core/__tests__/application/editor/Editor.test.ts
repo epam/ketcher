@@ -9,7 +9,7 @@ import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../helpers/dom';
-import { SelectBase } from 'application/editor/tools/select';
+import type { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {
@@ -525,7 +525,7 @@ describe('CoreEditor', () => {
       );
     });
 
-    it('should reject monomer with IDT alias exceeding 12 characters', () => {
+    it('should reject monomer with IDT alias exceeding 10 characters without slashes', () => {
       const monomerWithLongIdtAlias = {
         root: {
           templates: [{ $ref: 'monomerTemplate-CHEM_LONG' }],
@@ -545,7 +545,7 @@ describe('CoreEditor', () => {
             MonomerNaturalAnalogCode: 'X',
           },
           idtAliases: {
-            base: '1234567890123', // 13 chars — exceeds max of 12
+            base: 'N1234567890', // 11 chars, no slashes — exceeds max of 10
           },
         },
       };
@@ -554,7 +554,9 @@ describe('CoreEditor', () => {
       editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('IDT alias length must not exceed 12'),
+        expect.stringContaining(
+          'The maximum number of characters of an IDT alias without slashes (/) is 10.',
+        ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
     });
@@ -620,6 +622,42 @@ describe('CoreEditor', () => {
         'Editor::updateMonomersLibrary',
         expect.stringContaining('BILN alias "BilnAlias1"'),
       );
+    });
+
+    it('should accept monomer with IDT alias of 10 inner characters wrapped in slashes', () => {
+      const monomerWithSlashedIdtAlias = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_OK' }],
+        },
+        'monomerTemplate-CHEM_OK': {
+          type: 'monomerTemplate',
+          id: 'CHEM_OK',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem OK IDT',
+          name: 'CHEM_OK',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_OK',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_OK',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: '/1234567890/', // 12 chars total, 10 inner — within limit
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithSlashedIdtAlias));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(
+          'The maximum number of characters of an IDT alias without slashes',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
     it('should reject monomer group template without name', () => {

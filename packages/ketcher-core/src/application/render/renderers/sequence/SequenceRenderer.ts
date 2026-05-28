@@ -1,11 +1,11 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
+  type ITwoStrandedChainItem,
   ChainsCollection,
-  ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import {
-  BaseMonomer,
+  type BaseMonomer,
   HydrogenBond,
   MonomerToAtomBond,
   Nucleotide,
@@ -13,7 +13,7 @@ import {
   Sugar,
   Vec2,
 } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
   getNextMonomerInChain,
@@ -25,10 +25,10 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import {
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
@@ -42,7 +42,7 @@ import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
+import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
 import ZoomTool from 'application/editor/tools/Zoom';

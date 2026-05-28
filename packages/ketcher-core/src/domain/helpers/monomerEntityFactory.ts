@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
 import {
   AmbiguousMonomer,
   Chem,

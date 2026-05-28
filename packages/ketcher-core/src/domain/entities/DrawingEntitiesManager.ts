@@ -1,32 +1,32 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
+  type KetFileMultitailArrowNode,
+  type LinkerSequenceNode,
+  type RNABase,
+  type RxnArrowMode,
+  type SubChainNode,
   BaseMonomer,
   Chem,
-  KetFileMultitailArrowNode,
-  LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
   Pool,
-  RNABase,
-  RxnArrowMode,
   SGroupForest,
   Struct,
-  SubChainNode,
   Sugar,
 } from 'domain/entities';
-import { BondCIP } from 'domain/entities/types';
+import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -59,8 +59,8 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import {
+  type GrouppedChain,
   ChainsCollection,
-  GrouppedChain,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
@@ -72,8 +72,8 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { IKetTemplateConnection } from 'application/formatters';
-import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
+import type { IKetTemplateConnection } from 'application/formatters';
+import { type AtomProperties, Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
   AtomAddOperation,
@@ -89,7 +89,7 @@ import {
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
-  AtomLabel,
+  type AtomLabel,
   HalfMonomerSize,
   SnakeLayoutCellWidth,
 } from 'domain/constants';
@@ -102,11 +102,11 @@ import {
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutMonomersNode,
   isTwoStrandedSnakeLayoutNode,
 } from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
@@ -125,13 +125,13 @@ import {
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
 import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
-import { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
-import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;

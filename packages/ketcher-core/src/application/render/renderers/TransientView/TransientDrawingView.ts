@@ -1,32 +1,35 @@
 import { select } from 'd3';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import type { IRnaPreset } from 'application/editor/tools/Tool';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Vec2 } from 'domain/entities/vec2';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { Vec2 } from 'domain/entities/vec2';
 import { BondSnapView } from './BondSnapView';
-import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
-import { BaseMonomerRenderer } from 'application/render';
-import { DistanceSnapView, DistanceSnapViewParams } from './DistanceSnapView';
+import { type AngleSnapViewParams, AngleSnapView } from './AngleSnapView';
+import type { BaseMonomerRenderer } from 'application/render';
 import {
+  type DistanceSnapViewParams,
+  DistanceSnapView,
+} from './DistanceSnapView';
+import {
+  type ModifyAminoAcidsViewParams,
   ModifyAminoAcidsView,
-  ModifyAminoAcidsViewParams,
 } from './ModifyAminoAcidsView';
 import {
+  type LineLengthHighlightViewParams,
   LineLengthHighlightView,
-  LineLengthHighlightViewParams,
 } from './LineLengthHighlightView';
 import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
-import { MonomerItemType } from 'domain/types';
-import { SelectionView, SelectionViewParams } from './SelectionView';
+import type { MonomerItemType } from 'domain/types';
+import { type SelectionViewParams, SelectionView } from './SelectionView';
 import {
+  type GroupCenterSnapViewParams,
   GroupCentersnapView,
-  GroupCenterSnapViewParams,
 } from 'application/render/renderers/TransientView/GroupCenterSnapView';
-import { RotationView, RotationViewParams } from './RotationView';
+import { type RotationViewParams, RotationView } from './RotationView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;

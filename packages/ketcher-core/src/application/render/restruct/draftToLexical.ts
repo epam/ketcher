@@ -1,7 +1,7 @@
 // Conversion helpers for Draft.js to Lexical format
 // Copyright 2021 EPAM Systems
 
-import {
+import type {
   SerializedEditorState,
   SerializedParagraphNode,
   SerializedTextNode,

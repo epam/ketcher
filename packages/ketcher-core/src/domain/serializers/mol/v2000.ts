@@ -20,7 +20,7 @@ import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
 import { Bond } from 'domain/entities/bond';
 import { Pool } from 'domain/entities/pool';
-import { RGroup, RGroupAttributes } from 'domain/entities/rgroup';
+import { type RGroupAttributes, RGroup } from 'domain/entities/rgroup';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
@@ -29,7 +29,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';
 import utils from './utils';
-import { AtomMap, SGroupMap } from './mol.types';
+import type { AtomMap, SGroupMap } from './mol.types';
 
 const loadRGroupFragments = true; // TODO: set to load the fragments
 

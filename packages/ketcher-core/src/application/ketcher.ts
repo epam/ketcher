@@ -29,7 +29,7 @@ import type {
 } from 'domain/services';
 
 import {
-  Editor,
+  type Editor,
   getSelectionFromStruct,
   MonomerLibraryConvertError,
 } from './editor';

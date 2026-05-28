@@ -35,7 +35,7 @@
     "prestart": "npm run ajv",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:circ test:unit",
-    "test:circ": "dpdm --no-warning --no-tree -T ./src/index.ts",
+    "test:circ": "dpdm --no-warning --no-tree -T --exit-code circular:1 ./src/index.ts",
     "test:eslint": "eslint . --ext .ts,.js",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
     "test:eslint:fix": "npm run test:eslint -- --fix",

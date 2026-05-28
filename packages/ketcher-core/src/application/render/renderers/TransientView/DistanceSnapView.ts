@@ -1,6 +1,6 @@
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { MonomersAlignment } from 'application/editor/tools/types';

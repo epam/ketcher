@@ -7,7 +7,7 @@ import {
   ARROW_UNBALANCED_OFFSET,
 } from 'application/render/draw';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { toFixed } from 'utilities';
 
 export class UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer {

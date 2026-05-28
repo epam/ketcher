@@ -17,28 +17,28 @@ import { Subscription } from 'subscription';
 
 import { saveAs } from 'file-saver';
 import {
-  FormatterFactory,
+  type FormatterFactory,
   identifyStructFormat,
   SupportedFormat,
 } from './formatters';
-import {
+import type {
   GenerateImageOptions,
   StructService,
   CalculateData,
   type CalculateResult,
 } from 'domain/services';
 
-import { Editor, getSelectionFromStruct } from './editor';
+import { type Editor, getSelectionFromStruct } from './editor';
 import { provideEditorInstance } from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { MolfileFormat } from 'domain/serializers/mol/mol.types';
+import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
-  LogSettings,
+  type LogSettings,
   LogLevel,
   runAsyncAction,
   SettingsManager,
@@ -52,14 +52,14 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
-import { EditorSelection, EditorType } from './editor/editor.types';
+import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
+  type ExportImageParams,
+  type SupportedImageFormats,
+  type SupportedModes,
+  type UpdateMonomersLibraryParams,
   BlobTypes,
-  ExportImageParams,
   ModeTypes,
-  SupportedImageFormats,
-  SupportedModes,
-  UpdateMonomersLibraryParams,
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';

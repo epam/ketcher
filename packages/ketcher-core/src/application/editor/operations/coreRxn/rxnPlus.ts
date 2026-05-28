@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import type { Operation } from 'domain/entities/Operation';
+import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 
 export class RxnPlusAddOperation implements Operation {
   public rxnPlus: RxnPlus;

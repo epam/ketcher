@@ -146,6 +146,7 @@ export async function setMolecule(
   page: Page,
   structStr: string,
   position?: { x: number; y: number },
+  rescale?: true,
 ): Promise<void> {
   await page.waitForLoadState('domcontentloaded');
   await page.waitForFunction(
@@ -156,7 +157,7 @@ export async function setMolecule(
     try {
       return await page.evaluate(
         ({ structStr, position }) =>
-          window.ketcher.setMolecule(structStr, { position }),
+          window.ketcher.setMolecule(structStr, { position, rescale }),
         { structStr, position },
       );
     } catch (error) {

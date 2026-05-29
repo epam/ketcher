@@ -505,6 +505,27 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return this.getCanvasSvgSnapshot();
   };
 
+  private getCanvasImagePreviewDataUrl = async (
+    type: OutputFormatType,
+  ): Promise<string | undefined> => {
+    const canvasSvg = this.getCanvasSvg();
+    if (!canvasSvg) {
+      return undefined;
+    }
+
+    try {
+      return type === 'svg'
+        ? this.createSvgPreviewUrl(canvasSvg)
+        : await this.convertSvgToPngDataUrl(canvasSvg);
+    } catch (e) {
+      KetcherLogger.error(
+        'Save.jsx::SaveDialog::getCanvasImagePreviewDataUrl',
+        e,
+      );
+      return undefined;
+    }
+  };
+
   createSvgPreviewUrl = (svgData: string): string => {
     if (this.previewObjectUrl) {
       URL.revokeObjectURL(this.previewObjectUrl);
@@ -647,19 +668,18 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         structStr,
         isLoading: true,
       });
-      const serverOptions = { ...options };
+      const serverOptions = {
+        ...options,
+        outputFormat: type,
+      };
 
       return Promise.resolve()
-        .then(() => {
-          const canvasSvg = this.getCanvasSvg();
-
-          if (canvasSvg) {
-            return type === 'svg'
-              ? this.createSvgPreviewUrl(canvasSvg)
-              : this.convertSvgToPngDataUrl(canvasSvg);
+        .then(() => this.getCanvasImagePreviewDataUrl(type))
+        .then((imageSrc) => {
+          if (imageSrc) {
+            return imageSrc;
           }
 
-          serverOptions.outputFormat = type;
           return this.getServerImageDataUrl(type, structStr, serverOptions);
         })
         .then((imageSrc) => {

@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import {
-  Atom,
+  type Atom,
+  type Struct,
+  type SupportedFormat,
   Bond,
   RxnArrowMode,
   StereoFlag,
-  Struct,
-  SupportedFormat,
   getPropertiesByFormat,
 } from 'ketcher-core';
 

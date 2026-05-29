@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import {
+  type ReStruct,
+  type Struct,
   Vec2,
   fromItemsFuse,
   fromTemplateOnAtom,
@@ -24,8 +26,6 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
-  ReStruct,
-  Struct,
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
@@ -35,10 +35,10 @@ import {
   MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import TemplatePreview from './templatePreview';
 import {
   getAngleFromEvent,

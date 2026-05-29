@@ -19,13 +19,13 @@ import '@testing-library/jest-dom';
 import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({

@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Pool,
   Pile,
   SgContexts,
   checkOverlapping,
@@ -23,7 +24,6 @@ import {
   fromSgroupDeletion,
   FunctionalGroup,
   SGroup,
-  Pool,
   expandSGroupWithMultipleAttachmentPoint,
   KetcherLogger,
 } from 'ketcher-core';
@@ -31,8 +31,8 @@ import {
 import LassoHelper from './helper/lasso';
 import { isEqual } from 'lodash/fp';
 import { selMerge } from './select/select.helpers';
-import Editor, { Selection } from '../Editor';
-import { Tool } from './Tool';
+import type { Editor, Selection } from '../Editor';
+import type { Tool } from './Tool';
 import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';
 
 const searchMaps = [

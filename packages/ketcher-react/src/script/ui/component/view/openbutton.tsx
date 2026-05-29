@@ -15,16 +15,16 @@
  ***************************************************************************/
 
 import {
-  ButtonHTMLAttributes,
-  ChangeEvent,
+  type ButtonHTMLAttributes,
+  type ChangeEvent,
+  type PropsWithChildren,
   Component,
-  PropsWithChildren,
 } from 'react';
 import clsx from 'clsx';
 
 import { fileOpener } from '../../utils';
 import classes from './buttons.module.less';
-import { FileContent, OpenerFunction } from './openButton.types';
+import type { FileContent, OpenerFunction } from './openButton.types';
 
 type OpenButtonOwnProps = {
   server?: unknown;

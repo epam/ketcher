@@ -1,9 +1,9 @@
 import {
-  Editor,
+  type Editor,
+  type EditorSelection,
+  type ReAtom,
   Vec2,
-  EditorSelection,
   fromMultipleMove,
-  ReAtom,
   Scale,
 } from 'ketcher-core';
 

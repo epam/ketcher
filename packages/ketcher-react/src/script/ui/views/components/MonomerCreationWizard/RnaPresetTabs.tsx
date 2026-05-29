@@ -2,13 +2,19 @@ import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
 import {
-  AtomLabel,
-  AttachmentPointName,
+  type AtomLabel,
+  type AttachmentPointName,
+  type RnaPresetComponentKey,
   KetMonomerClass,
-  RnaPresetComponentKey,
 } from 'ketcher-core';
-import { ChangeEvent, Fragment, useEffect, useState, useCallback } from 'react';
 import {
+  type ChangeEvent,
+  Fragment,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+import type {
   RnaPresetWizardAction,
   RnaPresetWizardState,
   RnaPresetWizardStatePresetFieldValue,
@@ -25,17 +31,17 @@ import {
   selectionSelector,
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
-import { Editor } from '../../../../editor';
+import type { Editor } from '../../../../editor';
 import inputStyles from '../../../component/form/Input/Input.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
+  type RnaPresetComponentType,
   MonomerCreationMarkAsComponentAction,
-  RnaPresetComponentType,
 } from './MonomerCreationWizard.constants';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
 import {
+  type PhosphatePosition,
   getLeavingAtomForAttachmentPoint,
-  PhosphatePosition,
 } from './RnaPresetAttachmentPointValidation';
 import {
   getAttachmentPointsForRnaPresetComponent,

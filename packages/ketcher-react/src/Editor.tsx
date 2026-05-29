@@ -1,12 +1,16 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import {
+  type EditorProps,
   MicromoleculesEditor as MicromoleculesEditorComponent,
-  EditorProps,
 } from './MicromoleculesEditor';
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
-import { Ketcher, Editor as MoleculesEditor, CoreEditor } from 'ketcher-core';
+import type {
+  Ketcher,
+  Editor as MoleculesEditor,
+  CoreEditor,
+} from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;

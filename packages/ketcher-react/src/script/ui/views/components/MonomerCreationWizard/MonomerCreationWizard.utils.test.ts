@@ -1,4 +1,4 @@
-import { BaseMonomer, KetMonomerClass } from 'ketcher-core';
+import { type BaseMonomer, KetMonomerClass } from 'ketcher-core';
 import { getEditInstanceInitialValues } from './MonomerCreationWizard.utils';
 
 const createMonomer = (

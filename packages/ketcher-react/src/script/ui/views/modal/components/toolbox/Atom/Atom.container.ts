@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Atom from './Atom';
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import { connect } from 'react-redux';
 
 type StateProps = Pick<BaseProps, 'formState'> & {

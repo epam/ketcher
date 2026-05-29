@@ -964,7 +964,20 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   public static removeLeavingGroupsFromConnectedAtoms(_struct: Struct) {
-    const struct = _struct.clone();
+    const needCloneAttachmentPoints = true;
+    const struct = _struct.clone(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      needCloneAttachmentPoints,
+    );
 
     struct.atoms.forEach((_atom, atomId) => {
       if (Atom.isHiddenLeavingGroupAtom(struct, atomId, false, true)) {

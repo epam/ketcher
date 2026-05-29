@@ -20,6 +20,7 @@ import type { Serializer } from '../serializers.types';
 import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export class MolSerializer implements Serializer<Struct> {
   static readonly DefaultOptions: MolSerializerOptions = {
@@ -78,6 +79,12 @@ export class MolSerializer implements Serializer<Struct> {
 
   serialize(_struct: Struct): string {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+
+    struct.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule) {
+        sgroup.data.expanded = true;
+      }
+    });
 
     return new Molfile().saveMolecule(
       struct,

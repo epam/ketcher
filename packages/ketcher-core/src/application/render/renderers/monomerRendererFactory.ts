@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import {
+  type ConcreteMonomerEntityClass,
   monomerEntityFactory,
-  ConcreteMonomerEntityClass,
 } from 'domain/helpers/monomerEntityFactory';
-import { MonomerItemType } from 'domain/types';
-import { KetMonomerClass } from 'domain/constants/monomers';
+import type { MonomerItemType } from 'domain/types';
+import type { KetMonomerClass } from 'domain/constants/monomers';
 import {
   Chem,
   Peptide,
@@ -29,7 +29,7 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { BaseMonomerRenderer } from './BaseMonomerRenderer';
+import type { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { ChemRenderer } from './ChemRenderer';
 import { PeptideRenderer } from './PeptideRenderer';
 import { PhosphateRenderer } from './PhosphateRenderer';

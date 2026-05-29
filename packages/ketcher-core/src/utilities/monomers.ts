@@ -1,5 +1,5 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { IKetIdtAliases } from 'application/formatters/types/ket';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { IKetIdtAliases } from 'application/formatters/types/ket';
 
 export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
   'The HELM alias must consist only of uppercase and lowercase letters, numbers, underscores (_), asterisks (*), square brackets ([]), parentheses (()), dots (.), and hyphens (-), spaces prohibited.';

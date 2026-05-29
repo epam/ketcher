@@ -16,8 +16,8 @@
 
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
@@ -31,7 +31,7 @@ import { fromAromaticTemplateOnBond } from './aromaticFusing';
 import { fromPaste } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';

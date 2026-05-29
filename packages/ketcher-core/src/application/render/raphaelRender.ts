@@ -17,21 +17,21 @@
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
-import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { AttachmentPointName } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 
 export type MonomerCreationInitialValues = {
   type: KetMonomerClass;

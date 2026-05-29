@@ -1,10 +1,10 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MonomerCreationState, ReStruct } from 'application/render';
+import type { MonomerCreationState, ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
-import { AttachmentPointName } from 'domain/types';
-import Restruct from 'application/render/restruct/restruct';
+import type { AttachmentPointName } from 'domain/types';
+import type Restruct from 'application/render/restruct/restruct';
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];

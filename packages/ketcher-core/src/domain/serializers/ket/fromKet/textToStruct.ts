@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Text } from 'domain/entities/text';
 import { getNodeWithInvertedYCoord } from '../helpers';
 import {
+  type DraftEditorState,
   convertDraftToLexical,
-  DraftEditorState,
 } from 'application/render/restruct/draftToLexical';
 
 const IS_BOLD = 1;

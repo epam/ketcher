@@ -16,8 +16,8 @@
 
 import { StereoFlag } from 'domain/entities/fragment';
 import { StereoLabel } from 'domain/entities/atom';
-import { Struct } from 'domain/entities/struct';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 
 import { Elements } from 'domain/constants';

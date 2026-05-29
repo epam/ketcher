@@ -32,6 +32,10 @@ interface MacromoleculesEditorProps {
  *  and ts-ignore is needed to avoid TypeScript error as ketcher-react is built first
  *  so ketcher-macromolecules can't provide any typings while building ketcher-react.
  *  Consider refactoring/restructuring packages to avoid these two issues
+ *
+ *  NOTE: The circular dependency check (test:circ) uses --skip-dynamic-imports tree so that dpdm does not
+ *  traverse this dynamic import. If this import is ever changed to a static one, the flag must be removed
+ *  and the resulting cross-package cycle (ketcher-macromolecules -> ketcher-react) must be resolved first.
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

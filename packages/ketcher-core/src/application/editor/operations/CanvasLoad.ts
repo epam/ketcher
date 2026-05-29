@@ -16,8 +16,8 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
-import { Struct } from 'domain/entities/struct';
+import type { ReStruct } from '../../render';
+import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
 
 export class CanvasLoad extends BaseOperation {

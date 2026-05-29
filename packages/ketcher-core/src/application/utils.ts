@@ -1,12 +1,12 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { Struct } from 'domain/entities';
+import type { Struct } from 'domain/entities';
 import {
   FormatterFactory,
   SupportedFormat,
   identifyStructFormat,
 } from './formatters';
-import { Ketcher } from './ketcher';
-import { ChemicalMimeType, StructService } from 'domain/services';
+import type { Ketcher } from './ketcher';
+import { type StructService, ChemicalMimeType } from 'domain/services';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';

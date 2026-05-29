@@ -1,13 +1,18 @@
-import {
+import type {
   IKetMacromoleculesContent,
   IKetMonomerNode,
   IKetMonomerTemplate,
   IKetAmbiguousMonomerNode,
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct, Vec2, BaseMonomer } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { MonomerItemType } from 'domain/types/monomers';
+import {
+  type Struct,
+  type BaseMonomer,
+  type BaseMonomerConfig,
+  Vec2,
+} from 'domain/entities';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { MonomerItemType } from 'domain/types/monomers';
 import {
   modifyTransformation,
   setMonomerTemplatePrefix,
@@ -73,9 +78,16 @@ export function monomerToDrawingEntity(
   );
 }
 
-type MonomerFactoryFn = (
+export type MonomerFactoryFn = (
   monomerItem: MonomerItemType,
-) => [new (...args: unknown[]) => BaseMonomer, ...unknown[]];
+) => [
+  new (
+    monomerItem: MonomerItemType,
+    position?: Vec2,
+    config?: BaseMonomerConfig,
+  ) => BaseMonomer,
+  ...unknown[],
+];
 
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord } from '../helpers';
 

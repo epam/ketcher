@@ -123,7 +123,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             disabled={isDisabled}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
-            <span>{formatTitle(tools[name].title)}</span>
+            <span>{formatTitle(tools[name].title ?? '')}</span>
           </Item>
         );
       })}
@@ -148,7 +148,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
               disabled={isDisabled}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title)}</span>
+              <span>{formatTitle(tools[name].title ?? '')}</span>
             </Item>
           );
         })}

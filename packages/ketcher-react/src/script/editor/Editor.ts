@@ -49,6 +49,7 @@ import {
   KetTemplateType,
   KetConnectionType,
   MacromoleculesConverter,
+  MonomerCreationInitialValues,
   MonomerCreationState,
   monomerFactory,
   MULTITAIL_ARROW_KEY,
@@ -75,6 +76,7 @@ import {
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
   MonomerCreationComponentStructureUpdateEvent,
+  SGroupAttachmentPoint,
   RnaPresetComponentKey,
   ComponentStructureUpdateData,
   LayerMap,
@@ -975,15 +977,37 @@ class Editor implements KetcherEditor {
 
   private changeEventSubscriber: any = null;
 
-  openMonomerCreationWizard() {
+  openMonomerCreationWizard(
+    selectionOverride?: Selection,
+    editInstanceInitialValues?: MonomerCreationInitialValues,
+    editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
+  ) {
     const currentStruct = this.render.ctab.molecule;
-    const selection = this.selection() ?? {
-      atoms: Array.from(this.struct().atoms.keys()),
-      bonds: Array.from(this.struct().bonds.keys()),
+    const rawSelection = selectionOverride ??
+      this.selection() ?? {
+        atoms: Array.from(this.struct().atoms.keys()),
+        bonds: Array.from(this.struct().bonds.keys()),
+      };
+    const selection: Selection = {
+      rxnArrows: [],
+      rxnPluses: [],
+      texts: [],
+      rgroupAttachmentPoints: [],
+      ...rawSelection,
     };
 
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);
+
+    if (editInstanceInitialValues) {
+      selectedStruct.functionalGroups.clear();
+      Array.from(selectedStruct.sgroups.keys()).forEach((sgid) => {
+        selectedStruct.sGroupDelete(sgid);
+      });
+      this.terminalRGroupAtoms = [];
+      this.potentialLeavingAtomsForAutoAssignment = [];
+      this.potentialLeavingAtomsForManualAssignment = [];
+    }
 
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
@@ -1003,6 +1027,28 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >();
+
+    editInstanceAttachmentPoints?.forEach((attachmentPoint) => {
+      if (!attachmentPoint.attachmentPointNumber) {
+        return;
+      }
+
+      const attachmentAtomId = originalToSelectedAtomsIdMap.get(
+        attachmentPoint.atomId,
+      );
+      const leavingAtomId = originalToSelectedAtomsIdMap.get(
+        attachmentPoint.leaveAtomId as number,
+      );
+
+      if (!isNumber(attachmentAtomId) || !isNumber(leavingAtomId)) {
+        return;
+      }
+
+      assignedAttachmentPoints.set(
+        getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
+        [attachmentAtomId, leavingAtomId],
+      );
+    });
 
     const sideTerminalSGroupAtoms = this.terminalRGroupAtoms.filter(
       ([, attachmentPointLabel]) =>
@@ -1228,6 +1274,7 @@ class Editor implements KetcherEditor {
       potentialAttachmentPoints,
       problematicAttachmentPoints: new Set(),
       hasDefaultAttachmentPoints,
+      ...(editInstanceInitialValues ? { editInstanceInitialValues } : {}),
     };
 
     this.originalHistoryStack = this.historyStack;
@@ -1938,6 +1985,20 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.render.update(true);
+  }
+
+  setProblematicAtoms(problematicAtoms: Set<number>) {
+    if (!this.monomerCreationState) {
+      KetcherLogger.error(
+        'Can not set problematic atoms. There is no monomerCreationState',
+      );
+
+      return;
+    }
+
+    this.monomerCreationState.problematicAtoms = problematicAtoms;
     this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
     this.render.update(true);
   }

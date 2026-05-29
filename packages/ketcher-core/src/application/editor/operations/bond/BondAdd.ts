@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReBond, ReStruct } from '../../../render';
+import { type ReStruct, ReBond } from '../../../render';
 
 import { BaseOperation } from '../BaseOperation';
-import { Bond, BondAttributes } from 'domain/entities';
+import { type BondAttributes, Bond } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 
 type Data = {

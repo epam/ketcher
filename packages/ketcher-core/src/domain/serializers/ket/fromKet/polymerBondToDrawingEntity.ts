@@ -1,10 +1,10 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { IKetConnection } from 'application/formatters/types/ket';
+import type { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AttachmentPointName } from 'domain/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AttachmentPointName } from 'domain/types';
 
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,

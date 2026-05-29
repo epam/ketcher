@@ -19,7 +19,7 @@ import { Vec2 } from 'domain/entities/vec2';
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {

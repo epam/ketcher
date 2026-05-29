@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from 'domain/entities/bond';
+import type { Bond } from 'domain/entities/bond';
 import type { Neighbor, Struct } from 'domain/entities/struct';
 
 function isCorrectStereoCenter(

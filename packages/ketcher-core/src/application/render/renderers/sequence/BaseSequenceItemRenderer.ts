@@ -1,18 +1,18 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
-import {
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { SequenceRenderer } from 'application/render';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
@@ -71,7 +71,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      sequenceRendererStore.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }

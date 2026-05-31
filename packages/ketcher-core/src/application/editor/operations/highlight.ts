@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  * Copyright 2021 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,10 +15,10 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Highlight } from 'domain/entities';
-import { ReStruct } from '../../render';
+import { Highlight } from 'domain/entities/highlight';
+import type { ReStruct } from '../../render';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 
 type Data = {
@@ -100,10 +100,10 @@ export class HighlightDelete extends BaseOperation {
     super(OperationType.REMOVE_HIGHLIGHT, 5);
     this.data = {
       highlightId,
-      atoms: atoms || [],
-      bonds: bonds || [],
-      rgroupAttachmentPoints: rgroupAttachmentPoints || [],
-      color: color || 'white',
+      atoms: atoms ?? [],
+      bonds: bonds ?? [],
+      rgroupAttachmentPoints: rgroupAttachmentPoints ?? [],
+      color: color ?? 'white',
     };
   }
 

@@ -39,9 +39,25 @@ const FileDrop = ({
   testId,
   ...rest
 }: FileDropProps) => {
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
     ...rest,
   });
 
@@ -52,12 +68,11 @@ const FileDrop = ({
       disabled ? styles.isDisabled : null,
     ];
     return classes.join(' ');
-  }, [isDragActive]);
+  }, [isDragActive, disabled]);
 
   return (
     <div
       data-testid={testId}
-      onKeyDown={open}
       {...getRootProps({
         className: getClassesString,
       })}

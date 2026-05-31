@@ -1,17 +1,17 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { Page, test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Page, test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   addFragment,
-  selectRectangleArea,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   readFileContent,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';
@@ -24,16 +24,16 @@ async function shiftStructure(page: Page) {
   const toShiftToCoordinates = 400;
 
   await selectRectangleArea(page, startX, startY, endX, endY);
-  const alanine = getMonomerLocator(page, Peptides.A).first();
+  const alanine = getMonomerLocator(page, Peptide.A).first();
   await alanine.hover();
-  await dragMouseTo(toShiftToCoordinates, toShiftToCoordinates, page);
+  await dragMouseTo(page, toShiftToCoordinates, toShiftToCoordinates);
 }
 
 test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await openFileAndAddToCanvasMacro(fileName, page);
+    await openFileAndAddToCanvasMacro(page, fileName);
     await shiftStructure(page);
   });
 
@@ -59,7 +59,7 @@ test.describe('addFragment', () => {
     );
     const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);
   });

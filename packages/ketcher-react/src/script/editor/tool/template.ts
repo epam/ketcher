@@ -34,6 +34,7 @@ import {
   BondAttr,
   AtomAttr,
   MonomerMicromolecule,
+  CoordinateTransformation,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -43,7 +44,7 @@ import TemplatePreview from './templatePreview';
 
 export function getBondFlipSign(struct: Struct, bond: Bond): number {
   const xy0 = new Vec2();
-  const frid = struct.atoms.get(bond?.begin as number)?.fragment;
+  const frid = struct.atoms.get(bond.begin)?.fragment;
   const frIds = struct.getFragmentIds(frid as number);
   let count = 0;
 
@@ -126,7 +127,7 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
+      aid: (parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: parseInt(tmpl.bid) || 0,
     };
 
@@ -192,7 +193,10 @@ class TemplateTool implements Tool {
     const targetId = this.findKeyOfRelatedGroupId(
       this.closestItem?.id as number,
     );
-    const functionalGroup = this.functionalGroups.get(targetId!);
+    if (targetId === undefined) {
+      return false;
+    }
+    const functionalGroup = this.functionalGroups.get(targetId);
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
       return false;
@@ -205,7 +209,12 @@ class TemplateTool implements Tool {
     return Boolean(isTargetExpanded || isTargetAtomOrBond);
   }
 
-  private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
+  private findKeyOfRelatedGroupId(
+    clickedClosestItemId?: number,
+  ): number | undefined {
+    if (clickedClosestItemId === undefined) {
+      return undefined;
+    }
     let targetId;
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -276,7 +285,7 @@ class TemplateTool implements Tool {
     this.editor.hover(null);
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(event),
+      xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: this.editor.findItem(this.event, this.findItems),
     };
 
@@ -309,15 +318,18 @@ class TemplateTool implements Tool {
 
       this.templatePreview?.movePreview(event);
 
-      return true;
+      return;
     }
 
     if (this.isSaltOrSolvent) {
       delete this.dragCtx.item;
-      return true;
+      return;
     }
 
-    const eventPosition = this.editor.render.page2obj(event);
+    const eventPosition = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
@@ -351,7 +363,7 @@ class TemplateTool implements Tool {
         dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
         this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
       }
-      return true;
+      return;
     }
     /* end */
 
@@ -365,7 +377,7 @@ class TemplateTool implements Tool {
 
       if (atomId !== undefined) {
         const atom = this.struct.atoms.get(atomId);
-        targetPos = atom?.pp;
+        targetPos = atom?.pp ?? null;
 
         if (targetPos) {
           extraBond = this.isModeFunctionalGroup
@@ -376,7 +388,7 @@ class TemplateTool implements Tool {
     }
 
     if (!targetPos) {
-      return true;
+      return;
     }
 
     // calc angle
@@ -398,7 +410,7 @@ class TemplateTool implements Tool {
       (!dragCtx.hasOwnProperty('extra_bond') ||
         dragCtx.extra_bond === extraBond)
     ) {
-      return true;
+      return;
     }
 
     // undo previous action
@@ -414,7 +426,7 @@ class TemplateTool implements Tool {
       const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size;
       if (isAddingFunctionalGroup) {
         // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
-        return true;
+        return;
       }
       [action] = fromTemplateOnCanvas(
         this.editor.render.ctab,
@@ -439,15 +451,13 @@ class TemplateTool implements Tool {
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
-
-    return true;
   }
 
   mouseup(event?) {
     const dragCtx = this.dragCtx;
 
     if (!dragCtx) {
-      return true;
+      return;
     }
 
     delete this.dragCtx;
@@ -478,7 +488,7 @@ class TemplateTool implements Tool {
         action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
         this.editor.update(action);
       });
-      return true;
+      return;
     }
     /* end */
 
@@ -507,7 +517,7 @@ class TemplateTool implements Tool {
           editor: this.editor,
           event,
         });
-        return true;
+        return;
       }
 
       functionalGroupRemoveAction = new Action();
@@ -537,7 +547,7 @@ class TemplateTool implements Tool {
           editor: this.editor,
           event,
         });
-        return true;
+        return;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
 
@@ -549,7 +559,7 @@ class TemplateTool implements Tool {
             editor: this.editor,
             event,
           });
-          return true;
+          return;
         }
 
         const angle = getAngleFromEvent(event, ci, restruct);
@@ -583,7 +593,7 @@ class TemplateTool implements Tool {
           }
         });
 
-        return true;
+        return;
       }
     }
     for (const id of restruct.molecule.bonds.keys()) {
@@ -598,7 +608,6 @@ class TemplateTool implements Tool {
       this.editor.update(completeAction);
     }
     this.editor.hover(this.editor.findItem(event, null), null, event);
-    return true;
   }
 
   cancel() {

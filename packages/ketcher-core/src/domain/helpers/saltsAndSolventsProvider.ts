@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from '../entities';
+import type { Struct } from '../entities';
 
 export class SaltsAndSolventsProvider {
   // eslint-disable-next-line no-use-before-define

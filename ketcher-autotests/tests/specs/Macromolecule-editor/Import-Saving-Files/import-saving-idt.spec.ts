@@ -1,13 +1,12 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Presets } from '@constants/monomers/Presets';
-import { chromium, expect, Page, test } from '@playwright/test';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { chromium, expect, Page, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
   moveMouseAway,
@@ -18,46 +17,31 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
-  selectMonomer,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
-  takePolymerEditorScreenshot,
+  takeElementScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
-
-import {
-  closeErrorMessage,
-  closeOpenStructure,
-  pageReload,
-} from '@utils/common/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseTab,
-  Tabs,
-  waitForMonomerPreview,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   getSymbolLocator,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
-  toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
-} from '@utils/macromolecules/rnaBuilder';
+  bondTwoMonomersPointToPoint,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
@@ -72,6 +56,14 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { RNASection } from '@tests/pages/constants/library/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 let page: Page;
 
@@ -91,7 +83,7 @@ test.beforeAll(async ({ browser }) => {
   page = await sharedContext.newPage();
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await goToPeptidesTab(page);
+  await Library(page).switchToPeptidesTab();
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
@@ -111,7 +103,7 @@ test.afterAll(async ({ browser }) => {
 
 test.describe('Import-Saving .idt Files', () => {
   test(`Import .idt file`, async () => {
-    await openFileAndAddToCanvasMacro('IDT/idt-a.idt', page);
+    await openFileAndAddToCanvasMacro(page, 'IDT/idt-a.idt', MacroFileType.IDT);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -130,7 +122,7 @@ test.describe('Import-Saving .idt Files', () => {
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
-    const expectedValues = ['IDT'];
+    const expectedValues = [MacroFileType.IDT];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }
@@ -170,19 +162,27 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: In case of peptide monomers are on canvas, error "Peptide monomers are not supported in IDT" appear.
     */
-    await selectMonomer(page, Peptides._1Nal);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer 1Nal.';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test('Check import of .ket file and save in .idt format', async () => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
-    await openFileAndAddToCanvasAsNewProject('IDT/idt-rna-a.idt', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'IDT/idt-rna-a.idt');
     await takeEditorScreenshot(page);
   });
 
@@ -194,7 +194,7 @@ test.describe('Import-Saving .idt Files', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('IDT/idt-empty.idt', page);
+    await openFile(page, 'IDT/idt-empty.idt');
     await expect(addToCanvasButton).toBeDisabled();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
@@ -206,22 +206,21 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    await chooseTab(page, Tabs.Rna);
-    await togglePhosphatesAccordion(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId(Phosphates.P.testId).hover();
-    });
-    await takePolymerEditorScreenshot(page);
+    await Library(page).switchToRNATab();
+    await Library(page).openRNASection(RNASection.Phosphates);
+    await Library(page).hoverMonomer(Phosphate.P);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   const rnaNucleotides = [
-    Nucleotides._2_damdA,
-    Nucleotides._5hMedC,
-    Nucleotides.Super_G,
-    Nucleotides.AmMC6T,
-    Nucleotides.Super_T,
-    Nucleotides._5Br_dU,
-    Nucleotides._5NitInd,
+    Nucleotide._2_damdA,
+    Nucleotide._5hMedC,
+    Nucleotide.Super_G,
+    Nucleotide.AmMC6T,
+    Nucleotide.Super_T,
+    Nucleotide._5Br_dU,
+    Nucleotide._5NitInd,
   ];
 
   for (const monomer of rnaNucleotides) {
@@ -232,21 +231,20 @@ test.describe('Import-Saving .idt Files', () => {
       */
       markResetToDefaultState('tabSelection');
 
-      await chooseTab(page, Tabs.Rna);
-      await toggleNucleotidesAccordion(page);
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
-      await takePolymerEditorScreenshot(page);
+      await Library(page).switchToRNATab();
+      await Library(page).openRNASection(RNASection.Nucleotides);
+      await Library(page).hoverMonomer(monomer);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 
   const rnaMonomers = [
-    Presets.MOE_A_P,
-    Presets.MOE_G_P,
-    Presets.MOE_5meC_P,
-    Presets.MOE_T_P,
-    Presets.dR_U_P,
+    Preset.MOE_A_P,
+    Preset.MOE_G_P,
+    Preset.MOE_5meC_P,
+    Preset.MOE_T_P,
+    Preset.dR_U_P,
   ];
 
   for (const monomer of rnaMonomers) {
@@ -257,11 +255,10 @@ test.describe('Import-Saving .idt Files', () => {
       */
       markResetToDefaultState('tabSelection');
 
-      await chooseTab(page, Tabs.Rna);
-      await waitForRender(page, async () => {
-        await page.getByTestId(monomer.testId).hover();
-      });
-      await takePolymerEditorScreenshot(page);
+      await Library(page).switchToRNATab();
+      await Library(page).hoverMonomer(monomer);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
     });
   }
 
@@ -272,14 +269,14 @@ test.describe('Import-Saving .idt Files', () => {
   //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'IDT/idt-corrupted.idt';
-  //   await openFile(filename, page);
+  //   await openFile(page, filename);
   //   await selectOptionInDropdown(filename, page);
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
   // });
 
   test('Should open .ket file and modify to .idt format in save modal textarea', async () => {
-    await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-a.ket');
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
   });
 
@@ -299,18 +296,26 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
-      await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        `IDT/${fileName}.idt`,
+        MacroFileType.IDT,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -323,7 +328,7 @@ test.describe('Import-Saving .idt Files', () => {
     '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
     '+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C',
     'mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU',
-    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
+    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
   ];
 
   for (const fileName of fileNames1) {
@@ -344,13 +349,17 @@ test.describe('Import-Saving .idt Files', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await selectSnakeLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -370,8 +379,10 @@ test.describe('Import-Saving .idt Files', () => {
       A*T*A*C*G*C*G*C*C*T`,
       true,
     );
-
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid IDT sequence: '*' couldn't be the last symbol.'",
+    );
   });
 
   test('Validate that sequences with modifications can be edited after import', async () => {
@@ -386,12 +397,14 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
-    await selectSequenceLayoutModeTool(page);
-    await getSymbolLocator(page, {
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    const symbolG = getSymbolLocator(page, {
       symbolAlias: 'G',
       nodeIndexOverall: 2,
-    }).click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardTypeOnCanvas(page, 'ttt');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
@@ -409,9 +422,11 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(page, 'IDT/idt-expected.idt', FileType.IDT);
-    await openFileAndAddToCanvasAsNewProject('IDT/idt-expected.idt', page);
+    await openFileAndAddToCanvasAsNewProject(page, 'IDT/idt-expected.idt');
     await takeEditorScreenshot(page);
   });
 
@@ -431,8 +446,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-1.idt',
       page,
+      'IDT/sequences-with-modifications-1.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -449,15 +464,17 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-2.idt',
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-2.idt',
       page,
+      'IDT/sequences-with-modifications-2.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -480,11 +497,13 @@ test.describe('Import-Saving .idt Files', () => {
 
       mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
 
-      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
       `,
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -506,18 +525,20 @@ test.describe('Import-Saving .idt Files', () => {
 
       mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
 
-      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
       `,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-3.idt',
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-3.idt',
       page,
+      'IDT/sequences-with-modifications-3.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -532,10 +553,9 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/32MOErT/`,
     );
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await bondLine.hover();
-    await waitForMonomerPreview(page);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getBondLocator(page, {}).first().hover({ force: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -552,7 +572,9 @@ test.describe('Import-Saving .idt Files', () => {
       `/5Phos/ACG/3Phos/`,
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -566,17 +588,19 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await verifyFileExport(
       page,
       'IDT/sequences-with-modifications-4.idt',
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-4.idt',
       page,
+      'IDT/sequences-with-modifications-4.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -587,14 +611,17 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
     */
     // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-    await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/5formD-form5C-cm.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const convertErrorMessage = await ErrorMessageDialog(
+      page,
+    ).getErrorMessage();
+    const expectedErrorMessage =
+      'Convert error! Sequence saver: IDT alias for group sugar:5formD base:form5C phosphate:cm not found.';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
   test('Verify that if * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P)', async () => {
@@ -617,8 +644,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/sequences-with-modifications-5.idt',
       page,
+      'IDT/sequences-with-modifications-5.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -642,7 +669,9 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -665,7 +694,9 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -680,7 +711,11 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErG/*/i2MOErG/*/3Phos/`,
       true,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      `Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Symbol '*' could be placed only between two nucleotides/nucleosides.'`,
+    );
+    await ErrorMessageDialog(page).close();
   });
 
   test('Verify it is possible to load IDT data from clipboard having trailing spaces at the end of the IDT string', async () => {
@@ -702,8 +737,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: It is possible save 80 char formating for IDT.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/idt-line-longer-than-80-chars.ket',
       page,
+      'KET/idt-line-longer-than-80-chars.ket',
     );
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -712,18 +747,18 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/idt-line-longer-than-80-chars-expected.idt',
       page,
+      'IDT/idt-line-longer-than-80-chars-expected.idt',
     );
     await takeEditorScreenshot(page);
   });
 
   test('Check import of .ket file with unresolved monomers and save in .idt format ', async () => {
-    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/unresolved-monomers.ket');
     await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/unresolved-monomers.idt',
       page,
+      'IDT/unresolved-monomers.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -738,13 +773,15 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/G*A*/iMe-dC2/T*A*T*A*/iMe-dC2/G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -758,14 +795,16 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await getSymbolLocator(page, { symbolAlias: '?' }).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -777,11 +816,11 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
-    await waitForMonomerPreview(page);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Chem.iMe_dC2).nth(1).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -790,28 +829,28 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
     */
-    await goToPeptidesTab(page);
-    const x = 650;
-    const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
-    const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
+    await Library(page).switchToPeptidesTab();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
+    const secondMonomer = getMonomerLocator(page, Peptide._1Nal);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
+      x: 650,
+      y: 400,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R2',
-      'R1',
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
-    await waitForMonomerPreview(page);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -822,50 +861,50 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 650,
+      y: 400,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R3',
-      'R4',
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
     );
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
-    await waitForMonomerPreview(page);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
   test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async () => {
-    const x = 650;
-    const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
-    const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
+    const secondMonomer = getMonomerLocator(page, Peptide._1Nal);
+    const bondLine = getBondLocator(page, {}).first();
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
+      x: 650,
+      y: 400,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R2',
-      'R1',
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
     );
 
     const bondExists = await bondLine.isVisible();
@@ -874,8 +913,8 @@ test.describe('Import-Saving .idt Files', () => {
       throw new Error('Bond line is not present, likely due to a known bug.');
     }
 
-    await CommonLeftToolbar(page).selectEraseTool();
-    await bondLine.click();
+    await CommonLeftToolbar(page).erase();
+    await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -888,27 +927,26 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
-    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC2);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 650,
+      y: 400,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R3',
-      'R4',
+      AttachmentPoint.R3,
+      AttachmentPoint.R4,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
-    await bondLine.click();
+    await CommonLeftToolbar(page).erase();
+    await getBondLocator(page, {}).first().click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -919,16 +957,14 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Sequence with unresolved IDT monomers copied/pasted.
     */
-    const x = 0;
-    const y = 600;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(0, 600);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -938,19 +974,19 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
     */
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
-    await clickOnCanvas(page, x, y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Peptides._1Nal).click();
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
+      x: 650,
+      y: 400,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Peptide._1Nal).click();
     await page.mouse.down();
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -962,20 +998,20 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('defaultLayout');
 
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Peptides._1Nal);
-    await clickOnCanvas(page, x, y);
-    await selectSnakeLayoutModeTool(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Peptides._1Nal).click();
+    await Library(page).dragMonomerOnCanvas(Peptide._1Nal, {
+      x: 650,
+      y: 400,
+    });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Peptide._1Nal).click();
     await page.mouse.down();
-    await getMonomerLocator(page, Chem.iMe_dC).hover();
+    await getMonomerLocator(page, Chem.iMe_dC2).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -987,17 +1023,17 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('tabSelection');
 
-    const x = 650;
-    const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.iMe_dC).click();
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 650,
+      y: 400,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await getMonomerLocator(page, Chem.iMe_dC2).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.up();
@@ -1024,13 +1060,16 @@ test.describe('Import-Saving .idt Files', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.IDT,
-        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
       );
       await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(format.testId);
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      const convertErrorMessage = await ErrorMessageDialog(
+        page,
+      ).getErrorMessage();
+      const expectedErrorMessage =
+        'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
+      expect(convertErrorMessage).toEqual(expectedErrorMessage);
     });
   }
 
@@ -1045,7 +1084,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
 
     await verifyFileExport(
@@ -1055,8 +1094,8 @@ test.describe('Import-Saving .idt Files', () => {
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
       page,
+      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1070,8 +1109,8 @@ test.describe('Import-Saving .idt Files', () => {
 
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
-      'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
       page,
+      'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -1086,7 +1125,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -1100,7 +1139,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC2/*G*A*/iMe-dC2/*T*A*T*A*/iMe-dC2/`,
     );
     await verifyFileExport(
       page,
@@ -1108,8 +1147,8 @@ test.describe('Import-Saving .idt Files', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/idt-with-unresolved-monomer-expected.idt',
       page,
+      'IDT/idt-with-unresolved-monomer-expected.idt',
     );
     await takeEditorScreenshot(page);
   });
@@ -1122,11 +1161,11 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.IDT,
-      `/iMe-dC/`,
+      `/iMe-dC2/`,
     );
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await getMonomerLocator(page, Chem.iMe_dC).click();
+    await CommonLeftToolbar(page).erase();
+    await getMonomerLocator(page, Chem.iMe_dC2).click();
     await takeEditorScreenshot(page);
   });
 });
@@ -1134,6 +1173,7 @@ test.describe('Import-Saving .idt Files', () => {
 interface IIDTString {
   idtDescription: string;
   IDTString: string;
+  expectedErrorMessage?: string;
   // Set shouldFail to true if you expect test to work wrong because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -1470,13 +1510,15 @@ const incorrectIDTStrings: IIDTString[] = [
   {
     idtDescription: '1. Sum of percent is less 100',
     IDTString: '(Y:00300060)',
+    expectedErrorMessage: '',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2328',
   },
   {
     idtDescription:
-      '2. Percent for non inscluded base (G) (but included base percents are present)',
+      '2. Percent for non included base (G) (but included base percents are present)',
     IDTString: '(Y:00333334)',
+    expectedErrorMessage: '',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2329',
   },
@@ -1484,6 +1526,7 @@ const incorrectIDTStrings: IIDTString[] = [
     idtDescription:
       '3. Zeroes for included bases but non zeroes for non included',
     IDTString: '(R:00330067)',
+    expectedErrorMessage: '',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/Indigo/issues/2328, https://github.com/epam/Indigo/issues/2329',
@@ -1491,54 +1534,76 @@ const incorrectIDTStrings: IIDTString[] = [
   {
     idtDescription: '4. Less digits than needed',
     IDTString: '(Y:0033006)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'Invalid IDT ambiguous monomer (Y:0033006)'",
   },
   {
     idtDescription: '5. One digit replaced with char',
     IDTString: '(Y:003300a6)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid number 'a6''",
   },
   {
     idtDescription: '6. Wrong IUBcode',
     IDTString: '(Z:00330067)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'Z''",
   },
   {
     idtDescription: '7. Doubled IUBcode',
     IDTString: '(YY:00330067)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2331',
   },
   {
     idtDescription: '8. Digit as IUBcode',
     IDTString: '(9:00330067)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base '9''",
   },
   {
     idtDescription: '9. No percentages',
     IDTString: '(Y:)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'Invalid IDT ambiguous monomer (Y:)'",
   },
   {
     idtDescription: '10. No IUBcode',
     IDTString: '(:00330067)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base '''",
   },
   {
     idtDescription: '11. Semicolumns replaced with comma',
     IDTString: '(Y,00330067)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Invalid mixed base - only numerical index allowed.'",
   },
   {
     idtDescription: '12. Y used before definition',
     IDTString: '(Y)A(Y:00670033)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Ambiguous monomer (Y) redefinion'",
   },
   {
     idtDescription: '13. Y defined twice',
     IDTString: '(Y:00330067)A(Y:00670033)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Ambiguous monomer (Y) redefinion'",
   },
   {
     idtDescription: '14. Index out of range (allowed range - 1-4)',
     IDTString: '(B5:00653005)',
+    expectedErrorMessage: '',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2381',
   },
   {
     idtDescription: '15. Index out of range (allowed range - 1-4)',
     IDTString: '(B0:00653005)',
+    expectedErrorMessage: '',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2381',
   },
@@ -1547,45 +1612,58 @@ const incorrectIDTStrings: IIDTString[] = [
       '16. (DNA and RNA thogether is not alowed) DNA with same mixed bases defined 4 different times using index and later inserted as RNA',
     IDTString:
       '(B4:00653005)(B3:00603010)(B2:00553015)(B1:00503020)(B:00453025)r(B)r(B1)r(B2)r(B3)r(B4)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
   {
     idtDescription:
       '17. (DNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as DNA',
     IDTString: 'r(B1:00503020)(B1)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
   {
     idtDescription:
       '18. (LRNA and RNA thogether is not alowed) LRNA of three mixed bases later inserted as RNA',
     IDTString: '+(B1:00503020)r(B1)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
   {
     idtDescription:
       '19. (mRNA and RNA thogether is not alowed) mRNA of three mixed bases later inserted as RNA',
     IDTString: 'm(B1:00503020)r(B1)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
   {
     idtDescription:
       '20. (LRNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as LRNA',
     IDTString: 'r(B1:00503020)+(B1)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
   {
     idtDescription:
       '21. (DNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as DNA',
     IDTString: 'r(B1:00503020)(B1)',
+    expectedErrorMessage:
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown mixed base 'B1''",
   },
 ];
 
 test.describe('Import incorrect IDT sequence: ', () => {
   for (const incorrectIDTString of incorrectIDTStrings) {
     test(`${incorrectIDTString.idtDescription}`, async () => {
-      /* 
-      Test case: https://github.com/epam/ketcher/issues/5505
-      Description: Load INCORRECT IDT sequences and compare canvas (with error message) with the template
-      Case:
-        1. Load icorrect IDT
-        2. Get error message
-        3. Take screenshot to compare it with example
-      */
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/5505
+       * Description: Load INCORRECT IDT sequences and compare canvas (with error message) with the template
+       * Case:
+       *   1. Load icorrect IDT
+       *   2. Get error message
+       *   3. Validate error message text
+       *  4. Close all dialogs
+       */
       test.setTimeout(20000);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1594,26 +1672,19 @@ test.describe('Import incorrect IDT sequence: ', () => {
         incorrectIDTString.IDTString,
         true,
       );
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
 
-      // if Error Message is not found - that means that error message didn't appear.
-      // That shoul be considered as bug in that case
-      const errorMessage = page.getByText('Error message', {
-        exact: true,
-      });
-
-      if (await errorMessage.isVisible()) {
-        await closeErrorMessage(page);
-        await closeOpenStructure(page);
-      }
-
-      // Test should be skipped if related bug exists
       test.fixme(
         incorrectIDTString.shouldFail === true,
         `That test fails or works wrong because of ${incorrectIDTString.issueNumber} issue.`,
       );
+
+      const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+      expect(errorMessage).toContain(incorrectIDTString.expectedErrorMessage);
+
+      // if Error Message is not found - that means that error message didn't appear.
+      // That shoul be considered as bug in that case
+      await ErrorMessageDialog(page).close();
+      await OpenStructureDialog(page).closeWindow();
     });
   }
 });
@@ -1630,8 +1701,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -600);
@@ -1641,26 +1712,31 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer X.',
+    );
+
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 600);
   });
 
   test('Saving ambiguous peptides (with mapping, mixed) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.2 Verify saving ambiguous peptides (with mapping, mixed) in IDT format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message should occur)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.2 Verify saving ambiguous peptides (with mapping, mixed) in IDT format (macro mode)
+     * Case: 1. Load ambiguous peptides (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error message should occur)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -600);
@@ -1670,28 +1746,31 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
 
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer %.',
+    );
+
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 600);
   });
 
   test('Saving ambiguous peptides (without mapping, alternatives) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.3 Verify saving ambiguous peptides (without mapping, alternatives) in IDT format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-            (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.3 Verify saving ambiguous peptides (without mapping, alternatives) in IDT format (macro mode)
+     * Case: 1. Load ambiguous peptides (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *         (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
@@ -1702,26 +1781,29 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
-
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer %.',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
 
   test('Saving ambiguous peptides (without mapping, mixed) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.4 Verify saving ambiguous peptides (without mapping, mixed) in IDT format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library, mixed) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-            (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.4 Verify saving ambiguous peptides (without mapping, mixed) in IDT format (macro mode)
+     * Case: 1. Load ambiguous peptides (that have mapping to library, mixed) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *         (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -200);
@@ -1732,28 +1814,30 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save molecule in IDT format - expected sugar but found AminoAcid monomer %.',
+    );
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
 
   test('Saving ambiguous DNA bases (with mapping, alternatives) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in IDT format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in IDT format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1764,9 +1848,12 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
@@ -1781,8 +1868,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
     );
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
@@ -1793,8 +1880,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
@@ -1805,17 +1892,18 @@ test.describe('Ambiguous monomers: ', () => {
 
   test('Saving ambiguous RNA bases (with mapping, alternatives) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in IDT format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in IDT format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error message should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1826,9 +1914,12 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
 
-    await closeErrorMessage(page);
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
@@ -1843,8 +1934,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1856,8 +1947,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
@@ -1866,17 +1957,18 @@ test.describe('Ambiguous monomers: ', () => {
 
   test('Saving ambiguous (common) bases (with mapping, alternatives) in IDT format', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in IDT format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message should occure)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in IDT format (macro mode)
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error message should occure)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
     );
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1884,8 +1976,11 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page);
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - only mixture supported but found alternatives.',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
@@ -1900,8 +1995,8 @@ test.describe('Ambiguous monomers: ', () => {
           4. Take screenshot to make sure export is correct
     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
     );
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -1911,8 +2006,8 @@ test.describe('Ambiguous monomers: ', () => {
       FileType.IDT,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
       page,
+      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 200);
@@ -1921,17 +2016,18 @@ test.describe('Ambiguous monomers: ', () => {
 
   test('Saving RNA ambigous base connected to DNA sugar to IDT', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.11 Verify saving RNA ambigous base connected to DNA sugar to IDT
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message occurs)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.11 Verify saving RNA ambigous base connected to DNA sugar to IDT
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error message occurs)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1942,11 +2038,11 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - RNA ambigous base connected to DNA sugar.',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
 
@@ -1955,17 +2051,18 @@ test.describe('Ambiguous monomers: ', () => {
 
   test('Saving DNA ambigous base connected to RNA sugar to IDT', async () => {
     /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.12 Verify saving DNA ambigous base connected to RNA sugar to IDT
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message occurs)
-          4. Take screenshot to make sure export is correct
-    */
+     * Test task: https://github.com/epam/ketcher/issues/5558
+     * Description: 17.12 Verify saving DNA ambigous base connected to RNA sugar to IDT
+     * Case: 1. Load ambiguous bases (that have mapping to library) from KET
+     *       2. Take screenshot to make sure monomers on the canvas
+     *       3. Open Save dialog and choose IDT option
+     *          (Error message occurs)
+     *       4. Validate error message
+     *       5. Close all dialogs
+     */
     await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
       page,
+      'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
     );
 
     await zoomWithMouseWheel(page, -100);
@@ -1976,11 +2073,11 @@ test.describe('Ambiguous monomers: ', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-
-    await closeErrorMessage(page);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Sequence saver: Cannot save IDT - DNA ambigous base connected to RNA sugar.',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
 

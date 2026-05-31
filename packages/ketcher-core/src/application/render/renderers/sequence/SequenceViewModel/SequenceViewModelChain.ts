@@ -1,12 +1,12 @@
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
-import { EmptySequenceNode } from 'domain/entities';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 export interface ISequenceViewModelRow {
   sequenceViewModelItems: ITwoStrandedChainItem[];
 }
 
 export class SequenceViewModelChain {
-  private rows: ISequenceViewModelRow[] = [];
+  private readonly rows: ISequenceViewModelRow[] = [];
 
   public get lastRow() {
     return this.rows[this.rows.length - 1];

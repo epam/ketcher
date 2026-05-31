@@ -1,11 +1,13 @@
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreEditor, SelectRectangle } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   anglesToSector,
@@ -13,22 +15,25 @@ import {
   checkFor0and360,
   sectorsList,
 } from 'domain/helpers/attachmentPointCalculations';
-import {
+import type {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import {
+  getMonomerSize,
+  setMonomerSize,
+} from 'application/render/renderers/monomerSizeState';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
-let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
-  private editorEvents: typeof editorEvents;
-  private editor: CoreEditor;
+  private readonly editorEvents: typeof editorEvents;
+  private readonly editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
@@ -37,8 +42,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private attachmentPoints: AttachmentPoint[] | [] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
-  private monomerSymbolElement?: SVGUseElement | SVGRectElement;
-  public monomerSize: { width: number; height: number };
+  private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
+  public readonly monomerSize: { width: number; height: number };
 
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
   public enumeration: number | null = null;
@@ -61,14 +66,15 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected constructor(
     public monomer: BaseMonomer,
-    private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
-    private scale?: number,
+    private readonly monomerHoveredElementId: string,
+    public monomerSymbolElementId: string,
+    public monomerAutochainPreviewElementId: string,
+    private readonly scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
-    this.editor = CoreEditor?.provideEditorInstance();
+    this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -77,13 +83,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
       width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') || 0
+        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
       ),
       height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
+        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
       ),
     };
-    monomerSize = this.monomerSize;
+    setMonomerSize(this.monomerSize);
   }
 
   // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -100,7 +106,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public static get monomerSize() {
-    return monomerSize;
+    return getMonomerSize();
   }
 
   public get center() {
@@ -122,7 +128,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       Y: WHITE,
     };
     return (
-      colorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode] ||
+      colorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode] ??
       'black'
     );
   }
@@ -131,7 +137,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return (
       theme.monomer.color[
         this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-      ]?.regular || theme.monomer.color.X.regular
+      ]?.regular ?? theme.monomer.color.X.regular
     );
   }
 
@@ -139,7 +145,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     const naturalAnalogCode =
       this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
     const peptideColor = theme.peptide.color[naturalAnalogCode]?.regular;
-    return peptideColor || this.getMonomerColor(theme);
+    return peptideColor ?? this.getMonomerColor(theme);
   }
 
   public redrawAttachmentPoints(): void {
@@ -205,7 +211,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return;
     }
 
-    const appendFnToUse = appendFn || this.appendAttachmentPoint.bind(this);
+    const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
 
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
@@ -309,25 +315,42 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoveredAttachmentPoint = attachmentPointName;
   }
 
+  protected raiseAttachmentPoints() {
+    this.attachmentPoints.forEach((attachmentPoint) => {
+      attachmentPoint.raise();
+    });
+  }
+
   protected appendRootElement(
-    canvas: D3SvgElementSelection<SVGSVGElement, void>,
+    canvas:
+      | D3SvgElementSelection<SVGSVGElement, void>
+      | D3SvgElementSelection<SVGGElement, void>,
   ) {
+    let monomerTypeAttribute = '';
+
+    if (this.monomer instanceof AmbiguousMonomer) {
+      monomerTypeAttribute = AmbiguousMonomer.getMonomerClass(
+        this.monomer.monomers,
+      );
+    } else if (this.monomer.monomerItem.props.isMicromoleculeFragment) {
+      monomerTypeAttribute = 'CHEM';
+    } else if (this.monomer.monomerItem.props.MonomerClass) {
+      monomerTypeAttribute = this.monomer.monomerItem.props.MonomerClass;
+    }
+
     const rootElement = canvas
       .append('g')
       .data([this])
       .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr('data-testid', 'monomer')
-      .attr(
-        'data-monomertype',
-        this.monomer instanceof AmbiguousMonomer
-          ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
-          : (this.monomer.monomerItem.props.isMicromoleculeFragment
-              ? 'CHEM'
-              : this.monomer.monomerItem.props.MonomerClass) || '',
-      )
+      .attr('data-monomertype', monomerTypeAttribute)
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)
+      .attr(
+        'data-naturalAnalogue',
+        this.monomer.monomerItem.props.MonomerNaturalAnalogCode,
+      )
       .attr(
         'data-number-of-attachment-points',
         this.monomer.listOfAttachmentPoints.length,
@@ -340,7 +363,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         'transform',
         `translate(${this.scaledMonomerPosition.x}, ${
           this.scaledMonomerPosition.y
-        }) scale(${this.scale || 1})`,
+        }) scale(${this.scale ?? 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     this.monomer.listOfAttachmentPoints.forEach((attachmentPoint) => {
@@ -368,7 +391,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    const [, , monomerClass] = monomerFactory(
+    const [, monomerClass] = monomerEntityFactory(
       this.monomer instanceof AmbiguousMonomer
         ? this.monomer.variantMonomerItem
         : this.monomer.monomerItem,
@@ -383,8 +406,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       };
     }
     textElement
-      .attr('x', labelPositions[monomerUniqueKey]?.x || 0)
-      .attr('y', labelPositions[monomerUniqueKey]?.y || 0);
+      .attr('x', labelPositions[monomerUniqueKey]?.x ?? 0)
+      .attr('y', labelPositions[monomerUniqueKey]?.y ?? 0);
 
     if (this.scale && this.scale !== 1) {
       labelPositions[monomerUniqueKey] = undefined;
@@ -401,7 +424,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let cursor = 'default';
 
     if (this.hoverElement) this.hoverElement.remove();
-    if (this.editor.selectedTool instanceof SelectRectangle) cursor = 'move';
+    if (this.editor.selectedTool?.name === 'select-tool') cursor = 'move';
 
     return hoverAreaElement
       .style('cursor', cursor)
@@ -438,6 +461,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
+  public get scaledPosition() {
+    return this.scaledMonomerPosition;
+  }
+
   public appendSelection() {
     if (this.selectionCircle) {
       this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);
@@ -448,7 +475,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
   }
@@ -483,6 +510,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.editorEvents.mouseOnMoveMonomer.dispatch(event);
       })
       .on('mouseleave', (event) => {
+        if (event.relatedTarget?.__data__ instanceof AttachmentPoint) {
+          return;
+        }
+
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.editorEvents.mouseLeaveMonomer.dispatch(event);
       })
@@ -517,9 +548,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '500')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
+
+    this.raiseAttachmentPoints();
   }
 
   public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
@@ -554,6 +588,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('font-weight', '700')
       .attr('text-align', 'right')
       .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(
@@ -561,6 +596,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
           : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
       );
+
+    this.raiseAttachmentPoints();
   }
 
   protected abstract get modificationConfig();
@@ -592,9 +629,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public show(theme?) {
     this.rootElement =
-      this.rootElement ||
+      this.rootElement ??
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendEvents();
     this.drawModification();
 
@@ -634,7 +672,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       'transform',
       `translate(${this.scaledMonomerPosition.x}, ${
         this.scaledMonomerPosition.y
-      }) scale(${this.scale || 1})`,
+      }) scale(${this.scale ?? 1})`,
     );
   }
 

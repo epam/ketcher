@@ -31,7 +31,9 @@ import {
   ImageMove,
   MultitailArrowMove,
 } from '../operations';
-import { Pile, RGroup, Vec2 } from 'domain/entities';
+import { Pile } from 'domain/entities/pile';
+import { RGroup } from 'domain/entities/rgroup';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
@@ -50,6 +52,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.atoms) {
     const atomSet = new Pile(lists.atoms);
     const bondlist: Array<number> = [];
+    const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -76,7 +79,8 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
 
     loops.forEach((loopId) => {
-      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) {
+      const loop = restruct.reloops.get(loopId);
+      if (loop?.visel) {
         // hack
         action.addOp(new LoopMove(loopId, d));
       }
@@ -86,9 +90,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
     });
 
-    if (lists.sgroupData && lists.sgroupData.length === 0) {
-      const sgroups = getRelSGroupsBySelection(struct, lists.atoms);
-      sgroups.forEach((sg) => {
+    relatedSgroups.forEach((sgroup) => {
+      sgroup?.atoms.forEach((aid) => {
+        if (!atomSet.has(aid)) {
+          action.addOp(new AtomMove(aid, d, true));
+        }
+      });
+    });
+
+    if (lists.sgroupData?.length === 0) {
+      relatedSgroups.forEach((sg) => {
         action.addOp(new SGroupDataMove(sg.id, d));
       });
     }

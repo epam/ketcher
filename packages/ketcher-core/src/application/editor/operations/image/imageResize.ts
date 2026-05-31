@@ -1,7 +1,8 @@
-import { BaseOperation } from 'application/editor/operations/base';
-import { ImageReferenceName, Vec2 } from 'domain/entities';
-import { ReStruct } from 'application/render';
-import { OperationType } from 'application/editor';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import type { ImageReferenceName } from 'domain/entities/image';
+import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
+import { OperationType } from 'application/editor/operations/OperationType';
 
 const moveLeftPositions: Array<ImageReferenceName> = [
   'topLeftPosition',
@@ -30,9 +31,9 @@ const moveBottomPositions: Array<ImageReferenceName> = [
 export class ImageResize extends BaseOperation {
   private previousPosition: Vec2 | null = null;
   constructor(
-    private id: number,
-    private position: Vec2,
-    private referencePositionName: ImageReferenceName,
+    private readonly id: number,
+    private readonly position: Vec2,
+    private readonly referencePositionName: ImageReferenceName,
   ) {
     super(OperationType.IMAGE_RESIZE);
   }

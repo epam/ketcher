@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
@@ -16,26 +17,20 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
-import {
-  SequencePointer,
-  SequenceRenderer,
-} from 'application/render/renderers/sequence/SequenceRenderer';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;
-  constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     editor.mode.initialize(false);
   }
@@ -43,17 +38,18 @@ export class ReinitializeModeOperation implements Operation {
 
 export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
-    private previousPosition: SequencePointer,
-    private nextPosition: SequencePointer,
+    private readonly previousPosition: number,
+    private readonly nextPosition: number,
+    private readonly setCaretPosition: (position: number) => void,
   ) {
     this.execute();
   }
 
   public execute() {
-    SequenceRenderer.setCaretPosition(this.nextPosition);
+    this.setCaretPosition(this.nextPosition);
   }
 
   public invert(_renderersManager: RenderersManager) {
-    SequenceRenderer.setCaretPosition(this.previousPosition);
+    this.setCaretPosition(this.previousPosition);
   }
 }

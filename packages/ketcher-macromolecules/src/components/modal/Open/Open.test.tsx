@@ -19,7 +19,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Open } from './Open';
 import { IndigoProvider } from 'ketcher-react';
-import { CoreEditor, Struct } from 'ketcher-core';
+import { Struct } from 'ketcher-core';
+import * as ketcherCore from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
@@ -44,7 +45,7 @@ describe('Open component', () => {
       onClose: () => expect(mockProps.onClose).toHaveBeenCalled(),
     };
 
-    jest.spyOn(CoreEditor, 'provideEditorInstance').mockImplementation(() => {
+    jest.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
       return {
         drawingEntitiesManager: {
           monomers: new Map(),
@@ -75,5 +76,62 @@ describe('Open component', () => {
     fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } });
     expect(clipboardTextarea).toBeInTheDocument();
     expect(clipboardTextarea).toHaveValue(mockTypedText);
+  });
+
+  it('buttons should be disabled when textarea is empty', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).toBeDisabled();
+    expect(addToCanvasButton).toBeDisabled();
+  });
+
+  it('buttons should be disabled when textarea contains only whitespace', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, { target: { value: '   \n\t  ' } });
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).toBeDisabled();
+    expect(addToCanvasButton).toBeDisabled();
+  });
+
+  it('buttons should be enabled when textarea has valid content', () => {
+    const mockProps = {
+      isModalOpen: true,
+      onClose: jest.fn(),
+    };
+
+    render(withThemeAndStoreProvider(<Open {...mockProps} />));
+    const clipboardButton = screen.getByText('Paste from clipboard');
+    fireEvent.click(clipboardButton);
+
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, { target: { value: 'Valid content' } });
+
+    const openButton = screen.getByTestId('open-as-new-button');
+    const addToCanvasButton = screen.getByTestId('add-to-canvas-button');
+
+    expect(openButton).not.toBeDisabled();
+    expect(addToCanvasButton).not.toBeDisabled();
   });
 });

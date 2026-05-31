@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -20,7 +20,7 @@ test.describe('Track Changes', () => {
 
     const addAtom = async (x: number, y: number) => {
       await atomToolbar.clickAtom(atomType);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, x, y, { from: 'pageTopLeft' });
     };
 
     const numberOfRows = 6;

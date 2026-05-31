@@ -1,24 +1,18 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pressButton,
-  resetCurrentTool,
-  BondType,
+  waitForPageInit,
+  clickOnCanvas,
+  MolFileFormat,
+} from '@utils';
+import {
   copyAndPaste,
   cutAndPaste,
-  clickOnAtom,
-  clickOnBond,
-  fillFieldByLabel,
-  screenshotBetweenUndoRedo,
-  AttachmentPoint,
-  setAttachmentPoints,
-  waitForPageInit,
   selectAllStructuresOnCanvas,
-  clickOnCanvas,
-} from '@utils';
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -28,34 +22,17 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 500;
-
-async function selectMultipleGroup(
-  page: Page,
-  text: string,
-  dataName: string,
-  valueRepeatCount: string,
-  buttonToClick?: 'Apply' | 'Cancel',
-) {
-  await page.locator('span').filter({ hasText: text }).click();
-  await page.getByRole('option', { name: dataName }).click();
-  await page.getByLabel('Repeat count').fill(valueRepeatCount);
-  if (buttonToClick === 'Apply') {
-    await pressButton(page, 'Apply');
-  } else if (buttonToClick === 'Cancel') {
-    await pressButton(page, 'Cancel');
-  }
-}
-
-async function changeRepeatCountValue(page: Page, value: string) {
-  await selectAllStructuresOnCanvas(page);
-  await LeftToolbar(page).sGroup();
-  await page.getByTestId('s-group-type-input-span').click();
-  await page.getByTestId('Multiple group-option').click();
-  await page.getByTestId('mul-input').fill(value);
-}
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { TypeOption } from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('Multiple S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -67,10 +44,15 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -79,10 +61,13 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -91,24 +76,31 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole s-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await setAttachmentPoints(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
+      { primary: true },
+    );
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '88',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -117,13 +109,13 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1520
       Description: User is able to edit the Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3, 'right');
-    await page.getByText('Edit S-Group...').click();
-    await fillFieldByLabel(page, 'Repeat count', '99');
-    await pressButton(page, 'Apply');
-    await resetCurrentTool(page);
+    const point = await getBondLocator(page, { bondId: 9 });
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('99');
+    await SGroupPropertiesDialog(page).apply();
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -132,12 +124,12 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
-    const atomToolbar = RightToolbar(page);
-
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -148,12 +140,18 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnAtom(page, 'C', 3);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -164,12 +162,16 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete whole Chain with Multiple S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -180,16 +182,20 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add R-Group Label and Undo/Redo on structure with Multiple S-group.
     */
-    const rGroupName = 'R8';
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByRole('button', { name: rGroupName }).click();
-    await pressButton(page, 'Apply');
-    await resetCurrentTool(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupLabels(RGroup.R8);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -198,9 +204,11 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to copy and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 500, 500, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -209,9 +217,9 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to cut and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group.ket');
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -220,13 +228,13 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1523
       Description: User is able to save and open structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/multiple-group-data.ket');
 
     await verifyFileExport(
       page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -237,10 +245,13 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 1
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -250,10 +261,13 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 200
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -265,10 +279,11 @@ test.describe('Multiple S-Group tool', () => {
       Description: 0 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray, the "Apply" button is not active
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('0');
     await takeEditorScreenshot(page);
   });
 
@@ -280,10 +295,11 @@ test.describe('Multiple S-Group tool', () => {
       Description: 201 is displayed and warning message "must be <=200" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
     await takeEditorScreenshot(page);
   });
 
@@ -294,10 +310,11 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16893
       Description: -1 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('-1');
     await takeEditorScreenshot(page);
   });
 
@@ -306,16 +323,17 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16938
       Description: Attachment points should be inside of S-Group
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
-    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 3 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -323,35 +341,50 @@ test.describe('Multiple S-Group tool', () => {
   test('Multiple Group - Limit on minimum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18027
     // Verify minimum value of the Repeat count field
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await changeRepeatCountValue(page, '1');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '1',
+    });
     await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Limit on maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET- EPMLSOPKET-18028
     // Verify maximum value of the Repeat count field
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await changeRepeatCountValue(page, '200');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '200',
+    });
     await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Limit higher than maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18028
     // Verify system answer after putting a number higher than limit
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await changeRepeatCountValue(page, '201');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).selectType(TypeOption.MultipleGroup);
+    await SGroupPropertiesDialog(page).setRepeatCountValue('201');
     await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Value in the valid range', async ({ page }) => {
     // Test case: EPMLSOPKET-18029
     // Verify value in the valid range
-    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await changeRepeatCountValue(page, '50');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/templates.mol');
+    await selectAllStructuresOnCanvas(page);
+    await LeftToolbar(page).sGroup();
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '50',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -361,10 +394,13 @@ test.describe('Multiple S-Group tool', () => {
       Description: S-Group added to the structure and represent in .ket file.
       The test is currently not functioning correctly as the bug has not been fixed.
     */
-    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.MultipleGroup,
+      RepeatCount: '8',
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-multiple-expected.ket',

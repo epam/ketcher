@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -9,14 +9,16 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  clickOnAtom,
-  clickOnBond,
-  BondType,
+  MolFileFormat,
+  deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 const DELTA = 200;
 
@@ -39,37 +41,36 @@ test.describe('Chain Tool verification', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(center.x + DELTA, center.y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
-    await clickOnAtom(page, 'C', 0);
-    await page.keyboard.press('n');
+    await dragMouseTo(page, center.x + DELTA, center.y);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
   test('Chain tool - Save and render', async ({ page }) => {
     // Test case: EPMLSOPKET-1479
     // Saving open .ket file with collection of chains in a .mol file
-    await openFileAndAddToCanvas('KET/chains.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chains.ket');
     await verifyFileExport(
       page,
       'Molfiles-V2000/chains-expected-file.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
 
   test('Chain tool - edit saved file', async ({ page }) => {
     // Moving and deleting part of the chain on the canvas
-    const bondNumber = 3;
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/chains-expected-file.mol',
       page,
+      'Molfiles-V2000/chains-expected-file.mol',
     );
-    await clickOnBond(page, BondType.SINGLE, bondNumber);
-    await page.keyboard.press('Delete');
+    await getBondLocator(page, { bondId: 34 }).click({ force: true });
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -78,21 +79,24 @@ test.describe('Chain Tool verification', () => {
   }) => {
     // Test case: EPMLSOPKET-16949
     // Verify selecting and changing atom type on chain
-    const bondNumber = 2;
-    const bondNumber1 = 4;
-    const bondNumber2 = 6;
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(center.x + DELTA, center.y, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await dragMouseTo(page, center.x + DELTA, center.y);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', bondNumber);
-    await clickOnAtom(page, 'C', bondNumber1);
-    await clickOnAtom(page, 'C', bondNumber2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 2 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+    });
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
+      force: true,
+    });
     await page.keyboard.up('Shift');
     await page.keyboard.press('p');
     await takeEditorScreenshot(page);

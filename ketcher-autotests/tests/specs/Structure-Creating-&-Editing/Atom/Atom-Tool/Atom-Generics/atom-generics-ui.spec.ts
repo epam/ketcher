@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
@@ -11,9 +11,7 @@ test.describe('Open and validate Extended table', () => {
     /* 
       Test cases: EPMLSOPKET-1494
       */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 });

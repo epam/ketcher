@@ -20,7 +20,7 @@ export const AboutDialog = (page: Page) => {
   return {
     ...locators,
 
-    async closeByX() {
+    async closeWindow() {
       await locators.closeWindowButton.click();
     },
 

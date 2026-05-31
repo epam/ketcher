@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { MODAL_STATES, MODAL_STATES_VALUES } from './Open';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 import { ActionButton } from 'components/shared/actionButton';
 
 interface OpenFileWrapperProps {

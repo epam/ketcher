@@ -1,26 +1,25 @@
-import { CoreEditor } from 'application/editor/Editor';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import {
-  HydrogenBond,
-  LinkerSequenceNode,
-  MonomerSequenceNode,
-  Nucleoside,
-  Nucleotide,
-  Sugar,
-  UnsplitNucleotide,
-} from 'domain/entities';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Command } from 'domain/entities/Command';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Vec2 } from 'domain/entities/vec2';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Command } from 'domain/entities/Command';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName } from 'domain/types';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { AttachmentPointName } from 'domain/types';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
@@ -32,6 +31,15 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { RxnArrowRenderer } from 'application/render/renderers/RxnArrowRenderer';
+import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
+import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import ZoomTool from 'application/editor/tools/Zoom';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -39,7 +47,7 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 
 export class RenderersManager {
   // FIXME: Specify the types.
-  private theme;
+  private readonly theme;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -71,6 +79,21 @@ export class RenderersManager {
   public moveDrawingEntity(drawingEntity: DrawingEntity) {
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.moveSelection();
+
+    if (drawingEntity instanceof Atom) {
+      drawingEntity.bonds.forEach((bond) => {
+        if (!(bond instanceof Bond)) {
+          return;
+        }
+
+        bond.renderer?.move();
+
+        const connectedAtom =
+          bond.firstAtom === drawingEntity ? bond.secondAtom : bond.firstAtom;
+        connectedAtom.renderer?.move();
+      });
+    }
+
     drawingEntity.baseRenderer.drawSelection();
   }
 
@@ -239,7 +262,7 @@ export class RenderersManager {
   }
 
   private recalculateMonomersEnumeration() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -308,7 +331,7 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
@@ -321,6 +344,10 @@ export class RenderersManager {
   }
 
   public addAtom(atom: Atom) {
+    if (atom.renderer) {
+      atom.renderer.remove();
+    }
+
     const atomRenderer = new AtomRenderer(atom);
 
     this.atoms.set(atom.id, atomRenderer);
@@ -333,10 +360,50 @@ export class RenderersManager {
   }
 
   public addBond(bond: Bond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
     const bondRenderer = new BondRenderer(bond);
 
     this.bonds.set(bond.id, bondRenderer);
+
+    // redraw connected atoms labels as their connections numbers can be updated after bond is added
+    [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
+      if (bondAtom.bonds.indexOf(bond) !== -1) return;
+
+      bondAtom.addBond(bond);
+      this.atoms.forEach((atom) => {
+        if (bondAtom.renderer?.atom.id !== atom.atom.id) return;
+
+        atom.redrawLabel();
+      });
+    });
+
     bondRenderer.show();
+
+    // covers the case when atom label is redrawn and start/end positions
+    // of PolymerBond and MonomerToAtomBond must be redrawn
+    this.bonds.forEach((redrawBondRenderer) => {
+      const { firstAtom, secondAtom } = redrawBondRenderer.bond;
+
+      const monomerToAtomBonds = [
+        ...firstAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
+        ...secondAtom.bonds.filter((bond) => bond instanceof MonomerToAtomBond),
+      ];
+      monomerToAtomBonds.forEach((monomerToAtomBond) =>
+        monomerToAtomBond.renderer?.move(),
+      );
+
+      if (
+        firstAtom === bond.secondAtom ||
+        secondAtom === bond.firstAtom ||
+        firstAtom === bond.firstAtom ||
+        secondAtom === bond.secondAtom
+      ) {
+        redrawBondRenderer.move();
+      }
+    });
   }
 
   public deleteBond(bond: Bond) {
@@ -345,6 +412,10 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
     const bondRenderer = new MonomerToAtomBondRenderer(bond);
     this.redrawDrawingEntity(bond.atom);
 
@@ -358,37 +429,169 @@ export class RenderersManager {
     this.redrawDrawingEntity(bond.atom);
   }
 
+  public addRxnArrow(arrow: RxnArrow) {
+    const arrowRenderer = new RxnArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addMultitailArrow(arrow: MultitailArrow) {
+    const arrowRenderer = new MultitailArrowRenderer(arrow);
+
+    arrowRenderer.show();
+  }
+
+  public deleteMultitailArrow(arrow: MultitailArrow) {
+    arrow.renderer?.remove();
+  }
+
+  public addRxnPlus(rxnPlus: RxnPlus) {
+    const rxnPlusRenderer = new RxnPlusRenderer(rxnPlus);
+
+    rxnPlusRenderer.show();
+  }
+
+  public deleteRxnPlus(rxnPlus: RxnPlus) {
+    rxnPlus.renderer?.remove();
+  }
+
+  private renderAromaticCircles() {
+    const editor = provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const canvas = ZoomTool.instance?.canvas;
+
+    if (!canvas?.selectAll) {
+      return;
+    }
+
+    // Remove existing aromatic circles
+    canvas.selectAll('.aromatic-circle').remove();
+
+    // Draw aromatic circles or dashed polygons for each aromatic loop
+    viewModel.loops.forEach((loop) => {
+      if (!loop.aromatic) {
+        return;
+      }
+
+      if (loop.isConvex) {
+        // For convex loops, draw a circle
+        const { center, radius } = this.calculateLoopCenterAndRadius(loop);
+
+        if (radius <= 0) {
+          return;
+        }
+
+        canvas
+          .append('circle')
+          .attr('class', 'aromatic-circle')
+          .attr('cx', center.x)
+          .attr('cy', center.y)
+          .attr('r', radius)
+          .attr('stroke', '#000')
+          .attr('stroke-width', 1)
+          .attr('fill', 'none');
+      } else {
+        // For non-convex loops, draw a dashed polygon
+        const pathStr = this.calculateDashedPolygonPath(loop);
+
+        if (!pathStr) {
+          return;
+        }
+
+        canvas
+          .append('path')
+          .attr('class', 'aromatic-circle')
+          .attr('d', pathStr)
+          .attr('stroke', '#000')
+          .attr('stroke-width', 1)
+          .attr('stroke-dasharray', '2,2')
+          .attr('fill', 'none');
+      }
+    });
+  }
+
+  private calculateDashedPolygonPath(loop) {
+    const editorSettings = provideEditorSettings();
+    let pathStr = '';
+
+    // Calculate the polygon path similar to reloop.js
+    loop.halfEdges.forEach((halfEdge, k) => {
+      const nextHalfEdge = loop.halfEdges[(k + 1) % loop.halfEdges.length];
+
+      // Calculate the angle between consecutive half edges
+      const angle = Math.atan2(
+        Vec2.cross(halfEdge.direction, nextHalfEdge.direction),
+        Vec2.dot(halfEdge.direction, nextHalfEdge.direction),
+      );
+      const halfAngle = (Math.PI - angle) / 2;
+      const dir = nextHalfEdge.direction.rotate(halfAngle);
+
+      const pi = Scale.modelToCanvas(
+        nextHalfEdge.firstAtom.position,
+        editorSettings,
+      );
+
+      let sin = Math.sin(halfAngle);
+      const minSin = 0.1;
+      if (Math.abs(sin) < minSin) {
+        sin = (sin * minSin) / Math.abs(sin);
+      }
+
+      const bondSpace = 6; // Default bond space
+      const offset = bondSpace / sin;
+      const qi = pi.addScaled(dir, -offset);
+
+      pathStr += k === 0 ? `M ${qi.x} ${qi.y}` : ` L ${qi.x} ${qi.y}`;
+    });
+
+    pathStr += ' Z';
+    return pathStr;
+  }
+
+  private calculateLoopCenterAndRadius(loop) {
+    const editorSettings = provideEditorSettings();
+
+    let center = new Vec2(0, 0);
+
+    // Calculate the center as the average of all atom positions
+    loop.halfEdges.forEach((halfEdge) => {
+      const atomPos = Scale.modelToCanvas(
+        halfEdge.firstAtom.position,
+        editorSettings,
+      );
+      center = center.add(atomPos);
+    });
+    center = center.scaled(1.0 / loop.halfEdges.length);
+
+    // Calculate the radius as the minimum distance from center to any bond
+    let radius = -1;
+    loop.halfEdges.forEach((halfEdge) => {
+      const apos = Scale.modelToCanvas(
+        halfEdge.firstAtom.position,
+        editorSettings,
+      );
+      const bpos = Scale.modelToCanvas(
+        halfEdge.secondAtom.position,
+        editorSettings,
+      );
+      const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
+      const dist = Vec2.dot(Vec2.diff(apos, center), n);
+      radius = radius < 0 ? dist : Math.min(radius, dist);
+    });
+    radius *= 0.7; // Scale down the radius
+
+    return { center, radius };
+  }
+
   public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
     }
-  }
-
-  public static getRenderedStructuresBbox(monomers?: BaseMonomer[]) {
-    let left;
-    let right;
-    let top;
-    let bottom;
-    const editor = CoreEditor.provideEditorInstance();
-
-    (monomers || editor.drawingEntitiesManager.monomers).forEach((monomer) => {
-      const monomerPosition = monomer.renderer?.scaledMonomerPosition;
-
-      assert(monomerPosition);
-
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-    });
-    return {
-      left,
-      right,
-      top,
-      bottom,
-      width: right - left,
-      height: bottom - top,
-    };
+    this.renderAromaticCircles();
   }
 
   public rerenderSideConnectionPolymerBonds() {

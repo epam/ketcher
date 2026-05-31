@@ -1,17 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   moveMouseAway,
   MacroFileType,
-  resetZoomLevelToDefault,
-  waitForPageInit,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
-import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
@@ -22,30 +17,26 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Import/export sequence:', () => {
@@ -71,7 +62,9 @@ test.describe('Import/export sequence:', () => {
     const contentTypeSelector =
       PasteFromClipboardDialog(page).contentTypeSelector;
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
@@ -79,7 +72,7 @@ test.describe('Import/export sequence:', () => {
       .locator('span')
       .first()
       .innerText();
-    expect(defaultValue).toBe('Ket');
+    expect(defaultValue).toBe('Ket Format');
 
     await contentTypeSelector.click();
 
@@ -87,7 +80,7 @@ test.describe('Import/export sequence:', () => {
     const values = await options.allTextContents();
 
     const expectedValues = [
-      MacroFileType.Ket,
+      MacroFileType.KetFormat,
       MacroFileType.MOLv3000,
       MacroFileType.Sequence,
       MacroFileType.FASTA,
@@ -97,7 +90,7 @@ test.describe('Import/export sequence:', () => {
       expect(values).toContain(value);
     }
     // Case 2
-    await page.getByText(MacroFileType.Sequence).click();
+    await page.getByRole('option', { name: MacroFileType.Sequence }).click();
 
     await PasteFromClipboardDialog(page).monomerTypeSelector.click();
 
@@ -116,7 +109,7 @@ test.describe('Import/export sequence:', () => {
 
     // Case 30
     await PasteFromClipboardDialog(page).contentTypeSelector.click();
-    await page.getByText(MacroFileType.FASTA).click();
+    await page.getByRole('option', { name: MacroFileType.FASTA }).click();
     await PasteFromClipboardDialog(page).monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();
@@ -134,6 +127,7 @@ test.describe('Import/export sequence:', () => {
     await keyboardPressOnCanvas(page, 'Escape');
   });
 
+  //
   test('It is possible to paste from clipboard A, T, C, G, U for RNA open structure', async () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/4422 - Case 3.1 (RNA case)
@@ -143,14 +137,12 @@ test.describe('Import/export sequence:', () => {
         Enter symbols A, T, C, G, U (case insensitive) in the sequence input.
         Ensure no errors are displayed.
     */
-
+    await clickInTheMiddleOfTheCanvas(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
-
-    await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -171,7 +163,6 @@ test.describe('Import/export sequence:', () => {
       'ATCGUatcgu',
     );
 
-    await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -195,10 +186,10 @@ test.describe('Import/export sequence:', () => {
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   // Fail while performance issue on Indigo side
@@ -268,7 +259,9 @@ test.describe('Import/export sequence:', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList

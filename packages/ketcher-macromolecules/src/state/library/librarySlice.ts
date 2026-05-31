@@ -33,6 +33,7 @@ import {
   AmbiguousMonomerType,
   isAmbiguousMonomerLibraryItem,
   IKetIdtAliases,
+  IKetMonomerGroupTemplate,
 } from 'ketcher-core';
 import {
   LibraryNameType,
@@ -48,6 +49,7 @@ import { localStorageWrapper } from 'helpers/localStorage';
 
 interface LibraryState {
   monomers: Group[];
+  defaultRnaPresets: IKetMonomerGroupTemplate[];
   favorites: { [key: string]: Group };
   searchFilter: string;
   selectedTabIndex: number;
@@ -65,6 +67,7 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
 
 const initialState: LibraryState = {
   monomers: [],
+  defaultRnaPresets: [],
   favorites: {},
   searchFilter: '',
   selectedTabIndex: LIBRARY_TAB_INDEX.RNA,
@@ -77,9 +80,9 @@ export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {
 }
 
 export function getPresetUniqueKey(preset: IRnaPreset) {
-  return `${preset.name}_${preset.base?.label || '.'}_${
-    preset.sugar?.label || '.'
-  }_${preset.phosphate?.label || '.'}`;
+  return `${preset.name}_${preset.base?.label ?? '.'}_${
+    preset.sugar?.label ?? '.'
+  }_${preset.phosphate?.label ?? '.'}`;
 }
 
 export const librarySlice: Slice = createSlice({
@@ -98,6 +101,17 @@ export const librarySlice: Slice = createSlice({
       });
 
       state.monomers = clonedMonomers;
+    },
+
+    loadDefaultPresets: (
+      state: RootState,
+      action: PayloadAction<IKetMonomerGroupTemplate[]>,
+    ) => {
+      state.defaultRnaPresets = action.payload.map((groupTemplate) => {
+        return {
+          ...groupTemplate,
+        };
+      });
     },
 
     setFavoriteMonomersFromLocalStorage: (state: RootState) => {
@@ -141,7 +155,7 @@ export const librarySlice: Slice = createSlice({
 
       const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
-      ) || []) as string[];
+      ) ?? []) as string[];
 
       if (state.favorites[key]) {
         delete state.favorites[key];
@@ -167,7 +181,39 @@ export const librarySlice: Slice = createSlice({
   },
 });
 
-export const getSearchTermValue = (state): string => {
+export const {
+  loadMonomerLibrary,
+  loadDefaultPresets,
+  setFavoriteMonomersFromLocalStorage,
+  clearFavorites,
+  toggleMonomerFavorites,
+  setSearchFilter,
+  setSelectedTabIndex,
+} = librarySlice.actions;
+
+export const selectAxoLabsAliasesByPresetName = createSelector(
+  (state: RootState) => state.library.defaultRnaPresets,
+  (defaultPresets: IKetMonomerGroupTemplate[]): Map<string, string> => {
+    const presets = defaultPresets ?? [];
+    return presets.reduce(
+      (aliases: Map<string, string>, preset: IKetMonomerGroupTemplate) => {
+        if (preset.aliasAxoLabs && preset.name) {
+          aliases.set(
+            preset.name.toLowerCase(),
+            preset.aliasAxoLabs.toLowerCase(),
+          );
+        }
+        return aliases;
+      },
+      new Map<string, string>(),
+    );
+  },
+);
+
+export const selectLibrarySlice = (state: RootState): LibraryState =>
+  state.library;
+
+export const selectSearchFilter = (state: RootState): string => {
   return state.library.searchFilter;
 };
 
@@ -210,6 +256,23 @@ export const selectAmbiguousMonomersInCategory = (
   if (libraryGroupName === MonomerGroups.BASES) {
     groupedAmbiguousMonomerLibraryItems = [
       {
+        groupTitle: 'Ambiguous Bases',
+        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
+          return (
+            isAmbiguousMonomerLibraryItem(libraryItem) &&
+            libraryItem.options.every(
+              (option) =>
+                !option.templateId
+                  .toLowerCase()
+                  .includes(DNA_TEMPLATE_NAME_PART) &&
+                !option.templateId
+                  .toLowerCase()
+                  .includes(RNA_TEMPLATE_NAME_PART),
+            )
+          );
+        }),
+      },
+      {
         groupTitle: 'Ambiguous DNA Bases',
         groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
           return (
@@ -227,23 +290,6 @@ export const selectAmbiguousMonomersInCategory = (
             isAmbiguousMonomerLibraryItem(libraryItem) &&
             libraryItem.options.find((option) =>
               option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
-            )
-          );
-        }),
-      },
-      {
-        groupTitle: 'Ambiguous Bases',
-        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
-          return (
-            isAmbiguousMonomerLibraryItem(libraryItem) &&
-            libraryItem.options.every(
-              (option) =>
-                !option.templateId
-                  .toLowerCase()
-                  .includes(DNA_TEMPLATE_NAME_PART) &&
-                !option.templateId
-                  .toLowerCase()
-                  .includes(RNA_TEMPLATE_NAME_PART),
             )
           );
         }),
@@ -320,10 +366,14 @@ export const selectFilteredMonomers = createSelector(
     const normalizedSearchFilter = searchFilter.toLowerCase();
 
     const checkMonomerMatch = (
-      name = '',
-      fullName = '',
       idtAliases: IKetIdtAliases | undefined,
       searchFilter: string,
+      name = '',
+      fullName = '',
+      helmAlias: string | undefined = '',
+      bilnAlias: string | undefined = '',
+      axoLabsAlias: string | undefined = '',
+      modificationTypes: string[] | undefined = [],
     ) => {
       const monomerName = name.toLowerCase();
       const monomerNameFull = fullName.toLowerCase();
@@ -335,6 +385,14 @@ export const selectFilteredMonomers = createSelector(
             .map((mod) => mod.toLowerCase())
             .join(' ')
         : '';
+
+      const helmAliasLower = helmAlias?.toLowerCase() ?? '';
+      const bilnAliasLower = bilnAlias?.toLowerCase() ?? '';
+      const axoLabsAliasLower = axoLabsAlias?.toLowerCase() ?? '';
+      const modificationTypesLower =
+        modificationTypes && modificationTypes.length > 0
+          ? modificationTypes.map((type) => type.toLowerCase()).join(' ')
+          : '';
 
       if (searchFilter === '/') {
         return Boolean(idtBase || idtModifications);
@@ -351,8 +409,7 @@ export const selectFilteredMonomers = createSelector(
           const textBetweenSlashes = parts[1];
 
           const matchesIdtBase =
-            idtBase &&
-            idtBase.length === textBetweenSlashes.length &&
+            idtBase?.length === textBetweenSlashes.length &&
             Array.from(idtBase).every(
               (char, index) => char === textBetweenSlashes[index],
             );
@@ -378,37 +435,25 @@ export const selectFilteredMonomers = createSelector(
         if (searchFilter.startsWith('/') && searchFilter.length > 1) {
           const aliasRest = searchFilter.slice(1);
           return (
-            (idtBase && idtBase.startsWith(aliasRest)) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.startsWith(aliasRest)))
+            idtBase?.startsWith(aliasRest) ||
+            idtModifications
+              ?.split(' ')
+              .some((mod) => mod.startsWith(aliasRest))
           );
         }
 
         if (searchFilter.endsWith('/') && searchFilter.length > 1) {
           const aliasRest = searchFilter.slice(0, -1);
-          const aliasLastSymbol = searchFilter[searchFilter.length - 2];
 
           return (
-            (idtBase &&
-              idtBase.endsWith(aliasRest) &&
-              idtBase[idtBase.length - 1] === aliasLastSymbol) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some(
-                  (mod) =>
-                    mod.endsWith(aliasRest) &&
-                    mod[mod.length - 1] === aliasLastSymbol,
-                ))
+            idtBase?.endsWith(aliasRest) ||
+            idtModifications?.split(' ').some((mod) => mod.endsWith(aliasRest))
           );
         }
 
         const matchesIdtBase =
-          idtBase &&
-          idtBase.startsWith(searchAfterSlash) &&
-          idtBase.endsWith(searchBeforeSlash);
+          idtBase?.startsWith(searchAfterSlash) &&
+          idtBase?.endsWith(searchBeforeSlash);
         const matchesIdtModifications = idtModifications
           ? idtModifications
               .split(' ')
@@ -427,17 +472,39 @@ export const selectFilteredMonomers = createSelector(
         ? idtModifications.includes(searchFilter)
         : false;
 
+      const matchesHelmAlias = helmAliasLower
+        ? helmAliasLower.includes(searchFilter)
+        : false;
+      const matchesBilnAlias = bilnAliasLower
+        ? bilnAliasLower.includes(searchFilter)
+        : false;
+      const matchesAxoLabsAlias = axoLabsAliasLower
+        ? axoLabsAliasLower.includes(searchFilter)
+        : false;
+      const matchesModificationTypes = modificationTypesLower
+        ? modificationTypesLower.includes(searchFilter)
+        : false;
+
       const cond =
         monomerName.includes(searchFilter) ||
         monomerNameFull.includes(searchFilter) ||
         matchesIdtBase ||
-        matchesIdtModifications;
+        matchesIdtModifications ||
+        matchesHelmAlias ||
+        matchesBilnAlias ||
+        matchesAxoLabsAlias ||
+        matchesModificationTypes;
 
       return cond;
     };
 
     return monomers
       .filter((item: MonomerOrAmbiguousType) => {
+        // Filter out hidden monomers - they are part of presets and should not be visible in the library
+        if (!item.isAmbiguous && (item as MonomerItemType).props?.hidden) {
+          return false;
+        }
+
         if (item.isAmbiguous) {
           const {
             label,
@@ -447,35 +514,57 @@ export const selectFilteredMonomers = createSelector(
           } = item as AmbiguousMonomerType;
 
           const matchesMonomer = checkMonomerMatch(
-            label,
-            id,
             idtAliases,
             normalizedSearchFilter,
+            label,
+            id,
           );
 
           return (
             matchesMonomer ||
             components.some((monomer) => {
-              const { Name, MonomerName, idtAliases } =
-                monomer.monomerItem.props;
-
-              return checkMonomerMatch(
+              const {
                 Name,
                 MonomerName,
                 idtAliases,
+                aliasHELM,
+                aliasBILN,
+                aliasAxoLabs,
+                modificationTypes,
+              } = monomer.monomerItem.props;
+
+              return checkMonomerMatch(
+                idtAliases,
                 normalizedSearchFilter,
+                Name,
+                MonomerName,
+                aliasHELM,
+                aliasBILN,
+                aliasAxoLabs,
+                modificationTypes,
               );
             })
           );
         } else {
-          const { Name, MonomerName, idtAliases } = (item as MonomerItemType)
-            .props;
-
-          return checkMonomerMatch(
+          const {
             Name,
             MonomerName,
             idtAliases,
+            aliasHELM,
+            aliasBILN,
+            aliasAxoLabs,
+            modificationTypes,
+          } = (item as MonomerItemType).props;
+
+          return checkMonomerMatch(
+            idtAliases,
             normalizedSearchFilter,
+            Name,
+            MonomerName,
+            aliasHELM,
+            aliasBILN,
+            aliasAxoLabs,
+            modificationTypes,
           );
         }
       })
@@ -513,9 +602,8 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 
   const sortedPreparedData = Object.entries(preparedData).reduce(
     (result, [code, monomers]) => {
-      const sortedMonomers = monomers.sort((a, b) =>
-        a.label.localeCompare(b.label),
-      );
+      const sortedMonomers = [...monomers];
+      sortedMonomers.sort((a, b) => a.label.localeCompare(b.label));
       const baseIndex = sortedMonomers.findIndex(
         (monomer) => monomer.label === code,
       );
@@ -531,38 +619,33 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
 
   // generate list of monomer groups
   const preparedGroups: Group[] = [];
-  return Object.keys(sortedPreparedData)
-    .sort((a, b) => a.localeCompare(b))
-    .reduce((result, code) => {
-      const group: Group = {
-        groupTitle:
-          code === NoNaturalAnalogueGroupCode
-            ? NoNaturalAnalogueGroupTitle
-            : code,
-        groupItems: [],
-      };
-      sortedPreparedData[code].forEach((item: MonomerItemType) => {
-        group.groupItems.push({
-          ...item,
-          props: { ...item.props },
-        });
+  const sortedGroupCodes = Object.keys(sortedPreparedData);
+  sortedGroupCodes.sort((a, b) => a.localeCompare(b));
+
+  return sortedGroupCodes.reduce((result, code) => {
+    const group: Group = {
+      groupTitle:
+        code === NoNaturalAnalogueGroupCode
+          ? NoNaturalAnalogueGroupTitle
+          : code,
+      groupItems: [],
+    };
+    sortedPreparedData[code].forEach((item: MonomerItemType) => {
+      group.groupItems.push({
+        ...item,
+        props: { ...item.props },
       });
-      if (group.groupItems.length) {
-        result.push(group);
-      }
-      return result;
-    }, preparedGroups);
+    });
+    if (group.groupItems.length) {
+      result.push(group);
+    }
+    return result;
+  }, preparedGroups);
 };
 
 export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
 
-export const {
-  loadMonomerLibrary,
-  setFavoriteMonomersFromLocalStorage,
-  clearFavorites,
-  toggleMonomerFavorites,
-  setSearchFilter,
-  setSelectedTabIndex,
-} = librarySlice.actions;
-
 export const libraryReducer = librarySlice.reducer;
+
+export const selectDefaultRnaPresets = (state) =>
+  state.library.defaultRnaPresets;

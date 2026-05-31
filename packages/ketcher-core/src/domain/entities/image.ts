@@ -16,7 +16,8 @@
 
 import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
 import { Vec2 } from 'domain/entities/vec2';
-import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
+import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 export interface KetFileImageNode extends KetFileNode<string> {
@@ -141,9 +142,7 @@ export class Image extends BaseMicromoleculeEntity {
   toKetNode(): KetFileImageNode {
     const topLeftCorner = this.getTopLeftPosition();
     const base64Data = this.bitmap.replace(/^.*;base64,/, '');
-    const format = this.bitmap.match(
-      /^data:(image\/.*);base64,/,
-    )?.[1] as string;
+    const format = /^data:(image\/.*);base64,/.exec(this.bitmap)?.[1] as string;
     return {
       type: IMAGE_SERIALIZE_KEY,
       center: getNodeWithInvertedYCoord(this._center),

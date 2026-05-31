@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -570,7 +571,7 @@
                     1,
                     7
                 ],
-                "stereo": 1
+                "stereo": 6
             },
             {
                 "type": 1,
@@ -607,6 +608,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -831,6 +833,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1010,6 +1013,7 @@
         "id": "C___Cytosine",
         "fullName": "Cytosine",
         "alias": "C",
+        "aliasHELM": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -1112,6 +1116,8 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -1135,8 +1141,8 @@
         "idtAliases": {
             "base": "Phos",
             "modifications": {
-                "endpoint3": "3Phos",
-                "endpoint5": "5Phos"
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
             }
         },
         "naturalAnalogShort": "P"
@@ -1359,6 +1365,7 @@
         "id": "G___Guanine",
         "fullName": "Guanine",
         "alias": "G",
+        "aliasHELM": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1563,6 +1570,7 @@
         "id": "T___Thymine",
         "fullName": "Thymine",
         "alias": "T",
+        "aliasHELM": "T",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -1752,6 +1760,7 @@
         "id": "U___Uracil",
         "fullName": "Uracil",
         "alias": "U",
+        "aliasHELM": "U",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

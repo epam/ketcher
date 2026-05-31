@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, RefObject } from 'react';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR, Icon } from 'ketcher-react';
 import { ZoomInput } from 'components/ZoomControls/ZoomInput';
 import { ZoomTool } from 'ketcher-core';
@@ -105,7 +105,7 @@ export const ZoomControls = () => {
         <DropDownContent>
           <ZoomInput
             onZoomSubmit={onZoomSubmit}
-            inputRef={inputRef}
+            inputRef={inputRef as RefObject<HTMLInputElement>}
             currentZoom={currentZoom}
           />
           <ZoomControlButton

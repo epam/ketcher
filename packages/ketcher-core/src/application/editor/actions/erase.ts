@@ -27,19 +27,17 @@ import {
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
-import { RGroup } from 'domain/entities';
+import { RGroup } from 'domain/entities/rgroup';
 import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 
 import { Action } from './action';
 import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
-import {
-  fromBondStereoUpdate,
-  removeAttachmentPointFromSuperatom,
-} from '../actions/bond';
+import { removeAttachmentPointFromSuperatom } from '../actions/bond';
+import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
@@ -54,7 +52,7 @@ function fromBondDeletion(
 ) {
   let action = new Action();
 
-  if (restruct.sgroups && restruct.sgroups.size > 0) {
+  if (restruct.sgroups?.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
       if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
         const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
@@ -118,7 +116,7 @@ export function fromOneBondDeletion(restruct, id) {
 }
 
 export function fromFragmentDeletion(restruct, rawSelection) {
-  assert(!!rawSelection != null);
+  assert(rawSelection != null);
 
   let action = new Action();
   const atomsToRemove: Array<number> = [];
@@ -147,7 +145,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
-    if (sgroup && sgroup.isSuperatomWithoutLabel) {
+    if (sgroup?.isSuperatomWithoutLabel) {
       const attachmentPoints = sgroup.getAttachmentPoints();
       attachmentPoints.forEach((attachmentPoint) => {
         if (

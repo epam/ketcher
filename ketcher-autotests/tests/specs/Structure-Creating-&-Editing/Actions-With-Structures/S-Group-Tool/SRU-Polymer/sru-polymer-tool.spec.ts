@@ -1,24 +1,19 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  BondType,
-  clickInTheMiddleOfTheScreen,
-  clickOnAtom,
-  clickOnBond,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
+  MolFileFormat,
   openFileAndAddToCanvas,
-  pressButton,
-  resetCurrentTool,
-  screenshotBetweenUndoRedo,
-  selectAllStructuresOnCanvas,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { getBondByIndex } from '@utils/canvas/bonds';
-import { SGroupRepeatPattern } from '@utils/sgroup';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -28,40 +23,21 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-const CANVAS_CLICK_X = 500;
-const CANVAS_CLICK_Y = 500;
-
-async function selectSruPolymer(
-  page: Page,
-  text: string,
-  dataName: string,
-  polymerLabel: string,
-  repeatPattern: SGroupRepeatPattern,
-) {
-  await page.locator('span').filter({ hasText: text }).click();
-  await page.getByRole('option', { name: dataName }).click();
-  await page.getByLabel('Polymer label').fill(polymerLabel);
-  await page
-    .locator('label')
-    .filter({ hasText: 'Repeat Pattern' })
-    .locator('span')
-    .nth(1)
-    .click();
-  await page.getByRole('option', { name: repeatPattern }).click();
-  await pressButton(page, 'Apply');
-}
-
-async function selectRepeatPattern(
-  page: Page,
-  repeatPattern: SGroupRepeatPattern,
-) {
-  await page.getByTestId('connectivity-input-span').click();
-  await page.getByRole('option', { name: repeatPattern }).click();
-  await pressButton(page, 'Apply');
-}
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MicroBondOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  RepeatPatternOption,
+  TypeOption,
+} from '@tests/pages/constants/s-GroupPropertiesDialog/Constants';
+import { SGroupPropertiesDialog } from '@tests/pages/molecules/canvas/S-GroupPropertiesDialog';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 test.describe('SRU Polymer tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,16 +49,16 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnAtom(page, 'C', 3);
-    await selectSruPolymer(
-      page,
-      'Data',
-      'SRU Polymer',
-      'A',
-      SGroupRepeatPattern.HeadToTail,
-    );
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -91,16 +67,14 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await LeftToolbar(page).sGroup();
-    await clickOnBond(page, BondType.SINGLE, 3);
-    await selectSruPolymer(
-      page,
-      'Data',
-      'SRU Polymer',
-      'A',
-      SGroupRepeatPattern.HeadToTail,
-    );
+    await getBondLocator(page, { bondId: 9 }).click({ force: true });
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -109,16 +83,14 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectSruPolymer(
-      page,
-      'Data',
-      'SRU Polymer',
-      'A',
-      SGroupRepeatPattern.HeadToTail,
-    );
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -128,7 +100,7 @@ test.describe('SRU Polymer tool', () => {
       Description: No connection label should be present at the right-top side of the brackets when the
       'Head-to-tail' connection type is opened.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await takeEditorScreenshot(page);
   });
 
@@ -138,12 +110,14 @@ test.describe('SRU Polymer tool', () => {
       Description: The 'hh' connection label should be present at the right-top side of the brackets when the
       'Head-to-head' connection type is selected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
-    await selectRepeatPattern(page, SGroupRepeatPattern.HeadToHead);
+    const point = await getBondLocator(page, { bondId: 17 });
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
+    await SGroupPropertiesDialog(page).selectRepeatPattern(
+      RepeatPatternOption.HeadToHead,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -153,12 +127,14 @@ test.describe('SRU Polymer tool', () => {
       Description: The 'eu' connection label should be present at the right-top side of the brackets when the
       'Either unknown' connection type is selected.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
-    await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
+    const point = await getBondLocator(page, { bondId: 17 });
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
+    await SGroupPropertiesDialog(page).selectRepeatPattern(
+      RepeatPatternOption.EitherUnknown,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
   });
 
@@ -168,16 +144,17 @@ test.describe('SRU Polymer tool', () => {
       Description: The 'eu' connection label should be present at the right-top side of the brackets when the
       'Either unknown' connection type is selected. And 'n' letter changes to 'A'
     */
-    const polymerLabel = 'A';
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).sGroup();
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-    await page.getByText('Edit S-Group...').click();
-    await page.getByLabel('Polymer label').fill(polymerLabel);
-    await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
+    const point = await getBondLocator(page, { bondId: 17 });
+    await ContextMenu(page, point).click(MicroBondOption.EditSGroup);
+    await SGroupPropertiesDialog(page).setPolymerLabelValue('A');
+    await SGroupPropertiesDialog(page).selectRepeatPattern(
+      RepeatPatternOption.EitherUnknown,
+    );
+    await SGroupPropertiesDialog(page).apply();
     await takeEditorScreenshot(page);
-    await selectUndoByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -186,12 +163,12 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
-    const atomToolbar = RightToolbar(page);
-
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
+    await RightToolbar(page).clickAtom(Atom.Oxygen);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -202,12 +179,18 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnAtom(page, 'C', 3);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -218,12 +201,16 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to delete whole Chain with SRU polymer S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('delete').click();
+    await RotationTool(page).delete();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -232,13 +219,19 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add Template on structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectRingButton(page, RingButton.Benzene);
-    await clickOnAtom(page, 'C', 3);
-    await resetCurrentTool(page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -249,16 +242,20 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add R-Group Label and Undo/Redo on structure with SRU polymer S-group.
     */
-    const rGroupName = 'R12';
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await clickOnAtom(page, 'C', 3);
-    await page.getByRole('button', { name: rGroupName }).click();
-    await pressButton(page, 'Apply');
-    await resetCurrentTool(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 18 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupLabels(RGroup.R12);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
 
-    await screenshotBetweenUndoRedo(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page, {
+      maxDiffPixels: 1,
+    });
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -267,9 +264,11 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1535
       Description: User is able to copy and paste structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await copyAndPaste(page);
-    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, 500, 500, {
+      from: 'pageTopLeft',
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -278,9 +277,9 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1535
       Description: User is able to cut and paste structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/sru-polymer.mol');
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -289,13 +288,13 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1536
       Description: User is able to save and open structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/sru-polymer-data.ket');
 
     await verifyFileExport(
       page,
       'Molfiles-V2000/sru-polymer-data-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
       [1],
     );
   });
@@ -306,16 +305,14 @@ test.describe('SRU Polymer tool', () => {
       Description: S-Group added to the structure and represent in .ket file.
       The test is currently not functioning correctly as the bug has not been fixed.
     */
-    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/cyclopropane-and-h2o.ket');
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
-    await selectSruPolymer(
-      page,
-      'Data',
-      'SRU Polymer',
-      'A',
-      SGroupRepeatPattern.HeadToTail,
-    );
+    await SGroupPropertiesDialog(page).setOptions({
+      Type: TypeOption.SRUPolymer,
+      PolymerLabel: 'A',
+      RepeatPattern: RepeatPatternOption.HeadToTail,
+    });
     await verifyFileExport(
       page,
       'KET/cyclopropane-and-h2o-sru-expected.ket',

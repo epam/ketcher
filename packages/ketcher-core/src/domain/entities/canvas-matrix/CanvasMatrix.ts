@@ -1,7 +1,9 @@
-import { BaseMonomer, MonomerToAtomBond, SubChainNode } from 'domain/entities';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
@@ -11,15 +13,15 @@ interface MatrixConfig {
 }
 
 export class CanvasMatrix {
-  private matrix: Matrix<Cell>;
-  private initialMatrixWidth: number;
-  private monomerToCell: Map<BaseMonomer, Cell> = new Map();
+  private readonly matrix: Matrix<Cell>;
+  private readonly initialMatrixWidth: number;
+  private readonly monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
 
   constructor(
     public chainsCollection: ChainsCollection,
-    private matrixConfig: MatrixConfig = {
+    private readonly matrixConfig: MatrixConfig = {
       initialMatrix: new Matrix<Cell>(),
     },
   ) {
@@ -41,12 +43,15 @@ export class CanvasMatrix {
   ): void {
     // set offsets for connections with overlappings
     const currentConnections = new Map<PolymerBond, Set<Connection>>();
-    const iterationMethod =
-      direction === 180
-        ? this.matrix.forEach.bind(this.matrix)
-        : direction === 0
-        ? this.matrix.forEachRightToLeft.bind(this.matrix)
-        : this.matrix.forEachBottomToTop.bind(this.matrix);
+    let iterationMethod: typeof this.matrix.forEach;
+
+    if (direction === 180) {
+      iterationMethod = this.matrix.forEach.bind(this.matrix);
+    } else if (direction === 0) {
+      iterationMethod = this.matrix.forEachRightToLeft.bind(this.matrix);
+    } else {
+      iterationMethod = this.matrix.forEachBottomToTop.bind(this.matrix);
+    }
 
     iterationMethod((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(

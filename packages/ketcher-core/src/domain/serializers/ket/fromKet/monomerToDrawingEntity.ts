@@ -1,34 +1,47 @@
-import {
+import type {
   IKetMacromoleculesContent,
   IKetMonomerNode,
   IKetMonomerTemplate,
   IKetAmbiguousMonomerNode,
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct, Vec2 } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import {
+  type Struct,
+  type BaseMonomer,
+  type BaseMonomerConfig,
+  Vec2,
+} from 'domain/entities';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { MonomerItemType } from 'domain/types/monomers';
 import {
   modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
-import { KetSerializer } from 'domain/serializers';
-import { monomerFactory } from 'application/editor';
+import {
+  convertMonomerTemplateToStruct,
+  fillStructRgLabelsByMonomerTemplate,
+  getTemplateAttachmentPoints,
+} from './monomerTemplateUtils';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
     id: template.id,
-    Name: template.fullName || template.name || template.alias || template.id,
-    MonomerNaturalAnalogCode: template.naturalAnalogShort || '',
-    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog || '',
-    MonomerName: template.name || template.alias || template.id,
+    Name: template.fullName ?? template.name ?? template.alias ?? template.id,
+    MonomerNaturalAnalogCode: template.naturalAnalogShort ?? '',
+    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog ?? '',
+    MonomerName: template.name ?? template.alias ?? template.id,
     MonomerFullName: template.fullName,
     MonomerType: template.classHELM,
     MonomerClass: template.class,
     MonomerCaps: {},
     idtAliases: template.idtAliases,
     unresolved: template.unresolved,
-    modificationType: template.modificationType,
+    modificationTypes: template.modificationTypes,
+    ...(template.aliasHELM ? { aliasHELM: template.aliasHELM } : {}),
+    ...(template.aliasBILN ? { aliasBILN: template.aliasBILN } : {}),
+    ...(template.aliasAxoLabs ? { aliasAxoLabs: template.aliasAxoLabs } : {}),
+    ...(template.hidden ? { hidden: template.hidden } : {}),
   };
 }
 
@@ -48,11 +61,11 @@ export function monomerToDrawingEntity(
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: alias || id,
+      label: alias ?? id,
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
-      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
+      attachmentPoints: getTemplateAttachmentPoints(template),
       seqId: seqid,
       ...(expanded !== undefined && {
         expanded,
@@ -65,9 +78,21 @@ export function monomerToDrawingEntity(
   );
 }
 
+export type MonomerFactoryFn = (
+  monomerItem: MonomerItemType,
+) => [
+  new (
+    monomerItem: MonomerItemType,
+    position?: Vec2,
+    config?: BaseMonomerConfig,
+  ) => BaseMonomer,
+  ...unknown[],
+];
+
 export function createMonomersForVariantMonomer(
   variantMonomerTemplate: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
+  monomerFactory: MonomerFactoryFn,
 ) {
   const monomerTemplates = variantMonomerTemplate.options.map((option) => {
     return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
@@ -76,15 +101,12 @@ export function createMonomersForVariantMonomer(
     const monomerItem = {
       label: monomerTemplate.alias,
       expanded: false,
-      struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
+      struct: convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
-      attachmentPoints: monomerTemplate.attachmentPoints,
+      attachmentPoints: getTemplateAttachmentPoints(monomerTemplate),
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
-    KetSerializer.fillStructRgLabelsByMonomerTemplate(
-      monomerTemplate,
-      monomerItem,
-    );
+    fillStructRgLabelsByMonomerTemplate(monomerTemplate, monomerItem);
 
     return new MonomerConstructor(monomerItem, undefined, {
       generateId: false,
@@ -99,12 +121,17 @@ export function variantMonomerToDrawingEntity(
   node: IKetAmbiguousMonomerNode,
   template: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
+  monomerFactory: MonomerFactoryFn,
 ) {
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),
   );
 
-  const monomers = createMonomersForVariantMonomer(template, parsedFileContent);
+  const monomers = createMonomersForVariantMonomer(
+    template,
+    parsedFileContent,
+    monomerFactory,
+  );
 
   return drawingEntitiesManager.addAmbiguousMonomer(
     {

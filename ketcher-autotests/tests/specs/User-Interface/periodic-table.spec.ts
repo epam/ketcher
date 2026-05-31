@@ -1,9 +1,9 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
 } from '@utils';
 
@@ -41,7 +41,7 @@ test.describe('Open Ketcher', () => {
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(atom);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     });
   }

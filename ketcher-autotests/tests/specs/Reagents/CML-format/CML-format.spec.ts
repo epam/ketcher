@@ -1,12 +1,12 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  FILE_TEST_DATA,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndAddToCanvas,
   moveMouseAway,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -29,8 +29,8 @@ test.describe('Reagents CML format', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -48,8 +48,8 @@ test.describe('Reagents CML format', () => {
     results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
     */
     await openFileAndAddToCanvas(
-      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       page,
+      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
     );
     await takeEditorScreenshot(page);
   });
@@ -62,8 +62,8 @@ test.describe('Reagents CML format', () => {
     results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
     */
     await openFileAndAddToCanvas(
-      'CML/reagents-below-and-above-arrow.cml',
       page,
+      'CML/reagents-below-and-above-arrow.cml',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -79,11 +79,11 @@ test.describe('Reagents CML format', () => {
       Description: Reagents 'NH3' displays above reaction arrow and HF below.
       results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
+    const fileContent = await readFileContent(
+      'CML/reagents-below-and-above-arrow.cml',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

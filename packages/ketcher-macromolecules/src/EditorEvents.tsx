@@ -19,6 +19,7 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
+  selectLastSelectedSelectionMenuItem,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -37,6 +38,7 @@ import {
   PolymerBond,
   HydrogenBond,
   BackBoneSequenceNode,
+  LinkerSequenceNode,
   ToolName,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
@@ -50,7 +52,7 @@ import {
   PreviewType,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
-import { loadMonomerLibrary } from 'state/library';
+import { loadDefaultPresets, loadMonomerLibrary } from 'state/library';
 
 const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
@@ -61,9 +63,14 @@ export const EditorEvents = () => {
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const lastSelectedSelectionMenuItem = useAppSelector(
+    selectLastSelectedSelectionMenuItem,
+  );
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
+    dispatch(loadDefaultPresets(editor?.defaultRnaPresetsLibraryItems));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
 
   useEffect(() => {
@@ -73,6 +80,21 @@ export const EditorEvents = () => {
       editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
   }, [editor]);
+
+  useEffect(() => {
+    const onSelectSelectionTool = () => {
+      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      dispatch(selectTool(lastSelectedSelectionMenuItem));
+    };
+
+    if (editor) {
+      editor.events.selectSelectionTool.add(onSelectSelectionTool);
+    }
+
+    return () => {
+      editor?.events.selectSelectionTool.remove(onSelectSelectionTool);
+    };
+  }, [dispatch, editor, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
     const handler = ([toolName]: [string]) => {
@@ -241,6 +263,24 @@ export const EditorEvents = () => {
         sequenceNode instanceof Nucleotide ||
         sequenceNode instanceof Nucleoside;
 
+      // Check if this is a LinkerSequenceNode with multiple monomers (e.g., CHEM chain)
+      if (sequenceNode instanceof LinkerSequenceNode) {
+        const monomers = sequenceNode.monomers;
+
+        // If there are multiple monomers in the chain, show them all in a preset-style preview
+        if (monomers.length > 1) {
+          const chemChainPreviewData: PresetPreviewState = {
+            type: PreviewType.Preset,
+            monomers: monomers.map((m) => m.monomerItem),
+            position: PresetPosition.ChainMiddle,
+            target: e.target,
+          };
+
+          debouncedShowPreview(chemChainPreviewData);
+          return;
+        }
+      }
+
       if (isNucleotideOrNucleoside) {
         const monomers =
           sequenceNode instanceof Nucleotide
@@ -289,6 +329,9 @@ export const EditorEvents = () => {
           monomers,
           name: existingPreset?.name,
           idtAliases: existingPreset?.idtAliases,
+          aliasAxoLabs: existingPreset?.aliasAxoLabs,
+          phosphatePosition:
+            sequenceNode instanceof Nucleotide ? 'right' : undefined,
           position,
           target: e.target,
         };
@@ -317,6 +360,8 @@ export const EditorEvents = () => {
   useEffect(() => {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
+    editor?.events.mouseLeaveAttachmentPoint.add(handleClosePreview);
+    editor?.events.mouseDownAttachmentPoint.add(handleClosePreview);
     editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
     editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
@@ -330,6 +375,7 @@ export const EditorEvents = () => {
       }
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
+    editor?.events.mouseMoveAttachmentPoint.add(onMoveHandler);
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
     editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
@@ -338,12 +384,14 @@ export const EditorEvents = () => {
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
+      editor?.events.mouseLeaveAttachmentPoint.remove(handleClosePreview);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
 
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
+      editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
 

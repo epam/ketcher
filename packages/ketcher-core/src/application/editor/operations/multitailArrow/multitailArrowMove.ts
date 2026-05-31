@@ -1,11 +1,11 @@
-import { Vec2 } from 'domain/entities';
-import { OperationType } from 'application/editor';
+import type { Vec2 } from 'domain/entities/vec2';
+import { OperationType } from 'application/editor/operations/OperationType';
 import { Scale } from 'domain/helpers';
-import { ReStruct } from 'application/render';
-import BaseOperation from 'application/editor/operations/base';
+import type { ReStruct } from 'application/render';
+import BaseOperation from 'application/editor/operations/BaseOperation';
 
 export class MultitailArrowMove extends BaseOperation {
-  constructor(private id: number, private offset: Vec2) {
+  constructor(private readonly id: number, private readonly offset: Vec2) {
     super(OperationType.MULTITAIL_ARROW_MOVE);
   }
 

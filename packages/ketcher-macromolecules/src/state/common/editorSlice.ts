@@ -17,6 +17,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
+  RenderersManager,
   type LayoutMode,
   SettingsManager,
   type EditorLineLength,
@@ -27,6 +28,7 @@ import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
+import { SELECT_SUBMENU_ID } from 'components/menu/constants';
 
 export enum MolarMeasurementUnit {
   nanoMol = 'nM',
@@ -40,7 +42,16 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
+interface AppMeta {
+  buildDate: string;
+  indigoVersion: string;
+  indigoMachine: string;
+  version: string;
+}
+
 interface EditorState {
+  ketcherId: string;
+  isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
   editorLayoutMode: LayoutMode | undefined;
@@ -48,13 +59,20 @@ interface EditorState {
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
+  isDragging: boolean;
   isMacromoleculesPropertiesWindowOpened: boolean;
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
+  unipositiveIonsValue: number;
+  oligonucleotidesValue: number;
+  app: AppMeta;
+  selectedMenuGroupItems: Record<string, string>;
 }
 
 const initialState: EditorState = {
+  ketcherId: '',
+  isReady: null,
   activeTool: 'select',
   editor: undefined,
   editorLayoutMode: undefined,
@@ -66,16 +84,38 @@ const initialState: EditorState = {
   },
   position: undefined,
   isContextMenuActive: false,
+  isDragging: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
+  unipositiveIonsValue: 140,
+  oligonucleotidesValue: 200,
+  app: {
+    buildDate: process.env.BUILD_DATE ?? '',
+    indigoVersion: process.env.INDIGO_VERSION ?? '',
+    indigoMachine: process.env.INDIGO_MACHINE ?? '',
+    version: process.env.VERSION ?? '',
+  },
+  selectedMenuGroupItems: {},
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
   name: 'editor',
   initialState,
   reducers: {
+    init: (state) => {
+      state.isReady = false;
+    },
+    initKetcherId: (state, action: PayloadAction<string>) => {
+      state.ketcherId = action.payload;
+    },
+    initSuccess: (state) => {
+      state.isReady = true;
+    },
+    initFailure: (state) => {
+      state.isReady = false;
+    },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
@@ -85,17 +125,26 @@ export const editorSlice: Slice<EditorState> = createSlice({
     createEditor: (
       state,
       action: PayloadAction<{
+        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
+        monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
       }>,
     ) => {
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
+        renderersContainer: new RenderersManager({
+          theme: action.payload.theme,
+        }),
       });
+
+      editor.initializeMonomersLibraryFromKetcher(
+        action.payload.monomersLibraryUpdate,
+        action.payload.monomersLibraryReplace,
+      );
 
       // TODO: Figure out proper typing here and below
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -105,7 +154,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor?.mode.modeName;
-      state.editor?.switchToMicromolecules();
+      state.editor?.destroy();
       state.editor = undefined;
     },
     showPreview: (
@@ -118,6 +167,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
+    },
+    setIsDragging: (state, action: PayloadAction<boolean>) => {
+      state.isDragging = action.payload;
     },
     setMacromoleculesPropertiesWindowVisibility: (
       state,
@@ -156,22 +208,49 @@ export const editorSlice: Slice<EditorState> = createSlice({
         ...action.payload,
       };
     },
+    setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
+      state.unipositiveIonsValue = action.payload;
+    },
+    setOligonucleotidesValue: (state, action: PayloadAction<number>) => {
+      state.oligonucleotidesValue = action.payload;
+    },
+    setAppMeta: (state, action: PayloadAction<AppMeta>) => {
+      state.app = action.payload;
+    },
+    setSelectedMenuGroupItem: (
+      state,
+      action: PayloadAction<{ groupName: string; activeItemName: string }>,
+    ) => {
+      state.selectedMenuGroupItems = {
+        ...state.selectedMenuGroupItems,
+        [action.payload.groupName]: action.payload.activeItemName,
+      };
+    },
   },
 });
 
 export const {
+  init,
+  initSuccess,
+  initFailure,
+  initKetcherId,
   selectTool,
   setPosition,
   createEditor,
   destroyEditor,
   showPreview,
   setContextMenuActive,
+  setIsDragging,
   setMacromoleculesPropertiesWindowVisibility,
   toggleMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,
   setEditorLineLength,
+  setUnipositiveIonsValue,
+  setOligonucleotidesValue,
+  setAppMeta,
+  setSelectedMenuGroupItem,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>
@@ -186,7 +265,11 @@ export const selectEditorPosition = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
 
-export const selectEditor = (state: RootState): CoreEditor =>
+export const selectKetcherId = (state: RootState): string => {
+  return state.editor.ketcherId;
+};
+
+export const selectEditor = (state: RootState): CoreEditor | undefined =>
   state.editor.editor;
 
 export const selectIsSequenceEditInRNABuilderMode = (
@@ -212,6 +295,9 @@ export const hasAntisenseChains = (state: RootState): CoreEditor =>
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
 
+export const selectIsDragging = (state: RootState): boolean =>
+  state.editor.isDragging;
+
 export const selectIsMacromoleculesPropertiesWindowOpened = (
   state: RootState,
 ) => state.editor.isMacromoleculesPropertiesWindowOpened;
@@ -225,10 +311,32 @@ export const selectUnipositiveIonsMeasurementUnit = (state: RootState) =>
 export const selectOligonucleotidesMeasurementUnit = (state: RootState) =>
   state.editor.oligonucleotidesMeasurementUnit;
 
+export const selectUnipositiveIonsValue = (state: RootState) =>
+  state.editor.unipositiveIonsValue;
+
+export const selectOligonucleotidesValue = (state: RootState) =>
+  state.editor.oligonucleotidesValue;
+
 export const selectMonomers = (state: RootState) =>
   state.editor.editor?.drawingEntitiesManager?.monomers;
 
 export const selectEditorLineLength = (state: RootState): EditorLineLength =>
   state.editor.editorLineLength;
+
+export const selectAppMeta = (state: RootState): AppMeta => state.editor.app;
+
+export const selectSelectedMenuGroupItemsState = (state: RootState) =>
+  state.editor.selectedMenuGroupItems;
+
+export const selectSelectedMenuGroupItem =
+  (groupItemName: string) => (state: RootState) => {
+    return state.editor.selectedMenuGroupItems[groupItemName];
+  };
+
+export const selectLastSelectedSelectionMenuItem = (state): string => {
+  return (
+    state.editor.selectedMenuGroupItems[SELECT_SUBMENU_ID] || 'select-rectangle'
+  );
+};
 
 export const editorReducer = editorSlice.reducer;

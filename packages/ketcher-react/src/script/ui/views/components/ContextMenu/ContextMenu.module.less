@@ -21,21 +21,22 @@
 .contextMenu {
   // Reference https://fkhadra.github.io/react-contexify/how-to-style
   --contexify-menu-bgColor: @color-background-primary;
-  --contexify-item-color: @color-text-secondary;
+  --contexify-item-color:@color-text-primary;
   --contexify-activeItem-color: @color-text-secondary;
-  --contexify-activeItem-bgColor: @color-dropdown-hover;
+  --contexify-activeItem-bgColor: @color-grey-3;
   --contexify-rightSlot-color: @color-text-secondary;
   --contexify-activeRightSlot-color: @color-text-secondary;
-  --contexify-arrow-color: @color-grey-5;
-  --contexify-activeArrow-color: @color-grey-5;
+  --contexify-arrow-color: @color-text-primary;
+  --contexify-activeArrow-color: @color-text-primary;
   --contexify-menu-shadow: 0 2px 5px 0 rgba(@main-color, 0.54);
   --contexify-zIndex: 1;
-  --contexify-menu-minWidth: 160px;
-  --contexify-menu-padding: 4px;
+  --contexify-menu-minWidth: 0px;
+  --contexify-menu-padding: 4px 4px 4px 4px;
   --contexify-menu-radius: 4px;
   --contexify-menu-negatePadding: var(--contexify-menu-padding);
   --contexify-itemContent-padding: 3px 20px;
   --contexify-activeItem-radius: 0;
+
 
   position: fixed;
   user-select: none;
@@ -46,10 +47,22 @@
   line-height: 1.5;
 
   .icon {
-    width: 20px;
-    height: 20px;
-    margin: 0 10px 0 -10px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+
+    &.markAsComponentIcon {
+      width: 15px;
+      color: var(--color-icon-grey);
+    }
   }
+
+  .contextMenuText {
+    display: flex;
+    align-items: center;
+    line-height: var(--ketcher-font-size-regular);
+  }  
 
   :global(.contexify_submenu) {
     max-height: 400px;
@@ -63,15 +76,31 @@
     & > div {
       opacity: 0.5;
     }
+
+    & > :global(.contexify_submenu) {
+      display: none;
+    }
+  }
+
+  :global(.contexify_itemContent) {
+    gap: 4px;
   }
 
   :global(.contexify_item):not(.sameGroup,:last-child) {
     &::after {
-      content: '';
-      display: block;
-      border-top: 1px solid @border-color;
-      margin: 3px 0;
+      content: none;
     }
+  }
+
+  :global(.contexify_separator) {
+    margin: 3px 0;
+    height: 0;
+    border-top: 1px solid @border-color;
+    background: transparent;
+  }
+
+  :global(.contexify_rightSlot) {
+    margin-right: -15px;
   }
 
   .devider {
@@ -81,9 +110,4 @@
       margin: 3px 0;
   }
 
-  .subMenu {
-    :global(.contexify_rightSlot) {
-      margin-right: -15px;
-    }
-  }
 }

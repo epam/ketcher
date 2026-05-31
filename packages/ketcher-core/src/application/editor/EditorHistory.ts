@@ -14,11 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Command } from 'domain/entities/Command';
-import { CoreEditor } from './Editor';
+import type { Command } from 'domain/entities/Command';
+import type { CoreEditor } from './Editor';
 import assert from 'assert';
-import { ketcherProvider } from 'application/utils';
-import { notifyRenderComplete } from 'application/render';
+import { ketcherProvider } from 'application/ketcherProvider';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -26,18 +25,29 @@ export type HistoryOperationType = 'undo' | 'redo';
 export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;
-  editor: CoreEditor | undefined;
+  editor!: CoreEditor;
 
-  private static _instance;
+  private static _instance: object | null = null;
+
   constructor(editor: CoreEditor) {
-    if (EditorHistory._instance) {
-      return EditorHistory._instance;
-    }
     this.editor = editor;
     this.historyPointer = 0;
+  }
 
-    EditorHistory._instance = this;
-    return this;
+  static getInstance(editor: CoreEditor): EditorHistory {
+    const instance = EditorHistory._instance;
+    if (EditorHistory.isInstance(instance)) {
+      return instance;
+    }
+
+    const createdInstance = new EditorHistory(editor);
+    EditorHistory._instance = createdInstance;
+
+    return createdInstance;
+  }
+
+  private static isInstance(value: object | null): value is EditorHistory {
+    return value instanceof EditorHistory;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
@@ -51,14 +61,14 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
-    ketcherProvider.getKetcher()?.changeEvent.dispatch();
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-    ketcherProvider.getKetcher()?.changeEvent.dispatch();
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -73,13 +83,15 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-    ketcherProvider.getKetcher()?.changeEvent.dispatch();
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.execute(this.editor.renderersContainer);
     this.historyPointer++;
-    notifyRenderComplete();
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
   }
 
   public get previousCommand() {

@@ -1,8 +1,8 @@
 import {
+  type SVGPathAttributes,
+  type BondVectors,
   BondDashArrayMap,
   BondSpace,
-  BondSVGPath,
-  BondVectors,
   BondWidth,
   LinesOffset,
 } from 'application/render/renderers/BondPathRenderer/constants';
@@ -14,7 +14,7 @@ class DoubleBondPathRenderer {
     bondVectors: BondVectors,
     shift: number,
     type?: BondType,
-  ): BondSVGPath[] {
+  ): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge, secondHalfEdge } =
       bondVectors;
 
@@ -87,7 +87,7 @@ class DoubleBondPathRenderer {
     const strokeDasharray =
       type !== undefined ? BondDashArrayMap[type] : 'none';
     if (type === BondType.Double || type === BondType.DoubleAromatic) {
-      const svgPath: BondSVGPath = {
+      const svgPath: SVGPathAttributes = {
         d: `
           M${firstLineStartPosition.x},${firstLineStartPosition.y}
           L${firstLineEndPosition.x},${firstLineEndPosition.y}
@@ -103,26 +103,29 @@ class DoubleBondPathRenderer {
 
       return [svgPath];
     } else {
-      const firstSvgPath: BondSVGPath = {
+      const solidAttrs = {
+        stroke: 'black',
+        'stroke-width': `${BondWidth}`,
+      };
+      const dashedAttrs = {
+        'stroke-dasharray': strokeDasharray,
+        'stroke-width': `${BondWidth}`,
+      };
+
+      const firstSvgPath: SVGPathAttributes = {
         d: `
           M${firstLineStartPosition.x},${firstLineStartPosition.y}
           L${firstLineEndPosition.x},${firstLineEndPosition.y}
         `,
-        attrs: {
-          stroke: 'black',
-          'stroke-width': `${BondWidth}`,
-        },
+        attrs: shift > 0 ? dashedAttrs : solidAttrs,
       };
 
-      const secondSvgPath: BondSVGPath = {
+      const secondSvgPath: SVGPathAttributes = {
         d: `
           M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `,
-        attrs: {
-          'stroke-dasharray': strokeDasharray,
-          'stroke-width': `${BondWidth}`,
-        },
+        attrs: shift > 0 ? solidAttrs : dashedAttrs,
       };
 
       return shift > 0

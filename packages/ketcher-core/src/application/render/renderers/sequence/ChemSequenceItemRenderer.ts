@@ -1,13 +1,15 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../../utilities/monomers';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 
 export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return '@';
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 
   public show() {
     if (

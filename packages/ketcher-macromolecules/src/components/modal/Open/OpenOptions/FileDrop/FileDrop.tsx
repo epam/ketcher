@@ -17,7 +17,7 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
-import { OpenOptionText, DisabledText } from '../OpenOptions';
+import { OpenOptionText, DisabledText } from '../sharedStyles';
 
 export type FileDropProps = {
   buttonLabel: string;
@@ -64,6 +64,21 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const DropzoneButton = styled.button`
+  all: unset;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+`;
+
 const FileDrop = ({
   textLabel,
   iconName,
@@ -75,6 +90,22 @@ const FileDrop = ({
     multiple: false,
     noClick: true,
     disabled,
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
     ...rest,
   });
 
@@ -86,8 +117,25 @@ const FileDrop = ({
     [isDragActive],
   ) as React.CSSProperties;
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (!disabled) {
+        open();
+      }
+    }
+  };
+
   return (
-    <div {...getRootProps({ style })} onClick={open}>
+    <DropzoneButton
+      {...getRootProps({ style })}
+      role={undefined}
+      onClick={open}
+      onKeyDown={handleKeyDown}
+      tabIndex={disabled ? -1 : 0}
+      disabled={disabled}
+      type="button"
+    >
       <input {...getInputProps()} />
       <StyledIcon name={iconName} disabled={disabled} />
       {disabled ? (
@@ -100,7 +148,7 @@ const FileDrop = ({
           <OpenOptionText>Open from file</OpenOptionText>
         </>
       )}
-    </div>
+    </DropzoneButton>
   );
 };
 

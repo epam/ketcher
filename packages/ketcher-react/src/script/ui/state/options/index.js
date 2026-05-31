@@ -24,6 +24,7 @@ import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
+import { APP_OPTIONS_ACTION } from './actions';
 
 export const initOptionsState = {
   app: {
@@ -81,6 +82,15 @@ export const initOptionsState = {
 };
 
 function getSerilizedServerOptions(options) {
+  let renderStereoStyle;
+  if (!options.showStereoFlags) {
+    renderStereoStyle = 'none';
+  } else if (options.ignoreChiralFlag) {
+    renderStereoStyle = 'ext';
+  } else {
+    renderStereoStyle = 'old';
+  }
+
   let newOptions = {
     'render-coloring': options.atomColoring,
     'render-font-size': options.fontsz,
@@ -100,6 +110,7 @@ function getSerilizedServerOptions(options) {
     'reaction-component-margin-size': options.reactionComponentMarginSize,
     'reaction-component-margin-size-unit':
       options.reactionComponentMarginSizeUnit,
+    'render-stereo-style': renderStereoStyle,
   };
 
   if (options.imageResolution === '600') {
@@ -112,13 +123,6 @@ function getSerilizedServerOptions(options) {
   }
 
   return newOptions;
-}
-
-export function appUpdate(data) {
-  return (dispatch) => {
-    dispatch({ type: 'APP_OPTIONS', data });
-    dispatch({ type: 'UPDATE' });
-  };
 }
 
 /* SETTINGS */
@@ -191,7 +195,7 @@ export function checkOpts(data) {
 /* REDUCER */
 function optionsReducer(state = {}, action) {
   const { type, data } = action;
-  if (type === 'APP_OPTIONS')
+  if (type === APP_OPTIONS_ACTION)
     return { ...state, app: { ...state.app, ...data } };
 
   if (type === 'SAVE_SETTINGS') {

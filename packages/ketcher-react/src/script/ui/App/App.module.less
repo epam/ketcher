@@ -52,3 +52,36 @@
 :global(.smallEditor) .app {
   grid-template-columns: minmax(35px, max-content) 1fr minmax(35px, max-content);
 }
+
+.toastNotification {
+  background-color: #333333;
+  max-height: 40px;
+  display: flex;
+  align-items: stretch;
+}
+
+.toastNotificationText {
+  max-width: 356px;
+  padding: 4px 10px 4px 10px;
+  color: white;
+  display: flex;
+}
+
+.toastNotificationCloseIcon {
+  color: white !important;
+  width: 24px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #585858;
+    color: white;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}

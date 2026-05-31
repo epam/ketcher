@@ -1,13 +1,15 @@
 import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { MonomerToAtomBond, SubChainNode, Vec2 } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Vec2 } from 'domain/entities/vec2';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
   constructor(
     public monomerToAtomBond: MonomerToAtomBond,
-    private monomerNode: SubChainNode,
+    private readonly monomerNode: SubChainNode,
   ) {
     super(monomerToAtomBond);
   }
@@ -76,9 +78,13 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
     } L ${this.scaledPosition.endPosition.x}, ${this.mainLineY.mainLineY2}`;
   }
 
-  public moveStart(): void {}
+  public moveStart(): void {
+    // intentional no-op
+  }
 
-  public moveEnd(): void {}
+  public moveEnd(): void {
+    // intentional no-op
+  }
 
   public get isSnake(): false {
     return false;

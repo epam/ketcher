@@ -1,16 +1,16 @@
 import {
+  type SVGPathAttributes,
+  type BondVectors,
   BondDashArrayMap,
   BondSpace,
-  BondSVGPath,
-  BondVectors,
   BondWidth,
   LinesOffset,
 } from 'application/render/renderers/BondPathRenderer/constants';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { BondType } from 'domain/entities/CoreBond';
 
 class SingleDoubleBondPathRenderer {
-  static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
+  static preparePaths(bondVectors: BondVectors): SVGPathAttributes[] {
     const { startPosition, endPosition, firstHalfEdge } = bondVectors;
 
     let sectionsNumber =
@@ -61,7 +61,7 @@ class SingleDoubleBondPathRenderer {
       midLineStartPosition = midLineEndPosition;
     }
 
-    const svgPath: BondSVGPath = {
+    const svgPath: SVGPathAttributes = {
       d: path,
       attrs: {
         'stroke-dasharray': BondDashArrayMap[BondType.SingleDouble],

@@ -1,9 +1,12 @@
-import {
+import type {
   MonomerItemType,
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import { IKetMonomerGroupTemplate } from 'application/formatters';
+import type {
+  IKetMonomerGroupTemplate,
+  IKetTemplateConnection,
+} from 'application/formatters/types/ket';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -52,6 +55,8 @@ interface ToolEventHandler {
 
   rightClickCanvas?(event: Event): void;
 
+  rightClickCanvasSequence?(event: Event): void;
+
   rightClickPolymerBond?(event: Event): void;
 
   rightClickSelectedMonomers?(event: Event): void;
@@ -91,20 +96,26 @@ interface ToolEventHandler {
   selectEntities?(event: Event): void;
 }
 
+export type RnaPhosphatePosition = 'left' | 'right';
+
 export interface IRnaPreset {
   name?: string;
   nameInList?: string;
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
+  phosphatePosition?: 'left' | 'right';
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
-    Pick<IKetMonomerGroupTemplate, 'templates'> {}
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate' | 'connections'>,
+    Pick<IKetMonomerGroupTemplate, 'templates' | 'connections'> {
+  connections?: IKetTemplateConnection[];
+}
 
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;
@@ -124,6 +135,8 @@ export interface Tool extends ToolEventHandler {
   isSelectionRunning?(): boolean;
 
   isNotActiveTool?: boolean;
+
+  readonly name?: string;
 }
 
 export interface BaseTool extends Tool {
@@ -132,13 +145,10 @@ export interface BaseTool extends Tool {
 
 export type PeptideToolOptions = MonomerItemType;
 
-// export type ToolOptions = MonomerItemType;
-// !todo
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ToolOptions = any;
-export type ToolConstructorInterface = {
-  new (editor, ...args: ToolOptions[]): Tool | BaseTool;
-};
+export type ToolConstructorInterface = new (editor: any, ...args: any[]) =>
+  | Tool
+  | BaseTool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;
 

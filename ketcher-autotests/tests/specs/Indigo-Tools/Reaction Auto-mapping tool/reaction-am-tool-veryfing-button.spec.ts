@@ -1,20 +1,24 @@
-import { test, expect } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  clickOnTheCanvas,
-  applyAutoMapMode,
-  mapTwoAtoms,
+  clickOnCanvas,
   waitForPageInit,
-  clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { mapTwoAtoms } from '@utils/canvas/autoMapTools';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { AutoMapModeOption } from '@tests/pages/constants/reactionAutoMappingDialog/Constants';
+import { ReactionAutoMappingDialog } from '@tests/pages/molecules/canvas/ReactionAutoMappingDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -26,9 +30,14 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-2865
      * Description: Verifying of the button
      */
-    const button = page.getByTestId(ReactionMappingType.ReactionMapping);
-    await button.click();
-    expect(button).toHaveAttribute('title', 'Reaction Mapping Tool');
+    const reactionMappingToolsButton = page.getByTestId(
+      ReactionMappingType.ReactionMapping,
+    );
+    await reactionMappingToolsButton.click();
+    expect(reactionMappingToolsButton).toHaveAttribute(
+      'title',
+      'Reaction Mapping Tool',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -48,17 +57,17 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
 
-    await openFileAndAddToCanvas('Molfiles-V2000/four-structures.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/four-structures.mol');
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
     await LeftToolbar(page).reactionPlusTool();
 
-    await clickOnTheCanvas(page, point1.x, point1.y);
+    await clickOnCanvas(page, point1.x, point1.y, { from: 'pageCenter' });
     await LeftToolbar(page).expandReactionMappingToolsDropdown();
     await expect(reactionAutoMappingButton).toBeDisabled();
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-    await clickOnTheCanvas(page, point2.x, point2.y);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+    await clickOnCanvas(page, point2.x, point2.y, { from: 'pageCenter' });
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );
@@ -70,12 +79,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-1808
      * Description:  UI dialog
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-2.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-2.rxn');
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionAutoMapping,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('automap-mode-input-span').click();
+    await ReactionAutoMappingDialog(page).modeDropdown.click();
     await takeEditorScreenshot(page);
   });
 
@@ -84,42 +93,73 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1809/EPMLSOPKET-1810/EPMLSOPKET-1811
      * Description:  Different modes - full reaction on canvas
      */
-    const modes = ['Discard', 'Keep', 'Alter'];
+    const modes = [
+      AutoMapModeOption.Discard,
+      AutoMapModeOption.Keep,
+      AutoMapModeOption.Alter,
+    ];
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
-        const atomNumber1 = 1;
-        const atomNumber2 = 2;
-        await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-        await applyAutoMapMode(page, mode);
+        await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
+        const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(mode);
+        await takeEditorScreenshot(page);
         await CommonTopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
         await LeftToolbar(page).selectReactionMappingTool(
           ReactionMappingType.ReactionMapping,
         );
-        await clickOnAtom(page, 'C', atomNumber1);
-        await clickOnAtom(page, 'C', atomNumber2);
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 24 }).click({
+          force: true,
+        });
+        await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+          force: true,
+        });
         await takeEditorScreenshot(page);
-        await CommonLeftToolbar(page).selectAreaSelectionTool(
+        await CommonLeftToolbar(page).areaSelectionTool(
           SelectionToolType.Rectangle,
         );
-        await applyAutoMapMode(page, mode, false);
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(mode);
+        await takeEditorScreenshot(page);
       });
     }
   });
 
   test.describe('With autoMapping', () => {
     test.afterEach(async ({ page }) => {
-      await CommonLeftToolbar(page).selectAreaSelectionTool(
+      await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
       await takeEditorScreenshot(page);
-      await applyAutoMapMode(page, 'Discard');
+      const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(
+        AutoMapModeOption.Discard,
+      );
+      await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
-      await applyAutoMapMode(page, 'Keep');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
+      await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
-      await applyAutoMapMode(page, 'Alter', false);
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Alter);
+      await takeEditorScreenshot(page);
     });
+
     test('After the manual mapping with incorrect ordering', async ({
       page,
     }) => {
@@ -127,16 +167,16 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
        * Test cases: EPMLSOPKET-1817
        * Description: After the manual mapping with incorrect ordering
        */
-      await openFileAndAddToCanvas('Rxn-V2000/alter-mapping.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
     });
 
@@ -145,16 +185,16 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
        * Test cases: EPMLSOPKET-1818
        * Description: After the manual mapping with incorrect pairs
        */
-      await openFileAndAddToCanvas('Rxn-V2000/alter-mapping.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/alter-mapping.rxn');
       await mapTwoAtoms(
         page,
-        { label: 'S', number: 0 },
-        { label: 'N', number: 1 },
+        getAtomLocator(page, { atomLabel: 'S' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       );
       await mapTwoAtoms(
         page,
-        { label: 'N', number: 0 },
-        { label: 'S', number: 1 },
+        getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+        getAtomLocator(page, { atomLabel: 'S' }).nth(1),
       );
     });
 
@@ -163,7 +203,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
        * Test cases: EPMLSOPKET-1819
        * Description: Compare the behavior
        */
-      await openFileAndAddToCanvas('Rxn-V2000/for-mappingTools-10.rxn', page);
+      await openFileAndAddToCanvas(page, 'Rxn-V2000/for-mappingTools-10.rxn');
     });
   });
 
@@ -172,17 +212,32 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Clear mode
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await applyAutoMapMode(page, 'Alter');
-    await applyAutoMapMode(page, 'Clear');
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Alter);
+    await takeEditorScreenshot(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Clear);
+    await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
     await mapTwoAtoms(
       page,
-      { label: 'C', number: 0 },
-      { label: 'C', number: 2 },
+      getAtomLocator(page, { atomLabel: 'C' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'C' }).nth(4),
     );
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
 
     await takeEditorScreenshot(page);
-    await applyAutoMapMode(page, 'Clear');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Clear);
+    await takeEditorScreenshot(page);
   });
 
   test('Half reaction on canvas', async ({ page }) => {
@@ -190,8 +245,13 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Half reaction on canvas
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-half.rxn', page);
-    await applyAutoMapMode(page, 'Discard', false);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-half.rxn');
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
+    await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Discard);
+    await takeEditorScreenshot(page);
   });
 
   // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
@@ -202,34 +262,54 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      */
     const yOffsetFromCenter1 = 100;
     const yOffsetFromCenter2 = 300;
-    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await applyAutoMapMode(page, 'Discard'),
-    );
+    const reactionAutoMappingDialog = ReactionAutoMappingDialog(page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/allenes.rxn');
+    await waitForSpinnerFinishedWork(page, async () => {
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionAutoMapping,
+      );
+      await reactionAutoMappingDialog.setModeAndApply(
+        AutoMapModeOption.Discard,
+      );
+      await takeEditorScreenshot(page);
+    });
     await openFileAndAddToCanvas(
-      'Rxn-V2000/mapping-4-benzene.rxn',
       page,
+      'Rxn-V2000/mapping-4-benzene.rxn',
       0,
       yOffsetFromCenter1,
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await applyAutoMapMode(page, 'Keep'),
+      async () => {
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(AutoMapModeOption.Keep);
+        await takeEditorScreenshot(page);
+      },
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      30_000,
     );
     await openFileAndAddToCanvas(
-      'Rxn-V2000/allenes.rxn',
       page,
+      'Rxn-V2000/allenes.rxn',
       0,
       yOffsetFromCenter2,
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await applyAutoMapMode(page, 'Alter', false),
+      async () => {
+        await LeftToolbar(page).selectReactionMappingTool(
+          ReactionMappingType.ReactionAutoMapping,
+        );
+        await reactionAutoMappingDialog.setModeAndApply(
+          AutoMapModeOption.Alter,
+        );
+        await takeEditorScreenshot(page);
+      },
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      30_000,
     );
   });
 });

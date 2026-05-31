@@ -1,6 +1,4 @@
 import {
-  AttachmentPointName,
-  KetConnectionType,
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
@@ -273,7 +271,7 @@ export const preset = {
   default: true,
 };
 
-const phosphate = {
+const phosphate: MonomerItemType = {
   props: {
     MonomerName: 'P',
     Name: 'Phosphate',
@@ -287,7 +285,7 @@ const phosphate = {
   label: 'P',
   struct: new Struct(),
 };
-const ribose = {
+const ribose: MonomerItemType = {
   props: {
     MonomerName: 'R',
     Name: 'Ribose',
@@ -301,7 +299,7 @@ const ribose = {
   label: 'R',
   struct: new Struct(),
 };
-const thymine = {
+const thymine: MonomerItemType = {
   props: {
     MonomerName: 'T',
     Name: 'Thymine',
@@ -315,7 +313,7 @@ const thymine = {
   label: 'T',
   struct: new Struct(),
 };
-const cytosine = {
+const cytosine: MonomerItemType = {
   props: {
     MonomerName: 'C',
     Name: 'Cytosine',
@@ -329,7 +327,7 @@ const cytosine = {
   label: '',
   struct: new Struct(),
 };
-const uracil = {
+const uracil: MonomerItemType = {
   props: {
     MonomerName: 'U',
     Name: 'Uracil',
@@ -343,7 +341,7 @@ const uracil = {
   label: '',
   struct: new Struct(),
 };
-const adenine = {
+const adenine: MonomerItemType = {
   props: {
     MonomerName: 'A',
     Name: 'Adenine',
@@ -357,7 +355,7 @@ const adenine = {
   label: '',
   struct: new Struct(),
 };
-const guanine = {
+const guanine: MonomerItemType = {
   props: {
     MonomerName: 'G',
     Name: 'Guanine',
@@ -378,6 +376,7 @@ const rnaPresetsTemplates = [
     id: 'A',
     name: 'A',
     class: KetMonomerGroupTemplateClass.RNA,
+    aliasAxoLabs: '(5MdC)',
     templates: [
       {
         $ref: 'monomerTemplate-R___Ribose',
@@ -387,30 +386,6 @@ const rnaPresetsTemplates = [
       },
       {
         $ref: 'monomerTemplate-P___Phosphate',
-      },
-    ],
-    connections: [
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-A___Adenine',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R3,
-        },
-      },
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R2,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-P___Phosphate',
-          attachmentPointId: AttachmentPointName.R1,
-        },
       },
     ],
   },
@@ -430,30 +405,6 @@ const rnaPresetsTemplates = [
         $ref: 'monomerTemplate-P___Phosphate',
       },
     ],
-    connections: [
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-C___Cytosine',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R3,
-        },
-      },
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R2,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-P___Phosphate',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-      },
-    ],
   },
   {
     type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
@@ -469,30 +420,6 @@ const rnaPresetsTemplates = [
       },
       {
         $ref: 'monomerTemplate-P___Phosphate',
-      },
-    ],
-    connections: [
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-G___Guanine',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R3,
-        },
-      },
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R2,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-P___Phosphate',
-          attachmentPointId: AttachmentPointName.R1,
-        },
       },
     ],
   },
@@ -512,30 +439,6 @@ const rnaPresetsTemplates = [
         $ref: 'monomerTemplate-P___Phosphate',
       },
     ],
-    connections: [
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-T___Thymine',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R3,
-        },
-      },
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R2,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-P___Phosphate',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-      },
-    ],
   },
   {
     type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
@@ -551,30 +454,6 @@ const rnaPresetsTemplates = [
       },
       {
         $ref: 'monomerTemplate-P___Phosphate',
-      },
-    ],
-    connections: [
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-U___Uracil',
-          attachmentPointId: AttachmentPointName.R1,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R3,
-        },
-      },
-      {
-        connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerTemplateId: 'monomerTemplate-R___Ribose',
-          attachmentPointId: AttachmentPointName.R2,
-        },
-        endpoint2: {
-          monomerTemplateId: 'monomerTemplate-P___Phosphate',
-          attachmentPointId: AttachmentPointName.R1,
-        },
       },
     ],
   },

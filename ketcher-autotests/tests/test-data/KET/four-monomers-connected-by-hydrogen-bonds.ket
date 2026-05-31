@@ -62,8 +62,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 0.7079876835335535,
-            "y": -2.7249999999999996
+            "x": 6.7,
+            "y": -2.9000000000000004
         },
         "alias": "2Nal",
         "templateId": "2Nal___3-(2-naphthyl)-alanine"
@@ -369,8 +369,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 2.4113541152950058,
-            "y": -2.7249999999999996
+            "x": 9.107500596048855,
+            "y": -2.9
         },
         "alias": "Hhs",
         "templateId": "Hhs___homohistidine"
@@ -633,8 +633,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 4.013037331175732,
-            "y": -2.7249999999999996
+            "x": 11.51500119209771,
+            "y": -2.9000000000000004
         },
         "alias": "D-Pen",
         "templateId": "D-Pen___D-penicillamine"
@@ -845,8 +845,8 @@
         "type": "monomer",
         "id": "3",
         "position": {
-            "x": 5.614720547056458,
-            "y": -2.724999999999999
+            "x": 13.922501788146565,
+            "y": -2.9
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"

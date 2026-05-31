@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
-import { goToCHEMTab } from '@utils/macromolecules/library';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +16,7 @@ test.describe('Open Ketcher', () => {
     Test case: #2496 - chem monomer library
     Description: Switch to Polymer Editor
     */
-    await expect(page.getByText('CHEM')).toBeVisible();
+    await expect(Library(page).chemTab).toBeVisible();
   });
 
   test('Open Chem tab in library', async ({ page }) => {
@@ -23,8 +24,8 @@ test.describe('Open Ketcher', () => {
     Test case: #2496 - chem monomer library
     Description: Open Chem tab in library
     */
-    await goToCHEMTab(page);
-    await expect(page.getByText('A6OH')).toBeVisible();
+    await Library(page).switchToCHEMTab();
+    expect(await Library(page).isMonomerExist(Chem.A6OH)).toBeTruthy();
     await takeMonomerLibraryScreenshot(page);
   });
 });

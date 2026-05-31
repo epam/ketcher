@@ -5,6 +5,28 @@ import { Editor } from 'ketcher-react';
 
 import 'ketcher-react/dist/index.css';
 
+const safePostMessage = (
+  message: Record<string, unknown>,
+  fallbackOrigin: string = window.location.origin,
+): void => {
+  if (window.parent === window) return;
+
+  let parentOrigin = fallbackOrigin;
+  try {
+    parentOrigin = window.parent.location.origin || fallbackOrigin;
+  } catch {}
+
+  if (
+    !parentOrigin ||
+    parentOrigin === 'null' ||
+    parentOrigin === 'undefined'
+  ) {
+    parentOrigin = fallbackOrigin;
+  }
+
+  window.parent.postMessage(message, parentOrigin);
+};
+
 const StandaloneStructServiceProvider =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   StandaloneStructServiceProviderType as unknown as new () => any;
@@ -21,13 +43,9 @@ export function EditorComponent() {
       }}
       onInit={(ketcher) => {
         window.ketcher = ketcher;
-
-        window.parent.postMessage(
-          {
-            eventType: 'init',
-          },
-          '*',
-        );
+        safePostMessage({
+          eventType: 'init',
+        });
       }}
     />
   );

@@ -1,11 +1,11 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  FILE_TEST_DATA,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
+  readFileContent,
 } from '@utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -24,8 +24,8 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -43,8 +43,8 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -61,7 +61,7 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4720
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reagent-nh3-text-above-arrow.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
@@ -77,7 +77,7 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4720
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/reagent-hcl-text-below-arrow.ket');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
@@ -91,8 +91,8 @@ test.describe('Reagents CDXML format', () => {
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -108,12 +108,11 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4722
       Description: Reagent 'NH3' displays above reaction arrow
       */
-    // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
+    const fileContent = await readFileContent(
+      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -123,8 +122,8 @@ test.describe('Reagents CDXML format', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -135,8 +134,8 @@ test.describe('Reagents CDXML format', () => {
       Description: File opens with the reagent HCl below the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -150,8 +149,8 @@ test.describe('Reagents CDXML format', () => {
       plus and two reaction arrows NH3 molecule above first arrow and HCl below second arrow
     */
     await openFileAndAddToCanvas(
-      'CDXML/molecules-above-and-below-arrow.cdxml',
       page,
+      'CDXML/molecules-above-and-below-arrow.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -162,7 +161,7 @@ test.describe('Reagents CDXML format', () => {
       Description: The structure opens as it was saved with all structural elements: 
       plus and two reaction arrows NH3 molecule above first arrow and HCl below second arrow
     */
-    await openFileAndAddToCanvas('CDXML/cdxml-multistep.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/cdxml-multistep.cdxml');
     await takeEditorScreenshot(page);
   });
 });

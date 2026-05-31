@@ -27,11 +27,12 @@ import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
   legacyCopy,
+  isHelmCompatible,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -50,14 +51,16 @@ import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
 // TODO: Make it type safe by using `SupportedFormats` as id
 const options: Array<Option> = [
-  { id: 'ket', label: 'Ket' },
+  { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence (1-letter code)' },
   { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
+  { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const formatDetector = {
@@ -66,7 +69,9 @@ const formatDetector = {
   sequence: ChemicalMimeType.SEQUENCE,
   'sequence-3-letter': ChemicalMimeType.PeptideSequenceThreeLetter,
   idt: ChemicalMimeType.IDT,
+  'axo-labs': ChemicalMimeType.AXOLABS,
   helm: ChemicalMimeType.HELM,
+  biln: ChemicalMimeType.BILN,
 };
 
 const StyledModal = styled(Modal)({
@@ -94,7 +99,7 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -109,14 +114,37 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
+      // Get Ketcher root element offset for SVG positioning
+      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
+      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
+      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
+
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
+        horizontal: ketcherRootOffsetX,
+        vertical: ketcherRootOffsetY,
+      });
       setSvgData(svgData);
       return;
+    }
+    if (
+      fileFormat === 'helm' &&
+      !isHelmCompatible(
+        Array.from(editor.drawingEntitiesManager.monomers.values()),
+        editor.monomersLibrary,
+      )
+    ) {
+      editor.events.error.dispatch(
+        'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
+      );
     }
 
     try {
       setIsLoading(true);
-      if (fileFormat === 'fasta' || fileFormat === 'sequence') {
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'idt'
+      ) {
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {
@@ -153,7 +181,15 @@ export const Save = ({
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
+      // Get Ketcher root element offset for SVG positioning
+      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
+      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
+      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
+
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
+        horizontal: ketcherRootOffsetX,
+        vertical: ketcherRootOffsetY,
+      });
       if (!svgData) {
         onClose();
         return;

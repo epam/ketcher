@@ -1,24 +1,25 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
-  typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
-  selectUndoByKeyboard,
-  selectRedoByKeyboard,
-  waitForRender,
-  getControlModifier,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
+  undoByKeyboard,
+  redoByKeyboard,
+  clearCanvasByKeyboard,
+  deleteByKeyboard,
+  keyboardTypeOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,8 +32,8 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Delete');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -41,40 +42,37 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
   test('Check Undo Functionality with Ctrl+Z and Redo with Ctrl+Shift+Z', async ({
     page,
   }) => {
-    /* 
-    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
-    Description: Clear canvas action Undo and then Redo.
-    */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
-    await selectUndoByKeyboard(page);
+    /*
+     * Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+     * Description: Clear canvas action Undo and then Redo.
+     */
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await selectRedoByKeyboard(page);
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
   test('Check Redo Capability with Ctrl+Y', async ({ page }) => {
-    /* 
-    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
-    Description: Clear canvas action Undo and then Redo.
-    */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Backspace');
-    await selectUndoByKeyboard(page);
+    /*
+     * Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+     * Description: Clear canvas action Undo and then Redo.
+     */
+    await openFileAndAddToCanvasMacro(page, 'Molfiles-V3000/peptide-bzl.mol');
+    await clearCanvasByKeyboard(page);
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    const modifier = getControlModifier();
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyY`);
-    });
+    await redoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -85,9 +83,9 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Appropriate tools are selected by hotkeys.
     */
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');
@@ -99,14 +97,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers are Zoomed In on canvas
     */
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -115,14 +110,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers are Zoomed Out on canvas
     */
-    const numberOfPressZoomOut = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await ZoomOutByKeyboard(page);
-    }
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -131,14 +123,11 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Monomers Zoome In are reset
     */
-    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await ZoomInByKeyboard(page);
-    }
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
@@ -150,8 +139,8 @@ test.describe('Hotkeys', () => {
     Description: All Monomers are selected.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -165,11 +154,11 @@ test.describe('Hotkeys', () => {
     Description: Selection tool not switches to deletion tool.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Delete');
+    await deleteByKeyboard(page);
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
@@ -187,7 +176,9 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type.
         */
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });
@@ -203,8 +194,10 @@ test.describe('Hotkeys', () => {
         Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
         Description: ${key} switches to ${type} type when typing any sequences.
         */
-        await selectSequenceLayoutModeTool(page);
-        await typeAllEnglishAlphabet(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
+        await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         await page.keyboard.press(key);
         await takeTopToolbarScreenshot(page);
       });

@@ -114,7 +114,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
     if (!currentId) {
       currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
+        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
         options[0].id;
     }
   }
@@ -140,6 +140,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       ref={ref}
       className={classes.root}
       data-testid={`${id}-drop-down-button`}
+      data-is-selected={selected ? 'true' : 'false'}
     >
       <ActionButton
         {...actionButtonProps}
@@ -148,7 +149,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
-        dataTestId={dataTestId || iconName}
+        dataTestId={dataTestId ?? iconName}
       />
       {!isOpen && !isDisabled && (
         <Icon

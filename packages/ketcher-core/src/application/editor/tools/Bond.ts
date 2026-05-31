@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import {
@@ -25,7 +26,7 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
 import { Peptide } from 'domain/entities/Peptide';
@@ -38,9 +39,14 @@ import { AttachmentPointName } from 'domain/types';
 //  which probably due to a circular dependency
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
-import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import {
+  MACROMOLECULES_BOND_TYPES,
+  ToolName,
+} from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -49,12 +55,15 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
-  private history: EditorHistory;
-  private bondType: MACROMOLECULES_BOND_TYPES;
+  private readonly history: EditorHistory;
+  private readonly bondType: MACROMOLECULES_BOND_TYPES;
 
-  constructor(private editor: CoreEditor, options: { toolName: ToolName }) {
+  constructor(
+    private readonly editor: CoreEditor,
+    options: { toolName: ToolName },
+  ) {
     this.editor = editor;
-    this.history = new EditorHistory(this.editor);
+    this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE
@@ -302,9 +311,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }
@@ -425,9 +442,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }
@@ -477,7 +502,27 @@ class PolymerBond implements BaseTool {
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
-      ) || monomer?.getValidSourcePoint();
+      ) ?? monomer?.getValidSourcePoint();
+
+    // Check if atom already has a bond with this monomer
+    const atom = atomRenderer.atom;
+    const existingBondWithMonomer = atom.bonds.find(
+      (bond) => bond instanceof MonomerToAtomBond && bond.monomer === monomer,
+    );
+
+    if (existingBondWithMonomer) {
+      this.editor.events.error.dispatch(
+        'Only one connection between monomer and atom is allowed',
+      );
+      // Remove temporary Polymer Bond
+      this.editor.drawingEntitiesManager.deletePolymerBond(
+        this.bondRenderer?.polymerBond,
+      );
+      this.bondRenderer?.remove();
+      this.bondRenderer = undefined;
+      monomer.setChosenFirstAttachmentPoint(null);
+      return;
+    }
 
     // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
@@ -602,7 +647,14 @@ class PolymerBond implements BaseTool {
     }
 
     // Modal: Any or both monomers are Chems
-    if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+    if (
+      firstMonomer instanceof Chem ||
+      secondMonomer instanceof Chem ||
+      (firstMonomer instanceof AmbiguousMonomer &&
+        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
+      (secondMonomer instanceof AmbiguousMonomer &&
+        secondMonomer.monomerClass === KetMonomerClass.CHEM)
+    ) {
       return true;
     }
 
@@ -636,16 +688,6 @@ class PolymerBond implements BaseTool {
     ) {
       return true;
     }
-    // if (
-    //   (firstMonomer instanceof RNABase &&
-    //     secondMonomer instanceof Sugar &&
-    //     secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
-    //   (secondMonomer instanceof RNABase &&
-    //     firstMonomer instanceof Sugar &&
-    //     firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
-    // ) {
-    //   return true;
-    // }
 
     // Modal: special case for Peptide chain
     if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {

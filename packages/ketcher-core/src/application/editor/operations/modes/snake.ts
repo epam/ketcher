@@ -1,11 +1,11 @@
-import { Operation } from 'domain/entities/Operation';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class RecalculateCanvasMatrixOperation implements Operation {
   public priority = 1;
   constructor(
-    private recalculateCanvasMatrixModelChange: () => void,
-    private invertRecalculateCanvasMatrixModelChange: () => void,
+    private readonly recalculateCanvasMatrixModelChange: () => void,
+    private readonly invertRecalculateCanvasMatrixModelChange: () => void,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

@@ -1,53 +1,15 @@
-import { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import type { Struct } from 'domain/entities';
 import {
   FormatterFactory,
   SupportedFormat,
   identifyStructFormat,
 } from './formatters';
-import { Ketcher } from './ketcher';
-import { ChemicalMimeType, StructService } from 'domain/services';
-import { CoreEditor, EditorHistory } from './editor/internal';
+import type { Ketcher } from './ketcher';
+import { type StructService, ChemicalMimeType } from 'domain/services';
+import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
-import { EditorSelection } from './editor/editor.types';
-
-class KetcherProvider {
-  private ketcherInstance: Ketcher | undefined;
-
-  setKetcherInstance(ketcherInstance: Ketcher) {
-    this.ketcherInstance = ketcherInstance;
-  }
-
-  getKetcher() {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return this.ketcherInstance!;
-  }
-}
-
-const ketcherProvider = new KetcherProvider();
-
-export { ketcherProvider };
-
-export function getStructure(
-  structureFormat = SupportedFormat.rxn,
-  formatterFactory: FormatterFactory,
-  struct: Struct,
-  drawingEntitiesManager?: DrawingEntitiesManager,
-  selection?: EditorSelection,
-): Promise<string> {
-  const serverSettings = ketcherProvider.getKetcher().editor.serverSettings;
-  const formatter = formatterFactory.create(structureFormat, serverSettings);
-  const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
-    new DrawingEntitiesManager(),
-  );
-
-  return formatter.getStructureFromStructAsync(
-    struct,
-    drawingEntitiesManagerCloningResult?.mergedDrawingEntities,
-    selection,
-  );
-}
 
 export async function prepareStructToRender(
   structStr: string,
@@ -85,16 +47,19 @@ export function parseStruct(
 }
 
 export function deleteAllEntitiesOnCanvas() {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+
+  EditorHistory.getInstance(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
 }
 
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,
+  mergeWithLatestHistoryCommand = false,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
   const format = identifyStructFormat(struct);
   let ketStruct = struct;
@@ -114,6 +79,9 @@ export async function parseAndAddMacromoleculesOnCanvas(
       editor.drawingEntitiesManager,
     );
 
-  new EditorHistory(editor).update(modelChanges);
+  EditorHistory.getInstance(editor).update(
+    modelChanges,
+    mergeWithLatestHistoryCommand,
+  );
   editor.renderersContainer.update(modelChanges);
 }

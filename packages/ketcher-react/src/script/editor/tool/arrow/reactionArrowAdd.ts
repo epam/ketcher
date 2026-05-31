@@ -29,13 +29,16 @@ interface DragContextInProgress extends BaseDragContext {
 type ReactionArrowDragContext = InitialDragContext | DragContextInProgress;
 
 export class ReactionArrowAddTool implements ArrowAddTool {
-  static MIN_LENGTH = 0.5;
-  static DEFAULT_LENGTH = 1;
+  static readonly MIN_LENGTH = 0.5;
+  static readonly DEFAULT_LENGTH = 1;
 
   private dragCtx: ReactionArrowDragContext | null = null;
 
   // eslint-disable-next-line no-useless-constructor
-  constructor(private editor: Editor, private mode: RxnArrowMode) {}
+  constructor(
+    private readonly editor: Editor,
+    private readonly mode: RxnArrowMode,
+  ) {}
 
   private get render() {
     return this.editor.render;
@@ -133,7 +136,7 @@ export class ReactionArrowAddTool implements ArrowAddTool {
 
   private addNewArrowWithClicking(event) {
     const ci = this.editor.findItem(event, ['rxnArrows']);
-    const p0 = this.render.page2obj(event);
+    const p0 = CoordinateTransformation.pageToModel(event, this.render);
 
     if (!ci) {
       const pos = [p0, this.getArrowWithMinimalLengthEnd(p0, null)];

@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled';
 
-import { useResizeObserver } from 'src/hooks';
+import { useAppContext, useResizeObserver } from 'src/hooks';
 import { FileControls } from './FileControls';
 import { ClipboardControls } from './ClipboardControls';
 import { UndoRedo } from './UndoRedo';
@@ -28,7 +28,7 @@ import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
-import { useCallback, useMemo } from 'react';
+import { cloneElement, useCallback, useMemo } from 'react';
 import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -68,6 +68,7 @@ export interface PanelProps {
   onAbout: VoidFunction;
   onHelp: VoidFunction;
   togglerComponent?: JSX.Element;
+  isModeSwitcherDisabled: boolean;
   customButtons: Array<CustomButton>;
 }
 
@@ -155,10 +156,15 @@ export const TopToolbar = ({
   onAbout,
   onHelp,
   togglerComponent,
+  isModeSwitcherDisabled,
   customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
-  const ketcher = ketcherProvider.getKetcher();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   const onCustomAction = useCallback(
     (name: string) => ketcher.sendCustomAction(name),
@@ -172,6 +178,11 @@ export const TopToolbar = ({
   }, [customButtons.length]);
 
   const isCollapsed = width < collapseLimitWithCustomButtons;
+  const renderedTogglerComponent = togglerComponent
+    ? cloneElement(togglerComponent, {
+        disabled: isModeSwitcherDisabled,
+      })
+    : undefined;
 
   return (
     <ControlsPanel
@@ -236,13 +247,10 @@ export const TopToolbar = ({
         />
       </BtnsWpapper>
       <BtnsWpapper>
-        {togglerComponent}
-        {togglerComponent && <Divider />}
+        {renderedTogglerComponent}
+        {renderedTogglerComponent && <Divider />}
 
         <SystemControls
-          onHistoryClick={() => {
-            console.log('History button clicked'); // @TODO Implement handler when History log is ready
-          }}
           onSettingsOpen={onSettingsOpen}
           onFullscreen={onFullscreen}
           onHelp={onHelp}
@@ -253,7 +261,7 @@ export const TopToolbar = ({
         <Divider />
         {!hiddenButtons.includes('zoom-list') && (
           <ZoomControls
-            currentZoom={currentZoom || 1}
+            currentZoom={currentZoom ?? 1}
             onZoomIn={onZoomIn}
             onZoomOut={onZoomOut}
             onZoom={onZoom}

@@ -16,9 +16,9 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class MonomerToAtomBondAddOperation implements Operation {
   public monomerToAtomBond: MonomerToAtomBond;
@@ -64,8 +64,11 @@ export class MonomerToAtomBondDeleteOperation implements Operation {
     renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     this.addMonomerToAtomBondChangeModel(this.monomerToAtomBond);
+  }
+
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }
 }

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import BaseOperation from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
-import { ReStruct } from 'application/render';
-import { MonomerMicromolecule } from 'domain/entities';
+import BaseOperation from 'application/editor/operations/BaseOperation';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { ReStruct } from 'application/render';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type RotateMonomerData = {
   id: number;
@@ -27,7 +27,7 @@ type RotateMonomerData = {
 export class RotateMonomerOperation extends BaseOperation {
   private previousValue: number | null = null;
 
-  constructor(public data: RotateMonomerData) {
+  constructor(public readonly data: RotateMonomerData) {
     super(OperationType.ROTATE_MONOMER);
   }
 

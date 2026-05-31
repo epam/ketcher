@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -548,7 +549,7 @@
                     1,
                     7
                 ],
-                "stereo": 1
+                "stereo": 6
             },
             {
                 "type": 1,
@@ -585,6 +586,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
+        "aliasHELM": "r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,
@@ -773,6 +775,7 @@
         "id": "U___Uracil",
         "fullName": "Uracil",
         "alias": "U",
+        "aliasHELM": "U",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -876,6 +879,8 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -896,6 +901,13 @@
                 }
             }
         ],
+        "idtAliases": {
+            "base": "Phos",
+            "modifications": {
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
+            }
+        },
         "naturalAnalogShort": "P"
     },
     "monomer3": {
@@ -1118,6 +1130,7 @@
         "id": "G___Guanine",
         "fullName": "Guanine",
         "alias": "G",
+        "aliasHELM": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1310,6 +1323,7 @@
         "id": "C___Cytosine",
         "fullName": "Cytosine",
         "alias": "C",
+        "aliasHELM": "C",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -1620,6 +1634,8 @@
         "id": "1Nal___3-(1-naphthyl)-alanine",
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
+        "aliasHELM": "1Nal",
+        "aliasBILN": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1891,6 +1907,8 @@
         "id": "Cys_Bn___S-benzylcysteine",
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
+        "aliasHELM": "Cys_Bn",
+        "aliasBILN": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -2095,6 +2113,8 @@
         "id": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "alias": "AspOMe",
+        "aliasHELM": "Asp_OMe",
+        "aliasBILN": "Asp_OMe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -2413,6 +2433,7 @@
         "id": "A___Adenine",
         "fullName": "Adenine",
         "alias": "A",
+        "aliasHELM": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

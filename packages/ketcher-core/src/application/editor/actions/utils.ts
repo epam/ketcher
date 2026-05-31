@@ -15,19 +15,19 @@
  ***************************************************************************/
 
 import {
+  type AtomAttributes,
+  type AtomQueryProperties,
   Atom,
-  AtomAttributes,
-  AtomQueryProperties,
-  Bond,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+} from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 
 import closest from '../shared/closest';
-import { difference } from 'lodash';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
-import { EditorSelection } from '../editor.types';
+import type { EditorSelection } from '../editor.types';
 export type AtomType = 'single' | 'list' | 'pseudo';
 export type AtomAttributeName = keyof AtomAttributes;
 export type AtomQueryPropertiesName = keyof AtomQueryProperties;
@@ -95,6 +95,28 @@ export function structSelection(struct): EditorSelection {
   }, {});
 }
 
+export function getSelectionFromStruct(struct: Struct): EditorSelection {
+  const selection: EditorSelection = {};
+
+  selectionKeys.forEach((entityType) => {
+    if (struct?.[entityType]) {
+      const selected: number[] = [];
+      struct[entityType].forEach((value, key) => {
+        if (
+          typeof value.getInitiallySelected === 'function' &&
+          value.getInitiallySelected()
+        ) {
+          selected.push(key);
+        }
+      });
+      if (selected.length > 0) {
+        selection[entityType] = selected;
+      }
+    }
+  });
+  return selection;
+}
+
 export function formatSelection(selection): any {
   return selectionKeys.reduce((res, key) => {
     res[key] = selection[key] || [];
@@ -115,7 +137,12 @@ export function atomForNewBond(restruct, id, bond?) {
     atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
   );
   const prevBond = restruct.molecule.bonds.get(prevBondId);
-  const prevBondType = prevBond ? prevBond.type : bond ? bond.type : 1;
+  let prevBondType = 1;
+  if (prevBond) {
+    prevBondType = prevBond.type;
+  } else if (bond) {
+    prevBondType = bond.type;
+  }
 
   restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid);
@@ -227,12 +254,18 @@ export function getRelSGroupsBySelection(
   struct: Struct,
   selectedAtoms: number[],
 ) {
-  return struct.sgroups.filter(
-    (_sgid, sg) =>
-      !sg.data.attached &&
-      !sg.data.absolute &&
-      difference(sg.atoms, selectedAtoms).length === 0,
-  );
+  const sgroups = new Set<SGroup>();
+
+  selectedAtoms.forEach((atom) => {
+    struct.atoms.get(atom)?.sgs.forEach((sgid) => {
+      const sgroup = struct.sgroups.get(sgid);
+      if (sgroup && !sgroup.data.attached && !sgroup.data.absolute) {
+        sgroups.add(sgroup);
+      }
+    });
+  });
+
+  return sgroups;
 }
 
 export function isAttachmentBond(

@@ -1,20 +1,35 @@
 import { select } from 'd3';
-import { D3SvgElementSelection } from 'application/render/types';
-import { ZoomTool } from 'application/editor';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { IRnaPreset } from 'application/editor/tools/Tool';
+import ZoomTool from 'application/editor/tools/Zoom';
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { HydrogenBond, PolymerBond } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { Vec2 } from 'domain/entities/vec2';
 import { BondSnapView } from './BondSnapView';
-import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
-import { BaseMonomerRenderer } from 'application/render';
-import { DistanceSnapView, DistanceSnapViewParams } from './DistanceSnapView';
+import { type AngleSnapViewParams, AngleSnapView } from './AngleSnapView';
+import type { BaseMonomerRenderer } from 'application/render';
 import {
+  type DistanceSnapViewParams,
+  DistanceSnapView,
+} from './DistanceSnapView';
+import {
+  type ModifyAminoAcidsViewParams,
   ModifyAminoAcidsView,
-  ModifyAminoAcidsViewParams,
 } from './ModifyAminoAcidsView';
 import {
+  type LineLengthHighlightViewParams,
   LineLengthHighlightView,
-  LineLengthHighlightViewParams,
 } from './LineLengthHighlightView';
+import { AutochainPreviewView } from 'application/render/renderers/TransientView/AutochainPreviewView';
+import type { MonomerItemType } from 'domain/types';
+import { type SelectionViewParams, SelectionView } from './SelectionView';
+import {
+  type GroupCenterSnapViewParams,
+  GroupCentersnapView,
+} from 'application/render/renderers/TransientView/GroupCenterSnapView';
+import { type RotationViewParams, RotationView } from './RotationView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -25,13 +40,13 @@ type ViewData<P> = {
 };
 
 export class TransientDrawingView {
-  private views: Map<string, ViewData<unknown>> = new Map();
+  private readonly views: Map<string, ViewData<unknown>> = new Map();
 
   private readonly topLayer: D3SvgElementSelection<SVGGElement, void>;
   private readonly defaultLayer: D3SvgElementSelection<SVGGElement, void>;
 
   constructor() {
-    const canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
+    const canvas = ZoomTool.instance?.canvas ?? select(drawnStructuresSelector);
     this.defaultLayer = canvas
       .append('g')
       .attr('class', 'transient-views-layer');
@@ -129,6 +144,18 @@ export class TransientDrawingView {
     this.removeView(DistanceSnapView.viewName);
   }
 
+  public showGroupCenterSnap(params: GroupCenterSnapViewParams) {
+    this.addView(GroupCentersnapView.viewName, {
+      show: GroupCentersnapView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideGroupCenterSnap() {
+    this.removeView(GroupCentersnapView.viewName);
+  }
+
   public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
     this.addView(ModifyAminoAcidsView.viewName, {
       show: ModifyAminoAcidsView.show,
@@ -151,6 +178,44 @@ export class TransientDrawingView {
 
   public hideLineLengthHighlight() {
     this.removeView(LineLengthHighlightView.viewName);
+  }
+
+  public showAutochainPreview(
+    monomerOrRnaItem: MonomerItemType | IRnaPreset,
+    position: Vec2,
+    selectedMonomerToConnect?: BaseMonomer,
+  ) {
+    this.addView(AutochainPreviewView.viewName, {
+      show: AutochainPreviewView.show,
+      params: { monomerOrRnaItem, position, selectedMonomerToConnect },
+    });
+  }
+
+  public hideAutochainPreview() {
+    this.removeView(AutochainPreviewView.viewName);
+  }
+
+  public showSelection(params: SelectionViewParams) {
+    this.addView(SelectionView.viewName, {
+      show: SelectionView.show,
+      params,
+    });
+  }
+
+  public hideSelection() {
+    this.removeView(SelectionView.viewName);
+  }
+
+  public showRotation(params: RotationViewParams) {
+    this.addView(RotationView.viewName, {
+      show: RotationView.show,
+      params,
+      topLayer: true,
+    });
+  }
+
+  public hideRotation() {
+    this.removeView(RotationView.viewName);
   }
 
   public clear() {

@@ -86,9 +86,13 @@ export function editTmpl(tmpl) {
     openDialog(dispatch, 'attach', { tmpl })
       .then(
         (formData) => {
-          tmpl.struct.name = formData ? formData.name.trim() : tmpl.struct.name;
-          tmpl.props = formData
-            ? Object.assign({}, tmpl.props, formData.attach)
+          const data = formData as {
+            name: string;
+            attach?: Record<string, unknown>;
+          };
+          tmpl.struct.name = data ? data.name.trim() : tmpl.struct.name;
+          tmpl.props = data
+            ? { ...(tmpl.props || {}), ...(data.attach || {}) }
             : tmpl.props;
 
           if (tmpl.props.group === 'User Templates')
@@ -128,7 +132,11 @@ export function saveUserTmpl(struct) {
 
   return (dispatch, getState) => {
     openDialog(dispatch, 'attach', { tmpl })
-      .then(({ name, attach }) => {
+      .then((result) => {
+        const { name, attach } = result as {
+          name: string;
+          attach?: Record<string, unknown>;
+        };
         tmpl.struct.name = name.trim();
         tmpl.props = { ...attach, group: 'User Templates' };
 
@@ -148,7 +156,7 @@ function updateLocalStore(lib) {
     .filter((item) => item.props.group === 'User Templates')
     .map((item) => ({
       struct: ketSerializer.serialize(item.struct),
-      props: Object.assign({}, omit(['group'], item.props)),
+      props: { ...(omit(['group'], item.props) || {}) },
     }));
 
   storage.setItem('ketcher-tmpls', userLib);
@@ -177,15 +185,15 @@ const attachActions = ['INIT_ATTACH', 'SET_ATTACH_POINTS', 'SET_TMPL_NAME'];
 
 function templatesReducer(state = initTmplsState, action) {
   if (tmplActions.includes(action.type))
-    return Object.assign({}, state, action.data);
+    return { ...state, ...(action.data || {}) };
 
   if (attachActions.includes(action.type)) {
-    const attach = Object.assign({}, state.attach, action.data);
+    const attach = { ...state.attach, ...(action.data || {}) };
     return { ...state, attach };
   }
 
   if (action.type === 'TMPL_DELETE') {
-    const currentState = Object.assign({}, state);
+    const currentState = { ...state };
     const lib = currentState.lib.filter((value) => value !== action.data.tmpl);
     return { ...currentState, lib };
   }

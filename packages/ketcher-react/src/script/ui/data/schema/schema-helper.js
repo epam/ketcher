@@ -29,10 +29,10 @@ export function mapOf(schema, prop) {
 }
 
 export function selectListOf(schema, prop) {
-  const desc = schema.properties && schema.properties[prop];
+  const desc = schema.properties?.[prop];
   if (desc) {
     return desc.enum.map((value, i) => {
-      const title = desc.enumNames && desc.enumNames[i];
+      const title = desc.enumNames?.[i];
       return title ? { title, value } : value;
     });
   }

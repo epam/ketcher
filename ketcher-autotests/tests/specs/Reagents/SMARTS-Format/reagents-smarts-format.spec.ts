@@ -1,15 +1,15 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {
   verifyFileExport,
   FileType,
+  verifySMARTSExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
@@ -30,8 +30,8 @@ test.describe('Reagents SMARTS format', () => {
     format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(
@@ -40,12 +40,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMARTS,
+    await verifySMARTSExport(
+      page,
+      '[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1>[#7]>[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule below arrow as reagent
@@ -56,12 +54,12 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4681
     Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
     format in "Preview" tab (e.g.
-      [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]1(-[#35])-[#6](-[#6])=[#6]-[#6](-[#53])=[#6](-[#8])-[#6]=1
+      [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>Cl>[#6]1(-Br)-[#6](-[#6])=[#6]-[#6](-I)=[#6](-[#8])-[#6]=1
     )
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
 
     await verifyFileExport(
@@ -70,12 +68,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.DaylightSMARTS,
+    await verifySMARTSExport(
+      page,
+      '[#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>Cl>[#6]1(-Br)-[#6](-[#6])=[#6]-[#6](-I)=[#6](-[#8])-[#6]=1',
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
@@ -87,7 +83,7 @@ test.describe('Reagents SMARTS format', () => {
       page,
       '[#6]-[#6]1-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]-[#6]1-[#6](-,:[#35])=[#6]-[#6](-[#8])=[#6](-,:[#53])-[#6]=1',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -96,7 +92,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
     */
-    await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/expected-smarts-below.smarts');
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +103,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4706
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
-    await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
+    await openFileAndAddToCanvas(page, 'SMARTS/not-list-atoms-smarts.smarts');
     await takeEditorScreenshot(page);
   });
 });
@@ -123,8 +119,8 @@ test.describe('Reagents SMARTS format', () => {
     Description: File saved in format (e.g. "ketcher.smarts")
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
     );
 
     await verifyFileExport(

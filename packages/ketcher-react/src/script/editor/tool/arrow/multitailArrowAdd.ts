@@ -7,11 +7,11 @@ import { ArrowAddTool } from './arrow.types';
 import Editor from '../../Editor';
 
 export class MultitailArrowAddTool implements ArrowAddTool {
-  static MIN_HEIGHT = 2.5;
-  static MIN_WIDTH = 1.2;
+  static readonly MIN_HEIGHT = 2.5;
+  static readonly MIN_WIDTH = 1.2;
 
   // eslint-disable-next-line no-useless-constructor
-  constructor(private editor: Editor) {}
+  constructor(private readonly editor: Editor) {}
 
   private get render() {
     return this.editor.render;

@@ -1,7 +1,9 @@
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer, Vec2 } from 'domain/entities';
-import { Coordinates, MonomersAlignment } from 'application/editor';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities/vec2';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import type { MonomersAlignment } from 'application/editor/tools/types';
 
 export type DistanceSnapViewParams = {
   alignment: MonomersAlignment | undefined;
@@ -11,7 +13,7 @@ export type DistanceSnapViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class DistanceSnapView extends TransientView {
-  public static viewName = 'DistanceSnapView';
+  public static readonly viewName = 'DistanceSnapView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
@@ -19,11 +21,12 @@ export class DistanceSnapView extends TransientView {
   ) {
     const { alignment, alignedMonomers } = params;
 
-    if (!alignment || !alignedMonomers) {
+    if (!alignment || !alignedMonomers?.length) {
       return;
     }
 
-    const sortedMonomers = alignedMonomers.sort((a, b) => {
+    const sortedMonomers = [...alignedMonomers];
+    sortedMonomers.sort((a, b) => {
       return alignment === 'horizontal'
         ? a.center.x - b.center.x
         : a.center.y - b.center.y;
@@ -42,6 +45,7 @@ export class DistanceSnapView extends TransientView {
             : extremeMonomer;
         }
       },
+      alignedMonomers[0],
     );
 
     const alignerPosition = new Vec2(

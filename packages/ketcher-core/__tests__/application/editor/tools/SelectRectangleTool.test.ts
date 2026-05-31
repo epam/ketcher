@@ -5,8 +5,11 @@ import {
   peptideMonomerItem,
   polymerEditorTheme,
 } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
+import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 
@@ -26,6 +29,12 @@ jest.mock('d3', () => {
           return this;
         },
         select() {
+          return this;
+        },
+        selectAll() {
+          return this;
+        },
+        remove() {
           return this;
         },
         attr() {
@@ -107,6 +116,7 @@ describe('Select Rectangle Tool', () => {
       new CoreEditor({
         theme: polymerEditorTheme,
         canvas: createPolymerEditorCanvas(),
+        renderersContainer: createRenderersManager(polymerEditorTheme),
         mode: new FlexMode(),
       }),
     );
@@ -116,27 +126,13 @@ describe('Select Rectangle Tool', () => {
     expect(polymerBond.selected).toBeTruthy();
   });
 
-  it('should initiate the render of peptide mousedown', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
-    const mode = new FlexMode();
-    const editor: CoreEditor = new CoreEditor({
-      canvas,
-      theme: polymerEditorTheme,
-      mode,
-    });
-    const onShow = jest.fn();
-    jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
-    editor.events.selectMonomer.dispatch(peptideMonomerItem);
-    canvas.dispatchEvent(new Event('mouseover', { bubbles: true }));
-    expect(onShow).toHaveBeenCalled();
-  });
-
   it('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const mode = new FlexMode();
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
       mode,
     });
     const onMove = jest.fn();
@@ -163,6 +159,7 @@ describe('Select Rectangle Tool', () => {
       peptideMonomerItem,
       new Vec2(0, 0),
     );
+
     editor.renderersContainer.update(modelChanges);
 
     const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];

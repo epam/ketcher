@@ -1,48 +1,45 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
-  startNewSequence,
   moveMouseAway,
-  switchSequenceEnteringButtonType,
-  SequenceType,
-  selectUndoByKeyboard,
+  undoByKeyboard,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
-  selectAllStructuresOnCanvas,
 } from '@utils';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
-import { switchToDNAMode } from '@utils/macromolecules/sequence';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-
-export async function clickOnTriangle(page: Page) {
-  const expandButton = page
-    .getByTestId('Create Antisense Strand')
-    .getByTestId('dropdown-expand');
-  await expandButton.click();
-}
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import {
+  AntisenseStrandType,
+  LayoutMode,
+} from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 test.describe('Sequence Mode', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  let page: Page;
+  test.beforeAll(async ({ initSequenceCanvas }) => {
+    page = await initSequenceCanvas();
   });
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
+  });
+  test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
-  test('Open monomers chains and switch to sequence mode', async ({ page }) => {
+  test('Open monomers chains and switch to sequence mode', async () => {
     /* 
     Test case: #3648 - Open monomers chains and switch to sequence mode
     Description: Sequence mode tool
@@ -50,68 +47,70 @@ test.describe('Sequence Mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await takeEditorScreenshot(page);
   });
 
-  test('Switch from flex view to sequence view to snake view and back to flex.', async ({
-    page,
-  }) => {
+  test('Switch from flex view to sequence view to snake view and back to flex.', async () => {
     /* 
     Test case: #3648
     Description: Switching between modes occurs with a visual change in monomers and their compounds depending on the mode.
     */
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 300;
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async ({
-    page,
-  }) => {
+  test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async () => {
     /* 
     Test case: #3648
     Description: Nucleotides are connected through R2-R1 bonds, these bonds are not visually represented,
     and nucleotides are depicted as symbols forming a word.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/peptides-connected-with-bonds.ket',
       page,
+      'KET/peptides-connected-with-bonds.ket',
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async ({
-    page,
-  }) => {
+  test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async () => {
     /* 
     Test case: #3648
     Description: All phosphates not part of nucleotides are displayed as "p" symbols, 
     including last phosphate connected to last nucleoside.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/phosphates-not-part-of-nucleoside.ket',
       page,
+      'KET/phosphates-not-part-of-nucleoside.ket',
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Test sequence display for long DNA/RNA', async ({ page }) => {
+  test('Test sequence display for long DNA/RNA', async () => {
     /* 
     Test case: #3648
     Description: Sequence of letters is divided into groups of tens, and enumeration 
@@ -120,12 +119,18 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/dna-long.mol',
+      MacroFileType.MOLv3000,
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Test sequence display for long Peptides chains', async ({ page }) => {
+  test('Test sequence display for long Peptides chains', async () => {
     /* 
     Test case: #3648
     Description: Sequence of letters is divided into groups of tens, and enumeration 
@@ -134,137 +139,162 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvasMacro('KET/50-peptides-and-2-chems.ket', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(page, 'KET/50-peptides-and-2-chems.ket');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that if system encounters Peptide it is appears as letter for natural analog', async ({
-    page,
-  }) => {
+  test('Confirm that if system encounters Peptide it is appears as letter for natural analog', async () => {
     /* 
     Test case: #3648
     Description: Peptide appears as letter for natural analog
     */
     const ZOOM_OUT_VALUE = 800;
     const SCROLL_DOWN_VALUE = 150;
-    await openFileAndAddToCanvasMacro('KET/natural-analog-peptides.ket', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(page, 'KET/natural-analog-peptides.ket');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that if system encounters Sugar, Base or CHEM it is appears as @ symbol', async ({
-    page,
-  }) => {
+  test('Confirm that if system encounters Sugar, Base or CHEM it is appears as @ symbol', async () => {
     /* 
     Test case: #3648
     Description: Sugar, Base or CHEM appears as @ symbol
     */
     await openFileAndAddToCanvasMacro(
-      'KET/sugar-base-chem-not-connected.ket',
       page,
+      'KET/sugar-base-chem-not-connected.ket',
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Open RNA in sequence mode, switch to flex mode and confirm that RNA chain layout is left-to-right', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /* 
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right.
     */
-    await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Press Undo button and verify that layout returns to unarranged state', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /* 
     Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
   test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /* 
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
-    await selectSequenceLayoutModeTool(page);
-    await selectUndoByKeyboard(page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Confirm that length of each row is limited to 30 nucleotides', async ({
-    page,
-  }) => {
+  test('Confirm that length of each row is limited to 30 nucleotides', async () => {
     /* 
     Test case: #3648
     Description: Length of each row is limited to 30 nucleotides after switch to sequence mode.
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/dna-long.mol',
+      MacroFileType.MOLv3000,
+    );
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
     */
-    await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/rna.mol',
+      MacroFileType.MOLv3000,
+    );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Open modified RNA in sequence mode', async ({ page }) => {
+  test('Open modified RNA in sequence mode', async ({ SequenceCanvas: _ }) => {
     /*
     Test case: #3734
     Description: Displaying modified nucleotide chains in sequence representation
     */
-    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/modified-nucleotide-chain.ket',
       page,
+      'KET/modified-nucleotide-chain.ket',
     );
     await takeEditorScreenshot(page);
-    await startNewSequence(page);
+    await ContextMenu(page, { x: 200, y: 200 }).click(
+      SequenceSymbolOption.StartNewSequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Open monomers cyclic chains and switch to sequence mode', async ({
-    page,
-  }) => {
+  test('Open monomers cyclic chains and switch to sequence mode', async () => {
     /*
     Related bug: #4329 - Open monomers cyclic chains and switch to sequence mode
     */
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 100;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-cyclic-chains.ket', page);
-    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-cyclic-chains.ket');
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await moveMouseAway(page);
@@ -276,30 +306,31 @@ test.describe('Sequence Mode', () => {
       description:
         'System displays structure preview of DNA (preset) while hovering over letters on canvas.',
       file: 'Molfiles-V3000/dna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'System displays structure preview of RNA (preset) while hovering over letters on canvas.',
       file: 'Molfiles-V3000/rna.mol',
+      fileType: MacroFileType.MOLv3000,
     },
     {
       description:
         'System displays structure preview of Peptide (preset) while hovering over letters on canvas.',
       file: 'KET/peptides-connected-with-bonds.ket',
+      fileType: MacroFileType.KetFormat,
     },
   ];
 
   for (const data of testData) {
-    test(`Ensure that ${data.description}`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro(data.file, page);
-      await selectSequenceLayoutModeTool(page);
-      await page
-        .locator('g.drawn-structures')
-        .locator('g', { has: page.locator('text="G"') })
-        .first()
-        .hover();
+    test(`Ensure that ${data.description}`, async () => {
+      await openFileAndAddToCanvasMacro(page, data.file, data.fileType);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await getSymbolLocator(page, { symbolAlias: 'G' }).first().hover();
 
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });
   }
@@ -328,78 +359,84 @@ test.describe('Sequence Mode', () => {
   ];
 
   for (const data of testsData) {
-    test(`${data.description}`, async ({ page }) => {
+    test(`${data.description}`, async ({ SequenceCanvas: _ }) => {
       /*
       Test case: #3734
       Description: Modified component is unambiguously marked.
       */
-      await selectSequenceLayoutModeTool(page);
-      await openFileAndAddToCanvasMacro(data.file, page);
+      await openFileAndAddToCanvasMacro(page, data.file);
       await takeEditorScreenshot(page);
     });
   }
 
   test('Test display of a phosphate connected to R2 AP of sugar and a phosphate that is not part of a nucleotide in sequence view', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: Phosphate is displayed as p symbol.
     */
-    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      'KET/phosphates-not-part-of-nucleoside.ket',
       page,
+      'KET/phosphates-not-part-of-nucleoside.ket',
     );
     await takeEditorScreenshot(page);
   });
 
   test('Test display of CHEM in sequence view and confirm that they are displayed as @', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: CHEM is displayed as @ symbol.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/chem-on-the-end-of-sequence.ket',
       page,
+      'KET/chem-on-the-end-of-sequence.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: Sugars that are not part of a nucleotide or nucleoside in sequence view are displayed as @ symbol
     */
     await openFileAndAddToCanvasMacro(
-      'KET/sugar-on-the-end-of-sequence.ket',
       page,
+      'KET/sugar-on-the-end-of-sequence.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Side chain connections between sugar and phosphate', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
     */
-    await openFileAndAddToCanvasMacro('KET/r3-r2-sugar-phosphate.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/r3-r2-sugar-phosphate.ket');
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Side chain connections between sugar and base', async ({ page }) => {
+  test('Side chain connections between sugar and base', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     Test case: #3734
     Description: Sugar and Base are displayed as straight lines connecting two monomers center-to-center.
@@ -407,54 +444,54 @@ test.describe('Sequence Mode', () => {
     After fix need to be updated.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/r1-r1-sugar-base-connection.ket',
       page,
+      'KET/r1-r1-sugar-base-connection.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Test sequence view for chains containing both modified and unmodified nucleotides', async ({
-    page,
+    FlexCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: Modified component is marked accordingly to mockup.
     */
     await openFileAndAddToCanvasMacro(
-      'KET/modified-and-unmodified-sequence.ket',
       page,
+      'KET/modified-and-unmodified-sequence.ket',
     );
     await takeEditorScreenshot(page);
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Test display of last nucleotide in sequence view, ensuring it lacks a phosphate', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: After switch to flex mode phosphate is absent.
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acg');
     await keyboardPressOnCanvas(page, 'Escape');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
   });
 
   test('Zoom In and Zoom Out while add monomers in sequence view', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3734
     Description: Monomers added without errors.
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(3);
     await keyboardTypeOnCanvas(page, 'ac');
     await takeEditorScreenshot(page);
@@ -465,121 +502,110 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Create a single chain in sequence mode. Switch to flex mode and verify that position of first monomer remains same', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3870
     Description: Position of first monomer remains same.
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cgatu');
     await keyboardPressOnCanvas(page, 'Escape');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Create a multiple chains in sequence mode. Switch to flex mode and confirm that position of first monomer defines "top left" corner on canvas', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3870
     Description: Position of first monomer defines "top left" corner on canvas.
     */
-    await selectSequenceLayoutModeTool(page);
     await moveMouseAway(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Enter');
-    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Enter');
-    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
+    await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'acfrtp');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('If nucleotide is being added to the end of sequence, then phosphate P should be added automatically between last two nucleosides', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3650
     Description: Phosphate P added automatically between last two nucleosides.
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cactt');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Delete any nucleotide within RNA fragment using keyboard keys (Del, Backspace)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3650
     Description: RNA fragment deleted.
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'cagtt');
     await keyboardPressOnCanvas(page, 'Escape');
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Delete');
     await keyboardPressOnCanvas(page, 'Backspace');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
   });
 
   test('Merging two chains occurs when cursor is before first symbol of the second chain in text-editing mode, and Backspace is pressed', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3650
     Description: DNA and RNA chains are merged into one chain.
     */
-    await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
-    await page
-      .locator('g.drawn-structures')
-      .locator('g', { has: page.locator('text="G"') })
-      .first()
-      .click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
+    await openFileAndAddToCanvasMacro(page, 'KET/dna-rna-separate.ket');
+    const symbolG = getSymbolLocator(page, {
+      symbolAlias: 'G',
+    });
+    await ContextMenu(page, symbolG).click(SequenceSymbolOption.EditSequence);
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Verify that selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test case: #3861
     Description: Selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA).
     */
-    await selectSequenceLayoutModeTool(page);
-    await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'acgtu');
-    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that a command icon added to the right of the Undo button and separated from it by a line.(Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -591,7 +617,6 @@ test.describe('Sequence Mode', () => {
      * 3. Add a sequence and select all monomers
      * 4. Check activation of the command icon
      */
-    await selectSequenceLayoutModeTool(page);
     await takeTopToolbarScreenshot(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
@@ -599,7 +624,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check that clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two options (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -610,10 +635,9 @@ test.describe('Sequence Mode', () => {
      * 2. Add a sequence and select all monomers
      * 3. Click on the triangle on the right-bottom corner of the icon
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await clickOnTriangle(page);
+    await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -621,7 +645,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Create antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -632,7 +656,6 @@ test.describe('Sequence Mode', () => {
      * 2. Add a sequence and select all monomers
      * 3. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await keyboardPressOnCanvas(page, 'Shift+Alt+R');
@@ -643,7 +666,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Create antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -655,9 +678,8 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Snake mode and select all monomers
      * 4. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await keyboardPressOnCanvas(page, 'Shift+Alt+R');
     await takeEditorScreenshot(page, {
@@ -667,7 +689,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -678,7 +700,6 @@ test.describe('Sequence Mode', () => {
      * 2. Add a sequence and select all monomers
      * 3. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await keyboardPressOnCanvas(page, 'Shift+Alt+D');
@@ -689,7 +710,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -701,9 +722,8 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Snake mode and select all monomers
      * 4. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
     await keyboardPressOnCanvas(page, 'Shift+Alt+D');
     await takeEditorScreenshot(page, {
@@ -713,7 +733,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check creation RNA Antisense Strand by button (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -723,10 +743,9 @@ test.describe('Sequence Mode', () => {
      * 2. Add a RNA sequence and select all monomers
      * 3. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -734,7 +753,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check creation RNA Antisense Strand by button (Snake mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -745,11 +764,10 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Snake mode and select all monomers
      * 4. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -757,7 +775,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check creation DNA Antisense Strand by button (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -767,11 +785,12 @@ test.describe('Sequence Mode', () => {
      * 2. Add a DNA sequence and select all monomers
      * 3. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -779,7 +798,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check creation DNA Antisense Strand by button (Snake mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -790,20 +809,25 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Snake mode and select all monomers
      * 4. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -813,20 +837,20 @@ test.describe('Sequence Mode', () => {
      * 2. Add a RNA and DNA sequence and select all monomers
      * 3. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -837,13 +861,12 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Snake mode and select all monomers
      * 4. Click on button "Create Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page);
+    await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -851,7 +874,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -861,20 +884,22 @@ test.describe('Sequence Mode', () => {
      * 2. Add a RNA and DNA sequence and select all monomers
      * 3. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page, 'RNA');
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.RNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -884,20 +909,22 @@ test.describe('Sequence Mode', () => {
      * 2. Add a RNA and DNA sequence and select all monomers
      * 3. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page, 'DNA');
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -908,21 +935,26 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Flex mode and select all monomers
      * 4. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page, 'RNA');
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.RNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode)', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/5999
@@ -933,17 +965,22 @@ test.describe('Sequence Mode', () => {
      * 3. Switch to Flex mode and select all monomers
      * 4. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
      */
-    await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await switchToDNAMode(page);
+    await MacromoleculesTopToolbar(page).dna();
     await keyboardTypeOnCanvas(page, 'ACGTU');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
-    await createAntisenseStrandByButton(page, 'DNA');
+    await MacromoleculesTopToolbar(page).selectAntisenseStrand(
+      AntisenseStrandType.DNA,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await MacromoleculesTopToolbar(page).rna();
   });
 
   const testCases = [
@@ -971,17 +1008,15 @@ test.describe('Sequence Mode', () => {
   ];
 
   for (const testCase of testCases) {
-    test(`${testCase.name}`, async ({ page }) => {
+    test(`${testCase.name}`, async ({ SequenceCanvas: _ }) => {
       /*
       Test case: #3876
       */
-      await selectSequenceLayoutModeTool(page);
       if (testCase.name === 'Preview for DNA') {
-        await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+        await MacromoleculesTopToolbar(page).dna();
       } else if (testCase.name === 'Preview for Peptide') {
-        await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
+        await MacromoleculesTopToolbar(page).peptides();
       }
-      await startNewSequence(page);
       await keyboardTypeOnCanvas(page, testCase.sequence);
       await keyboardPressOnCanvas(page, 'Escape');
       await page
@@ -990,7 +1025,7 @@ test.describe('Sequence Mode', () => {
         .first()
         .hover();
 
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     });
   }
@@ -998,7 +1033,7 @@ test.describe('Sequence Mode', () => {
   test(
     'Check that Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /*
     Test case: #4346
     Description: Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point.
@@ -1006,10 +1041,12 @@ test.describe('Sequence Mode', () => {
     When fix is made, you need to update screenshot.
     */
       await openFileAndAddToCanvasMacro(
-        'KET/monomers-attached-to-bases-via-r2.ket',
         page,
+        'KET/monomers-attached-to-bases-via-r2.ket',
       );
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -1039,16 +1076,18 @@ test.describe('Sequence Mode', () => {
 
   for (const testInfo of tests) {
     test(`Validate displaying modified nucleotide chains for ${testInfo.description}`, async ({
-      page,
+      FlexCanvas: _,
     }) => {
-      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
-      await selectSequenceLayoutModeTool(page);
+      await openFileAndAddToCanvasMacro(page, testInfo.fileName);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await takeEditorScreenshot(page);
     });
   }
 
   test('1. Check that in sequence mode not modifid amino acids are not marked', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5629
@@ -1058,7 +1097,6 @@ test.describe('Sequence Mode', () => {
           2. Open HELM with all not modified amino acids
           3. Take a screenshot to verify that not modified amino acids are not marked
     */
-    await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1109,7 +1147,7 @@ test.describe('Sequence Mode', () => {
   ];
 
   test('2. Check that in sequence mode all modifid amino acids are marked', async ({
-    page,
+    SequenceCanvas: _,
   }) => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5629
@@ -1119,7 +1157,6 @@ test.describe('Sequence Mode', () => {
           2. Switch to sequence mode
           3. Take a screenshot to verify that all modified amino acids are marked
     */
-    await selectSequenceLayoutModeTool(page);
 
     for (const modifiedAminoAcid of modifiedAminoAcids) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1132,9 +1169,7 @@ test.describe('Sequence Mode', () => {
     }
   });
 
-  test('Check that adjusted Add new sequence control width to longest sequence around it', async ({
-    page,
-  }) => {
+  test('Check that adjusted Add new sequence control width to longest sequence around it', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/7104
      * Description: Check that adjusted Add new sequence control width to longest sequence around it
@@ -1145,7 +1180,9 @@ test.describe('Sequence Mode', () => {
      *      3. Take a screenshot to verify that all modified amino acids are marked
      */
     const newSequenceButton = page.getByTestId('NewSequencePlusButton');
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

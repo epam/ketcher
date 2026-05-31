@@ -1,17 +1,18 @@
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chem } from 'domain/entities/Chem';
 import {
-  AmbiguousMonomer,
-  BaseMonomer,
-  Chem,
+  type SequenceNode,
+  type SubChainNode,
   IsChainCycled,
-  Peptide,
-  Phosphate,
-  RNABase,
-  SubChainNode,
-  Sugar,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
+} from 'domain/entities/monomer-chains/types';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { Sugar } from 'domain/entities/Sugar';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -20,10 +21,9 @@ import {
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
-import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -39,10 +39,10 @@ export type GrouppedChain = {
 };
 
 export interface ITwoStrandedChainItem {
-  senseNode?: SubChainNode | BackBoneSequenceNode;
+  senseNode?: SequenceNode;
   senseNodeIndex: number;
   chain: Chain;
-  antisenseNode?: SubChainNode | BackBoneSequenceNode;
+  antisenseNode?: SequenceNode;
   antisenseNodeIndex?: number;
   antisenseChain?: Chain;
 }
@@ -384,7 +384,14 @@ export class ChainsCollection {
     chain: Chain,
     startChain: Chain,
     previousChain?: Chain,
+    visitedChains: Set<Chain> = new Set(),
   ): Chain[] {
+    if (visitedChains.has(chain)) {
+      return [];
+    }
+
+    visitedChains.add(chain);
+
     const complimentaryChainsWithData =
       this.getComplimentaryChainsWithData(chain);
 
@@ -393,27 +400,32 @@ export class ChainsCollection {
     }
 
     const complimentaryChainGoesToStartChain = complimentaryChainsWithData.find(
-      (complimentaryChainsWithData) =>
-        complimentaryChainsWithData.complimentaryChain !== previousChain &&
-        complimentaryChainsWithData.complimentaryChain === startChain,
+      ({ complimentaryChain }) =>
+        complimentaryChain !== previousChain &&
+        complimentaryChain === startChain,
     );
 
     if (complimentaryChainGoesToStartChain) {
       return [chain];
     } else {
       return complimentaryChainsWithData.reduce(
-        (acc, complimentaryChainWithData) => {
-          return complimentaryChainWithData.complimentaryChain === startChain ||
-            complimentaryChainWithData.complimentaryChain === previousChain
-            ? [...acc]
-            : [
-                ...acc,
-                ...this.findCycledComplimentaryChains(
-                  complimentaryChainWithData.complimentaryChain,
-                  startChain,
-                  chain,
-                ),
-              ];
+        (acc, { complimentaryChain }) => {
+          if (
+            complimentaryChain === startChain ||
+            complimentaryChain === previousChain
+          ) {
+            return acc;
+          }
+
+          return [
+            ...acc,
+            ...this.findCycledComplimentaryChains(
+              complimentaryChain,
+              startChain,
+              chain,
+              visitedChains,
+            ),
+          ];
         },
         [] as Chain[],
       );

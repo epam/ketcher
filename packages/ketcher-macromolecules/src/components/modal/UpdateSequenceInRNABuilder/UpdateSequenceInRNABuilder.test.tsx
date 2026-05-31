@@ -63,7 +63,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
         },
       }),
     );
-    const cancelButton = screen.getByTitle('Cancel');
+    const cancelButton = screen.getByTestId('update-sequence-cancel-button');
     fireEvent.click(cancelButton);
     expect(mockProps.onClose).toHaveBeenCalled();
   });
@@ -84,7 +84,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
         },
       }),
     );
-    const yesButton = screen.getByTitle('Yes');
+    const yesButton = screen.getByTestId('update-sequence-yes-button');
     fireEvent.click(yesButton);
     expect(mockProps.onClose).toHaveBeenCalled();
   });

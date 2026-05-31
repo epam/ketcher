@@ -1,6 +1,7 @@
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -8,8 +9,6 @@ import {
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-
-const X_OFFSET = 200;
 
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,7 +20,7 @@ test.describe('open files with different formats', () => {
     Test case: EPMLSOPKET-1839
     */
 
-    await openFileAndAddToCanvas('Rxn-V2000/1839-ketcher.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/1839-ketcher.rxn');
     await takeEditorScreenshot(page);
   });
 
@@ -29,7 +28,7 @@ test.describe('open files with different formats', () => {
     /*
     Test case: EPMLSOPKET-1840
     */
-    await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
+    await openFileAndAddToCanvas(page, 'SMILES/1840-cyclopentyl.smi');
     await takeEditorScreenshot(page);
   });
 
@@ -37,7 +36,7 @@ test.describe('open files with different formats', () => {
     /*
     Test case: EPMLSOPKET-1841
     */
-    await openFileAndAddToCanvas('InChI/1841-ketcher.inchi', page);
+    await openFileAndAddToCanvas(page, 'InChI/1841-ketcher.inchi');
     await takeEditorScreenshot(page);
   });
 
@@ -54,15 +53,10 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1840225-mol-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // add second structure from file to canvas
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/glutamine.mol',
-      page,
-      X_OFFSET,
-      0,
-    );
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/glutamine.mol', 200, 0);
     await takeEditorScreenshot(page);
   });
 
@@ -76,12 +70,7 @@ test.describe('open files with different formats', () => {
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     // add second structure from file to canvas
-    await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-reaction.rxn',
-      page,
-      0,
-      -X_OFFSET,
-    );
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/rxn-reaction.rxn', 0, -200);
     await takeEditorScreenshot(page);
   });
 
@@ -94,7 +83,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-1.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +96,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-2.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -120,7 +109,7 @@ test.describe('open files with different formats', () => {
     const fileContent = await readFileContent('Txt/1837-inchi-3.txt');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -131,8 +120,8 @@ test.describe('open files with different formats', () => {
      */
     // add first structure from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/a-query-notList.mol',
       page,
+      'Molfiles-V3000/a-query-notList.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -144,8 +133,8 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/dhis-prohibit-atoms.mol',
       page,
+      'Molfiles-V3000/dhis-prohibit-atoms.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -156,8 +145,8 @@ test.describe('open files with different formats', () => {
       Description: ket file with SMARTS attributes should be open without error
       */
     await openFileAndAddToCanvas(
-      'KET/benzene-with-smarts-attributes.ket',
       page,
+      'KET/benzene-with-smarts-attributes.ket',
     );
     await takeEditorScreenshot(page);
   });

@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState, FC } from 'react';
-import {
-  Vec2,
-  Render,
-  SGroup,
-  Struct,
-  CoordinateTransformation,
-} from 'ketcher-core';
+import { Vec2, Render, SGroup, CoordinateTransformation } from 'ketcher-core';
 import clsx from 'clsx';
 import classes from './InfoPanel.module.less';
 import { calculateMiddleCoordsForRect } from './helpers';
@@ -80,7 +74,6 @@ interface SGroupDataRenderProps {
   clientX: number;
   clientY: number;
   render: Render;
-  groupStruct: Struct;
   sGroup: SGroup;
   sGroupData: string | null;
   className?: string;

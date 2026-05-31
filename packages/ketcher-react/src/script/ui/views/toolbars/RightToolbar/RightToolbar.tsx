@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, PropsWithChildren, useRef } from 'react';
+import { FC, PropsWithChildren, RefObject, useRef } from 'react';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -55,14 +55,22 @@ const RightToolbar = (props: Props) => {
   const { ref, height } = useResizeObserver<HTMLDivElement>();
   const [startRef, startInView] = useInView({ threshold: 1 });
   const [endRef, endInView] = useInView({ threshold: 1 });
-  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const sizeRef = useRef(null) as RefObject<HTMLDivElement | null>;
+  const scrollRef = useRef(null) as RefObject<HTMLDivElement | null>;
 
   const scrollUp = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
   };
 
   const scrollDown = () => {
+    if (!scrollRef.current || !sizeRef.current) {
+      return;
+    }
+
     scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
   };
 
@@ -121,12 +129,12 @@ const RightToolbar = (props: Props) => {
           </Group>
         </div>
       </div>
-      {height && scrollRef?.current?.scrollHeight > height && (
+      {height && (scrollRef?.current?.scrollHeight || 0) > height && (
         <ArrowScroll
           startInView={startInView}
           endInView={endInView}
-          scrollUp={scrollUp}
-          scrollDown={scrollDown}
+          scrollForward={scrollDown}
+          scrollBack={scrollUp}
         />
       )}
     </div>

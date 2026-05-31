@@ -28,7 +28,7 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
-import { GetActionState, Tools, UiAction } from './action.types';
+import { Tools, UiAction } from './action.types';
 import Editor from '../../editor/Editor';
 
 export * from './action.types';
@@ -40,7 +40,7 @@ const updateConfigItem = (item: UiAction): UiAction => {
   if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
     return item;
   } else if (typeof item.disabled === 'function') {
-    const originalDisabled = item.disabled as GetActionState;
+    const originalDisabled = item.disabled;
     return {
       ...item,
       disabled: (...props) =>
@@ -67,6 +67,7 @@ const config: Record<string, UiAction> = {
         if (!editor.struct().isBlank()) editor.struct(null);
       },
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'clear'),
   },
   open: {
@@ -74,6 +75,7 @@ const config: Record<string, UiAction> = {
     title: 'Open…',
     enabledInViewOnly: true,
     action: { dialog: 'open' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'open'),
   },
   save: {
@@ -81,6 +83,7 @@ const config: Record<string, UiAction> = {
     title: 'Save As…',
     enabledInViewOnly: true,
     action: { dialog: 'save' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'save'),
   },
   'atom-props': {
@@ -96,8 +99,11 @@ const config: Record<string, UiAction> = {
   undo: {
     shortcut: 'Mod+z',
     title: 'Undo',
-    action: (editor) => {
-      editor.undo();
+    action: {
+      thunk: (_, getState) => {
+        const editor = getState().editor;
+        editor.undo();
+      },
     },
     disabled: (editor) => editor.historySize().undo === 0,
     hidden: (options) => isHidden(options, 'undo'),
@@ -105,8 +111,11 @@ const config: Record<string, UiAction> = {
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
     title: 'Redo',
-    action: (editor) => {
-      editor.redo();
+    action: {
+      thunk: (_, getState) => {
+        const editor = getState().editor;
+        editor.redo();
+      },
     },
     disabled: (editor) => editor.historySize().redo === 0,
     hidden: (options) => isHidden(options, 'redo'),
@@ -129,9 +138,10 @@ const config: Record<string, UiAction> = {
   // This is some dirty trick for `ClipboardControls.tsx` component
   copies: {
     enabledInViewOnly: true,
+    action: () => undefined,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  } as UiAction,
+  },
   copy: {
     shortcut: 'Mod+c',
     enabledInViewOnly: true,
@@ -159,7 +169,7 @@ const config: Record<string, UiAction> = {
     hidden: (options) => isHidden(options, 'copy-image'),
   },
   'copy-mol': {
-    shortcut: 'Mod+m',
+    shortcut: 'Mod+Shift+m',
     enabledInViewOnly: true,
     title: 'Copy as MOL',
     action: () => {
@@ -190,15 +200,13 @@ const config: Record<string, UiAction> = {
         }
       },
     },
-    selected: ({ actions }) =>
-      actions && // TMP
-      actions.active &&
-      actions.active.tool === 'paste',
+    selected: ({ actions }) => actions?.active?.tool === 'paste',
     hidden: (options) => isHidden(options, 'paste'),
   },
   settings: {
     title: 'Settings',
     action: { dialog: 'settings' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'settings'),
   },
   about: {
@@ -222,6 +230,7 @@ const config: Record<string, UiAction> = {
   'extended-table': {
     title: 'Extended Table',
     action: { dialog: 'extended-table' },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'extended-table'),
   },
   'select-all': {
@@ -271,6 +280,7 @@ const config: Record<string, UiAction> = {
         type: 'gen',
       },
     },
+    disabled: (editor) => editor.isMonomerCreationWizardActive,
     hidden: (options) => isHidden(options, 'any-atom'),
   },
   'info-modal': {

@@ -25,6 +25,7 @@ import { groupNameToRnaEditorItemLabel } from './utils';
 import { useAppSelector } from 'hooks';
 import { selectIsEditMode } from 'state/rna-builder';
 import GroupIcon from './GroupIcon';
+import { PropsWithChildren } from 'react';
 
 export const GroupBlockWide = ({
   groupName,
@@ -33,7 +34,8 @@ export const GroupBlockWide = ({
   selected,
   onClick,
   testid,
-}: IGroupBlockProps) => {
+  children,
+}: IGroupBlockProps & PropsWithChildren) => {
   const isEditMode = useAppSelector(selectIsEditMode);
 
   const empty = !monomerName;
@@ -45,15 +47,18 @@ export const GroupBlockWide = ({
       isEditMode={isEditMode}
       data-testid={testid}
     >
-      <GroupIcon name={iconName} selected={selected} empty={empty} />
-      <TextContainer>
-        <GroupName selected={selected}>
-          {groupNameToRnaEditorItemLabel[groupName]}
-        </GroupName>
-        <MonomerName empty={empty} selected={selected}>
-          {monomerName || 'Not selected'}
-        </MonomerName>
-      </TextContainer>
+      <>
+        <GroupIcon name={iconName} selected={selected} empty={empty} />
+        <TextContainer>
+          <GroupName selected={selected}>
+            {groupNameToRnaEditorItemLabel[groupName]}
+          </GroupName>
+          <MonomerName empty={empty} selected={selected}>
+            {monomerName ?? 'Not selected'}
+          </MonomerName>
+        </TextContainer>
+        {children}
+      </>
     </GroupBlockContainer>
   );
 };

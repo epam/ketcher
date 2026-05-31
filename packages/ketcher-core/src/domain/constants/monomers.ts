@@ -31,6 +31,13 @@ export enum StandardAmbiguousRnaBase {
   S = 'S',
 }
 
+export enum StandardAmbiguousPeptide {
+  B = 'B', // Aspartic acid or Asparagine
+  J = 'J', // Leucine or Isoleucine
+  Z = 'Z', // Glutamic acid or Glutamine
+  X = 'X', // Any amino acid (note: also appears in unknownNaturalAnalogues for compatibility)
+}
+
 export const rnaDnaNaturalAnalogues = [
   RnaDnaNaturalAnaloguesEnum.ADENINE,
   RnaDnaNaturalAnaloguesEnum.THYMINE,
@@ -38,6 +45,28 @@ export const rnaDnaNaturalAnalogues = [
   RnaDnaNaturalAnaloguesEnum.CYTOSINE,
   RnaDnaNaturalAnaloguesEnum.URACIL,
 ] as string[];
+
+export const rnaDnaAmbiguousSymbols = [
+  StandardAmbiguousRnaBase.N,
+  StandardAmbiguousRnaBase.B,
+  StandardAmbiguousRnaBase.V,
+  StandardAmbiguousRnaBase.D,
+  StandardAmbiguousRnaBase.H,
+  StandardAmbiguousRnaBase.K,
+  StandardAmbiguousRnaBase.M,
+  StandardAmbiguousRnaBase.W,
+  StandardAmbiguousRnaBase.Y,
+  StandardAmbiguousRnaBase.R,
+  StandardAmbiguousRnaBase.S,
+] as string[];
+
+export const peptideAmbiguousSymbols = [
+  StandardAmbiguousPeptide.B,
+  StandardAmbiguousPeptide.J,
+  StandardAmbiguousPeptide.Z,
+  StandardAmbiguousPeptide.X,
+] as string[];
+
 export const unknownNaturalAnalogues = ['.', 'X'];
 export const peptideNaturalAnalogues = [
   'A',
@@ -80,7 +109,27 @@ export const MONOMER_CONST = {
   PHOSPHATE: 'PHOSPHATE',
 };
 
+export const CREATE_MONOMER_TOOL_NAME = 'create-monomer';
+
 export const MonomerSize = 0.75;
 // Approximately equal to 15px on the screen and widely used as a measure of checking whether two vectors are in proximity
 export const HalfMonomerSize = MonomerSize / 2;
 export const StandardBondLength = MonomerSize * 2;
+
+/**
+ * Classifies monomer library items by chemical role.  Defined here (domain
+ * layer) so that domain entities and helpers can use it without importing from
+ * the application/formatters layer, which would create circular dependencies.
+ */
+export enum KetMonomerClass {
+  AminoAcid = 'AminoAcid',
+  Sugar = 'Sugar',
+  Phosphate = 'Phosphate',
+  Base = 'Base',
+  Terminator = 'Terminator',
+  Linker = 'Linker',
+  Unknown = 'Unknown',
+  CHEM = 'CHEM',
+  RNA = 'RNA',
+  DNA = 'DNA',
+}

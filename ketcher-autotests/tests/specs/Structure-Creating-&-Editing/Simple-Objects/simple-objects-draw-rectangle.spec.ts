@@ -1,15 +1,13 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
-import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
@@ -24,8 +22,8 @@ const setupRectangle = async (page: Page) => {
     x: x + rectangleWidth,
     y: y + rectangleHeight,
   };
-  await clickInTheMiddleOfTheScreen(page);
-  await dragMouseTo(rectangleCoordinates.x, rectangleCoordinates.y, page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, rectangleCoordinates.x, rectangleCoordinates.y);
   return rectangleCoordinates;
 };
 
@@ -49,13 +47,13 @@ async function resizeRectangle(page: Page) {
   const point3 = { x: 880, y: 596 };
   const point4 = { x: 881, y: 174 };
   const point5 = { x: 584, y: 371 };
-  await clickOnCanvas(page, point.x, point.y);
-  await dragMouseTo(point1.x, point1.y, page);
-  await clickOnCanvas(page, point2.x, point2.y);
-  await await dragMouseTo(point3.x, point3.y, page);
-  await clickOnCanvas(page, point4.x, point4.y);
-  await await dragMouseTo(point5.x, point5.y, page);
-  await clickInTheMiddleOfTheScreen(page);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point1.x, point1.y);
+  await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point3.x, point3.y);
+  await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point5.x, point5.y);
+  await clickInTheMiddleOfTheCanvas(page);
 }
 
 async function separetingAndMovingRecatngles(page: Page) {
@@ -65,19 +63,17 @@ async function separetingAndMovingRecatngles(page: Page) {
   const point3 = { x: 817, y: 471 };
   const point4 = { x: 496, y: 280 };
   const point5 = { x: 194, y: 167 };
-  await clickOnCanvas(page, point.x, point.y);
-  await dragMouseTo(point1.x, point1.y, page);
-  await clickOnCanvas(page, point2.x, point2.y);
-  await dragMouseTo(point3.x, point3.y, page);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point1.x, point1.y);
+  await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point3.x, point3.y);
   await takeEditorScreenshot(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await clickInTheMiddleOfTheCanvas(page);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
-  await clickOnCanvas(page, point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await page.mouse.down();
-  await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(page, point5.x, point5.y);
 }
 
 test.describe('Draw Rectangle', () => {
@@ -91,7 +87,7 @@ test.describe('Draw Rectangle', () => {
     // Test case: EPMLSOPKET-1972
 
     const rectangleCoordinates = await setupRectangle(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(rectangleCoordinates.x, rectangleCoordinates.y);
     await takeEditorScreenshot(page);
   });
@@ -103,10 +99,10 @@ test.describe('Draw Rectangle', () => {
     const point = { x: 645, y: 367 };
     const point1 = { x: 759, y: 183 };
     await setupRectangle(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnCanvas(page, point.x, point.y);
-    await dragMouseTo(point1.x, point1.y, page);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -120,8 +116,8 @@ test.describe('Draw Rectangle', () => {
     await selectAllStructuresOnCanvas(page);
     await resizeRectangle(page);
     await createSomeStructure(page);
-    await clickOnCanvas(page, point.x, point.y);
-    await dragMouseTo(point1.x, point1.y, page);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -130,8 +126,8 @@ test.describe('Draw Rectangle', () => {
   }) => {
     // Test case: EPMLSOPKET-1958
     await openFileAndAddToCanvas(
-      'KET/rectangle-test-EPMLSOPKET-1977.ket',
       page,
+      'KET/rectangle-test-EPMLSOPKET-1977.ket',
     );
     await separetingAndMovingRecatngles(page);
     await takeEditorScreenshot(page);

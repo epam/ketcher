@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`AnalyzingFile component should render correctly 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -10,6 +10,7 @@ Object {
       >
         <div
           class="loading-spinner css-rmxyg7"
+          data-testid="loading-spinner"
         >
           <span />
           <span />
@@ -24,6 +25,7 @@ Object {
     >
       <div
         class="loading-spinner css-rmxyg7"
+        data-testid="loading-spinner"
       >
         <span />
         <span />

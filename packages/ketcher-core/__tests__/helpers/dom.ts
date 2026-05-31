@@ -1,3 +1,5 @@
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+
 export const createSvgElement = (qualifiedName: string): SVGElement => {
   return document.createElementNS('http://www.w3.org/2000/svg', qualifiedName);
 };
@@ -32,4 +34,8 @@ export const createPolymerEditorCanvas = (): SVGSVGElement => {
   peptideSymbol.appendChild(peptideBody);
 
   return canvas as SVGSVGElement;
+};
+
+export const createRenderersManager = (theme = {}): RenderersManager => {
+  return new RenderersManager({ theme });
 };

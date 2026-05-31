@@ -1,12 +1,12 @@
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { ScrollOffset } from './scroll-offset';
 import { VerticalScrollbar } from './scrollbar-vertical';
 import { HorizontalScrollbar } from './scrollbar-horizontal';
 
 export class ScrollbarContainer {
-  #scrollOffset: ScrollOffset;
-  #verticalBar: VerticalScrollbar;
-  #horizontalBar: HorizontalScrollbar;
+  readonly #scrollOffset: ScrollOffset;
+  readonly #verticalBar: VerticalScrollbar;
+  readonly #horizontalBar: HorizontalScrollbar;
 
   constructor(render: Render) {
     this.#scrollOffset = new ScrollOffset(render);

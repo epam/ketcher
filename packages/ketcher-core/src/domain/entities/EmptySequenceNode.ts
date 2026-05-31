@@ -1,12 +1,13 @@
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class EmptySequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;
-  public monomer = new EmptyMonomer();
-  constructor() {}
+  public readonly monomer = new EmptyMonomer();
+  // when iterating over large amount of nodes, this saves a lot of GC time
+  private readonly monomersCache = [this.monomer];
 
   public get SubChainConstructor() {
     return EmptySubChain;
@@ -33,7 +34,7 @@ export class EmptySequenceNode {
   }
 
   public get monomers(): BaseMonomer[] {
-    return [this.monomer];
+    return this.monomersCache;
   }
 
   public setRenderer(renderer) {

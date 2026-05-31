@@ -55,19 +55,29 @@ import {
   MultitailArrowClosestItem,
   ReactionArrowClosestItem,
 } from '../arrow/arrow.types';
+import { CommonArrowTool } from '../arrow/commonArrow';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
 import {
   getNewSelectedItems,
   getSelectedAtoms,
   getSelectedBonds,
+  isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
   onSelectionMove,
   onSelectionStart,
   selMerge,
 } from './select.helpers';
-import { SelectMode } from './select.types';
+import {
+  DragContext,
+  isArrowDragContext,
+  isImageSelectionDragContext,
+  isSelectionMoveDragContext,
+  isSimpleObjectSelectionDragContext,
+  SelectMode,
+  SimpleObjectSelectionDragContext,
+} from './select.types';
 import { createCopyOfSelected } from 'src/script/ui/action/createCopyOfSelected';
 
 enum Direction {
@@ -81,14 +91,14 @@ class SelectTool implements Tool {
   readonly #mode: SelectMode;
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
-  private dragCtx: any;
+  private dragCtx: DragContext = null;
   private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
   isReadyForCopy = false;
   isCopied = false;
   readonly isMoving = false;
-  private multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
-  private reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
+  private readonly multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
+  private readonly reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
@@ -125,7 +135,17 @@ class SelectTool implements Tool {
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
     const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
+    // Only auto-expand the selection to the enclosing sgroup(s) when the
+    // clicked item is not already part of the current selection. Otherwise
+    // a click on, say, an inter-monomer bond would overwrite an existing
+    // multi-selection with the atoms/bonds of just the sgroup containing one
+    // of that bond's endpoints, breaking multi-drag.
+    const isClickedItemInSelection =
+      ci && isItemSelected(this.editor.selection(), ci, ctab);
+    if (
+      !isClickedItemInSelection &&
+      (newSelected.atoms?.length || newSelected.bonds?.length)
+    ) {
       this.editor.selection(newSelected);
     }
     const currentPosition = CoordinateTransformation.pageToModel(
@@ -135,7 +155,7 @@ class SelectTool implements Tool {
 
     if (!ci) {
       onSelectionStart(event, this.editor, this.#lassoHelper);
-      return true;
+      return;
     }
 
     if (ci.map === MULTITAIL_ARROW_KEY && ci.ref) {
@@ -184,14 +204,16 @@ class SelectTool implements Tool {
         bonds: rgroup.getBonds(rnd),
       };
     } else if (ci.map === 'sgroupData') {
-      if (isSelected(selection, ci)) return true;
+      if (isSelected(selection, ci)) return;
     }
 
     if (event.shiftKey) {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(isSelected(selection, ci) ? selection : sel);
+      this.editor.selection(
+        isItemSelected(selection, ci, ctab) ? selection : sel,
+      );
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -201,8 +223,6 @@ class SelectTool implements Tool {
     if (isControlKey(event) && this.dragCtx) {
       this.isReadyForCopy = true;
     }
-
-    return true;
   }
 
   mousemove(event: PointerEvent) {
@@ -217,28 +237,24 @@ class SelectTool implements Tool {
       const { action, items } = createCopyOfSelected(editor, point);
       editor.selection(items);
 
-      this.dragCtx.copyAction = action;
+      if (dragCtx) {
+        dragCtx.copyAction = action;
+      }
       this.isCopied = true;
       return;
     }
 
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
-    if (dragCtx?.closestItem) {
+    if (isArrowDragContext(dragCtx)) {
       if (dragCtx.action) {
         dragCtx.action.perform(restruct);
       }
 
-      if (dragCtx.closestItem.map === 'rxnArrows') {
-        this.dragCtx.action = this.reactionArrowMoveTool.mousemove(
-          event,
-          this.dragCtx,
-        );
-      } else if (dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        this.dragCtx.action = this.multitailArrowMoveTool.mousemove(
-          event,
-          this.dragCtx,
-        );
+      if (CommonArrowTool.isDragContextReaction(dragCtx)) {
+        dragCtx.action = this.reactionArrowMoveTool.mousemove(event, dragCtx);
+      } else if (CommonArrowTool.isDragContextMultitail(dragCtx)) {
+        dragCtx.action = this.multitailArrowMoveTool.mousemove(event, dragCtx);
       }
       if (dragCtx.action) {
         editor.update(dragCtx.action, true);
@@ -246,97 +262,106 @@ class SelectTool implements Tool {
       }
     }
 
-    if (dragCtx?.item) {
+    if (isSelectionMoveDragContext(dragCtx)) {
+      const selectionDragCtx = dragCtx;
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
 
       /* handle atoms */
       const shouldDisplayDegree =
-        dragCtx.item.map === 'atoms' &&
-        atoms?.get(dragCtx.item.id)?.neighbors.length === 1 &&
+        selectionDragCtx.item.map === 'atoms' &&
+        atoms?.get(selectionDragCtx.item.id)?.neighbors.length === 1 &&
         selection?.atoms?.length === 1 &&
         !selection.bonds;
       if (shouldDisplayDegree) {
         // moving selected objects
-        const pos = rnd.page2obj(event);
-        const angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+        const pos = CoordinateTransformation.pageToModel(event, rnd);
+        const angle = vectorUtils.calcAngle(selectionDragCtx.xy0, pos);
         const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /* end */
 
       /* handle image resize */
-      if (dragCtx.item.map === IMAGE_KEY && dragCtx.item.ref) {
-        if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
+      if (isImageSelectionDragContext(selectionDragCtx)) {
+        if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
         const position = CoordinateTransformation.pageToModel(event, rnd);
-        dragCtx.action = fromImageResize(
+        selectionDragCtx.action = fromImageResize(
           rnd.ctab,
-          dragCtx.item.id,
+          selectionDragCtx.item.id,
           position,
-          dragCtx.item.ref,
+          selectionDragCtx.item.ref,
         );
-        editor.update(dragCtx.action, true);
+        editor.update(selectionDragCtx.action, true);
         return true;
       }
       /* end + fullstop */
 
       /* handle simpleObjects */
-      if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
-        if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
-        const props = getResizingProps(editor, dragCtx, event);
-        dragCtx.action = fromSimpleObjectResizing(...props, event.shiftKey);
-        editor.update(dragCtx.action, true);
+      if (isSimpleObjectSelectionDragContext(selectionDragCtx)) {
+        if (selectionDragCtx.action) selectionDragCtx.action.perform(rnd.ctab);
+        const props = getResizingProps(editor, selectionDragCtx, event);
+        selectionDragCtx.action = fromSimpleObjectResizing(
+          ...props,
+          event.shiftKey,
+        );
+        editor.update(selectionDragCtx.action, true);
         return true;
       }
       /* end + fullstop */
 
       /* handle functionalGroups */
-      if (dragCtx.item.map === 'functionalGroups' && !dragCtx.action) {
+      if (
+        selectionDragCtx.item.map === 'functionalGroups' &&
+        !selectionDragCtx.action
+      ) {
         editor.event.showInfo.dispatch(null);
       }
       /* end */
 
-      if (dragCtx.action) {
-        dragCtx.action.perform(restruct);
+      if (selectionDragCtx.action) {
+        selectionDragCtx.action.perform(restruct);
       }
 
       const expSel = editor.explicitSelected();
-      dragCtx.action = fromMultipleMove(
+      selectionDragCtx.action = fromMultipleMove(
         restruct,
         expSel,
-        editor.render.page2obj(event).sub(dragCtx.xy0),
+        CoordinateTransformation.pageToModel(event, editor.render).sub(
+          selectionDragCtx.xy0,
+        ),
       );
 
       const visibleSelectedItems = filterNotInContractedSGroup(
         expSel,
         this.editor.struct(),
       );
-      dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
-      editor.hover(getHoverToFuse(dragCtx.mergeItems));
+      selectionDragCtx.mergeItems = getItemsToFuse(
+        editor,
+        visibleSelectedItems,
+      );
+      editor.hover(getHoverToFuse(selectionDragCtx.mergeItems));
 
-      editor.update(dragCtx.action, true);
-      return true;
+      editor.update(selectionDragCtx.action, true);
+    } else {
+      const isSelectionRunning = onSelectionMove(
+        event,
+        this.editor,
+        this.#lassoHelper,
+      );
+      if (!isSelectionRunning) {
+        const maps = getMapsForClosestItem(
+          this.#lassoHelper.fragment || event.altKey,
+        );
+        const item = editor.findItem(event, maps, null);
+        editor.hover(item, null, event);
+        handleMovingPosibilityCursor(
+          item,
+          this.editor.render.paper.canvas,
+          getItemCursor(this.editor.render, item),
+        );
+      }
     }
-
-    const isSelectionRunning = onSelectionMove(
-      event,
-      this.editor,
-      this.#lassoHelper,
-    );
-    if (isSelectionRunning) {
-      return true;
-    }
-
-    const maps = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.altKey,
-    );
-    const item = editor.findItem(event, maps, null);
-    editor.hover(item, null, event);
-    handleMovingPosibilityCursor(
-      item,
-      this.editor.render.paper.canvas,
-      getItemCursor(this.editor.render, item),
-    );
 
     return true;
   }
@@ -352,13 +377,14 @@ class SelectTool implements Tool {
     const selected = editor.selection();
     const struct = editor.render.ctab;
     const molecule = struct.molecule;
+    const dragCtx = this.dragCtx;
 
     // add all items of all selectedSGroups to selection
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
 
-    if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
+    if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     /* ignore salts and solvents */
     const possibleSaltOrSolvent = struct.sgroups.get(
@@ -371,40 +397,38 @@ class SelectTool implements Tool {
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
       !FunctionalGroup.isFunctionalGroup(possibleSaltOrSolvent?.item);
     if (
-      this.dragCtx &&
+      dragCtx &&
       (isDraggingCustomSgroupOnStructure ||
         isDraggingSaltOrSolventOnStructure ||
-        this.isDraggingStructureOnSaltOrSolvent(this.dragCtx, struct.sgroups))
+        this.isDraggingStructureOnSaltOrSolvent(dragCtx, struct.sgroups))
     ) {
-      preventSaltAndSolventsMerge(struct, this.dragCtx, editor);
-      delete this.dragCtx;
+      preventSaltAndSolventsMerge(struct, dragCtx, editor);
+      this.dragCtx = null;
     }
     /* end */
-    if (this.dragCtx?.closestItem) {
-      if (this.dragCtx.closestItem.map === 'rxnArrows') {
-        this.dragCtx.action = this.reactionArrowMoveTool.mouseup(
-          event,
-          this.dragCtx,
-        );
-      } else if (this.dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        this.dragCtx.action = this.multitailArrowMoveTool.mouseup(
-          event,
-          this.dragCtx,
-        );
+    if (isArrowDragContext(dragCtx)) {
+      if (CommonArrowTool.isDragContextReaction(dragCtx)) {
+        dragCtx.action = this.reactionArrowMoveTool.mouseup(event, dragCtx);
+      } else if (CommonArrowTool.isDragContextMultitail(dragCtx)) {
+        dragCtx.action = this.multitailArrowMoveTool.mouseup(event, dragCtx);
       }
-      if (this.dragCtx.action) {
-        this.editor.update(this.dragCtx.action);
+      if (dragCtx.action) {
+        this.editor.update(dragCtx.action);
         this.editor.update(true);
       }
+      this.dragCtx = null;
+      editor.event.message.dispatch({ info: false });
+      this.editor.rotateController.rerender();
+      return;
     }
 
-    if (this.dragCtx?.item) {
-      if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
+    if (isSelectionMoveDragContext(dragCtx)) {
+      if (!isMergingToMacroMolecule(this.editor, dragCtx)) {
         dropAndMerge(
           editor,
-          this.dragCtx.mergeItems,
-          this.dragCtx.action,
-          this.dragCtx.copyAction,
+          dragCtx.mergeItems,
+          dragCtx.action,
+          dragCtx.copyAction,
         );
       }
     } else {
@@ -429,9 +453,9 @@ class SelectTool implements Tool {
       null,
     );
 
-    const atomResult: any[] = [];
-    const bondResult: any[] = [];
-    const result: any[] = [];
+    const atomResult: number[] = [];
+    const bondResult: number[] = [];
+    const result: number[] = [];
     if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
@@ -445,7 +469,6 @@ class SelectTool implements Tool {
           atomFromStruct,
           sgroups,
           functionalGroups,
-          true,
         )
       )
         atomResult.push(atomId);
@@ -502,7 +525,7 @@ class SelectTool implements Tool {
       const atoms = getSelectedAtoms(selection, molecule);
       const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
       updateSelectedAtoms({
-        atoms: selection?.atoms || [],
+        atoms: selection?.atoms ?? [],
         editor,
         changeAtomPromise,
       });
@@ -510,7 +533,7 @@ class SelectTool implements Tool {
       const bonds = getSelectedBonds(selection, molecule);
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
-        bonds: selection?.bonds || [],
+        bonds: selection?.bonds ?? [],
         changeBondPromise,
         editor,
       });
@@ -545,21 +568,21 @@ class SelectTool implements Tool {
   }
 
   mouseleave() {
-    if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping();
+    if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 
-    if (this.dragCtx && this.dragCtx.action) {
+    if (this.dragCtx?.action) {
       const action = this.dragCtx.action;
       this.editor.update(action);
     }
     onSelectionLeave(this.editor, this.#lassoHelper);
 
-    delete this.dragCtx;
+    this.dragCtx = null;
 
     this.editor.hover(null);
   }
 
   private isDraggingStructureOnSaltOrSolvent(
-    dragCtx,
+    dragCtx: Pick<NonNullable<DragContext>, 'mergeItems'> | null | undefined,
     sgroups: Map<number, ReSGroup>,
   ) {
     let isDraggingOnSaltOrSolventAtom;
@@ -667,14 +690,12 @@ function closestToSel(ci) {
 }
 
 function isSelected(selection, item) {
-  return (
-    selection && selection[item.map] && selection[item.map].includes(item.id)
-  );
+  return selection?.[item.map]?.includes(item.id) ?? false;
 }
 
 function preventSaltAndSolventsMerge(
   struct: ReStruct,
-  dragCtx,
+  dragCtx: Pick<NonNullable<DragContext>, 'action' | 'mergeItems'>,
   editor: Editor,
 ) {
   const action = dragCtx.action
@@ -710,10 +731,16 @@ function getMapsForClosestItem(selectFragment: boolean) {
 
 function getResizingProps(
   editor: Editor,
-  dragCtx,
-  event,
-): [ReStruct, number, Vec2, Vec2, any] {
-  const current = editor.render.page2obj(event);
+  dragCtx: SimpleObjectSelectionDragContext,
+  event: PointerEvent,
+): [
+  ReStruct,
+  number,
+  Vec2,
+  Vec2,
+  NonNullable<SimpleObjectSelectionDragContext['item']['ref']>,
+] {
+  const current = CoordinateTransformation.pageToModel(event, editor.render);
   const diff = current.sub(dragCtx.xy0);
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }

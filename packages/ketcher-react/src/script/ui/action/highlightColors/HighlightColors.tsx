@@ -11,20 +11,29 @@ import { Item, Submenu } from 'react-contexify';
 
 interface HighlightMenuProps {
   onHighlight: (color: string) => void;
+  disabled?: boolean;
 }
 
-const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight }) => {
+const HighlightMenu: FC<HighlightMenuProps> = ({ onHighlight, disabled }) => {
   return (
-    <Submenu label="Highlight">
+    <Submenu
+      data-testid="Highlight-option"
+      label="Highlight"
+      disabled={disabled}
+    >
       <ColorContainer>
         {standardColors.map((color) => (
-          <ColorItem key={color.name} onClick={() => onHighlight(color.value)}>
+          <ColorItem
+            key={color.name}
+            data-testid={`${color.name}-option`}
+            onClick={() => onHighlight(color.value)}
+          >
             <ColorSquare color={color.value} />
           </ColorItem>
         ))}
       </ColorContainer>
       <Divider />
-      <Item onClick={() => onHighlight('')}>
+      <Item data-testid="No highlight-option" onClick={() => onHighlight('')}>
         <div
           style={{
             marginLeft: '-10px',

@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer: BaseMonomer) {
@@ -38,6 +38,7 @@ export class MonomerMicromolecule extends SGroup {
   public static clone(
     monomerMicromolecule: MonomerMicromolecule,
     atomIdMap?: Map<number, number>,
+    needCloneAttachmentPoints = false,
   ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
@@ -48,6 +49,13 @@ export class MonomerMicromolecule extends SGroup {
       ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
       : monomerMicromolecule.atoms;
     monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
+    monomerMicromoleculeClone.data.name = monomerMicromolecule.data.name;
+    if (needCloneAttachmentPoints && atomIdMap) {
+      monomerMicromoleculeClone.addAttachmentPoints(
+        monomerMicromolecule.cloneAttachmentPoints(atomIdMap),
+        false,
+      );
+    }
 
     return monomerMicromoleculeClone;
   }

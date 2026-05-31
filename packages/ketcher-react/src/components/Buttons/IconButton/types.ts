@@ -36,6 +36,7 @@ type IIconButtonBasePropsWithoutChildren = Omit<
 
 export interface IIconButtonProps extends IIconButtonBasePropsWithoutChildren {
   iconName: IconName;
+  testid?: string;
 }
 
 export interface IIconButtonCustomIconProps

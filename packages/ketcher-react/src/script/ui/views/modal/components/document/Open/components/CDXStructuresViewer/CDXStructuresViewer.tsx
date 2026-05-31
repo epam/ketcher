@@ -30,7 +30,6 @@ import { editorOptionsSelector } from '../../../../../../../state/editor/selecto
 export type CDXStructuresViewerProps = {
   structList?: string[];
   inputHandler: (str: string) => void;
-  structStr: string;
   fileName: string;
 };
 
@@ -125,6 +124,7 @@ export const CDXStructuresViewer = ({
             {structList.map((value, index) => (
               <MenuItem
                 key={value + index}
+                data-testid={`cdx-structure-${index + 1}`}
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >

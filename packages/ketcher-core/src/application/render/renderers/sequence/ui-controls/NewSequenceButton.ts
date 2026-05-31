@@ -1,6 +1,7 @@
-import { BaseSequenceItemRenderer, SequenceRenderer } from 'application/render';
-import { D3SvgElementSelection } from 'application/render/types';
-import { CoreEditor } from 'application/editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
+import type { D3SvgElementSelection } from 'application/render/types';
 import ZoomTool from '../../../../editor/tools/Zoom';
 import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';
@@ -14,18 +15,18 @@ const RECT_MAX_WIDTH = 620;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
-  private canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  private readonly canvas: D3SvgElementSelection<SVGGElement, void>;
   private rootElement?: D3SvgElementSelection<SVGGElement, void>;
   private bodyElement?: D3SvgElementSelection<SVGForeignObjectElement, void>;
 
-  constructor(private indexOfRowBefore: number) {
+  constructor(private readonly indexOfRowBefore: number) {
     this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
   public show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const chain =
-      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
+      sequenceRendererStore.sequenceViewModel.chains[this.indexOfRowBefore];
     const lastNodeRendererInChain =
       chain.lastNode?.antisenseNode?.renderer ||
       chain.lastNode?.senseNode?.renderer;
@@ -52,7 +53,11 @@ export class NewSequenceButton {
       void
     >;
 
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement.attr('opacity', '0');
+    this.rootElement.append('title').text('Add sequence here');
+
     this.rootElement
       .append('rect')
       .attr('x', '16')
@@ -133,11 +138,17 @@ export class NewSequenceButton {
     this.buttonElement?.style('color', HOVER_COLOR);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
-  drawSelection(): void {}
+  drawSelection(): void {
+    // intentional no-op: this renderer type does not render a selection view
+  }
 
-  moveSelection(): void {}
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
   protected removeHover(): void {
     this.buttonElement?.style('color', TEXT_COLOR);

@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -511,6 +512,8 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
+        "aliasHELM": "p",
+        "aliasAxoLabs": "p",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -534,8 +537,8 @@
         "idtAliases": {
             "base": "Phos",
             "modifications": {
-                "endpoint3": "3Phos",
-                "endpoint5": "5Phos"
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
             }
         },
         "naturalAnalogShort": "P"
@@ -888,6 +891,8 @@
         "id": "P___Proline",
         "fullName": "Proline",
         "alias": "P",
+        "aliasHELM": "P",
+        "aliasBILN": "P",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -907,6 +912,9 @@
                 },
                 "type": "right"
             }
+        ],
+        "modificationTypes": [
+            "Natural amino acid"
         ],
         "naturalAnalogShort": "P"
     },

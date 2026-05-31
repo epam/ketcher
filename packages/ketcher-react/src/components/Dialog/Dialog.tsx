@@ -14,18 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname';
-
 import {
   FC,
   PropsWithChildren,
   ReactElement,
+  useEffect,
   useLayoutEffect,
   useRef,
 } from 'react';
 
 import clsx from 'clsx';
-import { Icon } from 'components';
+import { Icon } from '../Icon';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
@@ -42,9 +41,10 @@ export interface DialogParams extends DialogParamsCallProps {
 
 interface DialogProps {
   title?: string;
-  params: DialogParams;
+  params?: DialogParams;
   buttons?: Array<string | ReactElement>;
   className?: string;
+  testId?: string;
   needMargin?: boolean;
   withDivider?: boolean;
   headerContent?: ReactElement;
@@ -53,6 +53,7 @@ interface DialogProps {
     [key in string]: string;
   };
   focusable?: boolean;
+  primaryButtons?: string[];
 }
 
 interface DialogCallProps {
@@ -73,30 +74,63 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     headerContent,
     footerContent,
     className,
+    testId: _testId,
     buttonsNameMap,
     needMargin = true,
     withDivider = false,
     focusable = true,
+    primaryButtons,
     ...rest
   } = props;
-  const dialogRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useLayoutEffect(() => {
-    if (focusable) {
-      (dialogRef.current as HTMLElement).focus();
+    const dialogElement = dialogRef.current;
+
+    // Use document.querySelector rather than dialogElement.closest() because
+    // in popup mode the native <dialog> lives inside a MUI portal appended to
+    // document.body — outside the .Ketcher-root subtree — so closest() returns
+    // null and clipArea would be undefined.
+    const clipArea = document.querySelector(
+      `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${CLIP_AREA_BASE_CLASS}`,
+    ) as HTMLElement | null;
+
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (focusable && dialogElement) {
+      timeoutId = setTimeout(() => {
+        (dialogElement as HTMLElement).focus();
+      }, 0);
     }
 
     return () => {
-      (
-        dialogRef.current
-          ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
-          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
-      ).focus();
+      // Cancel the pending focus-on-open timeout so it cannot fire after
+      // unmount and focus a detached element.
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      // Defer focus restoration so the browser can first move focus to
+      // document.body naturally (when the <dialog> DOM node is removed).
+      // That fires a native focusin on body which triggers MUI FocusTrap's
+      // contain() with activeElement outside the trap, causing it to clear its
+      // reactFocusEventTarget ref. If we focused clipArea synchronously here,
+      // contain() would see focus is still inside the trap and short-circuit —
+      // leaving reactFocusEventTarget pointing at the detached close button
+      // (memory leak in popup mode).
+      setTimeout(() => {
+        clipArea?.focus();
+      }, 0);
     };
   }, [focusable]);
 
   const isButtonOk = (button) => {
     return button === 'OK' || button === 'Save';
+  };
+
+  const isPrimary = (button) => {
+    if (primaryButtons && primaryButtons.length > 0) {
+      return primaryButtons.includes(button);
+    }
+    return isButtonOk(button);
   };
 
   const exit = (mode) => {
@@ -106,25 +140,40 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     }
   };
 
-  const keyDown = (event) => {
-    const key = KN.keyName(event);
-    const active = document.activeElement;
-    const activeTextarea = active && active.tagName === 'TEXTAREA';
-    if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel');
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  };
+  useEffect(() => {
+    const keyDown = (event: KeyboardEvent) => {
+      const isFocusInsideDialog = dialogRef.current?.contains(
+        document.activeElement,
+      );
+
+      if (!isFocusInsideDialog) {
+        return;
+      }
+
+      const { key } = event;
+      const active = document.activeElement;
+      const activeTextarea = active?.tagName === 'TEXTAREA';
+      if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
+        exit(key === 'Enter' ? 'OK' : 'Cancel');
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener('keydown', keyDown);
+
+    return () => {
+      document.removeEventListener('keydown', keyDown);
+    };
+  });
 
   return (
-    <div
+    <dialog
       ref={dialogRef}
-      role="dialog"
-      onSubmit={(event) => event.preventDefault()}
-      onKeyDown={keyDown}
+      open
+      data-testid={'info-modal-window'}
       tabIndex={-1}
-      className={clsx(styles.dialog, className, params.className)}
+      className={clsx(styles.dialog, className, params?.className)}
       {...rest}
     >
       <header
@@ -141,7 +190,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
           </button>
         </div>
       </header>
-      <div className={clsx(styles.body, needMargin && styles.withMargin)}>
+      <div
+        className={clsx(styles.body, needMargin && styles.withMargin)}
+        data-testid={'info-modal-body'}
+      >
         {children}
       </div>
 
@@ -157,14 +209,10 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   key={button}
                   type="button"
                   className={clsx(
-                    isButtonOk(button) ? styles.ok : styles.cancel,
+                    isPrimary(button) ? styles.ok : styles.cancel,
                     button === 'Save' && styles.save,
                   )}
-                  value={
-                    buttonsNameMap && buttonsNameMap[button]
-                      ? buttonsNameMap[button]
-                      : button
-                  }
+                  value={buttonsNameMap?.[button] ?? button}
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
                   data-testid={button}
@@ -173,6 +221,6 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
             )}
         </footer>
       )}
-    </div>
+    </dialog>
   );
 };

@@ -1,69 +1,27 @@
-import { Page, test, expect } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { test, expect } from '@fixtures';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import {
-  BottomToolbar,
-  openStructureLibrary,
-} from '@tests/pages/molecules/BottomToolbar';
-import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
-  FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  pressButton,
-  selectAllStructuresOnCanvas,
-  selectFunctionalGroups,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
-
-async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Stereochemistry', { exact: true }).click();
-  await page.getByTestId('stereo-label-style-input-span').click();
-  // Using "On" label style, to always show the stereo labels, so we can see the difference
-  await page.getByRole('option', { name: 'On' }).click();
-  await pressButton(page, 'Apply');
-}
-
-async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Stereochemistry', { exact: true }).click();
-
-  const checkLocator = page.getByText('Ignore the chiral flag');
-  const isChecked = await checkLocator.isChecked();
-  if (isChecked !== newSetting) {
-    await checkLocator.click();
-  }
-  await pressButton(page, 'Apply');
-}
-
-async function placePhenylalanineMustard(page: Page, x: number, y: number) {
-  await BottomToolbar(page).StructureLibrary();
-  const phenylalanineLocator = page.locator(
-    `div[title*="Phenylalanine mustard"] > div`,
-  );
-  if ((await phenylalanineLocator.count()) === 0) {
-    await page.getByText('Aromatics').click();
-  }
-  await waitForRender(page, async () => {
-    await phenylalanineLocator.first().click();
-    await clickOnCanvas(page, x, y);
-  });
-}
-
-async function editAndClearTemplateName(
-  page: Page,
-  templateCategory: string,
-  templateName: string,
-) {
-  await editStructureTemplate(page, templateCategory, templateName);
-  await page.getByTestId('name-input').click();
-  await selectAllStructuresOnCanvas(page);
-  await page.keyboard.press('Delete');
-}
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import {
+  LabelDisplayAtStereogenicCentersOption,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  AromaticsTemplate,
+  BetaDSugarsTemplate,
+  FunctionalGroupsTabItems,
+  TemplateLibraryTab,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
 
 test.describe('Templates - Template Library', () => {
   test.beforeEach(async ({ page }) => {
@@ -78,20 +36,35 @@ test.describe('Templates - Template Library', () => {
     const offsetX = 300;
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-    await setDisplayStereoFlagsSettingToOn(page);
+    // Using "On" label style, to always show the stereo labels, so we can see the difference
+    await setSettingsOption(
+      page,
+      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+      LabelDisplayAtStereogenicCentersOption.On,
+    );
 
-    await setIgnoreChiralFlagSetting(page, true);
-    await placePhenylalanineMustard(page, x - offsetX, y);
-
-    await setIgnoreChiralFlagSetting(page, false);
-    await placePhenylalanineMustard(page, x + offsetX, y);
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
+    await clickOnCanvas(page, x - offsetX, y, { from: 'pageTopLeft' });
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
+    await clickOnCanvas(page, x + offsetX, y, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
   test('Structure Library UI', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Overview Templates Library structure
-    await openStructureLibrary(page);
+
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -113,7 +86,7 @@ test.describe('Templates - Template Library', () => {
     const deltaY = 220;
     const anyX = 638;
     const anyY = 524;
-    await openStructureLibrary(page);
+    await BottomToolbar(page).structureLibrary();
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
       await page.mouse.move(anyX, anyY);
@@ -125,25 +98,36 @@ test.describe('Templates - Template Library', () => {
   test('Functional groups tab', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Verify Functional Group tab
-    await openFunctionalGroup(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).switchToFunctionalGroupTab();
     await takeEditorScreenshot(page);
   });
 
   test('Functional groups - adding structure', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Add structure from Functional Group into canvas
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
   test('Edit templates - name with just spaces', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('name-input').fill('   ');
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
-    await page.getByText('β-D-Sugars').click();
+    const inputText = '   ';
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).edit();
+    await StructureLibraryDialog(page).openTemplateLibrarySection(
+      TemplateLibraryTab.BetaDSugars,
+    );
     await takeEditorScreenshot(page);
   });
 });
@@ -156,25 +140,36 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
     await getEditorScreenshot(page);
   });
 
   test('Edit templates - name field with no character', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
     await getEditorScreenshot(page);
   });
 
-  test('Text field 128 characters limit test ', async ({ page }) => {
+  test('Text field 128 characters limit test', async ({ page }) => {
     // Verify maximum character validation on the name field
-    const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
     await waitForRender(page, async () => {
-      await textField.type(inputText);
+      await TemplateEditDialog(page).setMoleculeName(inputText);
     });
     await getEditorScreenshot(page);
   });

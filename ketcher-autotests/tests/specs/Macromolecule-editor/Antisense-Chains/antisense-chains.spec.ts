@@ -1,27 +1,27 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
-  selectAllStructuresOnCanvas,
-  ZoomInByKeyboard,
+  zoomInByKeyboard,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
   pasteFromClipboardByKeyboard,
   dragMouseTo,
-  selectSequenceLayoutModeTool,
-  selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   MonomerType,
+  MolFileFormat,
+  deleteByKeyboard,
+  clickOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
 import {
   createDNAAntisenseChain,
@@ -36,48 +36,40 @@ import {
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Sugars } from '@constants/monomers/Sugars';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Bases } from '@constants/monomers/Bases';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Chem } from '@constants/monomers/Chem';
-import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import {
+  MonomerOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSnakeLayoutModeTool(page);
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
-
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorOptions: MonomerLocatorOptions,
-) {
-  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
-  await canvasLocator.click({ button: 'right', force: true });
-}
 
 interface IMonomer {
   monomerDescription: string;
-  contentType: MacroFileType.Ket | MacroFileType.HELM;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
   KETFile?: string;
   HELMString?: string;
   eligibleForAntisense: boolean;
@@ -107,7 +99,7 @@ async function loadMonomerOnCanvas(
     );
   }
   if (monomer.KETFile) {
-    await openFileAndAddToCanvasMacro(monomer.KETFile, page);
+    await openFileAndAddToCanvasMacro(page, monomer.KETFile);
   }
 }
 
@@ -118,7 +110,7 @@ const monomers: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.A,
+    monomerLocatorOptions: Peptide.A,
     unsplitNucleotide: false,
   },
   {
@@ -128,7 +120,7 @@ const monomers: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.X,
+    monomerLocatorOptions: Peptide.X,
     unsplitNucleotide: false,
   },
   {
@@ -156,12 +148,12 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '5. Sugar R (from library)',
+    monomerDescription: '5. Sugar r (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R}$$$$V2.0',
+    HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Sugars.R,
+    monomerLocatorOptions: Sugar.R,
     unsplitNucleotide: false,
   },
   {
@@ -190,46 +182,46 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '8. Base A (from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '9. Ambiguous DNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '10. Ambiguous RNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/10. Ambiguous RNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '11. Ambiguous Base M (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/11. Ambiguous Base M (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '12. Ambiguous DNA Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/12. Ambiguous DNA Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -241,7 +233,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '13. Ambiguous RNA Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/13. Ambiguous RNA Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -253,7 +245,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '14. Ambiguous Base % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/14. Ambiguous Base % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -264,17 +256,17 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '15. Phosphate P (from library)',
+    monomerDescription: '15. Phosphate p (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Phosphates.P,
+    monomerLocatorOptions: Phosphate.P,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '16. Ambiguous phosphate % (alternatives)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/16. Ambiguous phosphate % (alternatives).ket',
     eligibleForAntisense: false,
@@ -287,7 +279,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '17. Ambiguous phosphate % (mixture)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/17. Ambiguous phosphate % (mixture).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -303,14 +295,14 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6840',
     unsplitNucleotide: true,
   },
   {
     monomerDescription: '19. Unknown monomer',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -366,12 +358,12 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '24. Nucleoside - R(A)',
+    monomerDescription: '24. Nucleoside - r(A)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
@@ -381,7 +373,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -393,48 +385,48 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '27. Nucleoside with ambuguous alternative DNA base N - R(A,C,G,T)',
+      '27. Nucleoside with ambuguous alternative DNA base N - r(A,C,G,T)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,T)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '28. Nucleoside with ambuguous alternative RNA base N - R(A,C,G,U)',
+      '28. Nucleoside with ambuguous alternative RNA base N - r(A,C,G,U)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,U)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6149',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '29. Nucleoside with ambuguous alternative base M - R(A,C)',
+      '29. Nucleoside with ambuguous alternative base M - r(A,C)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C)}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '30. Nucleoside with ambuguous mixture RNA base - R(A+C+G+T)',
+      '30. Nucleoside with ambuguous mixture RNA base - r(A+C+G+T)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C+G+T)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C+G+T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: false,
     monomerLocatorOptions: {
@@ -447,9 +439,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '31. Nucleoside with ambuguous mixture DNA base - R(A+C+G+U)',
+      '31. Nucleoside with ambuguous mixture DNA base - r(A+C+G+U)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C+G+U)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C+G+U)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
     eligibleForAntisense: false,
     monomerLocatorOptions: {
@@ -461,9 +453,9 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '32. Nucleoside with ambuguous mixture base - R(A+C)',
+    monomerDescription: '32. Nucleoside with ambuguous mixture base - r(A+C)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A+C)}$$$$V2.0',
+    HELMString: 'RNA1{r(A+C)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -475,46 +467,46 @@ const monomers: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '33. Nucleotide A - R(A)P',
+    monomerDescription: '33. Nucleotide A - r(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '34. Nucleotide A with ambiguous alternative phosphate - R(A)([bnn],[bP])',
+      '34. Nucleotide A with ambiguous alternative phosphate - r(A)([bnn],[bP])',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)([bnn],[bP])}$$$$V2.0',
+    HELMString: 'RNA1{r(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6090',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '35. Nucleotide A with ambiguous mixture phosphate - R(A)([bnn]+[bP])',
+      '35. Nucleotide A with ambiguous mixture phosphate - r(A)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)([bnn]+[bP])}$$$$V2.0',
+    HELMString: 'RNA1{r(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6090',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '36. Nucleotide of base A with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A)P',
+      '36. Nucleotide of base A with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -526,7 +518,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -534,12 +526,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '38. Nucleotide of base A with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A)P',
+      '38. Nucleotide of base A with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -551,7 +543,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -564,7 +556,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -577,7 +569,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -585,12 +577,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '42. Nucleotide of DNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,T)P',
+      '42. Nucleotide of DNA base N with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -602,7 +594,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -610,12 +602,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '44. Nucleotide of DNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,T)P',
+      '44. Nucleotide of DNA base N with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -627,7 +619,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -640,7 +632,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -653,7 +645,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -661,12 +653,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '48. Nucleotide of RNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,U)P',
+      '48. Nucleotide of RNA base N with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C,G,U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -678,7 +670,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -686,12 +678,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '50. Nucleotide of RNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,U)P',
+      '50. Nucleotide of RNA base N with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A,C,G,U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -703,7 +695,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -716,7 +708,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -729,7 +721,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.RNA_N,
+    monomerLocatorOptions: Base.RNA_N,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -737,12 +729,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '54. Nucleotide of alternative base M with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C)P',
+      '54. Nucleotide of alternative base M with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A,C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A,C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -754,7 +746,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -762,12 +754,12 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '56. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)P',
+      '56. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A,C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -779,7 +771,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -792,7 +784,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -805,7 +797,7 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.M,
+    monomerLocatorOptions: Base.M,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
@@ -813,9 +805,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '60. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A+C+G+T)P',
+      '60. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A+C+G+T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -843,9 +835,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '62. Nucleotide of mixed DNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C+G+T)P',
+      '62. Nucleotide of mixed DNA base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C+G+T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -903,9 +895,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '66. Nucleotide of mixed RNA base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A+C+G+U)P',
+      '66. Nucleotide of mixed RNA base % with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A+C+G+U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -933,9 +925,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '68. Nucleotide of mixed RNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C+G+U)P',
+      '68. Nucleotide of mixed RNA base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C+G+U)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -993,9 +985,9 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '72. Nucleotide of mixed base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A+C)P',
+      '72. Nucleotide of mixed base % with ambiguous alternative sugar and phosphate p - ([25moe3],[5A6])(A+C)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{([25moe3],[5A6])(A+C)P}$$$$V2.0',
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C)p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1023,7 +1015,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '74. Nucleotide of mixed base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A+C)P',
+      '74. Nucleotide of mixed base % with ambiguous mixed sugar and phosphate p - ([25moe3]+[5A6])(A+C)p',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C)([bnn],[bP])}$$$$V2.0',
     eligibleForAntisense: false,
@@ -1104,21 +1096,15 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
 
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
-    await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, monomer.monomerLocatorOptions);
-
-    const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-
-    // Checking presence of Create Antisense Strand option on the context menu and enabled
-    await expect(createAntisenseStrandOption).toHaveCount(1);
-    await expect(createAntisenseStrandOption).toHaveAttribute(
-      'aria-disabled',
-      'false',
+    const monomerLocator = getMonomerLocator(
+      page,
+      monomer.monomerLocatorOptions,
     );
 
-    await createAntisenseStrandOption.click();
+    await selectAllStructuresOnCanvas(page);
+    await ContextMenu(page, monomerLocator).click(
+      MonomerOption.CreateAntisenseRNAStrand,
+    );
     await takeEditorScreenshot(page);
   });
 }
@@ -1145,43 +1131,43 @@ for (const monomer of monomers.filter(
     );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
+    const monomerLocator = getMonomerLocator(
+      page,
+      monomer.monomerLocatorOptions,
+    );
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, monomer.monomerLocatorOptions);
-
-    const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-    const createAntisenseStrandOptionPresent =
-      (await createAntisenseStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseStrandOptionPresent).toBeTruthy();
-    if (createAntisenseStrandOptionPresent) {
-      await expect(createAntisenseStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    expect(
+      await ContextMenu(page, monomerLocator).isOptionVisible(
+        MonomerOption.CreateAntisenseRNAStrand,
+      ),
+    ).toBeTruthy();
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(page, monomerLocator).isOptionEnabled(
+        MonomerOption.CreateAntisenseRNAStrand,
+      ),
+    ).toBeFalsy();
   });
 }
 
 const chainWithExtraBondToBase: IMonomer[] = [
   {
     monomerDescription:
-      '1. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '1. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '2. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '2. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1194,10 +1180,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '3. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '3. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1210,21 +1196,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '4. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '4. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '5. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '5. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1237,10 +1223,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '6. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '6. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1253,21 +1239,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '7. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '7. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '8. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '8. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1280,10 +1266,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '9. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '9. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1296,21 +1282,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '10. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '10. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '11. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+      '11. Nucleoside of sugar r, ambiguous alternative base that have extra covalent bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1323,10 +1309,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '12. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+      '12. Nucleoside of sugar r, ambiguous mixed base that have extra covalent bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1362,7 +1348,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1375,7 +1361,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1456,7 +1442,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1469,7 +1455,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1550,7 +1536,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1563,7 +1549,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1644,7 +1630,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1657,7 +1643,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -1715,10 +1701,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '37. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '37. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1732,10 +1718,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '38. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '38. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1749,23 +1735,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '39. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '39. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '40. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '40. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1779,10 +1765,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '41. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '41. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1796,23 +1782,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '42. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '42. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '43. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '43. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1826,10 +1812,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '44. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '44. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1843,23 +1829,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '45. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '45. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '46. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '46. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1873,10 +1859,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '47. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '47. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1890,34 +1876,34 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '48. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '48. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '49. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '49. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '50. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '50. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1930,10 +1916,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '51. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '51. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1946,21 +1932,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '52. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '52. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '53. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '53. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1973,10 +1959,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '54. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '54. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -1989,21 +1975,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '55. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '55. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '56. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '56. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2016,10 +2002,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '57. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '57. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2032,21 +2018,21 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '58. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '58. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '59. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+      '59. Nucleoside of sugar r, ambiguous alternative base that have extra hydrogen bond - r([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2059,10 +2045,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '60. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+      '60. Nucleoside of sugar r, ambiguous mixed base that have extra hydrogen bond - r([nC6n8A]+[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2098,7 +2084,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2111,7 +2097,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2191,7 +2177,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2204,7 +2190,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2285,7 +2271,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2298,7 +2284,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2379,7 +2365,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2392,7 +2378,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
       'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2450,10 +2436,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '85. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '85. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2467,10 +2453,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '86. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '86. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2484,23 +2470,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '87. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '87. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '88. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '88. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2513,10 +2499,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '89. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '89. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2530,23 +2516,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '90. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '90. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '91. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '91. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2559,10 +2545,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '92. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '92. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2576,23 +2562,23 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '93. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '93. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '94. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+      '94. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A],[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2605,10 +2591,10 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '95. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+      '95. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorOptions: {
@@ -2621,13 +2607,13 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '96. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+      '96. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate p- ([25moe3],[5A6])([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{([25moe3],[5A6])([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6091',
     unsplitNucleotide: false,
@@ -2654,22 +2640,22 @@ for (const chain of chainWithExtraBondToBase) {
     );
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+    const monomerLocator = getMonomerLocator(
+      page,
+      chain.monomerLocatorOptions,
+    ).first();
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-    const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-    const createAntisenseStrandOptionPresent =
-      (await createAntisenseStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseStrandOptionPresent).toBeTruthy();
-    if (createAntisenseStrandOptionPresent) {
-      await expect(createAntisenseStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    expect(
+      await ContextMenu(page, monomerLocator).isOptionVisible(
+        MonomerOption.CreateAntisenseRNAStrand,
+      ),
+    ).toBeTruthy();
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(page, monomerLocator).isOptionEnabled(
+        MonomerOption.CreateAntisenseRNAStrand,
+      ),
+    ).toBeFalsy();
   });
 }
 
@@ -2680,7 +2666,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.A,
+    monomerLocatorOptions: Peptide.A,
     unsplitNucleotide: false,
   },
   {
@@ -2690,45 +2676,49 @@ const shortMonomerList: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Peptides.X,
+    monomerLocatorOptions: Peptide.X,
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '3. Sugar R (from library)',
+    monomerDescription: '3. Sugar r (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R}$$$$V2.0',
+    HELMString: 'RNA1{r}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Sugars.R,
+    monomerLocatorOptions: Sugar.R,
     unsplitNucleotide: false,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     monomerDescription: '4. Base A (from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription: '5. Ambiguous DNA Base N (alternatives, from library)',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile:
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '6. Phosphate P (from library)',
+    monomerDescription: '6. Phosphate p (from library)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{P}$$$$V2.0',
+    HELMString: 'RNA1{p}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Phosphates.P,
+    monomerLocatorOptions: Phosphate.P,
     unsplitNucleotide: false,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
   },
   {
     monomerDescription: '7. Unsplit monomer 2-damdA (from library)',
@@ -2736,14 +2726,14 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: Nucleotides._2_damdA,
+    monomerLocatorOptions: Nucleotide._2_damdA,
     unsplitNucleotide: true,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6735',
   },
   {
     monomerDescription: '8. Unknown monomer',
-    contentType: MacroFileType.Ket,
+    contentType: MacroFileType.KetFormat,
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
@@ -2763,75 +2753,75 @@ const shortMonomerList: IMonomer[] = [
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '10. Nucleoside - R(A)',
+    monomerDescription: '10. Nucleoside - r(A)',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    HELMString: 'RNA1{r(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
-    monomerDescription: '11. Nucleotide A - R(A)P',
+    monomerDescription: '11. Nucleotide A - r(A)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.A,
+    monomerLocatorOptions: Base.A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '12. Nucleotide of DNA base N with sugar R and phosphate P - R(A,C,G,T)P',
+      '12. Nucleotide of DNA base N with sugar r and phosphate p - r(A,C,G,T)p',
     contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
+    HELMString: 'RNA1{r(A,C,G,T)p}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.DNA_N,
+    monomerLocatorOptions: Base.DNA_N,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '13. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+      '13. Nucleoside of sugar r, base that have extra covalent bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '14. Nucleoside of sugar R, base that have extra covalent bond and phosphate P - R([nC6n8A])P',
+      '14. Nucleoside of sugar r, base that have extra covalent bond and phosphate p - r([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+      'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '15. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+      '15. Nucleoside of sugar r, base that have extra hydrogen bond - r([nC6n8A])',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
   {
     monomerDescription:
-      '16. Nucleoside of sugar R, base that have extra hydrogen bond and phosphate P - R([nC6n8A])P',
+      '16. Nucleoside of sugar r, base that have extra hydrogen bond and phosphate p - r([nC6n8A])p',
     contentType: MacroFileType.HELM,
     HELMString:
-      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+      'RNA1{r([nC6n8A])p}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
@@ -2862,12 +2852,10 @@ for (const monomer1 of shortMonomerList) {
       );
       await loadMonomerOnCanvas(page, monomer2);
 
-      await selectAllStructuresOnCanvas(page);
-      await callContextMenuForMonomer(page, monomer1.monomerLocatorOptions);
-
-      const createAntisenseStrandOption = page
-        .getByTestId('create_antisense_rna_chain')
-        .first();
+      const monomerLocator = getMonomerLocator(
+        page,
+        monomer1.monomerLocatorOptions,
+      ).first();
 
       if (
         (monomer1.eligibleForAntisense &&
@@ -2885,28 +2873,27 @@ for (const monomer1 of shortMonomerList) {
         (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
         (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
       ) {
-        // Checking presence of Create Antisense Strand option on the context menu and enabled
-        await expect(createAntisenseStrandOption).toHaveCount(1);
-        await expect(createAntisenseStrandOption).toHaveAttribute(
-          'aria-disabled',
-          'false',
+        await selectAllStructuresOnCanvas(page);
+        await ContextMenu(page, monomerLocator).click(
+          MonomerOption.CreateAntisenseRNAStrand,
         );
-
-        await createAntisenseStrandOption.click();
         await takeEditorScreenshot(page);
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent
       ) {
-        const createAntisenseStrandOptionPresent =
-          (await createAntisenseStrandOption.count()) > 0;
-        // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-        await expect(createAntisenseStrandOptionPresent).toBeTruthy();
+        await selectAllStructuresOnCanvas(page);
+        const createAntisenseStrandOptionPresent = await ContextMenu(
+          page,
+          monomerLocator,
+        ).isOptionVisible(MonomerOption.CreateAntisenseRNAStrand);
         if (createAntisenseStrandOptionPresent) {
-          await expect(createAntisenseStrandOption).toHaveAttribute(
-            'aria-disabled',
-            'true',
-          );
+          await selectAllStructuresOnCanvas(page);
+          expect(
+            await ContextMenu(page, monomerLocator).isOptionEnabled(
+              MonomerOption.CreateAntisenseRNAStrand,
+            ),
+          ).toBeFalsy();
         }
       }
     });
@@ -2916,12 +2903,12 @@ for (const monomer1 of shortMonomerList) {
 const chainWithAllTypeOfConnections: IMonomer = {
   monomerDescription:
     'All type of monomers connected to R1, R2, R3, R4 attachment points',
-  contentType: MacroFileType.Ket,
+  contentType: MacroFileType.KetFormat,
   KETFile:
     'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.A,
+  monomerLocatorOptions: Base.A,
   unsplitNucleotide: false,
 };
 
@@ -2940,21 +2927,15 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
-
-  await createAntisenseStrandOption.click();
   await takeEditorScreenshot(page);
 });
 
@@ -2973,39 +2954,35 @@ const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer = {
   unsplitNucleotide: false,
 };
 
-test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"`, async () => {
+test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *              and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *              chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"
+   *              chain that contains ribose (r), phosphate (p), and the appropriate "antisense base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
 
-  await createAntisenseStrandOption.click();
-  for (let i = 0; i < 4; i++) await ZoomOutByKeyboard(page);
+  await zoomOutByKeyboard(page, { repeat: 4 });
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3058,56 +3035,51 @@ const chainOfNucleosidesWithAllTypesOfSugar: IMonomer[] = [
       'RNA97,RNA98,1:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: Bases.nC6n8A,
+    monomerLocatorOptions: Base.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
 
-test(`7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense base"`, async () => {
+test(`7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
 
-  await createAntisenseStrandOption.click();
-  for (let i = 0; i < 5; i++) await ZoomOutByKeyboard(page);
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
 
 const chainOfAllTypesModifiedMonomers: IMonomer = {
   monomerDescription: 'All types of modified monomers in one chain',
-  contentType: MacroFileType.Ket,
+  contentType: MacroFileType.KetFormat,
   KETFile:
     'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.A,
+  monomerLocatorOptions: Base.A,
   unsplitNucleotide: false,
 };
 
@@ -3127,22 +3099,17 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
 
-  await createAntisenseStrandOption.click();
-  for (let i = 0; i < 2; i++) await ZoomOutByKeyboard(page);
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3151,10 +3118,10 @@ const chainOfNucleotidesAndPeptides: IMonomer = {
   monomerDescription: 'All types of modified monomers in one chain',
   contentType: MacroFileType.HELM,
   HELMString:
-    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+    'RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
   eligibleForAntisense: true,
   baseWithR3R1ConnectionPresent: true,
-  monomerLocatorOptions: Bases.U,
+  monomerLocatorOptions: Base.U,
   unsplitNucleotide: false,
 };
 
@@ -3177,22 +3144,17 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
 
-  await createAntisenseStrandOption.click();
-  for (let i = 0; i < 6; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 6; i++) await zoomInByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -3212,16 +3174,22 @@ test(`10. Check that options "Delete" and "Copy" added to the r-click menu`, asy
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
-  await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
 
-  const deleteOption = page.getByTestId('delete').first();
-  const copyOption = page.getByTestId('copy').first();
-  // Checking presence of Copy and Delete options are in the context menu and enabled
-  await expect(deleteOption).toHaveCount(1);
-  await expect(copyOption).toHaveCount(1);
-  await expect(deleteOption).toHaveAttribute('aria-disabled', 'false');
-  await expect(copyOption).toHaveAttribute('aria-disabled', 'false');
+  await selectAllStructuresOnCanvas(page);
+  expect(
+    await ContextMenu(page, monomerLocator).isOptionEnabled(
+      MonomerOption.Delete,
+    ),
+  ).toBeTruthy();
+
+  await selectAllStructuresOnCanvas(page);
+  expect(
+    await ContextMenu(page, monomerLocator).isOptionEnabled(MonomerOption.Copy),
+  ).toBeTruthy();
 });
 
 test(`11. Check that option "Delete" deletes the selected monomers and all the bonds of those monomers and Undo restore all monomers and bonds`, async () => {
@@ -3245,14 +3213,13 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
 
-  const deleteOption = page.getByTestId('delete').first();
-  // Checking presence of Delete options are in the context menu and enabled
-  await expect(deleteOption).toHaveCount(1);
-  await expect(deleteOption).toHaveAttribute('aria-disabled', 'false');
-
-  await deleteOption.click();
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, monomerLocator).click(MonomerOption.Delete);
   await takeEditorScreenshot(page);
 
   await CommonTopLeftToolbar(page).undo();
@@ -3279,14 +3246,13 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
 
   await selectAllStructuresOnCanvas(page);
   await takeEditorScreenshot(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
 
-  const copyOption = page.getByTestId('copy').first();
-  // Checking presence of Delete options are in the context menu and enabled
-  await expect(copyOption).toHaveCount(1);
-  await expect(copyOption).toHaveAttribute('aria-disabled', 'false');
-
-  await copyOption.click();
+  await selectAllStructuresOnCanvas(page);
+  await ContextMenu(page, monomerLocator).click(MonomerOption.Copy);
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page);
@@ -3301,9 +3267,9 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
    *       4. Take screenshot to validate Antisense creation
-   *       5. Delete sugar R from the antisense chain
+   *       5. Delete sugar r from the antisense chain
    *       6. Take screenshot to validate deletion
-   *       7. Move sugar R to the new position
+   *       7. Move sugar r to the new position
    *       8. Take screenshot to validate movement
    *       9. Undo all actions taking screenshots after each action to validate the undo functionality
    *      10. Redo all actions taking screenshots after each action to validate the redo functionality
@@ -3313,37 +3279,27 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
-
-  await createAntisenseStrandOption.click();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const sugarRs = getMonomerLocator(page, Sugars.R);
+  const sugarRs = getMonomerLocator(page, Sugar.R);
 
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await sugarRs.nth(2).click();
-  await CommonLeftToolbar(page).selectEraseTool();
+  await CommonLeftToolbar(page).erase();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await sugarRs.nth(1).click();
-  await dragMouseTo(200, 200, page);
+  await dragMouseTo(page, 200, 200);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await CommonTopLeftToolbar(page).undo();
@@ -3382,21 +3338,15 @@ test(`14. Validate that both sense and antisense strands can be exported correct
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
-
-  await createAntisenseStrandOption.click();
 
   await verifyFileExport(
     page,
@@ -3408,12 +3358,12 @@ test(`14. Validate that both sense and antisense strands can be exported correct
     page,
     'KET/Antisense-Chains/Antisense-expected.mol',
     FileType.MOL,
-    'v3000',
+    MolFileFormat.v3000,
   );
 
   await verifyHELMExport(
     page,
-    `RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}|PEPTIDE2{[AspOMe].[Cys_Bn].[1Nal]}|RNA2{P.R(G)P.R(C)P.R(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
+    `RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}|PEPTIDE2{[Asp_OMe].[Cys_Bn].[1Nal]}|RNA2{p.r(G)p.r(C)p.r(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
   );
 });
 
@@ -3437,29 +3387,25 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
 
-  await createAntisenseStrandOption.click();
-
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3481,21 +3427,15 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
-
-  await createAntisenseStrandOption.click();
 
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -3524,21 +3464,15 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
 
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
+  const monomerLocator = getMonomerLocator(
+    page,
+    chain.monomerLocatorOptions,
+  ).first();
+
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, monomerLocator).click(
+    MonomerOption.CreateAntisenseRNAStrand,
   );
-
-  await createAntisenseStrandOption.click();
 
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
@@ -3565,14 +3499,14 @@ test(`18. Flipping checks`, async () => {
   test.setTimeout(20000);
 
   await pageReload(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{[dR](A,C,G,T)P.[dR](A,G,T)P.[dR](A,T)P}|RNA2{R(A,C,G,U)P.R(A,C,U)P.R(A,U)[Ssp]}|RNA3{[RSpabC](A,U)P}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0`,
+    `RNA1{[dR](A,C,G,T)p.[dR](A,G,T)p.[dR](A,T)p}|RNA2{r(A,C,G,U)p.r(A,C,U)p.r(A,U)[Ssp]}|RNA3{[RSpabC](A,U)p}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0`,
   );
-  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -3582,8 +3516,8 @@ test(`18. Flipping checks`, async () => {
     getMonomerLocator(page, { monomerAlias: 'RSpabC' }),
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -3601,12 +3535,14 @@ test(`19. Verify dot placement for a modified phosphate in sequence mode in sens
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await takeEditorScreenshot(page, {
@@ -3629,17 +3565,21 @@ test(`20. Verify correct dot placement after mode switches from Sequence to Flex
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
-  await selectFlexLayoutModeTool(page);
-  await selectSnakeLayoutModeTool(page);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -3661,11 +3601,13 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
     page,
+    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
   );
 
   await takeEditorScreenshot(page, {
@@ -3674,8 +3616,9 @@ test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`
   });
 
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
     page,
+    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
+    MacroFileType.MOLv3000,
   );
 
   await takeEditorScreenshot(page, {
@@ -3699,12 +3642,14 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3732,16 +3677,18 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
    */
   test.setTimeout(20000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA7{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r([cl6pur])[bnn].r(C,G,T)[bnn].r(C,G,U)[bnn].r(A,G)[bnn].r(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].r(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
-  await page.keyboard.press('Delete');
+  await deleteByKeyboard(page);
   await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
@@ -3763,12 +3710,14 @@ test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3796,12 +3745,14 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+    `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
   );
 
   await selectAllStructuresOnCanvas(page);
@@ -3829,36 +3780,32 @@ test(`25. Verify that the antisense strand creation options are disabled for an 
    */
   test.setTimeout(40000);
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    `RNA1{R(A+C)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}$$$$V2.0`,
+    `RNA1{r(A+C)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}$$$$V2.0`,
   );
-
-  await selectAllStructuresOnCanvas(page);
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
-  const createAntisenseRNAStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
+  await selectAllStructuresOnCanvas(page);
+  expect(
+    await ContextMenu(page, anySymbolA).isOptionEnabled(
+      SequenceSymbolOption.CreateRNAAntisenseStrand,
+    ),
+  ).toBeFalsy();
 
-  const createAntisenseDNAStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  await anySymbolA.click({ button: 'right', force: true });
-
-  await expect(createAntisenseRNAStrandOption).toBeDisabled();
-  await expect(createAntisenseDNAStrandOption).toBeDisabled();
+  await selectAllStructuresOnCanvas(page);
+  expect(
+    await ContextMenu(page, anySymbolA).isOptionEnabled(
+      SequenceSymbolOption.CreateDNAAntisenseStrand,
+    ),
+  ).toBeFalsy();
 });
-
-async function callContextMenuForAnySymbol(page: Page) {
-  const anySymbol = getSymbolLocator(page, {}).first();
-  await anySymbol.click({ button: 'right', force: true });
-}
 
 for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
   test(`26.1.1 Create antisense chain for: ${monomer.monomerDescription}`, async () => {
@@ -3881,24 +3828,15 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-
-    await callContextMenuForAnySymbol(page);
-
-    const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-    // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
-    await expect(createAntisenseRNAStrandOption).toHaveCount(1);
-    await expect(createAntisenseRNAStrandOption).toHaveAttribute(
-      'aria-disabled',
-      'false',
+    await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+      MonomerOption.CreateAntisenseRNAStrand,
     );
-
-    await createAntisenseRNAStrandOption.click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -3928,24 +3866,15 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-
-    await callContextMenuForAnySymbol(page);
-
-    const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
-      .first();
-    // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
-    await expect(createAntisenseDNAStrandOption).toHaveCount(1);
-    await expect(createAntisenseDNAStrandOption).toHaveAttribute(
-      'aria-disabled',
-      'false',
+    await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+      MonomerOption.CreateAntisenseDNAStrand,
     );
-
-    await createAntisenseDNAStrandOption.click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -3977,26 +3906,26 @@ for (const monomer of monomers.filter(
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionVisible(SequenceSymbolOption.CreateRNAAntisenseStrand),
+    ).toBeTruthy();
 
-    await callContextMenuForAnySymbol(page);
-
-    const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-    const createAntisenseRNAStrandOptionPresent =
-      (await createAntisenseRNAStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
-    if (createAntisenseRNAStrandOptionPresent) {
-      await expect(createAntisenseRNAStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
+    ).toBeFalsy();
   });
 }
 
@@ -4023,26 +3952,26 @@ for (const monomer of monomers.filter(
       `That test fails because of ${monomer.issueNumber} issue(s).`,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionVisible(SequenceSymbolOption.CreateDNAAntisenseStrand),
+    ).toBeTruthy();
 
-    await callContextMenuForAnySymbol(page);
-
-    const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
-      .first();
-    const createAntisenseDNAStrandOptionPresent =
-      (await createAntisenseDNAStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
-    if (createAntisenseDNAStrandOptionPresent) {
-      await expect(createAntisenseDNAStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
+    ).toBeFalsy();
   });
 }
 
@@ -4065,25 +3994,26 @@ for (const chain of chainWithExtraBondToBase) {
       chain.shouldFail === true,
       `That test fails because of ${chain.issueNumber} issue(s).`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionVisible(SequenceSymbolOption.CreateRNAAntisenseStrand),
+    ).toBeTruthy();
 
-    const createAntisenseRNAStrandOption = page
-      .getByTestId('create_antisense_rna_chain')
-      .first();
-    const createAntisenseRNAStrandOptionPresent =
-      (await createAntisenseRNAStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
-    if (createAntisenseRNAStrandOptionPresent) {
-      await expect(createAntisenseRNAStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
+    ).toBeFalsy();
   });
 }
 
@@ -4106,25 +4036,26 @@ for (const chain of chainWithExtraBondToBase) {
       chain.shouldFail === true,
       `That test fails because of ${chain.issueNumber} issue(s).`,
     );
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForAnySymbol(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionVisible(SequenceSymbolOption.CreateDNAAntisenseStrand),
+    ).toBeTruthy();
 
-    const createAntisenseDNAStrandOption = page
-      .getByTestId('create_antisense_dna_chain')
-      .first();
-    const createAntisenseDNAStrandOptionPresent =
-      (await createAntisenseDNAStrandOption.count()) > 0;
-    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-    await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
-    if (createAntisenseDNAStrandOptionPresent) {
-      await expect(createAntisenseDNAStrandOption).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      );
-    }
+    await selectAllStructuresOnCanvas(page);
+    expect(
+      await ContextMenu(
+        page,
+        getSymbolLocator(page, {}).first(),
+      ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
+    ).toBeFalsy();
   });
 }
 
@@ -4149,20 +4080,15 @@ for (const monomer1 of shortMonomerList) {
         `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await loadMonomerOnCanvas(
         page,
         monomer1,
         monomer1.pageReloadNeeded || monomer2.pageReloadNeeded,
       );
       await loadMonomerOnCanvas(page, monomer2);
-
-      await selectAllStructuresOnCanvas(page);
-      await callContextMenuForAnySymbol(page);
-
-      const createAntisenseRNAStrandOption = page
-        .getByTestId('create_antisense_rna_chain')
-        .first();
 
       if (
         (monomer1.eligibleForAntisense &&
@@ -4178,15 +4104,10 @@ for (const monomer1 of shortMonomerList) {
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
-        // Checking presence of Create Antisense Strand option on the context menu and enabled
-        await expect(createAntisenseRNAStrandOption).toHaveCount(1);
-        await expect(createAntisenseRNAStrandOption).toHaveAttribute(
-          'aria-disabled',
-          'false',
+        await selectAllStructuresOnCanvas(page);
+        await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+          SequenceSymbolOption.CreateRNAAntisenseStrand,
         );
-
-        await createAntisenseRNAStrandOption.click();
-
         await moveMouseAway(page);
         await takeEditorScreenshot(page, {
           hideMonomerPreview: true,
@@ -4196,16 +4117,21 @@ for (const monomer1 of shortMonomerList) {
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent
       ) {
-        const createAntisenseRNAStrandOptionPresent =
-          (await createAntisenseRNAStrandOption.count()) > 0;
-        // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-        await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
-        if (createAntisenseRNAStrandOptionPresent) {
-          await expect(createAntisenseRNAStrandOption).toHaveAttribute(
-            'aria-disabled',
-            'true',
-          );
-        }
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionVisible(SequenceSymbolOption.CreateRNAAntisenseStrand),
+        ).toBeTruthy();
+
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
+        ).toBeFalsy();
       }
     });
   }
@@ -4232,20 +4158,15 @@ for (const monomer1 of shortMonomerList) {
         `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await loadMonomerOnCanvas(
         page,
         monomer1,
         monomer1.pageReloadNeeded || monomer2.pageReloadNeeded,
       );
       await loadMonomerOnCanvas(page, monomer2);
-
-      await selectAllStructuresOnCanvas(page);
-      await callContextMenuForAnySymbol(page);
-
-      const createAntisenseDNAStrandOption = page
-        .getByTestId('create_antisense_dna_chain')
-        .first();
 
       if (
         (monomer1.eligibleForAntisense &&
@@ -4261,14 +4182,10 @@ for (const monomer1 of shortMonomerList) {
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
-        // Checking presence of Create Antisense Strand option on the context menu and enabled
-        await expect(createAntisenseDNAStrandOption).toHaveCount(1);
-        await expect(createAntisenseDNAStrandOption).toHaveAttribute(
-          'aria-disabled',
-          'false',
+        await selectAllStructuresOnCanvas(page);
+        await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+          SequenceSymbolOption.CreateDNAAntisenseStrand,
         );
-
-        await createAntisenseDNAStrandOption.click();
         await moveMouseAway(page);
         await takeEditorScreenshot(page, {
           hideMonomerPreview: true,
@@ -4278,16 +4195,21 @@ for (const monomer1 of shortMonomerList) {
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent
       ) {
-        const createAntisenseDNAStrandOptionPresent =
-          (await createAntisenseDNAStrandOption.count()) > 0;
-        // Checking presence of Create Antisense Strand option on the context menu and its disabled state
-        await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
-        if (createAntisenseDNAStrandOptionPresent) {
-          await expect(createAntisenseDNAStrandOption).toHaveAttribute(
-            'aria-disabled',
-            'true',
-          );
-        }
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionVisible(SequenceSymbolOption.CreateDNAAntisenseStrand),
+        ).toBeTruthy();
+
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
+        ).toBeFalsy();
       }
     });
   }
@@ -4305,26 +4227,17 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
    *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4344,26 +4257,18 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
    *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateDNAAntisenseStrand,
   );
 
-  await createAntisenseStrandOption.click();
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4371,41 +4276,31 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
   });
 });
 
-test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"`, async () => {
+test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   *                 chain that contains ribose (r), phosphate (p), and the appropriate "antisense RNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
-
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4413,40 +4308,31 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
   });
 });
 
-test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense DNA base"`, async () => {
+test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (r), phosphate (p), and the appropriate "antisense DNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
-   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   *                 chain that contains ribose (r), phosphate (p), and the appropriate "antisense DNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to r and p
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateDNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
 
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
@@ -4455,40 +4341,31 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
   });
 });
 
-test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"`, async () => {
+test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense RNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense RNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4496,39 +4373,30 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
   });
 });
 
-test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"`, async () => {
+test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (r) and the appropriate "antisense DNA base"`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
-   *              on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"
+   *              on the antisense chain that contains ribose (r) and the appropriate "antisense DNA base"
    * Case:
    *       1. Load chain with all type of phosphates and sugars
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
-   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to r and p
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateDNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4549,26 +4417,18 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
    *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateRNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
+  await clickOnCanvas(page, 0, 0);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4589,26 +4449,18 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
    *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
    */
   test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForAnySymbol(page);
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  // Checking presence of Create Antisense Strand option on the context menu and enabled
-  await expect(createAntisenseStrandOption).toHaveCount(1);
-  await expect(createAntisenseStrandOption).toHaveAttribute(
-    'aria-disabled',
-    'false',
+  await ContextMenu(page, getSymbolLocator(page, {}).first()).click(
+    SequenceSymbolOption.CreateDNAAntisenseStrand,
   );
-
-  await createAntisenseStrandOption.click();
+  await clickOnCanvas(page, 0, 0);
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -4616,42 +4468,50 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
   });
 });
 
-test(`27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/6684
-   * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
-   *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
-   * Case:
-   *       1. Swticth to Sequence mode (clear canvas)
-   *       2. Check that SYNC button is NOT present
-   *       3. Paste on the canvas single chain
-   *       4. Check that SYNC button is NOT present
-   *       5. Create Antisense RNA Strand
-   *       6. Check that SYNC button is present and enabled
-   */
-  test.setTimeout(20000);
-  await selectSequenceLayoutModeTool(page);
+test.fail(
+  `27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`,
+  { tag: ['@IncorrectResultBecauseOfBug'] },
+  async () => {
+    /*
+     * !!! Incorrect result because of bug: https://github.com/epam/ketcher/issues/7701
+     *
+     * Test task: https://github.com/epam/ketcher/issues/6684
+     * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
+     *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
+     * Case:
+     *       1. Swticth to Sequence mode (clear canvas)
+     *       2. Check that SYNC button is NOT present
+     *       3. Paste on the canvas single chain
+     *       4. Check that SYNC button is NOT present
+     *       5. Create Antisense RNA Strand
+     *       6. Check that SYNC button is present and enabled
+     */
+    test.setTimeout(20000);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
 
-  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-  // checking that SYNC button is not present
-  await expect(syncButton).toHaveCount(0);
+    const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+    // checking that SYNC button is not present
+    await expect(syncButton).toHaveCount(0);
 
-  await pasteFromClipboardAndAddToMacromoleculesCanvas(
-    page,
-    MacroFileType.HELM,
-    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
-  );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      `RNA1{r(A)[bnn].r(C)[bnn].r(G)[bnn].r(T)[bnn].r(U)[bnn].r(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].r(A)}|RNA3{r([2imen2])[bnn].r([5meC])[bnn].r([4imen2])[bnn].r([cnes4T])[bnn].r([cpU])[bnn].r(C,G,T)[bnn].r(A,G)[bnn].r(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].r(A)}|RNA5{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$$$$V2.0`,
+    );
 
-  // checking that SYNC button is not present
-  await expect(syncButton).toHaveCount(0);
+    // checking that SYNC button is not present
+    await expect(syncButton).toHaveCount(0);
 
-  await selectAllStructuresOnCanvas(page);
+    await selectAllStructuresOnCanvas(page);
 
-  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-  await createDNAAntisenseChain(page, anySymbolA);
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await createDNAAntisenseChain(page, anySymbolA);
 
-  // checking that SYNC button is not present
-  await expect(syncButton).toHaveCount(1);
-  // checking that SYNC button is active
-  await expect(syncButton).toHaveAttribute('data-isactive', 'true');
-});
+    // checking that SYNC button is not present
+    await expect(syncButton).toHaveCount(1);
+    // checking that SYNC button is active
+    await expect(syncButton).toHaveAttribute('data-isactive', 'true');
+  },
+);

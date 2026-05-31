@@ -1,6 +1,6 @@
-import { Vec2 } from 'domain/entities';
-import { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
+import { Vec2 } from 'domain/entities/vec2';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { Bond } from 'domain/entities/CoreBond';
 
 export class HalfEdge {
   public direction: Vec2;

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerMoveOperation implements Operation {
   public monomer: BaseMonomer;
   constructor(
-    private monomerMoveModelChange: () => BaseMonomer,
-    private invertMonomerMoveModelChange: () => BaseMonomer,
+    private readonly monomerMoveModelChange: () => BaseMonomer,
+    private readonly invertMonomerMoveModelChange: () => BaseMonomer,
   ) {
     this.monomer = this.monomerMoveModelChange();
   }

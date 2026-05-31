@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Vec2 } from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 class ReLoop extends ReObject {
   constructor(loop) {
@@ -79,6 +80,33 @@ class ReLoop extends ReObject {
     });
     this.radius *= 0.7;
     if (!loop.aromatic) return;
+
+    // Check if all atoms in the loop belong to a contracted sgroup
+    // If they do, skip rendering the aromatic circle
+    const atomIds = new Set();
+    loop.hbs.forEach((hbid) => {
+      const hb = molecule.halfBonds.get(hbid);
+      atomIds.add(hb.begin);
+      atomIds.add(hb.end);
+    });
+
+    // Get the sgroup for the first atom to check if it's a contracted sgroup
+    const firstAtomId = atomIds.values().next().value;
+    const sgroup = molecule.getGroupFromAtomId(firstAtomId);
+
+    // If the loop is inside a contracted sgroup, don't render it
+    if (sgroup?.isContracted()) {
+      // Verify all atoms in the loop belong to the same contracted sgroup
+      const allAtomsInSameSgroup = Array.from(atomIds).every((atomId) => {
+        const atomSgroup = molecule.getGroupFromAtomId(atomId);
+        return atomSgroup === sgroup;
+      });
+
+      if (allAtomsInSameSgroup) {
+        return;
+      }
+    }
+
     let path = null;
     if (loop.convex && options.aromaticCircle) {
       path = paper.circle(this.centre.x, this.centre.y, this.radius).attr({
@@ -106,7 +134,7 @@ class ReLoop extends ReObject {
         const offset = options.bondSpace / sin;
         const qi = pi.addScaled(dir, -offset);
         pathStr += k === 0 ? 'M' : 'L';
-        pathStr += tfx(qi.x) + ',' + tfx(qi.y);
+        pathStr += toFixed(qi.x) + ',' + toFixed(qi.y);
       }
       pathStr += 'Z';
       path = paper.path(pathStr).attr({

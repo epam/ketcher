@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../operations/base';
-import { ReStruct } from '../../render';
+import type { BaseOperation } from '../operations/BaseOperation';
+import type { ReStruct } from '../../render';
 //
 // Undo/redo actions
 //
 export class Action {
   operations: BaseOperation[];
 
-  constructor(operations = []) {
+  constructor(operations: BaseOperation[] = []) {
     this.operations = operations;
   }
 

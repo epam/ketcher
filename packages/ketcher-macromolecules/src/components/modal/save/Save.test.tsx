@@ -17,7 +17,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';
 import userEvent from '@testing-library/user-event';
-import { CoreEditor, Struct } from 'ketcher-core';
+import { Struct } from 'ketcher-core';
+import * as ketcherCore from 'ketcher-core';
 
 const mockOnClose = jest.fn();
 
@@ -28,7 +29,7 @@ const mockProps = {
 
 describe('Save modal', () => {
   it('renders correctly', () => {
-    jest.spyOn(CoreEditor, 'provideEditorInstance').mockImplementation(() => {
+    jest.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
       return {
         drawingEntitiesManager: {
           micromoleculesHiddenEntities: {
@@ -44,6 +45,9 @@ describe('Save modal', () => {
           bonds: [],
           monomerToAtomBonds: [],
           atoms: [],
+          rxnArrows: [],
+          multitailArrows: [],
+          rxnPluses: [],
         },
         viewModel: {
           initialize: jest.fn(),
@@ -56,7 +60,7 @@ describe('Save modal', () => {
     const filenameInput = screen.getByRole('textbox', {
       name: 'File name:',
     });
-    const fileFormatInput = screen.getByText('Ket');
+    const fileFormatInput = screen.getByText('Ket Format');
 
     expect(view).toMatchSnapshot();
     expect(filenameInput).toBeVisible();

@@ -1,9 +1,10 @@
 import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import { Pool } from 'domain/entities/pool';
-import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
+import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
-import { FixedPrecisionCoordinates } from 'domain/entities';
+import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export type Line = [Vec2, Vec2];
 
@@ -55,21 +56,28 @@ interface TailDistance {
 }
 
 export class MultitailArrow extends BaseMicromoleculeEntity {
-  static KET_MIN_DISTANCE =
+  static readonly KET_MIN_DISTANCE =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.01);
 
-  static MIN_TAIL_DISTANCE =
+  static readonly MIN_TAIL_DISTANCE =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.35);
 
-  static MIN_HEAD_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
-  static MIN_TAIL_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
-  static MIN_TOP_BOTTOM_OFFSET =
+  static readonly MIN_HEAD_LENGTH =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+
+  static readonly MIN_TAIL_LENGTH =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
+
+  static readonly MIN_TOP_BOTTOM_OFFSET =
     FixedPrecisionCoordinates.fromFloatingPrecision(0.15);
 
-  static MIN_HEIGHT = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
-  static TOP_TAIL_NAME = 'topTail';
-  static BOTTOM_TAIL_NAME = 'bottomTail';
-  static TAILS_NAME = 'tails';
+  static readonly MIN_HEIGHT =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+
+  static readonly TOP_TAIL_NAME = 'topTail';
+  static readonly BOTTOM_TAIL_NAME = 'bottomTail';
+  static readonly TAILS_NAME = 'tails';
+  public arrowId?: number;
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return (
@@ -139,12 +147,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const headY = FixedPrecisionCoordinates.fromFloatingPrecision(
       head.position.y,
     );
-    const tailsFixedPrecision = tails.pos
-      .map((tail) => ({
-        x: FixedPrecisionCoordinates.fromFloatingPrecision(tail.x),
-        y: FixedPrecisionCoordinates.fromFloatingPrecision(tail.y),
-      }))
-      .sort((a, b) => b.y.value - a.y.value);
+    const tailsFixedPrecision = tails.pos.map((tail) => ({
+      x: FixedPrecisionCoordinates.fromFloatingPrecision(tail.x),
+      y: FixedPrecisionCoordinates.fromFloatingPrecision(tail.y),
+    }));
+    tailsFixedPrecision.sort((a, b) => b.y.value - a.y.value);
 
     if (
       spineStartX.value !== spineEndX.value ||
@@ -192,7 +199,9 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
   }
 
-  static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {
+  static getConstructorParamsFromKetNode(
+    ketFileNode: KetFileNode<KetFileMultitailArrowNode>,
+  ) {
     const data = getNodeWithInvertedYCoord(
       ketFileNode.data,
     ) as KetFileMultitailArrowNode;
@@ -215,7 +224,8 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     ).sub(spineTopY);
 
     const tailsYOffset = new Pool<FixedPrecisionCoordinates>();
-    const tails = data.tails.pos.sort((a, b) => a.y - b.y);
+    const tails = [...data.tails.pos];
+    tails.sort((a, b) => a.y - b.y);
     const tailsLength = spineTopX.sub(
       FixedPrecisionCoordinates.fromFloatingPrecision(tails[0].x),
     );
@@ -224,6 +234,28 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         FixedPrecisionCoordinates.fromFloatingPrecision(tail.y).sub(spineTopY),
       );
     });
+
+    return {
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    };
+  }
+
+  static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {
+    const {
+      spineTopX,
+      spineTopY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailsLength,
+      tailsYOffset,
+    } = MultitailArrow.getConstructorParamsFromKetNode(ketFileNode);
 
     return new MultitailArrow(
       spineTopX,
@@ -267,47 +299,69 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     private headOffsetY: FixedPrecisionCoordinates,
     private tailLength: FixedPrecisionCoordinates,
     private tailsYOffset: Pool<FixedPrecisionCoordinates>,
+    arrowId?: number,
   ) {
     super();
+    this.arrowId = arrowId;
   }
 
-  getReferencePositions(): MultitailArrowsReferencePositions {
-    const tailX = this.spineTopX.sub(this.tailLength);
-    const bottomY = this.spineTopY.add(this.height);
+  static getReferencePositions(
+    spineTopX: FixedPrecisionCoordinates,
+    spineTopY: FixedPrecisionCoordinates,
+    height: FixedPrecisionCoordinates,
+    headOffsetX: FixedPrecisionCoordinates,
+    headOffsetY: FixedPrecisionCoordinates,
+    tailLength: FixedPrecisionCoordinates,
+    tailsYOffset: Pool<FixedPrecisionCoordinates>,
+  ) {
+    const tailX = spineTopX.sub(tailLength);
+    const bottomY = spineTopY.add(height);
     const tails = new Pool<Vec2>();
-    this.tailsYOffset.forEach((tailYOffset, key) => {
+    tailsYOffset.forEach((tailYOffset, key) => {
       tails.set(
         key,
         new Vec2(
           tailX.getFloatingPrecision(),
-          this.spineTopY.add(tailYOffset).getFloatingPrecision(),
+          spineTopY.add(tailYOffset).getFloatingPrecision(),
         ),
       );
     });
 
     return {
       head: new Vec2(
-        this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
-        this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
+        spineTopX.add(headOffsetX).getFloatingPrecision(),
+        spineTopY.add(headOffsetY).getFloatingPrecision(),
       ),
       topTail: new Vec2(
         tailX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       bottomTail: new Vec2(
         tailX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
       topSpine: new Vec2(
-        this.spineTopX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       bottomSpine: new Vec2(
-        this.spineTopX.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
       tails,
     };
+  }
+
+  getReferencePositions(): MultitailArrowsReferencePositions {
+    return MultitailArrow.getReferencePositions(
+      this.spineTopX,
+      this.spineTopY,
+      this.height,
+      this.headOffsetX,
+      this.headOffsetY,
+      this.tailLength,
+      this.tailsYOffset,
+    );
   }
 
   getReferencePositionsArray(): Array<Vec2> {
@@ -340,9 +394,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   getTailsDistance(
     tailsYOffsets: Array<FixedPrecisionCoordinates>,
   ): Array<TailDistance> {
-    const allTailsOffsets = tailsYOffsets
-      .concat([new FixedPrecisionCoordinates(0), this.height])
-      .sort((a, b) => a.sub(b).getFloatingPrecision());
+    const allTailsOffsets = tailsYOffsets.concat([
+      new FixedPrecisionCoordinates(0),
+      this.height,
+    ]);
+    allTailsOffsets.sort((a, b) => a.sub(b).getFloatingPrecision());
     return allTailsOffsets.reduce(
       (acc: Array<TailDistance>, item, index, array) => {
         if (index === 0) {
@@ -418,6 +474,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       this.headOffsetY,
       this.tailLength,
       this.tailsYOffset,
+      this.arrowId,
     );
   }
 
@@ -491,12 +548,13 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
       .filter(([key]) => key !== tailId)
       .map(([_, value]) => value);
-    const tailMinDistance = this.getTailsDistance(tailsWithoutCurrent)
-      .filter((item) => MultitailArrow.canAddTail(item.distance))
-      .sort(
-        (a, b) => getDistanceToTailDistance(a) - getDistanceToTailDistance(b),
-      )
-      .at(0);
+    const tailDistances = this.getTailsDistance(tailsWithoutCurrent).filter(
+      (item) => MultitailArrow.canAddTail(item.distance),
+    );
+    tailDistances.sort(
+      (a, b) => getDistanceToTailDistance(a) - getDistanceToTailDistance(b),
+    );
+    const tailMinDistance = tailDistances.at(0);
 
     if (!tailMinDistance) {
       return null;
@@ -542,9 +600,8 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         MultitailArrow.MIN_HEIGHT.value,
       ),
     );
-    const tailsOffset = Array.from(this.tailsYOffset.values()).sort(
-      (a, b) => a.value - b.value,
-    );
+    const tailsOffset = Array.from(this.tailsYOffset.values());
+    tailsOffset.sort((a, b) => a.value - b.value);
     const lastTail = tailsOffset.at(-1) || new FixedPrecisionCoordinates(0);
     const firstTail =
       tailsOffset.at(0) || new FixedPrecisionCoordinates(Infinity);
@@ -627,37 +684,47 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     );
   }
 
-  toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
+  static getParametersForKetNode(
+    spineTopX: FixedPrecisionCoordinates,
+    spineTopY: FixedPrecisionCoordinates,
+    headOffsetX: FixedPrecisionCoordinates,
+    headOffsetY: FixedPrecisionCoordinates,
+    tailLength: FixedPrecisionCoordinates,
+    tailsYOffset: Pool<FixedPrecisionCoordinates>,
+    height: FixedPrecisionCoordinates,
+    center: Vec2,
+    isInitiallySelected?: boolean,
+  ) {
     const head = new Vec2(
-      this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
-      this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
+      spineTopX.add(headOffsetX).getFloatingPrecision(),
+      spineTopY.add(headOffsetY).getFloatingPrecision(),
     );
-    const bottomY = this.spineTopY.add(this.height);
+    const bottomY = spineTopY.add(height);
     const spine: [Vec2, Vec2] = [
       new Vec2(
-        this.spineTopX.getFloatingPrecision(),
-        this.spineTopY.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
+        spineTopY.getFloatingPrecision(),
       ),
       new Vec2(
-        this.spineTopX.getFloatingPrecision(),
+        spineTopX.getFloatingPrecision(),
         bottomY.getFloatingPrecision(),
       ),
     ];
-    const tailX = this.spineTopX.sub(this.tailLength);
-    const nonBorderTails = Array.from(this.tailsYOffset.values()).map(
-      (yOffset) => this.spineTopY.add(yOffset),
+    const tailX = spineTopX.sub(tailLength);
+    const nonBorderTails = Array.from(tailsYOffset.values()).map((yOffset) =>
+      spineTopY.add(yOffset),
     );
     const convertTail = (y: FixedPrecisionCoordinates) =>
       new Vec2(tailX.getFloatingPrecision(), y.getFloatingPrecision());
-    const tails = [this.spineTopY]
+    const tails = [spineTopY]
       .concat(nonBorderTails)
       .concat(bottomY)
       .map(convertTail);
 
     return {
       type: MULTITAIL_ARROW_SERIALIZE_KEY,
-      center: this.center(),
-      selected: this.getInitiallySelected(),
+      center,
+      selected: isInitiallySelected,
       data: getNodeWithInvertedYCoord({
         head: {
           position: head,
@@ -668,8 +735,22 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         tails: {
           pos: tails,
         },
-        zOrder: 0,
+        zOrder: 0 as const,
       }),
     };
+  }
+
+  toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
+    return MultitailArrow.getParametersForKetNode(
+      this.spineTopX,
+      this.spineTopY,
+      this.headOffsetX,
+      this.headOffsetY,
+      this.tailLength,
+      this.tailsYOffset,
+      this.height,
+      this.center(),
+      this.getInitiallySelected(),
+    );
   }
 }

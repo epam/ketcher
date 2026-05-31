@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="C" x2="13.825" y2="-8.275"/>
+            <atom id="a1" elementType="O" x2="14.325" y2="-7.40899"/>
+            <atom id="a2" elementType="O" x2="14.325" y2="-9.14101"/>
+            <atom id="a3" elementType="C" x2="15.325" y2="-7.40899"/>
+            <atom id="a4" elementType="C" x2="16.325" y2="-7.40899"/>
+            <atom id="a5" elementType="C" x2="15.325" y2="-6.40899"/>
+            <atom id="a6" elementType="C" x2="15.325" y2="-8.409"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a0 a1" order="1"/>
+            <bond atomRefs2="a0 a2" order="2"/>
+            <bond atomRefs2="a1 a3" order="1"/>
+            <bond atomRefs2="a3 a4" order="1"/>
+            <bond atomRefs2="a3 a5" order="1"/>
+            <bond atomRefs2="a3 a6" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a0 a1 a2 a3 a4 a5 a6" role="SuperatomSgroup" title="Boc">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>

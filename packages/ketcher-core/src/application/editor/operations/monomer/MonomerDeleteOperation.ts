@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerDeleteOperation implements Operation {
   monomer: BaseMonomer;
@@ -25,7 +25,7 @@ export class MonomerDeleteOperation implements Operation {
     monomer: BaseMonomer,
     public addMonomerChangeModel: (monomer: BaseMonomer) => BaseMonomer,
     public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
-    private callback?: () => void,
+    private readonly callback?: () => void,
   ) {
     this.monomer = monomer;
   }

@@ -9,8 +9,6 @@ type TopLeftToolbarLocators = {
   saveButton: Locator;
   undoButton: Locator;
   redoButton: Locator;
-  createAntisenseStrandButton: Locator;
-  calculateMacromoleculePropertiesButton: Locator;
 };
 
 export const CommonTopLeftToolbar = (page: Page) => {
@@ -29,12 +27,6 @@ export const CommonTopLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
     redoButton: page
       .getByTestId('redo')
-      .filter({ has: page.locator(':visible') }),
-    createAntisenseStrandButton: page
-      .getByTestId('Create Antisense Strand')
-      .filter({ has: page.locator(':visible') }),
-    calculateMacromoleculePropertiesButton: page
-      .getByTestId('calculate-macromolecule-properties-button')
       .filter({ has: page.locator(':visible') }),
   };
 
@@ -55,7 +47,7 @@ export const CommonTopLeftToolbar = (page: Page) => {
           return;
         } catch {
           attempts++;
-          await clickOnCanvas(page, 0, 0);
+          await clickOnCanvas(page, 0, 0, { from: 'pageTopLeft' });
           await page.keyboard.press('Escape');
           if (await closeWindowXButton.isVisible()) {
             await closeWindowXButton.click();
@@ -87,15 +79,6 @@ export const CommonTopLeftToolbar = (page: Page) => {
     async redo() {
       await waitForRender(page, async () => {
         await locators.redoButton.click();
-      });
-    },
-
-    async calculateProperties() {
-      await waitForRender(page, async () => {
-        await locators.calculateMacromoleculePropertiesButton.click({
-          timeout: 1000,
-        });
-        await page.waitForTimeout(1000);
       });
     },
   };

@@ -1,34 +1,37 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { D3SvgElementSelection } from 'application/render/types';
-import { line, Selection } from 'd3';
-import { BaseMonomer } from './entities/BaseMonomer';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { type Selection, line } from 'd3';
+import type { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
+  type Coordinates,
   canvasToMonomerCoordinates,
-  Coordinates,
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
-import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import {
+  type AttachmentPointConstructorParams,
+  AttachmentPointName,
+} from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
-import { CoreEditor, SnakeMode } from 'application/editor';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
-  static attachmentPointVector = 6;
-  static attachmentPointLength = Math.hypot(
+  static readonly attachmentPointVector = 6;
+  static readonly attachmentPointLength = Math.hypot(
     AttachmentPoint.attachmentPointVector,
     AttachmentPoint.attachmentPointVector,
   );
 
-  static labelOffset = 3.5;
-  static radius = 3;
-  static labelSize = { x: 3.5, y: 2.5 };
-  static colors = {
+  static readonly labelOffset = 3.5;
+  static readonly radius = 3;
+  static readonly labelSize = { x: 3.5, y: 2.5 };
+  static readonly colors = {
     fillUsed: '#0097A8',
     fill: 'white',
     fillPotentially: '#167782',
@@ -54,10 +57,10 @@ export class AttachmentPoint {
     | undefined;
 
   protected initialAngle = 0;
-  private isUsed: boolean;
-  private isSnake;
-  private editorEvents: typeof editorEvents;
-  private applyZoomForPositionCalculation: boolean;
+  private readonly isUsed: boolean;
+  private readonly isSnake;
+  private readonly editorEvents: typeof editorEvents;
+  private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
     constructorParams: AttachmentPointConstructorParams,
@@ -72,7 +75,7 @@ export class AttachmentPoint {
       new DOMRect(0, 0, 0, 0);
     this.attachmentPointName = constructorParams.attachmentPointName;
     this.centerOfMonomer =
-      constructorParams.monomer.renderer?.center || new Vec2(0, 0, 0);
+      constructorParams.monomer.renderer?.center ?? new Vec2(0, 0, 0);
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
     this.initialAngle = constructorParams.angle;
@@ -123,7 +126,7 @@ export class AttachmentPoint {
     const stroke = this.stroke;
 
     this.attachmentPoint = this.rootElement
-      .insert('g', ':first-child')
+      .append('g')
       .data([this])
       .style('pointer-events', 'none')
       .style('cursor', 'pointer')
@@ -148,6 +151,10 @@ export class AttachmentPoint {
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
+      .attr('data-testid', 'monomer-attachment-point')
+      .attr('data-attachment-point-alias', this.attachmentPointName)
+      .attr('data-parent-monomer-id', this.monomer.id)
+      .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
 
     const labelGroup = this.attachmentPoint.append('text');
@@ -222,6 +229,9 @@ export class AttachmentPoint {
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseMoveAttachmentPoint.dispatch(event);
+      })
       .on('mousedown', (event) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
@@ -239,7 +249,7 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
@@ -257,20 +267,23 @@ export class AttachmentPoint {
       !(polymerBond instanceof MonomerToAtomBond) &&
       !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
       ((this.isSnake && !polymerBond.isHorizontal) ||
-        (editor.mode instanceof SnakeMode && polymerBond.isSideChainConnection))
+        (editor.mode.modeName === 'snake-layout-mode' &&
+          polymerBond.isSideChainConnection))
     ) {
       const bondRenderer =
         polymerBond?.renderer as SnakeModePolymerBondRenderer;
       const sideConnectionEndpointDirection =
         bondRenderer.getSideConnectionEndpointAngle(this.monomer);
 
-      angleRadians = isAttachmentpointR1
-        ? Math.PI * 2
-        : isAttachmentpointR2
-        ? Math.PI
-        : isNumber(sideConnectionEndpointDirection)
-        ? sideConnectionEndpointDirection
-        : this.rotateToAngle(polymerBond, flip);
+      if (isAttachmentpointR1) {
+        angleRadians = Math.PI * 2;
+      } else if (isAttachmentpointR2) {
+        angleRadians = Math.PI;
+      } else if (isNumber(sideConnectionEndpointDirection)) {
+        angleRadians = sideConnectionEndpointDirection;
+      } else {
+        angleRadians = this.rotateToAngle(polymerBond, flip);
+      }
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       angleRadians = this.rotateToAngle(polymerBond, flip);
@@ -309,6 +322,10 @@ export class AttachmentPoint {
     this.hoverableArea = hoverableArea;
 
     return attachmentPoint;
+  }
+
+  public raise() {
+    this.element?.raise();
   }
 
   public updateAttachmentPointStyleForHover() {

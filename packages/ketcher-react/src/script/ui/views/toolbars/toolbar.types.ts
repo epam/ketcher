@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -69,6 +69,7 @@ type LeftToolbarItemVariant =
   | 'select'
   | 'select-lasso'
   | 'select-rectangle'
+  | 'select-structure'
   | 'select-fragment'
   | 'erase'
   // bond group
@@ -131,6 +132,8 @@ type LeftToolbarItemVariant =
   | 'rgroup-label'
   | 'rgroup-fragment'
   | 'rgroup-attpoints'
+  // create monomer
+  | 'create-monomer'
   // shape group
   | 'shapes'
   | 'shape-ellipse'

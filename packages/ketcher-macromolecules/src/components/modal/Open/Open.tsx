@@ -19,17 +19,16 @@ import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
 import {
+  type CoreEditor,
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   EditorHistory,
-  SequenceMode,
   macromoleculesFilesInputFormats,
   ModeTypes,
-  SnakeMode,
-  FlexMode,
+  normalizeError,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -45,6 +44,7 @@ import { openErrorModal } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
 import styled from '@emotion/styled';
 import { Option } from 'components/shared/dropDown/dropDown';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './openModalStates';
 
 export interface Props {
   onClose: () => void;
@@ -122,12 +122,14 @@ const ONE_LETTER = 'one-letter';
 const THREE_LETTER = 'three-letter';
 
 const options: Array<Option> = [
-  { id: 'ket', label: 'Ket' },
+  { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
+  { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -142,14 +144,6 @@ const peptideLettersFormatOptions: Array<Option> = [
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
-
-export const MODAL_STATES = {
-  openOptions: 'openOptions',
-  textEditor: 'textEditor',
-} as const;
-
-export type MODAL_STATES_VALUES =
-  typeof MODAL_STATES[keyof typeof MODAL_STATES];
 
 const addToCanvas = ({
   ketSerializer,
@@ -173,10 +167,10 @@ const addToCanvas = ({
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
-  const editorHistory = new EditorHistory(editor);
-  const isSequenceMode = editor.mode instanceof SequenceMode;
-  const isSnakeMode = editor.mode instanceof SnakeMode;
-  const isFlexMode = editor.mode instanceof FlexMode;
+  const editorHistory = EditorHistory.getInstance(editor);
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode) {
     if (editor.drawingEntitiesManager.hasAntisenseChains) {
@@ -211,6 +205,10 @@ const addToCanvas = ({
   if (isCanvasEmptyBeforeOpenStructure) {
     editor.zoomToStructuresIfNeeded();
   }
+
+  editor.calculateAndStoreNextAutochainPosition(
+    deserialisedKet.drawingEntitiesManager,
+  );
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -235,7 +233,7 @@ const onOk = async ({
   const isSeq = formatSelection === SEQ;
   const isFasta = formatSelection === FASTA;
   const ketSerializer = new KetSerializer();
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
   let inputFormat;
   let fileData = struct;
 
@@ -281,8 +279,7 @@ const onOk = async ({
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
-    const stringError =
-      typeof error === 'string' ? error : JSON.stringify(error);
+    const stringError = normalizeError(error).message;
     showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {
@@ -335,6 +332,15 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
+    const windowContext = window as unknown as Record<string, unknown>;
+
+    if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+      document.documentElement.requestFullscreen?.().catch(() => {
+        /* Fullscreen restoration failed or was denied by the browser */
+      });
+      windowContext.isKetcherFullscreenBeforeFilePicker = false;
+    }
+
     const onLoad = (fileContent) => {
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
@@ -358,8 +364,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
-    const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
+    const editor = provideEditorInstance();
+    const history = EditorHistory.getInstance(editor);
     const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
 
     history.update(modelChanges);
@@ -409,7 +415,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       <FooterButtonContainer>
         <FooterButton
           key="openButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
@@ -417,7 +423,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         />
         <FooterButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={addToCanvasHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
@@ -433,6 +439,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       title="Open Structure"
       onClose={onCloseCallback}
       modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
+      testId="openStructureModal"
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>

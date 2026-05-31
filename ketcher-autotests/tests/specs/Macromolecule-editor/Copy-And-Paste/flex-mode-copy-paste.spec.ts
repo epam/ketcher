@@ -1,15 +1,16 @@
-import { Chem } from '@constants/monomers/Chem';
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
-  selectRectangleArea,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -24,7 +25,7 @@ test.describe('Flex mode copy&paste', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
 
-    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/monomers-chains.ket');
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
   });
 
@@ -34,12 +35,12 @@ test.describe('Flex mode copy&paste', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await copyToClipboardByKeyboard(page);
 
-    await page.mouse.move(-startX, 0);
+    await page.mouse.move(200, 300);
     await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Copy & paste selection with Shift + Click and undo', async ({

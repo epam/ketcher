@@ -1,4 +1,5 @@
 export enum ExtendedTableButton {
+  // Atom Generics
   A = 'A-button',
   AH = 'AH-button',
   Q = 'Q-button',
@@ -7,17 +8,22 @@ export enum ExtendedTableButton {
   MH = 'MH-button',
   X = 'X-button',
   XH = 'XH-button',
+  // Special Nodes
   H_PLUS = 'H+-button',
   D = 'D-button',
   T = 'T-button',
   R = 'R-button',
   Pol = 'Pol-button',
+  STAR = '*-button',
+  // Group Generics
   G = 'G-button',
   GH = 'GH-button',
   G_STAR = 'G*-button',
   GH_STAR = 'GH*-button',
+  // Acyclic
   ACY = 'ACY-button',
   ACH = 'ACH-button',
+  // Acyclic Carbo
   ABC = 'ABC-button',
   ABH = 'ABH-button',
   AYL = 'AYL-button',
@@ -30,6 +36,7 @@ export enum ExtendedTableButton {
   AHH = 'AHH-button',
   AOX = 'AOX-button',
   AOH = 'AOH-button',
+  // Cyclic
   CYC = 'CYC-button',
   CYH = 'CYH-button',
   CXX = 'CXX-button',

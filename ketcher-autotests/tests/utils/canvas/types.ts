@@ -1,3 +1,8 @@
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
+
 export enum SORT_TYPE {
   DESC_X = 'DESC_X',
   DESC_Y = 'DESC_Y',
@@ -54,6 +59,28 @@ export enum BondType {
   HYDROGEN,
 }
 
+export enum ArrowType {
+  OpenAngle = 'open-angle-arrow',
+  FilledTriangle = 'filled-triangle-arrow',
+  FilledBow = 'filled-bow-arrow',
+  DashedOpenAngle = 'dashed-open-angle-arrow',
+  Failed = 'failed-arrow',
+  Retrosynthetic = 'retrosynthetic-arrow',
+  BothEndsFilledTriangle = 'both-ends-filled-triangle-arrow',
+  EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow-arrow',
+  EquilibriumFilledTriangle = 'equilibrium-filled-triangle-arrow',
+  EquilibriumOpenAngle = 'equilibrium-open-angle-arrow',
+  UnbalancedFilledHalfBow = 'unbalanced-equilibrium-filled-half-bow-arrow',
+  UnbalancedOpenHalfAngle = 'unbalanced-equilibrium-open-half-angle-arrow',
+  UnbalancedLargeFilledHalfBow = 'unbalanced-equilibrium-large-filled-half-bow-arrow',
+  UnbalancedFilledHalfTriangle = 'unbalanced-equilibrium-filled-half-triangle-arrow',
+  EllipticalArcFilledBow = 'elliptical-arc-arrow-filled-bow-arrow',
+  EllipticalArcFilledTriangle = 'elliptical-arc-arrow-filled-triangle-arrow',
+  EllipticalArcOpenAngle = 'elliptical-arc-arrow-open-angle-arrow',
+  EllipticalArcOpenHalfAngle = 'elliptical-arc-arrow-open-half-angle-arrow',
+  MultiTailedArrow = 'multitail-arrow',
+}
+
 export type BondAttributes = {
   angle?: number;
   begin?: number;
@@ -87,16 +114,20 @@ export enum SequenceType {
   PEPTIDE = 'PEPTIDE',
 }
 
-// export enum PeptideType {
-//   oneLetterCode = '1-letter code',
-//   threeLetterCode = '3-letter code',
-// }
-
 export enum MacroFileType {
-  Ket = 'Ket',
+  KetFormat = 'Ket Format',
   MOLv3000 = 'MDL Molfile V3000',
   Sequence = 'Sequence',
   FASTA = 'FASTA',
   IDT = 'IDT',
+  AxoLabs = 'AxoLabs',
   HELM = 'HELM',
 }
+
+export type StructureFormat =
+  | MacroFileType
+  | [MacroFileType.FASTA | MacroFileType.Sequence, SequenceMonomerType]
+  | [
+      MacroFileType.Sequence,
+      [SequenceMonomerType.Peptide, PeptideLetterCodeType],
+    ];

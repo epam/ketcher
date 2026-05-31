@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -34,8 +35,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 9.612500000000026,
-            "y": -6.624999999999991
+            "x": 10.487500000000026,
+            "y": -7.499999999999992
         },
         "alias": "Phe4Me",
         "templateId": "Phe4Me___p-Methylphenylalanine"
@@ -263,6 +264,7 @@
         "id": "Phe4Me___p-Methylphenylalanine",
         "fullName": "p-Methylphenylalanine",
         "alias": "Phe4Me",
+        "aliasBILN": "Phe_4Me",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -289,8 +291,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 12.437499999999973,
-            "y": -8.27500000000001
+            "x": 13.312499999999973,
+            "y": -9.15000000000001
         },
         "alias": "meE",
         "templateId": "meE___N-Methyl-Glutamic acid"
@@ -481,6 +483,7 @@
         "id": "meE___N-Methyl-Glutamic acid",
         "fullName": "N-Methyl-Glutamic acid",
         "alias": "meE",
+        "aliasBILN": "meE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

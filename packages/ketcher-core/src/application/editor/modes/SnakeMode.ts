@@ -1,12 +1,14 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { LayoutMode } from 'application/editor/modes';
+import type { LayoutMode } from 'application/editor/modes/types';
 import ZoomTool from '../tools/Zoom';
-import { CoreEditor } from '../Editor';
-import { Coordinates } from '../internal';
+import { Coordinates } from '../shared/coordinates';
+import { provideEditorInstance } from '../editorSingleton';
 import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { registerMode } from './modesRegistry';
+import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -15,7 +17,7 @@ export class SnakeMode extends BaseMode {
 
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     // Prevent layout to be called if turn on snake mode by undo operation
     // because during undo to flex mode if monomers were not moved
@@ -37,17 +39,16 @@ export class SnakeMode extends BaseMode {
   }
 
   getNewNodePosition() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     return Coordinates.modelToCanvas(
       editor.drawingEntitiesManager.bottomRightMonomerPosition,
     );
   }
 
-  scrollForView() {
+  async scrollForView() {
     const zoom = ZoomTool.instance;
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
+    const drawnEntitiesBoundingBox = getRenderedStructuresBbox();
 
     if (zoom.isFitToCanvasHeight(drawnEntitiesBoundingBox.height)) {
       zoom.scrollTo(
@@ -67,9 +68,18 @@ export class SnakeMode extends BaseMode {
     }
   }
 
-  applyAdditionalPasteOperations() {
+  applyAdditionalPasteOperations(
+    mergedDrawingEntities: DrawingEntitiesManager,
+  ) {
     const command = new Command();
+    const editor = provideEditorInstance();
+
     command.addOperation(new ReinitializeModeOperation());
+    command.merge(
+      editor.drawingEntitiesManager.selectDrawingEntities(
+        mergedDrawingEntities.allEntitiesArray,
+      ),
+    );
 
     return command;
   }
@@ -82,3 +92,5 @@ export class SnakeMode extends BaseMode {
     return true;
   }
 }
+
+registerMode('snake-layout-mode', SnakeMode);

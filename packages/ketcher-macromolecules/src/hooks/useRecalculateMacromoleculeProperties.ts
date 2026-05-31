@@ -1,10 +1,11 @@
 import { IndigoProvider } from 'ketcher-react';
 import {
-  Chain,
   ChainsCollection,
+  Chain,
   getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
+  notifyRequestCompleted,
   Struct,
   StructService,
 } from 'ketcher-core';
@@ -12,7 +13,9 @@ import {
   molarMeasurementUnitToNumber,
   selectEditor,
   selectOligonucleotidesMeasurementUnit,
+  selectOligonucleotidesValue,
   selectUnipositiveIonsMeasurementUnit,
+  selectUnipositiveIonsValue,
   setMacromoleculesProperties,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
@@ -26,6 +29,8 @@ export const useRecalculateMacromoleculeProperties = () => {
   const oligonucleotidesMeasurementUnit = useAppSelector(
     selectOligonucleotidesMeasurementUnit,
   );
+  const unipositiveIonsValue = useAppSelector(selectUnipositiveIonsValue);
+  const oligonucleotidesValue = useAppSelector(selectOligonucleotidesValue);
 
   return async (shouldSkip?: boolean) => {
     if (!editor || shouldSkip) {
@@ -36,6 +41,7 @@ export const useRecalculateMacromoleculeProperties = () => {
     const selectionDrawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
+    const hasNoSelection = !selectionDrawingEntitiesManager.hasDrawingEntities;
     const drawingEntitiesManagerToCalculateProperties =
       selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager
@@ -51,9 +57,16 @@ export const useRecalculateMacromoleculeProperties = () => {
         0,
       ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
 
+    const hasNoChainsButMultipleFragments =
+      chainsCollection.chains.length === 0 &&
+      [...drawingEntitiesManagerToCalculateProperties.monomers.values()].filter(
+        (monomer) => monomer.monomerItem.props.isMicromoleculeFragment,
+      ).length > 1;
+
     if (
       !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
-      !areAllMonomersConnectedByCovalentOrHydrogenBonds
+      !areAllMonomersConnectedByCovalentOrHydrogenBonds ||
+      (hasNoSelection && hasNoChainsButMultipleFragments)
     ) {
       dispatch(setMacromoleculesProperties(undefined));
 
@@ -62,9 +75,10 @@ export const useRecalculateMacromoleculeProperties = () => {
 
     const serializedKet = ketSerializer.serialize(
       new Struct(),
-      drawingEntitiesManagerToCalculateProperties,
+      editor.drawingEntitiesManager,
       undefined,
       false,
+      true,
     );
     const calculateMacromoleculePropertiesResponse =
       await indigo.calculateMacromoleculeProperties(
@@ -73,9 +87,11 @@ export const useRecalculateMacromoleculeProperties = () => {
         },
         {
           upc:
-            140 / molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
+            unipositiveIonsValue /
+            molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
           nac:
-            200 / molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
+            oligonucleotidesValue /
+            molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
         },
       );
 
@@ -84,6 +100,7 @@ export const useRecalculateMacromoleculeProperties = () => {
         calculateMacromoleculePropertiesResponse.properties &&
         JSON.parse(calculateMacromoleculePropertiesResponse.properties);
 
+      notifyRequestCompleted();
       dispatch(setMacromoleculesProperties(macromoleculeProperties));
     } catch (e) {
       KetcherLogger.error('Error during parsing macromolecule properties: ', e);

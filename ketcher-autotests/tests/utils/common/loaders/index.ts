@@ -4,4 +4,3 @@ export { waitForSpinnerFinishedWork } from './waitForSpinnerFinishedWork/waitFor
 export { waitForIndigoToLoad } from './waitForIndigoToLoad';
 export { waitForRender } from './waitForRender';
 export { waitForPageInit } from './waitForPageInit';
-export { waitForAtomPropsModal, waitForBondPropsModal } from './waitForModal';

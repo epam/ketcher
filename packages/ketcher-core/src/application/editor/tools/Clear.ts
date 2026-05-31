@@ -14,16 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
+import { ZoomTool } from 'application/editor/tools/Zoom';
 
 class ClearTool implements BaseTool {
-  private history: EditorHistory;
-
-  constructor(private editor: CoreEditor) {
+  constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(editor);
+
+    // Only update history if there are entities to delete
+    if (!this.editor.drawingEntitiesManager.hasDrawingEntities) {
+      return;
+    }
+
+    const history = EditorHistory.getInstance(editor);
     const mode = editor.mode;
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
@@ -34,10 +40,13 @@ class ClearTool implements BaseTool {
 
     this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);
-    this.history.update(modelChanges);
+    history.update(modelChanges);
+    ZoomTool.instance.resetZoom();
   }
 
-  destroy() {}
+  destroy() {
+    // intentional no-op: this tool holds no resources that require cleanup
+  }
 }
 
 export { ClearTool };

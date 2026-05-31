@@ -20,20 +20,34 @@ import {
   PresetIcon,
   PresetContainer,
   PresetName,
+  PhosphatePositionIcon,
+  PhosphatePositionIconWrapper,
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react';
+import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
+import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import { useAppSelector } from 'hooks';
-import IDTAliases from '../IDTAliases/IDTAliases';
 import { PresetPreviewState } from 'state';
 
-const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
-  'sugar',
-  'base',
-  'phosphate',
-];
+const getIconNameForMonomer = (
+  monomer: MonomerItemType,
+): Extract<IconName, 'sugar' | 'base' | 'phosphate' | 'chem'> => {
+  switch (monomer.props.MonomerClass) {
+    case KetMonomerClass.Sugar:
+      return 'sugar';
+    case KetMonomerClass.Base:
+      return 'base';
+    case KetMonomerClass.Phosphate:
+      return 'phosphate';
+    default:
+      return 'chem';
+  }
+};
+
+const PHOSPHATE_INDEX = 2;
 
 interface Props {
   className?: string;
@@ -42,10 +56,11 @@ interface Props {
 const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
-  const { monomers, name, position, idtAliases } = preview;
+  const { monomers, name, position, idtAliases, aliasAxoLabs } = preview;
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
+  const axoLabsText = aliasAxoLabs ?? baseMonomer?.props.aliasAxoLabs;
 
   const idtAliasesText = useIDTAliasesTextForPreset({
     presetName,
@@ -53,24 +68,66 @@ const PresetPreview = ({ className }: Props) => {
     idtAliases,
   });
 
+  const isMonomerPreviewPropertiesVisible = idtAliasesText || axoLabsText;
+  // Resolve the phosphate-position icon (matches the icon used in the RNA
+  // Builder's phosphate position selector). `left` => 5'-end (icon with the
+  // colored phosphate on the left), `right` => 3'-end.
+  let phosphatePositionIconName: IconName | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionIconName = 'preset-left-phosphate';
+  } else {
+    phosphatePositionIconName =
+      preview.phosphatePosition === 'right'
+        ? 'preset-right-phosphate'
+        : undefined;
+  }
+
+  let phosphatePositionTooltip: string | undefined;
+  if (preview.phosphatePosition === 'left') {
+    phosphatePositionTooltip = "Phosphate on the left (5')";
+  } else {
+    phosphatePositionTooltip =
+      preview.phosphatePosition === 'right'
+        ? "Phosphate on the right (3')"
+        : undefined;
+  }
+  const getMonomerNameText = (monomer: MonomerItemType) =>
+    `(${monomer.props.Name})`;
+
   return (
     <PresetContainer
       className={className}
       style={{ alignItems: 'flex-start' }}
       data-testid="polymer-library-preview"
+      data-idtaliases={idtAliasesText ?? undefined}
+      data-axolabs={axoLabsText ?? undefined}
     >
-      <PresetName>{presetName}</PresetName>
-      {monomers.map(
-        (monomer, index) =>
-          monomer && (
-            <PresetMonomerRow key={index}>
-              <PresetIcon name={icons[index]} />
-              <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
-              <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
-            </PresetMonomerRow>
-          ),
+      <PresetName data-testid="preview-tooltip-title">{presetName}</PresetName>
+      {monomers.map((monomer, index) =>
+        monomer ? (
+          <PresetMonomerRow key={monomer.props.id ?? index}>
+            <PresetIcon name={getIconNameForMonomer(monomer)} />
+            <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
+            <PresetMonomerName>{getMonomerNameText(monomer)}</PresetMonomerName>
+            {index === PHOSPHATE_INDEX && phosphatePositionIconName && (
+              <PhosphatePositionIconWrapper
+                title={phosphatePositionTooltip}
+                data-testid="preset-preview-phosphate-position-icon"
+                data-phosphate-position={preview.phosphatePosition}
+              >
+                <PhosphatePositionIcon name={phosphatePositionIconName} />
+              </PhosphatePositionIconWrapper>
+            )}
+          </PresetMonomerRow>
+        ) : null,
       )}
-      {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} preset />}
+      {isMonomerPreviewPropertiesVisible && (
+        <MonomerPreviewProperties
+          preset
+          idtAliasesText={idtAliasesText ?? undefined}
+          axoLabsText={axoLabsText}
+        />
+      )}
     </PresetContainer>
   );
 };

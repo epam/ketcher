@@ -1,26 +1,25 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test, expect } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test, expect } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
+  clearCanvasByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import {} from '@utils/macromolecules';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Clear canvas with monomer bonded with another monomers', async ({
@@ -30,38 +29,29 @@ test.describe('Clear Canvas Tool', () => {
     Description: Clear Tool
     */
 
-    // Create 4 peptides on canvas
-    const peptide1 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      300,
-      300,
-      0,
-    );
-    const peptide2 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      400,
-      400,
-      1,
-    );
-    const peptide3 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      500,
-      500,
-      2,
-    );
-    const peptide4 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      500,
-      200,
-      3,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 300,
+    });
+    const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
-    // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 400,
+      y: 400,
+    });
+    const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 500,
+      y: 500,
+    });
+    const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 500,
+      y: 200,
+    });
+    const peptide4 = getMonomerLocator(page, Peptide.Tza).nth(3);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -85,16 +75,14 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Clear canvas button tooltip is located in the left toolbar.
     */
-    const icon = {
+    const clearCanvasButton = {
       testId: 'clear-canvas',
       title: 'Clear Canvas (Ctrl+Del)',
     };
-    const iconButton = page
-      .getByTestId(icon.testId)
-      .filter({ has: page.locator(':visible') });
-    await expect(iconButton).toHaveAttribute('title', icon.title);
-    await iconButton.hover();
-    expect(icon.title).toBeTruthy();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
+    await expect(button).toHaveAttribute('title', clearCanvasButton.title);
+    await button.hover();
+    expect(clearCanvasButton.title).toBeTruthy();
   });
 
   test('Check clearing canvas by use short key "CTRL+Delete"', async ({
@@ -105,11 +93,11 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await clearCanvasByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -121,8 +109,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: Canvas cleared.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `Molfiles-V3000/monomers-and-chem.mol`,
       page,
+      `Molfiles-V3000/monomers-and-chem.mol`,
     );
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
@@ -154,7 +142,7 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: After click Undo structure back for same place.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -168,7 +156,7 @@ test.describe('Clear Canvas Tool', () => {
     Test case: Clear canvas Tool
     Description: Undo/Redo functionality works properly.
     */
-    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await openFileAndAddToCanvasAsNewProject(page, `KET/chems-connected.ket`);
     await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
@@ -185,8 +173,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: All structure is deleted.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
@@ -202,8 +190,8 @@ test.describe('Clear Canvas Tool', () => {
     Description: When you switch back to Macromonecules structure is still deleted from canvas.
     */
     await openFileAndAddToCanvasAsNewProject(
-      `KET/peptides-flex-chain.ket`,
       page,
+      `KET/peptides-flex-chain.ket`,
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();

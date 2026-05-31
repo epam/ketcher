@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { KetcherLogger, GenerateImageOptions } from 'ketcher-core';
+import {
+  KetcherLogger,
+  GenerateImageOptions,
+  ketcherProvider,
+} from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -54,15 +58,14 @@ const SaveButton = (props: SaveButtonProps) => {
     disabled,
     testId,
   } = props;
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
-  const saveFile = () => {
+  const saveFile = async () => {
     if (data) {
       try {
-        fileSaver(server).then((saver: SaverType) => {
-          saver(data, filename, type);
-          onSave();
-        });
+        const saver: SaverType = await fileSaver(server);
+        saver(data, filename, type);
+        onSave();
       } catch (e) {
         KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
         onError(e);
@@ -71,7 +74,7 @@ const SaveButton = (props: SaveButtonProps) => {
   };
 
   const saveImage = () => {
-    const ketcherInstance = getKetcherInstance();
+    const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
     if (options?.outputFormat) {
       ketcherInstance
         .generateImage(data, options)

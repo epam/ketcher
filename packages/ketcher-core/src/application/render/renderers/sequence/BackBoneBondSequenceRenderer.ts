@@ -1,5 +1,5 @@
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class BackBoneBondSequenceRenderer extends BaseSequenceRenderer {
   constructor(polymerBond: PolymerBond) {
@@ -14,7 +14,11 @@ export class BackBoneBondSequenceRenderer extends BaseSequenceRenderer {
     return false;
   }
 
-  public moveStart(): void {}
+  public moveStart(): void {
+    // intentional no-op
+  }
 
-  public moveEnd(): void {}
+  public moveEnd(): void {
+    // intentional no-op
+  }
 }

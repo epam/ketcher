@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 
 import { MonomerGroup } from './MonomerGroup';
@@ -111,20 +111,6 @@ describe('Monomer Group', () => {
 
     expect(view).toMatchSnapshot();
   });
-  it('callback for monomer item should be called for group items', () => {
-    render(
-      withThemeAndStoreProvider(
-        <MonomerGroup
-          items={mockGroupProps.groupItems}
-          title={mockGroupProps.groupTitle}
-          onItemClick={onItemClick}
-        />,
-      ),
-    );
-    const item = screen.getByText('Ld');
-    fireEvent.click(item);
-    expect(onItemClick).toBeCalled();
-  });
   it('should apply correct style if selected', () => {
     const firstMonomer = mockGroupProps.groupItems[0];
     render(
@@ -139,5 +125,21 @@ describe('Monomer Group', () => {
     );
     const item = screen.getByTestId(getMonomerUniqueKey(firstMonomer));
     expect(item).toMatchSnapshot();
+  });
+  it('should not render when items array is empty', () => {
+    const { container } = render(
+      withThemeAndStoreProvider(
+        <MonomerGroup
+          items={[]}
+          title={mockGroupProps.groupTitle}
+          onItemClick={onItemClick}
+        />,
+      ),
+    );
+
+    expect(container.firstChild).toBeNull();
+    expect(
+      screen.queryByText(mockGroupProps.groupTitle),
+    ).not.toBeInTheDocument();
   });
 });

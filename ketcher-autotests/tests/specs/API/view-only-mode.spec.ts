@@ -1,27 +1,23 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@fixtures';
 import {
   waitForPageInit,
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
   takeTopToolbarScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeLeftToolbarScreenshot,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   openFile,
-  moveOnAtom,
-  resetCurrentTool,
-  clickOnAtom,
-  pressButton,
   dragMouseTo,
-  selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  deleteByKeyboard,
+  keyboardPressOnCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
-import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
   FileType,
   verifyFileExport,
@@ -31,17 +27,25 @@ import {
   disableViewOnlyModeBySetOptions,
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
+  MolFileFormat,
 } from '@utils/formats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
-import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { MoleculesTopToolbar } from '@tests/pages/molecules/MoleculesTopToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { LabelEditDialog } from '@tests/pages/molecules/canvas/LabelEditDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -132,8 +136,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: All editing tools are disabled in toolbars for elements
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await enableViewOnlyModeBySetOptions(page);
     await takePageScreenshot(page, { timeout: 10000 });
@@ -148,8 +152,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await enableViewOnlyModeBySetOptions(page);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-50-with-50-structures.ket',
       page,
+      'KET/images-png-50-with-50-structures.ket',
     );
     await takePageScreenshot(page);
   });
@@ -161,13 +165,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Tools and functions are enabled in view-only mode(Open, Save, Copy) 
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
     await expect(CommonTopLeftToolbar(page).openButton).toBeEnabled();
     await expect(CommonTopLeftToolbar(page).saveButton).toBeEnabled();
-    await expect(TopToolbar(page).copyButton).toBeEnabled();
+    await expect(MoleculesTopToolbar(page).copyButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -193,15 +197,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Elements on Canvas copied (as MOL) in view-only mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
 
-    await TopToolbar(page).copyAsMOL();
+    await MoleculesTopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takePageScreenshot(page);
   });
 
@@ -212,14 +216,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Elements on Canvas copied (as KET) in view-only mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await TopToolbar(page).copyAsKET();
+    await MoleculesTopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -231,8 +235,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
     const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
-    const aboutButton = TopRightToolbar(page).aboutButton;
-    const helpButton = TopRightToolbar(page).helpButton;
+    const aboutButton = CommonTopRightToolbar(page).aboutButton;
+    const helpButton = CommonTopRightToolbar(page).helpButton;
 
     await enableViewOnlyModeBySetOptions(page);
     await expect(helpButton).toBeEnabled();
@@ -249,9 +253,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The "Check Structure", "Calculated Values", and "3D Viewer" tools are enabled in view-only mode
     */
     await enableViewOnlyModeBySetOptions(page);
-    await expect(page.getByTitle('Check Structure (Alt+S)')).toBeEnabled();
-    await expect(page.getByTitle('Calculated Values (Alt+C)')).toBeEnabled();
-    await expect(page.getByTitle('3D Viewer')).toBeEnabled();
+    await expect(
+      IndigoFunctionsToolbar(page).checkStructureButton,
+    ).toBeEnabled();
+    await expect(
+      IndigoFunctionsToolbar(page).calculatedValuesButton,
+    ).toBeEnabled();
+    await expect(IndigoFunctionsToolbar(page).ThreeDViewerButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -262,18 +270,31 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Check Structure", "Calculated Values", and "3D Viewer" tools are operational in view-only mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
-    await closeErrorAndInfoModals(page);
+    await OpenStructureDialog(page).closeWindow();
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
-    await IndigoFunctionsToolbar(page).ThreeDViewer();
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C6H6');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '78.114',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '78.047',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 92.3 H 7.7');
+    await OpenStructureDialog(page).closeWindow();
+    await IndigoFunctionsToolbar(page).threeDViewer({
+      waitForApplyButtonIsEnabled: false,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -288,7 +309,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopLeftToolbar(page).openFile();
-    await openFile(`KET/images-png-50-with-50-structures.ket`, page);
+    await openFile(page, `KET/images-png-50-with-50-structures.ket`);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();
     await takeEditorScreenshot(page);
@@ -298,7 +319,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { keys: 'Control+c', action: 'Copy' },
     { keys: 'Control+Shift+f', action: 'Copy Image' },
     { keys: 'Control+Shift+k', action: 'Copy as KET' },
-    { keys: 'Control+m', action: 'Copy as MOL' },
+    { keys: 'Control+Shift+m', action: 'Copy as MOL' },
     { keys: 'Control+o', action: 'Open' },
     { keys: 'Control+s', action: 'Save As' },
     { keys: 'Control+a', action: 'Select All' },
@@ -321,24 +342,23 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         const saveStructureTextarea =
           SaveStructureDialog(page).saveStructureTextarea;
 
-        await selectRingButton(page, RingButton.Benzene);
-        await clickInTheMiddleOfTheScreen(page);
+        await BottomToolbar(page).clickRing(RingButton.Benzene);
+        await clickInTheMiddleOfTheCanvas(page);
         await enableViewOnlyModeBySetOptions(page);
         await selectAllStructuresOnCanvas(page);
         // Waiting for all selected elements to lose `display: none` is insufficient
         // because the "Copy" button becomes enabled last as an indicator of completion.
-        await waitForOpenButtonEnabled(page);
+        // await waitForOpenButtonEnabled(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),
         );
         await takePageScreenshot(page, {
           mask: [
-            page.locator('[class*="Check-module_checkInfo"] > span'),
+            StructureCheckDialog(page).lastCheckInfo,
             saveStructureTextarea,
           ],
         });
-        await closeErrorAndInfoModals(page);
       });
     }
   });
@@ -350,14 +370,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Hotkeys for editing works after switching from View only mode to normal mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
-    await page.keyboard.press('Delete');
-    await moveOnAtom(page, 'C', 4);
-    await page.keyboard.press('n');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
+    await deleteByKeyboard(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
@@ -368,13 +392,17 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Eiting-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
-    await page.keyboard.press('Delete');
-    await moveOnAtom(page, 'C', 4);
-    await page.keyboard.press('n');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
+    await deleteByKeyboard(page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 3 }).hover({
+      force: true,
+    });
+    await keyboardPressOnCanvas(page, 'n');
     await takeEditorScreenshot(page);
   });
 
@@ -383,17 +411,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: ZoomIn and ZoomOut works as expected.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await CommonTopRightToolbar(page).setZoomInputValue('20');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).setZoomInputValue('350');
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -404,12 +429,20 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The right-click context menu is fully blocked in view-only mode
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
+
     await enableViewOnlyModeBySetOptions(page);
-    await clickOnAtom(page, 'C', 1, 'right');
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -420,8 +453,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: When we select structure there is no rotation tool above.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
@@ -436,21 +469,22 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: In view-only mode, when user clicks and holds on an atom for several seconds, atom's edit window does not appear.
     */
-    const timeout = 2000;
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await LabelEditDialog(page).cancel();
     await enableViewOnlyModeBySetOptions(page);
-    await moveOnAtom(page, 'C', 1);
-    await page.mouse.down();
-    await page.waitForTimeout(timeout);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+      delay: 2000,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -461,11 +495,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: When view mode is triggered tool reset to selection (from Fragment to Rectangle).
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
-    );
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
     await takeLeftToolbarScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
@@ -478,16 +510,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: After disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
-    await moveOnAtom(page, 'C', 1);
-    await dragMouseTo(300, 300, page);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).hover({
+      force: true,
+    });
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -496,8 +530,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from KET.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await verifyFileExport(
       page,
@@ -505,8 +539,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       page,
+      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -518,19 +552,19 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from MOL V2000.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await verifyFileExport(
       page,
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       page,
+      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });
@@ -542,19 +576,19 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: Structure saved and opened from MOL V3000.
     */
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await enableViewOnlyModeBySetOptions(page);
     await verifyFileExport(
       page,
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
     );
 
     await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       page,
+      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
     );
     await takeEditorScreenshot(page);
   });

@@ -1,12 +1,13 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import {
+  verifyPNGExport,
+  verifySVGExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,8 +23,8 @@ test.describe('Reagents molecule below arrow', () => {
       We have a bug https://github.com/epam/Indigo/issues/2591
     */
       await openFileAndAddToCanvas(
-        'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
         page,
+        'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
       );
       await takeEditorScreenshot(page);
     },
@@ -35,8 +36,8 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File opens with the reagent HCl below the arrow
     */
     await openFileAndAddToCanvas(
-      'CDXML/benzene-arrow-benzene-reagent-hcl.cdxml',
       page,
+      'CDXML/benzene-arrow-benzene-reagent-hcl.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -47,14 +48,10 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await verifySVGExport(page);
   });
 
   test('Save PNG with reagent HCl below arrow', async ({ page }) => {
@@ -63,14 +60,9 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
     await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
     );
-
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await verifyPNGExport(page);
   });
 });

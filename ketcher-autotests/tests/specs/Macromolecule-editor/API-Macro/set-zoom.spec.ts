@@ -1,12 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   setZoom,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
 
 test.describe('setZoom', () => {
@@ -16,7 +16,7 @@ test.describe('setZoom', () => {
   });
 
   test('Should zoom drawn structures', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     const zoomValue = 2;
     await takeEditorScreenshot(page);
     await setZoom(page, zoomValue);
@@ -33,12 +33,12 @@ test.describe('setZoom', () => {
 
   for (const { level, description, adjustZoom } of zoomLevels) {
     test(`Verify ketcher.setZoom at ${description}`, async ({ page }) => {
-      await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
+      await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
       await takeEditorScreenshot(page);
 
       if (adjustZoom) {
         await CommonTopRightToolbar(page).selectZoomInTool(3);
-        await clickInTheMiddleOfTheScreen(page);
+        await clickInTheMiddleOfTheCanvas(page);
         await takeEditorScreenshot(page);
       }
 

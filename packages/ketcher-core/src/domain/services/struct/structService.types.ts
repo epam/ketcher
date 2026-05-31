@@ -36,8 +36,11 @@ export enum ChemicalMimeType {
   DNA = 'chemical/x-dna-sequence',
   PEPTIDE = 'chemical/x-peptide-sequence',
   IDT = 'chemical/x-idt',
+  AXOLABS = 'chemical/x-axo-labs',
   HELM = 'chemical/x-helm',
+  BILN = 'chemical/x-biln',
   RDF = 'chemical/x-rdf',
+  MonomerLibrary = 'chemical/x-monomer-library',
 }
 
 export interface WithStruct {
@@ -177,6 +180,7 @@ export interface GenerateImageOptions extends StructServiceOptions {
 }
 
 export interface StructService {
+  addKetcherId: (id: string) => void;
   info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,

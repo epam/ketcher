@@ -77,11 +77,18 @@ module.exports = override(
         chunks: ['duo'],
         inject: true,
       }),
+      new HtmlWebpackPlugin({
+        filename: 'closable.html',
+        template: 'public/closable.html',
+        chunks: ['closable'],
+        inject: true,
+      }),
     );
     config.entry = {
       main: './src/index.tsx',
       popup: './src/popupIndex.tsx',
       duo: './src/duoIndex.tsx',
+      closable: './src/closableIndex.tsx',
     };
     return config;
   },

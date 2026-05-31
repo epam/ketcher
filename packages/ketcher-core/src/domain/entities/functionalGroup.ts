@@ -13,18 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ReSGroup } from 'application/render';
+import type { ReSGroup } from 'application/render';
 import assert from 'assert';
-import { FunctionalGroupsProvider } from '../helpers';
-import { Atom } from './atom';
-import { Bond } from './bond';
-import { Pool } from './pool';
+import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
+import type { Atom } from './atom';
+import type { Bond } from './bond';
+import type { Pool } from './pool';
 import { SGroup } from './sgroup';
-import { Struct } from './struct';
-import { HalfBond } from './halfBond';
+import type { Struct } from './struct';
+import type { HalfBond } from './halfBond';
+
+const isSaltOrSolvent = (moleculeName: string): boolean => {
+  const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
+  const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
+  return saltsAndSolvents.some(
+    ({ name, abbreviation }) =>
+      name === moleculeName || moleculeName === abbreviation,
+  );
+};
+
+const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
+  const atoms = sgroup.allAtoms
+    ? Array.from(molecule.atoms.keys())
+    : (sgroup.atoms as number[]);
+  const bonds: number[] = [];
+
+  molecule.bonds.forEach((bond, bid) => {
+    if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
+      bonds.push(bid);
+    }
+  });
+
+  return bonds;
+};
 
 export class FunctionalGroup {
-  #sgroup: SGroup;
+  readonly #sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
     assert(sgroup != null);
@@ -59,7 +83,7 @@ export class FunctionalGroup {
     return (
       type === 'SUP' &&
       (functionalGroups.some((type) => type.name === name) ||
-        SGroup.isSaltOrSolvent(name))
+        isSaltOrSolvent(name))
     );
   }
 
@@ -90,7 +114,7 @@ export class FunctionalGroup {
       return null;
     }
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
       if (bonds.includes(bond)) return bond;
     }
     return null;
@@ -155,8 +179,12 @@ export class FunctionalGroup {
     isFunctionalGroupReturned?: boolean,
   ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
-      if (!fg.relatedSGroup.isSuperatomWithoutLabel && bonds.includes(bondId)) {
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
+      if (
+        bondId !== null &&
+        !fg.relatedSGroup.isSuperatomWithoutLabel &&
+        bonds.includes(bondId)
+      ) {
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
       }
     }
@@ -179,27 +207,21 @@ export class FunctionalGroup {
 
   static isAtomInContractedFunctionalGroup(
     atom: Atom,
-    sgroups,
+    sgroups: Map<number, ReSGroup> | Pool<SGroup>,
     functionalGroups,
-    sgroupsFromReStruct: boolean,
   ): boolean {
-    const contractedFunctionalGroups: number[] = [];
-    if (sgroupsFromReStruct) {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(sg.item, functionalGroups)
-        ) {
-          contractedFunctionalGroups.push(sg.item.id);
-        }
-      });
-    } else {
-      sgroups.forEach((sg) => {
-        if (FunctionalGroup.isContractedFunctionalGroup(sg, functionalGroups)) {
-          contractedFunctionalGroups.push(sg.id);
-        }
-      });
-    }
-    return contractedFunctionalGroups.some((sg) => atom.sgs.has(sg));
+    return [...atom.sgs.values()].some((sgid) => {
+      const sgroup = sgroups.get(sgid);
+
+      if (!sgroup) {
+        return false;
+      }
+
+      return FunctionalGroup.isContractedFunctionalGroup(
+        'item' in sgroup ? sgroup.item : sgroup,
+        functionalGroups,
+      );
+    });
   }
 
   static isBondInContractedFunctionalGroup(

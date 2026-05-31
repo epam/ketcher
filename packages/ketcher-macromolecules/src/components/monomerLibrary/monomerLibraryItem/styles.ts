@@ -15,6 +15,7 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
+import { Icon } from 'ketcher-react';
 
 export const Card = styled.div<{
   code?: string;
@@ -22,11 +23,17 @@ export const Card = styled.div<{
   disabled?: boolean;
   isVariantMonomer?: boolean;
   item?: MonomerOrAmbiguousType;
+  isDragging?: boolean;
 }>`
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  cursor: ${({ disabled, isDragging }) => {
+    if (disabled) {
+      return 'default';
+    }
+    return isDragging ? 'grabbing !important' : 'pointer';
+  }};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;
@@ -45,13 +52,23 @@ export const Card = styled.div<{
   box-sizing: border-box;
   z-index: ${({ selected }) => (selected ? 2 : undefined)};
 
+  ${({ isDragging }) =>
+    isDragging &&
+    `
+    &, & * {
+      pointer-events: none !important;
+      cursor: grabbing !important;
+    }
+  `}
+
   .hidden & .star {
     visibility: hidden !important;
   }
 
   &:hover {
     outline: 1px solid #b4b9d6;
-    > .star {
+    > .star,
+    .autochain {
       visibility: visible;
       opacity: 1;
     }
@@ -95,14 +112,19 @@ export const Card = styled.div<{
     max-width: 85%;
   }
   > .star {
-    color: #e1e5ea;
+    color: #cad3dd;
     position: absolute;
-    top: 12px;
-    right: 3px;
-    font-size: 15px;
+    left: calc(50% - 7px);
+    top: 11px;
+    font-size: 13px;
+    line-height: 13px;
     opacity: 0;
     transition: 0.2s ease;
     flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
     &.visible {
       visibility: visible;
       opacity: 1;
@@ -139,3 +161,25 @@ export const NumberCircle = styled.div<{
 export const CardTitle = styled.span`
   font-size: 12px;
 `;
+
+export const AutochainIcon = styled(Icon)<{ disabled?: boolean }>`
+  color: #cad3dd;
+  stroke-width: 0;
+  opacity: 0;
+  transition: 0.2s ease;
+  flex-shrink: 0;
+  width: 13px;
+
+  &:active {
+    transform: scale(1.2);
+  }
+  &:hover {
+    color: ${({ disabled }) => (disabled ? '#cad3dd' : '#333333')};
+  }
+`;
+
+export const AutochainIconWrapper = styled('div')({
+  position: 'absolute',
+  top: '12px',
+  left: '4px',
+});

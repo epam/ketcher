@@ -1,7 +1,9 @@
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer, HydrogenBond, PolymerBond } from 'domain/entities';
-import { Coordinates } from 'application/editor';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { arc } from 'd3';
 
 export type AngleSnapViewParams = {
@@ -26,7 +28,7 @@ const minimalAngleDifference = (a: number, b: number) => {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class AngleSnapView extends TransientView {
-  public static viewName = 'AngleSnapView';
+  public static readonly viewName = 'AngleSnapView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,

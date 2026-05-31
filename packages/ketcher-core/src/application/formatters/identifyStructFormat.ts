@@ -57,10 +57,10 @@ export function identifyStructFormat(
     return SupportedFormat.molV3000;
   }
 
-  const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m);
+  const match = /^(M {2}END|\$END MOL)$/m.exec(sanitizedString);
 
   if (match) {
-    const end = (match.index || 0) + match[0].length;
+    const end = (match.index ?? 0) + match[0].length;
     if (
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
@@ -70,7 +70,7 @@ export function identifyStructFormat(
   }
 
   if (
-    sanitizedString[0] === '<' &&
+    sanitizedString.startsWith('<') &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
     return SupportedFormat.cml;
@@ -90,7 +90,7 @@ export function identifyStructFormat(
     return SupportedFormat.cdx;
   }
 
-  if (sanitizedString.slice(0, 5) === 'InChI') {
+  if (sanitizedString.startsWith('InChI')) {
     return SupportedFormat.inChI;
   }
 
@@ -103,11 +103,11 @@ export function identifyStructFormat(
     return SupportedFormat.cdxml;
   }
 
-  if (sanitizedString[0] === '>') {
+  if (sanitizedString.startsWith('>')) {
     return SupportedFormat.fasta;
   }
 
-  const isSequence = /^[a-zA-Z\s\n]*$/.test(sanitizedString);
+  const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
   const isIdt = /([a-zA-Z0-9]+)\/*([a-zA-Z0-9*-]+)/.test(sanitizedString);
 

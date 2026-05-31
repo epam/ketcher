@@ -1,22 +1,24 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
+  pasteFromClipboardAndOpenAsNewProject,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
+  readFileContent,
 } from '@utils';
-import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getMolfile } from '@utils/formats';
+import { MolFileFormat, RxnFileFormat, SdfFileFormat } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
+  verifyInChIKeyExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
@@ -24,14 +26,10 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-const RING_OFFSET = 150;
-const ARROW_OFFSET = 20;
-const ARROW_LENGTH = 100;
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,18 +42,16 @@ test.describe('Save files', () => {
      * Description: Reaction is saved correctly in .rxn file
      */
 
-    await drawReactionWithTwoBenzeneRings(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
-      RING_OFFSET,
-      ARROW_OFFSET,
-      ARROW_LENGTH,
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
     await verifyFileExport(
       page,
       'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
   });
 
@@ -70,7 +66,7 @@ test.describe('Save files', () => {
       page,
       'Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
   });
 
@@ -80,11 +76,9 @@ test.describe('Save files', () => {
      * Description: Sctuctures are saved correctly in .ket file
      */
 
-    await drawReactionWithTwoBenzeneRings(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
-      RING_OFFSET,
-      ARROW_OFFSET,
-      ARROW_LENGTH,
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCABK4ScBNAyfAQAABIAGAAAAAAIIALreJwHK89IBAAAEgAcAAAAAAggA8uAYAcwMuQEAAASACAAAAAACCAAY50UByvPSAQAABIAJAAAAAAIIAGAIRgE0DJ8BAAAEgAoAAAAAAggAUOJUASgcuQEAAAWAFQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAFgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAFwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAGAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAGQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAGgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAAiemAA0DJ8BAAAEgA0AAAAAAggAeJuYAMrz0gEAAASADgAAAAACCACwnYkAzAy5AQAABIAPAAAAAAIIANWjtgDK89IBAAAEgBAAAAAAAggAHsW2ADQMnwEAAASAEQAAAAACCAANn8UAKBy5AQAABYAbAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAcAAAABAYEAAwAAAAFBgQAEAAAAAAABYAdAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAeAAAABAYEABEAAAAFBgQADwAAAAAABYAfAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAgAAAABAYEAA0AAAAFBgQADgAAAAAAAAAhgBIAAAAEAhAAOR/NAAAAuQGYIAkBAAC5ATcKAgAAAC8KAgABACAKAgDKCDEKAgAzAjUKAgACADAKAgAZAAcCDAAAALkBOR/NAAAAAAAIAgwAAAC5AZggCQEAAAAAAAANgAAAAAAOgAAAAAABDAQABAAAAAIMBAALAAAABAwEABIAAAAAAAAAAAAAAAAA',
     );
 
     await verifyFileExport(
@@ -99,7 +93,7 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-1851
     Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
     await verifyFileExport(
       page,
       'KET/two-benzene-connected-expected.smi',
@@ -114,16 +108,16 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/two-arrows-and-plus.ket');
     await verifyFileExport(
       page,
       'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
       page,
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
     );
     await takeEditorScreenshot(page);
   });
@@ -137,15 +131,15 @@ test.describe('Save files', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
+      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
     );
 
     await verifyFileExport(
       page,
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });
@@ -160,8 +154,8 @@ test.describe('Save files', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
@@ -183,24 +177,12 @@ test.describe('Save files', () => {
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await CommonTopLeftToolbar(page).saveFile();
 
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      MolFileFormat.v2000,
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Support for exporting to "InChiKey" file format', async ({ page }) => {
@@ -210,14 +192,9 @@ test.describe('Save files', () => {
      */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
     await waitForIndigoToLoad(page);
-    await selectRingButton(page, RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.InChIKey,
-    );
-    const inChistring = await SaveStructureDialog(page).getTextAreaValue();
-    expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await verifyInChIKeyExport(page, 'UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
   test('Support for exporting to "SDF V2000" file format', async ({ page }) => {
@@ -225,13 +202,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V2000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
   });
 
@@ -240,13 +217,13 @@ test.describe('Save files', () => {
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/chain.ket');
 
     await verifyFileExport(
       page,
       'SDF/chain-expectedV3000.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
   });
 });
@@ -261,11 +238,11 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-1844
       Description: MolFile is pasted to canvas
       */
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+    const fileContent = await readFileContent(
+      'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -280,7 +257,7 @@ test.describe('Open/Save/Paste files', () => {
       page,
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=CC=1.[*:1]%91 |$;;;;;;;;;;;;;;;;_AP1$,rb:10:2,u:10,s:10:*|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -295,7 +272,7 @@ test.describe('Open/Save/Paste files', () => {
       page,
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=C%92C=1O1C=CN=CC=1.[*:1]%91.[*:2]%92 |$;;;;;;;;;;;;;;;;;;;;;;_AP1;_AP2$,rb:10:2,u:10,s:10:*|',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -308,7 +285,7 @@ test.describe('Open/Save/Paste files', () => {
       page,
       'InChI=1S/C16H18/c1-11-5-12(2)8-15(7-11)16-9-13(3)6-14(4)10-16/h5-10H,1-4H3',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -317,12 +294,8 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2253
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
+    await verifySVGExport(page);
   });
 
   test('Save structure with PNG format', async ({ page }) => {
@@ -330,12 +303,8 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-2254
       Description: File is shown in the preview
     */
-    await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.PNGImage,
-    );
-    await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-connected.ket');
+    await verifyPNGExport(page);
   });
 
   test('Saving structure with QUERY in Smiles format', async ({ page }) => {
@@ -345,12 +314,12 @@ test.describe('Open/Save/Paste files', () => {
     of atoms and bonds that are not supported in the SMILES. 
     Query properties will not be reflected in the file saved."
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/attached-data.mol');
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
-    await SaveStructureDialog(page).warningsTab.click();
+    await SaveStructureDialog(page).switchToWarningsTab();
     await takeEditorScreenshot(page);
   });
 
@@ -362,8 +331,8 @@ test.describe('Open/Save/Paste files', () => {
      * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
      */
     await openFileAndAddToCanvas(
-      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
       page,
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
     );
 
     await verifyFileExport(

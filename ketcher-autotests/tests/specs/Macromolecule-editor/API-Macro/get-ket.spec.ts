@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   layout,
   recognize,
-  clickInTheMiddleOfTheScreen,
-  selectAllStructuresOnCanvas,
+  clickInTheMiddleOfTheCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
@@ -23,7 +23,7 @@ test.describe('getKet', () => {
   });
 
   test('with two monomers bonded', async ({ page }) => {
-    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/alanine-monomers-bonded.ket');
     await verifyFileExport(
       page,
       'KET/alanine-monomers-bonded-expected.ket',
@@ -156,7 +156,7 @@ test.describe('getKet', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
 
     await verifyFileExport(

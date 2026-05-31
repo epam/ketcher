@@ -44,9 +44,9 @@ export class CommonArrowTool extends ArrowTool implements Tool {
     | 'add'
     | null = null;
 
-  private addTool: ArrowAddTool;
-  private multitailMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
-  private reactionMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
+  private readonly addTool: ArrowAddTool;
+  private readonly multitailMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
+  private readonly reactionMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
   constructor(
     editor: Editor,

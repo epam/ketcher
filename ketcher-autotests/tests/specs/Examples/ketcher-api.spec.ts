@@ -1,12 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '@fixtures';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { molV2000 } from '@tests/test-data/JSON/molV2000-result';
-import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import { clickInTheMiddleOfTheCanvas, waitForPageInit } from '@utils';
 
 test('getting molV2000 from Ketcher API', async ({ page }) => {
   await waitForPageInit(page);
-  await BottomToolbar(page).Benzene();
-  await clickInTheMiddleOfTheScreen(page);
+  await BottomToolbar(page).benzene();
+  await clickInTheMiddleOfTheCanvas(page);
   const [, , molFile] = (
     await page.evaluate(() => window.ketcher.getMolfile())
   ).split('\n');

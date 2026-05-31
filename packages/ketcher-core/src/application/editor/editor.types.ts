@@ -14,16 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions';
-import { Render } from 'application/render';
-import { Struct } from 'domain/entities';
-import { selectionKeys } from './shared/constants';
-import { PipelineSubscription, Subscription } from 'subscription';
+import type { Action } from './actions/action';
+import type { MonomerCreationState, Render } from 'application/render';
+import type { Struct } from 'domain/entities/struct';
+import type { selectionKeys } from './shared/constants';
+import type { PipelineSubscription, Subscription } from 'subscription';
+import type { IRnaPreset } from './tools/Tool';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
+} & {
+  enhancedFlags?: number[];
 };
-
 export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };
@@ -61,6 +63,7 @@ export interface Editor {
   errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;
+    tooltip: Subscription;
     elementEdit: PipelineSubscription;
     bondEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
@@ -95,4 +98,16 @@ export interface Editor {
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
   focusCliparea: () => void;
+  closeMonomerCreationWizard: () => void;
+  ketcherId: string;
+  isMonomerCreationWizardActive: boolean;
+  monomerCreationState: MonomerCreationState;
 }
+
+export type LibraryItemDragState = {
+  item: IRnaPreset;
+  position: {
+    x: number;
+    y: number;
+  };
+} | null;

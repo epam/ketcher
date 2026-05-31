@@ -21,7 +21,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   const header = isAlternatives ? 'Alternatives' : 'Mixed';
   const aminoAcidFallback = monomer.label === 'X' ? 'Any amino acid' : null;
   const baseFallback = monomer.label === 'N' ? 'Any base' : null;
-  const fallback = aminoAcidFallback || baseFallback;
+  const fallback = aminoAcidFallback ?? baseFallback;
 
   const { monomers, options } = monomer;
 
@@ -53,24 +53,27 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   }, [fallback, monomers, presetMonomers, options]);
 
   const preparedPreviewData = useMemo(() => {
-    const sortedData = previewData.sort((a, b) => {
-      if (isAlternatives) {
+    const sortedData = [...previewData];
+    if (isAlternatives) {
+      sortedData.sort((a, b) => {
         return a.monomerName.localeCompare(b.monomerName);
-      } else {
-        if (!a.ratio || !b.ratio) {
-          return 0;
-        }
-        return b.ratio - a.ratio;
-      }
-    });
-    if (!isAlternatives) {
+      });
+    } else {
       const overallRatio = sortedData.reduce(
-        (acc, item) => acc + (item.ratio || 1),
+        (acc, item) => acc + (item.ratio ?? 1),
         0,
       );
 
       sortedData.forEach((entry) => {
-        entry.ratio = Math.round(((entry.ratio || 1) / overallRatio) * 100);
+        entry.ratio = Math.round(((entry.ratio ?? 1) / overallRatio) * 100);
+      });
+
+      sortedData.sort((a, b) => {
+        const ratioDiff = (b.ratio ?? 0) - (a.ratio ?? 0);
+        if (ratioDiff !== 0) {
+          return ratioDiff;
+        }
+        return a.monomerName.localeCompare(b.monomerName);
       });
     }
 
@@ -83,7 +86,7 @@ const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
       className={className}
       data-testid="polymer-library-preview"
     >
-      <Header>{header}</Header>
+      <Header data-testid="preview-tooltip-title">{header}</Header>
       <Content>
         {fallback ??
           preparedPreviewData.map((entry) => (

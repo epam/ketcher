@@ -3,17 +3,20 @@
   width: 100%;
   height: 36px;
   background-color: transparent;
+  pointer-events: none;
 }
 
 .rulerInput {
   position: absolute;
   top: 0;
   height: 14px;
-  width: 26px;
+  width: 35px;
   border: var(--border-regular);
   border-radius: 3px;
   opacity: 40%;
   text-align: center;
+  will-change: transform;
+  pointer-events: auto;
 
   &:hover {
     cursor: pointer;
@@ -30,7 +33,6 @@
 
   &.rulerInputDragging {
     user-select: none;
-    user-focus: none;
     opacity: 100%;
   }
 }
@@ -48,13 +50,15 @@
   top: 0;
   width: 16px;
   height: 13px;
+  will-change: transform;
 
   &:hover {
     cursor: pointer;
   }
 }
 
-.rulerInput, .rulerHandle {
+.rulerInput,
+.rulerHandle {
   &::before {
     content: '';
     display: block;

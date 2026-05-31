@@ -14,26 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  FunctionalGroup,
-  HalfBond,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import type { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { HalfBond } from 'domain/entities/halfBond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap, StereoColoringType } from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { RenderOptions, RenderOptionStyles } from '../render.types';
+import type { RenderOptions, RenderOptionStyles } from '../render.types';
+import { isNumber } from 'lodash';
+import Visel from './visel';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -131,8 +132,8 @@ class ReBond extends ReObject {
     bond.b.angle = (Math.atan2(hb1.dir.y, hb1.dir.x) * 180) / Math.PI;
   }
 
-  drawHover(render: Render) {
-    const ret = this.makeHoverPlate(render);
+  drawHover(render: Render, drawOutline = true) {
+    const ret = this.makeHoverPlate(render, drawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
@@ -277,7 +278,7 @@ class ReBond extends ReObject {
     return paper.path(pathString);
   }
 
-  makeHoverPlate(render: Render) {
+  makeHoverPlate(render: Render, drawOutline = true) {
     const restruct = render.ctab;
     const options = render.options;
     if (this.isPlateShouldBeHidden(restruct, options)) {
@@ -286,7 +287,11 @@ class ReBond extends ReObject {
 
     const rect = this.getSelectionContour(render, false);
 
-    return rect.attr({ ...options.hoverStyle });
+    return rect.attr(
+      drawOutline
+        ? { ...options.hoverStyle }
+        : { fill: options.hoverStyle.fill, stroke: 'none' },
+    );
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
@@ -299,7 +304,7 @@ class ReBond extends ReObject {
     return rect.attr(options.selectionStyle);
   }
 
-  private isPlateShouldBeHidden = (
+  private readonly isPlateShouldBeHidden = (
     restruct: ReStruct,
     options: RenderOptions,
   ) => {
@@ -492,6 +497,179 @@ class ReBond extends ReObject {
         visel: this.visel,
       });
     }
+
+    this.addTestIds(restruct.molecule, bond);
+  }
+
+  private addTestIds(struct: Struct, bond: Bond) {
+    const bondPathElement = this.path.items
+      ? this.path.items[0].node
+      : this.path.node;
+
+    if (!bondPathElement) {
+      return;
+    }
+
+    bondPathElement.setAttribute('data-testid', 'bond');
+    bondPathElement.setAttribute('data-bondid', struct.bonds.keyOf(bond));
+    bondPathElement.setAttribute(
+      'data-bondtype',
+      bond.type + (bond.stereo ? 10 + 2 * bond.stereo : 0),
+    );
+    bondPathElement.setAttribute('data-bondstereo', bond.stereo);
+    bondPathElement.setAttribute('data-fromatomid', bond.begin);
+    bondPathElement.setAttribute('data-toatomid', bond.end);
+    bondPathElement.setAttribute('data-topology', bond.topology);
+    bondPathElement.setAttribute(
+      'data-reacting-center',
+      bond.reactingCenterStatus,
+    );
+
+    const beginSGroupId = struct.getGroupIdFromAtomId(bond.begin);
+    const endSGroupId = struct.getGroupIdFromAtomId(bond.end);
+
+    if (beginSGroupId === endSGroupId) {
+      return;
+    }
+
+    if (isNumber(beginSGroupId)) {
+      bondPathElement.setAttribute('data-fromsgroupid', beginSGroupId);
+
+      if (struct.sgroups.get(beginSGroupId) instanceof MonomerMicromolecule) {
+        bondPathElement.setAttribute('data-frommonomerid', beginSGroupId);
+      }
+    }
+
+    if (isNumber(endSGroupId)) {
+      bondPathElement.setAttribute('data-tosgroupid', endSGroupId);
+
+      if (struct.sgroups.get(endSGroupId) instanceof MonomerMicromolecule) {
+        bondPathElement.setAttribute('data-tomonomerid', endSGroupId);
+      }
+    }
+  }
+
+  public drawFragmentSelectionPreview(
+    render: Render,
+    atomIdToDrawArrows: number,
+  ) {
+    this.hovering?.node?.remove();
+
+    const halfBond1 =
+      this.b.hb1 && render.ctab.molecule.halfBonds.get(this.b.hb1);
+    const halfBond2 =
+      this.b.hb2 && render.ctab.molecule.halfBonds.get(this.b.hb2);
+    const atom1 = render.ctab.molecule.atoms.get(this.b.begin);
+    const atom2 = render.ctab.molecule.atoms.get(this.b.end);
+
+    if (!halfBond1 || !halfBond2 || !atom1 || !atom2) {
+      return null;
+    }
+
+    const contourBorderRadius = 10;
+    const arrowsOffsetFromContour = 5;
+    const atom1Position = Coordinates.modelToCanvas(atom1.pp);
+    const atom2Position = Coordinates.modelToCanvas(atom2.pp);
+    const bondDirection = halfBond1.p.sub(halfBond2.p).normalized();
+    const bondLength = Vec2.dist(atom2Position, atom1Position);
+    const arrowsDirection =
+      this.b.begin === atomIdToDrawArrows
+        ? bondDirection
+        : bondDirection.scaled(-1);
+    const arrowStart =
+      atomIdToDrawArrows === this.b.begin ? atom1Position : atom2Position;
+    const arrowsOffset = 2;
+    const arrowHeadLength = 4;
+    const offsets = [0, -5, -10];
+    const contourSize = new Vec2(bondLength, 20);
+    const backgroundStart = new Vec2(
+      atomIdToDrawArrows === this.b.begin
+        ? atom1Position.x
+        : atom1Position.x + bondLength / 2,
+      atom1Position.y - contourSize.y / 2,
+    );
+    const newVisel = new Visel('fragment-selection-bond-preview');
+    const backgroundRect = render.paper
+      .rect(
+        backgroundStart.x,
+        backgroundStart.y,
+        contourSize.x / 2,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: '#fff', stroke: 'none', 'stroke-width': 0 });
+
+    render.ctab.addReObjectPath(
+      LayerMap.additionalInfo,
+      newVisel,
+      backgroundRect,
+    );
+    backgroundRect.rotate(this.b.angle, atom1Position.x, atom1Position.y);
+
+    const contour = render.paper
+      .rect(
+        atom1Position.x,
+        atom1Position.y - contourSize.y / 2,
+        contourSize.x,
+        contourSize.y,
+        contourBorderRadius,
+      )
+      .attr({ fill: 'none', stroke: '#365CFF', 'stroke-width': 0.7 });
+
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, contour);
+    // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
+    render.ctab.movePathOnTopOfLayer(
+      this.visel.paths[0],
+      LayerMap.bondSkeleton,
+    );
+
+    contour.rotate(this.b.angle, atom1Position.x, atom1Position.y);
+
+    const arrowsSet = render.paper.set();
+
+    offsets.forEach((delta) => {
+      const start = new Vec2(
+        arrowStart.x -
+          arrowsOffsetFromContour * arrowsDirection.x +
+          delta * arrowsDirection.x,
+        arrowStart.y -
+          arrowsOffsetFromContour * arrowsDirection.y +
+          delta * arrowsDirection.y,
+      );
+
+      const path = render.paper
+        .path(
+          `M ${
+            start.x -
+            arrowsOffset * arrowsDirection.x +
+            arrowHeadLength * arrowsDirection.y
+          } ${
+            start.y -
+            arrowsOffset * arrowsDirection.y -
+            arrowHeadLength * arrowsDirection.x
+          }` +
+            ` L ${start.x} ${start.y}` +
+            ` L ${
+              start.x -
+              arrowsOffset * arrowsDirection.x -
+              arrowHeadLength * arrowsDirection.y
+            } ${
+              start.y -
+              arrowsOffset * arrowsDirection.y +
+              arrowHeadLength * arrowsDirection.x
+            }`,
+        )
+        .attr({
+          stroke: '#365CFF',
+          'stroke-width': 2,
+        });
+
+      arrowsSet.push(path);
+    });
+
+    render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, arrowsSet);
+
+    return newVisel;
   }
 }
 
@@ -509,23 +687,31 @@ function findIncomingStereoUpBond(
     const neibond = restruct.bonds.get(hb.bid);
 
     if (!neibond) return false;
+
     const singleUp =
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (singleUp) {
+      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
+        return false;
+      }
       return (
         neibond.b.end === hb.begin ||
         (neibond.boldStereo && includeBoldStereoBond)
       );
     }
 
-    return !!(
+    if (
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
       includeBoldStereoBond &&
       neibond.boldStereo
-    );
+    ) {
+      return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
+    }
+
+    return false;
   });
 }
 
@@ -541,10 +727,16 @@ function findIncomingUpBonds(
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
 
-  bond.neihbid1 = restruct.atoms.get(bond.b.begin)?.showLabel
-    ? -1
-    : halfbonds[0];
-  bond.neihbid2 = restruct.atoms.get(bond.b.end)?.showLabel ? -1 : halfbonds[1];
+  // Keep bold stereo rendering independent from endpoint label visibility:
+  // half-bond coordinates are already shifted away from visible labels.
+  bond.neihbid1 =
+    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[0];
+  bond.neihbid2 =
+    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[1];
 }
 
 function checkStereoBold(bid0, bond, restruct) {
@@ -765,8 +957,23 @@ function getBondSingleUpPath(
   // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
-  const n = hb1.norm;
   const options = render.options;
+  // Prefer the stored half-bond normal; fall back to a normal derived from
+  // the actual rendered endpoints when hb1.norm is degenerate.
+  // Root cause fixed in struct.ts: halfBondUpdate now runs before
+  // atomAddNeighbor so hb.norm is always populated. This fallback is kept
+  // as a safety net for any future re-init path that skips halfBondUpdate.
+  const DEGENERATE_LENGTH = 1e-4;
+  let n = hb1.norm;
+  if (!n || n.length() < DEGENERATE_LENGTH) {
+    const renderedDir = b.sub(a);
+    if (renderedDir.length() < DEGENERATE_LENGTH) {
+      // Both the stored normal and the rendered direction are degenerate —
+      // the bond has zero length; skip drawing to avoid a zero-width wedge.
+      return null;
+    }
+    n = renderedDir.normalized().rotateSC(1, 0);
+  }
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
   let b3 = b.addScaled(n, -bsp);

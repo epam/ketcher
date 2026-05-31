@@ -67,6 +67,6 @@ export function customQueryValid(value: string, isCustomQuery: boolean) {
   if (!isCustomQuery) {
     return true;
   }
-  const regex = new RegExp(atomSchema.properties.customQuery.pattern);
+  const regex = new RegExp(atomSchema.properties.customQuery.pattern as string);
   return regex.test(value);
 }

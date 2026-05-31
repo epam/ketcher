@@ -1,13 +1,16 @@
 import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { MonomerSize } from 'domain/constants';
-import { Vec2 } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Vec2 } from 'domain/entities/vec2';
+import { getStructureBbox } from 'domain/entities/structureBbox';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
@@ -22,7 +25,7 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private editorEvents: typeof editorEvents;
+  private readonly editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
@@ -30,24 +33,24 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
-    super(polymerBond as DrawingEntity);
+    super(polymerBond);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
   }
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return;
+    if (!rootNode) return undefined;
 
     return rootNode.getBBox();
   }
 
   public get width(): number {
-    return this.rootBBox?.width || 0;
+    return this.rootBBox?.width ?? 0;
   }
 
   public get height(): number {
-    return this.rootBBox?.height || 0;
+    return this.rootBBox?.height ?? 0;
   }
 
   private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
@@ -109,7 +112,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       return;
     }
 
-    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+    const subStructureBBox = getStructureBbox([
       this.polymerBond.firstMonomer,
       this.polymerBond.secondMonomer,
     ]);
@@ -179,12 +182,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         } else {
           this.path = this.path.concat(generateCornerFromLeftToTop());
         }
+      } else if (cornerPoint.y < nextPoint.y) {
+        this.path = this.path.concat(generateCornerFromRightToBottom());
       } else {
-        if (cornerPoint.y < nextPoint.y) {
-          this.path = this.path.concat(generateCornerFromRightToBottom());
-        } else {
-          this.path = this.path.concat(generateCornerFromRightToTop());
-        }
+        this.path = this.path.concat(generateCornerFromRightToTop());
       }
     } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
       if (prevPoint.y < cornerPoint.y) {
@@ -193,12 +194,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         } else {
           this.path = this.path.concat(generateCornerFromTopToLeft());
         }
+      } else if (cornerPoint.x < nextPoint.x) {
+        this.path = this.path.concat(generateCornerFromBottomToRight());
       } else {
-        if (cornerPoint.x < nextPoint.x) {
-          this.path = this.path.concat(generateCornerFromBottomToRight());
-        } else {
-          this.path = this.path.concat(generateCornerFromBottomToLeft());
-        }
+        this.path = this.path.concat(generateCornerFromBottomToLeft());
       }
     }
   }
@@ -237,13 +236,13 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
       .attr(
-        'data-fromconnectionpoint',
+        'data-fromattachmentpoint',
         this.polymerBond.firstMonomer.getAttachmentPointByBond(
           this.polymerBond,
         ),
       )
       .attr(
-        'data-toconnectionpoint',
+        'data-toattachmentpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),
@@ -321,7 +320,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         ?.insert('path', ':first-child')
         .attr('d', this.path)
         .attr('fill', 'none')
-        .attr('stroke', '#57FF8F')
+        .attr('stroke', SELECTION_COLOR)
         .attr('stroke-width', '5')
         .attr('class', 'dynamic-element');
     } else {
@@ -364,18 +363,14 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
-      this.hoverAreaElement
-    )) = this.rootElement
+    this.hoverAreaElement = this.rootElement
       ?.append('path')
       .attr('d', this.path)
       .attr('fill', 'none')
       .attr('stroke', 'transparent')
       .attr('stroke-width', '10');
 
-    (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
-      this.hoverCircleAreaElement
-    )) = this.rootElement
+    this.hoverCircleAreaElement = this.rootElement
       ?.append('circle')
       .attr('cursor', 'pointer')
       .attr('r', '1')
@@ -392,7 +387,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', SELECTION_HOVERED_COLOR);
     }
   }
 
@@ -406,7 +401,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', SELECTION_COLOR);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

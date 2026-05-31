@@ -1,5 +1,4 @@
-export * from './Editor';
 export * from './EditorHistory';
 export * from './shared/coordinates';
 export * from './editor.types';
-export * from './tools/SelectRectangle';
+export * from './tools/select';

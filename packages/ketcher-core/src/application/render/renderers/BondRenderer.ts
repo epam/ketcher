@@ -1,16 +1,18 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom } from 'domain/entities/CoreAtom';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import { Bond as StructBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
-import { Box2Abs, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { ViewModel } from 'application/render/view-model/ViewModel';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
+import type { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
-import { D3SvgElementSelection } from 'application/render/types';
-import {
-  BondSVGPath,
+import type { D3SvgElementSelection } from 'application/render/types';
+import type {
+  SVGPathAttributes,
   BondVectors,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import {
@@ -24,9 +26,24 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
+import { editorEvents } from 'application/editor/editorEvents';
+import {
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
+} from 'application/render/renderers/constants';
 
 const BOND_WIDTH = 2;
-// const BOND_WIDTH_HOVER = 10;
+// Use same scale factor as Molecules mode (microModeScale = 40)
+const SCALE_FACTOR = 40;
+// lineWidth = scaleFactorMicro / 20 = 40 / 20 = 2
+const LINE_WIDTH = SCALE_FACTOR / 20;
+// bondSpace = scaleFactorMicro / 7 ≈ 5.7
+const BOND_SPACE = SCALE_FACTOR / 7;
+// labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6)) ≈ 13 (matches visible label size in Molecules mode)
+const FONT_SIZE_LABEL = Math.ceil(1.9 * (SCALE_FACTOR / 6));
+// Topology mark offset multipliers (controls position above bond)
+const TOPOLOGY_OFFSET_X_MULTIPLIER = 2;
+const TOPOLOGY_OFFSET_Y_MULTIPLIER = 1;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -150,7 +167,7 @@ export class BondRenderer extends BaseRenderer {
     atom: Atom,
     halfEdge: HalfEdge,
   ) {
-    if (!atom.renderer || !atom.renderer.isLabelVisible) {
+    if (!atom.renderer?.isLabelVisible) {
       return position;
     }
 
@@ -185,6 +202,12 @@ export class BondRenderer extends BaseRenderer {
     return `cip-bond-${this.bond.id}`;
   }
 
+  private getBondFromMoleculeStruct() {
+    return this.bond.firstAtom.monomer.monomerItem.struct?.bonds.get(
+      this.bond.bondIdInMicroMode,
+    );
+  }
+
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
@@ -194,13 +217,13 @@ export class BondRenderer extends BaseRenderer {
       this.selectionElement = this.canvas
         ?.insert('path', ':first-child')
         .attr('d', pathShape)
-        .attr('fill', '#57ff8f')
+        .attr('fill', SELECTION_COLOR)
         .attr('class', 'dynamic-element');
     }
 
     this.rootElement
       ?.select(`#${this.cipElementId} rect`)
-      ?.attr('fill', '#57ff8f');
+      ?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -235,20 +258,37 @@ export class BondRenderer extends BaseRenderer {
     this.hoverElement = undefined;
   }
 
+  public redrawHover() {
+    if (this.drawingEntity.hovered) {
+      const hoverElement = this.appendHover();
+      if (hoverElement) {
+        this.hoverElement = hoverElement;
+      }
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
+    } else {
+      this.removeHover();
+      this.hoverElement = undefined;
+      if (this.bond.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
+    }
+  }
+
   public drawSelection() {
     if (!this.rootElement) {
       return;
     }
     if (this.bond.selected) {
       this.appendSelection();
-      // this.raiseElement();
     } else {
       this.removeSelection();
     }
   }
 
   private appendRootElement() {
-    return this.canvas
+    const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('data-testid', 'bond')
@@ -256,16 +296,29 @@ export class BondRenderer extends BaseRenderer {
       .attr('data-bondstereo', this.bond.stereo)
       .attr('data-bondid', this.bond.id)
       .attr('data-fromatomid', this.bond.firstAtom.id)
-      .attr('data-toatomid', this.bond.secondAtom.id)
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
+      .attr('data-toatomid', this.bond.secondAtom.id);
+
+    // Add topology and reacting center attributes from molecule struct if available
+    const bondFromStruct = this.getBondFromMoleculeStruct();
+    if (bondFromStruct) {
+      rootElement.attr('data-topology', bondFromStruct.topology);
+      rootElement.attr(
+        'data-reacting-center',
+        bondFromStruct.reactingCenterStatus,
+      );
+    }
+
+    rootElement.attr(
+      'transform',
+      `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+    );
+
+    return rootElement as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   getSelectionPoints() {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
     const firstHalfEdge = halfEdges?.[0];
@@ -409,8 +462,6 @@ export class BondRenderer extends BaseRenderer {
       startBottom,
     ] = this.getSelectionPoints();
 
-    // for a visual representation of the points
-    // please refer to: ketcher-core/docs/data/hover_selection_exp.png
     const pathString = `
       M ${startTop.x} ${startTop.y}
       L ${endTop.x} ${endTop.y}
@@ -431,7 +482,7 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
-  private createBondHoverablePath(paths: BondSVGPath[]): void {
+  private createBondHoverablePath(paths: SVGPathAttributes[]): void {
     if (!this.rootElement) {
       return;
     }
@@ -469,16 +520,18 @@ export class BondRenderer extends BaseRenderer {
       .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath
-      .on('mouseenter', () => {
+      .on('mouseenter', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
-      .on('mouseleave', () => {
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }
 
   private get halfEdges() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     return viewModel.bondsToHalfEdges.get(this.bond);
   }
@@ -489,7 +542,7 @@ export class BondRenderer extends BaseRenderer {
     const secondHalfEdge = halfEdges?.[1];
 
     if (!firstHalfEdge || !secondHalfEdge) {
-      return;
+      return undefined;
     }
 
     let startPosition = new Vec2(0, 0);
@@ -518,10 +571,10 @@ export class BondRenderer extends BaseRenderer {
   }
 
   show() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
-    this.rootElement = this.appendRootElement();
+    this.rootElement = this.rootElement || this.appendRootElement();
 
     const bondVectors = this.bondVectors;
     if (!bondVectors) {
@@ -529,7 +582,7 @@ export class BondRenderer extends BaseRenderer {
       return;
     }
 
-    let bondSVGPaths: BondSVGPath[] = [];
+    let bondSVGPaths: SVGPathAttributes[] = [];
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
@@ -565,17 +618,39 @@ export class BondRenderer extends BaseRenderer {
 
       case BondType.Aromatic:
       case BondType.SingleAromatic:
-      case BondType.DoubleAromatic:
-        bondSVGPaths = DoubleBondPathRenderer.preparePaths(
-          bondVectors,
-          this.getDoubleBondShift(
-            viewModel,
-            bondVectors.firstHalfEdge,
-            bondVectors.secondHalfEdge,
-          ),
-          this.bond.type,
-        );
+      case BondType.DoubleAromatic: {
+        // Check if the bond is in a convex aromatic loop
+        const firstHalfEdge = bondVectors.firstHalfEdge;
+        const secondHalfEdge = bondVectors.secondHalfEdge;
+        const firstLoop =
+          firstHalfEdge && firstHalfEdge.loopId >= 0
+            ? viewModel.loops.get(firstHalfEdge.loopId)
+            : null;
+        const secondLoop =
+          secondHalfEdge && secondHalfEdge.loopId >= 0
+            ? viewModel.loops.get(secondHalfEdge.loopId)
+            : null;
+        const inConvexAromaticLoop =
+          (firstLoop?.aromatic && firstLoop?.isConvex) ||
+          (secondLoop?.aromatic && secondLoop?.isConvex);
+
+        // If in a convex aromatic loop, render as a single bond (the aromatic circle will be drawn separately)
+        // Otherwise, render as a dashed double bond
+        if (inConvexAromaticLoop) {
+          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+            bondVectors,
+            this.getDoubleBondShift(
+              viewModel,
+              bondVectors.firstHalfEdge,
+              bondVectors.secondHalfEdge,
+            ),
+            this.bond.type,
+          );
+        }
         break;
+      }
 
       case BondType.SingleDouble:
         bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);
@@ -596,7 +671,296 @@ export class BondRenderer extends BaseRenderer {
 
     this.createBondHoverablePath(bondSVGPaths);
 
+    this.appendBondProperties();
     this.appendStereochemistry();
+  }
+
+  private get topologyElementId() {
+    return `topology-bond-${this.bond.id}`;
+  }
+
+  private get reactingCenterElementId() {
+    return `reacting-center-bond-${this.bond.id}`;
+  }
+
+  private appendBondProperties() {
+    const bondFromStruct = this.getBondFromMoleculeStruct();
+    if (!bondFromStruct) {
+      return;
+    }
+
+    this.appendTopologyMark(bondFromStruct);
+    this.appendReactingCenterMark(bondFromStruct);
+  }
+
+  private appendTopologyMark(bondFromStruct: StructBond) {
+    if (!this.rootElement) {
+      return;
+    }
+
+    let mark: string | null = null;
+
+    if (bondFromStruct.customQuery) {
+      mark = bondFromStruct.customQuery;
+      if (bondFromStruct.customQuery.length > 8) {
+        mark = `${bondFromStruct.customQuery.substring(0, 8)}...`;
+      }
+    } else if (bondFromStruct.topology === StructBond.PATTERN.TOPOLOGY.RING) {
+      mark = 'rng';
+    } else if (bondFromStruct.topology === StructBond.PATTERN.TOPOLOGY.CHAIN) {
+      mark = 'chn';
+    }
+
+    if (!mark) {
+      return;
+    }
+
+    const halfEdges = this.halfEdges;
+    const firstHalfEdge = halfEdges?.[0];
+    const secondHalfEdge = halfEdges?.[1];
+
+    if (!firstHalfEdge || !secondHalfEdge) {
+      return;
+    }
+
+    const bondVectors = this.bondVectors;
+    if (!bondVectors) {
+      return;
+    }
+
+    // Calculate center position in local coordinates
+    const center = bondVectors.endPosition
+      .add(bondVectors.startPosition)
+      .scaled(0.5);
+    const direction = bondVectors.endPosition
+      .sub(bondVectors.startPosition)
+      .normalized();
+    let normal = new Vec2(-direction.y, direction.x);
+
+    // Adjust position based on double bond shift
+    const doubleBondShift = this.getDoubleBondShift(
+      provideEditorInstance().viewModel,
+      firstHalfEdge,
+      secondHalfEdge,
+    );
+
+    let fixed = LINE_WIDTH;
+    if (doubleBondShift > 0) {
+      normal = normal.scaled(-doubleBondShift);
+    } else if (doubleBondShift === 0) {
+      fixed += BOND_SPACE / 2;
+    }
+
+    const offset = new Vec2(
+      TOPOLOGY_OFFSET_X_MULTIPLIER,
+      TOPOLOGY_OFFSET_Y_MULTIPLIER,
+    ).scaled(BOND_SPACE);
+    if (bondFromStruct.type === StructBond.PATTERN.TYPE.TRIPLE) {
+      fixed += BOND_SPACE;
+    }
+
+    const position = center.add(
+      new Vec2(normal.x * (offset.x + fixed), normal.y * (offset.y + fixed)),
+    );
+
+    const topologyGroup = this.rootElement
+      .append('g')
+      .attr('id', this.topologyElementId);
+
+    const topologyText = topologyGroup
+      .append('text')
+      .text(mark)
+      .attr('font-family', 'Arial')
+      .attr('font-size', `${FONT_SIZE_LABEL}px`)
+      .attr('fill', '#000')
+      .attr('pointer-events', 'none');
+
+    const textNode = topologyText.node();
+    if (textNode) {
+      const box = textNode.getBBox();
+      topologyText
+        .attr('x', position.x - box.width / 2)
+        .attr('y', position.y + box.height / 4);
+    }
+  }
+
+  private appendReactingCenterMark(bondFromStruct: StructBond) {
+    if (!this.rootElement) {
+      return;
+    }
+
+    const reactingCenterStatus = bondFromStruct.reactingCenterStatus;
+
+    if (
+      reactingCenterStatus === null ||
+      reactingCenterStatus === undefined ||
+      reactingCenterStatus === StructBond.PATTERN.REACTING_CENTER.UNMARKED
+    ) {
+      return;
+    }
+
+    const bondVectors = this.bondVectors;
+    if (!bondVectors) {
+      return;
+    }
+
+    // Calculate center and direction in local coordinates
+    const center = bondVectors.endPosition
+      .add(bondVectors.startPosition)
+      .scaled(0.5);
+    const direction = bondVectors.endPosition
+      .sub(bondVectors.startPosition)
+      .normalized();
+    const normal = new Vec2(-direction.y, direction.x);
+
+    const lw = LINE_WIDTH;
+    const bs = BOND_SPACE / 2;
+    const alongIntRc = lw;
+    const alongIntMadeBroken = 2 * lw;
+    const alongSz = 1.5 * bs;
+    const acrossInt = 1.5 * bs;
+    const acrossSz = 3.0 * bs;
+    const tiltTan = 0.2;
+
+    const points: Vec2[] = [];
+
+    switch (reactingCenterStatus) {
+      case StructBond.PATTERN.REACTING_CENTER.NOT_CENTER: // X
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, tiltTan * acrossSz),
+        );
+        break;
+      case StructBond.PATTERN.REACTING_CENTER.CENTER: // #
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, tiltTan * acrossSz)
+            .addScaled(direction, -alongIntRc),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -tiltTan * acrossSz)
+            .addScaled(direction, -alongIntRc),
+        );
+        points.push(
+          center.addScaled(direction, alongSz).addScaled(normal, acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, -alongSz).addScaled(normal, acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, alongSz).addScaled(normal, -acrossInt),
+        );
+        points.push(
+          center.addScaled(direction, -alongSz).addScaled(normal, -acrossInt),
+        );
+        break;
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN: // ||
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        break;
+      case StructBond.PATTERN.REACTING_CENTER.ORDER_CHANGED: // |
+        points.push(center.addScaled(normal, acrossSz));
+        points.push(center.addScaled(normal, -acrossSz));
+        break;
+      case StructBond.PATTERN.REACTING_CENTER.MADE_OR_BROKEN_AND_CHANGED: // ||| combined
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(
+          center
+            .addScaled(normal, -acrossSz)
+            .addScaled(direction, -alongIntMadeBroken),
+        );
+        points.push(center.addScaled(normal, acrossSz));
+        points.push(center.addScaled(normal, -acrossSz));
+        break;
+      default:
+        return;
+    }
+
+    if (points.length === 0) {
+      return;
+    }
+
+    // Build path from point pairs
+    let pathD = '';
+    for (let i = 0; i < points.length; i += 2) {
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      if (p1 && p2) {
+        pathD += `M${p1.x},${p1.y}L${p2.x},${p2.y}`;
+      }
+    }
+
+    this.rootElement
+      .append('path')
+      .attr('id', this.reactingCenterElementId)
+      .attr('d', pathD)
+      .attr('stroke', 'black')
+      .attr('stroke-width', LINE_WIDTH)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'none');
   }
 
   private appendStereochemistry() {
@@ -662,5 +1026,7 @@ export class BondRenderer extends BaseRenderer {
     this.show();
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 }

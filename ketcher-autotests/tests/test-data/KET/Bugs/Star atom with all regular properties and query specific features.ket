@@ -1,0 +1,316 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "*",
+                "alias": "Alias",
+                "location": [
+                    4.64956713603998,
+                    -6.846875000000001,
+                    0
+                ]
+            },
+            {
+                "label": "*",
+                "location": [
+                    5.515592539824418,
+                    -7.346875000000001,
+                    0
+                ],
+                "charge": -10
+            },
+            {
+                "label": "*",
+                "location": [
+                    6.381617943608855,
+                    -6.846875000000001,
+                    0
+                ],
+                "isotope": 111
+            },
+            {
+                "label": "*",
+                "location": [
+                    7.247643347393295,
+                    -7.346875000000001,
+                    0
+                ],
+                "explicitValence": 8
+            },
+            {
+                "label": "*",
+                "location": [
+                    8.113668751177734,
+                    -6.846875000000001,
+                    0
+                ],
+                "radical": 3
+            },
+            {
+                "label": "*",
+                "location": [
+                    8.979694154962171,
+                    -7.346875000000001,
+                    0
+                ],
+                "ringBondCount": -2
+            },
+            {
+                "label": "*",
+                "location": [
+                    9.845719558746609,
+                    -6.846875000000001,
+                    0
+                ],
+                "hCount": 10
+            },
+            {
+                "label": "*",
+                "location": [
+                    10.71174496253105,
+                    -7.346875000000001,
+                    0
+                ],
+                "substitutionCount": -2
+            },
+            {
+                "label": "*",
+                "location": [
+                    11.577770366315487,
+                    -6.846875000000001,
+                    0
+                ],
+                "unsaturatedAtom": true
+            },
+            {
+                "label": "*",
+                "location": [
+                    12.443795770099925,
+                    -7.346875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            },
+            {
+                "label": "*",
+                "location": [
+                    13.309821173884366,
+                    -6.846875000000001,
+                    0
+                ],
+                "implicitHCount": 9
+            },
+            {
+                "label": "*",
+                "location": [
+                    14.175846577668807,
+                    -7.346875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "ringMembership": 9
+                }
+            },
+            {
+                "label": "*",
+                "location": [
+                    15.041871981453241,
+                    -6.846875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "ringSize": 9
+                }
+            },
+            {
+                "label": "*",
+                "location": [
+                    15.907897385237682,
+                    -7.346875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "connectivity": 9
+                }
+            },
+            {
+                "label": "*",
+                "location": [
+                    16.773922789022123,
+                    -6.846875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "chirality": "anticlockwise"
+                }
+            },
+            {
+                "label": "*",
+                "location": [
+                    17.639948192806553,
+                    -7.346875000000001,
+                    0
+                ],
+                "invRet": 2
+            },
+            {
+                "label": "*",
+                "location": [
+                    18.505973596590994,
+                    -6.846875000000001,
+                    0
+                ],
+                "exactChangeFlag": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    19.371999000375435,
+                    -7.346875000000001,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "*"
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 19.371999000375435,
+            "y": 5.846875000000001,
+            "z": 0
+        }
+    }
+}

@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -16,8 +17,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 13.875,
-            "y": -6.775
+            "x": 12.275,
+            "y": -8.700000000000001
         },
         "alias": "25R",
         "templateId": "25R___Ribose (2,5 connectivity)"
@@ -221,6 +222,7 @@
         "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "Ribose (2,5 connectivity)",
         "alias": "25R",
+        "aliasHELM": "25r",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,

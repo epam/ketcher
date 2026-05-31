@@ -1,22 +1,17 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Chem } from '@constants/monomers/Chem';
-import { Peptides } from '@constants/monomers/Peptides';
-import { Phosphates } from '@constants/monomers/Phosphates';
-import { Sugars } from '@constants/monomers/Sugars';
-import { FAVORITES_TAB } from '@constants/testIdConstants';
-import { Page, expect, test } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, expect, test } from '@fixtures';
 import {
-  FILE_TEST_DATA,
-  FunctionalGroups,
-  SaltsAndSolvents,
-  addMonomersToFavorites,
-  clickInTheMiddleOfTheScreen,
-  clickOnAtom,
+  MolFileFormat,
+  SdfFileFormat,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
-  getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -26,45 +21,28 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProject,
-  pressButton,
   readFileContent,
-  selectFunctionalGroups,
-  selectMonomer,
-  selectSaltsAndSolvents,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  setAttachmentPoints,
-  switchSequenceEnteringButtonType,
   takeEditorScreenshot,
+  takeElementScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  waitForPageInit,
   waitForRender,
 } from '@utils';
-import { hideLibrary, showLibrary } from '@utils/canvas/tools';
-import {
-  MacroFileType,
-  selectAllStructuresOnCanvas,
-  SequenceType,
-} from '@utils/canvas';
-import {
-  addSuperatomAttachmentPoint,
-  removeSuperatomAttachmentPoint,
-} from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
+import { MacroFileType } from '@utils/canvas';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
+  verifyPNGExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { Tabs, chooseTab, waitForMonomerPreview } from '@utils/macromolecules';
-import { goToRNATab, goToTab } from '@utils/macromolecules/library';
 import {
   getMonomerLocator,
   moveMonomerOnMicro,
   getSymbolLocator,
+  AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -72,27 +50,61 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
-  MacroBondDataIds,
   MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  resetZoomLevelToDefault,
+} from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
-import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
-  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  setSettingsOption,
+  setSettingsOptions,
+} from '@tests/pages/molecules/canvas/SettingsDialog';
+import {
+  AtomsSetting,
+  BondsSetting,
+  ShowHydrogenLabelsOption,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MonomerOnMicroOption,
+  SequenceSymbolOption,
+  SuperatomOption,
+} from '@tests/pages/constants/contextMenu/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { StructureCheckDialog } from '@tests/pages/molecules/canvas/StructureCheckDialog';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 const topLeftCorner = {
   x: -325,
@@ -101,9 +113,9 @@ const topLeftCorner = {
 
 async function zoomWithMouseWheel(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
-    await page.keyboard.down('Control');
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(0, scrollValue);
-    await page.keyboard.up('Control');
+    await page.keyboard.up('ControlOrMeta');
   });
 }
 
@@ -113,96 +125,49 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-async function addToFavoritesMonomers(page: Page) {
-  await addMonomersToFavorites(page, [
-    Peptides.bAla,
-    Peptides.Phe4Me,
-    Peptides.meM,
-    Sugars._25R,
-    Bases.baA,
-    Phosphates.bP,
-    Chem.Test_6_Ch,
-  ]);
-}
-
-async function setAtomAndBondSettings(page: Page) {
-  await TopRightToolbar(page).Settings();
-  await page.getByText('Atoms', { exact: true }).click();
-  await page.getByText('Terminal and Hetero').click();
-  await page.getByTestId('On-option').click();
-  await page.getByText('Bonds', { exact: true }).click();
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as' })
-    .getByRole('textbox')
-    .nth(2)
-    .click();
-  await page
-    .locator('fieldset')
-    .filter({ hasText: 'Aromatic Bonds as' })
-    .getByRole('textbox')
-    .nth(2)
-    .fill('05');
-  await page.getByTestId('OK').click();
-}
-
-async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).ThreeDViewer();
-  if (waitForButtonIsEnabled) {
-    await miewApplyButtonIsEnabled(page);
-  }
-}
-
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ FlexCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test.describe('Macro-Micro-Switcher', () => {
-  test(
-    'Check that preview window of macro structure does not change in micro mode ',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Check that preview window of macro structure does not change in micro mode ', async () => {
+    /* 
     Test case: https://github.com/epam/ketcher/issues/3603
     Description: Preview window of macro structure doesn't change in micro mode
-    Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3603
     */
-      const scrollValue = -400;
-      const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
-      await openFileAndAddToCanvasMacro('KET/five-monomers.ket', page);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await scrollHorizontally(page, scrollValue);
-      for (const label of moleculeLabels) {
-        await waitForRender(page, async () => {
-          await page
-            .getByTestId('ketcher-canvas')
-            .filter({ has: page.locator(':visible') })
-            .getByText(label, { exact: true })
-            .hover();
-        });
-        await takeEditorScreenshot(page);
-      }
-    },
-  );
+    const scrollValue = -400;
+    const monomerLabelsOnMacromoleculesCanvas = [
+      'A',
+      '25R',
+      'baA',
+      'Test-6-Ph',
+      'Test-6-Ch',
+    ];
+    await openFileAndAddToCanvasMacro(page, 'KET/five-monomers.ket');
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await scrollHorizontally(page, scrollValue);
+    for (const label of monomerLabelsOnMacromoleculesCanvas) {
+      await getAbbreviationLocator(page, {
+        name: label,
+      }).hover();
+      await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
+      await takeEditorScreenshot(page);
+    }
+  });
 
   test('Check that macromolecule structures in micromode are represented as S-Groups with bonds', async () => {
     /* 
@@ -211,8 +176,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -223,15 +188,14 @@ test.describe('Macro-Micro-Switcher', () => {
   test.skip(
     'Micromolecules in macromode will be represented as CHEMs with generated name(F1, F2, ...Fn)',
     { tag: ['@NeedToBeUpdated'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /* 
     Test case: Macro-Micro-Switcher
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await openFileAndAddToCanvas(
-        'KET/eight-micromolecules.ket',
         page,
+        'KET/eight-micromolecules.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -246,10 +210,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await takePageScreenshot(page);
-    expect(page.getByTestId('show-monomer-library')).toBeVisible();
-    await showLibrary(page);
+    expect(Library(page).showLibraryButton).toBeVisible();
+    await Library(page).showLibrary();
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
@@ -257,7 +221,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode
     */
-    await openFileAndAddToCanvasMacro('Molfiles-V2000/glutamine.mol', page);
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V2000/glutamine.mol',
+      MacroFileType.MOLv3000,
+    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -270,8 +238,9 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await openFileAndAddToCanvasMacro('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvasMacro(page, 'KET/stereo-and-structure.ket');
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -283,17 +252,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3654
     */
-    const x = 400;
-    const y = 400;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('Edc').hover();
-    await dragMouseTo(x, y, page);
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
+    await dragMouseTo(page, 400, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -306,16 +273,15 @@ test.describe('Macro-Micro-Switcher', () => {
     await pageReload(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('A6OH')
-      .click({ button: 'right' });
-    await waitForMonomerPreviewMicro(page);
+    await resetZoomLevelToDefault(page);
+    const monomerOnTheCanvas = getAbbreviationLocator(page, { name: 'A6OH' });
+    await monomerOnTheCanvas.hover();
+    await ContextMenu(page, monomerOnTheCanvas).open();
+    await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -327,20 +293,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3658
     */
-    const x1 = 400;
-    const y1 = 400;
-    const x2 = 500;
-    const y2 = 500;
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-not-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-not-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.getByText('Edc').hover();
-    await dragMouseTo(x1, y1, page);
-    await page.getByText('Edc').hover();
-    await dragMouseTo(x2, y2, page);
+    await resetZoomLevelToDefault(page);
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
+    await dragMouseTo(page, 400, 400);
+    await getAbbreviationLocator(page, { name: 'Edc' }).hover();
+    await dragMouseTo(page, 500, 500);
     await takeEditorScreenshot(page);
   });
 
@@ -353,20 +317,18 @@ test.describe('Macro-Micro-Switcher', () => {
     const numberOfPressZoomIn = 5;
     const numberOfPressZoomOut = 8;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
+    await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await resetZoomLevelToDefault(page);
     await CommonTopRightToolbar(page).selectZoomInTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
-
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -378,11 +340,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await page.waitForTimeout(1 * 1000);
     await moveMouseToTheMiddleOfTheScreen(page);
     await zoomWithMouseWheel(page, -400);
 
@@ -402,11 +365,11 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
-      'KET/three-monomers-connected-with-bonds.ket',
       page,
+      'KET/three-monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomIn);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
 
@@ -418,20 +381,6 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
-    when switching from Macro mode to Micro mode and back to Macro is saved
-    */
-
-    await addToFavoritesMonomers(page);
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToTab(page, FAVORITES_TAB);
-    await takeMonomerLibraryScreenshot(page);
-  });
-
   test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
     /* 
     Test case: Macro-Micro-Switcher
@@ -439,28 +388,54 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      await readFileContent('KET/one-functional-group-expanded.ket'),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 8 }), {
+      padding: 150,
+    });
+  });
+
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
+    /*
+    Test case: Macro-Micro-Switcher
+    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs
+    when switching from Macro mode to Micro mode and back to Macro is saved
+    */
+
+    await Library(page).addMonomersToFavorites([
+      Peptide.bAla,
+      Peptide.Phe4Me,
+      Peptide.meM,
+      Sugar._25R,
+      Base.baA,
+      Phosphate.bP,
+      Chem.Test_6_Ch,
+    ]);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).switchToFavoritesTab();
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async () => {
     /* 
     Test case: Macro-Micro-Switcher
-    Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
+    Description: Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      await readFileContent(
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
+      ),
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
+    await takeElementScreenshot(page, getAtomLocator(page, { atomId: 10 }), {
+      padding: 190,
     });
   });
 
@@ -470,14 +445,16 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.A);
-    await clickInTheMiddleOfTheScreen(page);
-    await moveMouseAway(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await IndigoFunctionsToolbar(page).layout();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await expect(
+      getAbbreviationLocator(page, { name: Peptide.A.alias }),
+    ).toBeVisible();
   });
 
   test(`Check that Pressing Clean Up button not erase all macromolecules from canvas`, async () => {
@@ -486,14 +463,18 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Clean Up button not erase all macromolecules from canvas
       */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.A);
-    await clickInTheMiddleOfTheScreen(page);
-    await moveMouseAway(page);
+    await resetZoomLevelToDefault(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.A, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await IndigoFunctionsToolbar(page).cleanUp();
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await resetZoomLevelToDefault(page);
+    await expect(
+      getAbbreviationLocator(page, { name: Peptide.A.alias }),
+    ).toBeVisible();
   });
 
   test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async () => {
@@ -502,48 +483,51 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickInTheMiddleOfTheScreen(page);
+    await resetZoomLevelToDefault(page);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') })
-      .getByText('Test-6-Ch')
-      .click({ button: 'right' });
-    await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
+    await resetZoomLevelToDefault(page);
+    const test6Ch = getAbbreviationLocator(page, {
+      name: Chem.Test_6_Ch.alias,
     });
+    expect(
+      await ContextMenu(page, test6Ch).isOptionVisible(
+        MonomerOnMicroOption.ExpandMonomer,
+      ),
+    ).toBe(true);
+    expect(
+      await ContextMenu(page, test6Ch).isOptionVisible(
+        SuperatomOption.RemoveAbbreviation,
+      ),
+    ).toBe(false);
   });
 
-  test(
-    'The 3D view works for micromolecules when there are macromolecules on the canvas',
-    {
-      tag: ['@IncorrectResultBecauseOfBug'],
-    },
-    async () => {
-      /* 
+  test('The 3D view works for micromolecules when there are macromolecules on the canvas', async () => {
+    /* 
     Test case: Macro-Micro-Switcher/#4203
     Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
-    After closing the ticket, should update the screenshots.
-
     */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, Peptides.bAla);
-      await clickInTheMiddleOfTheScreen(page);
-      await moveMouseAway(page);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRingButton(page, RingButton.Benzene);
-      await clickInTheMiddleOfTheScreen(page);
-      await IndigoFunctionsToolbar(page).ThreeDViewer();
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page, {
-        maxDiffPixelRatio: 0.05,
-      });
-    },
-  );
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixelRatio: 0.05,
+    });
+  });
 
   test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async () => {
     /* 
@@ -560,8 +544,8 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Peptides.bAla);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).selectMonomer(Peptide.bAla);
+    await clickInTheMiddleOfTheCanvas(page);
     await moveMouseAway(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -588,7 +572,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await CommonTopLeftToolbar(page).saveFile();
+    expect(SaveStructureDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+    await fullScreenButton.click();
   });
 });
 
@@ -607,8 +594,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
       await openFileAndAddToCanvas(
-        'Molfiles-V2000/glutamine.mol',
         page,
+        'Molfiles-V2000/glutamine.mol',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -616,7 +603,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -630,8 +617,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
       await openFileAndAddToCanvas(
-        'KET/stereo-and-structure.ket',
         page,
+        'KET/stereo-and-structure.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -639,7 +626,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -653,8 +640,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-charged.ket',
         page,
+        'KET/two-benzene-charged.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -662,7 +649,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await getMonomerLocator(page, {
         monomerAlias: 'F2',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -676,8 +663,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas without text.
     */
       await openFileAndAddToCanvas(
-        'KET/benzene-rings-with-text.ket',
         page,
+        'KET/benzene-rings-with-text.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -685,7 +672,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -699,8 +686,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure exists on the canvas without Shape Ellipse.
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-ellipse.ket',
         page,
+        'KET/two-benzene-and-ellipse.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -718,8 +705,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-arrow.ket',
         page,
+        'KET/two-benzene-and-arrow.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -736,19 +723,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-      const xOffsetFromCenter = 200;
-      const yOffsetFromCenter = 0;
       await openFileAndAddToCanvas(
-        'KET/three-alpha-d-allopyranose.ket',
         page,
-        xOffsetFromCenter,
-        yOffsetFromCenter,
+        'KET/three-alpha-d-allopyranose.ket',
+        200,
+        0,
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -762,8 +747,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: In Macro mode plus sign is not appear
     */
       await openFileAndAddToCanvas(
-        'KET/two-benzene-and-plus.ket',
         page,
+        'KET/two-benzene-and-plus.ket',
         topLeftCorner.x,
         topLeftCorner.y,
       );
@@ -786,9 +771,11 @@ test.describe('Macro-Micro-Switcher', () => {
       };
       await pasteFromClipboardAndAddToCanvas(
         page,
-        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+        await readFileContent('KET/one-functional-group-expanded.ket'),
       );
-      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
@@ -812,14 +799,16 @@ test.describe('Macro-Micro-Switcher', () => {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.MOLv3000,
-        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        'Molfiles-V3000/functional-groups-expanded-contracted.mol',
       );
-      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
+      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y, {
+        from: 'pageTopLeft',
+      });
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
       await takeEditorScreenshot(page);
     },
   );
@@ -831,18 +820,16 @@ test.describe('Macro-Micro-Switcher', () => {
     */
 
     await openFileAndAddToCanvas(
-      'KET/two-benzene-and-plus.ket',
       page,
+      'KET/two-benzene-and-plus.ket',
       topLeftCorner.x,
       topLeftCorner.y,
     );
-    await page
-      .getByTestId('fullscreen-mode-button')
-      .filter({ has: page.locator(':visible') })
-      .click();
+    await CommonTopRightToolbar(page).fullScreen();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToRNATab(page);
+    await Library(page).switchToRNATab();
     await takePageScreenshot(page);
+    await CommonTopRightToolbar(page).fullScreen();
   });
 
   test.skip(
@@ -856,21 +843,22 @@ test.describe('Macro-Micro-Switcher', () => {
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
 
-  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async () => {
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async ({
+    MoleculesCanvas: _,
+  }) => {
     /* 
     Test case: Macro-Micro-Switcher/#3902
     Description: Structure is in left upper corner of canvas
     */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/peptides-connected-with-bonds.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
@@ -889,12 +877,21 @@ test.describe('Macro-Micro-Switcher', () => {
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
-      await setAtomAndBondSettings(page);
+      await openFileAndAddToCanvas(page, 'KET/all-type-of-atoms-and-bonds.ket');
+      await setSettingsOptions(page, [
+        {
+          option: AtomsSetting.ShowHydrogenLabels,
+          value: ShowHydrogenLabelsOption.TerminalAndHetero,
+        },
+        {
+          option: BondsSetting.BondThickness,
+          value: '05',
+        },
+      ]);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await CommonTopRightToolbar(page).selectZoomOutTool(3);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -905,14 +902,14 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment point added in micro mode used as attachment point when switch to macro mode.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
@@ -922,17 +919,20 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: System does not allow create s-group if structure have attachment point.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    const modifier = getControlModifier();
-    await keyboardPressOnCanvas(page, `${modifier}+a`);
+
+    await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R1').click();
+    await CommonLeftToolbar(page).erase();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await keyboardPressOnCanvas(page, `${modifier}+a`);
+    await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
@@ -943,80 +943,37 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Multiple attachment points added in micro mode used as attachment point when switch to macro mode.
     */
     await openFileAndAddToCanvas(
+      page,
       'KET/more-than-one-attachment-point.ket',
-      page,
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
-  test('Verify attachment points can be added/removed via context menu', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: Attachment points can be added/removed via context menu.
-    */
-    await drawBenzeneRing(page);
-    await addSuperatomAttachmentPoint(page, 'C', 1);
-    await addSuperatomAttachmentPoint(page, 'C', 2);
-    await addSuperatomAttachmentPoint(page, 'C', 3);
-    await takeEditorScreenshot(page);
-    await removeSuperatomAttachmentPoint(page, 'C', 2);
-    await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
-    await getMonomerLocator(page, Chem.F1).hover();
-    await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Ensure that new attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
-    */
-    // await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
-    await openFileAndAddToCanvas('KET/long-chain.ket', page);
-    await addSuperatomAttachmentPoint(page, 'C', 4);
-    await addSuperatomAttachmentPoint(page, 'C', 6);
-    await addSuperatomAttachmentPoint(page, 'C', 8);
-    await addSuperatomAttachmentPoint(page, 'C', 10);
-    await addSuperatomAttachmentPoint(page, 'C', 12);
-    await addSuperatomAttachmentPoint(page, 'C', 14);
-    await addSuperatomAttachmentPoint(page, 'C', 16);
-    await addSuperatomAttachmentPoint(page, 'C', 17);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async () => {
+  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
     */
-    await openFileAndAddToCanvas(
-      'KET/chain-with-eight-attachment-points.ket',
+    await openFileAndAddToCanvasAsNewProject(
       page,
-    );
-    await clickOnAtom(page, 'C', 9, 'right');
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check that system start to use missed labels if user want to create AP greater that R8 (if it has R1,R3-R8 - attempt to add causes R2 selection)', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
-    */
-    await openFileAndAddToCanvas(
       'KET/chain-with-eight-attachment-points.ket',
-      page,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R2').click();
-    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await waitForRender(page, async () => {
+      await ContextMenu(
+        page,
+        getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
+      ).open();
+    });
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Check that in context menu for AP - only Delete and Highlight avaliable', async () => {
@@ -1026,11 +983,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: In context menu for AP - only Delete and Highlight avaliable.
     */
     await openFileAndAddToCanvas(
-      'KET/structure-with-two-attachment-points.ket',
       page,
+      'KET/structure-with-two-attachment-points.ket',
     );
-    await CommonLeftToolbar(page).selectEraseTool();
-    await page.getByText('R2').click({ button: 'right' });
+    await CommonLeftToolbar(page).erase();
+    // R1 group is actually H atom
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'H' }).nth(1),
+    ).open();
     await takeEditorScreenshot(page);
   });
 
@@ -1042,19 +1003,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
-      await selectRingButton(page, RingButton.Benzene);
-      await clickOnCanvas(page, x, y);
+      await BottomToolbar(page).clickRing(RingButton.Benzene);
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
-      await dragMouseTo(x1, y1, page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await dragMouseTo(page, 600, 600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1070,21 +1027,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickOnCanvas(page, x, y);
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
-      await dragMouseTo(x1, y1, page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await dragMouseTo(page, 600, 600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1100,19 +1053,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
-      await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-      await clickOnCanvas(page, x, y);
+      await BottomToolbar(page).structureLibrary();
+      await StructureLibraryDialog(page).selectFunctionalGroup(
+        FunctionalGroupsTabItems.FMOC,
+      );
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
-      await dragMouseTo(x1, y1, page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await dragMouseTo(page, 600, 600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1128,19 +1080,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-      const x = 200;
-      const y = 200;
-      const x1 = 600;
-      const y1 = 600;
-      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
-      await clickOnCanvas(page, x, y);
+      await BottomToolbar(page).structureLibrary();
+      await StructureLibraryDialog(page).selectSaltsAndSolvents(
+        SaltsAndSolventsTabItems.AceticAnhydride,
+      );
+      await clickOnCanvas(page, 200, 200, { from: 'pageTopLeft' });
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await getMonomerLocator(page, {
         monomerAlias: 'F1',
       }).hover();
-      await waitForMonomerPreview(page);
-      await dragMouseTo(x1, y1, page);
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await dragMouseTo(page, 600, 600);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1151,18 +1102,27 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Sugar._25R,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      monomer: Base.meA,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Phosphate.sP_,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1172,17 +1132,17 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(data.monomer, {
+        x: 750,
+        y: 370,
+      });
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1191,7 +1151,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Single,
+        bondType: MacroBondType.Single,
       }).first();
       await bondLine.hover({ force: true });
       await takeEditorScreenshot(page, {
@@ -1205,47 +1165,56 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 750,
+      y: 370,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     const bondLine = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
     await bondLine.hover({ force: true });
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
   const testData2 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Sugar._25R,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      monomer: Base.meA,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.moen,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Phosphate.moen,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1255,18 +1224,20 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectSnakeLayoutModeTool(page);
-      await selectMonomer(page, data.monomer);
-      await clickOnCanvas(page, x, y);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      await Library(page).dragMonomerOnCanvas(data.monomer, {
+        x: 750,
+        y: 370,
+      });
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1274,8 +1245,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      const bondLine = page.locator('g path').first();
-      await bondLine.hover();
+      await getBondLocator(page, {}).hover({ force: true });
       await takeEditorScreenshot(page);
     });
   }
@@ -1285,45 +1255,53 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectSnakeLayoutModeTool(page);
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 750,
+      y: 370,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
-    const bondLine = page.locator('g path').first();
-    await bondLine.hover();
+    await getBondLocator(page, {}).first().hover({ force: true });
     await takeEditorScreenshot(page);
   });
 
   const testData3 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Sugar._25R,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      monomer: Base.meA,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Phosphate.sP_,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1333,17 +1311,17 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(data.monomer, {
+        x: 750,
+        y: 370,
+      });
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1351,9 +1329,9 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      await CommonLeftToolbar(page).selectEraseTool();
+      await CommonLeftToolbar(page).erase();
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Single,
+        bondType: MacroBondType.Single,
       }).first();
       await bondLine.click({ force: true });
       await takeEditorScreenshot(page);
@@ -1367,27 +1345,27 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 750,
+      y: 370,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     const bondLine = getBondLocator(page, {
-      bondType: MacroBondDataIds.Single,
+      bondType: MacroBondType.Single,
     }).first();
     await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
@@ -1398,18 +1376,27 @@ test.describe('Macro-Micro-Switcher', () => {
   const testData4 = [
     {
       description: 'Sugar',
-      monomer: Sugars._25R,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Sugar._25R,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
     {
       description: 'Base',
-      monomer: Bases.meA,
-      bondEndpoints: { first: 'R1', second: 'R1' },
+      monomer: Base.meA,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R1,
+      },
     },
     {
       description: 'Phosphate',
-      monomer: Phosphates.sP_,
-      bondEndpoints: { first: 'R1', second: 'R2' },
+      monomer: Phosphate.sP_,
+      bondEndpoints: {
+        first: AttachmentPoint.R1,
+        second: AttachmentPoint.R2,
+      },
     },
   ];
 
@@ -1419,17 +1406,17 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description: Macro structure deleted.
       */
-      const x = 750;
-      const y = 370;
       const firstMonomer = getMonomerLocator(page, Chem.F1);
       const secondMonomer = getMonomerLocator(page, data.monomer);
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, data.monomer);
-      await clickOnCanvas(page, x, y);
+      await Library(page).dragMonomerOnCanvas(data.monomer, {
+        x: 750,
+        y: 370,
+      });
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1438,8 +1425,8 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await CommonLeftToolbar(page).selectEraseTool();
-      await page.getByText(data.monomer.alias).click();
+      await CommonLeftToolbar(page).erase();
+      await getAbbreviationLocator(page, { name: data.monomer.alias }).click();
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
@@ -1452,30 +1439,27 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       After removing bond and then pressing Undo, the micro and macro structures are disconnected
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 750,
+      y: 370,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).selectEraseTool();
-    const canvasLocator = page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(5).click();
+    await CommonLeftToolbar(page).erase();
+    await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
@@ -1487,30 +1471,27 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       it is not possible to change bond type between monomer and micromolecule in micro mode
     */
-    const x = 750;
-    const y = 370;
     const firstMonomer = getMonomerLocator(page, Chem.F1);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await selectMonomer(page, Chem.Test_6_Ch);
-    await clickOnCanvas(page, x, y);
+    await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {
+      x: 750,
+      y: 370,
+    });
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
       secondMonomer,
-      'R1',
-      'R3',
+      AttachmentPoint.R1,
+      AttachmentPoint.R3,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
-    const canvasLocator = page
-      .getByTestId('ketcher-canvas')
-      .filter({ has: page.locator(':visible') });
-    await canvasLocator.locator('path').nth(5).click();
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
+    await getBondLocator(page, {}).nth(6).click();
     await takeEditorScreenshot(page);
   });
 
@@ -1520,9 +1501,9 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
-    await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
-    await CommonLeftToolbar(page).selectEraseTool();
-    await clickOnCanvas(page, 645, 318);
+    await openFileAndAddToCanvas(page, 'KET/oxygen-on-attachment-point.ket');
+    await CommonLeftToolbar(page).erase();
+    await clickOnCanvas(page, 645, 318, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
   });
 
@@ -1533,8 +1514,8 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(
-      'KET/molecule-connected-to-monomers.ket',
       page,
+      'KET/molecule-connected-to-monomers.ket',
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1546,9 +1527,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Github ticket: #4530
     Description: It is impossible to create attachment point if atom is a part of s-group
     */
-    await openFileAndAddToCanvasMacro('KET/part-chain-with-s-group.ket', page);
-    await clickOnAtom(page, 'C', 2, 'right');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'KET/part-chain-with-s-group.ket',
+    );
+    await ContextMenu(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 4 }),
+    ).open();
     await takeEditorScreenshot(page);
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
   });
 
   test('Validate that we can save bond between micro and macro structures to KET', async () => {
@@ -1557,8 +1546,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: We can save bond between micro and macro structures to KET.
     */
     await openFileAndAddToCanvas(
-      'KET/chem-connected-to-micro-structure.ket',
       page,
+      'KET/chem-connected-to-micro-structure.ket',
     );
 
     await verifyFileExport(
@@ -1579,18 +1568,18 @@ test.describe('Macro-Micro-Switcher', () => {
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
       await verifyFileExport(
         page,
         'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
         FileType.MOL,
-        'v2000',
+        MolFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
         page,
+        'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
       );
       await takeEditorScreenshot(page);
     },
@@ -1602,18 +1591,18 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in SDF V2000 format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
       'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       FileType.SDF,
-      'v2000',
+      SdfFileFormat.v2000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
@@ -1624,31 +1613,31 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await verifyFileExport(
       page,
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
-    /* 
-    Test case: #4530
-    Description: Attachment points and leaving groups are correctly represented in CDX format.
-                 CDX does not support R-groups, so R1 converts to H (hydrogen)
-    */
+    /*
+     * Test case: #4530
+     * Description: Attachment points and leaving groups are correctly represented in CDX format.
+     *              CDX does not support R-groups, so R1 converts to H (hydrogen)
+     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -1657,18 +1646,12 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDX,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    await openFileAndAddToCanvasAsNewProject(
       page,
-      undefined,
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
       // Error expected
       true,
     );
-
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await closeErrorAndInfoModals(page);
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -1677,8 +1660,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Attachment points and leaving groups are correctly represented in CDX format.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
 
     await verifyFileExport(
@@ -1687,9 +1670,9 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDXML,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    await openFileAndAddToCanvasAsNewProject(
       page,
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
     );
     await takeEditorScreenshot(page);
   });
@@ -1705,8 +1688,8 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
 
       await verifyFileExport(
@@ -1715,8 +1698,8 @@ test.describe('Macro-Micro-Switcher', () => {
         FileType.CML,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'CML/one-attachment-point-added-in-micro-mode-expected.cml',
         page,
+        'CML/one-attachment-point-added-in-micro-mode-expected.cml',
       );
       await takeEditorScreenshot(page);
     },
@@ -1728,8 +1711,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Undo-Redo invalidation if we change mode from micro to macro and back.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -1747,14 +1730,10 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.SVGDocument,
-      );
-      await takeEditorScreenshot(page);
+      await verifySVGExport(page);
     },
   );
 
@@ -1769,14 +1748,10 @@ test.describe('Macro-Micro-Switcher', () => {
     After the fix, you need to update test.
     */
       await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
+        'KET/one-attachment-point-added-in-micro-mode.ket',
       );
-      await CommonTopLeftToolbar(page).saveFile();
-      await SaveStructureDialog(page).chooseFileFormat(
-        MoleculesFileFormatType.PNGImage,
-      );
-      await takeEditorScreenshot(page);
+      await verifyPNGExport(page);
     },
   );
 
@@ -1786,8 +1761,8 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Aromatize/Dearomatize works for molecules with AP.
      */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
@@ -1801,8 +1776,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Layout works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
@@ -1813,7 +1788,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4530
     Description: Clean Up works for molecules with AP.
     */
-    await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/distorted-r1-attachment-point.ket');
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -1824,7 +1799,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4530
     Description: Calculate CIPs works for molecules with AP.
     */
-    await openFileAndAddToCanvas('KET/structure-with-ap-and-stereo.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/structure-with-ap-and-stereo.ket');
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
@@ -1836,12 +1811,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Structure Check works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
-      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [StructureCheckDialog(page).lastCheckInfo],
     });
   });
 
@@ -1851,11 +1826,22 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Calculate values works for molecules with AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C6H6');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '78.114',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '78.047',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 92.3 H 7.7');
   });
 
   test('Check that 3D view works for molecules with AP but hydrohen is shown instead of AP', async () => {
@@ -1864,21 +1850,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: 3D view works for molecules with AP but hydrohen is shown instead of AP.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await open3DViewer(page);
+    await IndigoFunctionsToolbar(page).threeDViewer();
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
     });
   });
 
-  const testData5 = [
-    { type: 'RNA', sequenceType: null },
-    { type: 'DNA', sequenceType: SequenceType.DNA },
-    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
-  ];
+  const testData5 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData5) {
     // eslint-disable-next-line max-len
@@ -1891,40 +1873,45 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
         await openFileAndAddToCanvas(
-          'KET/two-attachment-points-added-in-micro-mode.ket',
           page,
+          'KET/two-attachment-points-added-in-micro-mode.ket',
         );
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
 
-        if (data.sequenceType) {
-          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        if (data.type === 'DNA') {
+          await MacromoleculesTopToolbar(page).dna();
+        }
+        if (data.type === 'Peptide') {
+          await MacromoleculesTopToolbar(page).peptides();
         }
 
-        await getSymbolLocator(page, {
+        const symbolAt = getSymbolLocator(page, {
           symbolAlias: '@',
           nodeIndexOverall: 0,
-        }).click({ button: 'right' });
-        await page.getByTestId('edit_sequence').click();
+        });
+        await ContextMenu(page, symbolAt).click(
+          SequenceSymbolOption.EditSequence,
+        );
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await keyboardPressOnCanvas(page, 'Escape');
-        await selectSnakeLayoutModeTool(page);
-        await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Snake,
+        );
+        await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
         await getMonomerLocator(page, {
           monomerAlias: 'F1',
         }).hover();
-        await waitForMonomerPreview(page);
+        await MonomerPreviewTooltip(page).waitForBecomeVisible();
         await takeEditorScreenshot(page);
       },
     );
   }
 
-  const testData6 = [
-    { type: 'RNA', sequenceType: null },
-    { type: 'DNA', sequenceType: SequenceType.DNA },
-    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
-  ];
+  const testData6 = [{ type: 'RNA' }, { type: 'DNA' }, { type: 'Peptide' }];
 
   for (const data of testData6) {
     // eslint-disable-next-line max-len
@@ -1938,17 +1925,24 @@ test.describe('Macro-Micro-Switcher', () => {
       */
         await drawBenzeneRing(page);
         await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
 
-        if (data.sequenceType) {
-          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        if (data.type === 'DNA') {
+          await MacromoleculesTopToolbar(page).dna();
+        }
+        if (data.type === 'Peptide') {
+          await MacromoleculesTopToolbar(page).peptides();
         }
 
-        await getSymbolLocator(page, {
+        const symbolAt = getSymbolLocator(page, {
           symbolAlias: '@',
           nodeIndexOverall: 0,
-        }).click({ button: 'right' });
-        await page.getByTestId('edit_sequence').click();
+        });
+        await ContextMenu(page, symbolAt).click(
+          SequenceSymbolOption.EditSequence,
+        );
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
         await takeEditorScreenshot(page);
@@ -1962,17 +1956,19 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach old AP to new AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
       page,
-      { label: 'C', index: 2 },
+      getAtomLocator(page, { atomLabel: 'C', atomId: 9 }),
       { primary: true },
-      'Apply',
     );
     await takeEditorScreenshot(page);
   });
@@ -1983,13 +1979,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is possible to wrap AP labed to R-group (by fragment tool).
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
-    await page.getByText('R1').click();
-    await page.getByText('R18').click();
-    await pressButton(page, 'Apply');
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R18);
     await takeEditorScreenshot(page);
   });
 
@@ -1999,15 +1997,19 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach R-Group to AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByText('R8').click();
-    await pressButton(page, 'Apply');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupLabels(RGroup.R8);
     await takeEditorScreenshot(page);
   });
 
@@ -2017,18 +2019,28 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to change charge of AP label (select it and use A+/A- buttons).
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
     await LeftToolbar(page).chargePlus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
     await LeftToolbar(page).chargeMinus();
-    await page.getByText('R1').click();
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
-    await clickOnAtom(page, 'C', 2);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -2038,24 +2050,14 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is NOT possible to attach bond to AP label.
     */
     await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
+      'KET/one-attachment-point-added-in-micro-mode.ket',
     );
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
-    await page.getByText('R1').click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check we can attach AP to single atom', async () => {
-    /*
-    Test case: Macro-Micro-Switcher/#4530
-    Description: AP attached to single atom.
-    */
-    const atomToolbar = RightToolbar(page);
-
-    await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
-    await addSuperatomAttachmentPoint(page, 'O', 0);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
+    // R1 group is actually H atom
+    await getAtomLocator(page, { atomLabel: 'H' }).click({
+      force: true,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -2066,7 +2068,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Canvas after switching to Macro mode and presented after returning to Micro
      */
 
-    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/images-png-svg.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2098,7 +2100,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro
      */
 
-    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2112,7 +2114,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on the Canvas after switching
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-svg-expected.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-svg-expected.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2127,7 +2129,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
 
-    await openFileAndAddToCanvas('CDXML/image-svg-expected.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-svg-expected.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2141,7 +2143,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * Description: Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
-    await openFileAndAddToCanvas('CDX/image-png-svg-together.cdx', page);
+    await openFileAndAddToCanvas(page, 'CDX/image-png-svg-together.cdx');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2156,7 +2158,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
      */
 
-    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
+    await openFileAndAddToCanvas(page, 'CDXML/image-png-svg-together.cdxml');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -2170,8 +2172,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is possible to save micro-macro connection to ket file.
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/micro-macro-structure.ket',
       page,
+      'KET/micro-macro-structure.ket',
     );
     await verifyFileExport(
       page,
@@ -2179,8 +2181,8 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'KET/micro-macro-structure-expected.ket',
       page,
+      'KET/micro-macro-structure-expected.ket',
     );
     await takeEditorScreenshot(page);
   });
@@ -2195,16 +2197,16 @@ test.describe('Macro-Micro-Switcher', () => {
     The structure after opening is not similar to the original one. 
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
-      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
       await verifyFileExport(
         page,
         'Molfiles-V2000/micro-macro-structure-expected.mol',
         FileType.MOL,
-        'v2000',
+        MolFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V2000/micro-macro-structure-expected.mol',
         page,
+        'Molfiles-V2000/micro-macro-structure-expected.mol',
       );
       await takeEditorScreenshot(page);
     },
@@ -2220,16 +2222,16 @@ test.describe('Macro-Micro-Switcher', () => {
     Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5123
     After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
-      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
       await verifyFileExport(
         page,
         'SDF/micro-macro-structure-v2000-expected.sdf',
         FileType.SDF,
-        'v2000',
+        SdfFileFormat.v2000,
       );
       await openFileAndAddToCanvasAsNewProject(
-        'SDF/micro-macro-structure-v2000-expected.sdf',
         page,
+        'SDF/micro-macro-structure-v2000-expected.sdf',
       );
       await takeEditorScreenshot(page);
     },
@@ -2240,64 +2242,25 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: #4532
     Description: It is possible to save micro-macro connection to sdf v3000 file.
     */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/micro-macro-structure.ket');
     await verifyFileExport(
       page,
       'SDF/micro-macro-structure-v3000-expected.sdf',
       FileType.SDF,
-      'v3000',
+      SdfFileFormat.v3000,
     );
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/micro-macro-structure-v3000-expected.sdf',
       page,
+      'SDF/micro-macro-structure-v3000-expected.sdf',
     );
     await takeEditorScreenshot(page);
   });
 });
 
-async function callContexMenu(page: Page, locatorText: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(locatorText, { exact: true }).click({
-    button: 'right',
-  });
-}
-
-async function expandMonomer(page: Page, locatorText: string) {
-  await callContexMenu(page, locatorText);
-  await waitForRender(page, async () => {
-    await page.getByText('Expand monomer').click();
-  });
-}
-
-async function collapseMonomer(page: Page) {
-  // await clickInTheMiddleOfTheScreen(page, 'right');
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
-
-  if (await attachmentPoint.isVisible()) {
-    await attachmentPoint.click({
-      button: 'right',
-    });
-  } else {
-    await canvasLocator.getByText('O', { exact: true }).first().click({
-      button: 'right',
-    });
-  }
-
-  const collapseMonomerMenu = page.getByText('Collapse monomer');
-  if (await collapseMonomerMenu.isVisible()) {
-    await page.getByText('Collapse monomer').click();
-  } else {
-    // This hack should be removed after https://github.com/epam/ketcher/issues/5809 fix.
-    // Only Collapse monomer menu should remain
-    await page.getByText('Contract abbreviation').click();
-  }
-}
-
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;
-  monomerLocatorText: string;
+  monomerAlias: string;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -2309,7 +2272,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '1. Petide D (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
+    monomerAlias: 'D',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2319,7 +2282,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2329,7 +2292,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
+    monomerAlias: 'hU',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2339,7 +2302,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2349,7 +2312,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
+    monomerAlias: '5hMedC',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2359,7 +2322,7 @@ const expandableMonomers: IMonomer[] = [
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
+    monomerAlias: '4aPEGMal',
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5792, ' +
@@ -2390,9 +2353,14 @@ test.describe('Expand on Micro canvas: ', () => {
        *       4. Take screenshot to make sure it works
        *       Molecule should appear
        */
-      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
       await takeEditorScreenshot(page);
-      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        name: expandableMonomer.monomerAlias,
+      });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
+      );
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists
@@ -2409,105 +2377,105 @@ const nonExpandableMonomers: IMonomer[] = [
     monomerDescription: '1. Peptide X (ambiguouse, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
-    monomerLocatorText: 'X',
+    monomerAlias: 'X',
   },
   {
     monomerDescription:
       '2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription:
       '4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '6. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '7. DNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'N',
+    monomerAlias: 'N',
   },
   {
     monomerDescription: '8. RNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'N',
+    monomerAlias: 'N',
   },
   {
     monomerDescription: '9. Base M (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'M',
+    monomerAlias: 'M',
   },
   {
     monomerDescription: '10. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '11. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '12. Base A+C (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '13. Phosphate bnn,cmp,nen (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '14. Phosphate bnn+cmp+nen (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '17. Unknown nucleotide',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
-    monomerLocatorText: 'Unknown',
+    monomerAlias: 'Unknown',
   },
 ];
 
@@ -2528,14 +2496,19 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
        *       4. Check if Expand monomer menu option is disabled
        */
       await openFileAndAddToCanvasAsNewProject(
-        nonExpandableMonomer.KETFile,
         page,
+        nonExpandableMonomer.KETFile,
       );
       await takeEditorScreenshot(page);
-      await callContexMenu(page, nonExpandableMonomer.monomerLocatorText);
 
-      const disableState = await page.getByText('Expand monomer').isDisabled();
-      expect(disableState).toBe(true);
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        name: nonExpandableMonomer.monomerAlias,
+      });
+      expect(
+        await ContextMenu(page, monomerOnMicro).isOptionEnabled(
+          MonomerOnMicroOption.ExpandMonomer,
+        ),
+      ).toBe(false);
     });
   }
 });
@@ -2545,61 +2518,49 @@ const collapsableMonomers: IMonomer[] = [
     monomerDescription: '1. Petide D (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
+    monomerAlias: 'D',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
+    monomerAlias: 'hU',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
+    monomerAlias: '5hMedC',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
+    monomerAlias: '4aPEGMal',
     shouldFail: true,
-    issueNumber:
-      'https://github.com/epam/ketcher/issues/5809, ' +
-      'https://github.com/epam/ketcher/issues/5810',
+    issueNumber: 'https://github.com/epam/ketcher/issues/5810',
   },
 ];
 
@@ -2626,19 +2587,21 @@ test.describe('Collapse on Micro canvas: ', () => {
        *       Molecule got collapsed
        */
       await openFileAndAddToCanvasAsNewProject(
-        collapsableMonomer.KETFile,
         page,
+        collapsableMonomer.KETFile,
       );
-      await expandMonomer(page, collapsableMonomer.monomerLocatorText);
-      await takeEditorScreenshot(page);
-      await collapseMonomer(page);
-      await takeEditorScreenshot(page);
-
-      // Test should be skipped if related bug exists
-      test.fixme(
-        collapsableMonomer.shouldFail === true,
-        `That test results are wrong because of ${collapsableMonomer.issueNumber} issue(s).`,
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        name: collapsableMonomer.monomerAlias,
+      });
+      await ContextMenu(page, monomerOnMicro).click(
+        MonomerOnMicroOption.ExpandMonomer,
       );
+      await takeEditorScreenshot(page);
+      const monomerAtom = getAtomLocator(page, {}).first();
+      await ContextMenu(page, monomerAtom).click(
+        MonomerOnMicroOption.CollapseMonomer,
+      );
+      await takeEditorScreenshot(page);
     });
   }
 });
@@ -2648,143 +2611,143 @@ const movableCollapsedMonomers: IMonomer[] = [
     monomerDescription: '1. Petide D (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
+    monomerAlias: 'D',
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
+    monomerAlias: 'UNA',
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
+    monomerAlias: 'hU',
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
+    monomerAlias: 'bnn',
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
+    monomerAlias: '5hMedC',
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
+    monomerAlias: '4aPEGMal',
   },
   {
     monomerDescription: '7. Peptide X (ambiguouse, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
-    monomerLocatorText: 'X',
+    monomerAlias: 'X',
   },
   {
     monomerDescription:
       '8. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '9. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription:
       '10. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '11. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '12. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription:
       '13. DNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'N',
+    monomerAlias: 'N',
   },
   {
     monomerDescription:
       '14. RNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'N',
+    monomerAlias: 'N',
   },
   {
     monomerDescription: '15. Base M (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
-    monomerLocatorText: 'M',
+    monomerAlias: 'M',
   },
   {
     monomerDescription: '16. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '17. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '18. Base A+C (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '19. Phosphate bnn,cmp,nen (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '20. Phosphate bnn+cmp+nen (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '21. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '22. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
-    monomerLocatorText: '%',
+    monomerAlias: '%',
   },
   {
     monomerDescription: '23. Unknown nucleotide',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
-    monomerLocatorText: 'Unknown',
+    monomerAlias: 'Unknown',
   },
 ];
 
@@ -2806,18 +2769,16 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
        */
 
       await openFileAndAddToCanvasAsNewProject(
-        movableCollapsedMonomer.KETFile,
         page,
+        movableCollapsedMonomer.KETFile,
       );
       await takeEditorScreenshot(page);
 
-      const canvasLocator = page.getByTestId('ketcher-canvas');
-      const monomerLocator = canvasLocator.getByText(
-        movableCollapsedMonomer.monomerLocatorText,
-        { exact: true },
-      );
+      const monomerOnMicro = getAbbreviationLocator(page, {
+        name: movableCollapsedMonomer.monomerAlias,
+      });
 
-      await moveMonomerOnMicro(page, monomerLocator, 100, 100);
+      await moveMonomerOnMicro(page, monomerOnMicro, 100, 100);
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -2839,11 +2800,15 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   */
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
-    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
     page,
-    undefined,
+    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
+    MacroFileType.KetFormat,
     // error is expected
     true,
   );
-  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
+  const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+  expect(errorMessage).toContain(
+    'Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages:',
+  );
+  await ErrorMessageDialog(page).close();
 });

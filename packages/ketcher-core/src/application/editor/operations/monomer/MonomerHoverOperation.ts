@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class MonomerHoverOperation implements Operation {
   constructor(
-    private peptide: BaseMonomer,
-    private needRedrawAttachmentPoints: boolean,
+    private readonly peptide: BaseMonomer,
+    private readonly needRedrawAttachmentPoints: boolean,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
@@ -31,5 +31,7 @@ export class MonomerHoverOperation implements Operation {
     );
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: hover state is transient and has no undo state
+  }
 }

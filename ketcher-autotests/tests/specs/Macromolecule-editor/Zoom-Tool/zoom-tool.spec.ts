@@ -1,33 +1,30 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { Locator, test, Page, chromium } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Locator, test, Page, chromium } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
-  selectRectangleArea,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   moveMouseAway,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
-  selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { pageReload } from '@utils/common/helpers';
-import {
-  zoomWithMouseWheel,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
 
@@ -61,48 +58,51 @@ test.afterAll(async ({ browser }) => {
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // await browser.close();
 });
 
 const ZOOM_STEP = 200;
 test.describe('Zoom Tool', () => {
   const deltas = { x: 0, y: 200 };
-  const peptideCoordinates = { x: 300, y: 300 };
   let peptide: Locator;
   test.beforeEach(async () => {
-    await goToPeptidesTab(page);
-    // First monomer at the center of the screen
-    peptide = await addSingleMonomerToCanvas(
-      page,
-      Peptides.C,
-      peptideCoordinates.x,
-      peptideCoordinates.y,
-      0,
-    );
-    await moveMouseToTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, { x: 320, y: 320 });
+    peptide = getMonomerLocator(page, Peptide.C).nth(0);
   });
 
   test('Zoom In & Out monomer with menu buttons', async () => {
     const zoomInCount = 4;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
-    await page.keyboard.down('Control');
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(deltas.x, deltas.y);
     await takeEditorScreenshot(page);
 
@@ -117,58 +117,67 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out attachment points with menu buttons', async () => {
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
-    await page.keyboard.down('Control');
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await page.keyboard.down('ControlOrMeta');
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
-    await waitForMonomerPreview(page);
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out bond with menu buttons', async () => {
-    const bondCoordinates = { x: 400, y: 400 };
+    const bondCoordinates = { x: 450, y: 450 };
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -176,7 +185,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.up();
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -185,10 +194,11 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
-    await page.keyboard.down('Control');
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await page.keyboard.down('ControlOrMeta');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -213,8 +223,12 @@ test.describe('Zoom Tool', () => {
     const selectionEnd = { x: 400, y: 400 };
     const zoomInCount = 2;
     await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await Library(page).dragMonomerOnCanvas(Peptide.C, {
+      x: 0,
+      y: 0,
+      fromCenter: true,
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectRectangleArea(
@@ -227,7 +241,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).resetZoom();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectRectangleArea(
       page,
       selectionStart.x,
@@ -239,7 +253,7 @@ test.describe('Zoom Tool', () => {
 
     const zoomOutCount = 2;
     await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectRectangleArea(
       page,
       selectionStart.x,
@@ -255,7 +269,7 @@ test.describe('Zoom Tool', () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 800, y: 800 };
     await zoomWithMouseWheel(page, ZOOM_STEP);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await selectRectangleArea(
@@ -342,7 +356,7 @@ test.describe('Zoom Tool', () => {
      *        7. Take screenshot to witness the result
      */
     await CommonTopLeftToolbar(page).clearCanvas();
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -375,7 +389,9 @@ test.describe('Zoom Tool', () => {
      *        7. Take screenshot to witness the result
      */
     await CommonTopLeftToolbar(page).clearCanvas();
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -392,7 +408,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test('Ensure that the zoom behavior works correctly with large sequences where the top left monomer is off-screen before zooming', async () => {
@@ -428,7 +444,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 });
 
@@ -454,16 +470,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 });
 
@@ -483,7 +494,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        8. Take screenshot to witness the result
    */
   await CommonTopLeftToolbar(page).clearCanvas();
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -491,18 +502,13 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Sequence mode)', async () => {
@@ -521,7 +527,9 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        8. Take screenshot to witness the result
    */
   await CommonTopLeftToolbar(page).clearCanvas();
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -529,16 +537,11 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
   );
   await takeEditorScreenshot(page);
 
-  const numberOfZooms = 5;
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomInByKeyboard(page);
-  }
+  await zoomInByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
-  for (let i = 0; i < numberOfZooms; i++) {
-    await ZoomOutByKeyboard(page);
-  }
+  await zoomOutByKeyboard(page, { repeat: 5 });
   await takeEditorScreenshot(page);
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });

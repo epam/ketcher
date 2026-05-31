@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Pile } from './pile';
-import { Pool } from './pool';
+import type { Pool } from './pool';
 
 export interface RGroupAttributes {
   index?: number;
@@ -32,10 +32,10 @@ export class RGroup {
 
   constructor(atrributes?: RGroupAttributes) {
     this.frags = new Pile<number>();
-    this.resth = atrributes?.resth || false;
-    this.range = atrributes?.range || '';
-    this.ifthen = atrributes?.ifthen || 0;
-    this.index = atrributes?.index || -1;
+    this.resth = atrributes?.resth ?? false;
+    this.range = atrributes?.range ?? '';
+    this.ifthen = atrributes?.ifthen ?? 0;
+    this.index = atrributes?.index ?? -1;
   }
 
   static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {

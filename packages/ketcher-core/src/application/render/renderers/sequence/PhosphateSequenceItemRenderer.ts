@@ -1,12 +1,14 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 
 export class PhosphateSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return 'p';
   }
 
-  protected drawModification() {}
+  protected drawModification() {
+    // intentional no-op: this monomer type does not have a modification glyph
+  }
 
   protected appendRootElement() {
     this.rootElement = super.appendRootElement();

@@ -4,6 +4,9 @@ interface IStyledAttachmentPointNameProps {
   disabled?: boolean;
 }
 
+// TODO suppressed after upgrade to react 19. Need to fix
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const AttachmentPoint = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',

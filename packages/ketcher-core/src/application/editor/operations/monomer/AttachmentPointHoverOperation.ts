@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AttachmentPointName } from 'domain/types';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class AttachmentPointHoverOperation implements Operation {
   constructor(
-    private peptide: BaseMonomer,
-    private attachmentPointName: AttachmentPointName,
+    private readonly peptide: BaseMonomer,
+    private readonly attachmentPointName: AttachmentPointName,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
@@ -32,5 +32,7 @@ export class AttachmentPointHoverOperation implements Operation {
     );
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: hover state is transient and has no undo state
+  }
 }

@@ -27,7 +27,7 @@ export const ContentLine = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  white-space: nowrap;
+  white-space: pre;
 `;
 
 interface RatioBarProps {

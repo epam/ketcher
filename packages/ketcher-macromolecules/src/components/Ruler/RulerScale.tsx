@@ -1,5 +1,5 @@
 import { ZoomTransform } from 'd3';
-import { memo, ReactElement, useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import { LayoutMode } from 'ketcher-core';
 
 import styles from './RulerArea.module.less';
@@ -14,39 +14,68 @@ import {
 type Props = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
+  lineLengthValue: number;
 };
 
-const RulerScale = ({ transform, layoutMode }: Props) => {
+const RulerScale = ({
+  transform,
+  layoutMode,
+  lineLengthValue: _lineLengthValue,
+}: Props) => {
   const ref = useRef<SVGSVGElement>(null);
-
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
-  const positions = useMemo(() => {
+  const getDynamicPositions = (
+    visibleStart: number,
+    visibleEnd: number,
+    step: number,
+    offset: number,
+  ): number[] => {
+    const startIndex = Math.max(0, Math.floor((visibleStart - offset) / step));
+    const endIndex = Math.ceil((visibleEnd - offset) / step) + 10;
+
     return Array.from(
-      { length: layoutMode === 'snake-layout-mode' ? 101 : 20 },
-      (_, i) => {
-        if (layoutMode === 'sequence-layout-mode') {
-          return (
-            SequenceModeStartOffset +
-            i * 10 * SequenceModeItemWidth +
-            (i - 1) * SequenceModeIndentWidth
-          );
-        } else if (layoutMode === 'snake-layout-mode') {
-          return SnakeModeStartOffset + i * SnakeModeItemWidth;
-        }
-        return 0;
-      },
+      { length: endIndex - startIndex },
+      (_, i) => offset + (startIndex + i) * step,
     );
-  }, [layoutMode]);
+  };
+
+  const positions = useMemo(() => {
+    const canvasWidth =
+      ref.current?.ownerSVGElement?.width.baseVal.value || 1000;
+    const visibleStart = transform.invertX(0);
+    const visibleEnd = transform.invertX(canvasWidth);
+
+    if (layoutMode === 'sequence-layout-mode') {
+      const step = 10 * SequenceModeItemWidth + SequenceModeIndentWidth;
+      return getDynamicPositions(
+        visibleStart,
+        visibleEnd,
+        step,
+        SequenceModeStartOffset,
+      );
+    }
+
+    if (layoutMode === 'snake-layout-mode') {
+      return getDynamicPositions(
+        visibleStart,
+        visibleEnd,
+        SnakeModeItemWidth,
+        SnakeModeStartOffset,
+      );
+    }
+
+    return [];
+  }, [layoutMode, transform]);
 
   const svgChildren = useMemo(() => {
-    const children: ReactElement[] = [];
+    const children: JSX.Element[] = [];
 
     positions.forEach((position, i) => {
       if (layoutMode === 'sequence-layout-mode') {
         children.push(
           <line
-            key={`ruler-mark-${i}`}
+            key={`ruler-mark-${position}`}
             x1={transform.applyX(position)}
             y1={14}
             x2={transform.applyX(position)}
@@ -61,7 +90,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
           if (isMultipleOfFive) {
             children.push(
               <text
-                key={`ruler-label-${i}`}
+                key={`ruler-label-${position}`}
                 x={transform.applyX(position)}
                 y={18}
                 fontSize={10}
@@ -76,7 +105,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
           } else {
             children.push(
               <line
-                key={`ruler-mark-${i}`}
+                key={`ruler-mark-${position}`}
                 x1={transform.applyX(position)}
                 y1={14}
                 x2={transform.applyX(position)}
@@ -89,7 +118,7 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
         } else {
           children.push(
             <text
-              key={`ruler-label-${i}`}
+              key={`ruler-label-${position}`}
               x={transform.applyX(position)}
               y={18}
               fontSize={10}
@@ -104,7 +133,8 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
         }
       }
 
-      if (i === positions.length - 1) {
+      const nextPosition = positions[i + 1];
+      if (nextPosition === undefined) {
         return;
       }
 
@@ -115,10 +145,10 @@ const RulerScale = ({ transform, layoutMode }: Props) => {
 
       children.push(
         <line
-          key={`ruler-fill-${i}`}
+          key={`ruler-fill-${position}-${nextPosition}`}
           x1={transform.applyX(position + 10)}
           y1={18}
-          x2={transform.applyX(positions[i + 1] - 10)}
+          x2={transform.applyX(nextPosition - 10)}
           y2={18}
           stroke="#B4B9D6"
           strokeDasharray="2,2"

@@ -1,63 +1,54 @@
-import { Page, test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { Page, test } from '@fixtures';
 import {
-  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   waitForRender,
-  hideLibrary,
-  showLibrary,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  waitForPageInit,
+  zoomOutByKeyboard,
+  MolFileFormat,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { pageReload } from '@utils/common/helpers';
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
+  verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await chooseTab(page, Tabs.Rna);
+  await Library(page).switchToRNATab();
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SnakeCanvas: _ }) => {
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await resetZoomLevelToDefault(page);
-  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
-
-async function clickNthConnectionLine(page: Page, n: number) {
-  const bondLine = page.locator('g[pointer-events="stroke"]').nth(n);
-  await bondLine.click();
-}
 
 test.describe('Side chain connections', () => {
   test('Open file with rna side chain connections', async () => {
@@ -66,8 +57,7 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for rna chain in snake mode
     */
 
-    await selectSnakeLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(`KET/side-connections-rna.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/side-connections-rna.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -77,8 +67,7 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for peptide chain in snake mode
     */
 
-    await selectSnakeLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(`KET/side-connections-peptide.ket`, page);
+    await openFileAndAddToCanvasMacro(page, `KET/side-connections-peptide.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -88,10 +77,9 @@ test.describe('Side chain connections', () => {
     Description: Open file and check how side connections look for cycled chain in snake mode
     */
 
-    await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `KET/side-connection-in-cycle-chain.ket`,
       page,
+      `KET/side-connection-in-cycle-chain.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -104,13 +92,14 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
+    await page.waitForTimeout(200);
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/1.1.ket`,
       page,
+      `KET/Side-Chain-Connections/1.1.ket`,
     );
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -122,12 +111,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/1.2.ket`,
       page,
+      `KET/Side-Chain-Connections/1.2.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -139,13 +127,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/1.3.ket`,
       page,
+      `KET/Side-Chain-Connections/1.3.ket`,
     );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -160,13 +146,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/1.4.ket`,
       page,
+      `KET/Side-Chain-Connections/1.4.ket`,
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
@@ -183,16 +167,15 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.1.ket`,
       page,
+      `KET/Side-Chain-Connections/2.1.ket`,
     );
     await moveMouseAway(page);
     // Zoom out to see whole picture
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -204,12 +187,12 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
     await pageReload(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.2.ket`,
       page,
+      `KET/Side-Chain-Connections/2.2.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -222,12 +205,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.3.ket`,
       page,
+      `KET/Side-Chain-Connections/2.3.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -240,12 +222,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.4.ket`,
       page,
+      `KET/Side-Chain-Connections/2.4.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -258,12 +239,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.5.ket`,
       page,
+      `KET/Side-Chain-Connections/2.5.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -276,12 +256,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.5.ket`,
       page,
+      `KET/Side-Chain-Connections/2.5.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -294,12 +273,11 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/2.5.ket`,
       page,
+      `KET/Side-Chain-Connections/2.5.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -319,13 +297,11 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.1.ket`,
         page,
+        `KET/Side-Chain-Connections/3.1.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
@@ -350,12 +326,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.2.ket`,
         page,
+        `KET/Side-Chain-Connections/3.2.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -378,12 +353,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.3.ket`,
         page,
+        `KET/Side-Chain-Connections/3.3.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -406,12 +380,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.4.ket`,
         page,
+        `KET/Side-Chain-Connections/3.4.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -434,12 +407,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.5.ket`,
         page,
+        `KET/Side-Chain-Connections/3.5.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -462,12 +434,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.6.ket`,
         page,
+        `KET/Side-Chain-Connections/3.6.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -490,16 +461,15 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/3.7.ket`,
         page,
+        `KET/Side-Chain-Connections/3.7.ket`,
       );
       await moveMouseAway(page);
       // Zoom out to see bottom chians
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -519,13 +489,12 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await selectSnakeLayoutModeTool(page);
+
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.1.ket`,
         page,
+        `KET/Side-Chain-Connections/4.1.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
@@ -550,12 +519,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.2.ket`,
         page,
+        `KET/Side-Chain-Connections/4.2.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -577,13 +545,12 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await selectSnakeLayoutModeTool(page);
+
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.3.ket`,
         page,
+        `KET/Side-Chain-Connections/4.3.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
@@ -608,12 +575,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.4.ket`,
         page,
+        `KET/Side-Chain-Connections/4.4.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -636,12 +602,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.5.ket`,
         page,
+        `KET/Side-Chain-Connections/4.5.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -664,12 +629,11 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.6.ket`,
         page,
+        `KET/Side-Chain-Connections/4.6.ket`,
       );
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -692,16 +656,15 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-      await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
-      await hideLibrary(page);
+      await Library(page).hideLibrary();
       await openFileAndAddToCanvasMacro(
-        `KET/Side-Chain-Connections/4.7.ket`,
         page,
+        `KET/Side-Chain-Connections/4.7.ket`,
       );
       await moveMouseAway(page);
       // Zoom out to see bottom chains
-      await ZoomOutByKeyboard(page);
+      await zoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -712,10 +675,9 @@ test.describe('Side chain connections', () => {
     /* If more than one side connection is drawn horizontally between two monomer rows, they should be shifted vertically against each other.
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/5.ket`, page);
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/5.ket`);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -728,10 +690,9 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/6.ket`, page);
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/6.ket`);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -745,12 +706,11 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/6.1.ket`,
       page,
+      `KET/Side-Chain-Connections/6.1.ket`,
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -765,12 +725,11 @@ test.describe('Side chain connections', () => {
     /* connected from the vertically. 
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/6.2.ket`,
       page,
+      `KET/Side-Chain-Connections/6.2.ket`,
     );
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -785,12 +744,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/7.1.ket`,
       page,
+      `KET/Side-Chain-Connections/7.1.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -804,12 +762,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/7.2.ket`,
       page,
+      `KET/Side-Chain-Connections/7.2.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -823,12 +780,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/7.3.ket`,
       page,
+      `KET/Side-Chain-Connections/7.3.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -842,12 +798,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/7.4.ket`,
       page,
+      `KET/Side-Chain-Connections/7.4.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -861,12 +816,11 @@ test.describe('Side chain connections', () => {
     /* All canvases (5 in total) contain all combinations of connections between base and sugar
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/7.5.ket`,
       page,
+      `KET/Side-Chain-Connections/7.5.ket`,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -877,11 +831,11 @@ test.describe('Side chain connections', () => {
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
     await pageReload(page);
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/8.ket`, page);
-    await selectFlexLayoutModeTool(page);
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/8.ket`);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -891,126 +845,135 @@ test.describe('Side chain connections', () => {
     /* Case 9: Verify display of side-chain connections when switching from snake mode to sequence mode
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/9.ket`, page);
-    await selectSequenceLayoutModeTool(page);
+    await Library(page).hideLibrary();
+    await openFileAndAddToCanvasMacro(page, `KET/Side-Chain-Connections/9.ket`);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('10. Verify display of side-chain connections when switching from sequence mode to flex mode', async () => {
+  test('10. Verify display of side-chain connections when switching from sequence mode to flex mode', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /* Case 10: Verify display of side-chain connections when switching from sequence mode to flex mode
     */
 
-    await selectSequenceLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/10.ket`,
       page,
+      `KET/Side-Chain-Connections/10.ket`,
     );
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('11. Verify selection of a single side-chain connection', async () => {
+  test('11. Verify selection of a single side-chain connection', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 11: Verify selection of a single side-chain connection
     */
 
-    await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/11.ket`,
       page,
+      `KET/Side-Chain-Connections/11.ket`,
     );
 
     const randomSideBondToSelect = 12;
-    await clickNthConnectionLine(page, randomSideBondToSelect);
-    await waitForMonomerPreview(page);
+    await getBondLocator(page, {})
+      .nth(randomSideBondToSelect)
+      .click({ force: true });
+    await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 
-  test('12. Verify deletion of a single side-chain connection and Undo', async () => {
+  test('12. Verify deletion of a single side-chain connection and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 12: Verify deletion of a single side-chain connection and Undo
     */
 
-    await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/12.ket`,
       page,
+      `KET/Side-Chain-Connections/12.ket`,
     );
 
     const randomSideBondToSelect = 12;
-    await clickNthConnectionLine(page, randomSideBondToSelect);
-    // await takeEditorScreenshot(page);
-    await CommonLeftToolbar(page).selectEraseTool();
+    await getBondLocator(page, {})
+      .nth(randomSideBondToSelect)
+      .click({ force: true });
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
-  test('13. Verify deletion of multiple side-chain connections and Undo', async () => {
+  test('13. Verify deletion of multiple side-chain connections and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 13: Verify deletion of multiple side-chain connections and Undo
     */
 
-    await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/13.ket`,
       page,
+      `KET/Side-Chain-Connections/13.ket`,
     );
 
     // Selectiong ALL 60 available bonds
     const numberOfBondsToSelectAndDelete = 60;
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
-      await clickNthConnectionLine(page, i);
+      await getBondLocator(page, {}).nth(i).click({ force: true });
       await page.keyboard.up('Shift');
     }
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
-  test('14. Verify deletion of a side-chain connection in a complex RNA structure and Undo', async () => {
+  test('14. Verify deletion of a side-chain connection in a complex RNA structure and Undo', async ({
+    FlexCanvas: _,
+  }) => {
     /*
     /* Case 14: Verify deletion of a side-chain connection in a complex RNA structure and Undo
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/14.ket`,
       page,
+      `KET/Side-Chain-Connections/14.ket`,
     );
 
     // Selecting ALL 53 available bonds
     const numberOfBondsToSelectAndDelete = 53;
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
-      await clickNthConnectionLine(page, i);
+      await getBondLocator(page, {}).nth(i).click({ force: true });
       await page.keyboard.up('Shift');
     }
-    await CommonLeftToolbar(page).selectEraseTool();
+    await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
 
     await CommonTopLeftToolbar(page).undo();
@@ -1019,17 +982,18 @@ test.describe('Side chain connections', () => {
     });
   });
 
-  test('15. Verify copy-paste of a structure with side-chain connections', async () => {
+  test('15. Verify copy-paste of a structure with side-chain connections', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
     /* Case 15: Verify copy-paste of a structure with side-chain connections
     */
 
-    await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
-    await hideLibrary(page);
+    await Library(page).hideLibrary();
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/15.ket`,
       page,
+      `KET/Side-Chain-Connections/15.ket`,
     );
     await takeEditorScreenshot(page);
 
@@ -1044,30 +1008,25 @@ test.describe('Side chain connections', () => {
     /*  
       Case 16: Verify saving structure with side-chain connections in SVG Document format
     */
-    await showLibrary(page);
-    await selectSnakeLayoutModeTool(page);
+    await Library(page).showLibrary();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/16.ket`,
       page,
+      `KET/Side-Chain-Connections/16.ket`,
     );
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.SVGDocument,
-    );
-    await takeEditorScreenshot(page);
-    // Closing Save dialog
-    await SaveStructureDialog(page).cancel();
+    await verifySVGExport(page);
   });
 
-  test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {
+  test('17. Verify saving structure with side-chain connections in SVG Document format', async ({
+    SnakeCanvas: _,
+  }) => {
     /*
     /*  
       Case 17: Verify saving structure with side-chain connections in SVG Document format
     */
-    await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/17.ket`,
       page,
+      `KET/Side-Chain-Connections/17.ket`,
     );
 
     await waitForRender(page, async () => {
@@ -1085,10 +1044,11 @@ test.describe('Side chain connections', () => {
     await waitForRender(page, async () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/18.ket`,
       page,
+      `KET/Side-Chain-Connections/18.ket`,
     );
 
     await waitForRender(page, async () => {
@@ -1099,25 +1059,28 @@ test.describe('Side chain connections', () => {
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
 
-    await selectFlexLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
 
-    await selectSnakeLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takeEditorScreenshot(page);
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('19. Verify saving and opening structure with side-chain connections in KET format', async () => {
+  test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /*
     /* Case 19: Verify saving and opening structure with side-chain connections in KET format
     */
-    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/19.ket`,
       page,
+      `KET/Side-Chain-Connections/19.ket`,
     );
     await verifyFileExport(
       page,
@@ -1126,21 +1089,22 @@ test.describe('Side chain connections', () => {
     );
   });
 
-  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async () => {
+  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
+    SequenceCanvas: _,
+  }) => {
     /*
     /*
     /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
     */
-    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/20.ket`,
       page,
+      `KET/Side-Chain-Connections/20.ket`,
     );
     await verifyFileExport(
       page,
       'KET/Side-Chain-Connections/20-expected.mol',
       FileType.MOL,
-      'v3000',
+      MolFileFormat.v3000,
       [1],
     );
   });

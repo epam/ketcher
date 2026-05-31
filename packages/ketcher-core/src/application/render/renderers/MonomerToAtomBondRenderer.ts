@@ -1,8 +1,12 @@
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import util from '../util';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
   private selectionElement:
@@ -37,18 +41,50 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       };
     }
 
-    const atomRect =
-      this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+    const atomRenderer = this.monomerToAtomBond.atom
+      .baseRenderer as AtomRenderer;
+    const atomRootBoundingClientRect = atomRenderer.rootBoundingClientRect; // Use public getter
 
-    if (atomRect) {
-      // Get the atom rectangle dimensions
-      const atomWidth = atomRect.width;
-      const atomHeight = atomRect.height;
+    if (atomRootBoundingClientRect) {
+      // Convert DOMRect to Box2Abs relative to atom's center
+      const atomVisualBBox = new Box2Abs(
+        new Vec2(
+          atomRootBoundingClientRect.x - atomRenderer.scaledPosition.x,
+          atomRootBoundingClientRect.y - atomRenderer.scaledPosition.y,
+        ),
+        new Vec2(
+          atomRootBoundingClientRect.x -
+            atomRenderer.scaledPosition.x +
+            atomRootBoundingClientRect.width,
+          atomRootBoundingClientRect.y -
+            atomRenderer.scaledPosition.y +
+            atomRootBoundingClientRect.height,
+        ),
+      );
 
-      // Estimate the atom radius (approximating the atom as a circle)
-      const atomRadius = Math.min(atomWidth, atomHeight) / 2;
+      let combinedVisualBBox: Box2Abs;
 
-      // Calculate direction vector from start to end
+      // If the label is visible, use labelBoundingBox for a more precise bounding box.
+      // Otherwise, use the overall bounding box of the atom's visual representation.
+      if (atomRenderer.isLabelVisible && atomRenderer.labelBoundingBox) {
+        const labelBBox = atomRenderer.labelBoundingBox;
+        combinedVisualBBox = new Box2Abs(
+          new Vec2(labelBBox.x, labelBBox.y),
+          new Vec2(
+            labelBBox.x + labelBBox.width,
+            labelBBox.y + labelBBox.height,
+          ),
+        );
+      } else {
+        // Fallback: use the bounding box of the entire atom element (circle or rectangle for selection)
+        // Adjust for being relative to (0,0) (atom's center)
+        combinedVisualBBox = new Box2Abs(
+          new Vec2(atomVisualBBox.p0.x, atomVisualBBox.p0.y),
+          new Vec2(atomVisualBBox.p1.x, atomVisualBBox.p1.y),
+        );
+      }
+
+      // Calculate direction vector from start to end (bond direction)
       const directionX = endPositionInPixels.x - startPositionInPixels.x;
       const directionY = endPositionInPixels.y - startPositionInPixels.y;
       const distance = Math.sqrt(
@@ -58,12 +94,26 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       // Normalize the direction vector
       const normalizedDirectionX = directionX / distance;
       const normalizedDirectionY = directionY / distance;
+      const bondDirection = new Vec2(
+        normalizedDirectionX,
+        normalizedDirectionY,
+      );
 
-      // Adjust end position to stop at the atom edge
+      // Ray direction for shiftRayBox: from atom's center *away* from bond's origin
+      const rayDirection = bondDirection.negated();
+
+      // Calculate the shift needed to avoid overlap with the combined visual bounding box
+      const shift = util.shiftRayBox(
+        new Vec2(0, 0),
+        rayDirection,
+        combinedVisualBBox,
+      );
+
+      // Adjust end position to stop at the atom's visual edge, with an additional offset for the hover effect
       endPositionInPixels.x =
-        endPositionInPixels.x - normalizedDirectionX * atomRadius;
+        endPositionInPixels.x + rayDirection.x * (shift + 6);
       endPositionInPixels.y =
-        endPositionInPixels.y - normalizedDirectionY * atomRadius;
+        endPositionInPixels.y + rayDirection.y * (shift + 6);
     }
 
     return {
@@ -74,30 +124,38 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
 
   show() {
     // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
+    // TODO refactor this with a more proper solution without checking atom renderer here
     const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
-    if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
-      setTimeout(() => this.show(), 10);
+    if (!atomRenderer?.rootBoundingClientRect) {
+      setTimeout(() => {
+        // Check if this renderer is still the active renderer for this bond
+        if (this.monomerToAtomBond.renderer === this) {
+          this.show();
+        }
+      }, 10);
       return;
     }
 
-    this.rootElement = this.canvas
-      .insert('g', `.monomer`)
-      .data([this])
-      .attr('data-testid', 'bond')
-      .attr('data-type', 'covalent')
-      .attr('data-bondid', this.monomerToAtomBond.id)
-      .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
-      .attr('data-toatomid', this.monomerToAtomBond.atom.id)
-      .attr(
-        'data-fromconnectionpoint',
-        this.monomerToAtomBond.monomer.getAttachmentPointByBond(
-          this.monomerToAtomBond,
-        ) || '',
-      )
-      .attr(
-        'transform',
-        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      ) as never as D3SvgElementSelection<SVGGElement, void>;
+    this.rootElement =
+      this.rootElement ||
+      (this.canvas
+        .insert('g', `.monomer`)
+        .data([this])
+        .attr('data-testid', 'bond')
+        .attr('data-bondtype', 'covalent')
+        .attr('data-bondid', this.monomerToAtomBond.id)
+        .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
+        .attr('data-toatomid', this.monomerToAtomBond.atom.id)
+        .attr(
+          'data-fromconnectionpoint',
+          this.monomerToAtomBond.monomer.getAttachmentPointByBond(
+            this.monomerToAtomBond,
+          ) ?? '',
+        )
+        .attr(
+          'transform',
+          `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+        ) as never as D3SvgElementSelection<SVGGElement, void>);
 
     this.rootElement
       ?.append('line')
@@ -133,7 +191,9 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       .attr('stroke-width', 10);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
   public drawSelection() {
     if (!this.rootElement) {
@@ -159,7 +219,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#57ff8f')
+      .attr('stroke', SELECTION_COLOR)
       .attr('stroke-width', 10);
   }
 
@@ -182,5 +242,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     this.hoverElement = undefined;
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

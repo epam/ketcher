@@ -1,10 +1,11 @@
-import { Page, test } from '@playwright/test';
+/* eslint-disable max-len */
+/* eslint-disable no-magic-numbers */
+import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  FILE_TEST_DATA,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
@@ -12,16 +13,11 @@ import {
 } from '@utils';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
-
-async function editText(page: Page, text: string) {
-  await page.getByTestId('openStructureModal').getByRole('textbox').click();
-  await page.keyboard.press('Home');
-  await page.keyboard.insertText(text);
-}
+import { CalculatedValuesDialog } from '@tests/pages/molecules/canvas/CalculatedValuesDialog';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.describe('Floating windows', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,18 +34,18 @@ test.describe('Floating windows', () => {
       fileContent,
     );
 
-    await editText(page, '  NEW TEXT   ');
+    await PasteFromClipboardDialog(page).openStructureTextarea.click();
+    await page.keyboard.press('Home');
+    await page.keyboard.insertText('  NEW TEXT   ');
     await takeEditorScreenshot(page);
   });
 
   test('Open structure: Errors of input (text file)', async ({ page }) => {
     // Test case: EPMLSOPKET-4007
     // Verify if adding incorrect text file triggers Error message
-    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('Txt/incorect-text.txt', page);
-    await addToCanvasButton.click();
+    await openFile(page, 'Txt/incorect-text.txt');
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -58,9 +54,20 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3998
       Description: verify the floating window with calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323.440',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323.200',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculated values: check accuracy', async ({ page }) => {
@@ -68,13 +75,22 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(1)
       Description: verify 0 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByTestId('Molecular Weight-select').click();
-    await page.getByRole('option', { name: '0' }).click();
-    await page.getByTestId('Exact Mass-select').click();
-    await page.getByRole('option', { name: '0' }).click();
-    await takeEditorScreenshot(page);
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(0);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(0);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculated values: check accuracy 2', async ({ page }) => {
@@ -82,13 +98,22 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-3999(2)
       Description: verify 7 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/bicycle.mol');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByTestId('Molecular Weight-select').click();
-    await page.getByRole('option', { name: '7' }).click();
-    await page.getByTestId('Exact Mass-select').click();
-    await page.getByRole('option', { name: '7' }).click();
-    await takeEditorScreenshot(page);
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(7);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(7);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C20H25N3O');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '323.4399935',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '323.1997615',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 74.3 H 7.8 N 13.0 O 5.0');
   });
 
   test('Calculate values: verify UI (empty canvas)', async ({ page }) => {
@@ -97,7 +122,14 @@ test.describe('Floating windows', () => {
       Description: verify empty fields in floating window for empty canvas 
     */
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('Chemical Formula:');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toBeEmpty();
+    await expect(CalculatedValuesDialog(page).exactMassInput).toBeEmpty();
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toBeEmpty();
   });
 
   test('Open structure: Open window', async ({ page }) => {
@@ -115,9 +147,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4010
       Description: verify visual representation of "Extended" table 
     */
-    const extendedTableButton = RightToolbar(page).extendedTableButton;
-
-    await extendedTableButton.click();
+    await RightToolbar(page).extendedTable();
     await takeEditorScreenshot(page);
   });
 
@@ -126,15 +156,24 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4000
       Description: Change dedcimal places
     */
-    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/calculated-values-chain.ket');
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await page.getByText('Decimal places3').first().click();
-    await page.getByRole('option', { name: '4' }).click();
-    await page.getByText('Decimal places3').click();
-    await page.getByRole('option', { name: '1' }).click();
-    await page.keyboard.press('Escape');
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(4);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(1);
+    await CalculatedValuesDialog(page).closeWindow();
     await IndigoFunctionsToolbar(page).calculatedValues();
-    await takeEditorScreenshot(page);
+    await expect(
+      CalculatedValuesDialog(page).chemicalFormulaInput,
+    ).toContainText('C7H16');
+    await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
+      '100.2050',
+    );
+    await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
+      '100.1',
+    );
+    await expect(
+      CalculatedValuesDialog(page).elementalAnalysisInput,
+    ).toHaveValue('C 83.9 H 16.1');
   });
 
   test('Opening text file', async ({ page }) => {
@@ -143,7 +182,7 @@ test.describe('Floating windows', () => {
       Description: open text file via "open file" 
     */
     await CommonTopLeftToolbar(page).openFile();
-    await openFile('CML/cml-molecule.cml', page);
+    await openFile(page, 'CML/cml-molecule.cml');
     await takeEditorScreenshot(page);
   });
 
@@ -164,9 +203,13 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', false);
-    await takeEditorScreenshot(page);
-    await closeErrorAndInfoModals(page);
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', true);
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', 'molecule auto loader: SMILES loader: unexpected end of input', 'molecule auto loader: SMILES loader: 'A' specifier is allowed only for query molecules', 'scanner: BufferScanner::read() error'",
+    );
+    await ErrorMessageDialog(page).close();
+    await PasteFromClipboardDialog(page).cancel();
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {
@@ -174,11 +217,11 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
+    const fileContent = await readFileContent(
+      'Rxn-V2000/benzene-arrow-benzene-reagent-hcl.rxn',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

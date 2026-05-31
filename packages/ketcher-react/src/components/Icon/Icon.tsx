@@ -16,7 +16,16 @@
 import { IIconProps } from './types';
 import { getIconByName } from './utils/getIconByName';
 
-const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
+const Icon = ({
+  name,
+  className,
+  title,
+  onClick,
+  onMouseOver,
+  onMouseOut,
+  onDoubleClick,
+  dataTestId,
+}: IIconProps) => {
   const Component = getIconByName(name);
 
   return (
@@ -25,6 +34,10 @@ const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
       title={title}
       onClick={onClick}
       data-testid={dataTestId}
+      // TODO wrap icon into a button and use mouse events there
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+      onDoubleClick={onDoubleClick}
     />
   );
 };

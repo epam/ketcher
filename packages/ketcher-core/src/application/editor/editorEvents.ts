@@ -1,6 +1,6 @@
 import { Subscription } from 'subscription';
-import { ToolEventHandlerName } from 'application/editor/tools/Tool';
-import { CoreEditor } from 'application/editor/Editor';
+import type { ToolEventHandlerName } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
@@ -9,6 +9,7 @@ export interface IEditorEvents {
   selectMonomer: Subscription;
   selectPreset: Subscription;
   selectTool: Subscription;
+  selectSelectionTool: Subscription;
   createBondViaModal: Subscription;
   cancelBondCreationViaModal: Subscription;
   selectMode: Subscription;
@@ -24,6 +25,7 @@ export interface IEditorEvents {
   mouseOnMoveMonomer: Subscription;
   mouseLeaveMonomer: Subscription;
   mouseOverAttachmentPoint: Subscription;
+  mouseMoveAttachmentPoint: Subscription;
   mouseLeaveAttachmentPoint: Subscription;
   mouseUpAttachmentPoint: Subscription;
   mouseDownAttachmentPoint: Subscription;
@@ -32,6 +34,7 @@ export interface IEditorEvents {
   mouseUpMonomer: Subscription;
   rightClickSequence: Subscription;
   rightClickCanvas: Subscription;
+  rightClickCanvasSequence: Subscription;
   rightClickPolymerBond: Subscription;
   rightClickSelectedMonomers: Subscription;
   keyDown: Subscription;
@@ -66,75 +69,99 @@ export interface IEditorEvents {
   modifyAminoAcids: Subscription;
   setEditorLineLength: Subscription;
   toggleLineLengthHighlighting: Subscription;
+  setLibraryItemDragState: Subscription;
+  placeLibraryItemOnCanvas: Subscription;
+  autochain: Subscription;
+  previewAutochain: Subscription;
+  removeAutochainPreview: Subscription;
+  switchToMacromoleculesMode: Subscription;
+  switchToMoleculesMode: Subscription;
+  layoutCircular: Subscription;
+  flipHorizontal: Subscription;
+  flipVertical: Subscription;
 }
 
-export let editorEvents: IEditorEvents;
+export const editorEvents: IEditorEvents = {
+  selectMonomer: new Subscription(),
+  selectPreset: new Subscription(),
+  selectTool: new Subscription(),
+  selectSelectionTool: new Subscription(),
+  createBondViaModal: new Subscription(),
+  cancelBondCreationViaModal: new Subscription(),
+  selectMode: new Subscription(),
+  layoutModeChange: new Subscription(),
+  selectHistory: new Subscription(),
+  error: new Subscription(),
+  openErrorModal: new Subscription(),
+  openMonomerConnectionModal: new Subscription(),
+  mouseOverPolymerBond: new Subscription(),
+  mouseLeavePolymerBond: new Subscription(),
+  mouseOnMovePolymerBond: new Subscription(),
+  mouseOverMonomer: new Subscription(),
+  mouseOnMoveMonomer: new Subscription(),
+  mouseLeaveMonomer: new Subscription(),
+  mouseOverAttachmentPoint: new Subscription(),
+  mouseMoveAttachmentPoint: new Subscription(),
+  mouseLeaveAttachmentPoint: new Subscription(),
+  mouseUpAttachmentPoint: new Subscription(),
+  mouseDownAttachmentPoint: new Subscription(),
+  mouseOverDrawingEntity: new Subscription(),
+  mouseLeaveDrawingEntity: new Subscription(),
+  mouseUpMonomer: new Subscription(),
+  rightClickSequence: new Subscription(),
+  rightClickCanvas: new Subscription(),
+  rightClickCanvasSequence: new Subscription(),
+  rightClickPolymerBond: new Subscription(),
+  rightClickSelectedMonomers: new Subscription(),
+  keyDown: new Subscription(),
+  editSequence: new Subscription(),
+  startNewSequence: new Subscription(),
+  establishHydrogenBond: new Subscription(),
+  deleteHydrogenBond: new Subscription(),
+  turnOnSequenceEditInRNABuilderMode: new Subscription(),
+  turnOffSequenceEditInRNABuilderMode: new Subscription(),
+  modifySequenceInRnaBuilder: new Subscription(),
+  mouseOverSequenceItem: new Subscription(),
+  mouseOnMoveSequenceItem: new Subscription(),
+  mouseLeaveSequenceItem: new Subscription(),
+  changeSequenceTypeEnterMode: new Subscription(),
+  toggleSequenceEditMode: new Subscription(),
+  toggleSequenceEditInRNABuilderMode: new Subscription(),
+  toggleIsSequenceSyncEditMode: new Subscription(),
+  resetSequenceEditMode: new Subscription(),
+  clickOnSequenceItem: new Subscription(),
+  mousedownBetweenSequenceItems: new Subscription(),
+  mouseDownOnSequenceItem: new Subscription(),
+  doubleClickOnSequenceItem: new Subscription(),
+  openConfirmationDialog: new Subscription(),
+  mouseUpAtom: new Subscription(),
+  updateMonomersLibrary: new Subscription(),
+  createAntisenseChain: new Subscription(),
+  copySelectedStructure: new Subscription(),
+  pasteFromClipboard: new Subscription(),
+  deleteSelectedStructure: new Subscription(),
+  selectEntities: new Subscription(),
+  toggleMacromoleculesPropertiesVisibility: new Subscription(),
+  modifyAminoAcids: new Subscription(),
+  setEditorLineLength: new Subscription(),
+  toggleLineLengthHighlighting: new Subscription(),
+  setLibraryItemDragState: new Subscription(),
+  placeLibraryItemOnCanvas: new Subscription(),
+  autochain: new Subscription(),
+  previewAutochain: new Subscription(),
+  removeAutochainPreview: new Subscription(),
+  switchToMacromoleculesMode: new Subscription(),
+  switchToMoleculesMode: new Subscription(),
+  layoutCircular: new Subscription(),
+  flipHorizontal: new Subscription(),
+  flipVertical: new Subscription(),
+};
 
 export function resetEditorEvents() {
-  editorEvents = {
-    selectMonomer: new Subscription(),
-    selectPreset: new Subscription(),
-    selectTool: new Subscription(),
-    createBondViaModal: new Subscription(),
-    cancelBondCreationViaModal: new Subscription(),
-    selectMode: new Subscription(),
-    layoutModeChange: new Subscription(),
-    selectHistory: new Subscription(),
-    error: new Subscription(),
-    openErrorModal: new Subscription(),
-    openMonomerConnectionModal: new Subscription(),
-    mouseOverPolymerBond: new Subscription(),
-    mouseLeavePolymerBond: new Subscription(),
-    mouseOnMovePolymerBond: new Subscription(),
-    mouseOverMonomer: new Subscription(),
-    mouseOnMoveMonomer: new Subscription(),
-    mouseLeaveMonomer: new Subscription(),
-    mouseOverAttachmentPoint: new Subscription(),
-    mouseLeaveAttachmentPoint: new Subscription(),
-    mouseUpAttachmentPoint: new Subscription(),
-    mouseDownAttachmentPoint: new Subscription(),
-    mouseOverDrawingEntity: new Subscription(),
-    mouseLeaveDrawingEntity: new Subscription(),
-    mouseUpMonomer: new Subscription(),
-    rightClickSequence: new Subscription(),
-    rightClickCanvas: new Subscription(),
-    rightClickPolymerBond: new Subscription(),
-    rightClickSelectedMonomers: new Subscription(),
-    keyDown: new Subscription(),
-    editSequence: new Subscription(),
-    startNewSequence: new Subscription(),
-    establishHydrogenBond: new Subscription(),
-    deleteHydrogenBond: new Subscription(),
-    turnOnSequenceEditInRNABuilderMode: new Subscription(),
-    turnOffSequenceEditInRNABuilderMode: new Subscription(),
-    modifySequenceInRnaBuilder: new Subscription(),
-    mouseOverSequenceItem: new Subscription(),
-    mouseOnMoveSequenceItem: new Subscription(),
-    mouseLeaveSequenceItem: new Subscription(),
-    changeSequenceTypeEnterMode: new Subscription(),
-    toggleSequenceEditMode: new Subscription(),
-    toggleSequenceEditInRNABuilderMode: new Subscription(),
-    toggleIsSequenceSyncEditMode: new Subscription(),
-    resetSequenceEditMode: new Subscription(),
-    clickOnSequenceItem: new Subscription(),
-    mousedownBetweenSequenceItems: new Subscription(),
-    mouseDownOnSequenceItem: new Subscription(),
-    doubleClickOnSequenceItem: new Subscription(),
-    openConfirmationDialog: new Subscription(),
-    mouseUpAtom: new Subscription(),
-    updateMonomersLibrary: new Subscription(),
-    createAntisenseChain: new Subscription(),
-    copySelectedStructure: new Subscription(),
-    pasteFromClipboard: new Subscription(),
-    deleteSelectedStructure: new Subscription(),
-    selectEntities: new Subscription(),
-    toggleMacromoleculesPropertiesVisibility: new Subscription(),
-    modifyAminoAcids: new Subscription(),
-    setEditorLineLength: new Subscription(),
-    toggleLineLengthHighlighting: new Subscription(),
-  };
+  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
+    editorEvents[key] = new Subscription();
+  }
 }
-resetEditorEvents();
 export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverPolymerBond',
   'mouseLeavePolymerBond',
@@ -151,6 +178,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseUpMonomer',
   'rightClickSequence',
   'rightClickCanvas',
+  'rightClickCanvasSequence',
   'rightClickPolymerBond',
   'rightClickSelectedMonomers',
   'editSequence',
@@ -172,6 +200,18 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'selectEntities',
 ];
 
+const selectTools = [
+  ToolName.selectRectangle,
+  ToolName.selectLasso,
+  ToolName.selectStructure,
+];
+let currentSelectToolIdx = 0;
+
+// Bond tools require toolName in options to select the bond type.
+const selectBondTool = (editor: CoreEditor, toolName: ToolName) => {
+  editor.events.selectTool.dispatch([toolName, { toolName }]);
+};
+
 export const hotkeysConfiguration = {
   RNASequenceType: {
     shortcut: ['Control+Alt+r'],
@@ -192,9 +232,19 @@ export const hotkeysConfiguration = {
     },
   },
   exit: {
-    shortcut: ['Shift+Tab', 'Escape'],
+    shortcut: ['Escape'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      currentSelectToolIdx = 0;
+      editor.events.selectSelectionTool.dispatch();
+      editor.cancelLibraryItemDrag();
+    },
+  },
+  switchSelectTool: {
+    shortcut: ['Shift+Tab'],
+    handler: (editor: CoreEditor) => {
+      currentSelectToolIdx = (currentSelectToolIdx + 1) % selectTools.length;
+      editor.events.selectTool.dispatch([selectTools[currentSelectToolIdx]]);
+      editor.cancelLibraryItemDrag();
     },
   },
   undo: {
@@ -212,10 +262,38 @@ export const hotkeysConfiguration = {
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
-      // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      if (editor.isSequenceEditMode) return;
+      const hasSelectedEntities =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
+
+      // Select hovered entities so the erase tool deletes them
+      if (!hasSelectedEntities) {
+        const hoveredEntities =
+          editor.drawingEntitiesManager.allEntities.filter(
+            ([, entity]) => entity.hovered,
+          );
+        hoveredEntities.forEach(([, entity]) => entity.turnOnSelection());
+      }
+
+      const hasEntitiesToDelete =
+        editor.drawingEntitiesManager.selectedEntities.length > 0;
       editor.events.selectTool.dispatch([ToolName.erase]);
-      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      if (hasEntitiesToDelete) {
+        editor.events.selectTool.dispatch([ToolName.selectRectangle]);
+      }
+    },
+  },
+  bondSingle: {
+    shortcut: '1',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondSingle);
+    },
+  },
+  bondHydrogen: {
+    shortcut: '2',
+    handler: (editor: CoreEditor) => {
+      if (editor.isSequenceMode) return;
+      selectBondTool(editor, ToolName.bondHydrogen);
     },
   },
   clear: {
@@ -226,13 +304,13 @@ export const hotkeysConfiguration = {
     },
   },
   'zoom-plus': {
-    shortcut: 'Mod+=',
+    shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
     handler: () => {
       ZoomTool.instance.zoomIn();
     },
   },
   'zoom-minus': {
-    shortcut: 'Mod+-',
+    shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     handler: () => {
       ZoomTool.instance.zoomOut();
     },
@@ -279,6 +357,12 @@ export const hotkeysConfiguration = {
     shortcut: 'Alt+c',
     handler: (editor: CoreEditor) => {
       editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
+    },
+  },
+  arrangeRing: {
+    shortcut: ['Shift+Alt+c'],
+    handler: (editor: CoreEditor) => {
+      editor.events.layoutCircular.dispatch();
     },
   },
 };

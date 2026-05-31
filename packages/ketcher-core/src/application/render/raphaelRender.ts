@@ -14,19 +14,60 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, Struct, Vec2 } from 'domain/entities';
-import { RaphaelPaper } from 'raphael';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
-import { ReStruct } from './restruct';
+import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
+import type { AttachmentPointName } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+};
+
+export type RnaComponentAtoms = Map<
+  RnaPresetComponentKey,
+  { atoms: number[]; bonds: number[] }
+>;
+
+export type MonomerCreationState = {
+  // R-label mapping to [attachment atom id, leaving atom id]
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
+  // display to the active RNA component tab). When undefined, all assigned
+  // attachment points are displayed.
+  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  // Attachment atom id to a set of connected leaving atom ids
+  potentialAttachmentPoints: Map<number, Set<number>>;
+  problematicAttachmentPoints: Set<AttachmentPointName>;
+  problematicAtoms?: Set<number>;
+  clickedAttachmentPoint?: AttachmentPointName | null;
+  selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
+  hasDefaultAttachmentPoints?: boolean;
+  // RNA preset component atoms and bonds
+  rnaComponentAtoms?: RnaComponentAtoms;
+  isRnaPresetMode?: boolean;
+  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
+  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
+} | null;
 
 export class Render {
   public skipRaphaelInitialization = false;
@@ -42,23 +83,25 @@ export class Render {
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
   private resizeObserver: ResizeObserver | null = null;
+  private _monomerCreationState: MonomerCreationState = null;
 
   constructor(
     clientArea: HTMLElement,
     options: RenderOptions,
+    currentRender?: Render,
     reuseRestructIfExist?: boolean,
   ) {
     this.userOpts = options;
     this.clientArea = clientArea;
     this.paper = new Raphael(
       clientArea,
-      options.width || '100%',
-      options.height || '100%',
+      options.width ?? '100%',
+      options.height ?? '100%',
     );
     this.sz = this.getCanvasSizeVector();
     this.options = defaultOptions(this.userOpts);
-    if (reuseRestructIfExist && global.ketcher?.editor?.render?.ctab) {
-      this.ctab = global.ketcher?.editor?.render?.ctab;
+    if (reuseRestructIfExist && currentRender?.ctab) {
+      this.ctab = currentRender.ctab;
       this.ctab.render = this;
       this.ctab.initLayers();
       this.ctab.update(true);
@@ -84,7 +127,8 @@ export class Render {
   };
 
   unobserveCanvasResize = () => {
-    this.resizeObserver?.unobserve(this.paper.canvas);
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
   };
 
   updateOptions(opts: string) {
@@ -211,10 +255,10 @@ export class Render {
   update(force = false, viewSz: Vec2 | null = null) {
     // eslint-disable-line max-statements
     viewSz =
-      viewSz ||
+      viewSz ??
       new Vec2(
-        this.userOpts.width || this.clientArea.clientWidth || 100,
-        this.userOpts.height || this.clientArea.clientHeight || 100,
+        this.userOpts.width ?? this.clientArea.clientWidth ?? 100,
+        this.userOpts.height ?? this.clientArea.clientHeight ?? 100,
       );
 
     const changes = this.ctab.update(force);
@@ -223,7 +267,7 @@ export class Render {
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset || new Vec2());
+        .translate(this.options.offset ?? new Vec2());
 
       if (this.options.downScale) {
         this.ctab.molecule.rescale();
@@ -233,7 +277,7 @@ export class Render {
       if (!isAutoScale) {
         if (!this.oldCb) this.oldCb = new Box2Abs();
         this.scrollbar.update();
-        this.options.offset = this.options.offset || new Vec2();
+        this.options.offset = this.options.offset ?? new Vec2();
       } else {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
@@ -243,7 +287,7 @@ export class Render {
           throw new Error('View box too small for the given margin');
         }
         let rescale =
-          this.options.rescaleAmount ||
+          this.options.rescaleAmount ??
           Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
 
         const isForceDownscale = this.options.downScale && rescale < 1;
@@ -262,5 +306,13 @@ export class Render {
 
       notifyRenderComplete();
     }
+  }
+
+  get monomerCreationState() {
+    return this._monomerCreationState;
+  }
+
+  set monomerCreationState(state: MonomerCreationState) {
+    this._monomerCreationState = state;
   }
 }

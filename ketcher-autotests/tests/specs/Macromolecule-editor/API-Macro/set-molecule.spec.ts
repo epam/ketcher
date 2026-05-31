@@ -1,11 +1,11 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   waitForPageInit,
   setMolecule,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   readFileContent,
 } from '@utils';
 
@@ -25,7 +25,7 @@ test.describe('setMolecule', () => {
     );
     const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -39,7 +39,7 @@ test.describe('setMolecule', () => {
     );
     const numberOfPressZoomOut = 6;
     await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

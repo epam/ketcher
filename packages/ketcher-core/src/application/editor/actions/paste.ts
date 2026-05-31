@@ -34,11 +34,14 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { MultitailArrow, SGroup, Struct, Vec2 } from 'domain/entities';
+import type { MultitailArrow } from 'domain/entities/multitailArrow';
+import { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { Image } from 'domain/entities/image';
+import type { Image } from 'domain/entities/image';
 
 type CreatedItems = {
   atoms: number[];
@@ -106,16 +109,16 @@ export function fromPaste(
       Vec2.diff(atom.pp, xy0).rotate(angle).add(point),
     ).perform(restruct) as AtomAdd;
     action.addOp(operation);
-    aidMap.set(aid, operation.data.aid);
+    aidMap.set(aid, operation.data.aid as number);
 
-    pasteItems.atoms.push(operation.data.aid);
-    items.atoms.push(operation.data.aid);
+    pasteItems.atoms.push(operation.data.aid as number);
+    items.atoms.push(operation.data.aid as number);
 
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
         restruct,
         tmpAtom.attachmentPoints,
-        operation.data.aid,
+        operation.data.aid as number,
       ),
     );
   });
@@ -147,20 +150,31 @@ export function fromPaste(
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
-    pasteItems.bonds.push(operation.data.bid);
-    items.bonds.push(operation.data.bid);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview, false).perform(
-      restruct,
-    );
+    pasteItems.bonds.push(operation.data.bid as number);
+    items.bonds.push(operation.data.bid as number);
+    new BondAttr(
+      operation.data.bid as number,
+      'isPreview',
+      isPreview,
+      false,
+    ).perform(restruct);
   });
 
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
-    const attachmentPoints = sg.cloneAttachmentPoints(aidMap);
+    let attachmentPoints;
+    try {
+      attachmentPoints = sg.cloneAttachmentPoints(aidMap);
+    } catch (e) {
+      // For macromolecules, attachment points may reference atoms not in aidMap
+      // This is expected behavior, use empty array instead
+      attachmentPoints = [];
+    }
     if (
       sg.isNotContractible(pstruct) &&
-      !(sg instanceof MonomerMicromolecule)
+      !(sg instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sg)
     ) {
       sg.setAttr('expanded', true);
     }
@@ -176,7 +190,8 @@ export function fromPaste(
       sg.data.name,
       sg,
     );
-    sgAction.operations.reverse().forEach((oper) => {
+    sgAction.operations.reverse();
+    sgAction.operations.forEach((oper) => {
       action.addOp(oper);
     });
   });
@@ -190,6 +205,8 @@ export function fromPaste(
     const operation = new RxnArrowAdd(
       rxnArrow.pos.map((p) => p.add(offset)),
       rxnArrow.mode,
+      undefined,
+      rxnArrow.height,
     ).perform(restruct);
     action.addOp(operation);
     items.rxnArrows.push(operation.data.id);
@@ -258,10 +275,13 @@ export function fromPaste(
 function getStructCenter(struct: Struct): Vec2 {
   const isOnlyOneSGroup = struct.sgroups.size === 1;
   if (isOnlyOneSGroup) {
-    const onlyOneStructsSgroupId = struct.sgroups.keys().next().value;
-    const sgroup = struct.sgroups.get(onlyOneStructsSgroupId) as SGroup;
-    if (sgroup.isContracted()) {
-      return sgroup.getContractedPosition(struct).position;
+    const sgroupIterator = struct.sgroups.keys().next();
+    if (!sgroupIterator.done) {
+      const onlyOneStructsSgroupId = sgroupIterator.value;
+      const sgroup = struct.sgroups.get(onlyOneStructsSgroupId);
+      if (sgroup?.isContracted()) {
+        return sgroup.getContractedPosition(struct).position;
+      }
     }
   }
   if (struct.atoms.size > 0) {
@@ -276,7 +296,7 @@ function getStructCenter(struct: Struct): Vec2 {
       xmax = Math.max(xmax, atom.pp.x);
       ymax = Math.max(ymax, atom.pp.y);
     });
-    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2); // TODO: check
+    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();

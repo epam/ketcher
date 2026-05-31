@@ -1,8 +1,10 @@
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { KetcherLogger } from 'utilities';
-import { Box2Abs, Pile, Vec2 } from 'domain/entities';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Vec2 } from 'domain/entities/vec2';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Loop } from 'application/render/view-model/Loop';
 
 export class ViewModel {
@@ -106,23 +108,24 @@ export class ViewModel {
 
   private sortAtomsHalfEdges() {
     this.atomsToHalfEdges.forEach((atomHalfEdges, atom) => {
-      atomHalfEdges
-        .sort((halfEdge1, halfEdge2) => halfEdge1.angle - halfEdge2.angle)
-        .forEach((halfEdge, halfEdgeIndex) => {
-          const nextHalfEdge =
-            atomHalfEdges[(halfEdgeIndex + 1) % atomHalfEdges.length];
+      atomHalfEdges.sort(
+        (halfEdge1, halfEdge2) => halfEdge1.angle - halfEdge2.angle,
+      );
+      atomHalfEdges.forEach((halfEdge, halfEdgeIndex) => {
+        const nextHalfEdge =
+          atomHalfEdges[(halfEdgeIndex + 1) % atomHalfEdges.length];
 
-          if (!halfEdge.oppositeHalfEdge) {
-            KetcherLogger.warn(
-              `Failed to sort HalfEdges for atom ${atom.id}. HalfEdge ${halfEdge.id} has no opposite halfEdge`,
-            );
+        if (!halfEdge.oppositeHalfEdge) {
+          KetcherLogger.warn(
+            `Failed to sort HalfEdges for atom ${atom.id}. HalfEdge ${halfEdge.id} has no opposite halfEdge`,
+          );
 
-            return;
-          }
+          return;
+        }
 
-          halfEdge.oppositeHalfEdge.nextHalfEdge = nextHalfEdge;
-          this.setHalfEdgesAngle(halfEdge, nextHalfEdge);
-        });
+        halfEdge.oppositeHalfEdge.nextHalfEdge = nextHalfEdge;
+        this.setHalfEdgesAngle(halfEdge, nextHalfEdge);
+      });
     });
   }
 
@@ -290,6 +293,37 @@ export class ViewModel {
       newLoops,
       bondsToMark: Array.from(bondsToMark),
     };
+  }
+
+  /*
+   * Finds the largest angular gap between consecutive bonds around an atom by sorting bond angles,
+   * calculating angular differences between adjacent bonds (including wraparound from last to first),
+   * and returning both the largest gap size and the angle of the bond that precedes it.
+   */
+  public getLargestSectorFromAtomNeighbours(atom: Atom) {
+    const atomHalfEdges = this.atomsToHalfEdges.get(atom);
+    if (!atomHalfEdges || atomHalfEdges.length === 0) {
+      KetcherLogger.warn(`No half-edges found for atom ${atom.id}`);
+      return { neighborAngle: 0, largestAngle: 0 };
+    }
+
+    const angles = atomHalfEdges.map((halfEdge) => halfEdge.angle);
+    angles.sort((a, b) => a - b);
+    const largeAngles: number[] = [];
+    for (let i = 0; i < angles.length - 1; ++i) {
+      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
+    }
+    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    let largestAngle = 0;
+    let neighborAngle = -Math.PI / 2;
+    for (let i = 0; i < angles.length; ++i) {
+      if (largeAngles[i] > largestAngle) {
+        largestAngle = largeAngles[i];
+        neighborAngle = angles[i];
+      }
+    }
+
+    return { neighborAngle, largestAngle };
   }
 
   private clearState() {

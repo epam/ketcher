@@ -1,70 +1,56 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Page, test, expect, Locator } from '@playwright/test';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
-  clickOnCanvas,
-  delay,
+  clickInTheMiddleOfTheCanvas,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
-  waitForPageInit,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   getMonomerLocator,
   getSymbolLocator,
-  turnSyncEditModeOff,
-  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  pressYesInConfirmYourActionDialog,
-  switchToDNAMode,
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
-import {
-  MacroBondDataIds,
   MacroBondType,
+  MacroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { logTestWarning } from '@utils/testLogging';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { SequenceSymbolOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await selectSequenceLayoutModeTool(page);
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
 });
+
+test.beforeEach(async ({ SequenceCanvas: _ }) => {});
 
 test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-  await selectFlexLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomerToAdd {
@@ -1422,7 +1408,6 @@ function filterBugsInTests(
       item.SequenceId === undefined || item.SequenceId.includes(sequenceId);
     const replaceMonomerIdMatch =
       item.MonomerId === undefined ||
-      item.MonomerId === undefined ||
       (monomerId !== undefined && item.MonomerId.includes(monomerId));
 
     return testNameMatch && sequenceIdMatch && replaceMonomerIdMatch;
@@ -1462,52 +1447,23 @@ async function checkForKnownBugs(sequence: ISequence, monomer?: IMonomerToAdd) {
 async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
   switch (sequenceMode) {
     case SequenceModeType.RNA:
-      await switchToRNAMode(page);
+      await MacromoleculesTopToolbar(page).rna();
       break;
     case SequenceModeType.DNA:
-      await switchToDNAMode(page);
+      await MacromoleculesTopToolbar(page).dna();
       break;
     case SequenceModeType.Peptide:
-      await switchToPeptideMode(page);
+      await MacromoleculesTopToolbar(page).peptides();
       break;
     default:
-      await switchToRNAMode(page);
+      await MacromoleculesTopToolbar(page).rna();
       break;
   }
 }
 
 async function exitFromEditMode(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
+  await keyboardPressOnCanvas(page, 'Escape');
   await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
-}
-
-async function closeContextMenu(page: Page) {
-  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
-  await clickOnCanvas(page, 0, 0, { waitForRenderTimeOut: 0 });
-  await page.getByRole('menu').waitFor({ state: 'hidden' });
-}
-
-// Due to rare bug - sometimes wrong menu appears for selected symbol
-// Function below is workaround - it closes wrong menu and tries to open it once again
-async function callContextMenuForSelectedAllSymbol(
-  page: Page,
-  symbol: Locator,
-) {
-  let attempts = 0;
-  const maxAttempts = 5;
-  while (attempts < maxAttempts) {
-    await symbol.click({ button: 'right', force: true });
-    if (await page.getByTestId('sequence_menu_title').isVisible()) {
-      return;
-    }
-    attempts++;
-    await closeContextMenu(page);
-    await delay(1);
-    await selectAllStructuresOnCanvas(page);
-  }
-  logTestWarning(
-    'It was impossible to open contex menu for selected symbol in 5 tries',
-  );
 }
 
 async function turnIntoEditModeAndPlaceCursorToThePosition(
@@ -1538,9 +1494,9 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (syncEditMode) {
-    await turnSyncEditModeOn(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOn();
   } else {
-    await turnSyncEditModeOff(page);
+    await MacromoleculesTopToolbar(page).turnSyncEditModeOff();
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
@@ -1668,7 +1624,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   // Removed due to bug: https://github.com/epam/ketcher/issues/6736
   // {
   //   Id: 13,
-  //   ContentType: MacroFileType.Ket,
+  //   ContentType: MacroFileType.KetFormat,
   //   SenseForm:
   //     'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/13. Sence Base(oC64m5).ket',
   //   AntiSenseForm:
@@ -1677,7 +1633,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   // },
   {
     Id: 14,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/14. Sense Ambiguous Alternatives Base(%).ket',
     AntiSenseForm:
@@ -1686,7 +1642,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 15,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/15. Sense Ambiguous Mixed Base(%).ket',
     AntiSenseForm:
@@ -1702,7 +1658,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 17,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/17. Sense Ambiguous Mixed Phosphate(%).ket',
     AntiSenseForm:
@@ -1711,7 +1667,7 @@ const sequencesForHydrogenBondTests: IMonomerForHydrogenBondTest[] = [
   },
   {
     Id: 18,
-    ContentType: MacroFileType.Ket,
+    ContentType: MacroFileType.KetFormat,
     SenseForm:
       'KET/New-Sequence-Representation/MonomersForHydrogenBondTests/18. Sense Ambiguous Alternatives Phosphate(%).ket',
     AntiSenseForm:
@@ -1806,7 +1762,7 @@ async function setupSenseAndAntiSenseSequences(
   senseSequence: IMonomerForHydrogenBondTest,
   antisenseSequence: IMonomerForHydrogenBondTest,
 ) {
-  await selectSnakeLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   if (senseSequence.ContentType === MacroFileType.HELM) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1821,15 +1777,15 @@ async function setupSenseAndAntiSenseSequences(
       antisenseSequence.AntiSenseForm,
     );
   }
-  if (senseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(senseSequence.SenseForm, page);
+  if (senseSequence.ContentType === MacroFileType.KetFormat) {
+    await openFileAndAddToCanvasMacro(page, senseSequence.SenseForm);
   }
-  if (antisenseSequence.ContentType === MacroFileType.Ket) {
-    await openFileAndAddToCanvasMacro(antisenseSequence.AntiSenseForm, page);
+  if (antisenseSequence.ContentType === MacroFileType.KetFormat) {
+    await openFileAndAddToCanvasMacro(page, antisenseSequence.AntiSenseForm);
   }
 
-  const senseBase = getMonomerLocator(page, Bases.c7io7n).first();
-  const antisenseBase = getMonomerLocator(page, Bases.c7io7n).nth(1);
+  const senseBase = getMonomerLocator(page, Base.c7io7n).first();
+  const antisenseBase = getMonomerLocator(page, Base.c7io7n).nth(1);
 
   await bondTwoMonomers(
     page,
@@ -1837,7 +1793,7 @@ async function setupSenseAndAntiSenseSequences(
     antisenseBase,
     undefined,
     undefined,
-    MacroBondType.Hydrogen,
+    MacroBondTool.Hydrogen,
   );
 }
 
@@ -1871,7 +1827,12 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         antisenseSequence,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await CommonLeftToolbar(page).areaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
 
       const senseSymbolId = await getSymbolLocator(page, {
         hydrogenConnectionNumber: 0,
@@ -1887,27 +1848,32 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         .getAttribute('data-symbol-id');
 
       const senseSymbol = await getSymbolLocator(page, {
-        symbolId: senseSymbolId || '',
+        symbolId: senseSymbolId ?? '',
       }).first();
       const antisenseSymbol = await getSymbolLocator(page, {
-        symbolId: antisenseSymbolId || '',
+        symbolId: antisenseSymbolId ?? '',
       }).first();
 
-      const establishHydrogenBondsOption = page
-        .getByTestId('establish_hydrogen_bond')
-        .first();
-      const deleteHydrogenBondsOption = page
-        .getByTestId('delete_hydrogen_bond')
-        .first();
-
       // 1. Check that right clicking on a symbol that has no hydrogen bonds with a symbol bellow/above it, give the option to "Establish Hydrogen Bonds"
-      await senseSymbol.click({ button: 'right', force: true });
-      await expect(establishHydrogenBondsOption).toBeEnabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeTruthy();
       // 2. Check If there are no H-bonds, the option "Delete Hydrogen Bonds" is disabled ( Requirement: 1.2 )
-      await expect(deleteHydrogenBondsOption).toBeDisabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
       // 3. Check that a hydrogen bond established between the monomer that was clicked on and the monomer placed bellow/above it ( Requirement: 1.1 )
-      await establishHydrogenBondsOption.click({ force: true });
+      await clickInTheMiddleOfTheCanvas(page);
+      await ContextMenu(page, senseSymbol).click(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      );
       const senseHydrogenConnectionNumber = await senseSymbol.getAttribute(
         'data-hydrogen-connection-number',
       );
@@ -1919,11 +1885,13 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       // 4. Check if a symbol has H-bonds with a symbol opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
       // Dirty hack to make sure that the symbol got menu opened for it
       await senseSymbol.dblclick({ force: true });
-      await clickInTheMiddleOfTheScreen(page);
-      await clickInTheMiddleOfTheScreen(page);
-      await senseSymbol.click({ button: 'right', force: true });
-
-      await expect(establishHydrogenBondsOption).toBeDisabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
       // 5. Check that if the symbol represents a nucleotide/nucleoside, a hydrogen bond established from the base (no need for a "sense base" check) ( Requirement: 1.1 )
       const senseSymbolType = await senseSymbol.getAttribute(
@@ -1933,10 +1901,12 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         senseSymbolType === SymbolType.RNA ||
         senseSymbolType === SymbolType.DNA
       ) {
-        await selectFlexLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
 
         const hydrogenBondsAll = getBondLocator(page, {
-          bondType: MacroBondDataIds.Hydrogen,
+          bondType: MacroBondType.Hydrogen,
         });
 
         const basesWithHydrogenConnection = getMonomerLocator(page, {
@@ -1952,15 +1922,24 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         );
         // All hydrogen bonds should be present (two bonds in total)
         expect(await hydrogenBondsAll.count()).toBe(2);
-        await selectSequenceLayoutModeTool(page);
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
       }
 
       // 6. Check that right clicking on a symbol that has any H-bonds give the option to "Delete Hydrogen Bonds" ( Requirement: 1.2 )
-      await senseSymbol.click({ button: 'right', force: true });
-      await expect(deleteHydrogenBondsOption).toBeEnabled();
+      await clickInTheMiddleOfTheCanvas(page);
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeTruthy();
 
       // 7. Check that clicking on "Delete Hydrogen Bonds" will remove hydrogen bond
-      await deleteHydrogenBondsOption.click({ force: true });
+      await clickInTheMiddleOfTheCanvas(page);
+      await ContextMenu(page, senseSymbol).click(
+        SequenceSymbolOption.DeleteHydrogenBonds,
+      );
       expect(
         await senseSymbol.getAttribute('data-hydrogen-connection-number'),
       ).toBe('0');
@@ -1997,7 +1976,12 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         antisenseSequence,
       );
 
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await CommonLeftToolbar(page).areaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
 
       const senseSymbolId = await getSymbolLocator(page, {
         hydrogenConnectionNumber: 0,
@@ -2025,60 +2009,70 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         .first()
         .getAttribute('data-symbol-id');
 
-      const senseSymbol = await getSymbolLocator(page, {
-        symbolId: senseSymbolId || '',
+      const senseSymbol = getSymbolLocator(page, {
+        symbolId: senseSymbolId ?? '',
       }).first();
-      const antisenseSymbol = await getSymbolLocator(page, {
-        symbolId: antisenseSymbolId || '',
+      const antisenseSymbol = getSymbolLocator(page, {
+        symbolId: antisenseSymbolId ?? '',
       }).first();
-      const senseSymbolWithHBond = await getSymbolLocator(page, {
-        symbolId: senseSymbolWithHBondId || '',
+      const senseSymbolWithHBond = getSymbolLocator(page, {
+        symbolId: senseSymbolWithHBondId ?? '',
       }).first();
-      const antisenseSymbolWithHBond = await getSymbolLocator(page, {
-        symbolId: antisenseSymbolWithHBondId || '',
+      const antisenseSymbolWithHBond = getSymbolLocator(page, {
+        symbolId: antisenseSymbolWithHBondId ?? '',
       }).first();
-
-      const establishHydrogenBondsOption = page
-        .getByTestId('establish_hydrogen_bond')
-        .first();
-      const deleteHydrogenBondsOption = page
-        .getByTestId('delete_hydrogen_bond')
-        .first();
 
       // 1. Check if multiple monomers/symbols are selected and at least one of them does not have hydrogen bonds established
       //    with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" available from the r-click menu ( Requirement: 1.3 )
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await senseSymbolWithHBond.click({ button: 'right', force: true });
-      await expect(establishHydrogenBondsOption).toBeEnabled();
+      expect(
+        await ContextMenu(page, senseSymbolWithHBond).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBe(true);
 
       // 3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds"
       //    available in the r-click menu ( Requirement: 1.4 )
-      await closeContextMenu(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, senseSymbol);
-      await expect(deleteHydrogenBondsOption).toBeEnabled();
+      expect(
+        await ContextMenu(page, senseSymbol).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeTruthy();
 
       // 2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol
       //    above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
-      await closeContextMenu(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, senseSymbolWithHBond);
-      await establishHydrogenBondsOption.click({ force: true });
+      await ContextMenu(page, senseSymbolWithHBond).click(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      );
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, antisenseSymbol);
-      await expect(establishHydrogenBondsOption).toBeDisabled();
+      expect(
+        await ContextMenu(page, antisenseSymbol).isOptionEnabled(
+          SequenceSymbolOption.EstablishHydrogenBonds,
+        ),
+      ).toBeFalsy();
 
-      // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
-      await closeContextMenu(page);
+      // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds"
+      //    disabled in the r-click menu ( Requirement: 1.4 )
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await antisenseSymbol.click({ button: 'right', force: true });
-      await deleteHydrogenBondsOption.click({ force: true });
+      await ContextMenu(page, antisenseSymbol).click(
+        SequenceSymbolOption.DeleteHydrogenBonds,
+      );
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
-      await pressYesInConfirmYourActionDialog(page);
+      await ConfirmYourActionDialog(page).yes();
+      await clickInTheMiddleOfTheCanvas(page);
       await selectAllStructuresOnCanvas(page);
-      await callContextMenuForSelectedAllSymbol(page, antisenseSymbolWithHBond);
-      await expect(deleteHydrogenBondsOption).toBeDisabled();
-      await closeContextMenu(page);
+      expect(
+        await ContextMenu(page, antisenseSymbolWithHBond).isOptionEnabled(
+          SequenceSymbolOption.DeleteHydrogenBonds,
+        ),
+      ).toBeFalsy();
     });
   }
 }
@@ -2097,7 +2091,12 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
 
     await setupSenseAndAntiSenseSequences(page, senseSequence, emptySequence);
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2106,17 +2105,17 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .first()
       .getAttribute('data-symbol-id');
 
-    const senseSymbol = await getSymbolLocator(page, {
-      symbolId: senseSymbolId || '',
+    const senseSymbol = getSymbolLocator(page, {
+      symbolId: senseSymbolId ?? '',
     }).first();
 
-    const establishHydrogenBondsOption = page
-      .getByTestId('establish_hydrogen_bond')
-      .first();
-
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await senseSymbol.click({ button: 'right', force: true });
-    await expect(establishHydrogenBondsOption).toBeDisabled();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, senseSymbol).isOptionEnabled(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      ),
+    ).toBeFalsy();
   });
 }
 
@@ -2138,7 +2137,12 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       symbolRepresentingMultipleMonomers,
     );
 
-    await selectSequenceLayoutModeTool(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+      LayoutMode.Sequence,
+    );
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     const senseSymbolId = await getSymbolLocator(page, {
       hydrogenConnectionNumber: 0,
@@ -2147,17 +2151,17 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       .first()
       .getAttribute('data-symbol-id');
 
-    const senseSymbol = await getSymbolLocator(page, {
-      symbolId: senseSymbolId || '',
+    const senseSymbol = getSymbolLocator(page, {
+      symbolId: senseSymbolId ?? '',
     }).first();
 
-    const establishHydrogenBondsOption = page
-      .getByTestId('establish_hydrogen_bond')
-      .first();
-
     // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
-    await senseSymbol.click({ button: 'right', force: true });
-    await expect(establishHydrogenBondsOption).toBeDisabled();
+    await clickInTheMiddleOfTheCanvas(page);
+    expect(
+      await ContextMenu(page, senseSymbol).isOptionEnabled(
+        SequenceSymbolOption.EstablishHydrogenBonds,
+      ),
+    ).toBeFalsy();
   });
 }
 
@@ -2178,18 +2182,17 @@ test(`Case 15. Verify warning message on deleting all hydrogen bonds between two
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}|RNA3{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}|RNA4{R(U)P.R(U)P.R(U)}|RNA5{[dR](T)P.[dR](T)}|RNA6{R(U)}|RNA7{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,14:pair-2:pair|RNA1,RNA3,20:pair-11:pair|RNA1,RNA3,23:pair-8:pair|RNA1,RNA3,26:pair-5:pair|RNA1,RNA3,29:pair-2:pair|RNA1,RNA4,35:pair-8:pair|RNA1,RNA4,38:pair-5:pair|RNA1,RNA4,41:pair-2:pair|RNA1,RNA5,47:pair-5:pair|RNA1,RNA5,50:pair-2:pair|RNA1,RNA6,56:pair-2:pair|RNA1,RNA7,62:pair-11:pair|RNA1,RNA7,65:pair-8:pair|RNA1,RNA7,68:pair-5:pair|RNA1,RNA7,71:pair-2:pair$$$V2.0',
   );
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllStructuresOnCanvas(page);
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
-  await anySymbolA.click({ button: 'right', force: true });
-  const deleteHydrogenBondsOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondsOption.click({ force: true });
-  await pressYesInConfirmYourActionDialog(page);
+  await ContextMenu(page, anySymbolA).click(
+    SequenceSymbolOption.DeleteHydrogenBonds,
+  );
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -2214,18 +2217,17 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
     'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(A)P}|PEPTIDE1{(D,N).C.D.E.F.H.I.K.L.M.N.O.P.Q.R.S.T.V.W.(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).Y}$RNA2,PEPTIDE1,3:R2-1:R1|RNA2,RNA1,2:pair-65:pair|RNA1,PEPTIDE1,2:pair-21:pair|RNA1,PEPTIDE1,5:pair-20:pair|RNA1,PEPTIDE1,8:pair-19:pair|RNA1,PEPTIDE1,11:pair-18:pair|RNA1,PEPTIDE1,14:pair-17:pair|RNA1,PEPTIDE1,17:pair-16:pair|RNA1,PEPTIDE1,20:pair-15:pair|RNA1,PEPTIDE1,23:pair-14:pair|RNA1,PEPTIDE1,26:pair-13:pair|RNA1,PEPTIDE1,29:pair-12:pair|RNA1,PEPTIDE1,32:pair-11:pair|RNA1,PEPTIDE1,35:pair-10:pair|RNA1,PEPTIDE1,38:pair-9:pair|RNA1,PEPTIDE1,41:pair-8:pair|RNA1,PEPTIDE1,44:pair-7:pair|RNA1,PEPTIDE1,47:pair-6:pair|RNA1,PEPTIDE1,50:pair-5:pair|RNA1,PEPTIDE1,53:pair-4:pair|RNA1,PEPTIDE1,56:pair-3:pair|RNA1,PEPTIDE1,59:pair-2:pair|RNA1,PEPTIDE1,62:pair-1:pair$$$V2.0',
   );
 
-  await selectSequenceLayoutModeTool(page);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
   await selectAllStructuresOnCanvas(page);
 
   const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
 
-  await anySymbolA.click({ button: 'right', force: true });
-  const deleteHydrogenBondsOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondsOption.click({ force: true });
-  await pressYesInConfirmYourActionDialog(page);
+  await ContextMenu(page, anySymbolA).click(
+    SequenceSymbolOption.DeleteHydrogenBonds,
+  );
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -2274,11 +2276,14 @@ for (const monomer of monomersToAdd) {
         await pasteFromClipboardAndAddToMacromoleculesCanvas(
           page,
           MacroFileType.HELM,
-          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM ?? '',
         );
       }
-      await selectSequenceLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
       await selectSequenceMode(page, monomer.Type);
+      await resetZoomLevelToDefault(page);
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, {
         position: 1,
@@ -2292,10 +2297,12 @@ for (const monomer of monomersToAdd) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
-        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) ?? '',
       );
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      await selectFlexLayoutModeTool(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

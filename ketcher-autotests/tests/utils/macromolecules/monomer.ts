@@ -1,17 +1,18 @@
 import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { dragMouseTo } from '../clicks';
+import { Monomer, MonomerType, SymbolType } from '../types';
+import { waitForRender } from '../common/loaders/waitForRender';
 import {
-  dragMouseTo,
-  Monomer,
-  MonomerType,
-  SymbolType,
-  waitForRender,
-} from '@utils';
-import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import {
+  MonomerOption,
+  SequenceSymbolOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -19,11 +20,9 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function moveMonomerOnMicro(
@@ -32,22 +31,20 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await CommonLeftToolbar(page).selectHandTool();
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Rectangle,
-  );
+  await CommonLeftToolbar(page).handTool();
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await waitForRender(page, async () => {
     await monomer.click();
   });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
-  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
+  bondType: MacroBondTool | MicroBondTool = MacroBondTool.Single,
 ) {
-  await CommonLeftToolbar(page).selectBondTool(bondType);
+  await CommonLeftToolbar(page).bondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];
@@ -64,42 +61,11 @@ export async function connectMonomersWithBonds(
   }
 }
 
-export async function getMonomerIDsByAlias(
-  page: Page,
-  name: string,
-): Promise<number[]> {
-  const monomerIDs = await page
-    .locator('[data-testid="monomer"]')
-    .evaluateAll((elements, alias) => {
-      return elements
-        .filter(
-          (element) => element.getAttribute('data-monomeralias') === alias,
-        )
-        .map((element) => {
-          const monomerId = element.getAttribute('data-monomerid');
-          return monomerId ? parseInt(monomerId, 10) : null;
-        })
-        .filter((id) => id !== null);
-    }, name);
-  return monomerIDs as number[];
-}
-
-export function getMonomerLocatorByAlias(page: Page, monomerAlias: string) {
-  return page.locator(
-    `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
-  );
-}
-
-export function getMonomerLocatorById(page: Page, id: number | string) {
-  return page
-    .locator(`[data-testid="monomer"][data-monomerid="${id}"]`)
-    .first();
-}
-
 export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;
+  naturalAnalogue?: string;
 } & (
   | {
       monomerAlias?: string;
@@ -108,6 +74,22 @@ export type MonomerLocatorOptions = {
     }
   | Monomer
 );
+
+export enum AttachmentPoint {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
+
+type AttachmentPointLocatorOptions = {
+  attachmentPointAlias?: AttachmentPoint;
+  parentMonomerId?: string | number;
+};
 
 /**
  * This function returns locator for monomer in the macromolecule editor.
@@ -162,13 +144,13 @@ export type MonomerLocatorOptions = {
  *   await expect(locator).toHaveScreenshot();
  *
  * test('should take a screenshot of the monomer from Bases', async ({ page }) => {
- *  const locator = getMonomerLocator(page, Bases.A);
+ *  const locator = getMonomerLocator(page, Base.A);
  *  await expect(locator).toHaveScreenshot();
  * });
  *
  * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
  *   const locator = getMonomerLocator(page, {
- *     ...Sugars.fR,
+ *     ...Sugar.fR,
  *     rValues: [true, true, true],
  *   });
  *   await expect(locator).toHaveScreenshot();
@@ -182,7 +164,6 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
     attributes['data-monomertype'] = options.monomerType;
-    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
@@ -190,16 +171,18 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     if (monomerId) attributes['data-monomerid'] = String(monomerId);
   }
 
-  const { numberOfAttachmentPoints, rValues, hydrogenConnectionNumber } =
-    options;
+  const {
+    numberOfAttachmentPoints,
+    rValues,
+    hydrogenConnectionNumber,
+    naturalAnalogue,
+  } = options;
 
   if (numberOfAttachmentPoints) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
-  ) {
+  if (Object.hasOwn(options, 'hydrogenConnectionNumber')) {
     attributes['data-hydrogen-connection-number'] = String(
       hydrogenConnectionNumber,
     );
@@ -211,6 +194,10 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     });
   }
 
+  if (naturalAnalogue) {
+    attributes['data-naturalAnalogue'] = naturalAnalogue;
+  }
+
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
@@ -220,95 +207,65 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   return locator;
 }
 
-type GetAtomLocatorOptions = {
-  atomAlias?: string;
-  atomId?: string | number;
-};
+export function getAttachmentPointLocator(
+  root: Page | Locator,
+  options: AttachmentPoint | AttachmentPointLocatorOptions = {},
+) {
+  const normalizedOptions =
+    typeof options === 'string' ? { attachmentPointAlias: options } : options;
 
-export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
-  const attributes: { [key: string]: string } = {};
+  const attributes: { [key: string]: string } = {
+    'data-testid': 'monomer-attachment-point',
+  };
 
-  attributes['data-testid'] = 'atom';
+  if (normalizedOptions.attachmentPointAlias) {
+    attributes['data-attachment-point-alias'] =
+      normalizedOptions.attachmentPointAlias;
+  }
 
-  const { atomId, atomAlias } = options;
-  if (atomId) attributes['data-atomid'] = String(atomId);
-  if (atomAlias) attributes['data-atomalias'] = atomAlias;
+  if (Object.hasOwn(normalizedOptions, 'parentMonomerId')) {
+    attributes['data-parent-monomer-id'] = String(
+      normalizedOptions.parentMonomerId,
+    );
+  }
 
-  const attributeSelectors = Object.entries(attributes)
-    .map(([key, value]) => `[${key}="${value}"]`)
-    .join('');
-
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
+  return root.locator(
+    Object.entries(attributes)
+      .map(([key, value]) => `[${key}="${value}"]`)
+      .join(''),
+  );
 }
 
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
-}
-
-export async function createAntisenseStrandByButton(
-  page: Page,
-  chosenType?: 'RNA' | 'DNA',
-) {
-  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
-  await dropdownTrigger.click();
-
-  if (!chosenType) return;
-
-  const optionTestId =
-    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
-
-  const optionButton = page.getByTestId(optionTestId).first();
-  await optionButton.waitFor({ state: 'visible' });
-  await optionButton.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseRNAStrand,
+    );
+  });
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
-  await symbolLocator.click({ button: 'right' });
-  await page.getByTestId('modify_in_rna_builder').click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbolLocator).click(
+      SequenceSymbolOption.ModifyInRNABuilder,
+    );
+  });
 }
 
 export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_dna_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await waitForRender(page, async () => {
+    await ContextMenu(page, monomer).click(
+      MonomerOption.CreateAntisenseDNAStrand,
+    );
+  });
 }
 
-export async function deleteHydrogenBond(page: Page, monomer: Locator) {
-  await monomer.click({ button: 'right', force: true });
-
-  const deleteHydrogenBondOption = page
-    .getByTestId('delete_hydrogen_bond')
-    .first();
-
-  await deleteHydrogenBondOption.click();
-}
-
-export async function turnSyncEditModeOn(page: Page) {
-  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-  const editMode = await syncButton.getAttribute('data-isactive');
-  if (editMode === 'false') {
-    await syncButton.click();
-  }
-}
-
-export async function turnSyncEditModeOff(page: Page) {
-  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
-  const editMode = await syncButton.getAttribute('data-isactive');
-  if (editMode === 'true') {
-    await syncButton.click();
-  }
+export async function deleteHydrogenBond(page: Page, symbol: Locator) {
+  await waitForRender(page, async () => {
+    await ContextMenu(page, symbol).click(
+      SequenceSymbolOption.DeleteHydrogenBonds,
+    );
+  });
 }
 
 type SymbolLocatorOptions = {
@@ -344,33 +301,34 @@ export function getSymbolLocator(
     nodeIndexOverall,
     isAntisense,
   } = options;
-  if (Object.prototype.hasOwnProperty.call(options, 'symbolId')) {
+  if (Object.hasOwn(options, 'symbolId')) {
     attributes['data-symbol-id'] = String(symbolId);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'chainId')) {
+  if (Object.hasOwn(options, 'symbolAlias')) {
+    attributes['data-symbol-alias'] = String(symbolAlias);
+  }
+  if (Object.hasOwn(options, 'chainId')) {
     attributes['data-chain-id'] = String(chainId);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'sideConnectionNumber')) {
+  if (Object.hasOwn(options, 'sideConnectionNumber')) {
     attributes['data-side-connection-number'] = String(sideConnectionNumber);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'hasLeftConnection')) {
+  if (Object.hasOwn(options, 'hasLeftConnection')) {
     attributes['data-has-left-connection'] = String(hasLeftConnection);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'hasRightConnection')) {
+  if (Object.hasOwn(options, 'hasRightConnection')) {
     attributes['data-has-right-connection'] = String(hasRightConnection);
   }
-  if (
-    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
-  ) {
+  if (Object.hasOwn(options, 'hydrogenConnectionNumber')) {
     attributes['data-hydrogen-connection-number'] = String(
       hydrogenConnectionNumber,
     );
   }
   if (dataSymbolType) attributes['data-symbol-type'] = dataSymbolType;
-  if (Object.prototype.hasOwnProperty.call(options, 'nodeIndexOverall')) {
+  if (Object.hasOwn(options, 'nodeIndexOverall')) {
     attributes['data-nodeIndexOverall'] = String(nodeIndexOverall);
   }
-  if (Object.prototype.hasOwnProperty.call(options, 'isAntisense')) {
+  if (Object.hasOwn(options, 'isAntisense')) {
     attributes['data-isAntisense'] = String(isAntisense);
   }
 

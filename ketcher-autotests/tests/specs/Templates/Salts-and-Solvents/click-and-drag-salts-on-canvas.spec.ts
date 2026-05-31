@@ -1,24 +1,20 @@
-import { MAX_BOND_LENGTH } from '@constants';
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import {
+  FunctionalGroupsTabItems,
+  SaltsAndSolventsTabItems,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectFunctionalGroups,
-  FunctionalGroups,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
-  clickInTheMiddleOfTheScreen,
-  dragMouseTo,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  moveMouseToTheMiddleOfTheScreen,
-  resetCurrentTool,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
-  drawFGAndDrag,
-  drawSaltAndDrag,
   waitForPageInit,
+  dragMouseAndMoveTo,
 } from '@utils';
-
-const SHIFT = 50;
 
 test.describe('Click and drag Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,10 +30,13 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
-
-    await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, SHIFT, page);
-    await resetCurrentTool(page);
+    await clickInTheMiddleOfTheCanvas(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.FormicAcid,
+    );
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -47,11 +46,17 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on Functional Group
       Salts appears near FG where the left mouse button was released
     */
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
-    await clickInTheMiddleOfTheScreen(page);
-
-    await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
-    await resetCurrentTool(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
+      FunctionalGroupsTabItems.Cbz,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.AceticAcid,
+    );
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -63,10 +68,17 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on Salts and Solvents
       Salts appears near Salts where the left mouse button was released
     */
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
-    await resetCurrentTool(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.MethaneSulphonicAcid,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.PropionicAcid,
+    );
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -80,17 +92,17 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
-    await resetCurrentTool(page);
-
-    await drawSaltAndDrag(SaltsAndSolvents.Isobutanol, -SHIFT, page);
-    await resetCurrentTool(page);
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.Isobutanol,
+    );
+    await dragMouseAndMoveTo(page, -50);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 
@@ -101,14 +113,24 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       on a FG connected with bond to another FG Salts appears
       near FG where the left mouse button was released
     */
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
-    await resetCurrentTool(page);
-    // test fails because can't select AceticAcid
-    await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
-    await resetCurrentTool(page);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
+      FunctionalGroupsTabItems.Boc,
+    );
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectSaltsAndSolvents(
+      SaltsAndSolventsTabItems.AceticAcid,
+    );
+    await dragMouseAndMoveTo(page, 50);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
 });

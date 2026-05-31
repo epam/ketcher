@@ -1,11 +1,9 @@
-import { Page, test } from '@playwright/test';
+import { Page, test } from '@fixtures';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import { takeEditorScreenshot } from '@utils/canvas/helpers';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
-  selectAllStructuresOnCanvas,
-  takeEditorScreenshot,
-} from '@utils/canvas';
-import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
@@ -21,8 +19,8 @@ const setupEllipse = async (page: Page) => {
   await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
-  await clickInTheMiddleOfTheScreen(page);
-  await dragMouseTo(ellipseCoordinates.x, ellipseCoordinates.y, page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, ellipseCoordinates.x, ellipseCoordinates.y);
   return ellipseCoordinates;
 };
 
@@ -46,19 +44,17 @@ async function separetingAndMovingEllipse(page: Page) {
   const point3 = { x: 840, y: 262 };
   const point4 = { x: 509, y: 367 };
   const point5 = { x: 464, y: 239 };
-  await clickOnCanvas(page, point.x, point.y);
-  await dragMouseTo(point1.x, point1.y, page);
-  await clickOnCanvas(page, point2.x, point2.y);
-  await dragMouseTo(point3.x, point3.y, page);
+  await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point1.x, point1.y);
+  await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
+  await dragMouseTo(page, point3.x, point3.y);
   await takeEditorScreenshot(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await CommonLeftToolbar(page).selectAreaSelectionTool(
-    SelectionToolType.Lasso,
-  );
+  await clickInTheMiddleOfTheCanvas(page);
+  await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
   await createSomeStructure(page);
-  await clickOnCanvas(page, point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y, { from: 'pageTopLeft' });
   await page.mouse.down();
-  await dragMouseTo(point5.x, point5.y, page);
+  await dragMouseTo(page, point5.x, point5.y);
 }
 test.describe('Draw Ellipse', () => {
   test.beforeEach(async ({ page }) => {
@@ -70,7 +66,7 @@ test.describe('Draw Ellipse', () => {
   }) => {
     // Test case: EPMLSOPKET-1959
     const ellipseCoordinates = await setupEllipse(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await page.mouse.move(ellipseCoordinates.x, ellipseCoordinates.y);
     await takeEditorScreenshot(page);
   });
@@ -80,10 +76,10 @@ test.describe('Draw Ellipse', () => {
     const point = { x: 645, y: 367 };
     const point1 = { x: 759, y: 183 };
     await setupEllipse(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
-    await clickOnCanvas(page, point.x, point.y);
-    await dragMouseTo(point1.x, point1.y, page);
+    await clickOnCanvas(page, point.x, point.y, { from: 'pageTopLeft' });
+    await dragMouseTo(page, point1.x, point1.y);
     await takeEditorScreenshot(page);
   });
 
@@ -96,25 +92,23 @@ test.describe('Draw Ellipse', () => {
     const point2 = { x: 690, y: 410 };
     const point3 = { x: 220, y: 200 };
     await setupEllipse(page);
-    await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(point.x, point.y, page);
+    await clickInTheMiddleOfTheCanvas(page);
+    await dragMouseTo(page, point.x, point.y);
     await takeEditorScreenshot(page);
-    await dragMouseTo(point1.x, point1.y, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Lasso,
-    );
+    await dragMouseTo(page, point1.x, point1.y);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await createSomeStructure(page);
     await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();
-    await dragMouseTo(point3.x, point3.y, page);
+    await dragMouseTo(page, point3.x, point3.y);
     await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Draw a lot of ellipses', async ({ page }) => {
     // Test case: EPMLSOPKET-1966
     // Separeting and moving few objects on canvas
-    await openFileAndAddToCanvas('KET/ellipse-test-EPMLSOPKET-1966.ket', page);
+    await openFileAndAddToCanvas(page, 'KET/ellipse-test-EPMLSOPKET-1966.ket');
     await separetingAndMovingEllipse(page);
     await takeEditorScreenshot(page);
   });

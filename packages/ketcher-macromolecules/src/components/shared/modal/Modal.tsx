@@ -25,6 +25,7 @@ interface ModalProps {
   expanded?: boolean;
   setExpanded?: (boolean) => void;
   testId?: string;
+  hideHeaderBorder?: boolean;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -32,17 +33,19 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const Header = styled(DialogTitle)(({ theme }) => ({
-  padding: '2px 4px 2px 12px;',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  fontFamily: `${theme.ketcher.font.family.inter}`,
-  fontSize: `${theme.ketcher.font.size.medium}`,
-  fontWeight: 500,
-  textTransform: 'capitalize',
-  borderBottom: '1px solid rgba(202, 211, 221, 1)',
-}));
+const Header = styled(DialogTitle)<{ hideborder?: boolean }>(
+  ({ theme, hideborder }) => ({
+    padding: '2px 4px 2px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontFamily: `${theme.ketcher.font.family.inter}`,
+    fontSize: `${theme.ketcher.font.size.medium}`,
+    fontWeight: 500,
+    textTransform: 'capitalize',
+    borderBottom: hideborder ? 'none' : '1px solid rgba(202, 211, 221, 1)',
+  }),
+);
 
 const Title = styled.div({
   marginRight: '10px',
@@ -95,12 +98,14 @@ export const Modal = ({
   expanded = false,
   setExpanded = EmptyFunction,
   testId,
+  hideHeaderBorder,
 }: ModalProps) => {
   const theme = useTheme();
 
   const paperProps = useMemo(
     () => ({
-      testId,
+      ...(testId ? { testid: testId } : {}),
+      'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -115,6 +120,7 @@ export const Modal = ({
       },
     }),
     [
+      testId,
       theme.ketcher.color.text.primary,
       theme.ketcher.color.background.canvas,
       expanded,
@@ -158,12 +164,13 @@ export const Modal = ({
       sx={{ padding: '24px' }}
     >
       {title || showCloseButton || showExpandButton ? (
-        <Header>
+        <Header hideborder={hideHeaderBorder}>
           <Title>{title}</Title>
           <span>
             {showExpandButton && (
               <IconButton
-                title={'expand window'}
+                title={expanded ? 'Minimize window' : 'Expand window'}
+                data-testid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {
                   setExpanded(!expanded);

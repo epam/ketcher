@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 
@@ -32,11 +32,8 @@ class ChargeTool implements Tool {
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const ci = this.editor.findItem(event, ['atoms']);
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
-    ) {
+    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    if (atom && this.isChargeableAtom(atom)) {
       this.editor.hover(ci);
     } else {
       this.editor.hover(null, null, event);
@@ -89,24 +86,30 @@ class ChargeTool implements Tool {
       }
     }
 
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as string | number)
-    ) {
-      this.editor.hover(ci);
-      this.editor.update(
-        fromAtomsAttrs(
-          rnd.ctab,
-          ci.id,
-          {
-            charge: molecule.atoms.get(ci.id)?.charge + this.charge,
-          },
-          null,
-        ),
-      );
+    if (ci && ci.map === 'atoms') {
+      const atom = molecule.atoms.get(ci.id);
+      if (atom && this.isChargeableAtom(atom)) {
+        this.editor.hover(ci);
+        this.editor.update(
+          fromAtomsAttrs(
+            rnd.ctab,
+            ci.id,
+            {
+              charge: (atom.charge ?? 0) + this.charge,
+            },
+            null,
+          ),
+        );
+      }
     }
     return true;
+  }
+
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
+    return !atom.atomList && !atom.rglabel;
   }
 }
 

@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import { Dispatch } from 'redux';
+import { Struct } from 'ketcher-core';
+import Editor from '../../editor/Editor';
 
 type ToolVariant =
   | 'any-atom'
@@ -79,6 +81,7 @@ type ToolVariant =
   | 'rgroup-fragment'
   | 'rgroup-label'
   | 'save'
+  | 'select-structure'
   | 'select-fragment'
   | 'select-lasso'
   | 'select-rectangle'
@@ -107,39 +110,74 @@ type ToolVariant =
   | 'shape-line'
   | 'undo';
 
-// todo: find out types
-type Editor = any;
-type Server = any;
-type Options = any;
-type ReduxState = any;
+type ActionStateEditor = Editor & {
+  actions?: {
+    active?: {
+      tool?: string;
+    };
+  };
+  struct(): Struct;
+  struct(value: Struct | null): Struct;
+};
 
+type ActionStateOptions = {
+  app: {
+    server?: unknown;
+    templates?: unknown;
+    functionalGroups?: unknown;
+  };
+  buttons?: Record<string, { hidden?: boolean }>;
+};
+
+type ActionThunkState = {
+  editor: ActionStateEditor;
+  toolbar: {
+    visibleTools: {
+      select: ToolVariant;
+    };
+  };
+};
+
+// todo: find out types
 type ActionObj = {
   tool?: string;
-  opts?: any;
+  opts?: unknown;
   dialog?: string;
-  thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void;
+  thunk?: (dispatch: Dispatch, getState: () => ActionThunkState) => void;
 };
-type ActionFn = (editor: Editor) => void;
+type ActionFn = (editor: ActionStateEditor) => void;
 // todo: come up with better name
 type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
-export type GetActionState = (
-  editor: Editor,
-  server?: Server,
-  options?: Options,
+type GetSelectedState = (
+  editor: ActionStateEditor,
+  server?: unknown,
 ) => boolean;
+type GetDisabledState = (
+  editor: ActionStateEditor,
+  server: unknown,
+  options: ActionStateOptions,
+) => boolean;
+type GetHiddenState = (options: ActionStateOptions) => boolean;
 
-type IsActionState = boolean | GetActionState;
+export type GetActionState =
+  | GetSelectedState
+  | GetDisabledState
+  | GetHiddenState;
+
+type IsSelectedState = boolean | GetSelectedState;
+type IsDisabledState = boolean | GetDisabledState;
+type IsHiddenState = boolean | GetHiddenState;
 
 interface UiAction {
   title?: string;
   shortcut?: string | Array<string>;
   enabledInViewOnly?: true;
   action: UiActionAction;
-  selected?: IsActionState;
-  disabled?: IsActionState;
-  hidden?: IsActionState;
+  selected?: IsSelectedState;
+  disabled?: IsDisabledState;
+  hidden?: IsHiddenState;
   onAction?: (action: UiActionAction) => void;
 }
 

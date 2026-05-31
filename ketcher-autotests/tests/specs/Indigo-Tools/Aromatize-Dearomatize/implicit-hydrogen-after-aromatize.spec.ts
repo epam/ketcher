@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test } from '@fixtures';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   openFileAndAddToCanvas,
@@ -25,8 +25,8 @@ test.describe('Shows correctly implicit Hydrogen after aromatize', () => {
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvas(
-        `KET/Implicit-Hydrogen-After-Aromatize/${fileName}`,
         page,
+        `KET/Implicit-Hydrogen-After-Aromatize/${fileName}`,
       );
       await IndigoFunctionsToolbar(page).aromatize();
       await takeEditorScreenshot(page);

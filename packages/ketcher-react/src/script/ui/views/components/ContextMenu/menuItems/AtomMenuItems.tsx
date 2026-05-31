@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { Item, Submenu, Separator } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
+import useMarkAs from '../hooks/useMarkAs';
 import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
@@ -16,13 +17,14 @@ import {
   AtomQueryProperties,
   AtomAllAttributeName,
   Atom,
+  ketcherProvider,
 } from 'ketcher-core';
-import { atom } from 'src/script/ui/data/schema/struct-schema';
+import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
-import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
-import { isNumber } from 'lodash';
-import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { Icon } from 'components';
+import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
+import clsx from 'clsx';
 
 const {
   ringBondCount,
@@ -47,26 +49,29 @@ const atomPropertiesForSubMenu: {
   {
     title: ringBondCount.title,
     key: 'ringBondCount',
-    buttons: ringBondCount.enumNames.map((label, id) => ({
-      label,
-      value: ringBondCount.enum[id],
-    })),
+    buttons:
+      ringBondCount.enumNames?.map((label, id) => ({
+        label,
+        value: ringBondCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: hCount.title,
     key: 'hCount',
-    buttons: hCount.enumNames.map((label, id) => ({
-      label,
-      value: hCount.enum[id],
-    })),
+    buttons:
+      hCount.enumNames?.map((label, id) => ({
+        label,
+        value: hCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: substitutionCount.title,
     key: 'substitutionCount',
-    buttons: substitutionCount.enumNames.map((label, id) => ({
-      label,
-      value: substitutionCount.enum[id],
-    })),
+    buttons:
+      substitutionCount.enumNames?.map((label, id) => ({
+        label,
+        value: substitutionCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   {
     title: unsaturatedAtom.title,
@@ -79,31 +84,35 @@ const atomPropertiesForSubMenu: {
   {
     title: implicitHCount.title,
     key: 'implicitHCount',
-    buttons: implicitHCount.enumNames.map((label, id) => ({
-      label,
-      value: implicitHCount.enum[id],
-    })),
+    buttons:
+      implicitHCount.enumNames?.map((label, id) => ({
+        label,
+        value: implicitHCount.enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   },
   ...properties.map((name) => ({
     title: atom.properties[name].title,
     key: name,
-    buttons: atom.properties[name].enumNames.map(
-      (label: string, id: number) => ({
+    buttons:
+      atom.properties[name].enumNames?.map((label: string, id: number) => ({
         label,
-        value: atom.properties[name].enum[id],
-      }),
-    ),
+        value: atom.properties[name].enum?.[id] as AtomAllAttributeValue,
+      })) ?? [],
   })),
 ];
 
 const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
-  const [handleAddAttachmentPoint] = useAddAttachmentPoint();
-  const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
-  const { getKetcherInstance } = useAppContext();
-  const editor = getKetcherInstance().editor as Editor;
+  const {
+    handler: handleMarkAs,
+    isVisible: markAsIsVisible,
+    isDisabled: markAsIsDisabled,
+  } = useMarkAs();
+  const { ketcherId } = useAppContext();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const editor = ketcher.editor as Editor;
   const struct = editor.struct();
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
@@ -143,34 +152,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
-  const sgroup = isNumber(selectedAtomId)
-    ? struct.getGroupFromAtomId(selectedAtomId)
-    : undefined;
-  const atomInSgroupWithLabel = sgroup && !sgroup?.isSuperatomWithoutLabel;
-  const attachmentPoints = sgroup?.getAttachmentPoints() || [];
-  const maxAttachmentPointsAmount = attachmentPoints.length >= 8;
-  const isAtomSuperatomAttachmentPoint = Atom.isSuperatomAttachmentAtom(
-    struct,
-    selectedAtomId,
-  );
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
   );
-  const atomExternalConnections = isNumber(selectedAtomId)
-    ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
-    : undefined;
-  const atomFreeAttachmentPoints = attachmentPoints?.filter(
-    (attachmentPoint) =>
-      attachmentPoint.atomId === selectedAtomId &&
-      !atomExternalConnections?.some(
-        (bond) =>
-          bond.endSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber ||
-          bond.beginSuperatomAttachmentPointNumber ===
-            attachmentPoint.attachmentPointNumber,
-      ),
-  );
+
   const highlightAtomWithColor = (color: string) => {
     const atomIds = props.propsFromTrigger?.atomIds || [];
     editor.highlights.create({
@@ -181,88 +167,136 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     });
   };
 
-  const isAddAttachmentPointDisabled =
-    !onlyOneAtomSelected ||
-    (() => {
-      if (!isNumber(selectedAtomId)) return true;
-
-      const connectedComponents = struct.findConnectedComponent(selectedAtomId);
-      for (const connectedAtomId of connectedComponents) {
-        const connectedGroup = struct.getGroupFromAtomId(connectedAtomId);
-        if (connectedGroup?.isMonomer) {
-          return true;
-        }
-      }
-
-      return false;
-    })();
+  const makeAttachmentPointMenuItems = useMakeAttachmentPointMenuItems({
+    props,
+    selectedAtomId,
+    editor,
+  });
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
-        <Item {...props} onClick={handleDelete}>
-          Delete
+        <Separator />
+        <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+          <Icon name="deleteMenu" className={styles.icon} />
+          <span className={styles.contextMenuText}>Delete</span>
         </Item>
       </>
     );
   }
 
+  const editMenuItemTitle = props.propsFromTrigger?.extraItemsSelected
+    ? 'Edit selected atoms...'
+    : 'Edit...';
+
+  const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+  const showMarkAsMenu = markAsIsVisible();
+  const markAsDisabled = markAsIsDisabled();
+
   return (
     <>
-      <Item {...props} onClick={handleEdit}>
-        {props.propsFromTrigger?.extraItemsSelected
-          ? 'Edit selected atoms...'
-          : 'Edit...'}
+      {showMarkAsMenu && (
+        <Submenu
+          {...props}
+          data-testid="Mark as a...-option"
+          label="Mark as a..."
+          disabled={markAsDisabled}
+          className={styles.subMenu}
+        >
+          <Item
+            {...props}
+            data-testid="Mark as Base-option"
+            onClick={handleMarkAs('base')}
+          >
+            <Icon
+              name="base"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Base</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Sugar-option"
+            onClick={handleMarkAs('sugar')}
+          >
+            <Icon
+              name="sugar"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Sugar</span>
+          </Item>
+          <Item
+            {...props}
+            data-testid="Mark as Phosphate-option"
+            onClick={handleMarkAs('phosphate')}
+          >
+            <Icon
+              name="phosphate"
+              className={clsx(styles.icon, styles.markAsComponentIcon)}
+            />
+            <span>Phosphate</span>
+          </Item>
+        </Submenu>
+      )}
+      {makeAttachmentPointMenuItems && (
+        <>
+          {makeAttachmentPointMenuItems}
+          <Separator />
+        </>
+      )}
+      <Item
+        {...props}
+        data-testid={editMenuItemTitle.concat('-option')}
+        onClick={handleEdit}
+      >
+        <Icon name="editMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
       </Item>
-      <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>
+      <Item
+        {...props}
+        data-testid="Enhanced stereochemistry...-option"
+        disabled={stereoDisabled}
+        onClick={handleStereo}
+      >
         Enhanced stereochemistry...
       </Item>
       <Submenu
         {...props}
         label="Query properties"
+        data-testid="Query properties-option"
         style={{ overflow: 'visible' }}
+        disabled={disabledForMonomerCreation}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
             <Submenu
               {...props}
               label={title}
+              data-testid={`${title}-option`}
               key={key}
               className={styles.sameGroup}
             >
               <ButtonGroup<AtomAllAttributeValue>
                 buttons={buttons}
                 defaultValue={getPropertyValue(key)}
+                title={title}
                 onClick={(value: AtomAllAttributeValue) =>
                   updateAtomProperty(key, value)
                 }
-              ></ButtonGroup>
+              />
             </Submenu>
           );
         })}
       </Submenu>
-      {onlyOneAtomSelected &&
-        !atomInSgroupWithLabel &&
-        !maxAttachmentPointsAmount &&
-        !isAtomSuperatomLeavingGroup && (
-          <Item
-            {...props}
-            onClick={handleAddAttachmentPoint}
-            disabled={isAddAttachmentPointDisabled}
-          >
-            Add attachment point
-          </Item>
-        )}
-      <HighlightMenu onHighlight={highlightAtomWithColor} />
-      {isAtomSuperatomAttachmentPoint &&
-        atomFreeAttachmentPoints.length > 0 && (
-          <Item {...props} onClick={handleRemoveAttachmentPoint}>
-            Remove attachment point
-          </Item>
-        )}
-      <Item {...props} onClick={handleDelete}>
-        Delete
+      <HighlightMenu
+        onHighlight={highlightAtomWithColor}
+        disabled={disabledForMonomerCreation}
+      />
+      <Separator />
+      <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
+        <Icon name="deleteMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>Delete</span>
       </Item>
     </>
   );

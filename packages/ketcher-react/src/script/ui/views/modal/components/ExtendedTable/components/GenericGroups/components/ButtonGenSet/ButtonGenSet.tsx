@@ -20,7 +20,8 @@ import classes from './ButtonGenSet.module.less';
 
 type ButtonGenSetProps = {
   button: GenItem;
-  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  onAtomSelect: (label: string) => void;
+  onAtomActivate: (label: string) => void;
   selected: (label: string) => boolean;
   disabled: boolean;
 };
@@ -28,17 +29,18 @@ type ButtonGenSetProps = {
 const ButtonGenSet = ({
   button,
   onAtomSelect,
+  onAtomActivate,
   selected,
   disabled,
 }: ButtonGenSetProps) => {
   const titleText = disabled
     ? `${button.label} is disabled`
-    : button.description || button.label;
+    : button.description ?? button.label;
 
   return (
     <button
-      onClick={() => onAtomSelect(button.label, false)}
-      onDoubleClick={() => onAtomSelect(button.label, true)}
+      onClick={() => onAtomSelect(button.label)}
+      onDoubleClick={() => onAtomActivate(button.label)}
       title={titleText}
       disabled={disabled}
       data-testid={`${button.label}-button`}

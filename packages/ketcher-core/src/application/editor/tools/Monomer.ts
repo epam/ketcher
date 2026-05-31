@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseTool } from 'application/editor/tools/Tool';
-import { BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { type BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import {
-  BaseMonomerRenderer,
+  type BaseMonomerRenderer,
   AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
-import { MonomerOrAmbiguousType } from 'domain/types';
+import type { MonomerOrAmbiguousType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
 import { Coordinates } from '../shared/coordinates';
@@ -39,12 +40,12 @@ class MonomerTool implements BaseTool {
   readonly MONOMER_PREVIEW_OFFSET_Y = 30;
   history: EditorHistory;
   constructor(
-    private editor: CoreEditor,
-    private monomer: MonomerOrAmbiguousType,
+    private readonly editor: CoreEditor,
+    private readonly monomer: MonomerOrAmbiguousType,
   ) {
     this.editor = editor;
     this.monomer = monomer;
-    this.history = new EditorHistory(this.editor);
+    this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
@@ -72,6 +73,9 @@ class MonomerTool implements BaseTool {
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
+    this.editor.calculateAndStoreNextAutochainPosition(
+      modelChanges.operations[0].monomer as BaseMonomer,
+    );
   }
 
   mousemove() {

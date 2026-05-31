@@ -1,8 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, expect, test } from '@playwright/test';
+import { Page, chromium, expect, test } from '@fixtures';
 import {
   waitForKetcherInit,
-  waitForIndigoToLoad,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -12,6 +11,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -35,7 +35,6 @@ test.describe('Open/save file tests: ', () => {
 
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
@@ -49,10 +48,9 @@ test.describe('Open/save file tests: ', () => {
     const cntxt = page.context();
     await page.close();
     await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
+    browser.contexts().forEach((someContext) => {
       someContext.close();
     });
-    // await browser.close();
   });
 
   test(`Check that it is possible to select all text by CTRL+A and delete it in 'Paste from Clipboard modal window`, async () => {
@@ -74,7 +72,7 @@ test.describe('Open/save file tests: ', () => {
 
     await expect(openStructureTextarea).toHaveValue(textToPaste);
 
-    await openStructureTextarea.press('Control+A');
+    await openStructureTextarea.press('ControlOrMeta+A');
     await openStructureTextarea.press('Backspace');
 
     await expect(openStructureTextarea).toHaveValue('');
@@ -87,8 +85,8 @@ test.describe('Open/save file tests: ', () => {
      */
     test.setTimeout(20000);
     await openFileAndAddToCanvasAsNewProject(
-      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
       page,
+      'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
     );
 
     await CommonTopLeftToolbar(page).saveFile();
@@ -96,14 +94,11 @@ test.describe('Open/save file tests: ', () => {
       MacromoleculesFileFormatType.FASTA,
     );
 
-    const errorMessageDialog = page.getByRole('dialog');
-    const errorMessageText =
-      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)';
-    await expect(errorMessageDialog).toBeVisible();
-    await expect(page.getByText(errorMessageText)).toBeVisible();
-
-    await page.keyboard.press('Escape');
-
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      'Convert error! Error during sequence type recognition(RNA, DNA or Peptide)',
+    );
+    await ErrorMessageDialog(page).close();
     await SaveStructureDialog(page).cancel();
   });
 

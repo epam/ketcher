@@ -118,10 +118,12 @@ class RGroupFragmentTool implements Tool {
         ? ci.id
         : RGroup.findRGroupByFragment(molecule.rgroups, ci.id);
 
-    const rg = Object.assign(
-      { label },
-      ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id),
-    );
+    const rg = {
+      label,
+      ...(ci.map === 'frags'
+        ? { fragId: ci.id }
+        : molecule.rgroups.get(ci.id) || {}),
+    };
 
     const res = editor.event.rgroupEdit.dispatch(rg);
 

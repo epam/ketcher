@@ -1,8 +1,8 @@
 import { clamp } from 'lodash';
-import { Render } from '../raphaelRender';
-import { ScrollOffset } from './scroll-offset';
+import type { Render } from '../raphaelRender';
+import type { ScrollOffset } from './scroll-offset';
 import { Scrollbar } from './scrollbar';
-import { RaphaelRectAttr } from './types';
+import type { RaphaelRectAttr } from './types';
 import {
   getUserFriendlyScrollOffset,
   getUserFriendlyViewBoxDelta,
@@ -10,7 +10,7 @@ import {
 } from './utils';
 
 export class HorizontalScrollbar extends Scrollbar {
-  #scrollOffset: ScrollOffset;
+  readonly #scrollOffset: ScrollOffset;
 
   constructor(render: Render, scrollOffset: ScrollOffset) {
     super(render);

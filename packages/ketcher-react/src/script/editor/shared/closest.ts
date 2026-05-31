@@ -16,16 +16,13 @@
 
 import {
   Fragment,
-  FunctionalGroup,
   Vec2,
   Scale,
-  SGroup,
   ReStruct,
-  Atom,
-  Bond,
   IMAGE_KEY,
   ImageReferencePositionInfo,
   MULTITAIL_ARROW_KEY,
+  FunctionalGroup,
 } from 'ketcher-core';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -59,56 +56,40 @@ function rectangleContainsPoint(startX, startY, width, height, x, y) {
   );
 }
 
+function clampCoordinate(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function calculateDistanceToText(
+  cursorPosition: Vec2,
+  referencePoints: Vec2[],
+) {
+  const topLeft = referencePoints[0];
+  const bottomRight = referencePoints[2]; // [top-left, bottom-left, bottom-right, top-right]
+  // Use min/max in case reference points are provided in an unexpected order
+  const minX = Math.min(topLeft.x, bottomRight.x);
+  const maxX = Math.max(topLeft.x, bottomRight.x);
+  const minY = Math.min(topLeft.y, bottomRight.y);
+  const maxY = Math.max(topLeft.y, bottomRight.y);
+  const clampedX = clampCoordinate(cursorPosition.x, minX, maxX);
+  const clampedY = clampCoordinate(cursorPosition.y, minY, maxY);
+
+  if (clampedX === cursorPosition.x && clampedY === cursorPosition.y) {
+    return SELECTION_WITHIN_TEXT;
+  }
+
+  return Vec2.dist(new Vec2(clampedX, clampedY), cursorPosition);
+}
+
 function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
   let ret: ClosestReturnType = null;
 
   restruct.texts.forEach((text, id) => {
-    const referencePoints = text.getReferencePoints();
-    const topX = referencePoints[0].x;
-    const topY = referencePoints[0].y;
-    const bottomX = referencePoints[2].x;
-    const bottomY = referencePoints[2].y;
-
-    const distances: Array<number> = [];
-
-    if (cursorPosition.x >= topX && cursorPosition.x <= bottomX) {
-      if (cursorPosition.y < topY) {
-        distances.push(topY - cursorPosition.y);
-      } else if (cursorPosition.y > bottomY) {
-        distances.push(cursorPosition.y - bottomY);
-      } else {
-        distances.push(cursorPosition.y - topY, bottomY - cursorPosition.y);
-      }
-    }
-
-    if (cursorPosition.x < topX && cursorPosition.y < topY) {
-      distances.push(Vec2.dist(new Vec2(topX, topY), cursorPosition));
-    }
-
-    if (cursorPosition.x > bottomX && cursorPosition.y > bottomY) {
-      distances.push(Vec2.dist(new Vec2(bottomX, bottomY), cursorPosition));
-    }
-
-    if (cursorPosition.x < topX && cursorPosition.y > bottomY) {
-      distances.push(Vec2.dist(new Vec2(topX, bottomY), cursorPosition));
-    }
-
-    if (cursorPosition.x > bottomX && cursorPosition.y < topY) {
-      distances.push(Vec2.dist(new Vec2(bottomX, topY), cursorPosition));
-    }
-
-    if (cursorPosition.y >= topY && cursorPosition.y <= bottomY) {
-      if (cursorPosition.x < topX) {
-        distances.push(topX - cursorPosition.x);
-      } else if (cursorPosition.x > bottomX) {
-        distances.push(cursorPosition.x - bottomX);
-      } else {
-        distances.push(SELECTION_WITHIN_TEXT);
-      }
-    }
-
-    const dist = Math.min(...distances);
+    const dist = calculateDistanceToText(
+      cursorPosition,
+      text.getReferencePoints(),
+    );
 
     if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
       minDist = dist;
@@ -142,25 +123,24 @@ function findClosestSimpleObject(restruct: ReStruct, pos: Vec2) {
 function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   let closestAtom: null | number = null;
   const maxMinDist = SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'atoms' ? skip.id : null;
+  const skipId = skip?.map === 'atoms' ? skip.id : null;
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
 
-  minDist = minDist || maxMinDist;
+  minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
-  restruct.atoms.forEach((atom, aid) => {
+  restruct.visibleAtoms.forEach((atom, aid) => {
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,
-        true,
-      ) ||
-      Atom.isHiddenLeavingGroupAtom(restruct.molecule, aid)
+      )
     ) {
       return;
     }
+
     const isSkippedAtom = aid === skipId || atom.a.isPreview;
     if (isSkippedAtom) {
       return;
@@ -195,16 +175,15 @@ function findClosestBond(
   let closestBond: number | null = null;
   let closestBondCenter: number | null = null;
   const maxMinDist = 0.8 * SELECTION_DISTANCE_COEFFICIENT;
-  const skipId = skip && skip.map === 'bonds' ? skip.id : null;
-  const sGroups = restruct.sgroups;
-  const functionalGroups = restruct.molecule.functionalGroups;
+  const skipId = skip?.map === 'bonds' ? skip.id : null;
 
-  minDist = minDist || maxMinDist;
+  minDist = minDist ?? maxMinDist;
   minDist = Math.min(minDist, maxMinDist);
 
   let minCDist = minDist;
+  let minFoundCDist = Infinity;
 
-  restruct.bonds.forEach((bond, bid) => {
+  restruct.visibleBonds.forEach((bond, bid) => {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
     if (isSkippedBond) {
       return;
@@ -215,18 +194,6 @@ function findClosestBond(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const p2 = restruct.atoms.get(bond.b.end)!.a.pp;
 
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-      ) ||
-      SGroup.isBondInContractedSGroup(bond.b, sGroups) ||
-      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond.b)
-    ) {
-      return;
-    }
-
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5);
     const cdist = Vec2.dist(pos, mid);
 
@@ -235,8 +202,9 @@ function findClosestBond(
     const position = Scale.modelToCanvas(pos, options);
     const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints);
 
-    if (isPosInsidePolygon) {
+    if (isPosInsidePolygon && cdist < minFoundCDist) {
       minCDist = cdist;
+      minFoundCDist = cdist;
       closestBondCenter = bid;
     }
 
@@ -290,8 +258,7 @@ function findClosestEnhancedFlag(
   restruct.enhancedFlags.forEach((_item, id) => {
     const fragment = restruct.molecule.frags.get(id);
 
-    if (!fragment || !fragment.enhancedStereoFlag || !options.showStereoFlags)
-      return;
+    if (!fragment?.enhancedStereoFlag || !options.showStereoFlags) return;
 
     const p = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
@@ -345,7 +312,7 @@ function findClosestFrag(
   options,
 ) {
   minDist = Math.min(
-    minDist || SELECTION_DISTANCE_COEFFICIENT,
+    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
@@ -378,18 +345,14 @@ function findClosestFrag(
 
 function findClosestRGroup(restruct: ReStruct, pos: Vec2, skip, minDist) {
   minDist = Math.min(
-    minDist || SELECTION_DISTANCE_COEFFICIENT,
+    minDist ?? SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT,
   );
 
   let ret: ClosestReturnType = null;
 
   restruct.rgroups.forEach((rgroup, rgid) => {
-    if (
-      rgid !== skip &&
-      rgroup.labelBox &&
-      rgroup.labelBox.contains(pos, 0.5)
-    ) {
+    if (rgid !== skip && rgroup.labelBox?.contains(pos, 0.5)) {
       const dist = Vec2.dist(rgroup.labelBox.centre(), pos);
 
       if (!ret || dist < minDist) {
@@ -533,12 +496,12 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
 
 function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
   const sGroups = restruct.sgroups;
-  const skipId = skip && skip.map === 'functionalGroups' ? skip.id : null;
+  const skipId = skip?.map === 'functionalGroups' ? skip.id : null;
   for (const [reSGroupId, reSGroup] of sGroups.entries()) {
     if (reSGroupId === skipId) continue;
 
     const { startX, startY, width, height } =
-      reSGroup.getTextHighlightDimensions(0, restruct.render);
+      reSGroup.getTextHighlightDimensions(restruct.render, 0);
     const { x, y } = Scale.modelToCanvas(pos, restruct.render.options);
     if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;
@@ -563,12 +526,12 @@ function findClosestItem(
   options,
 ): ClosestItemWithMap | null {
   // eslint-disable-line max-params
-  maps = maps || Object.keys(findMaps);
+  maps = maps ?? Object.keys(findMaps);
 
   let priorityItem = null;
 
   const closestItem = maps.reduce((res, mp) => {
-    const minDist = res ? res.dist : null;
+    const minDist = res?.dist ?? null;
     const item = findMaps[mp](restruct, pos, skip, minDist, options);
 
     if (item !== null) {
@@ -587,7 +550,7 @@ function findClosestItem(
     return res;
   }, null);
 
-  return priorityItem || closestItem;
+  return priorityItem ?? closestItem;
 }
 
 /**
@@ -604,8 +567,8 @@ function findClosestItem(
 function findCloseMerge(
   restruct: ReStruct,
   selected,
-  maps = ['atoms', 'bonds'],
   options,
+  maps = ['atoms', 'bonds'],
 ) {
   const pos = {
     atoms: new Map(), // aid -> position
@@ -615,24 +578,27 @@ function findCloseMerge(
   const struct = restruct.molecule;
 
   selected.atoms.forEach((aid) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pos.atoms.set(aid, struct.atoms.get(aid)!.pp);
+    const atom = struct.atoms.get(aid);
+    if (!atom) return;
+
+    pos.atoms.set(aid, atom.pp);
   });
 
   selected.bonds.forEach((bid) => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const bond = struct.bonds.get(bid)!;
-    pos.bonds.set(
-      bid,
-      Vec2.lc2(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        struct.atoms.get(bond.begin)!.pp,
-        0.5,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        struct.atoms.get(bond.end)!.pp,
-        0.5,
-      ),
-    );
+    const bond = struct.bonds.get(bid);
+    if (bond) {
+      pos.bonds.set(
+        bid,
+        Vec2.lc2(
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          struct.atoms.get(bond.begin)!.pp,
+          0.5,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          struct.atoms.get(bond.end)!.pp,
+          0.5,
+        ),
+      );
+    }
   });
 
   const result = {

@@ -45,7 +45,7 @@ const MonomerLibraryToggle = ({ onClick }: Props) => {
     >
       <span className="icon">
         <Icon name="arrows-left" />
-      </span>
+      </span>{' '}
       Show Library
     </StyledMonomerLibraryToggle>
   );

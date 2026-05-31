@@ -1,4 +1,4 @@
-import { FunctionalGroup } from 'ketcher-core';
+import { AttachmentPointName, FunctionalGroup } from 'ketcher-core';
 import type { TriggerEvent, PredicateParams } from 'react-contexify';
 import { Selection } from '../../../../editor/Editor';
 
@@ -10,12 +10,11 @@ export enum CONTEXT_MENU_ID {
   FOR_R_GROUP_ATTACHMENT_POINT = 'context-menu-for-rgroup-attachment-point',
   FOR_MULTITAIL_ARROW = 'context-menu-for-multiple-arrowed',
   FOR_MACROMOLECULE = 'context-menu-for-macromolecule',
+  FOR_ATTACHMENT_POINT_LABEL = 'context-menu-for-attachment-point-label',
 }
 
-export type ItemData = unknown;
-
 interface BaseContextMenuProps {
-  id: CONTEXT_MENU_ID;
+  id: string;
 }
 
 interface WithExtraItems {
@@ -25,21 +24,21 @@ interface WithExtraItems {
 export interface BondsContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_BONDS;
+  id: string;
   bondIds: Array<number>;
 }
 
 export interface AtomContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_ATOMS;
+  id: string;
   atomIds: Array<number>;
 }
 
 export interface RGroupAttachmentPointContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT;
+  id: string;
   rgroupAttachmentPoints: Array<number>;
   atomIds?: AtomContextMenuProps['atomIds'];
 }
@@ -50,23 +49,29 @@ export interface SelectionContextMenuProps
     Partial<
       Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
     > {
-  id: CONTEXT_MENU_ID.FOR_SELECTION;
+  id: string;
 }
 
 export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS;
+  id: string;
   functionalGroups: FunctionalGroup[];
 }
 
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_MACROMOLECULE;
+  id: string;
   functionalGroups: FunctionalGroup[];
 }
 
 export interface MultitailArrowContextMenuProps {
-  id: CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW;
+  id: string;
   itemId: number;
   tailId: number | null;
+}
+
+export interface AttachmentPointLabelContextMenuProps
+  extends BaseContextMenuProps {
+  id: string;
+  attachmentPointName: AttachmentPointName;
 }
 
 export type ContextMenuProps =
@@ -76,7 +81,8 @@ export type ContextMenuProps =
   | FunctionalGroupsContextMenuProps
   | RGroupAttachmentPointContextMenuProps
   | MultitailArrowContextMenuProps
-  | MacromoleculeContextMenuProps;
+  | MacromoleculeContextMenuProps
+  | AttachmentPointLabelContextMenuProps;
 
 export interface MenuItemsProps<T extends ContextMenuProps> {
   triggerEvent?: TriggerEvent;
@@ -84,7 +90,7 @@ export interface MenuItemsProps<T extends ContextMenuProps> {
 }
 
 export type ItemEventParams<T extends ContextMenuProps = ContextMenuProps> =
-  PredicateParams<T, ItemData>;
+  PredicateParams<T, unknown>;
 
 export type ContextMenuInfo = {
   [id in CONTEXT_MENU_ID]?: boolean;
@@ -94,6 +100,7 @@ export enum ContextMenuTriggerType {
   None = 'none',
   Selection = 'selection',
   ClosestItem = 'closestItem',
+  AuxiliaryItem = 'auxiliaryItem',
 }
 
 export interface ClosestItem {

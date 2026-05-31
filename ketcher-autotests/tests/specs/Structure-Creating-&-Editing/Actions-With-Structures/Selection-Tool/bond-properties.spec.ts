@@ -1,35 +1,32 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page } from '@playwright/test';
+import { test } from '@fixtures';
 import {
-  BondType,
   clickOnCanvas,
-  doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  MolFileFormat,
   openFileAndAddToCanvas,
-  pressButton,
-  selectAllStructuresOnCanvas,
+  RxnFileFormat,
   takeEditorScreenshot,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
-
-async function selectOption(
-  page: Page,
-  chosenOption: string,
-  newOption: string,
-) {
-  await page.getByText(chosenOption, { exact: true }).click();
-  await page.getByRole('option', { name: newOption, exact: true }).click();
-}
+import { BondPropertiesDialog } from '@tests/pages/molecules/canvas/BondPropertiesDialog';
+import {
+  BondTypeOption,
+  BondTopologyOption,
+  BondReactingCenterOption,
+} from '@tests/pages/constants/bondProperties/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Bond Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,8 +43,8 @@ test.describe('Bond Properties', () => {
       Topology - 'Either',
       Reacting Center - 'Unmarked'.
     */
-    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 1);
+    await openFileAndAddToCanvas(page, 'KET/benzene-ring-with-two-atoms.ket');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
     await takeEditorScreenshot(page);
   });
 
@@ -67,17 +64,19 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
-    await page.getByText('Double').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 5) {
       await page.keyboard.press('ArrowDown');
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
 
     while (i < 7) {
       await page.keyboard.press('ArrowUp');
+      await page.waitForTimeout(0.1 * 1000);
       i++;
     }
     await takeEditorScreenshot(page);
@@ -97,9 +96,9 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
-    await page.getByText('Double').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 2) {
       await page.keyboard.press('s');
@@ -122,9 +121,9 @@ test.describe('Bond Properties', () => {
         User is able to select the Type by typing the A, D, S, T letters 
         (first letters of the bond types in the list).
       */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
-    await page.getByText('Double').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).bondTypeDropdown.click();
     let i = 0;
     while (i < 2) {
       await page.keyboard.press('t');
@@ -134,32 +133,33 @@ test.describe('Bond Properties', () => {
   });
 
   const types = [
-    'Single',
-    'Single Up',
-    'Single Down',
-    'Single Up/Down',
-    'Double Cis/Trans',
-    'Triple',
-    'Aromatic',
-    'Any',
-    'Hydrogen',
-    'Single/Double',
-    'Single/Aromatic',
-    'Double/Aromatic',
-    'Dative',
+    ['Single', BondTypeOption.Single],
+    ['Single Up', BondTypeOption.SingleUp],
+    ['Single Down', BondTypeOption.SingleDown],
+    ['Single Up/Down', BondTypeOption.SingleUpDown],
+    ['Double Cis/Trans', BondTypeOption.DoubleCisTrans],
+    ['Triple', BondTypeOption.Triple],
+    ['Aromatic', BondTypeOption.Aromatic],
+    ['Any', BondTypeOption.Any],
+    ['Hydrogen', BondTypeOption.Hydrogen],
+    ['Single/Double', BondTypeOption.SingleDouble],
+    ['Single/Aromatic', BondTypeOption.SingleAromatic],
+    ['Double/Aromatic', BondTypeOption.DoubleAromatic],
+    ['Dative', BondTypeOption.Dative],
   ];
 
   for (const type of types) {
-    test(`Change 'Type' field value to ${type} type`, async ({ page }) => {
+    test(`Change 'Type' field value to ${type[0]} type`, async ({ page }) => {
       /*
             Test case: EPMLSOPKET-1459
             Description: Any bond can be changed with any bond type selected in the 'Type' list.
             *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
           */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
-      await selectOption(page, 'Double', type);
-      await pressButton(page, 'Apply');
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+      await BondPropertiesDialog(page).setOptions({
+        type: type[1] as BondTypeOption,
+      });
       await takeEditorScreenshot(page);
     });
   }
@@ -169,10 +169,11 @@ test.describe('Bond Properties', () => {
           Description: Any bond can be changed with any bond type selected in the 'Type' list.
           *.mol file is correctly opened in Ketcher, applied bond property is correctly represented.
         */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectOption(page, 'Single', 'Double');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -182,15 +183,16 @@ test.describe('Bond Properties', () => {
      * Description: The saved structure is correctly rendered on the canvas
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectOption(page, 'Single', 'Double');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+    });
     await verifyFileExport(
       page,
       'Molfiles-V2000/mol_1459_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -206,9 +208,9 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
-    await page.getByText('Either').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).bondTopologyDropdown.click();
     let i = 0;
     while (i < 2) {
       await page.keyboard.press('ArrowDown');
@@ -235,9 +237,9 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
-      await page.getByText('Either').click();
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+      await BondPropertiesDialog(page).bondTopologyDropdown.click();
       await page.keyboard.press(letter);
       await takeEditorScreenshot(page);
     });
@@ -255,23 +257,26 @@ test.describe('Bond Properties', () => {
           *.mol file should be correctly opened, applied bond property should be correctly represented.
         */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectOption(page, 'Either', 'Ring');
-    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 8 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Ring,
+    });
+    await getBondLocator(page, { bondId: 6 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Chain,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Either', 'Chain');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 11 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Chain,
+    });
 
-    await doubleClickOnBond(page, BondType.DOUBLE, 1);
-    await selectOption(page, 'Either', 'Chain');
-    await pressButton(page, 'Apply');
     await verifyFileExport(
       page,
       'Molfiles-V2000/mol_1461_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -283,13 +288,14 @@ test.describe('Bond Properties', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/mol_1461_to_open-expected.mol',
       page,
+      'Molfiles-V2000/mol_1461_to_open-expected.mol',
     );
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Chain', 'Either');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 6 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Either,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -305,9 +311,9 @@ test.describe('Bond Properties', () => {
           User is able to select the Reacting Center by typing the N, C, M, O, U letters.
         */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-    await doubleClickOnBond(page, BondType.DOUBLE, 2);
-    await page.getByText('Unmarked').click();
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+    await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).bondReactingCenterDropdown.click();
     let i = 0;
     while (i < 2) {
       await page.keyboard.press('ArrowDown');
@@ -334,23 +340,25 @@ test.describe('Bond Properties', () => {
           It is possible to navigate through the list with the Arrow Down / Up keyboard buttons.
           User is able to select the Topology by typing the E, C, R letters.
         */
-      await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
-      await doubleClickOnBond(page, BondType.DOUBLE, 2);
-      await page.getByText('Unmarked').click();
+      await openFileAndAddToCanvas(page, 'Molfiles-V2000/benzene.mol');
+      await getBondLocator(page, { bondId: 7 }).dblclick({ force: true });
+      await BondPropertiesDialog(page).bondReactingCenterDropdown.click();
       await page.keyboard.press(letter);
       await takeEditorScreenshot(page);
     });
   }
 
   const rCOptions = [
-    'Not center',
-    'Center',
-    'No change',
-    'Made/broken',
-    'Order changes',
-    'Made/broken and changes',
-    'Unmarked',
+    BondReactingCenterOption.NotCenter,
+    BondReactingCenterOption.Center,
+    BondReactingCenterOption.NoChange,
+    BondReactingCenterOption.MadeBroken,
+    BondReactingCenterOption.OrderChanges,
+    BondReactingCenterOption.MadeBrokenAndChanges,
+    BondReactingCenterOption.Unmarked,
   ];
+
+  const bondIds = [22, 18, 19, 24, 25, 26, 20];
 
   test(`Change 'Reacting Center' field value - 1/2 edit and save`, async ({
     page,
@@ -375,27 +383,31 @@ test.describe('Bond Properties', () => {
           we can`t  open the file
         */
 
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/reaction-3.rxn');
 
-    for (let i = 0; i < rCOptions.length - 1; i++) {
-      await doubleClickOnBond(page, BondType.SINGLE, i);
-      await selectOption(page, 'Unmarked', rCOptions[i]);
-      await pressButton(page, 'Apply');
+    for (let i = 0; i < bondIds.length; i++) {
+      await getBondLocator(page, { bondId: bondIds[i] }).dblclick({
+        force: true,
+      });
+      await BondPropertiesDialog(page).setOptions({
+        reactingCenter: rCOptions[i],
+      });
     }
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      reactingCenter: BondReactingCenterOption.Center,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
-    await selectOption(page, 'Unmarked', 'Center');
-    await pressButton(page, 'Apply');
-
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
-    await selectOption(page, 'Center', 'Unmarked');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      reactingCenter: BondReactingCenterOption.Unmarked,
+    });
 
     await verifyFileExport(
       page,
       'Rxn-V2000/rxn-1463-to-open-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -409,12 +421,13 @@ test.describe('Bond Properties', () => {
     */
 
     await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
       page,
+      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 8);
-    await selectOption(page, 'Unmarked', 'Center');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 29 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      reactingCenter: BondReactingCenterOption.Center,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -432,32 +445,36 @@ test.describe('Bond Properties', () => {
         Selected bonds are highlighted green color.
  */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
     await selectAllStructuresOnCanvas(page);
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Single', 'Double');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 10 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+    });
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const offset = 100;
 
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await page.mouse.move(x - offset, y - offset);
-    await dragMouseTo(x + offset, y + offset, page);
+    await dragMouseTo(page, x + offset, y + offset);
 
-    await doubleClickOnBond(page, BondType.DOUBLE, 3);
-    await selectOption(page, 'Double', 'Single');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Single,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Either', 'Chain');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      topology: BondTopologyOption.Chain,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Unmarked', 'Center');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 12 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      reactingCenter: BondReactingCenterOption.Center,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -471,30 +488,33 @@ test.describe('Bond Properties', () => {
         *.mol and *.rxn files correctly opened, applied atom property correctly represented.
     */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/mol_2926_to_open.mol');
 
-    await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectOption(page, 'Single', 'Double');
-    await selectOption(page, 'Either', 'Chain');
-    await selectOption(page, 'Unmarked', 'Center');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 11 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+      topology: BondTopologyOption.Chain,
+      reactingCenter: BondReactingCenterOption.Center,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectOption(page, 'Single', 'Single Up');
-    await selectOption(page, 'Either', 'Ring');
-    await selectOption(page, 'Unmarked', 'No change');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 13 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleUp,
+      topology: BondTopologyOption.Ring,
+      reactingCenter: BondReactingCenterOption.NoChange,
+    });
 
-    await doubleClickOnBond(page, BondType.SINGLE, 4);
-    await selectOption(page, 'Single', 'Single Up');
-    await selectOption(page, 'Either', 'Chain');
-    await selectOption(page, 'Unmarked', 'Made/broken');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 15 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleUp,
+      topology: BondTopologyOption.Chain,
+      reactingCenter: BondReactingCenterOption.MadeBroken,
+    });
     await verifyFileExport(
       page,
       'Molfiles-V2000/mol_1465_to_open-expected.mol',
       FileType.MOL,
-      'v2000',
+      MolFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -510,31 +530,32 @@ test.describe('Bond Properties', () => {
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/mol_1465_to_open-expected.mol',
       page,
+      'Molfiles-V2000/mol_1465_to_open-expected.mol',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 5);
-    await selectOption(page, 'Single', 'Single Up');
-    await selectOption(page, 'Either', 'Chain');
-    await selectOption(page, 'Unmarked', 'No change');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 16 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.SingleUp,
+      topology: BondTopologyOption.Chain,
+      reactingCenter: BondReactingCenterOption.NoChange,
+    });
 
-    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y + 30);
-    dragMouseTo(x + 100, y + 100, page);
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    dragMouseTo(page, x + 100, y + 100);
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(page, RingButton.Benzene);
-    await clickOnCanvas(page, x + 150, y + 150);
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickOnCanvas(page, x + 150, y + 150, { from: 'pageTopLeft' });
 
     await verifyFileExport(
       page,
       'Rxn-V2000/rxn-1465-to-open-expected.rxn',
       FileType.RXN,
-      'v2000',
+      RxnFileFormat.v2000,
     );
     await takeEditorScreenshot(page);
   });
@@ -549,12 +570,13 @@ test.describe('Bond Properties', () => {
         *.mol and *.rxn files correctly opened, applied atom property correctly represented.
   */
     await openFileAndAddToCanvas(
-      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
       page,
+      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
     );
-    await doubleClickOnBond(page, BondType.SINGLE, 10);
-    await selectOption(page, 'Single', 'Double');
-    await pressButton(page, 'Apply');
+    await getBondLocator(page, { bondId: 31 }).dblclick({ force: true });
+    await BondPropertiesDialog(page).setOptions({
+      type: BondTypeOption.Double,
+    });
     await takeEditorScreenshot(page);
   });
 });

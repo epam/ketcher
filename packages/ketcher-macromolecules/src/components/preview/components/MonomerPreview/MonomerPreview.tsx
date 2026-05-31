@@ -20,17 +20,16 @@ import {
   MonomerName,
   StyledStructRender,
 } from './MonomerPreview.styles';
-import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
+import { getModificationTypeAttribute } from 'helpers/getModificationTypeAttribute';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
 import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import MonomerPreviewProperties from '../MonomerPreviewProperties/MonomerPreviewProperties';
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
-import IDTAliases from '../IDTAliases/IDTAliases';
 import { UsageInMacromolecule } from 'ketcher-core';
 import { MonomerPreviewState } from 'state';
-import { preview } from 'ketcher-react';
 
 interface Props {
   className?: string;
@@ -38,10 +37,15 @@ interface Props {
 
 const MonomerPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as MonomerPreviewState;
+  const LONG_NAME_THRESHOLD = 100;
 
   const { monomer, attachmentPointsToBonds } = preview;
 
   const idtAliases = monomer?.props.idtAliases;
+  const axoLabsAlias = monomer?.props.aliasAxoLabs;
+  const aliasHelm = monomer?.props.aliasHELM;
+  const aliasBiln = monomer?.props.aliasBILN;
+  const modificationTypes = monomer?.props.modificationTypes;
 
   const { preparedAttachmentPointsData, connectedAttachmentPoints } =
     useAttachmentPoints({
@@ -52,7 +56,6 @@ const MonomerPreview = ({ className }: Props) => {
   const idtAliasesText = useIDTAliasesTextForMonomer({
     idtAliases,
     attachmentPointsToBonds,
-    monomerClass: monomer?.props.MonomerClass,
   });
 
   if (!monomer) {
@@ -60,12 +63,36 @@ const MonomerPreview = ({ className }: Props) => {
   }
 
   const isUnresolved = monomer.props.unresolved;
-  const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
+  const monomerName = isUnresolved
+    ? monomer.label
+    : monomer.struct?.name || monomer.label;
+  const isMonomerPreviewPropertiesVisible =
+    idtAliasesText ||
+    axoLabsAlias ||
+    aliasHelm ||
+    aliasBiln ||
+    modificationTypes;
 
   return (
     (monomer.struct || isUnresolved) && (
-      <Container className={className} data-testid="polymer-library-preview">
-        {monomerName && <MonomerName>{monomerName}</MonomerName>}
+      <Container
+        className={className}
+        isLongName={monomerName.length > LONG_NAME_THRESHOLD}
+        data-testid="polymer-library-preview"
+        data-idtaliases={idtAliasesText ?? undefined}
+        data-axolabs={axoLabsAlias ?? undefined}
+        data-helm={aliasHelm ?? undefined}
+        data-biln={aliasBiln ?? undefined}
+        data-modificationtype={getModificationTypeAttribute(modificationTypes)}
+      >
+        {monomerName.length > 0 && (
+          <MonomerName
+            data-testid="preview-tooltip-title"
+            isLongName={monomerName.length > 100}
+          >
+            {monomerName}
+          </MonomerName>
+        )}
         {isUnresolved ? (
           <UnresolvedMonomerPreview />
         ) : (
@@ -83,17 +110,24 @@ const MonomerPreview = ({ className }: Props) => {
           <AttachmentPoints
             preparedAttachmentPointsData={preparedAttachmentPointsData}
           />
-          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+          {isMonomerPreviewPropertiesVisible && (
+            <MonomerPreviewProperties
+              idtAliasesText={idtAliasesText ?? undefined}
+              axoLabsText={axoLabsAlias ?? undefined}
+              helmText={aliasHelm ?? undefined}
+              bilnText={aliasBiln ?? undefined}
+              modificationTypeText={
+                Array.isArray(modificationTypes)
+                  ? modificationTypes.join(', ')
+                  : modificationTypes
+              }
+            />
+          )}
         </InfoBlock>
       </Container>
     )
   );
 };
 
-const StyledPreview = styled(MonomerPreview)`
-  width: ${preview.width + 'px'};
-  height: ${preview.height + 'px'};
-`;
-
-export default StyledPreview;
+export default MonomerPreview;
 export { MonomerPreview };

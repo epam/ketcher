@@ -16,15 +16,14 @@
 
 import { Atom } from './atom';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
-import { SGroup } from 'domain/entities/sgroup';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { BondCIP } from 'domain/entities/types';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -45,7 +44,7 @@ export interface BondAttributes {
 }
 
 export class Bond extends BaseMicromoleculeEntity {
-  static PATTERN = {
+  static readonly PATTERN = {
     TYPE: {
       SINGLE: 1,
       DOUBLE: 2,
@@ -84,7 +83,7 @@ export class Bond extends BaseMicromoleculeEntity {
     },
   };
 
-  static attrlist = {
+  static readonly attrlist = {
     type: Bond.PATTERN.TYPE.SINGLE,
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
@@ -120,7 +119,7 @@ export class Bond extends BaseMicromoleculeEntity {
     this.begin = attributes.begin;
     this.end = attributes.end;
     this.type = attributes.type;
-    this.xxx = attributes.xxx || '';
+    this.xxx = attributes.xxx ?? '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
     this.customQuery = null;
@@ -318,8 +317,8 @@ export class Bond extends BaseMicromoleculeEntity {
 
   getAttachedSGroups(struct: Struct) {
     const sGroupsWithBeginAtom =
-      struct.atoms.get(this.begin)?.sgs || new Pile();
-    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
+      struct.atoms.get(this.begin)?.sgs ?? new Pile();
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs ?? new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
 
@@ -338,7 +337,11 @@ export class Bond extends BaseMicromoleculeEntity {
     return sGroup1 !== sGroup2;
   }
 
-  public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
+  public static isBondToHiddenLeavingGroup(
+    struct: Struct,
+    bond: Bond,
+    includeAtomsInCollapsedSgroups = false,
+  ) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
     const endSuperatomAttachmentPoint =
@@ -346,10 +349,20 @@ export class Bond extends BaseMicromoleculeEntity {
 
     return (
       (beginSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(struct, bond.begin) &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.begin,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
-        Atom.isHiddenLeavingGroupAtom(struct, bond.end) &&
+        Atom.isHiddenLeavingGroupAtom(
+          struct,
+          bond.end,
+          false,
+          includeAtomsInCollapsedSgroups,
+        ) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
   }
@@ -362,7 +375,7 @@ export class Bond extends BaseMicromoleculeEntity {
           (sgroup.atoms.includes(bond.end) &&
             !sgroup.atoms.includes(bond.begin))) &&
         sgroup.isExpanded() &&
-        sgroup instanceof MonomerMicromolecule
+        sgroup.isMonomer
       );
     });
   }

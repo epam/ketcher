@@ -1,25 +1,25 @@
-import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { test } from '@fixtures';
 import {
-  addSingleMonomerToCanvas,
   dragMouseTo,
   waitForPageInit,
   takeEditorScreenshot,
   moveMouseAway,
 } from '@utils';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
+    await Library(page).switchToPeptidesTab();
   });
 
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {
@@ -28,38 +28,29 @@ test.describe('Check attachment point rotation', () => {
     Description: Attachment points and labels should rotate to bond on hover
     */
 
-    // Get 4 peptides locators
-    const peptide1 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      300,
-      300,
-      0,
-    );
-    const peptide2 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      400,
-      400,
-      1,
-    );
-    const peptide3 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      500,
-      500,
-      2,
-    );
-    const peptide4 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      500,
-      200,
-      3,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 300,
+    });
+    const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
-    // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 400,
+      y: 400,
+    });
+    const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 500,
+      y: 500,
+    });
+    const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 500,
+      y: 200,
+    });
+    const peptide4 = getMonomerLocator(page, Peptide.Tza).nth(3);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -92,23 +83,17 @@ test.describe('Check attachment point rotation', () => {
     */
 
     // Get 4 peptides locators
-    const peptide1 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      300,
-      300,
-      0,
-    );
-    const peptide2 = await addSingleMonomerToCanvas(
-      page,
-      Peptides.Tza,
-      400,
-      400,
-      1,
-    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 300,
+    });
+    const peptide1 = getMonomerLocator(page, Peptide.Tza).nth(0);
 
-    // Select bond tool
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 400,
+      y: 400,
+    });
+    const peptide2 = getMonomerLocator(page, Peptide.Tza).nth(1);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -122,14 +107,14 @@ test.describe('Check attachment point rotation', () => {
     });
 
     // Move selected monomer
-    await CommonLeftToolbar(page).selectAreaSelectionTool(
+    await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.mouse.move(400, 400);
-    await dragMouseTo(200, 400, page);
+    await page.mouse.move(410, 410);
+    await dragMouseTo(page, 200, 400);
     await moveMouseAway(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     // Hover 1th peptide
     await peptide1.hover();
     await takeEditorScreenshot(page, {

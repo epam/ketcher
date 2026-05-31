@@ -1,11 +1,11 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities';
 import {
+  type BaseSequenceItemRenderer,
   BaseMonomerRenderer,
-  BaseSequenceItemRenderer,
 } from 'application/render';
-import { CoreEditor, SequenceMode } from 'application/editor';
 
 export type ModifyAminoAcidsViewParams = {
   monomersToModify: BaseMonomer[];
@@ -14,16 +14,16 @@ export type ModifyAminoAcidsViewParams = {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class ModifyAminoAcidsView extends TransientView {
-  public static viewName = 'ModifyAminoAcidsView';
+  public static readonly viewName = 'ModifyAminoAcidsView';
 
   public static show(
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: ModifyAminoAcidsViewParams,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const { monomersToModify } = params;
 
-    if (editor.mode instanceof SequenceMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       monomersToModify.forEach((monomer) => {
         const renderer = monomer.renderer as BaseSequenceItemRenderer;
         const monomerRendererPositionInPixels =
@@ -61,7 +61,8 @@ export class ModifyAminoAcidsView extends TransientView {
           .attr('x', 2)
           .attr('font-family', 'Courier New')
           .attr('font-size', '20px')
-          .attr('font-weight', '700');
+          .attr('font-weight', '700')
+          .attr('style', 'user-select: none');
 
         if (renderer.node.modified) {
           group

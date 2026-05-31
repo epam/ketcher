@@ -10,12 +10,13 @@ export const Form = styled.form({
 export const Row = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
+  alignItems: 'flex-end',
   marginBottom: '16px',
 });
 
 export const StyledDropdown = styled(DropDown)(({ theme }) => ({
-  width: 'calc(50% - 6px)',
-  height: '28px',
+  width: '230px',
+  flexShrink: 0,
 
   '& .MuiOutlinedInput-root:hover:not(.Mui-disabled)': {
     border: `1px solid ${theme.ketcher.color.input.border.hover}`,
@@ -49,6 +50,15 @@ export const SvgPreview = styled('div')(({ theme }) => ({
   height: '100%',
   position: 'relative',
   border: `1px solid ${theme.ketcher.color.input.border.regular}`,
+  '& svg': {
+    width: '100%',
+    height: '100%',
+    '& .drawn-structures': {
+      '& .monomer': {
+        lineHeight: 'initial !important',
+      },
+    },
+  },
 }));
 
 export const PreviewContainer = styled('div')(({ theme }) => ({

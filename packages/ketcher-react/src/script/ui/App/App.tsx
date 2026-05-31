@@ -103,7 +103,7 @@ const App = (props: Props) => {
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <div className={classes.app}>
+      <div className={classes.app} data-testid="asdvasdv">
         <AppHiddenContainer />
         <Editor
           prevKetcherId={prevKetcherId}

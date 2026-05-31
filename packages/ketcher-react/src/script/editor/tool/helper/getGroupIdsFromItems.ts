@@ -1,4 +1,4 @@
-import { Atom, mergeMapOfItemsToSet, Struct } from 'ketcher-core';
+import { Atom, MergeItems, mergeMapOfItemsToSet, Struct } from 'ketcher-core';
 
 type Items = {
   atoms?: number[];
@@ -26,11 +26,6 @@ function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
 
   return Array.from(groupsIds);
 }
-
-type MergeItems = {
-  atoms: Map<number, number>;
-  bonds: Map<number, number>;
-};
 
 function getGroupIdsFromItemMaps(
   struct: Struct,

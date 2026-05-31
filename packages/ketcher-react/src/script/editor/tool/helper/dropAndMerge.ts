@@ -3,6 +3,7 @@ import {
   fromFragmentDeletion,
   fromItemsFuse,
   fromSgroupDeletion,
+  MergeItems,
   ReStruct,
   setExpandSGroup,
   SGroup,
@@ -11,23 +12,22 @@ import {
 import Editor from '../../Editor';
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems';
 
-type MergeItems = {
-  atoms: Map<number, number>;
-  bonds: Map<number, number>;
-  atomToFunctionalGroup?: Map<number, number>;
-};
-
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: any,
+  mergeItems?: MergeItems | null,
   action?: Action | null,
-  copyAction?: Action,
+  copyActionOrResizeCanvas?: Action | boolean,
 ): Action {
   const restruct = editor.render.ctab;
   const isMerging = !!mergeItems;
+  const copyAction =
+    typeof copyActionOrResizeCanvas === 'boolean'
+      ? undefined
+      : copyActionOrResizeCanvas;
+  const resizeCanvas = copyActionOrResizeCanvas === true;
   let dropItemAction = copyAction || new Action();
 
-  if (isMerging) {
+  if (isMerging && mergeItems) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
       editor.render.ctab,
       mergeItems,
@@ -60,7 +60,11 @@ export function dropAndMerge(
   if (isMerging) editor.selection(null);
 
   if (dropItemAction?.operations.length > 0) {
-    editor.update(dropItemAction, false);
+    editor.update(
+      dropItemAction,
+      false,
+      resizeCanvas ? { resizeCanvas: true } : undefined,
+    );
   }
 
   return dropItemAction;

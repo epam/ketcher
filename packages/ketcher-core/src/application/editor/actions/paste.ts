@@ -54,6 +54,11 @@ type CreatedItems = {
   multitailArrows: number[];
 };
 
+export interface PasteItems {
+  atoms: number[];
+  bonds: number[];
+}
+
 export function fromPaste(
   restruct,
   pstruct,
@@ -61,7 +66,7 @@ export function fromPaste(
   angle = 0,
   isPreview = false,
   needMoveFromTopLeftPoint = false,
-): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+): [Action, PasteItems, CreatedItems] {
   const xy0 = needMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
@@ -72,10 +77,10 @@ export function fromPaste(
   const aidMap = new Map();
   const fridMap = new Map();
 
-  const pasteItems = {
+  const pasteItems: PasteItems = {
     // only atoms and bonds now
-    atoms: [] as number[],
-    bonds: [] as number[],
+    atoms: [],
+    bonds: [],
   };
 
   const items: CreatedItems = {

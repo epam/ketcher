@@ -20,7 +20,9 @@ import { ThemeType } from '../defaultTheme';
 
 export const getGlobalStyles = (theme: ThemeType) =>
   css({
-    body: {
+    all: 'unset',
+    '.Ketcher-polymer-editor-root': {
+      all: 'unset',
       fontSize: theme.ketcher.font.size.medium,
       fontFamily: theme.ketcher.font.family.inter,
       fontWeight: theme.ketcher.font.weight.regular,
@@ -28,38 +30,38 @@ export const getGlobalStyles = (theme: ThemeType) =>
       color: theme.ketcher.color.text.primary,
       boxSizing: 'border-box',
     },
-    div: {
+    ':where(.Ketcher-polymer-editor-root) div': {
       boxSizing: 'border-box',
     },
-    input: {
+    ':where(.Ketcher-polymer-editor-root) input': {
       fontFamily: theme.ketcher.font.family.inter,
       fontWeight: theme.ketcher.font.weight.regular,
       fontSize: theme.ketcher.font.size.regular,
       boxSizing: 'border-box',
     },
-    h1: {
+    ':where(.Ketcher-polymer-editor-root) h1': {
       fontSize: 96,
     },
-    h2: {
+    ':where(.Ketcher-polymer-editor-root) h2': {
       fontSize: 60,
     },
-    h3: {
+    ':where(.Ketcher-polymer-editor-root) h3': {
       fontSize: 48,
     },
-    h4: {
+    ':where(.Ketcher-polymer-editor-root) h4': {
       fontSize: 34,
     },
-    h5: {
+    ':where(.Ketcher-polymer-editor-root) h5': {
       fontSize: 24,
     },
-    h6: {
+    ':where(.Ketcher-polymer-editor-root) h6': {
       fontSize: 20,
       fontWeight: theme.ketcher.font.weight.bold,
     },
-    p: {
+    ':where(.Ketcher-polymer-editor-root) p': {
       fontSize: theme.ketcher.font.size.regular,
     },
-    button: {
+    ':where(.Ketcher-polymer-editor-root) button': {
       textTransform: 'uppercase',
       fontWeight: theme.ketcher.font.weight.bold,
     },

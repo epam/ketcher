@@ -46,7 +46,7 @@ export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
       case props.states.idle:
         return <OpenOptions {...props} />;
       case props.states.textEditor:
-        return <TextEditor {...props} />;
+        return <TextEditor {...props} testId="open-structure-textarea" />;
       case props.states.presentationViewer:
         return <CDXStructuresViewer {...props} />;
       default:

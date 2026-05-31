@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
 
 export class AtomMove extends BaseOperation {
@@ -36,7 +36,7 @@ export class AtomMove extends BaseOperation {
     const { aid, d } = this.data;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
-    atom!.pp.add_(d); // eslint-disable-line no-underscore-dangle
+    atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
     const reatom = restruct.atoms.get(aid);
     if (reatom) {
       const scaled = Scale.modelToCanvas(d, restruct.render.options);

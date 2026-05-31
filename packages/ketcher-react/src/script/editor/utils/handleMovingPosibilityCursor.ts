@@ -7,7 +7,8 @@ export const handleMovingPosibilityCursor = (
   if (!item && isCursorShown) {
     canvas.removeAttribute('cursor');
   }
-  if (item && !isCursorShown) {
+  // Previously this code had condition on 'isCursorShown' which prevented different cursor for the same item
+  if (item) {
     canvas.setAttribute('cursor', cursor);
   }
 };

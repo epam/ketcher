@@ -1,12 +1,12 @@
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { ScrollOffset } from './scroll-offset';
 import { VerticalScrollbar } from './scrollbar-vertical';
 import { HorizontalScrollbar } from './scrollbar-horizontal';
 
 export class ScrollbarContainer {
-  #scrollOffset: ScrollOffset;
-  #verticalBar: VerticalScrollbar | null = null;
-  #horizontalBar: HorizontalScrollbar | null = null;
+  readonly #scrollOffset: ScrollOffset;
+  readonly #verticalBar: VerticalScrollbar;
+  readonly #horizontalBar: HorizontalScrollbar;
 
   constructor(render: Render) {
     this.#scrollOffset = new ScrollOffset(render);
@@ -14,9 +14,15 @@ export class ScrollbarContainer {
     this.#horizontalBar = new HorizontalScrollbar(render, this.#scrollOffset);
   }
 
+  public destroy() {
+    this.#verticalBar.destroy();
+    this.#horizontalBar.destroy();
+  }
+
+  /** Specified {@link render} resets scrollbars */
   update() {
     this.#scrollOffset.update();
-    this.#verticalBar?.update();
-    this.#horizontalBar?.update();
+    this.#verticalBar.update();
+    this.#horizontalBar.update();
   }
 }

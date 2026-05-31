@@ -1,0 +1,870 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    25.828990595883482,
+                    -8.386895089918564,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.828990595883482,
+            "y": 7.386895089918563,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.994445208784173,
+                    -8.220384666634938,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.994445241658612,
+                    -8.220384666634938,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label9",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.994445241658612,
+            "y": 7.220384666634938,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.6944461262335,
+                    -5.095384563902325,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.694446159107935,
+                    -5.095384563902325,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 4,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label7",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.694446159107935,
+            "y": 4.095384563902325,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    19.944446298824282,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.944446331698714,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 5,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label8",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.944446331698714,
+            "y": 4.020383798497264,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.269446546456988,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.269446579331422,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 3,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label5",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.269446579331422,
+            "y": 4.020383798497264,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.819445965970628,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.819445998845064,
+                    -5.020383798497264,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label6",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.819445998845064,
+            "y": 4.020383798497264,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.394446550566297,
+                    -1.9453838881432444,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.3944465834407325,
+                    -1.9453838881432444,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 10,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label1",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.3944465834407325,
+            "y": 0.9453838881432444,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.944445970079924,
+                    -1.9453838881432444,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.94444600295436,
+                    -1.9453838881432444,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "subscript": "Polymer label2",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.94444600295436,
+            "y": 0.9453838881432444,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.844447657043618,
+                    -1.9953840805218346,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.844447689918054,
+                    -1.9953840805218346,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 7,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label3",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.844447689918054,
+            "y": 0.9953840805218346,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.04444859093016,
+                    -1.9203837919539493,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.0444486238046,
+                    -1.9203837919539493,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 6,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label4",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.0444486238046,
+            "y": 0.9203837919539493,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.794436908498335,
+                    -13.776100410189038,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.794448385464944,
+                    -13.77609278079425,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    12.29444833615329,
+                    -12.910064920292825,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    12.2944445214559,
+                    -14.64211301190089,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 6,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label14",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 13.794448385464944,
+            "y": 11.910064920292825,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    19.894435616027863,
+                    -13.826099648893276,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.894447092994476,
+                    -13.826092019498496,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    19.394447043682824,
+                    -12.96006415899707,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    19.394447043682824,
+                    -14.692116065302528,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label15",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.894447092994476,
+            "y": 11.96006415899707,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.744433624975651,
+                    -13.80110193688985,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.7444451019422615,
+                    -13.801086678100283,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.244446959979301,
+                    -12.935062632296251,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    5.244446959979301,
+                    -14.667114538601709,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 4,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label13",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.7444451019422615,
+            "y": 11.935062632296251,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.794450770192364,
+                    -8.251083854975366,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.794450767136004,
+                    -8.251083854975366,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 8,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "subscript": "Polymer label10",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.794450770192364,
+            "y": 7.251083854975366,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    19.731947596206346,
+                    -8.2062499284717,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    20.731947597771793,
+                    -8.2062499284717,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 3,
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "subscript": "Polymer label12",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.731947597771793,
+            "y": 7.206249928471698,
+            "z": 0
+        }
+    }
+}

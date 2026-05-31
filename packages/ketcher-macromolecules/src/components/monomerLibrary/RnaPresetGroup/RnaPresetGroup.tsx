@@ -15,24 +15,42 @@
  ***************************************************************************/
 
 import { useAppSelector } from 'hooks';
-import { MouseEvent } from 'react';
+import {
+  getRnaPresetPhosphatePosition,
+  MonomerItemType,
+  isAmbiguousMonomerLibraryItem,
+} from 'ketcher-core';
+import { debounce } from 'lodash';
+import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
   setActivePresetForContextMenu,
+  setInvalidPresetError,
   setIsEditMode,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
 import {
-  GroupContainer,
+  GroupContainerColumn,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectShowPreview, showPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
+import {
+  AmbiguousMonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewType,
+} from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
+import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
@@ -41,11 +59,41 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
   const dispatch = useDispatch();
+  const resolvePhosphatePosition = (preset: IRnaPreset) =>
+    preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
+
+  const validatePreset = (preset: IRnaPreset) => {
+    let isBaseValid = true;
+    let isSugarValid = true;
+    let isPhosphateValid = true;
+    if (preset?.base?.props?.MonomerCaps) {
+      isBaseValid = 'R1' in preset.base.props.MonomerCaps;
+    }
+    if (preset?.sugar?.props?.MonomerCaps) {
+      if (isBaseValid && preset?.base?.props?.MonomerCaps) {
+        isSugarValid = 'R3' in preset.sugar.props.MonomerCaps;
+      }
+    }
+    if (preset?.phosphate?.props?.MonomerCaps) {
+      isPhosphateValid = 'R1' in preset.phosphate.props.MonomerCaps;
+      if (isSugarValid && preset?.sugar?.props?.MonomerCaps) {
+        isSugarValid = 'R2' in preset.sugar.props.MonomerCaps;
+      }
+    }
+
+    return isBaseValid && isSugarValid && isPhosphateValid;
+  };
 
   const selectPreset = (preset: IRnaPreset) => () => {
+    const isPresetValid = validatePreset(preset);
+
+    if (!isPresetValid && preset.name) {
+      dispatch(setInvalidPresetError(preset.name));
+      return;
+    }
     dispatch(setActivePreset(preset));
-    editor.events.selectPreset.dispatch(preset);
-    if (preset === activePreset?.presetInList) return;
+    editor?.events.selectPreset.dispatch(preset);
+    if (preset.name === activePreset.name) return;
     dispatch(setIsEditMode(false));
   };
 
@@ -68,35 +116,106 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     };
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    event.stopPropagation();
-    dispatch(setActivePresetForContextMenu(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        editPreset,
-      },
-      position: getMenuPosition(event.currentTarget as HTMLElement),
-    });
+  // region # Preview
+  const preview = useAppSelector(selectShowPreview);
+
+  const dispatchShowPreview = useCallback(
+    (payload: unknown) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useCallback(
+    debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
+  const handleItemMouseLeave = (): void => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
   };
 
+  const handleItemMouseMove = (
+    preset: IRnaPreset,
+    e: React.MouseEvent,
+  ): void => {
+    handleItemMouseLeave();
+
+    if (needSkipPreviewForElement(e.target as HTMLElement)) {
+      return;
+    }
+
+    if (preview.type === PreviewType.Preset || !e.currentTarget) {
+      return;
+    }
+
+    const monomers: ReadonlyArray<MonomerItemType | undefined> = [
+      preset.sugar,
+      preset.base,
+      preset.phosphate,
+    ];
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const style = {
+      left: `${cardCoordinates.left + cardCoordinates.width}px`,
+      top: isAmbiguousMonomerLibraryItem(preset.base)
+        ? calculateAmbiguousMonomerPreviewTop(preset.base)(cardCoordinates)
+        : calculateNucleoElementPreviewTop(cardCoordinates),
+      transform: 'translate(-100%, 0)',
+    };
+    const previewData: PresetPreviewState | AmbiguousMonomerPreviewState =
+      isAmbiguousMonomerLibraryItem(preset.base)
+        ? {
+            type: PreviewType.AmbiguousMonomer,
+            monomer: preset.base,
+            presetMonomers: monomers,
+            style,
+          }
+        : {
+            type: PreviewType.Preset,
+            monomers,
+            name: preset.name,
+            idtAliases: preset.idtAliases,
+            aliasAxoLabs: preset.aliasAxoLabs,
+            phosphatePosition: resolvePhosphatePosition(preset),
+            position: PresetPosition.Library,
+            style,
+          };
+    debouncedShowPreview(previewData);
+  };
+  // endregion # Preview
+
+  const handleContextMenu =
+    (preset: IRnaPreset) =>
+    (event: React.MouseEvent): void => {
+      event.stopPropagation();
+      dispatch(setActivePresetForContextMenu(preset));
+      show({
+        event,
+        props: {
+          duplicatePreset,
+          editPreset,
+        },
+        position: getMenuPosition(event.currentTarget as HTMLElement),
+      });
+    };
+
   return (
-    <GroupContainer data-testid="rna-preset-group">
+    <GroupContainerColumn data-testid="rna-preset-group">
       <ItemsContainer>
-        {presets.map((preset, index) => {
+        {presets.map((preset: IRnaPreset, index: number): ReactElement => {
           return (
             <RnaPresetItem
+              isSelected={activePreset?.name === preset.name}
               key={`${preset.name}${index}`}
               preset={preset}
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
-              isSelected={activePreset?.name === preset.name}
+              onMouseMove={(e) => handleItemMouseMove(preset, e)}
+              onMouseLeave={handleItemMouseLeave}
             />
           );
         })}
       </ItemsContainer>
       <RNAContextMenu />
-    </GroupContainer>
+    </GroupContainerColumn>
   );
 };

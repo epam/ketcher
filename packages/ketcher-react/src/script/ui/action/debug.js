@@ -33,11 +33,13 @@ const debugObj = {
       const molStr = molSerializer.serialize(editor.struct());
       const molQs = 'mol=' + encodeURIComponent(molStr).replace(/%20/g, '+');
       const qs = document.location.search;
-      document.location.search = !qs
-        ? '?' + molQs // eslint-disable-line
-        : qs.search('mol=') === -1
-        ? qs + '&' + molQs
-        : qs.replace(/mol=[^&$]*/, molQs);
+      if (!qs) {
+        document.location.search = '?' + molQs;
+      } else if (qs.search('mol=') === -1) {
+        document.location.search = qs + '&' + molQs;
+      } else {
+        document.location.search = qs.replace(/mol=[^&$]*/, molQs);
+      }
     },
   },
   hidden: (options) => isHidden(options, 'qs-serialize'),

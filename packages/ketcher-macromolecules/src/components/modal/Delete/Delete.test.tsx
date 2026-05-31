@@ -37,13 +37,28 @@ describe('Delete component', () => {
     },
     name: 'A',
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const presetCustom: any = {
+    base: {
+      label: '25A',
+    },
+    phosphate: {
+      label: 'P',
+    },
+    sugar: {
+      label: 'R',
+    },
+    name: 'MyRna',
+    nameInList: 'MyRna',
+  };
   it('should render correctly', () => {
     expect(
       render(
         withThemeAndStoreProvider(<Delete {...mockProps} />, {
           rnaBuilder: {
-            activePresetForContextMenu: { presetInList: preset, name: 'name' },
-            presets: [preset],
+            activePresetForContextMenu: { nameInList: 'name', name: 'name' },
+            presetsDefault: [preset],
+            presetsCustom: [],
           },
         }),
       ),
@@ -53,8 +68,9 @@ describe('Delete component', () => {
     render(
       withThemeAndStoreProvider(<Delete {...mockProps} />, {
         rnaBuilder: {
-          activePresetForContextMenu: { presetInList: preset, name: 'name' },
-          presets: [preset],
+          activePresetForContextMenu: { nameInList: 'name', name: 'name' },
+          presetsDefault: [preset],
+          presetsCustom: [],
         },
       }),
     );
@@ -67,8 +83,9 @@ describe('Delete component', () => {
     render(
       withThemeAndStoreProvider(<Delete {...mockProps} />, {
         rnaBuilder: {
-          activePresetForContextMenu: { presetInList: preset, name: 'name' },
-          presets: [preset],
+          activePresetForContextMenu: { nameInList: 'name', name: 'name' },
+          presetsDefault: [preset],
+          presetsCustom: [presetCustom],
         },
         editor: {
           editor: {

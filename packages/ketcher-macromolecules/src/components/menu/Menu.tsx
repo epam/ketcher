@@ -17,24 +17,25 @@ import React from 'react';
 import { MenuItem } from './menuItem';
 import { SubMenu } from './subMenu';
 import { IMenuContext, MenuContext } from '../../contexts';
-import { Divider, MenuLayout, StyledGroup } from './styles';
+import { Divider, MenuLayout, StyledGroup, VerticalDivider } from './styles';
 import { GroupProps, MenuProps } from './types';
 
 const Group = ({
   children,
   divider = false,
+  isHorizontal,
 }: React.PropsWithChildren<GroupProps>) => {
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem || child.type === SubMenu ? child : null;
+      return child;
     },
   );
 
   return (
     <>
-      <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
-      {divider && <Divider />}
+      <StyledGroup isHorizontal={isHorizontal}>{subComponents}</StyledGroup>
+      {divider && (isHorizontal ? <VerticalDivider /> : <Divider />)}
     </>
   );
 };
@@ -44,6 +45,7 @@ const Menu = ({
   onItemClick,
   activeMenuItems,
   testId,
+  isHorizontal,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
@@ -59,14 +61,14 @@ const Menu = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null;
+      return child && child.type === Group ? child : null;
     },
   );
 
   return (
     <MenuContext.Provider value={context}>
-      <MenuLayout data-testid={testId}>
-        {subComponents.map((component) => component)}
+      <MenuLayout data-testid={testId} isHorizontal={isHorizontal}>
+        {subComponents}
       </MenuLayout>
     </MenuContext.Provider>
   );

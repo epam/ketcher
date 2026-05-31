@@ -1,13 +1,11 @@
+import { StrictMode, useEffect, useState } from 'react';
+import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { Ketcher, StructServiceProvider } from 'ketcher-core';
+
 import 'ketcher-react/dist/index.css';
 
-import { useState } from 'react';
-import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
-import {
-  Ketcher,
-  RemoteStructServiceProvider,
-  StructServiceProvider,
-} from 'ketcher-core';
-import { ModeControl } from './ModeControl';
+import { getStructServiceProvider } from './utils';
+import { safePostMessage } from './utils/safePostMessage';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -19,59 +17,26 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
     if (button) acc[button] = { hidden: true };
 
     return acc;
-  }, {});
+  }, {} as { [val: string]: { hidden: boolean } });
 };
-
-let structServiceProvider: StructServiceProvider =
-  new RemoteStructServiceProvider(
-    process.env.API_PATH || process.env.REACT_APP_API_PATH,
-  );
-if (process.env.MODE === 'standalone') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { StandaloneStructServiceProvider } = require('ketcher-standalone');
-  structServiceProvider =
-    new StandaloneStructServiceProvider() as StructServiceProvider;
-}
-
-const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';
-
-type PolymerType = ({
-  togglerComponent,
-}: {
-  togglerComponent?: JSX.Element;
-}) => JSX.Element | null;
-
-let PolymerEditor: PolymerType = () => null;
-if (enablePolymerEditor) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-macromolecules');
-  PolymerEditor = Editor as PolymerType;
-}
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
-  const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  };
+  const [structServiceProvider, setStructServiceProvider] =
+    useState<StructServiceProvider | null>(null);
+  useEffect(() => {
+    getStructServiceProvider().then(setStructServiceProvider);
+  }, []);
 
-  const togglerComponent = enablePolymerEditor ? (
-    <ModeControl
-      toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
-    />
-  ) : undefined;
+  if (!structServiceProvider) {
+    return <div>Loading...</div>;
+  }
 
-  return showPolymerEditor ? (
-    <>
-      <PolymerEditor togglerComponent={togglerComponent} />
-    </>
-  ) : (
-    <>
+  return (
+    <StrictMode>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -82,15 +47,11 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
-
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
+          safePostMessage({
+            eventType: 'init',
+          });
+          window.scrollTo(0, 0);
         }}
-        togglerComponent={togglerComponent}
       />
       {hasError && (
         <InfoModal
@@ -105,7 +66,7 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

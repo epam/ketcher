@@ -8,7 +8,7 @@ import {
 import React, { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Icon } from 'ketcher-react';
+import { Icon, KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
 import { EmptyFunction } from 'helpers/emptyFunction';
 import styles from './Modal.module.less';
@@ -24,6 +24,8 @@ interface ModalProps {
   modalWidth?: string;
   expanded?: boolean;
   setExpanded?: (boolean) => void;
+  testId?: string;
+  hideHeaderBorder?: boolean;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -31,17 +33,19 @@ const StyledDialog = styled(Dialog)`
   }
 `;
 
-const Header = styled(DialogTitle)(({ theme }) => ({
-  padding: '2px 4px 2px 12px;',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  fontFamily: `${theme.ketcher.font.family.inter}`,
-  fontSize: `${theme.ketcher.font.size.medium}`,
-  fontWeight: 500,
-  textTransform: 'capitalize',
-  borderBottom: '1px solid rgba(202, 211, 221, 1)',
-}));
+const Header = styled(DialogTitle)<{ hideborder?: boolean }>(
+  ({ theme, hideborder }) => ({
+    padding: '2px 4px 2px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontFamily: `${theme.ketcher.font.family.inter}`,
+    fontSize: `${theme.ketcher.font.size.medium}`,
+    fontWeight: 500,
+    textTransform: 'capitalize',
+    borderBottom: hideborder ? 'none' : '1px solid rgba(202, 211, 221, 1)',
+  }),
+);
 
 const Title = styled.div({
   marginRight: '10px',
@@ -93,11 +97,15 @@ export const Modal = ({
   modalWidth,
   expanded = false,
   setExpanded = EmptyFunction,
+  testId,
+  hideHeaderBorder,
 }: ModalProps) => {
   const theme = useTheme();
 
   const paperProps = useMemo(
     () => ({
+      ...(testId ? { testid: testId } : {}),
+      'data-testid': testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
@@ -112,6 +120,7 @@ export const Modal = ({
       },
     }),
     [
+      testId,
       theme.ketcher.color.text.primary,
       theme.ketcher.color.background.canvas,
       expanded,
@@ -147,17 +156,21 @@ export const Modal = ({
       PaperProps={paperProps}
       open={isOpen}
       onClose={onClose}
+      container={document.querySelector(
+        KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+      )}
       disableEscapeKeyDown={!showCloseButton}
       className={className}
       sx={{ padding: '24px' }}
     >
       {title || showCloseButton || showExpandButton ? (
-        <Header>
+        <Header hideborder={hideHeaderBorder}>
           <Title>{title}</Title>
           <span>
             {showExpandButton && (
               <IconButton
-                title={'expand window'}
+                title={expanded ? 'Minimize window' : 'Expand window'}
+                data-testid={'expand-window-button'}
                 className={styles.expandButton}
                 onClick={() => {
                   setExpanded(!expanded);
@@ -167,7 +180,11 @@ export const Modal = ({
               </IconButton>
             )}
             {showCloseButton && (
-              <IconButton title={'Close window'} onClick={onClose}>
+              <IconButton
+                title={'Close window'}
+                onClick={onClose}
+                data-testid="close-window-button"
+              >
                 <StyledIcon name={'close'} />
               </IconButton>
             )}

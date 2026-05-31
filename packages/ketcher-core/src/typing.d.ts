@@ -1,4 +1,6 @@
-import { Ketcher } from 'ketcher-core';
+import type { Ketcher } from 'ketcher-core';
+import type { BaseRenderer } from 'application/render';
+import type { LogSettings } from 'utilities';
 
 declare global {
   export interface Window {
@@ -8,10 +10,19 @@ declare global {
   }
 
   export interface SVGElement {
-    getBBox: () => void;
+    getBBox: () => DOMRect;
   }
 
   export interface Element {
     __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
+    __data__?: BaseRenderer;
+  }
+
+  declare module '*.ket' {
+    const content: string;
+    export default content;
   }
 }

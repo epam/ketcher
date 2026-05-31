@@ -24,9 +24,14 @@ import {
   selectMonomerGroups,
   selectMonomersInCategory,
   selectMonomersInFavorites,
-  getMonomerUniqueKey,
+  selectAmbiguousMonomersInCategory,
+  selectAmbiguousMonomersInFavorites,
 } from 'state/library';
-import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
+import {
+  MONOMER_LIBRARY_FAVORITES,
+  MONOMER_LIBRARY_PEPTIDES,
+  MonomerGroups,
+} from '../../../constants';
 import { MonomerItemType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
 import {
@@ -56,6 +61,7 @@ const MonomerList = ({
   const presets = useAppSelector(selectFilteredPresets);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
+
   const items = !isFavoriteTab
     ? selectMonomersInCategory(monomers, libraryName)
     : ({
@@ -68,12 +74,10 @@ const MonomerList = ({
       ? (items as Favorites).monomers
       : (items as MonomerItemType[]),
   );
-
+  const ambiguousMonomers = isFavoriteTab
+    ? selectAmbiguousMonomersInFavorites(monomers)
+    : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
   const [selectedMonomers, setSelectedMonomers] = useState('');
-
-  const selectMonomer = (monomer: MonomerItemType) => {
-    setSelectedMonomers(getMonomerUniqueKey(monomer));
-  };
 
   useEffect(() => {
     if (activeTool !== 'monomer') {
@@ -91,7 +95,7 @@ const MonomerList = ({
             title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
             libraryName={libraryName}
-            onItemClick={onItemClick || selectMonomer}
+            onItemClick={onItemClick}
             selectedMonomerUniqueKey={selectedMonomers}
           />
         );
@@ -106,6 +110,21 @@ const MonomerList = ({
           />
         </>
       )}
+      <>
+        {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
+          ambiguousMonomers.map((group) => {
+            return (
+              <MonomerGroup
+                key={group.groupTitle}
+                title={group.groupTitle}
+                items={group.groupItems}
+                libraryName={libraryName}
+                onItemClick={onItemClick}
+                selectedMonomerUniqueKey={selectedMonomers}
+              />
+            );
+          })}
+      </>
     </MonomerListContainer>
   );
 };

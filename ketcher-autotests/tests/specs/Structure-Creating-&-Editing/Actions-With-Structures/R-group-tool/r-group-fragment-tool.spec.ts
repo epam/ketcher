@@ -1,0 +1,384 @@
+/* eslint-disable no-magic-numbers */
+import { test } from '@fixtures';
+import {
+  takeEditorScreenshot,
+  clickInTheMiddleOfTheCanvas,
+  openFileAndAddToCanvas,
+  waitForPageInit,
+  clickOnCanvas,
+  MolFileFormat,
+  deleteByKeyboard,
+} from '@utils';
+import {
+  copyAndPaste,
+  cutAndPaste,
+  selectAllStructuresOnCanvas,
+} from '@utils/canvas/selectSelection';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { setAttachmentPoints } from '@tests/pages/molecules/canvas/AttachmentPointsDialog';
+import { RGroup } from '@tests/pages/constants/rGroupDialog/Constants';
+import { RGroupDialog } from '@tests/pages/molecules/canvas/R-GroupDialog';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+
+test.describe('Open Ketcher', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('R-Fragment-Group dialog opening', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1582 and EPMLSOPKET-1610
+     * Description:  R-Fragment-Group dialog opening
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await RGroupDialog(page).setRGroup(RGroup.R5);
+    await takeEditorScreenshot(page);
+  });
+
+  test('R-Fragment-Group UI Verification', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1583
+     * Description: R-Fragment-Group UI Verification
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('R-Fragment-Group dialog cancelling', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1584
+     * Description:  R-Fragment-Group dialog cancelling
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await RGroupDialog(page).setRGroup(RGroup.R5);
+    await RGroupDialog(page).cancel();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create Single R-Fragment-Group member', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1585
+     * Description: Create Single R-Fragment-Group member
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await RGroupDialog(page).setRGroupFragment(RGroup.R5);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Change R-Group definition for single R-Group member', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1587
+     * Description: Change R-Group definition for single R-Group member
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await RGroupDialog(page).setRGroupFragment(RGroup.R5);
+
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add attachment point to the R-Group member', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1598
+     * Description: Change R-Group definition for single R-Group member
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R5);
+
+    await setAttachmentPoints(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+      { primary: true },
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Brackets rendering for whole r-group structure', async ({ page }) => {
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Brackets rendering for whole r-group structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas(page, 'KET/simple-chain.ket');
+    await setAttachmentPoints(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
+      { primary: true },
+    );
+    await CommonLeftToolbar(page).areaSelectionTool();
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Remove R-Group member from R-Group', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1589
+     * Description: Remove R-Group member from R-Group. File used for test - R-fragment-structure.mol
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/R-fragment-structure.mol',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
+    await RGroupDialog(page).unsetRGroupFragment(RGroup.R5);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Change R-Group definition for multiple R-Group members', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1588
+     * Description: Change R-Group definition for multiple R-Group members. File used for test - R-fragment-structure.mol
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/R-fragment-structure.mol',
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'R#' }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R7);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create several R-Group members', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1586
+     * Description: Create several R-Group members
+     */
+    await openFileAndAddToCanvas(page, 'Molfiles-V2000/three-structures.mol');
+
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R7);
+
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(2).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R8);
+
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(1).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R15);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Define a structure with attachment points as R-Group member', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1599
+     * Description: Define a structure with attachment points as R-Group member
+     */
+    await BottomToolbar(page).clickRing(RingButton.Benzene);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await setAttachmentPoints(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 8 }),
+      { primary: true, secondary: true },
+    );
+    await page.keyboard.press('ControlOrMeta+r');
+    await page.keyboard.press('ControlOrMeta+r');
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
+      force: true,
+    });
+    await RGroupDialog(page).setRGroupFragment(RGroup.R5);
+    await takeEditorScreenshot(page);
+  });
+
+  test('R-Group definition is not deleted when root structure was deleted', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1591
+     * Description: R-Group definition is not deleted when root structure was deleted
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/R-fragment-structure.mol',
+    );
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
+    await deleteByKeyboard(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete R-Group member', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1590
+     * Description: Delete R-Group member
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/R-fragment-structure.mol',
+    );
+
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Fragment);
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
+    await deleteByKeyboard(page);
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await CommonLeftToolbar(page).erase();
+    await getAtomLocator(page, { atomLabel: 'R#' }).nth(0).click({
+      force: true,
+    });
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+
+    await selectAllStructuresOnCanvas(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Layout action to the distorted structure with R-Group Label', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1609
+     * Description: The structure is layout correctly without R-group label loss.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/r1-several-distorted.mol',
+    );
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*   Test case: EPMLSOPKET-1601
+     * Description: User is able to Copy/Paste structure with R-group label.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/r1-several-structures.mol',
+    );
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*      Test case: EPMLSOPKET-1601
+     * Description: User is able to Cut/Paste the structure with R-group label.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/r1-several-structures.mol',
+    );
+    await cutAndPaste(page);
+    await clickOnCanvas(page, 500, 200, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('R-Group Fragment Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Save as *.mol V2000 file', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1602
+     * Description: All R-group members, R-group definition, occurrence,
+     * brackets are rendered correctly after saving as *.mol V2000 file.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V2000/r1-several-structures.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/r1-several-structures-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v2000,
+    );
+  });
+
+  test('Save as *.mol V3000 file', async ({ page }) => {
+    /*
+     * Test case: EPMLSOPKET-1603
+     * Description: All R-group members, R-group definition, occurrence,
+     * brackets are rendered correctly after saving as *.mol V3000 file.
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Molfiles-V3000/r1-several-structures-V3000.mol',
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+    );
+  });
+
+  test('Save as *.cxsmi file', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1604
+     * Description: User is able to save the structure with R-group label as .cxsmi file
+     */
+    await openFileAndAddToCanvas(
+      page,
+      'Extended-SMILES/r1-several-structures.cxsmi',
+    );
+    await verifyFileExport(
+      page,
+      'Extended-SMILES/r1-several-structures-expected.cxsmi',
+      FileType.ExtendedSMILES,
+    );
+  });
+});

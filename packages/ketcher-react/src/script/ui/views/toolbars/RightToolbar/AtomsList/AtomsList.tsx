@@ -18,13 +18,14 @@ import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
-import { UiActionAction } from '../../../../action';
+import { Tools, UiActionAction } from '../../../../action';
 import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 
 interface AtomsListProps {
   atoms: string[];
+  status: Tools;
   active?: {
     tool?: string;
     opts: {
@@ -60,11 +61,19 @@ const StyledAtom = styled(Atom)((props: any) => {
           background-color: ${style.color.primaryWhite};
          }
        }
+       &:disabled, &:disabled:active, &:disabled:hover {
+        cursor: not-allowed;
+        color: #333;
+        opacity: 0.4;
+        border: none;
+        border-color: none;
+        background-color: transparent;
+       }
    `;
 });
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
-  const { atoms, active, onAction } = props;
+  const { atoms, active, status, onAction } = props;
   const isAtom = active && active.tool === 'atom';
 
   return (
@@ -74,6 +83,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
         const shortcut =
           atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
         const isSelected = isAtom && active && active.opts.label === label;
+        const id = `atom-${label.toLowerCase()}`;
         return (
           <StyledAtom
             key={label}
@@ -81,6 +91,7 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
             shortcut={shortcut}
             className={isSelected ? 'selected' : ''}
             selected={isSelected}
+            disabled={status[id]?.disabled}
             onClick={() => onAction({ tool: 'atom', opts: { label } })}
           />
         );

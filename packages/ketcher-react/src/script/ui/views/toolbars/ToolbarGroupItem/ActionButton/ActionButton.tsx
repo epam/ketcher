@@ -71,7 +71,7 @@ const ActionButton = (props: Props) => {
 
   return (
     <button
-      data-testid={dataTestId || name}
+      data-testid={dataTestId ?? name}
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}

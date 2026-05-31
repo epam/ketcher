@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import {
-  OutputFormatType,
-  defaultBondThickness,
   KetcherLogger,
+  GenerateImageOptions,
+  ketcherProvider,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
@@ -28,16 +28,16 @@ import { SaverType } from './saveButton.types';
 type Props = {
   server?: any;
   filename: string;
-  outputFormat?: OutputFormatType;
-  bondThickness?: number;
   data: any;
   type?: string;
   mode?: string;
+  options?: GenerateImageOptions;
   onSave?: () => void;
   onError?: (err: any) => void;
   className?: string;
   title?: string;
   disabled?: boolean;
+  testId?: string;
 };
 
 type SaveButtonProps = PropsWithChildren<Props>;
@@ -47,26 +47,25 @@ const SaveButton = (props: SaveButtonProps) => {
   const {
     server,
     filename = 'unnamed',
-    outputFormat,
-    bondThickness,
     data,
     type,
     mode = 'saveFile',
+    options,
     onSave = noop,
     onError = noop,
     className,
     title,
     disabled,
+    testId,
   } = props;
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
-  const saveFile = () => {
+  const saveFile = async () => {
     if (data) {
       try {
-        fileSaver(server).then((saver: SaverType) => {
-          saver(data, filename, type);
-          onSave();
-        });
+        const saver: SaverType = await fileSaver(server);
+        saver(data, filename, type);
+        onSave();
       } catch (e) {
         KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
         onError(e);
@@ -75,15 +74,12 @@ const SaveButton = (props: SaveButtonProps) => {
   };
 
   const saveImage = () => {
-    const ketcherInstance = getKetcherInstance();
-    if (outputFormat) {
+    const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
+    if (options?.outputFormat) {
       ketcherInstance
-        .generateImage(data, {
-          outputFormat,
-          bondThickness: bondThickness || defaultBondThickness,
-        })
+        .generateImage(data, options)
         .then((blob) => {
-          saveAs(blob, `${filename}.${outputFormat}`);
+          saveAs(blob, `${filename}.${options.outputFormat}`);
           onSave();
         })
         .catch((e) => {
@@ -110,6 +106,7 @@ const SaveButton = (props: SaveButtonProps) => {
       title={title}
       className={className}
       disabled={disabled}
+      data-testid={testId}
       onClick={(event) => {
         save(event);
       }}

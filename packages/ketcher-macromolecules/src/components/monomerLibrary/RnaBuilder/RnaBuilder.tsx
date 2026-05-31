@@ -14,36 +14,56 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
-import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectUniqueNameError, setUniqueNameError } from 'state/rna-builder';
+import { useAppDispatch, useAppSelector, useIsCompactView } from 'hooks';
+import {
+  selectUniqueNameError,
+  setUniqueNameError,
+  selectInvalidPresetError,
+  setInvalidPresetError,
+} from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
-import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
+import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
+import { RnaElements } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/RnaElements';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
+  const invalidPresetError = useAppSelector(selectInvalidPresetError);
+
+  const isCompactView = useIsCompactView();
+
   const closeErrorModal = () => {
-    dispatch(setUniqueNameError(''));
+    if (uniqueNameError.length > 0) {
+      dispatch(setUniqueNameError(''));
+    }
+    if (invalidPresetError.length > 0) {
+      dispatch(setInvalidPresetError(''));
+    }
   };
+
   return (
     <RnaBuilderContainer>
       <RnaEditor duplicatePreset={duplicatePreset} />
-      <RnaAccordion
+      <RnaElements
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
         editPreset={editPreset}
+        view={isCompactView ? 'tabs' : 'accordion'}
       />
       <Modal
-        isOpen={!!uniqueNameError}
+        isOpen={!!uniqueNameError || !!invalidPresetError}
         title="Error Message"
         onClose={closeErrorModal}
       >
         <Modal.Content>
-          Preset with name "{uniqueNameError}" already exists. Please choose
-          another name.
+          <div style={{ padding: '12px' }}>
+            {uniqueNameError &&
+              `Preset with name "${uniqueNameError}" already exists. Please choose another name.`}
+            {invalidPresetError &&
+              `Preset with name "${invalidPresetError}" can't be used. Because it is impossible to establish bonds between monomers. Edit it's structure or choose another one.`}
+          </div>
         </Modal.Content>
         <Modal.Footer>
           <StyledButton onClick={closeErrorModal}>Close</StyledButton>

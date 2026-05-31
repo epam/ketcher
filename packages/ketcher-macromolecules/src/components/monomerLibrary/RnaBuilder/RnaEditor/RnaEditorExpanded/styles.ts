@@ -17,19 +17,84 @@
 import styled from '@emotion/styled';
 import { Button, Input } from 'ketcher-react';
 
-export const RnaEditorExpandedContainer = styled.div({
+export const RnaEditorExpandedContainer = styled.div((props) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '10px',
-});
+  backgroundColor: '#F7F9FA',
+  borderRadius: '0 0 4px 4px',
 
-export const GroupsContainer = styled.div({
-  marginTop: '16px',
-  width: '100%',
+  '&.rna-editor-expanded--sequence-edit-mode': {
+    padding: '8px',
+    paddingTop: '10px',
+    border: `2px ${props.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
+    borderTop: 'none',
+  },
+}));
+
+export const CompactViewName = styled.input`
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgba(180, 185, 214, 0.6);
+
+  &:hover,
+  &:focus {
+    outline: ${({ theme }) => theme.ketcher.outline.selected.small};
+  }
+`;
+
+export const GroupsContainer = styled.div<{ compact?: boolean }>`
+  width: 100%;
+  display: flex;
+  flex-direction: ${({ compact }) => (compact ? 'row' : 'column')};
+  justify-content: ${({ compact }) =>
+    compact ? 'space-between' : 'flex-start'};
+  gap: 8px;
+  margin-top: 16px;
+`;
+
+export const PhosphatePositionContainer = styled.div({
+  marginTop: '12px',
   display: 'flex',
-  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   gap: '8px',
 });
+
+export const PhosphatePositionLabel = styled.span(({ theme }) => ({
+  fontSize: theme.ketcher.font.size.small,
+  color: theme.ketcher.color.text.light,
+}));
+
+export const PhosphatePositionButtons = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+});
+
+export const PhosphatePositionButton = styled.button<{ selected?: boolean }>(
+  ({ theme, selected }) => ({
+    minWidth: '40px',
+    padding: '4px 8px',
+    borderRadius: theme.ketcher.border.radius.regular,
+    border: selected
+      ? theme.ketcher.outline.selected.small
+      : theme.ketcher.outline.grey.small,
+    color: selected
+      ? theme.ketcher.color.button.text.primary
+      : theme.ketcher.color.text.primary,
+    backgroundColor: selected
+      ? theme.ketcher.color.button.primary.active
+      : theme.ketcher.color.background.primary,
+    cursor: 'pointer',
+    ':disabled': {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+  }),
+);
 
 export const ButtonsContainer = styled.div({
   marginTop: '16px',
@@ -91,6 +156,11 @@ export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
 
 export const NameInput = styled(Input)({
   width: '100%',
+  '&:disabled': {
+    background: 'none',
+    outline: 'none',
+    color: 'inherit',
+  },
 });
 
 export const PresetName = styled.div({

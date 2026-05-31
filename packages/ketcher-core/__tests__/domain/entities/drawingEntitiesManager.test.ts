@@ -7,7 +7,6 @@ import {
   PolymerBondDeleteOperation,
 } from 'application/editor/operations/polymerBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import {
   DrawingEntityHoverOperation,
   DrawingEntityMoveOperation,
@@ -19,6 +18,15 @@ import {
   MonomerHoverOperation,
 } from 'application/editor/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
+import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Struct } from 'domain/entities/struct';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -39,6 +47,7 @@ describe('Drawing Entities Manager', () => {
         new Peptide(peptideMonomerItem),
         new Vec2(0, 0),
         new Vec2(10, 10),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
       );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondAddOperation);
@@ -61,6 +70,7 @@ describe('Drawing Entities Manager', () => {
       firstPeptide,
       new Vec2(0, 0),
       new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
     );
 
     const resultingOperations =
@@ -86,7 +96,12 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete peptide', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
     const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
@@ -99,12 +114,18 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete polymer bond', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
     const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
       new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
     );
     expect(
       Array.from(drawingEntitiesManager.polymerBonds)[0][1],
@@ -118,7 +139,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should select drawing entity', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const drawingEntity = new Peptide(peptideMonomerItem) as DrawingEntity;
+    const drawingEntity = new Peptide(peptideMonomerItem);
     const command = drawingEntitiesManager.selectDrawingEntity(drawingEntity);
     expect(drawingEntity.selected).toBeTruthy();
     expect(command.operations.length).toEqual(1);
@@ -161,5 +182,40 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should normalize invalid selection flags for reaction entities', () => {
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+
+    drawingEntitiesManager.addRxnArrow(
+      RxnArrowMode.OpenAngle,
+      [new Vec2(0, 0), new Vec2(10, 0)],
+      undefined,
+      INVALID,
+    );
+    drawingEntitiesManager.addRxnPlus(new Vec2(5, 5), INVALID);
+
+    expect(
+      Array.from(drawingEntitiesManager.rxnArrows.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+    expect(
+      Array.from(drawingEntitiesManager.rxnPluses.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+
+    const struct = new Struct();
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
+      drawingEntitiesManager,
+      struct,
+    );
+
+    const rxnArrow = Array.from(struct.rxnArrows.values())[0];
+    const rxnPlus = Array.from(struct.rxnPluses.values())[0];
+
+    expect(rxnArrow.getInitiallySelected()).toBeUndefined();
+    expect(rxnPlus.getInitiallySelected()).toBeUndefined();
   });
 });

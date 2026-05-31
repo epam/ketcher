@@ -20,4 +20,6 @@ export interface IStyledDropdownIconProps {
 
 export type OptionsContainerProps = {
   isVertical?: boolean;
+  islayoutModeButton?: boolean;
+  isAutoSize?: boolean;
 } & React.HTMLAttributes<HTMLDivElement>;

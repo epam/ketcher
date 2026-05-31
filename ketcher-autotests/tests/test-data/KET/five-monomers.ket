@@ -23,10 +23,10 @@
                 "$ref": "monomerTemplate-A___Alanine"
             },
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
                 "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem"
@@ -181,9 +181,9 @@
             "y": -3.55
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -378,7 +378,7 @@
             }
         ],
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "alias": "25R",
         "attachmentPoints": [
             {
@@ -413,9 +413,9 @@
             "y": -3.5233333333333348
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -706,7 +706,7 @@
             }
         ],
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "alias": "baA",
         "attachmentPoints": [
             {

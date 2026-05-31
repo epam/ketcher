@@ -16,9 +16,7 @@
 
 import {
   FormatterFactory,
-  Pile,
   SGroup,
-  getStereoAtomsMap,
   identifyStructFormat,
   Struct,
   SupportedFormat,
@@ -26,20 +24,22 @@ import {
   Editor,
   KetcherLogger,
   SettingsManager,
+  getSelectionFromStruct,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
+import { isNumber } from 'lodash';
 
 export function onAction(action) {
-  if (action && action.dialog) {
+  if (action?.dialog) {
     return {
       type: 'MODAL_OPEN',
       data: { name: action.dialog, prop: action.prop },
     };
   }
-  if (action && action.thunk) {
+  if (action?.thunk) {
     return action.thunk;
   }
 
@@ -99,45 +99,18 @@ export function removeStructAction(): {
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
-export const getSelectionFromStruct = (struct) => {
-  const selection = {};
-  [
-    'atoms',
-    'bonds',
-    'enhancedFlags',
-    'rxnPluses',
-    'rxnArrows',
-    'texts',
-    'rgroupAttachmentPoints',
-  ].forEach((selectionEntity) => {
-    if (struct && struct[selectionEntity]) {
-      const selected: number[] = [];
-      struct[selectionEntity].forEach((value, key) => {
-        if (
-          typeof value.getInitiallySelected === 'function' &&
-          value.getInitiallySelected()
-        ) {
-          selected.push(key);
-        }
-      });
-      selection[selectionEntity] = selected;
-    }
-  });
-  return selection;
-};
-
-export function load(struct: Struct, options?) {
+export function load(struct: string | Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
     const editor = state.editor as Editor;
     const server = state.server;
+    const serverSettings = state.options.getServerSettings();
     const errorHandler = editor.errorHandler;
     options = options || {};
     let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
+      ...serverSettings,
       ...otherOptions,
-      'dearomatize-on-load': editor.options()['dearomatize-on-load'],
-      ignoreChiralFlag: editor.options().ignoreChiralFlag,
     };
 
     dispatch(setAnalyzingFile(true));
@@ -148,6 +121,14 @@ export function load(struct: Struct, options?) {
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
+      const hasMoleculeToMonomerConnections = parsedStruct.bonds.find(
+        (_, bond) => {
+          return (
+            isNumber(bond.beginSuperatomAttachmentPointNumber) ||
+            isNumber(bond.endSuperatomAttachmentPointNumber)
+          );
+        },
+      );
 
       if (hasUnsupportedGroups) {
         await editor.event.confirm.dispatch();
@@ -156,7 +137,10 @@ export function load(struct: Struct, options?) {
         );
       }
 
-      parsedStruct.rescale(); // TODO: move out parsing?
+      // scaling works bad with molecule-to-monomer connections
+      if (!hasMoleculeToMonomerConnections) {
+        parsedStruct.rescale(); // TODO: move out parsing?
+      }
 
       if (editor.struct().atoms.size) {
         // NB: reset id
@@ -164,35 +148,68 @@ export function load(struct: Struct, options?) {
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
           const offset = sgroup ? SGroup.getOffset(sgroup) : null;
-          const atomSet = new Pile(sg.atoms);
-          const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
-          SGroup.bracketPos(sg, parsedStruct, crossBonds);
+          SGroup.bracketPos(sg, parsedStruct);
           if (offset) sg.updateOffset(offset);
+        });
+      }
+
+      if (
+        method === 'toggleExplicitHydrogens' &&
+        editor.isMonomerCreationWizardActive &&
+        editor.monomerCreationState
+      ) {
+        // If toggle explicit hydrogen is called, we should not apply it for marked leaving group atoms in monomer creation wizard
+        const { assignedAttachmentPoints } = editor.monomerCreationState;
+
+        // Find leaving group atoms in new struct
+        const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
+          Array.from(assignedAttachmentPoints.values()).some(
+            ([, leavingAtomId]) => leavingAtomId === atomId,
+          ),
+        );
+
+        const currentStruct = editor.struct();
+
+        // Find outgoing bonds to explicit hydrogens from leaving group atoms (they are not present in old struct)
+        const newBondsToLeavingGroupAtoms = parsedStruct.bonds.filter(
+          (_, bond) =>
+            (leavingGroupAtoms.has(bond.begin) &&
+              !currentStruct.atoms.has(bond.end)) ||
+            (leavingGroupAtoms.has(bond.end) &&
+              !currentStruct.atoms.has(bond.begin)),
+        );
+
+        // Find explicit hydrogen atoms
+        const explicitHydrogenAtomsForLeavingGroupAtoms = new Set(
+          Array.from(newBondsToLeavingGroupAtoms.values()).map((bond) =>
+            leavingGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
+          ),
+        );
+
+        // Filter out explicit hydrogen atoms for leaving atoms and bonds to these hydrogens from leaving group atoms
+        parsedStruct.atoms = parsedStruct.atoms.filter(
+          (atomId) => !explicitHydrogenAtomsForLeavingGroupAtoms.has(atomId),
+        );
+        parsedStruct.bonds = parsedStruct.bonds.filter(
+          (bondId) => !newBondsToLeavingGroupAtoms.has(bondId),
+        );
+
+        // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count.
+        // Atom ids may diverge after Indigo transformations, so skip stale ids defensively.
+        leavingGroupAtoms.forEach((_, atomId) => {
+          const originalAtom = currentStruct.atoms.get(atomId);
+          if (!originalAtom || !parsedStruct.atoms.has(atomId)) {
+            return;
+          }
+          parsedStruct.atoms.set(atomId, originalAtom);
         });
       }
 
       parsedStruct.findConnectedComponents();
       parsedStruct.setImplicitHydrogen();
-
-      const stereAtomsMap = getStereoAtomsMap(
-        parsedStruct,
-        Array.from(parsedStruct.bonds.values()),
-      );
-
-      parsedStruct.atoms.forEach((atom, id) => {
-        if (parsedStruct?.atomGetNeighbors(id)?.length === 0) {
-          atom.stereoLabel = null;
-          atom.stereoParity = 0;
-        } else {
-          const stereoProp = stereAtomsMap.get(id);
-          if (stereoProp) {
-            atom.stereoLabel = stereoProp.stereoLabel;
-            atom.stereoParity = stereoProp.stereoParity;
-          }
-        }
-      });
-
+      parsedStruct.setStereoLabelsToAtoms();
       parsedStruct.markFragments();
+      parsedStruct.applyMonomersTransformations();
 
       if (fragment) {
         if (parsedStruct.isBlank()) {
@@ -201,10 +218,7 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(
-          parsedStruct,
-          method === 'layout' || method === 'toggleExplicitHydrogens',
-        );
+        editor.struct(parsedStruct, method === 'layout');
       }
 
       editor.zoomAccordingContent(parsedStruct);
@@ -223,7 +237,9 @@ export function load(struct: Struct, options?) {
     } catch (e: any) {
       KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      e && errorHandler && errorHandler(e.message);
+      if (e) {
+        errorHandler?.(e.message);
+      }
     } finally {
       notifyRequestCompleted();
     }

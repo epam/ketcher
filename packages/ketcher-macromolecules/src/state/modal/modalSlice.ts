@@ -23,6 +23,7 @@ interface ModalState {
   additionalProps: AdditionalModalProps | null;
   errorTooltipText: string;
   errorModalText: string;
+  errorModalTitle: string;
 }
 
 const initialState: ModalState = {
@@ -31,7 +32,16 @@ const initialState: ModalState = {
   additionalProps: null,
   errorTooltipText: '',
   errorModalText: '',
+  errorModalTitle: '',
 };
+
+export type ModalName =
+  | 'open'
+  | 'save'
+  | 'delete'
+  | 'updateSequenceInRNABuilder'
+  | 'monomerConnection'
+  | 'confirmationDialog';
 
 export const modalSlice = createSlice({
   name: 'modal',
@@ -40,13 +50,15 @@ export const modalSlice = createSlice({
     openModal: (
       state,
       action: PayloadAction<
-        string | { name: string; additionalProps: AdditionalModalProps }
+        ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
       >,
     ) => {
       if (typeof action.payload === 'string') {
         state.name = action.payload;
       } else {
         state.name = action.payload.name;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         state.additionalProps = action.payload.additionalProps;
       }
 
@@ -63,8 +75,19 @@ export const modalSlice = createSlice({
     closeErrorTooltip: (state) => {
       state.errorTooltipText = '';
     },
-    openErrorModal: (state, action: PayloadAction<string>) => {
-      state.errorModalText = action.payload;
+    openErrorModal: (
+      state,
+      action: PayloadAction<
+        string | { errorMessage: string; errorTitle: string }
+      >,
+    ) => {
+      if (typeof action.payload === 'string') {
+        state.errorModalText = action.payload;
+      } else {
+        const { errorMessage, errorTitle } = action.payload;
+        state.errorModalText = errorMessage;
+        state.errorModalTitle = errorTitle;
+      }
     },
     closeErrorModal: (state) => {
       state.errorModalText = '';
@@ -90,7 +113,11 @@ export const selectAdditionalProps = (
 ): AdditionalModalProps | null => state.modal.additionalProps;
 export const selectErrorTooltipText = (state: RootState): boolean =>
   state.modal.errorTooltipText;
-export const selectErrorModalText = (state: RootState): string =>
-  state.modal.errorModalText;
+export const selectErrorModalText = (state: RootState): string => {
+  return state.modal.errorModalText;
+};
+export const selectErrorModalTitle = (state: RootState): string => {
+  return state.modal.errorModalTitle;
+};
 
 export const modalReducer = modalSlice.reducer;

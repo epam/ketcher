@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled';
 
-import { useResizeObserver } from 'src/hooks';
+import { useAppContext, useResizeObserver } from 'src/hooks';
 import { FileControls } from './FileControls';
 import { ClipboardControls } from './ClipboardControls';
 import { UndoRedo } from './UndoRedo';
@@ -26,6 +26,10 @@ import { SystemControls } from './SystemControls';
 import { ExternalFuncControls } from './ExternalFuncControls';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
+import { CustomButtons } from './CustomButtons';
+import { ketcherProvider } from 'ketcher-core';
+import { cloneElement, useCallback, useMemo } from 'react';
+import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
 
@@ -64,9 +68,12 @@ export interface PanelProps {
   onAbout: VoidFunction;
   onHelp: VoidFunction;
   togglerComponent?: JSX.Element;
+  isModeSwitcherDisabled: boolean;
+  customButtons: Array<CustomButton>;
 }
 
 const collapseLimit = 650;
+const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
 
 const ControlsPanel = styled('div')`
   display: flex;
@@ -149,8 +156,33 @@ export const TopToolbar = ({
   onAbout,
   onHelp,
   togglerComponent,
+  isModeSwitcherDisabled,
+  customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
+
+  const onCustomAction = useCallback(
+    (name: string) => ketcher.sendCustomAction(name),
+    [ketcher],
+  );
+
+  const collapseLimitWithCustomButtons = useMemo(() => {
+    return (
+      collapseLimit + customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH
+    );
+  }, [customButtons.length]);
+
+  const isCollapsed = width < collapseLimitWithCustomButtons;
+  const renderedTogglerComponent = togglerComponent
+    ? cloneElement(togglerComponent, {
+        disabled: isModeSwitcherDisabled,
+      })
+    : undefined;
 
   return (
     <ControlsPanel
@@ -165,6 +197,7 @@ export const TopToolbar = ({
           iconName="clear"
           shortcut={shortcuts.clear}
           isHidden={hiddenButtons.includes('clear')}
+          disabled={disabledButtons.includes('clear')}
           testId="clear-canvas"
         />
         <FileControls
@@ -205,17 +238,19 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           shortcuts={shortcuts}
           indigoVerification={indigoVerification}
-          isCollapsed={width < collapseLimit}
+          isCollapsed={isCollapsed}
+        />
+        <CustomButtons
+          isCollapsed={isCollapsed}
+          customButtons={customButtons}
+          onCustomAction={onCustomAction}
         />
       </BtnsWpapper>
       <BtnsWpapper>
-        {togglerComponent}
-        {togglerComponent && <Divider />}
+        {renderedTogglerComponent}
+        {renderedTogglerComponent && <Divider />}
 
         <SystemControls
-          onHistoryClick={() => {
-            console.log('History button clicked'); // @TODO Implement handler when History log is ready
-          }}
           onSettingsOpen={onSettingsOpen}
           onFullscreen={onFullscreen}
           onHelp={onHelp}
@@ -226,7 +261,7 @@ export const TopToolbar = ({
         <Divider />
         {!hiddenButtons.includes('zoom-list') && (
           <ZoomControls
-            currentZoom={currentZoom || 1}
+            currentZoom={currentZoom ?? 1}
             onZoomIn={onZoomIn}
             onZoomOut={onZoomOut}
             onZoom={onZoom}

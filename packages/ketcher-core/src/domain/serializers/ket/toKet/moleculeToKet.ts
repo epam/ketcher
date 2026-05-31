@@ -14,18 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  SGroup,
-  Struct,
-  SGroupAttachmentPoint,
-  AtomQueryProperties,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import type { AtomQueryProperties } from 'domain/entities/atom';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
-import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
+import { isNumber } from 'lodash';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -38,6 +37,11 @@ function fromRlabel(rg) {
     }
   }
   return res;
+}
+
+export interface MoleculesSelection {
+  atoms: Set<number>;
+  bonds: Set<number>;
 }
 
 export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
@@ -82,7 +86,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
       'label',
       source.label === 'R#' && monomer
         ? monomer.monomerItem.props.MonomerCaps?.[
-            convertAttachmentPointNumberToLabel(source.rglabel)
+            getAttachmentPointLabelWithBinaryShift(source.rglabel)
           ]
         : source.label,
     );
@@ -144,6 +148,7 @@ function rglabelToKet(source) {
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
+  ifDef(result, 'selected', source.getInitiallySelected());
 
   return result;
 }
@@ -160,8 +165,8 @@ function bondToKet(source) {
     ifDef(result, 'topology', source.topology, 0);
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
-    ifDef(result, 'selected', source.getInitiallySelected());
   }
+  ifDef(result, 'selected', source.getInitiallySelected());
   return result;
 }
 
@@ -172,13 +177,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
   ifDef(result, 'atoms', source.atoms);
 
   switch (source.type) {
-    case 'GEN':
-      break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
-      break;
-    }
-    case 'queryComponent': {
       break;
     }
     case 'SRU': {
@@ -186,7 +186,20 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'connectivity',
-        source.data.connectivity.toUpperCase() || 'ht',
+        source.data.connectivity.toUpperCase() || 'HT',
+      );
+      break;
+    }
+    case 'COP': {
+      ifDef(
+        result,
+        'subtype',
+        source.data.subtype ? source.data.subtype.toUpperCase() : null,
+      );
+      ifDef(
+        result,
+        'connectivity',
+        source.data.connectivity.toUpperCase() || 'HT',
       );
       break;
     }
@@ -194,6 +207,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(result, 'class', source.data.class);
       ifDef(
         result,
         'attachmentPoints',
@@ -212,6 +226,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'bonds', SGroup.getBonds(struct, source));
       break;
     }
+    case 'GEN':
+    case 'queryComponent':
     default:
       break;
   }
@@ -224,7 +240,13 @@ function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
 
   ifDef(result, 'attachmentAtom', source.atomId);
   ifDef(result, 'leavingAtom', source.leaveAtomId);
-  ifDef(result, 'attachmentId', source.attachmentId);
+  ifDef(
+    result,
+    'attachmentId',
+    isNumber(source.attachmentPointNumber)
+      ? source.attachmentPointNumber.toString()
+      : source.attachmentId,
+  );
 
   return result;
 }

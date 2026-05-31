@@ -16,22 +16,44 @@
 
 // Single entry point to Raphaël library
 
-import Raphael from 'raphael';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 
-// TODO: refactor ugly prototype extensions to plain old functions
-Raphael.el.translateAbs = function (x: number, y: number): void {
-  this.delta = this.delta || new Vec2();
-  // TODO check that only numbers might be passed to this function
-  this.delta.x += x - 0;
-  this.delta.y += y - 0;
-  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const raphaelModule: any =
+  typeof window !== 'undefined' ? require('raphael') : undefined;
 
-Raphael.st.translateAbs = function (x: number, y: number): void {
-  this.forEach((el) => {
-    el.translateAbs(x, y);
-  });
-};
+// Some environments (vite, webpack etc) might resolve this import differently
+// this is a workaround to make it work in all environments
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resolveRaphael(): any {
+  if (!raphaelModule) {
+    return undefined;
+  }
+
+  return typeof raphaelModule === 'function'
+    ? raphaelModule
+    : raphaelModule.default;
+}
+
+const Raphael = resolveRaphael();
+
+if (Raphael) {
+  // TODO: refactor ugly prototype extensions to plain old functions
+  Raphael.el.translateAbs = function (x: number, y: number): void {
+    this.delta = this.delta || new Vec2();
+    // TODO check that only numbers might be passed to this function
+    this.delta.x += x - 0;
+    this.delta.y += y - 0;
+    this.transform(
+      't' + this.delta.x.toString() + ',' + this.delta.y.toString(),
+    );
+  };
+
+  Raphael.st.translateAbs = function (x: number, y: number): void {
+    this.forEach((el) => {
+      el.translateAbs(x, y);
+    });
+  };
+}
 
 export default Raphael;

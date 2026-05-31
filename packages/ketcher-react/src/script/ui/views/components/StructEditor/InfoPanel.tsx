@@ -22,14 +22,15 @@ import {
   Struct,
   SGroup,
   CoordinateTransformation,
+  MonomerMicromolecule,
+  AmbiguousMonomer,
 } from 'ketcher-core';
 
 import SGroupDataRender from './SGroupDataRender';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
-import { StructRender } from 'components';
-
+import { AmbiguousMonomerPreview, PreviewType, StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
@@ -106,6 +107,33 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     setMolecule(groupStruct ? groupStruct.clone() : null);
   }, [groupName, groupStruct]);
 
+  // Ambiguous monomer tooltip uses marker coordinates, not mouse position,
+  // so it must be checked before the clientX/clientY guard.
+  // sGroup.pp must exist to avoid assertion error in getContractedPosition.
+  if (sGroup instanceof MonomerMicromolecule && render && sGroup.pp) {
+    const monomer = sGroup.monomer;
+    if (monomer instanceof AmbiguousMonomer) {
+      const { position } = sGroup.getContractedPosition(render.ctab.molecule);
+      const markerPos = CoordinateTransformation.modelToView(position, render);
+      const TOOLTIP_GAP = 10;
+
+      return (
+        <AmbiguousMonomerPreview
+          preview={{
+            type: PreviewType.AmbiguousMonomer,
+            monomer: monomer.variantMonomerItem,
+          }}
+          style={{
+            position: 'absolute',
+            left: `${markerPos.x}px`,
+            top: `${markerPos.y + TOOLTIP_GAP}px`,
+            transform: 'translate(-50%, 0)',
+          }}
+        />
+      );
+    }
+  }
+
   const nonTooltipSGroup =
     !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
 
@@ -154,7 +182,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       clientX={clientX}
       clientY={clientY}
       render={render}
-      groupStruct={groupStruct}
       sGroup={sGroup}
       sGroupData={sGroupData}
       className={className}

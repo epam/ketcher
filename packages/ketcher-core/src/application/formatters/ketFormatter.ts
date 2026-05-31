@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructFormatter } from './structFormatter.types';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { EditorSelection } from 'application/editor';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export class KetFormatter implements StructFormatter {
-  #ketSerializer: KetSerializer;
+  readonly #ketSerializer: KetSerializer;
 
   constructor(serializer: KetSerializer) {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,

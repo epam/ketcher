@@ -22,19 +22,22 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
     background: ${({ theme, selected }) =>
       selected ? theme.ketcher.color.button.primary.active : '#faa500'};
   }
+
   .dots {
-    visibility: visible;
+    visibility: hidden;
     position: absolute;
     right: 2px;
     top: 10px;
   }
-  .hidden {
-    visibility: hidden !important;
+
+  &:hover .dots {
+    visibility: visible;
   }
+
   > .star {
     right: 0;
-    left: 4px;
-    top: 10px;
+    left: calc(50% - 7px);
+    top: 11px;
     width: min-content;
   }
 `;

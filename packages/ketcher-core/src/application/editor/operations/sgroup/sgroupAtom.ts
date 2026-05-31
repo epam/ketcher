@@ -15,10 +15,10 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
-import { SGroup } from 'domain/entities';
+import type { ReStruct } from '../../../render';
+import { SGroup } from 'domain/entities/sgroup';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -43,9 +43,7 @@ class SGroupAtomAdd extends BaseOperation {
     const sgroup = struct.sgroups.get(sgid)!;
 
     if (sgroup.atoms.indexOf(aid) >= 0) {
-      throw new Error(
-        'The same atom cannot be added to an S-group more than once',
-      );
+      return;
     }
 
     if (!atom) {

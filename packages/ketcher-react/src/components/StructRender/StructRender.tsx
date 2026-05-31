@@ -41,8 +41,10 @@ const StructRender = ({
   struct,
   options,
   className,
+  fullsize,
   update,
   needRescale,
+  testId,
 }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -62,7 +64,14 @@ const StructRender = ({
     }
   }, [struct, options, update, needRescale]);
 
-  return <Container ref={renderRef} className={className}></Container>;
+  return (
+    <Container
+      data-testid={testId ?? 'monomer-preview-micro'}
+      ref={renderRef}
+      className={className}
+      fullsize={fullsize}
+    ></Container>
+  );
 };
 
 export default StructRender;

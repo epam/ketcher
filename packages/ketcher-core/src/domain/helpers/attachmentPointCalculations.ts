@@ -1,6 +1,7 @@
 import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
-import { BaseMonomer } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
+import type { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
@@ -67,12 +68,12 @@ export function findLabelPoint(
 
   let addedOrtogonalOffset = 0;
   const addedParallelOffset =
-    lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
+    lineOffset + Math.max(labelSize.x, labelSize.y) + 1;
   if (isUsed) {
     if (angle >= -270 && angle <= 0) {
-      addedOrtogonalOffset = 10;
+      addedOrtogonalOffset = 5;
     } else if (angle >= -360 && angle < -270) {
-      addedOrtogonalOffset = -10;
+      addedOrtogonalOffset = -5;
     }
   }
 
@@ -103,6 +104,7 @@ export function getSearchFunction(
   return function findPointOnMonomerBorder(
     coordStart: Coordinates,
     length: number,
+    applyZoomForPositionCalculation: boolean,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -122,15 +124,14 @@ export function getSearchFunction(
     const newLength = Math.round(diff.length() / 1.4);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
-    const zoomedCoordinateOfSecondPoint = CoordinatesTool.canvasToView(
-      new Vec2(secondPoint),
-    );
+    const zoomedCoordinateOfSecondPoint = applyZoomForPositionCalculation
+      ? CoordinatesTool.canvasToView(new Vec2(secondPoint))
+      : new Vec2(secondPoint);
 
     const newPointCoord = {
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    let newAngle: number = initialAngle;
 
     const elementsAtPoint = document.elementsFromPoint(
       newPointCoord.x,
@@ -140,13 +141,20 @@ export function getSearchFunction(
     const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
       (element) => element === monomer.renderer?.bodyElement?.node(),
     );
+
+    let newAngle: number;
     if (isCurrentMonomerAtNewPoint) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;
     }
 
-    return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
+    return findPointOnMonomerBorder(
+      newCoordStart,
+      newLength,
+      applyZoomForPositionCalculation,
+      newAngle,
+    );
   };
 }
 
@@ -221,14 +229,68 @@ export function checkFor0and360(sectorsList: number[]) {
   return sectorsList;
 }
 
-export function convertAttachmentPointNumberToLabel(
+/* attachmentPointName - R1, R2, ...
+ * returns number of attachment point with left binary shift:
+ * [attachmentPointNumber]: [binaryShiftedAttachmentPointNumber]
+ * 1: 1
+ * 2: 2
+ * 3: 4
+ * 4: 8
+ * 5: 16
+ * 6: 32
+ * It needs for conversion of attachment points to rglabels (just for same view in monomer preview)
+ * rglabel 3 means that atom has two r-group attachment points
+ * */
+export function getAttachmentPointLabelWithBinaryShift(
   attachmentPointNumber: number,
 ) {
   let attachmentPointLabel = '';
   for (let rgi = 0; rgi < 32; rgi++) {
     if (attachmentPointNumber & (1 << rgi)) {
-      attachmentPointLabel = 'R' + (rgi + 1).toString();
+      attachmentPointLabel += getAttachmentPointLabel(rgi + 1);
     }
   }
   return attachmentPointLabel;
 }
+
+export function isSingleRGroupAttachmentPoint(rGroupLabel: number) {
+  if (rGroupLabel === 0) return false;
+  // Convert to unsigned 32-bit integer to handle R32+ which become negative
+  // due to sign bit in JavaScript's 32-bit signed integer arithmetic
+  const unsigned = rGroupLabel >>> 0;
+  return (unsigned & (unsigned - 1)) === 0;
+}
+
+export function getAttachmentPointLabel(attachmentPointNumber: number) {
+  return `R${attachmentPointNumber}` as AttachmentPointName;
+}
+
+export function getAttachmentPointNumberFromLabel(
+  attachmentPointLabel: AttachmentPointName,
+) {
+  return Number(attachmentPointLabel.replace('R', ''));
+}
+
+export const getNextFreeAttachmentPoint = (
+  attachmentPoints: AttachmentPointName[],
+  skipR1AndR2 = false,
+) => {
+  const orderedAttachmentPointNumbers = attachmentPoints
+    .map(getAttachmentPointNumberFromLabel)
+    .sort((a, b) => a - b);
+
+  let nextFreeAttachmentPointNumber = skipR1AndR2 ? 3 : 1;
+  for (const number of orderedAttachmentPointNumbers) {
+    if (number === nextFreeAttachmentPointNumber) {
+      nextFreeAttachmentPointNumber++;
+    } else {
+      break;
+    }
+  }
+
+  if (nextFreeAttachmentPointNumber > 8) {
+    throw new Error('Cannot assign more than 8 attachment points');
+  }
+
+  return getAttachmentPointLabel(nextFreeAttachmentPointNumber);
+};

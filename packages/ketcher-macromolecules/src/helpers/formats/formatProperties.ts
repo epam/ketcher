@@ -19,7 +19,17 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'ket';
+export type SupportedFormats =
+  | 'mol'
+  | 'ket'
+  | 'fasta'
+  | 'sequence'
+  | 'sequence-3-letter'
+  | 'idt'
+  | 'axo-labs'
+  | 'helm'
+  | 'biln'
+  | 'svg';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
@@ -40,6 +50,46 @@ const formatProperties: FormatProperties = {
     true,
     { 'molfile-saving-mode': '3000' },
   ),
+  fasta: new SupportedFormatProperties(
+    'FASTA',
+    ChemicalMimeType.Fasta,
+    ['.fasta'],
+    false,
+    {},
+  ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.Sequence,
+    ['.seq'],
+    false,
+    {},
+  ),
+  'sequence-3-letter': new SupportedFormatProperties(
+    'SEQUENCE (3-letter code)',
+    ChemicalMimeType.Sequence,
+    ['.seq'],
+    false,
+    {},
+  ),
+  idt: new SupportedFormatProperties(
+    'IDT',
+    ChemicalMimeType.Idt,
+    ['.idt'],
+    false,
+    {},
+  ),
+  'axo-labs': new SupportedFormatProperties(
+    'AxoLabs',
+    ChemicalMimeType.AxoLabs,
+    ['.axolabs'],
+    false,
+    {},
+  ),
+  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.HELM, ['.helm']),
+  biln: new SupportedFormatProperties('BILN', ChemicalMimeType.BILN, ['.biln']),
+  svg: new SupportedFormatProperties('SVG Document', ChemicalMimeType.Svg, [
+    '.svg',
+  ]),
 };
 
 export const getPropertiesByFormat = (format: SupportedFormats) => {

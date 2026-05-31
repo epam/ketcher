@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import React from 'react';
 import { IRnaPreset } from '../RnaBuilder/types';
-import { MouseEvent } from 'react';
 
-export interface IRnaPresetItemrops {
-  preset: IRnaPreset;
-  isSelected?: boolean;
-  onClick?: VoidFunction;
-  onContextMenu?: (event: MouseEvent) => void;
+export interface IRNAPresetItemProps {
+  readonly isSelected: boolean;
+  readonly onClick: VoidFunction;
+  readonly onContextMenu: React.MouseEventHandler;
+  readonly onMouseLeave: React.MouseEventHandler;
+  readonly onMouseMove: React.MouseEventHandler;
+  readonly preset: IRnaPreset;
 }

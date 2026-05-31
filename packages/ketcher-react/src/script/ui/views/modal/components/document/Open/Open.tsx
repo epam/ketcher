@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types';
-import { FC, useEffect, useState } from 'react';
-import { Dialog } from '../../../../components';
+import { FC, useEffect, useMemo, useState } from 'react';
+import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
-import { getFormatMimeTypeByFileName } from 'ketcher-core';
-
+import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
+import { useAppContext } from 'src/hooks';
 interface OpenProps {
   server: any;
   errorHandler: (err: string) => void;
@@ -43,27 +43,39 @@ const MODAL_STATES = {
   presentationViewer: 'presentationViewer',
 };
 
-const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
+const FooterContent = ({
+  structStr,
+  openHandler,
+  copyHandler,
+  onCancel,
+  isAddToCanvasDisabled,
+}) => {
   return (
     <div className={classes.footerContent}>
-      <button onClick={onCancel} className={classes.cancelButton}>
+      <button
+        onClick={onCancel}
+        className={classes.cancelButton}
+        data-testid="cancel-button"
+      >
         Cancel
       </button>
       <div className={classes.buttonsContainer}>
         <DialogActionButton
           key="openButton"
-          disabled={!structStr}
+          disabled={!structStr.trim()}
           clickHandler={openHandler}
           styles={classes.openButton}
           label="Open as New Project"
+          testId="open-as-new-button"
         />
         <DialogActionButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr.trim() || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.copyButton}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
+          testId="add-to-canvas-button"
         />
       </div>
     </div>
@@ -88,6 +100,12 @@ const Open: FC<Props> = (props) => {
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
+  const [isLoading, setIsLoading] = useState(false);
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   useEffect(() => {
     if (server) {
@@ -98,6 +116,14 @@ const Open: FC<Props> = (props) => {
   }, [server]);
 
   const onFileLoad = (files) => {
+    if ((window as any).isKetcherFullscreenBeforeFilePicker) {
+      document.documentElement.requestFullscreen?.().catch(() => {
+        // Restore fullscreen if it was active before file picker opened
+      });
+      (window as any).isKetcherFullscreenBeforeFilePicker = false;
+    }
+
+    setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
         setStructStr('');
@@ -107,8 +133,12 @@ const Open: FC<Props> = (props) => {
         setStructStr(fileContent);
         setCurrentState(MODAL_STATES.textEditor);
       }
+      setIsLoading(false);
     };
-    const onError = () => errorHandler('Error processing file');
+    const onError = () => {
+      setIsLoading(false);
+      errorHandler('Error processing file');
+    };
 
     setFileName(files[0].name);
     opener.chosenOpener(files[0]).then(onLoad, onError);
@@ -129,7 +159,11 @@ const Open: FC<Props> = (props) => {
   };
 
   const openHandler = () => {
-    onOk({ structStr, fragment: false });
+    setIsLoading(true);
+    setTimeout(() => {
+      onOk({ structStr, fragment: false });
+      setIsLoading(false);
+    }, 0);
   };
 
   const withFooterContent =
@@ -157,6 +191,7 @@ const Open: FC<Props> = (props) => {
             openHandler={openHandler}
             copyHandler={copyHandler}
             onCancel={rest.onCancel}
+            isAddToCanvasDisabled={ketcher.editor.render.options.viewOnlyMode}
           />
         ) : undefined
       }
@@ -178,6 +213,11 @@ const Open: FC<Props> = (props) => {
         autoFocus
         structList={structList}
       />
+      {isLoading && (
+        <div className={classes.loadingContainer}>
+          <LoadingCircles />
+        </div>
+      )}
     </Dialog>
   );
 };

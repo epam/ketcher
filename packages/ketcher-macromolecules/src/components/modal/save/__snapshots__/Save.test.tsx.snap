@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Save modal renders correctly 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body
     style="padding-right: 1024px; overflow: hidden;"
@@ -16,7 +16,7 @@ Object {
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
-        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -25,18 +25,20 @@ Object {
       <div
         class="MuiDialog-container MuiDialog-scrollPaper css-hz1bth-MuiDialog-container"
         role="presentation"
-        style="opacity: 1; webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 1; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
         tabindex="-1"
       >
         <div
-          aria-labelledby=":r0:"
+          aria-labelledby="«r0»"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
+          data-testid="save-structure-dialog"
           role="dialog"
           style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
+          testid="save-structure-dialog"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
-            id=":r0:"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
+            id="«r0»"
           >
             <div
               class="css-1uarmuk"
@@ -46,6 +48,7 @@ Object {
             <span>
               <button
                 class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                data-testid="close-window-button"
                 tabindex="0"
                 title="Close window"
                 type="button"
@@ -77,7 +80,7 @@ Object {
               id="save"
             >
               <div
-                class="css-1abudc7"
+                class="css-1ybuxyu"
                 style="padding: 12px 12px 10px;"
               >
                 <div>
@@ -90,6 +93,7 @@ Object {
                     </span>
                     <input
                       class="css-1w4st8l"
+                      data-testid="filename-input"
                       id="filename"
                       type="text"
                       value="ketcher"
@@ -97,7 +101,7 @@ Object {
                   </label>
                 </div>
                 <div
-                  class="MuiFormControl-root css-1x3s1gv-MuiFormControl-root"
+                  class="MuiFormControl-root css-1vqbkeq-MuiFormControl-root"
                 >
                   <label
                     for="fileformat"
@@ -105,11 +109,11 @@ Object {
                     File format:
                   </label>
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1h8rp84-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                    data-testid="dropdown-select"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1ydgb7t-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    data-testid="file-format-list"
                   >
                     <div
-                      aria-controls=":r1:"
+                      aria-controls="«r1»"
                       aria-expanded="false"
                       aria-haspopup="listbox"
                       class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -117,7 +121,7 @@ Object {
                       tabindex="0"
                     >
                       <span>
-                        Ket
+                        Ket Format
                       </span>
                     </div>
                     <input
@@ -142,10 +146,10 @@ Object {
                     </svg>
                     <fieldset
                       aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                      class="MuiOutlinedInput-notchedOutline css-r01yff-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
                     >
                       <legend
-                        class="css-ihdtdm"
+                        class="css-1whs34k-MuiNotchedOutlined-root"
                       >
                         <span
                           class="notranslate"
@@ -158,14 +162,15 @@ Object {
                 </div>
               </div>
               <div
-                style="display: flex; flex-grow: 1; position: relative;"
+                class="css-4ly9h9"
               >
                 <textarea
-                  class="css-jgwrv8"
-                  data-testid="preview-area-text"
+                  class="css-evzoup"
+                  data-testid="preview-area"
                   readonly=""
                 >
                   {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [],
         "connections": [],
@@ -173,6 +178,25 @@ Object {
     }
 }
                 </textarea>
+                <button
+                  class="css-kp5gpq"
+                  data-testid="copy-to-clipboard"
+                  title="Copy to clipboard"
+                >
+                  <svg
+                    class="css-2ntgcm"
+                    fill="none"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M17.25 18.75H9V8.25h8.25v10.5zm0-12H9a1.5 1.5 0 00-1.5 1.5v10.5a1.5 1.5 0 001.5 1.5h8.25a1.5 1.5 0 001.5-1.5V8.25a1.5 1.5 0 00-1.5-1.5zm-2.25-3H6a1.5 1.5 0 00-1.5 1.5v10.5H6V5.25h9v-1.5z"
+                      fill="currentcolor"
+                    />
+                  </svg>
+                </button>
               </div>
             </form>
           </div>
@@ -181,7 +205,7 @@ Object {
           >
             <button
               class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
-              role="button"
+              data-testid="cancel-button"
               tabindex="0"
               title="Cancel"
               type="button"
@@ -193,7 +217,7 @@ Object {
             </button>
             <button
               class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
-              role="button"
+              data-testid="save-button"
               tabindex="0"
               title="Save"
               type="button"

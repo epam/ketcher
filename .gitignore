@@ -34,6 +34,13 @@ yarn-error.log*
 
 .vscode
 /.idea
+nohup.out
+ketcher-autotests/results.json
+
+# ajv validation file generated with npm run ajv
+/packages/ketcher-core/src/domain/serializers/ket/compiledSchema.js
 
 .pnp.*
 .yarn/*
+output.txt
+.github/agents/*

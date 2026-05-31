@@ -13,51 +13,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
-import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
+import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
-import { MonomerItemType } from 'ketcher-core';
-import { calculatePreviewPosition } from '../../../helpers';
-import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  showPreview,
-  selectShowPreview,
-  selectEditor,
-  selectTool,
-} from 'state/common';
-import { selectActiveRnaBuilderItem } from 'state/rna-builder';
+  isAmbiguousMonomerLibraryItem,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { selectEditor, showPreview } from 'state/common';
+import { selectGroupItemValidations } from 'state/rna-builder';
+import { PreviewStyle, PreviewType } from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateMonomerPreviewTop,
+} from 'ketcher-react';
+import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 const MonomerGroup = ({
   items,
   title,
+  groupName,
   selectedMonomerUniqueKey,
   libraryName,
   disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
-  const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
-  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+  const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
+    let monomerDisabled = false;
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      return false;
+    }
 
-  const [selectedItemInGroup, setSelectedItemInGroup] =
-    useState<MonomerItemType | null>(null);
-
-  useEffect(() => {
-    setSelectedItemInGroup(null);
-  }, [activeMonomerGroup]);
+    if (disabled) {
+      monomerDisabled = disabled;
+    } else {
+      const monomerValidations =
+        activeGroupItemValidations[`${monomer.props?.MonomerClass}s`];
+      if (monomerValidations?.length > 0 && monomer.props?.MonomerCaps) {
+        for (const monomerValidation of monomerValidations) {
+          if (!(monomerValidation in monomer.props.MonomerCaps)) {
+            monomerDisabled = true;
+          }
+        }
+      }
+    }
+    return monomerDisabled;
+  };
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
     [dispatch],
   );
 
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useCallback(
+    debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 
@@ -67,54 +84,70 @@ const MonomerGroup = ({
   };
 
   const handleItemMouseMove = (
-    monomer: MonomerItemType,
+    monomer: MonomerOrAmbiguousType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
-    if (preview.monomer || !e.currentTarget) {
+
+    if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
     }
+
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    const style = { top: previewStyle, right: '-88px' };
-    debouncedShowPreview({ monomer, style });
+    let style: PreviewStyle;
+    let previewType: PreviewType;
+    let top: string;
+
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      top = monomer
+        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
+        : '';
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+      previewType = PreviewType.AmbiguousMonomer;
+      style = { left, top, transform: 'translate(-50%, 0)' };
+    } else {
+      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+      style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
+      previewType = PreviewType.Monomer;
+    }
+
+    const previewData = {
+      type: previewType,
+      monomer,
+      style,
+    };
+
+    debouncedShowPreview(previewData);
   };
 
-  const selectMonomer = (monomer: MonomerItemType) => {
-    dispatch(selectTool('monomer'));
-    setSelectedItemInGroup(monomer);
-
+  const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
-      editor.events.selectMonomer.dispatch(monomer);
+      editor?.events.selectMonomer.dispatch(monomer);
     }
 
     onItemClick(monomer);
   };
 
-  const isMonomerSelected = (monomer: MonomerItemType) => {
-    return selectedItemInGroup
-      ? getMonomerUniqueKey(selectedItemInGroup) ===
-          getMonomerUniqueKey(monomer)
-      : selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
+  const isMonomerSelected = (monomer: MonomerOrAmbiguousType) => {
+    return selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
+  // Don't render the group if there are no items
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   return (
-    <GroupContainer>
-      {title && (
-        <GroupTitle>
-          <span>{title}</span>
-        </GroupTitle>
-      )}
+    <GroupContainerColumn>
+      {title && <GroupTitle>{title}</GroupTitle>}
       <ItemsContainer>
         {items.map((monomer) => {
-          const key = monomer.props
-            ? `${monomer.props.MonomerName + monomer.props.Name}`
-            : monomer.label;
           return (
             <MonomerItem
-              key={key}
-              disabled={disabled}
+              key={getMonomerUniqueKey(monomer)}
+              disabled={isMonomerDisabled(monomer)}
               item={monomer}
+              groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
@@ -123,7 +156,7 @@ const MonomerGroup = ({
           );
         })}
       </ItemsContainer>
-    </GroupContainer>
+    </GroupContainerColumn>
   );
 };
 export { MonomerGroup };

@@ -13,14 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
-import { BaseTool } from 'application/editor/tools/Tool';
+import { type ZoomBehavior, zoom, select, ZoomTransform, drag } from 'd3';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { canvasSelector, drawnStructuresSelector } from '../constants';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { clamp } from 'lodash';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
+import type { StructureBbox } from 'application/render/renderers/types';
+
+export enum SCROLL_POSITION {
+  CENTER = 'CENTER',
+  BOTTOM = 'BOTTOM',
+}
 
 interface ScrollBar {
   name: string;
@@ -28,18 +34,22 @@ interface ScrollBar {
   offsetEnd: number;
   maxWidth: number;
   maxHeight: number;
-  bar?: D3SvgElementSelection<SVGRectElement, void> | undefined;
+  bar?: D3SvgElementSelection<SVGRectElement, void>;
 }
 
-class ZoomTool implements BaseTool {
-  private canvas: D3SvgElementSelection<SVGSVGElement, void>;
-  private canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+// in percents
+const AUTO_SCROLL_OFFSET_X = 10;
+const AUTO_SCROLL_OFFSET_Y = 10;
+
+export class ZoomTool implements BaseTool {
+  public canvas: D3SvgElementSelection<SVGGElement, void>;
+  public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
-  private zoomTransform: ZoomTransform;
+  private _zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
-  private zoomEventHandlers: Array<(transform?) => void> = [];
+  private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
   private scrollBars!: {
     horizontal: ScrollBar;
     vertical: ScrollBar;
@@ -71,7 +81,7 @@ class ZoomTool implements BaseTool {
     this.canvas = select(drawnStructuresSelector);
 
     this.zoomLevel = 1;
-    this.zoomTransform = new ZoomTransform(1, 0, 0);
+    this._zoomTransform = new ZoomTransform(1, 0, 0);
     this.drawingEntitiesManager = drawingEntitiesManager;
 
     this.initActions();
@@ -101,10 +111,9 @@ class ZoomTool implements BaseTool {
         this.mouseWheeled(event);
       }
     });
-    this.initMenuZoom();
   }
 
-  setZoom(zoomLevel: number) {
+  setZoomLevel(zoomLevel: number) {
     this.zoomLevel = zoomLevel;
   }
 
@@ -113,40 +122,52 @@ class ZoomTool implements BaseTool {
   }
 
   setZoomTransform(transform: ZoomTransform) {
-    this.zoomTransform = transform;
+    this._zoomTransform = transform;
+  }
+
+  public get zoomTransform() {
+    return this._zoomTransform;
   }
 
   zoomAction({ transform }) {
     this.canvas.attr('transform', transform);
     this.zoomLevel = transform.k;
-    this.zoomTransform = transform;
+    this._zoomTransform = transform;
     this.drawScrollBars();
     requestAnimationFrame(() => {
       this.dispatchZoomEventHandlers(transform);
     });
   }
 
-  subscribeOnZoomEvent(zoomEventHandler: (transform?) => void) {
+  subscribeOnZoomEvent(zoomEventHandler: (transform?: ZoomTransform) => void) {
     this.zoomEventHandlers.push(zoomEventHandler);
   }
 
-  dispatchZoomEventHandlers(transform) {
+  unsubscribeOnZoomEvent(
+    zoomEventHandler: (transform?: ZoomTransform) => void,
+  ) {
+    this.zoomEventHandlers = this.zoomEventHandlers.filter(
+      (handler) => handler !== zoomEventHandler,
+    );
+  }
+
+  dispatchZoomEventHandlers(transform: ZoomTransform) {
     this.zoomEventHandlers.forEach((zoomEventHandler) => {
       zoomEventHandler(transform);
     });
   }
 
-  drawScrollBars() {
+  drawScrollBars(forceHide = false) {
     if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal);
-      this.renderScrollBar(this.scrollBars.vertical);
+      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
+      this.renderScrollBar(this.scrollBars.vertical, forceHide);
     }
   }
 
-  renderScrollBar(scrollBar: ScrollBar) {
+  renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
     const hasOffset = scrollBar.offsetStart < 0 || scrollBar.offsetEnd < 0;
-    if (hasOffset) {
+    if (hasOffset && !forceHide) {
       if (scrollBar.bar) {
         this.updateScrollBarAttrs(scrollBar);
       } else {
@@ -191,7 +212,8 @@ class ZoomTool implements BaseTool {
       .attr('cursor', 'pointer')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
-      .attr('data-testid', scrollBar.name + '-bar');
+      .attr('data-testid', scrollBar.name + '-bar')
+      .attr('class', 'dynamic-element');
   }
 
   calculateDynamicAttr(scrollBar: ScrollBar) {
@@ -214,6 +236,91 @@ class ZoomTool implements BaseTool {
       this.zoom?.translateBy(this.canvasWrapper, 0, -event.dy);
     }
   };
+
+  public scrollTo(
+    position: Vec2,
+    stickToBottom = false,
+    xOffset?,
+    yOffset?,
+    isOffsetInPercents = true,
+    needScrollVertical = true,
+  ) {
+    const canvasWrapperHeight =
+      this.canvasWrapper.node()?.height.baseVal.value || 0;
+
+    const canvasWrapperWidth =
+      this.canvasWrapper.node()?.width.baseVal.value || 0;
+
+    // Calculate X offset
+    let xOffsetValue: number;
+    if (isNumber(xOffset) && !isOffsetInPercents) {
+      xOffsetValue = xOffset;
+    } else {
+      const xOffsetOrDefault = isNumber(xOffset)
+        ? xOffset
+        : AUTO_SCROLL_OFFSET_X;
+      xOffsetValue = (canvasWrapperWidth * xOffsetOrDefault) / 100;
+    }
+
+    // Calculate Y offset
+    let yOffsetValue: number;
+    if (isNumber(yOffset) && !isOffsetInPercents) {
+      yOffsetValue = yOffset;
+    } else {
+      const yOffsetOrDefault = isNumber(yOffset)
+        ? yOffset
+        : AUTO_SCROLL_OFFSET_Y;
+      yOffsetValue = (canvasWrapperHeight * yOffsetOrDefault) / 100;
+    }
+
+    const offset = new Vec2(
+      canvasWrapperWidth / 2 - xOffsetValue,
+      canvasWrapperHeight / 2 - yOffsetValue,
+    );
+    const currentY = this._zoomTransform?.y ?? 0;
+
+    // Calculate Y position for translateTo
+    let yPosition: number;
+    if (needScrollVertical) {
+      const multiplier = stickToBottom ? -1 : 1;
+      yPosition = position.y + this.unzoomValue(offset.y * multiplier);
+    } else {
+      yPosition = this.unzoomValue(canvasWrapperHeight / 2 - currentY);
+    }
+
+    this.zoom?.translateTo(
+      this.canvasWrapper,
+      position.x + this.unzoomValue(offset.x),
+      yPosition,
+    );
+  }
+
+  public scrollBy(x: number, y: number) {
+    this.zoom?.translateBy(
+      this.canvasWrapper,
+      this.unzoomValue(x),
+      this.unzoomValue(y),
+    );
+  }
+
+  public scrollToVerticalCenter(structCenterY: number) {
+    const centerPointOfModel =
+      this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();
+    const offsetY = centerPointOfModel.y - structCenterY;
+    this.zoom?.translateBy(this.canvasWrapper, 0, offsetY);
+  }
+
+  public scrollToVerticalBottom() {
+    this.drawScrollBars();
+
+    if (this.scrollBars.vertical.offsetEnd < 0) {
+      this.zoom?.translateBy(
+        this.canvasWrapper,
+        0,
+        this.scrollBars.vertical.offsetEnd / this.zoomLevel,
+      );
+    }
+  }
 
   mouseWheeled(event) {
     const isShiftKeydown = event.shiftKey;
@@ -264,27 +371,44 @@ class ZoomTool implements BaseTool {
   }
 
   public zoomIn(zoomStep = this.zoomStep) {
-    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+    this.zoomToLeftTopCorner(this.zoomLevel + zoomStep);
   }
 
   public zoomOut(zoomStep = this.zoomStep) {
-    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+    this.zoomToLeftTopCorner(this.zoomLevel - zoomStep);
+  }
+
+  public zoomToLeftTopCorner(_newZoomLevel: number) {
+    let newZoomLevel = _newZoomLevel;
+
+    newZoomLevel = Math.min(newZoomLevel, this.MAXZOOMSCALE);
+    newZoomLevel = Math.max(newZoomLevel, this.MINZOOMSCALE);
+
+    const { x, y } = this._zoomTransform;
+    const scaleFactor = newZoomLevel / this.zoomLevel;
+
+    // Calculate the new translation to zoom to the top-left corner
+    const newX = x * scaleFactor;
+    const newY = y * scaleFactor;
+
+    this.zoom?.transform(
+      this.canvasWrapper,
+      new ZoomTransform(newZoomLevel, newX, newY),
+    );
+  }
+
+  public zoomTo(zoomLevel: number) {
+    this.zoomToLeftTopCorner(zoomLevel);
   }
 
   public resetZoom() {
-    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
-  }
+    const canvasWrapperNode = this.canvasWrapper.node();
 
-  initMenuZoom() {
-    select('.zoom-in').on('click', () => {
-      this.zoomIn();
-    });
-    select('.zoom-out').on('click', () => {
-      this.zoomOut();
-    });
-    select('.zoom-reset').on('click', () => {
-      this.resetZoom();
-    });
+    if (!canvasWrapperNode?.transform?.baseVal) {
+      return;
+    }
+
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
   }
 
   observeCanvasResize = () => {
@@ -295,21 +419,26 @@ class ZoomTool implements BaseTool {
   };
 
   defaultWheelDelta(event) {
-    return (
-      -event.deltaY *
-      (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002)
-    );
+    let wheelDeltaFactor = 0.002;
+
+    if (event.deltaMode === 1) {
+      wheelDeltaFactor = 0.05;
+    } else if (event.deltaMode) {
+      wheelDeltaFactor = 1;
+    }
+
+    return -event.deltaY * wheelDeltaFactor;
   }
 
   scaleCoordinates(position: Vec2) {
-    const newX = this.zoomTransform.applyX(position.x);
-    const newY = this.zoomTransform.applyY(position.y);
+    const newX = this._zoomTransform.applyX(position.x);
+    const newY = this._zoomTransform.applyY(position.y);
     return new Vec2(newX, newY);
   }
 
   invertZoom(position: Vec2) {
-    const newX = this.zoomTransform.invertX(position.x);
-    const newY = this.zoomTransform.invertY(position.y);
+    const newX = this._zoomTransform.invertX(position.x);
+    const newY = this._zoomTransform.invertY(position.y);
     return new Vec2(newX, newY);
   }
 
@@ -317,12 +446,71 @@ class ZoomTool implements BaseTool {
     return value / this.zoomLevel;
   }
 
+  zoomValue(value: number) {
+    return value * this.zoomLevel;
+  }
+
   destroy() {
-    this.scrollBars.horizontal?.bar?.remove();
-    this.scrollBars.vertical?.bar?.remove();
-    this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
+    this.scrollBars?.horizontal?.bar?.remove();
+    this.scrollBars?.vertical?.bar?.remove();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.zoom = null;
     this.zoomEventHandlers = [];
+  }
+
+  isFitToCanvasHeight(height) {
+    const canvasWrapperHeight = this.canvasWrapperHeight;
+
+    return (
+      height <
+      this.unzoomValue(
+        canvasWrapperHeight -
+          (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+      )
+    );
+  }
+
+  public zoomStructureToFitHalfOfCanvas(structureBbox: StructureBbox) {
+    const MAX_AUTOSCALE = 2;
+    const OFFSET_FROM_CANVAS_BORDER = 2;
+    const canvasWrapperSize = this.canvasWrapperSize;
+
+    if (structureBbox.width < canvasWrapperSize.width / 2) {
+      const scale = canvasWrapperSize.width / 2 / structureBbox.width;
+      this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
+      this.scrollTo(
+        new Vec2(structureBbox.left, structureBbox.top),
+        false,
+        OFFSET_FROM_CANVAS_BORDER,
+        OFFSET_FROM_CANVAS_BORDER,
+      );
+    }
+  }
+
+  public get canvasWrapperHeight() {
+    // TODO create class for Canvas and move this getter there
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.height ?? 0;
+  }
+
+  public get canvasWrapperWidth() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.width ?? 0;
+  }
+
+  public get canvasWrapperSize() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return {
+      width: canvasWrapperBbox?.width ?? 0,
+      height: canvasWrapperBbox?.height ?? 0,
+    };
   }
 }
 

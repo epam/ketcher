@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities';
+import type { Struct } from 'domain/entities/struct';
 
 export interface StructAssociatedData {
   [key: string]: string | number;

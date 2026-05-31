@@ -71,4 +71,10 @@ export class Pool<TValue = any> extends Map<number, TValue> {
       }
     });
   }
+
+  clone(): Pool<TValue> {
+    const newPool = new Pool<TValue>(this);
+    newPool.nextId = this.nextId;
+    return newPool;
+  }
 }

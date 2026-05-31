@@ -26,8 +26,8 @@ export const StyledDropdownIcon = styled(Icon, {
   position: absolute;
   height: 7px;
   width: 7px;
-  right: 2px;
-  bottom: 2px;
+  right: 3px;
+  bottom: 3px;
   cursor: pointer;
 
   path {
@@ -38,6 +38,7 @@ export const StyledDropdownIcon = styled(Icon, {
 export const RootContainer = styled.div`
   display: flex;
   position: relative;
+  align-items: center;
 
   &:active {
     .dropdown {
@@ -48,14 +49,20 @@ export const RootContainer = styled.div`
 
 export const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
-  position: absolute;
-  left: 5px;
-  border-radius: 2px;
+  border-radius: 4px;
   flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
+  z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
+  background-color: white;
+  padding: 2px;
+  width: ${({ isVertical, isAutoSize }) =>
+    isVertical && !isAutoSize ? '38px' : 'auto'};
+  height: ${({ isVertical, isAutoSize }) =>
+    isVertical || isAutoSize ? 'auto' : '38px'};
 `;
 
 export const OptionsItemsCollapse = styled(Collapse)`
-  position: relative;
+  position: absolute;
+  z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
 `;
 
 export const VisibleItem = styled.div`

@@ -18,6 +18,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
 import { MONOMER_TYPES } from 'src/constants';
+import { EditorClassName } from 'ketcher-react';
 import mockedPresets from './mockedPresets.json';
 
 jest.mock('../../../src/helpers/dom.ts', () => {
@@ -66,25 +67,35 @@ const monomerData = [
 describe('RNA ContextMenu', () => {
   const editPreset = jest.fn();
   const duplicatePreset = jest.fn();
+  const initialState = {
+    library: {
+      searchFilter: '',
+      favorites: {},
+      monomers: monomerData,
+      defaultRnaPresets: mockedPresets,
+    },
+    rnaBuilder: {
+      presetsDefault: mockedPresets,
+      presetsCustom: [],
+      groupItemValidations: {
+        Bases: [],
+        Sugars: [],
+        Phosphates: [],
+      },
+    },
+  };
 
   it('should render contextMenu correctly', () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder
-          libraryName={MONOMER_TYPES.RNA}
-          duplicatePreset={duplicatePreset}
-          editPreset={editPreset}
-        />,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        <div className={EditorClassName}>
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
+        </div>,
+        initialState,
       ),
     );
     const presetCard = screen.getByTestId('A_A_R_P');
@@ -95,21 +106,14 @@ describe('RNA ContextMenu', () => {
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder
-          libraryName={MONOMER_TYPES.RNA}
-          duplicatePreset={duplicatePreset}
-          editPreset={editPreset}
-        />,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        <div className={EditorClassName}>
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
+        </div>,
+        initialState,
       ),
     );
     const preset = screen.getByTestId('A_A_R_P');
@@ -121,7 +125,7 @@ describe('RNA ContextMenu', () => {
   it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <div>
+        <div className={EditorClassName}>
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}
@@ -129,16 +133,7 @@ describe('RNA ContextMenu', () => {
           />
           <ModalContainer />
         </div>,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        initialState,
       ),
     );
     const preset = screen.getByTestId('A_A_R_P');

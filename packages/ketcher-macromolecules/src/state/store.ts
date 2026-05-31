@@ -17,14 +17,10 @@
 import { configureStore, Store } from '@reduxjs/toolkit';
 import { editorReducer } from 'state/common';
 import { libraryReducer } from 'state/library';
-import createSagaMiddleware from 'redux-saga';
-import { rootSaga } from 'state/rootSaga';
 import { modalReducer } from 'state/modal';
 import { rnaBuilderReducer } from 'state/rna-builder';
 
 export function configureAppStore(preloadedState = {}) {
-  const sagaMiddleware = createSagaMiddleware();
-
   const store: Store = configureStore({
     reducer: {
       editor: editorReducer,
@@ -34,13 +30,11 @@ export function configureAppStore(preloadedState = {}) {
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        thunk: false,
+        // TODO: Currently storing the whole editor (with functions within) in the state violates this check. Ideally find a way to store serializable data only
         serializableCheck: false,
-      }).concat(sagaMiddleware),
+      }),
     preloadedState,
   });
-
-  sagaMiddleware.run(rootSaga);
 
   return store;
 }

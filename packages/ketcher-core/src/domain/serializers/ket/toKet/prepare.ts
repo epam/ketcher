@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
-
-type KetNode = {
-  type: string;
-  fragment?: Struct;
-  center: Vec2;
-  data?: any;
-  selected?: boolean;
-};
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { KetFileNode } from '../../serializers.types';
 
 export function prepareStructForKet(struct: Struct) {
-  const ketNodes: KetNode[] = [];
+  const ketNodes: KetFileNode[] = [];
 
   const rgFrags = new Set(); // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
@@ -79,6 +76,7 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
+      selected: item.getInitiallySelected(),
     });
   });
 
@@ -93,6 +91,14 @@ export function prepareStructForKet(struct: Struct) {
       },
       selected: item.getInitiallySelected(),
     });
+  });
+
+  struct.images.forEach((image) => {
+    ketNodes.push(image.toKetNode());
+  });
+
+  struct.multitailArrows.forEach((multitailArrow) => {
+    ketNodes.push(multitailArrow.toKetNode());
   });
 
   ketNodes.forEach((ketNode) => {
@@ -125,7 +131,7 @@ function getFragmentCenter(struct, atomSet) {
  * See: https://github.com/epam/ketcher/issues/2142
  */
 function addMolecules(
-  ketNodes: KetNode[],
+  ketNodes: KetFileNode[],
   fragmentIds: number[],
   struct: Struct,
 ) {
@@ -164,7 +170,7 @@ function addMolecules(
  * ```
  */
 function generateSGroupFragmentsMap(
-  ketNodes: KetNode[],
+  ketNodes: KetFileNode[],
   fragmentIds: number[],
   struct: Struct,
 ) {

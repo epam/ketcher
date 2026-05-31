@@ -62,6 +62,10 @@ export type EditorTheme = {
         clicked: string;
         disabled: string;
       };
+      group: {
+        active: string;
+        hover: string;
+      };
       transparent: {
         active: string;
       };
@@ -120,6 +124,9 @@ export type EditorTheme = {
     monomer: {
       default: string;
     };
+    editMode: {
+      sequenceInRNABuilder: string;
+    };
   };
   font: {
     size: {
@@ -144,6 +151,11 @@ export type EditorTheme = {
       [key: string]: MonomerColorScheme;
     };
   };
+  peptide: {
+    color: {
+      [key: string]: MonomerColorScheme;
+    };
+  };
   border: {
     regular: string;
     small: string;
@@ -153,6 +165,7 @@ export type EditorTheme = {
   };
   shadow: {
     regular: string;
+    mainLayoutBlocks: string;
   };
   outline: {
     small: string;
@@ -169,6 +182,14 @@ export type EditorTheme = {
   };
   transition: {
     regular: string;
+  };
+  zIndex: {
+    base: number;
+    toolbar: number;
+    sticky: number;
+    overlay: number;
+    modal: number;
+    critical: number;
   };
 };
 

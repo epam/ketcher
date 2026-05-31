@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Polymer Bond Renderer should render bond 1`] = `
 <svg
@@ -21,23 +21,39 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
     <g
       pointer-events="stroke"
     >
-      <line
+      <path
         class="selection-area"
+        d="
+      M400,400
+      L3600,4000
+    "
+        data-bondid="2"
+        data-bondtype="covalent"
+        data-frommonomerid="0"
+        data-testid="bond"
+        data-tomonomerid="1"
+        fill="none"
         pointer-events="stroke"
         stroke="#333333"
-        stroke-width="2"
-        x1="1500"
-        x2="13500"
-        y1="1500"
-        y2="15000"
+        stroke-width="1"
       />
-      <line
+      <path
+        d="
+      M400,400
+      L3600,4000
+    "
+        fill="none"
         stroke="transparent"
         stroke-width="10"
-        x1="1500"
-        x2="13500"
-        y1="1500"
-        y2="15000"
+      />
+      <circle
+        cursor="pointer"
+        cx="3600"
+        cy="4000"
+        fill="transparent"
+        pointer-events="none"
+        r="1"
+        stroke-width="10"
       />
     </g>
   </g>

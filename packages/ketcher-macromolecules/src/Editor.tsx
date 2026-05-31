@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  PointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  RefObject,
+} from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
-import { debounce, merge } from 'lodash';
+import { merge } from 'lodash';
 import {
-  SdfSerializer,
-  hotkeysConfiguration,
-  generateMenuShortcuts,
+  BaseMonomer,
+  CoreEditor,
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
+  NodeSelection,
+  NodesSelection,
 } from 'ketcher-core';
-import monomersData from './data/monomers.sdf';
-
 import { store } from 'state';
 import {
   defaultTheme,
-  muiOverrides,
   EditorTheme,
   MergedThemeType,
+  muiOverrides,
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
@@ -38,33 +48,25 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import { Menu } from 'components/menu';
 import {
   createEditor,
   destroyEditor,
   selectEditor,
-  selectEditorActiveTool,
-  selectTool,
-  showPreview,
+  selectIsHandToolSelected,
+  initKetcherId,
+  setContextMenuActive,
+  setEditorLineLength,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
-  loadMonomerLibrary,
-  selectMonomers,
-  setFavoriteMonomersFromLocalStorage,
-} from 'state/library';
-import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
-import {
-  closeErrorTooltip,
-  openErrorTooltip,
-  openModal,
-  selectErrorTooltipText,
-} from 'state/modal';
-import {
-  modalComponentList,
-  ModalContainer,
-} from 'components/modal/modalContainer';
+  useAppDispatch,
+  useAppSelector,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
+import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
+import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
-import { EditorClassName } from './constants';
+import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
   StyledIconButton,
@@ -72,51 +74,75 @@ import {
   StyledToastContent,
 } from 'components/shared/StyledToast/styles';
 import {
-  PeptideAvatar,
   ChemAvatar,
-  SugarAvatar,
+  PeptideAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  SugarAvatar,
+  UnresolvedMonomerAvatar,
+  NucleotideAvatar,
+  SequenceStartArrow,
+  ArrowMarker,
 } from 'components/shared/monomerOnCanvas';
-import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
-import { calculatePreviewPosition } from 'helpers';
-import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
-import { EditorWrapper } from './styledComponents';
+import {
+  CanvasWrapper,
+  EditorWrapper,
+  TogglerComponentWrapper,
+  TopMenuRightWrapper,
+} from './styledComponents';
 import { useLoading } from './hooks/useLoading';
+import useSetRnaPresets from './hooks/useSetRnaPresets';
+import { useMacromoleculesHotkeys } from './hooks/useMacromoleculesHotkeys';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
-import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
-import {
-  setDefaultPresets,
-  setFavoritePresetsFromLocalStorage,
-  clearFavorites,
-} from 'state/rna-builder';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
+import { LayoutModeButton } from 'components/LayoutModeButton';
+import { useContextMenu } from 'react-contexify';
+import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
+import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
+import { Preview } from 'components/preview/Preview';
+import { SequenceTypeGroupButton } from 'components/SequenceTypeGroupButton';
+import { TopMenuComponent } from 'components/TopMenuComponent';
+import { LeftMenuComponent } from 'components/LeftMenuComponent';
+import { ZoomControls } from 'components/ZoomControls/ZoomControls';
+import { VerticalDivider } from 'components/menu/styles';
+import { EditorEvents } from './EditorEvents';
+import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
+import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
+import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+import { DragGhost } from 'components/DragGhost/DragGhost';
+import { ButtonsComponents } from 'components/ButtonsComponents/ButtonsComponents';
+import { FloatingTools } from 'components/FloatingTools';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorContainerProps {
-  onInit?: () => void;
-  theme?: DeepPartial<EditorTheme>;
-  togglerComponent?: JSX.Element;
-}
-
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
+  monomersLibraryUpdate?: string | JSON;
+  monomersLibraryReplace?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
-const noPreviewTools = ['bond-single'];
-
-const shortcuts =
-  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
+interface EditorContainerProps extends EditorProps {
+  onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
+}
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
-}: EditorContainerProps) {
+  monomersLibraryUpdate,
+  monomersLibraryReplace,
+  isMacromoleculesEditorTurnedOn,
+}: Readonly<EditorContainerProps>) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -127,128 +153,144 @@ function EditorContainer({
   });
 
   useEffect(() => {
-    onInit?.();
-  }, [onInit]);
+    store.dispatch(initKetcherId(ketcherId));
+  }, [ketcherId]);
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
-        </EditorWrapper>
+        <RootSizeProvider
+          rootRef={rootElRef as RefObject<HTMLDivElement>}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
+          <EditorWrapper ref={rootElRef} className={EditorClassName}>
+            <Editor
+              ketcherId={ketcherId}
+              theme={editorTheme}
+              togglerComponent={togglerComponent}
+              monomersLibraryUpdate={monomersLibraryUpdate}
+              monomersLibraryReplace={monomersLibraryReplace}
+              onInit={onInit}
+            />
+          </EditorWrapper>
+        </RootSizeProvider>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme, togglerComponent }: EditorProps) {
+function Editor({
+  theme,
+  togglerComponent,
+  monomersLibraryUpdate,
+  monomersLibraryReplace,
+  onInit,
+}: Readonly<EditorProps>) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
-  const activeTool = useAppSelector(selectEditorActiveTool);
+  const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
-  const monomers = useAppSelector(selectMonomers);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
+  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
+  const { show: showSequenceContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SEQUENCE,
+  });
+  const { show: showSelectedMonomersContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
+  });
 
   useEffect(() => {
-    dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new SdfSerializer();
-    const library = serializer.deserialize(monomersData);
-    dispatch(loadMonomerLibrary(library));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
+    dispatch(
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+        monomersLibraryReplace,
+        onInit,
+      }),
+    );
 
     return () => {
       dispatch(destroyEditor(null));
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
-    dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage());
-
-    return () => {
-      dispatch(clearFavorites());
-    };
-  }, [dispatch, monomers]);
-
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
+  useSetRnaPresets();
+  useMacromoleculesHotkeys();
 
   useEffect(() => {
-    const handler = (toolName: string) => {
-      if (toolName !== activeTool) {
-        dispatch(selectTool(toolName));
-      }
-    };
-
-    if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
+    editor?.events.rightClickSequence.add(([event, selections]) => {
+      setSelections(selections);
+      setContextMenuEvent(event);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
+      showSequenceContextMenu({
+        event,
+        props: {
+          sequenceItemRenderer: event.target.__data__,
+        },
       });
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
-      editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
-      );
-      editor.events.selectTool.add(handler);
-    }
+    });
+    editor?.events.rightClickPolymerBond.add(
+      ([event, polymerBondRenderer]: [
+        PointerEvent,
+        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ]): void => {
+        setContextMenuEvent(event);
+        setSelectedMonomers([]);
+        showSelectedMonomersContextMenu({
+          event,
+          props: {
+            polymerBondRenderer,
+          },
+        });
+      },
+    );
 
-    return () => {
-      dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
-    };
+    editor?.events.rightClickSelectedMonomers.add(
+      ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
+        setSelectedMonomers(selectedMonomers);
+        setContextMenuEvent(event);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers },
+        });
+      },
+    );
+    editor?.events.rightClickCanvas.add(
+      ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
+        setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
+        setSelectedMonomers(selections);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers: selections },
+        });
+      },
+    );
+    editor?.events.rightClickCanvasSequence.add(
+      ([event, selections]: [PointerEvent, NodesSelection]) => {
+        setContextMenuEvent(event);
+        window.dispatchEvent(new Event('hidePreview'));
+        dispatch(setContextMenuActive(true));
+        setSelections(selections);
+        showSequenceContextMenu({
+          event,
+          props: {},
+        });
+      },
+    );
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    });
   }, [editor]);
-
-  const handleOpenPreview = useCallback((e) => {
-    const monomer = e.target.__data__.monomer.monomerItem;
-
-    const cardCoordinates = e.target.getBoundingClientRect();
-    const top = calculatePreviewPosition(monomer, cardCoordinates);
-    const previewStyle = {
-      top,
-      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-    };
-    debouncedShowPreview({ monomer, style: previewStyle });
-  }, []);
-
-  const handleClosePreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, []);
-
-  useEffect(() => {
-    editor?.events.mouseOverMonomer.add((e) => {
-      handleOpenPreview(e);
-    });
-    editor?.events.mouseLeaveMonomer.add(() => {
-      handleClosePreview();
-    });
-    editor?.events.mouseOnMoveMonomer.add((e) => {
-      handleClosePreview();
-      const isLeftClick = e.buttons === 1;
-      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
-        handleOpenPreview(e);
-      }
-    });
-  }, [editor, activeTool]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();
@@ -257,26 +299,75 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     };
   }, [editor]);
 
+  useEffect(() => {
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
 
+  const toggleLibraryVisibility = useCallback(() => {
+    setIsMonomerLibraryHidden((prev) => !prev);
+  }, []);
+
   return (
     <>
       <Layout>
-        <Layout.Top shortened={isMonomerLibraryHidden}>
-          {togglerComponent}
-          <FullscreenButton />
+        <Layout.Top
+          shortened={!isMonomerLibraryHidden}
+          data-testid="top-toolbar"
+        >
+          <TopMenuComponent />
+          <TopMenuRightWrapper>
+            <SequenceSyncEditModeButton />
+            <LayoutModeButton />
+            <SequenceTypeGroupButton />
+            <TogglerComponentWrapper
+              className={
+                isSequenceEditInRNABuilderMode
+                  ? 'toggler-component-wrapper--disabled'
+                  : ''
+              }
+            >
+              {togglerComponent}
+            </TogglerComponentWrapper>
+            <VerticalDivider />
+            <ButtonsComponents />
+            <FullscreenButton />
+            <VerticalDivider />
+            <ZoomControls />
+          </TopMenuRightWrapper>
         </Layout.Top>
 
         <Layout.Left>
-          <MenuComponent />
+          <LeftMenuComponent />
         </Layout.Left>
 
         <Layout.Main>
-          <svg
+          <EditorEvents />
+          <RulerArea />
+          <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            data-canvasmode="macromolecules-mode"
             preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
@@ -292,21 +383,50 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SugarAvatar />
               <PhosphateAvatar />
               <RNABaseAvatar />
+              <UnresolvedMonomerAvatar />
+              <NucleotideAvatar />
+              <SequenceStartArrow />
+              <ArrowMarker />
             </defs>
-            <g className="drawn-structures"></g>
-          </svg>
+            <g className="drawn-structures" data-testid="drawn-structures" />
+            {isHandToolSelected && (
+              <rect
+                x={0}
+                y={0}
+                width="100%"
+                height="100%"
+                fill="transparent"
+                pointerEvents="all"
+              />
+            )}
+          </CanvasWrapper>
+          <FloatingTools />
           {isLoading && <Loader />}
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
+        <Layout.InsideRoot>
+          {isMonomerLibraryHidden && (
+            <MonomerLibraryToggle onClick={toggleLibraryVisibility} />
+          )}
+        </Layout.InsideRoot>
       </Layout>
-      <MonomerLibraryToggle
-        isHidden={isMonomerLibraryHidden}
-        onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
+      <Preview />
+      <DragGhost />
+      <SequenceItemContextMenu
+        selections={selections}
+        contextMenuEvent={contextMenuEvent}
       />
-      <StyledPreview className="polymer-library-preview" />
+      <SelectedMonomersContextMenu
+        selectedMonomers={selectedMonomers}
+        contextMenuEvent={contextMenuEvent}
+      />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
@@ -320,6 +440,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             {errorTooltipText}
           </StyledToastContent>
           <StyledIconButton
+            testId="error-tooltip-close"
             iconName="close"
             onClick={handleCloseErrorTooltip}
           ></StyledIconButton>
@@ -329,101 +450,4 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 }
 
-function MenuComponent() {
-  const dispatch = useAppDispatch();
-  const activeTool = useAppSelector(selectEditorActiveTool);
-  const editor = useAppSelector(selectEditor);
-  const activeMenuItems = [activeTool];
-  const isSnakeMode = useSnakeMode();
-  if (isSnakeMode) activeMenuItems.push('snake-mode');
-  const menuItemChanged = (name) => {
-    if (modalComponentList[name]) {
-      dispatch(openModal(name));
-    } else if (name === 'snake-mode') {
-      editor.events.selectMode.dispatch(!isSnakeMode);
-    } else if (name === 'undo' || name === 'redo') {
-      editor.events.selectHistory.dispatch(name);
-    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
-      editor.events.selectTool.dispatch(name);
-      if (name === 'clear') {
-        dispatch(selectTool('select-rectangle'));
-        editor.events.selectTool.dispatch('select-rectangle');
-      } else {
-        dispatch(selectTool(name));
-      }
-    }
-  };
-
-  return (
-    <Menu
-      testId="left-toolbar"
-      onItemClick={menuItemChanged}
-      activeMenuItems={activeMenuItems}
-    >
-      <Menu.Group>
-        <Menu.Item
-          itemId="clear"
-          title={`Clear Canvas (${shortcuts.clear})`}
-          testId="clear-canvas"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="undo"
-          title={`Undo (${shortcuts.undo})`}
-          testId="undo"
-        />
-        <Menu.Item
-          itemId="redo"
-          title={`Redo (${shortcuts.redo})`}
-          testId="redo"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." testId="open-button" />
-        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="erase"
-          title={`Erase (${shortcuts.erase})`}
-          testId="erase"
-        />
-        <Menu.Item
-          itemId="select-rectangle"
-          title="Select Rectangle"
-          testId="select-rectangle"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="bond-single"
-          title="Single Bond (1)"
-          testId="single-bond"
-        />
-      </Menu.Group>
-      <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="zoom-in"
-          title={`Zoom In (${shortcuts['zoom-plus']})`}
-          testId="zoom-in-button"
-        />
-        <Menu.Item
-          itemId="zoom-out"
-          title={`Zoom Out (${shortcuts['zoom-minus']})`}
-          testId="zoom-out-button"
-        />
-        <Menu.Item
-          itemId="zoom-reset"
-          title={`Reset Zoom (${shortcuts['zoom-reset']})`}
-          testId="reset-zoom-button"
-        />
-      </Menu.Group>
-    </Menu>
-  );
-}
-
-export { EditorContainer as Editor };
+export default EditorContainer;

@@ -21,4 +21,5 @@ module.exports = {
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.tsx'],
+  setupFiles: ['./jest.setup.js'],
 };

@@ -15,11 +15,14 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
-import Base from '../base';
+import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReRxnArrow } from '../../../render';
+import { KetcherLogger } from 'utilities';
+import type Restruct from 'application/render/restruct/restruct';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -27,6 +30,8 @@ type RxnArrowAddData = {
   id?: number;
   pos: Array<Vec2>;
   mode: RxnArrowMode;
+  height?: number;
+  arrowId?: number;
 };
 
 class RxnArrowAdd extends Base {
@@ -36,20 +41,27 @@ class RxnArrowAdd extends Base {
     pos: Array<Vec2> = [],
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
     id?: number,
+    height?: number,
+    arrowId?: number,
   ) {
     super(OperationType.RXN_ARROW_ADD);
-    this.data = { pos, mode, id };
+    this.data = { pos, mode, id, height, arrowId };
   }
 
   execute(restruct: any): void {
     const struct = restruct.molecule;
-    const item = new RxnArrow({ mode: this.data.mode });
+    const item = new RxnArrow({
+      mode: this.data.mode,
+      height: this.data.height,
+      arrowId: this.data.arrowId,
+    });
 
     if (this.data.id == null) {
-      const index = struct.rxnArrows.add(item);
+      const index = struct.addRxnArrow(item);
       this.data.id = index;
+      this.data.arrowId = item.arrowId;
     } else {
-      struct.rxnArrows.set(this.data.id!, item);
+      struct.setRxnArrow(this.data.id, item);
     }
 
     const itemId = this.data.id!;
@@ -75,6 +87,8 @@ interface RxnArrowDeleteData {
   id: number;
   pos?: Array<Vec2>;
   mode?: RxnArrowMode;
+  height?: number;
+  arrowId?: number;
 }
 
 class RxnArrowDelete extends Base {
@@ -87,22 +101,38 @@ class RxnArrowDelete extends Base {
     this.performed = false;
   }
 
-  execute(restruct: any): void {
+  execute(restruct: Restruct): void {
+    KetcherLogger.log('RxnArrowDelete.execute(), start', this.data);
     const struct = restruct.molecule;
-    const item = struct.rxnArrows.get(this.data.id) as any;
+    const item = struct.rxnArrows.get(this.data.id);
+    if (!item) throw new Error(`rxnArrow not found with id: ${this.data.id}`);
+
     this.data.pos = item.pos;
     this.data.mode = item.mode;
+    this.data.height = item.height;
+    this.data.arrowId = item.arrowId;
     this.performed = true;
 
     restruct.markItemRemoved();
-    restruct.clearVisel(restruct.rxnArrows.get(this.data.id).visel);
+    const reItem = restruct.rxnArrows.get(this.data.id);
+    if (!reItem)
+      throw new Error(`reRxnArrow not found with id: ${this.data.id}`);
+    restruct.clearVisel(reItem.visel);
     restruct.rxnArrows.delete(this.data.id);
 
     struct.rxnArrows.delete(this.data.id);
+
+    KetcherLogger.log('RxnArrowDelete.execute(), end');
   }
 
   invert(): Base {
-    return new RxnArrowAdd(this.data.pos, this.data.mode, this.data.id);
+    return new RxnArrowAdd(
+      this.data.pos,
+      this.data.mode,
+      this.data.id,
+      this.data.height,
+      this.data.arrowId,
+    );
   }
 }
 

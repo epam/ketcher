@@ -24,14 +24,19 @@ import ReFrag from './refrag';
 import ReRGroup from './rergroup';
 import ReRxnArrow from './rerxnarrow';
 import ReRxnPlus from './rerxnplus';
-import ReSGroup from './resgroup';
+import ReSGroup, { paperPathFromSVGElement } from './resgroup';
 import ReSimpleObject from './resimpleObject';
 import ReStruct from './restruct';
 import ReText from './retext';
+import Visel from './visel';
 
 export * from './generalEnumTypes';
 export * from './reatom';
+export * from './showHydrogenLabels';
 export * from './rergroupAttachmentPoint';
+export * from './reImage';
+export * from './remultitailArrow';
+export * from './draftToLexical';
 export {
   ReObject,
   ReAtom,
@@ -45,4 +50,6 @@ export {
   ReSimpleObject,
   ReText,
   ReStruct,
+  Visel,
+  paperPathFromSVGElement,
 };

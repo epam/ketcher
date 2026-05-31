@@ -18,6 +18,10 @@ class LocalStorageWrapper {
   setItem(key: string, item: unknown) {
     this.localStorage.setItem(key, JSON.stringify(item));
   }
+
+  removeItem(key: string) {
+    this.localStorage.removeItem(key);
+  }
 }
 
 export const localStorageWrapper = new LocalStorageWrapper();

@@ -1,12 +1,15 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import {
   getFinishedPolymerBond,
   peptideMonomerItem,
   polymerEditorTheme,
 } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
+import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 
@@ -28,6 +31,12 @@ jest.mock('d3', () => {
         select() {
           return this;
         },
+        selectAll() {
+          return this;
+        },
+        remove() {
+          return this;
+        },
         attr() {
           return this;
         },
@@ -38,6 +47,9 @@ jest.mock('d3', () => {
           return this;
         },
         append() {
+          return this;
+        },
+        raise() {
           return this;
         },
         data() {
@@ -99,11 +111,13 @@ describe('Select Rectangle Tool', () => {
       target: {
         __data__: polymerBond.renderer,
       },
-    };
+    } as MouseEvent;
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
         theme: polymerEditorTheme,
         canvas: createPolymerEditorCanvas(),
+        renderersContainer: createRenderersManager(polymerEditorTheme),
+        mode: new FlexMode(),
       }),
     );
 
@@ -112,24 +126,14 @@ describe('Select Rectangle Tool', () => {
     expect(polymerBond.selected).toBeTruthy();
   });
 
-  it('should initiate the render of peptide mousedown', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
-    const editor: CoreEditor = new CoreEditor({
-      canvas,
-      theme: polymerEditorTheme,
-    });
-    const onShow = jest.fn();
-    jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
-    editor.events.selectMonomer.dispatch(peptideMonomerItem);
-    canvas.dispatchEvent(new Event('mouseover', { bubbles: true }));
-    expect(onShow).toHaveBeenCalled();
-  });
-
   it('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const mode = new FlexMode();
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
+      mode,
     });
     const onMove = jest.fn();
 
@@ -142,20 +146,20 @@ describe('Select Rectangle Tool', () => {
     jest
       .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
       .mockImplementation(() => {});
-    jest
-      .spyOn(BaseMonomerRenderer.prototype, 'reDrawChainBeginning')
-      .mockImplementation(() => {});
     const fn = jest
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((func) => {
         func(0);
         return 0;
       });
+    // TODO: Probably mock Editor/TransientDrawingView better
+    editor.transientDrawingView.update = jest.fn();
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
       new Vec2(0, 0),
     );
+
     editor.renderersContainer.update(modelChanges);
 
     const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
@@ -168,14 +172,16 @@ describe('Select Rectangle Tool', () => {
       },
       pageX: initialPosition.x,
       pageY: initialPosition.y,
-    };
+    } as MouseEvent;
 
     editor.drawingEntitiesManager.selectDrawingEntity(peptide);
     selectRectangleTool.mousedown(event);
     editor.lastCursorPositionOfCanvas.x = initialPosition.x + 100;
     editor.lastCursorPositionOfCanvas.y = initialPosition.y + 100;
 
-    selectRectangleTool.mousemove();
+    const moveEvent = new MouseEvent('mousemove');
+
+    selectRectangleTool.mousemove(moveEvent);
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();

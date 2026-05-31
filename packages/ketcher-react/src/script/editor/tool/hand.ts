@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import Editor from '../Editor';
-import { Vec2 } from 'ketcher-core';
+import { CoordinateTransformation, Vec2 } from 'ketcher-core';
 import { Tool } from './Tool';
 
 class HandTool implements Tool {
@@ -70,7 +70,7 @@ class HandTool implements Tool {
   mouseup(event) {
     if (this.begPos === null) return;
     const rnd = this.editor.render;
-    this.endPos = rnd.page2obj(event);
+    this.endPos = CoordinateTransformation.pageToModel(event, rnd);
     this.begPos = null;
     this.endPos = null;
     rnd.update(false);

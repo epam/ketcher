@@ -1,4 +1,10 @@
-import { MonomerItemType, Struct } from 'ketcher-core';
+import {
+  KetMonomerClass,
+  KetMonomerGroupTemplateClass,
+  KetTemplateType,
+  MonomerItemType,
+  Struct,
+} from 'ketcher-core';
 
 // you can add other props in monomers, if you need them
 export const monomers: MonomerItemType[] = [
@@ -265,12 +271,13 @@ export const preset = {
   default: true,
 };
 
-const phosphate = {
+const phosphate: MonomerItemType = {
   props: {
     MonomerName: 'P',
     Name: 'Phosphate',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'P',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Phosphate,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -278,12 +285,13 @@ const phosphate = {
   label: 'P',
   struct: new Struct(),
 };
-const ribose = {
+const ribose: MonomerItemType = {
   props: {
     MonomerName: 'R',
     Name: 'Ribose',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'R',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Sugar,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -291,12 +299,13 @@ const ribose = {
   label: 'R',
   struct: new Struct(),
 };
-const thymine = {
+const thymine: MonomerItemType = {
   props: {
     MonomerName: 'T',
     Name: 'Thymine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'T',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Base,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -304,12 +313,13 @@ const thymine = {
   label: 'T',
   struct: new Struct(),
 };
-const cytosine = {
+const cytosine: MonomerItemType = {
   props: {
     MonomerName: 'C',
     Name: 'Cytosine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'C',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Base,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -317,12 +327,13 @@ const cytosine = {
   label: '',
   struct: new Struct(),
 };
-const uracil = {
+const uracil: MonomerItemType = {
   props: {
     MonomerName: 'U',
     Name: 'Uracil',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'U',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Base,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -330,12 +341,13 @@ const uracil = {
   label: '',
   struct: new Struct(),
 };
-const adenine = {
+const adenine: MonomerItemType = {
   props: {
     MonomerName: 'A',
     Name: 'Adenine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'A',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Base,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -343,12 +355,13 @@ const adenine = {
   label: '',
   struct: new Struct(),
 };
-const guanine = {
+const guanine: MonomerItemType = {
   props: {
     MonomerName: 'G',
     Name: 'Guanine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'G',
     MonomerType: '',
+    MonomerClass: KetMonomerClass.Base,
     BranchMonomer: '',
     MonomerCaps: {},
     MonomerCode: '',
@@ -357,4 +370,102 @@ const guanine = {
   struct: new Struct(),
 };
 
-export { phosphate, ribose, cytosine, guanine, thymine, uracil, adenine };
+const rnaPresetsTemplates = [
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'A',
+    name: 'A',
+    class: KetMonomerGroupTemplateClass.RNA,
+    aliasAxoLabs: '(5MdC)',
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-A___Adenine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'C',
+    name: 'C',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-C___Cytosine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'G',
+    name: 'G',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-G___Guanine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'T',
+    name: 'T',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-T___Thymine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'U',
+    name: 'U',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-U___Uracil',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+  },
+];
+
+export {
+  phosphate,
+  ribose,
+  cytosine,
+  guanine,
+  thymine,
+  uracil,
+  adenine,
+  rnaPresetsTemplates,
+};

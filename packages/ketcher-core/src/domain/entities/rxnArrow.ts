@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2';
+import { type Point, Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum RxnArrowMode {
@@ -26,6 +26,7 @@ export enum RxnArrowMode {
   FilledBow = 'filled-bow',
   DashedOpenAngle = 'dashed-open-angle',
   Failed = 'failed',
+  Retrosynthetic = 'retrosynthetic',
   BothEndsFilledTriangle = 'both-ends-filled-triangle',
   EquilibriumFilledTriangle = 'equilibrium-filled-triangle',
   EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow',
@@ -45,12 +46,14 @@ export interface RxnArrowAttributes {
   pos?: Array<Point>;
   height?: number;
   initiallySelected?: initiallySelectedType;
+  arrowId?: number;
 }
 
 export class RxnArrow extends BaseMicromoleculeEntity {
   mode: RxnArrowMode;
   pos: Array<Vec2>;
   height?: number;
+  arrowId?: number;
 
   static isElliptical(arrow) {
     return [
@@ -64,6 +67,7 @@ export class RxnArrow extends BaseMicromoleculeEntity {
   constructor(attributes: RxnArrowAttributes) {
     super(attributes?.initiallySelected);
     this.pos = [];
+    this.arrowId = attributes.arrowId;
 
     if (attributes.pos) {
       for (let i = 0; i < attributes.pos.length; i++) {
@@ -72,7 +76,7 @@ export class RxnArrow extends BaseMicromoleculeEntity {
       }
     }
     this.mode = attributes.mode;
-    const defaultHeight = 2;
+    const defaultHeight = 1;
 
     if (RxnArrow.isElliptical(this)) {
       this.height = attributes.height ?? defaultHeight;

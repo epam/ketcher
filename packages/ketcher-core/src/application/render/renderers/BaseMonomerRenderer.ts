@@ -1,56 +1,80 @@
-import { BaseRenderer } from './BaseRenderer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
+import type { CoreEditor } from 'application/editor/Editor';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import assert from 'assert';
-import {
-  attachmentPointNumberToAngle,
-  anglesToSector,
-  sectorsList,
-  checkFor0and360,
-} from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { Vec2 } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { Vec2 } from 'domain/entities/vec2';
 import {
+  anglesToSector,
+  attachmentPointNumberToAngle,
+  checkFor0and360,
+  sectorsList,
+} from 'domain/helpers/attachmentPointCalculations';
+import type {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { BaseRenderer } from './BaseRenderer';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import {
+  getMonomerSize,
+  setMonomerSize,
+} from 'application/render/renderers/monomerSizeState';
+
+const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
+  {};
+export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
-  private editorEvents: typeof editorEvents;
+  private readonly editorEvents: typeof editorEvents;
+  private readonly editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-
+  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmenPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
-  private monomerSymbolElement?: SVGUseElement | SVGRectElement;
-  public monomerSize: { width: number; height: number };
+  private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
+  public readonly monomerSize: { width: number; height: number };
 
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
   public enumeration: number | null = null;
 
-  private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public beginning: string | null = null;
+  private terminalIndicatorElement?: D3SvgElementSelection<
+    SVGTextElement,
+    void
+  >;
+
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '';
 
   static isSelectable() {
     return true;
   }
 
+  static get selectionCircleRadius() {
+    return 21;
+  }
+
   protected constructor(
     public monomer: BaseMonomer,
-    private monomerSelectedElementId: string,
-    private monomerHoveredElementId: string,
-    monomerSymbolElementId: string,
-    private scale?: number,
+    private readonly monomerHoveredElementId: string,
+    public monomerSymbolElementId: string,
+    public monomerAutochainPreviewElementId: string,
+    private readonly scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -59,24 +83,30 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // in this case (<path> inside <symbol>, <defs>)
     this.monomerSize = {
       width: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-width') || 0
+        this.monomerSymbolElement?.getAttribute('data-actual-width') ?? 0
       ),
       height: +(
-        this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
+        this.monomerSymbolElement?.getAttribute('data-actual-height') ?? 0
       ),
     };
+    setMonomerSize(this.monomerSize);
   }
 
+  // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
-  ) {
-    return (
-      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
-        ?.isSnake &&
-      !this.monomer.attachmentPointsToBonds[
-        attachmentPointName
-      ]?.renderer?.isMonomersOnSameHorizontalLine()
-    );
+  ): boolean {
+    const renderer =
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
+    if (!renderer) return false;
+    if ('isSnake' in renderer) {
+      return renderer.isSnake && !renderer.polymerBond.isHorizontal;
+    }
+    return false;
+  }
+
+  public static get monomerSize() {
+    return getMonomerSize();
   }
 
   public get center() {
@@ -98,7 +128,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       Y: WHITE,
     };
     return (
-      colorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode] ||
+      colorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode] ??
       'black'
     );
   }
@@ -107,12 +137,19 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return (
       theme.monomer.color[
         this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-      ]?.regular || theme.monomer.color.default.regular
+      ]?.regular ?? theme.monomer.color.X.regular
     );
   }
 
-  public redrawAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  protected getPeptideColor(theme) {
+    const naturalAnalogCode =
+      this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const peptideColor = theme.peptide.color[naturalAnalogCode]?.regular;
+    return peptideColor ?? this.getMonomerColor(theme);
+  }
+
+  public redrawAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -122,8 +159,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
-  public updateAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  public updateAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -164,28 +201,32 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPoint.updateCoords();
   }
 
-  public drawAttachmentPoints() {
+  public drawAttachmentPoints(
+    appendFn?: (
+      apName: AttachmentPointName,
+      customAngle?: number,
+    ) => AttachmentPoint,
+  ) {
     if (this.attachmentPoints.length) {
       return;
     }
 
+    const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = this.appendAttachmentPoint(item);
-      const angle = attachmentPoint.getAngle();
+      const attachmentPoint = appendFnToUse(item);
+      const angle: number = attachmentPoint.getAngle();
 
       this.attachmentPoints.push(attachmentPoint as never);
 
-      if (typeof angle === 'number') {
-        // remove this sector from list of free sectors
-        const newList = this.freeSectorsList.filter((item) => {
-          return (
-            anglesToSector[item].min > angle ||
-            anglesToSector[item].max <= angle
-          );
-        });
-        this.freeSectorsList = checkFor0and360(newList);
-      }
+      // remove this sector from list of free sectors
+      const newList = this.freeSectorsList.filter((item) => {
+        return (
+          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
+        );
+      });
+      this.freeSectorsList = checkFor0and360(newList);
     });
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
@@ -197,7 +238,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
       // if this angle is free for unused att point, draw it
       if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
-        const attachmentPoint = this.appendAttachmentPoint(
+        const attachmentPoint = appendFnToUse(
           item,
           properAngleForFreeAttachmentPoint,
         );
@@ -216,21 +257,22 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const attachmentPoint = this.appendAttachmentPoint(item, customAngle);
+      const attachmentPoint = appendFnToUse(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
     });
   }
 
-  public appendAttachmentPoint(
+  protected prepareAttachmentPointsParams(
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
-  ) {
+  ): AttachmentPointConstructorParams {
     let rotation;
 
     if (!this.monomer.isAttachmentPointUsed(attachmentPointName)) {
       rotation = attachmentPointNumberToAngle[attachmentPointName];
     }
-    const attachmentPointParams: AttachmentPointConstructorParams = {
+
+    return {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       rootElement: this.rootElement!,
       monomer: this.monomer,
@@ -241,13 +283,24 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
       isPotentiallyUsed:
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
-        this.hoveredAttachmenPoint === attachmentPointName,
-      angle: customAngle || rotation,
-      isSnake: !!this.isSnakeBondForAttachmentPoint(attachmentPointName),
+        this.hoveredAttachmentPoint === attachmentPointName,
+      angle: customAngle ?? rotation,
+      applyZoomForPositionCalculation: true,
+      // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
+      isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
+  }
 
-    const attPointInstance = new AttachmentPoint(attachmentPointParams);
-    return attPointInstance;
+  public appendAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+    customAngle?: number,
+  ) {
+    const attachmentPointParams = this.prepareAttachmentPointsParams(
+      attachmentPointName,
+      customAngle,
+    );
+
+    return new AttachmentPoint(attachmentPointParams);
   }
 
   public removeAttachmentPoints() {
@@ -258,52 +311,127 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmenPoint(attachmentPointName: AttachmentPointName) {
-    this.hoveredAttachmenPoint = attachmentPointName;
+  public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
+    this.hoveredAttachmentPoint = attachmentPointName;
   }
 
-  private appendRootElement(
-    canvas: D3SvgElementSelection<SVGSVGElement, void>,
+  protected raiseAttachmentPoints() {
+    this.attachmentPoints.forEach((attachmentPoint) => {
+      attachmentPoint.raise();
+    });
+  }
+
+  protected appendRootElement(
+    canvas:
+      | D3SvgElementSelection<SVGSVGElement, void>
+      | D3SvgElementSelection<SVGGElement, void>,
   ) {
-    return canvas
+    let monomerTypeAttribute = '';
+
+    if (this.monomer instanceof AmbiguousMonomer) {
+      monomerTypeAttribute = AmbiguousMonomer.getMonomerClass(
+        this.monomer.monomers,
+      );
+    } else if (this.monomer.monomerItem.props.isMicromoleculeFragment) {
+      monomerTypeAttribute = 'CHEM';
+    } else if (this.monomer.monomerItem.props.MonomerClass) {
+      monomerTypeAttribute = this.monomer.monomerItem.props.MonomerClass;
+    }
+
+    const rootElement = canvas
       .append('g')
       .data([this])
+      .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
+      .attr('data-testid', 'monomer')
+      .attr('data-monomertype', monomerTypeAttribute)
+      .attr('data-monomeralias', this.monomer.label)
+      .attr('data-monomerid', this.monomer.id)
+      .attr(
+        'data-naturalAnalogue',
+        this.monomer.monomerItem.props.MonomerNaturalAnalogCode,
+      )
+      .attr(
+        'data-number-of-attachment-points',
+        this.monomer.listOfAttachmentPoints.length,
+      )
+      .attr(
+        'data-hydrogen-connection-number',
+        this.monomer.hydrogenBonds.length,
+      )
       .attr(
         'transform',
         `translate(${this.scaledMonomerPosition.x}, ${
           this.scaledMonomerPosition.y
-        }) scale(${this.scale || 1})`,
+        }) scale(${this.scale ?? 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    this.monomer.listOfAttachmentPoints.forEach((attachmentPoint) => {
+      rootElement.attr(
+        `data-${attachmentPoint}`,
+        !!this.monomer.attachmentPointsToBonds[attachmentPoint],
+      );
+    });
+    return rootElement;
   }
 
-  private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+  protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+    const fontSize = 6;
     const textElement = rootElement
       .append('text')
       .text(this.monomer.label)
       .attr('fill', this.textColor)
-      .attr('font-size', '12px')
-      .attr('line-height', '12px')
+      .attr('font-size', `${fontSize}px`)
+      .attr('line-height', `${fontSize}px`)
       .attr('font-weight', '700')
       .style('cursor', 'pointer')
       .style('user-select', 'none')
       .attr('pointer-events', 'none');
 
-    const textBBox = (textElement.node() as SVGTextElement).getBBox();
+    // cache label position to reuse it form other monomers with same label
+    // need to improve performance for large amount of monomers
+    // getBBox triggers reflow
+    const [, monomerClass] = monomerEntityFactory(
+      this.monomer instanceof AmbiguousMonomer
+        ? this.monomer.variantMonomerItem
+        : this.monomer.monomerItem,
+    );
+    const monomerUniqueKey = this.monomer.label + monomerClass;
 
+    if (!labelPositions[monomerUniqueKey]) {
+      const textBBox = (textElement.node() as SVGTextElement).getBBox();
+      labelPositions[monomerUniqueKey] = {
+        x: this.width / 2 - textBBox.width / 2,
+        y: this.height / 2,
+      };
+    }
     textElement
-      .attr('x', this.width / 2 - textBBox.width / 2)
-      .attr('y', this.height / 2);
+      .attr('x', labelPositions[monomerUniqueKey]?.x ?? 0)
+      .attr('y', labelPositions[monomerUniqueKey]?.y ?? 0);
+
+    if (this.scale && this.scale !== 1) {
+      labelPositions[monomerUniqueKey] = undefined;
+    }
+  }
+
+  public setLabelVisibility(isVisible: boolean) {
+    this.rootElement?.select('text').style('opacity', isVisible ? 1 : 0);
   }
 
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    let cursor = 'default';
+
     if (this.hoverElement) this.hoverElement.remove();
+    if (this.editor.selectedTool?.name === 'select-tool') cursor = 'move';
+
     return hoverAreaElement
+      .style('cursor', cursor)
       .append('use')
       .attr('href', this.monomerHoveredElementId)
-      .attr('pointer-events', 'none');
+      .attr('pointer-events', 'none')
+      .attr('class', 'dynamic-element');
   }
 
   public removeHover() {
@@ -311,36 +439,44 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoverElement.remove();
   }
 
-  private get scaledMonomerPosition() {
+  public static getScaledMonomerPosition(
+    positionInAngstoms: Vec2,
+    monomerSize: { width: number; height: number } = { width: 0, height: 0 },
+  ) {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const monomerPositionInPixels = Coordinates.modelToCanvas(
-      this.monomer.position,
-    );
+    const monomerPositionInPixels =
+      Coordinates.modelToCanvas(positionInAngstoms);
 
     return new Vec2(
-      monomerPositionInPixels.x - this.monomerSize.width / 2,
-      monomerPositionInPixels.y - this.monomerSize.height / 2,
+      monomerPositionInPixels.x - monomerSize.width / 2,
+      monomerPositionInPixels.y - monomerSize.height / 2,
     );
+  }
+
+  public get scaledMonomerPosition() {
+    return BaseMonomerRenderer.getScaledMonomerPosition(
+      this.monomer.position,
+      this.monomerSize,
+    );
+  }
+
+  public get scaledPosition() {
+    return this.scaledMonomerPosition;
   }
 
   public appendSelection() {
     if (this.selectionCircle) {
       this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);
     } else {
-      this.selectionBorder = this.rootElement
-        ?.append('use')
-        .attr('href', this.monomerSelectedElementId)
-        .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none');
-
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
-        .attr('r', '42px')
+        .attr('r', `${BaseMonomerRenderer.selectionCircleRadius}px`)
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F');
+        .attr('fill', SELECTION_COLOR)
+        .attr('class', 'dynamic-element');
     }
   }
 
@@ -353,7 +489,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected abstract appendBody(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
-    theme,
+    theme?,
   );
 
   protected appendHoverAreaElement() {
@@ -361,7 +497,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendEvents() {
-    assert(this.bodyElement);
+    if (!this.bodyElement) {
+      return;
+    }
+
     this.bodyElement
       .on('mouseover', (event) => {
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
@@ -371,6 +510,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.editorEvents.mouseOnMoveMonomer.dispatch(event);
       })
       .on('mouseleave', (event) => {
+        if (event.relatedTarget?.__data__ instanceof AttachmentPoint) {
+          return;
+        }
+
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.editorEvents.mouseLeaveMonomer.dispatch(event);
       })
@@ -379,12 +522,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       });
   }
 
-  protected abstract get enumerationElementPosition(): {
+  public abstract get enumerationElementPosition(): {
     x: number;
     y: number;
   } | void;
 
-  protected abstract get beginningElementPosition(): {
+  public abstract get beginningElementPosition(): {
     x: number;
     y: number;
   } | void;
@@ -400,55 +543,98 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .append('text')
       .attr('direction', 'rtl')
       .attr('fill', '#7C7C7F')
-      .attr('font-size', '12px')
-      .attr('line-height', '14px')
+      .attr('font-size', '6px')
+      .attr('line-height', '7px')
       .attr('font-weight', '500')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
+
+    this.raiseAttachmentPoints();
   }
 
-  public redrawEnumeration() {
-    assert(this.enumerationElement);
+  public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
+    this.redrawChainTerminalIndicator(needToDrawTerminalIndicator);
+
+    if (!this.enumerationElement) return;
+
     this.enumerationElement.text(this.enumeration);
   }
 
-  public setBeginning(beginning: string | null) {
-    this.beginning = beginning;
-  }
+  public redrawChainTerminalIndicator(needToDraw: boolean) {
+    if (
+      !this.rootElement ||
+      !this.CHAIN_START_TERMINAL_INDICATOR_TEXT ||
+      !this.beginningElementPosition
+    ) {
+      return;
+    }
 
-  protected appendChainBeginning() {
-    assert(this.rootElement);
-    assert(this.beginningElementPosition);
-    this.beginningElement = this.rootElement
+    this.terminalIndicatorElement?.remove();
+
+    if (!needToDraw) {
+      return;
+    }
+
+    this.terminalIndicatorElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
       .attr('fill', '#0097A8')
-      .attr('font-size', '12px')
-      .attr('line-height', '14px')
+      .attr('font-size', '6px')
+      .attr('line-height', '7px')
       .attr('font-weight', '700')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
+      .attr('pointer-events', 'none')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
+      .text(
+        this.monomer.monomerItem.isAntisense
+          ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
+          : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
+      );
+
+    this.raiseAttachmentPoints();
   }
 
-  public reDrawChainBeginning() {
-    assert(this.beginningElement);
-    assert(this.beginningElementPosition);
-    this.beginningElement
-      .attr('x', this.beginningElementPosition.x)
-      .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
+  protected abstract get modificationConfig();
+
+  protected drawModification() {
+    const config = this.modificationConfig;
+    const DARK_COLOR = '#333333';
+    const LIGHT_COLOR = 'white';
+
+    if (config && this.monomer.isModification) {
+      let fillColor: string | undefined;
+
+      if (config.requiresFill) {
+        const isTextColorDark = this.textColor === DARK_COLOR;
+        fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
+      }
+
+      const useElement = this.rootElement
+        ?.append('use')
+        .attr('xlink:href', config.backgroundId)
+        .attr('pointer-events', 'none')
+        .attr('class', 'modification-background');
+
+      if (fillColor) {
+        useElement?.attr('fill', fillColor);
+      }
+    }
   }
 
-  public show(theme) {
+  public show(theme?) {
     this.rootElement =
-      this.rootElement ||
+      this.rootElement ??
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendEvents();
+    this.drawModification();
 
     this.appendLabel(this.rootElement);
     this.appendHoverAreaElement();
@@ -459,7 +645,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawSelection() {
-    assert(this.rootElement);
+    if (!this.rootElement) {
+      return;
+    }
     if (this.monomer.selected) {
       this.appendSelection();
       this.raiseElement();
@@ -484,7 +672,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       'transform',
       `translate(${this.scaledMonomerPosition.x}, ${
         this.scaledMonomerPosition.y
-      }) scale(${this.scale || 1})`,
+      }) scale(${this.scale ?? 1})`,
     );
   }
 
@@ -492,6 +680,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
-    this.editorEvents.mouseLeaveMonomer.dispatch();
+    if (this.monomer.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
   }
 }

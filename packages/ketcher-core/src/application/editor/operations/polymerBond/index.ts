@@ -14,18 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
+  public priority = 1;
   constructor(
-    private addPolymerBondChangeModel: (
-      polymerBond?: PolymerBond,
-    ) => PolymerBond,
-    private deletePolymerBondChangeModel: (polymerBond) => void,
+    private readonly addPolymerBondChangeModel: (
+      polymerBond?: PolymerBond | HydrogenBond,
+    ) => PolymerBond | HydrogenBond,
+    private readonly deletePolymerBondChangeModel: (polymerBond) => void,
   ) {
     this.polymerBond = this.addPolymerBondChangeModel();
   }
@@ -42,13 +45,16 @@ export class PolymerBondAddOperation implements Operation {
 }
 
 export class PolymerBondDeleteOperation implements Operation {
+  public priority = -1;
   constructor(
-    public polymerBond: PolymerBond,
-    private deletePolymerBondChangeModel: () => void,
-    private finishPolymerBondCreationModelChange: (
-      polymerBond?: PolymerBond,
-    ) => PolymerBond,
-  ) {}
+    public polymerBond: PolymerBond | HydrogenBond,
+    private readonly deletePolymerBondChangeModel: () => void,
+    private readonly finishPolymerBondCreationModelChange: (
+      polymerBond?: PolymerBond | HydrogenBond,
+    ) => PolymerBond | HydrogenBond,
+  ) {
+    this.deletePolymerBondChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
     this.deletePolymerBondChangeModel();
@@ -70,7 +76,9 @@ export class PolymerBondMoveOperation implements Operation {
     renderersManager.movePolymerBond(this.polymerBond);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: move state is transient and has no undo state
+  }
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
@@ -80,13 +88,15 @@ export class PolymerBondShowInfoOperation implements Operation {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: show info state is transient and has no undo state
+  }
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
   constructor(
     public polymerBond: PolymerBond,
-    private secondMonomer?: BaseMonomer,
+    private readonly secondMonomer?: BaseMonomer,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
@@ -96,16 +106,21 @@ export class PolymerBondCancelCreationOperation implements Operation {
     );
   }
 
-  public invert() {}
+  public invert() {
+    // intentional no-op: cancel creation is a one-way operation with no undo state
+  }
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {
   public polymerBond;
+  public priority = 1;
   constructor(
-    private finishPolymerBondCreationModelChange: (
+    private readonly finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,
     ) => PolymerBond,
-    private deletePolymerBondCreationModelChange: (polymerBond) => void,
+    private readonly deletePolymerBondCreationModelChange: (
+      polymerBond,
+    ) => void,
   ) {
     this.polymerBond = this.finishPolymerBondCreationModelChange();
   }
@@ -123,13 +138,18 @@ export class PolymerBondFinishCreationOperation implements Operation {
   }
 }
 
-export class SelectSnakeModeOperation implements Operation {
-  private onExecute;
-  private onInvert;
+export class SelectLayoutModeOperation implements Operation {
+  private readonly onExecute;
+  private readonly onInvert;
 
-  constructor(onExecute: () => void, onInvert: () => void) {
-    this.onExecute = onExecute;
-    this.onInvert = onInvert;
+  constructor(
+    public _onExecute: () => void,
+    public _onInvert: () => void,
+    public mode: LayoutMode,
+    public prevMode,
+  ) {
+    this.onExecute = _onExecute;
+    this.onInvert = _onInvert;
   }
 
   public execute(): void {
@@ -138,5 +158,23 @@ export class SelectSnakeModeOperation implements Operation {
 
   public invert(): void {
     this.onInvert();
+  }
+}
+
+export class ReconnectPolymerBondOperation implements Operation {
+  public polymerBond;
+  constructor(
+    private readonly reconnectPolymerBondModelChange: () => PolymerBond,
+    private readonly revertReconnectPolymerBondModelChange: () => PolymerBond,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.reconnectPolymerBondModelChange();
+    renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.polymerBond = this.revertReconnectPolymerBondModelChange();
+    renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
   }
 }

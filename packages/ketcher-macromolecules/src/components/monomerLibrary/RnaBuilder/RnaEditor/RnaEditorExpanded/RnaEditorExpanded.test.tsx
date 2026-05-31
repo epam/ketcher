@@ -1,6 +1,14 @@
+import { Entities } from 'ketcher-core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
+
+const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
+
+jest.mock('hooks', () => ({
+  ...jest.requireActual('hooks'),
+  useLayoutMode: () => useLayoutModeMock(),
+}));
 
 describe('Test Rna Editor Expanded component', () => {
   it('should render correctly in edit mode', async () => {
@@ -10,22 +18,11 @@ describe('Test Rna Editor Expanded component', () => {
         {
           rnaBuilder: {
             activePreset: {
-              name: 'MyRna',
-              sugar: {
-                props: {
-                  MonomerName: '',
-                },
-              },
-              phosphate: {
-                props: {
-                  MonomerName: '',
-                },
-              },
-              base: {
-                props: {
-                  MonomerName: '',
-                },
-              },
+              name: '',
+              nameInList: '',
+              sugar: undefined,
+              phosphate: undefined,
+              base: undefined,
             },
           },
         },
@@ -38,6 +35,50 @@ describe('Test Rna Editor Expanded component', () => {
 
     fireEvent.click(addToPresetsBtn);
     fireEvent.click(cancelBtn);
+
+    expect(rnaEditorExpanded).toMatchSnapshot();
+  });
+
+  it('should render correctly in edit mode with modification of sequence', async () => {
+    render(
+      withThemeAndStoreProvider(
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
+        {
+          editor: {
+            editor: {
+              isSequenceEditInRNABuilderMode: true,
+              events: { keyDown: { add: () => true, remove: () => true } },
+            },
+          },
+          rnaBuilder: {
+            activePreset: {},
+            sequenceSelectionName: '2 nucleotides',
+            sequenceSelection: [
+              {
+                type: Entities.Nucleotide,
+                baseLabel: 'A',
+                sugarLabel: 'R',
+                phosphateLabel: 'P',
+                nodeIndexOverall: 0,
+                hasR1Connection: false,
+              },
+              {
+                type: Entities.Nucleotide,
+                baseLabel: 'C',
+                sugarLabel: 'R',
+                phosphateLabel: 'P',
+                nodeIndexOverall: 1,
+                hasR1Connection: true,
+              },
+            ],
+            presetsDefault: [],
+            presetsCustom: [],
+          },
+        },
+      ),
+    );
+
+    const rnaEditorExpanded = screen.getByTestId('rna-editor-expanded');
 
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
@@ -70,8 +111,10 @@ describe('Test Rna Editor Expanded component', () => {
                   MonomerName: '',
                 },
               },
-              presetInList: {},
+              nameInList: 'MyRna',
             },
+            presetsDefault: [],
+            presetsCustom: [],
           },
         },
       ),
@@ -84,7 +127,7 @@ describe('Test Rna Editor Expanded component', () => {
     fireEvent.click(editBtn);
     fireEvent.click(duplicateBtn);
 
-    expect(onDuplicateHandler).toBeCalled();
+    expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 });

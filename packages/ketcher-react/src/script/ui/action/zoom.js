@@ -25,6 +25,7 @@ export const zoomList = [
 export default {
   zoom: {
     shortcut: ['Mod+0'],
+    enabledInViewOnly: true,
     selected: (editor) => editor.zoom(),
     action: (editor) => {
       editor.zoom(1);
@@ -33,8 +34,9 @@ export default {
     hidden: (options) => isHidden(options, 'zoom'),
   },
   'zoom-out': {
-    shortcut: ['Ctrl+_', 'Ctrl+-'],
+    shortcut: ['Mod+Minus', 'Mod+NumpadSubtract'],
     title: 'Zoom Out',
+    enabledInViewOnly: true,
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
     action: (event) => (editor) => {
       const zoom = editor.zoom();
@@ -45,8 +47,9 @@ export default {
     hidden: (options) => isHidden(options, 'zoom-out'),
   },
   'zoom-in': {
-    shortcut: ['Ctrl+=', 'Ctrl++'],
+    shortcut: ['Mod+Equal', 'Mod+NumpadAdd'],
     title: 'Zoom In',
+    enabledInViewOnly: true,
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (event) => (editor) => {
       const zoom = editor.zoom();
@@ -60,6 +63,7 @@ export default {
     hidden: (options) => isHidden(options, 'zoom-in'),
   },
   'zoom-list': {
+    enabledInViewOnly: true,
     hidden: (options) => isHidden(options, 'zoom-list'),
   },
 };

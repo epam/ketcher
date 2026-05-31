@@ -3,6 +3,7 @@ import {
   type AtomColor,
   Vec2,
   CoordinateTransformation,
+  getOptionsWithConvertedUnits,
 } from 'ketcher-core';
 import Editor from './Editor';
 
@@ -10,7 +11,7 @@ const HOVER_ICON_OPACITY = 0.7;
 
 export class HoverIcon {
   element: any;
-  _fill: AtomColor | '';
+  _fill: AtomColor;
   _label: ElementLabel | '';
   isShown: boolean;
   /**
@@ -40,7 +41,7 @@ export class HoverIcon {
     clientArea.addEventListener('mouseleave', this.onMouseLeave);
   }
 
-  set fill(fillColor: AtomColor | '') {
+  set fill(fillColor: AtomColor) {
     this._fill = fillColor;
     this.element.attr('fill', fillColor);
   }
@@ -59,8 +60,8 @@ export class HoverIcon {
   }
 
   isOverLoader(event: MouseEvent) {
-    const target = <HTMLDivElement>event?.relatedTarget || event.target;
-    return target?.classList.contains('loading-spinner');
+    const target = <HTMLDivElement>event?.relatedTarget ?? event.target;
+    return target?.classList?.contains('loading-spinner');
   }
 
   onMouseMove(event: MouseEvent) {
@@ -110,20 +111,22 @@ export class HoverIcon {
 
   initialize(): {
     element: any;
-    fill: AtomColor | '';
+    fill: AtomColor;
     label: ElementLabel | '';
   } {
     const render = this.editor.render;
     const fillColor = this.fill ?? '#000000';
-    const element = render.paper.text(0, 0, this.label || '');
+    const element = render.paper.text(0, 0, this.label ?? '');
+    const options = getOptionsWithConvertedUnits(this.editor.options());
+
     element.attr('fill', fillColor);
-    element.attr('font-size', this.editor.options().fontsz);
+    element.attr('font-size', options.fontszInPx);
     element.attr('opacity', HOVER_ICON_OPACITY);
 
     return {
       element,
       fill: fillColor,
-      label: this?.label || '',
+      label: this?.label ?? '',
     };
   }
 
@@ -134,5 +137,12 @@ export class HoverIcon {
     this._label = icon.label;
     this.shouldBeShownWhenMouseBack = false;
     this.hide();
+  }
+
+  destroy() {
+    const clientArea = this.editor.render.clientArea;
+    document.removeEventListener('mousemove', this.onMouseMove);
+    clientArea.removeEventListener('mouseover', this.onMouseMove);
+    clientArea.removeEventListener('mouseleave', this.onMouseLeave);
   }
 }

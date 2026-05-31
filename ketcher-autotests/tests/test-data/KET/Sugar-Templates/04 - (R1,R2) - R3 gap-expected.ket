@@ -1,8 +1,9 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
-                "$ref": "monomer1"
+                "$ref": "monomer0"
             }
         ],
         "connections": [],
@@ -12,12 +13,12 @@
             }
         ]
     },
-    "monomer1": {
+    "monomer0": {
         "type": "monomer",
-        "id": "1",
+        "id": "0",
         "position": {
-            "x": 3.1733333333333333,
-            "y": -2.2199999999999998
+            "x": 11.9,
+            "y": -8.325000000000001
         },
         "alias": "(R1,R2)_-_R3_gap",
         "templateId": "_R1_R2__-_R3_gap"

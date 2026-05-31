@@ -1,0 +1,102 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    14.2090368284707,
+                    -8.294892325918656,
+                    0
+                ],
+                "radical": 3,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.2090368284707,
+            "y": 7.2948923259186556,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    13.173041225651843,
+                    -8.308718209634723,
+                    0
+                ],
+                "radical": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 13.173041225651843,
+            "y": 7.308718209634724,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    12.191368366211767,
+                    -8.285135907810037,
+                    0
+                ],
+                "radical": 2,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.191368366211767,
+            "y": 7.285135907810038,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    17.23246066185736,
+                    -8.216281897432061,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 17.23246066185736,
+            "y": 7.216281897432061,
+            "z": 0
+        }
+    }
+}

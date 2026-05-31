@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES';
+export const MONOMER_LIBRARY_PEPTIDES = 'PEPTIDE';
 
 export const MONOMER_TYPES = {
   PEPTIDE: 'PEPTIDE',
@@ -25,20 +26,12 @@ export type LibraryNameType =
   | typeof MONOMER_LIBRARY_FAVORITES
   | keyof typeof MONOMER_TYPES;
 
-export const EditorClassName = 'Ketcher-polymer-editor-root';
-export const EditorQuerySelector = `.${EditorClassName}`;
-
-export const preview = {
-  width: 230,
-  height: 230,
-  gap: 5,
-  topPadding: 16,
-} as const;
-
 export enum MonomerGroups {
   SUGARS = 'Sugars',
   BASES = 'Bases',
   PHOSPHATES = 'Phosphates',
+  PEPTIDES = 'Amino Acids',
+  NUCLEOTIDES = 'Nucleotides',
 }
 
 export enum MonomerGroupCodes {
@@ -64,3 +57,22 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
 } as const;
 
 export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';
+export const CUSTOM_PRESETS = 'ketcher_custom_presets';
+export const PRESET_PHOSPHATE_FILTER_STORAGE_KEY =
+  'ketcher_preset_phosphate_filter';
+
+// It's set as Z, so it will always be put in the end when alphabetically sorting groups by code
+export const NoNaturalAnalogueGroupCode = 'Z';
+export const NoNaturalAnalogueGroupTitle = 'No natural analogue';
+
+export const DNA_TEMPLATE_NAME_PART = 'thymine';
+export const RNA_TEMPLATE_NAME_PART = 'uracil';
+
+export const LIBRARY_TAB_INDEX = {
+  FAVORITES: 0,
+  PEPTIDES: 1,
+  RNA: 2,
+  CHEM: 3,
+} as const;
+
+export const FavoriteStarSymbol = '★';

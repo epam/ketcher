@@ -373,6 +373,7 @@
                 ]
             }
         ],
+        "class": "Base",
         "classHELM": "RNA",
         "id": "_R1_R2__-_R3_gap",
         "alias": "(R1,R2)_-_R3_gap",

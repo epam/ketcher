@@ -15,10 +15,11 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReStruct, ReText } from '../../../render';
-import { Text, Vec2 } from 'domain/entities';
+import { type ReStruct, ReText } from '../../../render';
+import { Text } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 
 interface TextCreateData {
@@ -29,7 +30,7 @@ interface TextCreateData {
 }
 
 export class TextCreate extends BaseOperation {
-  data: TextCreateData;
+  readonly data: TextCreateData;
 
   constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE);
@@ -43,10 +44,10 @@ export class TextCreate extends BaseOperation {
       const index = restruct.molecule.texts.add(item);
       this.data.id = index;
     } else {
-      restruct.molecule.texts.set(this.data.id!, item);
+      restruct.molecule.texts.set(this.data.id, item);
     }
 
-    const itemId = this.data.id!;
+    const itemId = this.data.id;
 
     restruct.texts.set(itemId, new ReText(item));
 
@@ -67,7 +68,7 @@ interface TextDeleteData {
 }
 
 export class TextDelete extends BaseOperation {
-  data: TextDeleteData;
+  readonly data: TextDeleteData;
 
   constructor(id: number) {
     super(OperationType.TEXT_DELETE);
@@ -76,7 +77,7 @@ export class TextDelete extends BaseOperation {
 
   execute(restruct: ReStruct): void {
     const struct = restruct.molecule;
-    const item = struct.texts.get(this.data.id)!;
+    const item = struct.texts.get(this.data.id);
     if (!item) return;
 
     this.data.content = item.content!;
@@ -84,7 +85,10 @@ export class TextDelete extends BaseOperation {
 
     restruct.markItemRemoved();
 
-    restruct.clearVisel(restruct.texts.get(this.data.id)!.visel);
+    const reText = restruct.texts.get(this.data.id);
+    if (reText) {
+      restruct.clearVisel(reText.visel);
+    }
     restruct.texts.delete(this.data.id);
 
     struct.texts.delete(this.data.id);

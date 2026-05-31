@@ -16,15 +16,17 @@
 
 import {
   FunctionalGroup,
-  MonomerMicromolecule,
+  IMAGE_KEY,
   Struct,
   Vec2,
+  ReStruct,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
+import assert from 'assert';
 
-function getElementsInRectangle(restruct, p0, p1) {
+function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
-  const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
@@ -33,51 +35,66 @@ function getElementsInRectangle(restruct, p0, p1) {
   const y0 = Math.min(p0.y, p1.y);
   const y1 = Math.max(p0.y, p1.y);
 
-  restruct.bonds.forEach((bond, bid) => {
-    if (struct.isBondFromMacromolecule(bid)) {
-      return;
+  const topLeftPosition = new Vec2(x0, y0);
+  const topRightPosition = new Vec2(x1, y0);
+  const bottomRightPosition = new Vec2(x1, y1);
+  const bottomLeftPosition = new Vec2(x0, y1);
+
+  const polygon = [
+    topLeftPosition,
+    topRightPosition,
+    bottomRightPosition,
+    bottomLeftPosition,
+  ];
+
+  restruct.visibleBonds.forEach((bond, bid) => {
+    const isSkippedBond = bond.b.isPreview;
+    if (isSkippedBond) return;
+
+    let center: Vec2;
+    if (bond.b.isExternalBondBetweenMonomers(struct)) {
+      const firstMonomer = struct.getGroupFromAtomId(bond.b.begin);
+      const secondMonomer = struct.getGroupFromAtomId(bond.b.end);
+
+      assert(firstMonomer);
+      assert(secondMonomer);
+
+      center =
+        firstMonomer.pp && secondMonomer.pp
+          ? Vec2.centre(firstMonomer.pp, secondMonomer.pp)
+          : bond.b.center;
+    } else {
+      center = bond.b.center;
     }
 
-    const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
-      0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
-      0.5,
-    );
-    if (
-      centre.x > x0 &&
-      centre.x < x1 &&
-      centre.y > y0 &&
-      centre.y < y1 &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond.b,
-        sGroups,
-        functionalGroups,
-      )
-    ) {
+    if (center.x > x0 && center.x < x1 && center.y > y0 && center.y < y1) {
       bondList.push(bid);
     }
   });
 
-  restruct.atoms.forEach((atom, aid) => {
+  restruct.visibleAtoms.forEach((atom, aid) => {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
       aid,
     );
-    const reSGroup = restruct.sgroups.get(relatedFGId);
-    if (
-      !(reSGroup?.item instanceof MonomerMicromolecule) &&
+    const sGroup = struct.sgroups.get(relatedFGId as number);
+
+    if (struct.isAtomFromMacromolecule(aid)) {
+      const sGroupPosition = sGroup?.pp;
+      if (
+        sGroupPosition &&
+        sGroupPosition.x > x0 &&
+        sGroupPosition.x < x1 &&
+        sGroupPosition.y > y0 &&
+        sGroupPosition.y < y1
+      ) {
+        atomList.push(aid);
+      }
+    } else if (
       atom.a.pp.x > x0 &&
       atom.a.pp.x < x1 &&
       atom.a.pp.y > y0 &&
-      atom.a.pp.y < y1 &&
-      (!FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom.a,
-        sGroups,
-        functionalGroups,
-        true,
-      ) ||
-        aid === reSGroup.item.atoms[0])
+      atom.a.pp.y < y1
     ) {
       atomList.push(aid);
     }
@@ -87,7 +104,8 @@ function getElementsInRectangle(restruct, p0, p1) {
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
 
-  restruct.rxnArrows.forEach((item, id) => {
+  // ReRxnArrow item doesn't have center method according to types but somehow it works
+  restruct.rxnArrows.forEach((item: any, id) => {
     if (
       item.item.center().x > x0 &&
       item.item.center().x < x1 &&
@@ -110,7 +128,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInRectangle = referencePoints.find(
       (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1,
     );
@@ -120,7 +138,8 @@ function getElementsInRectangle(restruct, p0, p1) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item, id) => {
+  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
+  restruct.enhancedFlags.forEach((item: any, id) => {
     if (!item.pp) return;
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id);
@@ -129,12 +148,8 @@ function getElementsInRectangle(restruct, p0, p1) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (
-      item.sgroup.pp.x > x0 &&
-      item.sgroup.pp.x < x1 &&
-      item.sgroup.pp.y > y0 &&
-      item.sgroup.pp.y < y1
-    ) {
+    const pp = item.sgroup.pp;
+    if (pp && pp.x > x0 && pp.x < x1 && pp.y > y0 && pp.y < y1) {
       sgroupDataList.push(id);
     }
   });
@@ -163,6 +178,25 @@ function getElementsInRectangle(restruct, p0, p1) {
     }
   });
 
+  const reImages = Array.from(restruct.images.entries()).reduce(
+    (acc: Array<number>, [id, item]): Array<number> => {
+      const isPointInside = Object.values(
+        item.image.getReferencePositions(),
+      ).some((point) => point.isInsidePolygon(polygon));
+      return isPointInside ? acc.concat(id) : acc;
+    },
+    [],
+  );
+
+  const reMultitailArrows = Array.from(
+    restruct.multitailArrows.entries(),
+  ).reduce((acc: Array<number>, [id, item]): Array<number> => {
+    const isPointInside = item.multitailArrow
+      .getReferencePositionsArray()
+      .some((point) => point.isInsidePolygon(polygon));
+    return isPointInside ? acc.concat(id) : acc;
+  }, []);
+
   return {
     atoms: atomList,
     bonds: bondList,
@@ -173,10 +207,12 @@ function getElementsInRectangle(restruct, p0, p1) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
+    [IMAGE_KEY]: reImages,
+    [MULTITAIL_ARROW_KEY]: reMultitailArrows,
   };
 }
 
-function getElementsInPolygon(restruct, rr) {
+function getElementsInPolygon(restruct: ReStruct, rr) {
   // eslint-disable-line max-statements
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
@@ -185,32 +221,38 @@ function getElementsInPolygon(restruct, rr) {
   const functionalGroups = restruct.molecule.functionalGroups;
   const struct: Struct = restruct.molecule;
 
-  for (let i = 0; i < rr.length; ++i) {
-    r[i] = new Vec2(rr[i].x, rr[i].y);
+  for (const point of rr) {
+    r.push(new Vec2(point.x, point.y));
   }
 
   restruct.bonds.forEach((bond, bid) => {
     if (
-      struct.isAtomFromMacromolecule(bond.b.begin) ||
-      struct.isAtomFromMacromolecule(bond.b.end)
-    ) {
-      return;
-    }
-
-    const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
-      0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
-      0.5,
-    );
-    if (
-      isPointInPolygon(r, centre) &&
-      !FunctionalGroup.isBondInContractedFunctionalGroup(
+      FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
         functionalGroups,
       )
     ) {
+      return;
+    }
+
+    let center: Vec2;
+    if (bond.b.isExternalBondBetweenMonomers(struct)) {
+      const firstMonomer = struct.getGroupFromAtomId(bond.b.begin);
+      const secondMonomer = struct.getGroupFromAtomId(bond.b.end);
+
+      assert(firstMonomer);
+      assert(secondMonomer);
+
+      center =
+        firstMonomer?.pp && secondMonomer?.pp
+          ? Vec2.centre(firstMonomer.pp, secondMonomer.pp)
+          : bond.b.center;
+    } else {
+      center = bond.b.center;
+    }
+
+    if (isPointInPolygon(r, center)) {
       bondList.push(bid);
     }
   });
@@ -220,17 +262,20 @@ function getElementsInPolygon(restruct, rr) {
       functionalGroups,
       aid,
     );
-    const reSGroup = restruct.sgroups.get(relatedFGId);
-    if (
-      !(reSGroup?.item instanceof MonomerMicromolecule) &&
+    const sGroup = struct.sgroups.get(relatedFGId as number);
+
+    if (struct.isAtomFromMacromolecule(aid)) {
+      if (sGroup?.pp && isPointInPolygon(r, sGroup.pp)) {
+        atomList.push(aid);
+      }
+    } else if (
       isPointInPolygon(r, atom.a.pp) &&
       (!FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
         sGroups,
         functionalGroups,
-        true,
       ) ||
-        aid === reSGroup.item.atoms[0])
+        aid === sGroup?.atoms[0])
     ) {
       atomList.push(aid);
     }
@@ -242,7 +287,7 @@ function getElementsInPolygon(restruct, rr) {
   const textsList: Array<number> = [];
 
   restruct.rxnArrows.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePoints();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
     );
@@ -258,7 +303,7 @@ function getElementsInPolygon(restruct, rr) {
   });
 
   restruct.simpleObjects.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePointsOnObject();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
     );
@@ -279,7 +324,8 @@ function getElementsInPolygon(restruct, rr) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item, id) => {
+  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
+  restruct.enhancedFlags.forEach((item: any, id) => {
     if (item.pp && isPointInPolygon(r, item.pp)) {
       enhancedFlagList.push(id);
     }
@@ -287,7 +333,7 @@ function getElementsInPolygon(restruct, rr) {
 
   const sgroupDataList: Array<number> = [];
   restruct.sgroupData.forEach((item, id) => {
-    if (isPointInPolygon(r, item.sgroup.pp)) {
+    if (item.sgroup.pp && isPointInPolygon(r, item.sgroup.pp)) {
       sgroupDataList.push(id);
     }
   });
@@ -299,6 +345,25 @@ function getElementsInPolygon(restruct, rr) {
     }
   });
 
+  const reImages = Array.from(restruct.images.entries()).reduce(
+    (acc: Array<number>, [id, item]) => {
+      const isPointInside = Object.values(
+        item.image.getReferencePositions(),
+      ).some((point) => isPointInPolygon(r, point));
+      return isPointInside ? acc.concat(id) : acc;
+    },
+    [],
+  );
+
+  const reMultitailArrows = Array.from(
+    restruct.multitailArrows.entries(),
+  ).reduce((acc: Array<number>, [id, item]) => {
+    const isPointInside = item.multitailArrow
+      .getReferencePositionsArray()
+      .some((point) => isPointInPolygon(r, point));
+    return isPointInside ? acc.concat(id) : acc;
+  }, []);
+
   return {
     atoms: atomList,
     bonds: bondList,
@@ -309,6 +374,8 @@ function getElementsInPolygon(restruct, rr) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
+    [IMAGE_KEY]: reImages,
+    [MULTITAIL_ARROW_KEY]: reMultitailArrows,
   };
 }
 
@@ -327,8 +394,8 @@ function isPointInPolygon(r, p) {
   let flag1 = false;
   let flag0 = false;
 
-  for (let i = 0; i < r.length; ++i) {
-    const v1 = Vec2.diff(r[i], p);
+  for (const point of r) {
+    const v1 = Vec2.diff(point, p);
     const w1 = Vec2.diff(v1, v0);
     const n1 = Vec2.dot(n, v1);
     const d1 = Vec2.dot(d, v1);

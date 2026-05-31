@@ -22,13 +22,17 @@ import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { IndigoProvider } from 'ketcher-react';
+import { IconButton, IndigoProvider } from 'ketcher-react';
 import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
+  getSvgFromDrawnStructures,
+  isClipboardAPIAvailable,
+  legacyCopy,
+  isHelmCompatible,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -36,18 +40,39 @@ import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
 import {
   Form,
   Loader,
+  PreviewContainer,
   Row,
   StyledDropdown,
   stylesForExpanded,
+  SvgPreview,
 } from './Save.styles';
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
-
+// TODO: Make it type safe by using `SupportedFormats` as id
 const options: Array<Option> = [
-  { id: 'ket', label: 'Ket' },
+  { id: 'ket', label: 'Ket Format' },
   { id: 'mol', label: 'MDL Molfile V3000' },
+  { id: 'sequence', label: 'Sequence (1-letter code)' },
+  { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
+  { id: 'fasta', label: 'FASTA' },
+  { id: 'idt', label: 'IDT' },
+  { id: 'axo-labs', label: 'AxoLabs' },
+  { id: 'svg', label: 'SVG Document' },
+  { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
+
+const formatDetector = {
+  mol: ChemicalMimeType.Mol,
+  fasta: ChemicalMimeType.FASTA,
+  sequence: ChemicalMimeType.SEQUENCE,
+  'sequence-3-letter': ChemicalMimeType.PeptideSequenceThreeLetter,
+  idt: ChemicalMimeType.IDT,
+  'axo-labs': ChemicalMimeType.AXOLABS,
+  helm: ChemicalMimeType.HELM,
+  biln: ChemicalMimeType.BILN,
+};
 
 const StyledModal = styled(Modal)({
   '& div.MuiPaper-root': {
@@ -72,8 +97,9 @@ export const Save = ({
   const [currentFileName, setCurrentFileName] = useState('ketcher');
   const [struct, setStruct] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -82,21 +108,63 @@ export const Save = ({
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
     );
+    setSvgData(undefined);
     if (fileFormat === 'ket') {
       setStruct(serializedKet);
       return;
     }
+    if (fileFormat === 'svg') {
+      // Get Ketcher root element offset for SVG positioning
+      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
+      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
+      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
+
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
+        horizontal: ketcherRootOffsetX,
+        vertical: ketcherRootOffsetY,
+      });
+      setSvgData(svgData);
+      return;
+    }
+    if (
+      fileFormat === 'helm' &&
+      !isHelmCompatible(
+        Array.from(editor.drawingEntitiesManager.monomers.values()),
+        editor.monomersLibrary,
+      )
+    ) {
+      editor.events.error.dispatch(
+        'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
+      );
+    }
 
     try {
       setIsLoading(true);
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'idt'
+      ) {
+        const isValid =
+          editor.drawingEntitiesManager.validateIfApplicableForFasta();
+        if (!isValid) {
+          throw new Error(
+            'Error during sequence type recognition(RNA, DNA or Peptide)',
+          );
+        }
+      }
       const result = await indigo.convert({
         struct: serializedKet,
-        output_format: ChemicalMimeType.Mol,
+        output_format: formatDetector[fileFormat],
       });
       setStruct(result.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      let stringError;
+      if (error instanceof Error) {
+        stringError = error.message;
+      } else {
+        stringError = typeof error === 'string' ? error : JSON.stringify(error);
+      }
       const errorMessage = 'Convert error! ' + stringError;
       dispatch(openErrorModal(errorMessage));
       KetcherLogger.error(errorMessage);
@@ -111,12 +179,48 @@ export const Save = ({
   };
 
   const handleSave = () => {
-    const blob = new Blob([struct], {
+    let blobPart;
+    if (currentFileFormat === 'svg') {
+      // Get Ketcher root element offset for SVG positioning
+      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
+      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
+      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
+
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
+        horizontal: ketcherRootOffsetX,
+        vertical: ketcherRootOffsetY,
+      });
+      if (!svgData) {
+        onClose();
+        return;
+      }
+      blobPart = svgData;
+    } else {
+      blobPart = struct;
+    }
+    const blob = new Blob([blobPart], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
     const formatProperties = getPropertiesByFormat(currentFileFormat);
     saveAs(blob, `${currentFileName}${formatProperties.extensions[0]}`);
     onClose();
+  };
+
+  const handleCopy = (event) => {
+    event.preventDefault();
+
+    try {
+      if (isClipboardAPIAvailable()) {
+        navigator.clipboard.writeText(struct);
+      } else {
+        legacyCopy(event.clipboardData, {
+          'text/plain': struct,
+        });
+      }
+    } catch (e) {
+      KetcherLogger.error('copyAs.js::copyAs', e);
+      dispatch(openErrorModal('This feature is not available in your browser'));
+    }
   };
 
   useEffect(() => {
@@ -131,7 +235,12 @@ export const Save = ({
   }, [currentFileFormat]);
 
   return (
-    <StyledModal title="save structure" isOpen={isModalOpen} onClose={onClose}>
+    <StyledModal
+      title="save structure"
+      isOpen={isModalOpen}
+      onClose={onClose}
+      testId="save-structure-dialog"
+    >
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">
           <Row style={{ padding: '12px 12px 10px' }}>
@@ -141,6 +250,7 @@ export const Save = ({
                 id="filename"
                 onChange={handleInputChange}
                 label="File name:"
+                data-testid="filename-input"
               />
             </div>
             <StyledDropdown
@@ -149,21 +259,30 @@ export const Save = ({
               currentSelection={currentFileFormat}
               selectionHandler={handleSelectChange}
               customStylesForExpanded={stylesForExpanded}
+              testId="file-format-list"
             />
           </Row>
-          <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
-            <TextArea
-              testId="preview-area-text"
-              value={struct}
-              readonly
-              selectOnInit
+          {svgData ? (
+            <SvgPreview
+              dangerouslySetInnerHTML={{ __html: svgData }}
+              data-testid="preview-area"
             />
-            {isLoading && (
-              <Loader>
-                <LoadingCircles />
-              </Loader>
-            )}
-          </div>
+          ) : (
+            <PreviewContainer>
+              <TextArea testId="preview-area" value={struct} readonly />
+              <IconButton
+                onClick={handleCopy}
+                iconName="copy"
+                title="Copy to clipboard"
+                testId="copy-to-clipboard"
+              />
+              {isLoading && (
+                <Loader>
+                  <LoadingCircles />
+                </Loader>
+              )}
+            </PreviewContainer>
+          )}
         </Form>
       </Modal.Content>
 
@@ -172,12 +291,14 @@ export const Save = ({
           label="Cancel"
           styleType="secondary"
           clickHandler={onClose}
+          data-testid="cancel-button"
         />
 
         <ActionButton
           label="Save"
           clickHandler={handleSave}
           disabled={!currentFileName}
+          data-testid="save-button"
         />
       </Modal.Footer>
     </StyledModal>

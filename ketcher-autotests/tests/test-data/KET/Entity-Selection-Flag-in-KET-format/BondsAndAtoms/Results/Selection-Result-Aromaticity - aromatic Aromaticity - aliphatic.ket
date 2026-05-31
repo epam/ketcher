@@ -1,0 +1,516 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            },
+            {
+                "$ref": "mol16"
+            },
+            {
+                "$ref": "mol17"
+            },
+            {
+                "$ref": "mol18"
+            },
+            {
+                "$ref": "mol19"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -1.7213320066299111,
+                    -6.114571305270938,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.7213320066299111,
+            "y": 5.114571305270938,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    30.1987189087575,
+                    -5.760845729869145,
+                    0
+                ],
+                "explicitValence": 8,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 30.1987189087575,
+            "y": 4.760845729869145,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    14.963153004952511,
+                    -5.810968621361821,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.963153004952511,
+            "y": 4.810968621361821,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -1.7110312972446122,
+                    -10.764154335406051,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -1.7110312972446122,
+            "y": 9.764154335406051,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    30.31762164133451,
+                    -10.353491287771359,
+                    0
+                ],
+                "explicitValence": 8,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 30.31762164133451,
+            "y": 9.353491287771359,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    15.079514007464633,
+                    -10.368001065734948,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.079514007464633,
+            "y": 9.368001065734948,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "location": [
+                    26.123451744380468,
+                    -5.810354417470443,
+                    0
+                ],
+                "explicitValence": 7,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 26.123451744380468,
+            "y": 4.810354417470443,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "location": [
+                    26.213176356854298,
+                    -10.312049767156356,
+                    0
+                ],
+                "explicitValence": 7,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 26.213176356854298,
+            "y": 9.312049767156356,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "location": [
+                    22.234023177314953,
+                    -5.821244262459975,
+                    0
+                ],
+                "explicitValence": 6,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.234023177314953,
+            "y": 4.821244262459975,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "location": [
+                    22.323747789788783,
+                    -10.358829457135418,
+                    0
+                ],
+                "explicitValence": 6,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.323747789788783,
+            "y": 9.358829457135418,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "location": [
+                    18.430484455238968,
+                    -5.849464572480911,
+                    0
+                ],
+                "explicitValence": 5,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.430484455238968,
+            "y": 4.849464572480911,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "location": [
+                    18.627878602681385,
+                    -10.404994689651122,
+                    0
+                ],
+                "explicitValence": 5,
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.627878602681385,
+            "y": 9.404994689651122,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    11.880314065888081,
+                    -5.809739960007085,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.880314065888081,
+            "y": 4.809739960007085,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    11.952093755867141,
+                    -10.34732515468253,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.952093755867141,
+            "y": 9.34732515468253,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    8.668957786139352,
+                    -5.891823486190678,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.668957786139352,
+            "y": 4.891823486190678,
+            "z": 0
+        }
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    8.830462088592238,
+                    -10.375573913381832,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.830462088592238,
+            "y": 9.375573913381832,
+            "z": 0
+        }
+    },
+    "mol16": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    5.428152281442966,
+                    -5.952684882501848,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.428152281442966,
+            "y": 4.952684882501848,
+            "z": 0
+        }
+    },
+    "mol17": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    5.481987048927262,
+                    -10.47232515468253,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.481987048927262,
+            "y": 9.47232515468253,
+            "z": 0
+        }
+    },
+    "mol18": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    1.7706307691785286,
+                    -6.03090519252279,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.7706307691785286,
+            "y": 5.03090519252279,
+            "z": 0
+        }
+    },
+    "mol19": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    1.7706307691785286,
+                    -10.694104844661592,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aliphatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.7706307691785286,
+            "y": 9.694104844661592,
+            "z": 0
+        }
+    }
+}

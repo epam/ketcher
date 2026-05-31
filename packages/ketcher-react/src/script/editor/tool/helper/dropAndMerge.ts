@@ -20,11 +20,12 @@ type MergeItems = {
 export function dropAndMerge(
   editor: Editor,
   mergeItems: any,
-  action?: Action,
+  action?: Action | null,
+  copyAction?: Action,
 ): Action {
   const restruct = editor.render.ctab;
   const isMerging = !!mergeItems;
-  let dropItemAction = new Action();
+  let dropItemAction = copyAction || new Action();
 
   if (isMerging) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
@@ -47,7 +48,7 @@ export function dropAndMerge(
     dropItemAction = dropItemAction.mergeWith(action);
   }
 
-  const bonds = editor.selection()?.bonds ?? [];
+  const bonds = editor.explicitSelected()?.bonds ?? [];
   for (const bondId of bonds) {
     const rebond = restruct.bonds.get(bondId);
     if (rebond) {

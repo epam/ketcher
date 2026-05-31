@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { memo } from 'react';
 import {
   MonomerName,
   RnaEditorCollapsedContainer,
@@ -21,17 +22,24 @@ import {
 } from './styles';
 import { IRnaEditorCollapsedProps } from './types';
 
-export const RnaEditorCollapsed = ({
-  name,
-  fullName,
-}: IRnaEditorCollapsedProps) => {
-  return name || fullName ? (
-    <RnaEditorCollapsedContainer>
+const RnaEditorCollapsed = ({ name, fullName }: IRnaEditorCollapsedProps) => {
+  const displayName = name ?? fullName;
+
+  if (!displayName) {
+    return null;
+  }
+
+  const title = fullName ?? displayName;
+
+  return (
+    <RnaEditorCollapsedContainer title={title}>
       <TextContainer>
-        <MonomerName grey={!name && !fullName}>{name || fullName}</MonomerName>
+        <MonomerName title={title} aria-label={title}>
+          {displayName}
+        </MonomerName>
       </TextContainer>
     </RnaEditorCollapsedContainer>
-  ) : (
-    <></>
   );
 };
+
+export default memo(RnaEditorCollapsed);

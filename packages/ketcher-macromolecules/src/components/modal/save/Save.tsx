@@ -140,7 +140,8 @@ export const Save = ({
     if (fileFormat === 'svg') {
       const canvas = getCanvasSvgElement();
       const svgData = canvas
-        ? getSvgFromDrawnStructures(canvas, 'preview', 10)
+        ? // Use the same geometry path as real export to avoid preview-only clipping.
+          getSvgFromDrawnStructures(canvas, 'file', 10)
         : undefined;
       setSvgData(svgData);
       return;

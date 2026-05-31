@@ -172,8 +172,29 @@ interface AppState {
   };
 }
 
-const DEFAULT_EXPORT_MARGIN = 10;
+const MIN_EXPORT_MARGIN = 6;
+const MAX_EXPORT_MARGIN = 24;
+const EXPORT_MARGIN_RATIO = 0.03;
+const VERTICAL_MARGIN_BOOST_RATIO = 0.04;
+const MIN_PAINT_SAFETY_MARGIN = 4;
+const MAX_PAINT_SAFETY_MARGIN = 14;
+const PAINT_SAFETY_MARGIN_RATIO = 0.012;
+const EXPORT_EDGE_GUARD_HORIZONTAL = 20;
+const EXPORT_EDGE_GUARD_VERTICAL = 10;
 const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
+const SVG_XLINK_NAMESPACE_URI = 'http://www.w3.org/1999/xlink';
+const NON_EXPORT_LAYER_CLASSES = [
+  'backgroundLayer',
+  'selectionPlateLayer',
+  'selectionPointsLayer',
+  'hoveringLayer',
+  'transient-views-layer',
+  'transient-views-top-layer',
+];
+const NON_EXPORT_ELEMENT_CLASSES = ['dynamic-element', 'blinking'];
+const SELECTION_OVERLAY_COLOR = '#57ff8f';
+const ROTATION_GUIDE_COLOR = '#b4b9d6';
+const SCROLLBAR_TRACK_COLOR = '#b2bbc3';
 
 // Extracted components for better performance and React best practices
 const LoadingState = ({ classes }: LoadingStateProps) => (
@@ -353,113 +374,142 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     return firstSvg instanceof SVGSVGElement ? firstSvg : undefined;
   };
 
-  private getTransformedBounds = (el: SVGGraphicsElement) => {
-    const bbox = el.getBBox();
-    if (!bbox.width && !bbox.height) {
-      return undefined;
-    }
-
-    const ctm = el.getCTM();
-    if (!ctm) {
-      return undefined;
-    }
-
-    const corners = [
-      new DOMPoint(bbox.x, bbox.y),
-      new DOMPoint(bbox.x + bbox.width, bbox.y),
-      new DOMPoint(bbox.x, bbox.y + bbox.height),
-      new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
-    ].map((point) => point.matrixTransform(ctm));
-
-    const xs = corners.map((point) => point.x);
-    const ys = corners.map((point) => point.y);
+  private getExportMargins = (bounds: { width: number; height: number }) => {
+    const dominantSize = Math.max(bounds.width, bounds.height);
+    const adaptiveMargin = dominantSize * EXPORT_MARGIN_RATIO;
+    const paintSafetyMargin = Math.min(
+      MAX_PAINT_SAFETY_MARGIN,
+      Math.max(
+        MIN_PAINT_SAFETY_MARGIN,
+        dominantSize * PAINT_SAFETY_MARGIN_RATIO,
+      ),
+    );
+    const horizontalMargin = Math.min(
+      MAX_EXPORT_MARGIN,
+      Math.max(MIN_EXPORT_MARGIN, adaptiveMargin) + paintSafetyMargin,
+    );
+    const verticalMargin = Math.min(
+      MAX_EXPORT_MARGIN,
+      Math.max(
+        horizontalMargin,
+        horizontalMargin * (1 + VERTICAL_MARGIN_BOOST_RATIO),
+      ),
+    );
 
     return {
-      x: Math.min(...xs),
-      y: Math.min(...ys),
-      width: Math.max(...xs) - Math.min(...xs),
-      height: Math.max(...ys) - Math.min(...ys),
+      horizontalMargin,
+      verticalMargin,
     };
   };
 
-  private getCanvasExportBounds = (svg: SVGSVGElement) => {
-    const drawnStructures = svg.querySelector('.drawn-structures');
-
-    let minX = Number.POSITIVE_INFINITY;
-    let minY = Number.POSITIVE_INFINITY;
-    let maxX = Number.NEGATIVE_INFINITY;
-    let maxY = Number.NEGATIVE_INFINITY;
-
-    const mergeBounds = (
-      bounds:
-        | {
-            x: number;
-            y: number;
-            width: number;
-            height: number;
-          }
-        | undefined,
-    ) => {
-      if (!bounds) {
-        return;
-      }
-
-      minX = Math.min(minX, bounds.x);
-      minY = Math.min(minY, bounds.y);
-      maxX = Math.max(maxX, bounds.x + bounds.width);
-      maxY = Math.max(maxY, bounds.y + bounds.height);
-    };
-
-    if (drawnStructures instanceof SVGGraphicsElement) {
-      try {
-        mergeBounds(this.getTransformedBounds(drawnStructures));
-      } catch {
-        // Fall through to per-element fallback below.
-      }
+  private isTransientSelectionRect = (el: SVGGraphicsElement) => {
+    if (el.tagName.toLowerCase() !== 'rect') {
+      return false;
     }
 
-    const externalTexts = Array.from(svg.querySelectorAll('text')).filter(
-      (el): el is SVGTextElement =>
-        el instanceof SVGTextElement && !el.closest('.drawn-structures'),
-    );
+    const strokeDashArray = el.getAttribute('stroke-dasharray') || '';
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const opacity = el.getAttribute('opacity');
 
-    externalTexts.forEach((el) => {
-      try {
-        mergeBounds(this.getTransformedBounds(el));
-      } catch {
-        // Ignore labels that cannot provide bounds in current render state.
-      }
-    });
+    return !!strokeDashArray && (fill === 'none' || opacity === '0');
+  };
 
-    if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-      const graphics = Array.from(svg.querySelectorAll('*')).filter(
-        (el): el is SVGGraphicsElement => {
-          if (!(el instanceof SVGGraphicsElement)) return false;
-          if (el.closest('defs')) return false;
-          if (el.id === 'rectangle-selection-area') return false;
-          return true;
-        },
-      );
-
-      graphics.forEach((el) => {
-        try {
-          mergeBounds(this.getTransformedBounds(el));
-        } catch {
-          // Ignore elements that cannot provide bounds in current render state.
-        }
-      });
+  private isTransientSelectionHandleRect = (el: SVGGraphicsElement) => {
+    if (el.tagName.toLowerCase() !== 'rect') {
+      return false;
     }
 
-    if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
-      return undefined;
+    const width = Number.parseFloat(el.getAttribute('width') || '0') || 0;
+    const height = Number.parseFloat(el.getAttribute('height') || '0') || 0;
+    const rx = Number.parseFloat(el.getAttribute('rx') || '0') || 0;
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const stroke = (el.getAttribute('stroke') || '').toLowerCase();
+
+    const looksLikeSelectionHandle =
+      width >= 20 &&
+      width <= 40 &&
+      height >= 20 &&
+      height <= 40 &&
+      rx >= 8 &&
+      !!fill &&
+      fill === stroke;
+
+    return looksLikeSelectionHandle;
+  };
+
+  private isTransientScrollbarRect = (el: SVGGraphicsElement) => {
+    if (el.tagName.toLowerCase() !== 'rect') {
+      return false;
     }
 
-    return {
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY,
-    };
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const stroke = (el.getAttribute('stroke') || '').toLowerCase();
+
+    if (fill !== SCROLLBAR_TRACK_COLOR || stroke !== SCROLLBAR_TRACK_COLOR) {
+      return false;
+    }
+
+    const width = Number.parseFloat(el.getAttribute('width') || '0') || 0;
+    const height = Number.parseFloat(el.getAttribute('height') || '0') || 0;
+
+    if (width > 0 && height > 0) {
+      return width <= 6 && height >= 120;
+    }
+
+    const box = el.getBBox();
+    return box.width <= 6 && box.height >= 120;
+  };
+
+  private isTransientSelectionOverlayElement = (el: SVGGraphicsElement) => {
+    const testId = (el.getAttribute('data-testid') || '').toLowerCase();
+    if (testId === 'rotation-handle' || testId === 'rotation-center-handle') {
+      return true;
+    }
+
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const stroke = (el.getAttribute('stroke') || '').toLowerCase();
+    const opacity = (el.getAttribute('opacity') || '').toLowerCase();
+    const tagName = el.tagName.toLowerCase();
+
+    const isSelectionGreen =
+      fill === SELECTION_OVERLAY_COLOR || stroke === SELECTION_OVERLAY_COLOR;
+    if (isSelectionGreen && ['circle', 'path', 'rect', 'g'].includes(tagName)) {
+      return true;
+    }
+
+    // Invisible hit-zones generated for selection controls.
+    if (opacity === '0' && tagName === 'circle' && fill === '#000000') {
+      return true;
+    }
+
+    return false;
+  };
+
+  private isTransientRotationGuideElement = (el: SVGGraphicsElement) => {
+    const testId = (el.getAttribute('data-testid') || '').toLowerCase();
+    if (testId === 'rotation-handle' || testId === 'rotation-center-handle') {
+      return true;
+    }
+
+    const tagName = el.tagName.toLowerCase();
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const stroke = (el.getAttribute('stroke') || '').toLowerCase();
+    const strokeDashArray = el.getAttribute('stroke-dasharray') || '';
+
+    if (tagName === 'path' && stroke === ROTATION_GUIDE_COLOR) {
+      return true;
+    }
+
+    if (
+      tagName === 'path' &&
+      fill === 'none' &&
+      stroke === ROTATION_GUIDE_COLOR &&
+      !!strokeDashArray
+    ) {
+      return true;
+    }
+
+    return false;
   };
 
   private getCanvasSvgSnapshot = (): string | undefined => {
@@ -468,37 +518,190 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       return undefined;
     }
 
-    const bounds = this.getCanvasExportBounds(sourceSvg);
+    const clonedSvg = this.getSanitizedExportSvg(sourceSvg);
+    const bounds = this.getMeasuredSvgBounds(clonedSvg);
     if (!bounds) {
       return undefined;
     }
+    const { horizontalMargin, verticalMargin } = this.getExportMargins(bounds);
 
+    const viewBoxX = bounds.x - horizontalMargin - EXPORT_EDGE_GUARD_HORIZONTAL;
+    const viewBoxY = bounds.y - verticalMargin - EXPORT_EDGE_GUARD_VERTICAL;
+    const viewBoxWidth =
+      bounds.width + horizontalMargin * 2 + EXPORT_EDGE_GUARD_HORIZONTAL * 2;
+    const viewBoxHeight =
+      bounds.height + verticalMargin * 2 + EXPORT_EDGE_GUARD_VERTICAL * 2;
+    const svgInnerHTML = clonedSvg.innerHTML.replace(
+      /\bcursor:\s*pointer;\s*/g,
+      '',
+    );
+
+    return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}' xmlns:xlink='${SVG_XLINK_NAMESPACE_URI}'>${svgInnerHTML}</svg>`;
+  };
+
+  private getSanitizedExportSvg = (sourceSvg: SVGSVGElement): SVGSVGElement => {
     const clonedSvg = sourceSvg.cloneNode(true) as SVGSVGElement;
+
+    // Embedded HTML nodes can carry UI artifacts (e.g. scrollbar tracks) into image exports.
+    clonedSvg.querySelectorAll('foreignObject').forEach((el) => el.remove());
+
     clonedSvg.querySelector('#rectangle-selection-area')?.remove();
+    NON_EXPORT_LAYER_CLASSES.forEach((layerClass) => {
+      clonedSvg.querySelectorAll(`.${layerClass}`).forEach((el) => el.remove());
+    });
+    NON_EXPORT_ELEMENT_CLASSES.forEach((excludedClass) => {
+      clonedSvg
+        .querySelectorAll(`.${excludedClass}`)
+        .forEach((el) => el.remove());
+    });
+
     clonedSvg.querySelectorAll('text').forEach((el) => {
       el.setAttribute('cursor', 'default');
     });
+
     clonedSvg.querySelectorAll('rect').forEach((el) => {
       if (el.getAttribute('cursor') === 'text') {
         el.removeAttribute('cursor');
       }
+
+      const svgEl = el as unknown as SVGGraphicsElement;
+      if (
+        this.isTransientSelectionRect(svgEl) ||
+        this.isTransientSelectionHandleRect(svgEl) ||
+        this.isTransientScrollbarRect(svgEl) ||
+        this.isTransientSelectionOverlayElement(svgEl) ||
+        this.isTransientRotationGuideElement(svgEl)
+      ) {
+        el.remove();
+      }
     });
+
+    clonedSvg.querySelectorAll('circle, path, g').forEach((el) => {
+      const svgEl = el as unknown as SVGGraphicsElement;
+      if (
+        this.isTransientSelectionOverlayElement(svgEl) ||
+        this.isTransientRotationGuideElement(svgEl)
+      ) {
+        el.remove();
+      }
+    });
+
     clonedSvg.querySelectorAll('g').forEach((el) => {
       if (el.hasAttribute('opacity')) {
         el.removeAttribute('opacity');
       }
     });
 
-    const viewBoxX = bounds.x - DEFAULT_EXPORT_MARGIN;
-    const viewBoxY = bounds.y - DEFAULT_EXPORT_MARGIN;
-    const viewBoxWidth = bounds.width + DEFAULT_EXPORT_MARGIN * 2;
-    const viewBoxHeight = bounds.height + DEFAULT_EXPORT_MARGIN * 2;
-    const svgInnerHTML = clonedSvg.innerHTML.replace(
-      /\bcursor:\s*pointer;\s*/g,
-      '',
-    );
+    return clonedSvg;
+  };
 
-    return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}'>${svgInnerHTML}</svg>`;
+  private getMeasuredSvgBounds = (svg: SVGSVGElement) => {
+    const mount = document.createElement('div');
+    mount.style.position = 'fixed';
+    mount.style.left = '-100000px';
+    mount.style.top = '-100000px';
+    mount.style.visibility = 'hidden';
+    mount.style.pointerEvents = 'none';
+
+    document.body.appendChild(mount);
+    mount.appendChild(svg);
+
+    try {
+      let minX = Number.POSITIVE_INFINITY;
+      let minY = Number.POSITIVE_INFINITY;
+      let maxX = Number.NEGATIVE_INFINITY;
+      let maxY = Number.NEGATIVE_INFINITY;
+      const screenToSvgMatrix = svg.getScreenCTM()?.inverse();
+
+      const graphics = Array.from(svg.querySelectorAll('*')).filter(
+        (el): el is SVGGraphicsElement => {
+          return el instanceof SVGGraphicsElement && !el.closest('defs');
+        },
+      );
+
+      graphics.forEach((el) => {
+        try {
+          const className = el.getAttribute('class') || '';
+          if (
+            el.tagName.toLowerCase() === 'rect' &&
+            /\b\w*Layer\b/.test(className)
+          ) {
+            return;
+          }
+
+          const bbox = el.getBBox();
+          if (!bbox || (!bbox.width && !bbox.height)) {
+            return;
+          }
+
+          // Ignore tiny technical artifacts anchored at the top-left corner.
+          if (
+            bbox.x + bbox.width <= 20 &&
+            bbox.y + bbox.height <= 20 &&
+            bbox.width <= 20 &&
+            bbox.height <= 20
+          ) {
+            return;
+          }
+
+          const strokeWidth =
+            Number.parseFloat(el.getAttribute('stroke-width') || '0') || 0;
+          const isTextElement = el.tagName.toLowerCase() === 'text';
+          const fontSize = isTextElement
+            ? Number.parseFloat(
+                el.getAttribute('font-size') ||
+                  window.getComputedStyle(el).fontSize ||
+                  '12',
+              ) || 12
+            : 0;
+          const textPadding = isTextElement ? Math.max(2, fontSize * 0.35) : 0;
+          const strokePadding = strokeWidth > 0 ? strokeWidth / 2 + 1 : 0;
+          const padding = Math.max(textPadding, strokePadding);
+
+          minX = Math.min(minX, bbox.x - padding);
+          minY = Math.min(minY, bbox.y - padding);
+          maxX = Math.max(maxX, bbox.x + bbox.width + padding);
+          maxY = Math.max(maxY, bbox.y + bbox.height + padding);
+
+          // Include painted client bounds mapped to SVG coordinates.
+          // This catches glyph overhang/antialiasing that tight getBBox can miss.
+          if (screenToSvgMatrix) {
+            const rect = el.getBoundingClientRect();
+            if (rect.width || rect.height) {
+              const corners = [
+                new DOMPoint(rect.left, rect.top),
+                new DOMPoint(rect.right, rect.top),
+                new DOMPoint(rect.left, rect.bottom),
+                new DOMPoint(rect.right, rect.bottom),
+              ].map((point) => point.matrixTransform(screenToSvgMatrix));
+
+              const paintedPadding = Math.max(3, padding);
+              corners.forEach((point) => {
+                minX = Math.min(minX, point.x - paintedPadding);
+                minY = Math.min(minY, point.y - paintedPadding);
+                maxX = Math.max(maxX, point.x + paintedPadding);
+                maxY = Math.max(maxY, point.y + paintedPadding);
+              });
+            }
+          }
+        } catch {
+          // Ignore non-measurable elements during export bounds calculation.
+        }
+      });
+
+      if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+        return undefined;
+      }
+
+      return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+      };
+    } finally {
+      mount.remove();
+    }
   };
 
   getCanvasSvg = (): string | undefined => {

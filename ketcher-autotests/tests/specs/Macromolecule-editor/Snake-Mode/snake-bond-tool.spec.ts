@@ -1,0 +1,1018 @@
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Page, test, expect } from '@fixtures';
+import {
+  takeEditorScreenshot,
+  addBondedMonomersToCanvas,
+  waitForRender,
+  dragMouseTo,
+  openFileAndAddToCanvasAsNewProject,
+  selectPartOfMolecules,
+  openFileAndAddToCanvasMacro,
+  moveMouseAway,
+  scrollDown,
+  scrollUp,
+  clickOnCanvas,
+  resetZoomLevelToDefault,
+  MacroFileType,
+} from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  getMonomerLocator,
+  AttachmentPoint,
+} from '@utils/macromolecules/monomer';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { Library } from '@tests/pages/macromolecules/Library';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+/* eslint-disable no-magic-numbers */
+
+async function createBondedMonomers(page: Page) {
+  await Library(page).dragMonomerOnCanvas(Peptide.dU, {
+    x: 200,
+    y: 200,
+  });
+  const peptide1 = getMonomerLocator(page, Peptide.dU).nth(0);
+  const [peptide2, peptide3] = await addBondedMonomersToCanvas(
+    page,
+    Peptide.Tza,
+    100,
+    100,
+    50,
+    50,
+    2,
+  );
+
+  await Library(page).dragMonomerOnCanvas(Peptide.meC, {
+    x: 400,
+    y: 400,
+  });
+  const peptide4 = getMonomerLocator(page, Peptide.meC).nth(0);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  await bondTwoMonomers(page, peptide1, peptide2);
+  await bondTwoMonomers(page, peptide3, peptide4);
+}
+
+let page: Page;
+
+async function configureInitialState(page: Page) {
+  await Library(page).switchToRNATab();
+}
+
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
+});
+
+test.beforeEach(async ({ FlexCanvas: _ }) => {
+  await configureInitialState(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Escape');
+});
+
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+
+test.describe('Snake Bond Tool', () => {
+  test('Create snake bond between peptides', async ({ SnakeCanvas: _ }) => {
+    /* 
+    Test case: #3280 - Create snake bond 
+    Description: Snake bond tool
+    */
+
+    await Library(page).switchToPeptidesTab();
+    const [, peptide2] = await addBondedMonomersToCanvas(
+      page,
+      Peptide.Tza,
+      300,
+      300,
+      100,
+      100,
+      2,
+    );
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 300,
+      y: 500,
+    });
+    const peptide3 = getMonomerLocator(page, Peptide.Tza).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Peptide.Tza, {
+      x: 200,
+      y: 200,
+    });
+    const peptide4 = getMonomerLocator(page, Peptide.Tza).nth(3);
+
+    await bondTwoMonomers(page, peptide2, peptide3);
+    await bondTwoMonomers(page, peptide3, peptide4);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check snake mode arrange for peptides chain', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: #3280 - Check snake mode
+    Description: Snake bond tool
+    */
+    await Library(page).switchToPeptidesTab();
+
+    await addBondedMonomersToCanvas(page, Peptide.Tza, 100, 100, 25, 25, 18);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check finding right chain sequence using snake mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+    Test case: #3280 - Check finding right chain sequence using snake mode
+    Description: Snake bond tool
+    */
+    await createBondedMonomers(page);
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Mode returns back/forth after undo/redo', async () => {
+    await Library(page).switchToPeptidesTab();
+    const flexModeButton = page.getByTestId('flex-layout-mode');
+    const snakeModeButton = page.getByTestId('snake-layout-mode');
+    await createBondedMonomers(page);
+    await expect(flexModeButton).toHaveClass(/active/);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await expect(snakeModeButton).toHaveClass(/active/);
+
+    await CommonTopLeftToolbar(page).undo();
+    await waitForRender(page);
+    await expect(snakeModeButton).not.toBeVisible();
+    await expect(flexModeButton).toHaveClass(/active/);
+
+    await CommonTopLeftToolbar(page).redo();
+    await waitForRender(page);
+    await expect(flexModeButton).not.toBeVisible();
+    await expect(snakeModeButton).toHaveClass(/active/);
+  });
+
+  test('Create snake bond between RNA nucleotides', async ({
+    SnakeCanvas: _,
+  }) => {
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 300,
+      y: 300,
+    });
+    const phosphate = getMonomerLocator(page, Preset.A.phosphate ?? {}).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Preset.C, {
+      x: 400,
+      y: 600,
+    });
+    const phosphate1 = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(1);
+    const sugar1 = getMonomerLocator(page, Preset.C.sugar).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 600,
+      y: 400,
+    });
+    const sugar2 = getMonomerLocator(page, Preset.G.sugar).nth(2);
+
+    await bondTwoMonomers(page, phosphate, sugar1);
+    await bondTwoMonomers(page, phosphate1, sugar2);
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check snake mode arrange for RNA chain', async ({ FlexCanvas: _ }) => {
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 300,
+      y: 300,
+    });
+    const phosphate = getMonomerLocator(page, Preset.A.phosphate ?? {}).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Preset.C, {
+      x: 400,
+      y: 600,
+    });
+    const phosphate1 = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(1);
+    const sugar1 = getMonomerLocator(page, Preset.C.sugar).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 600,
+      y: 400,
+    });
+    const phosphate2 = getMonomerLocator(page, Preset.G.phosphate ?? {}).nth(2);
+    const sugar2 = getMonomerLocator(page, Preset.G.sugar).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 800,
+      y: 200,
+    });
+    const phosphate3 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(3);
+    const sugar3 = getMonomerLocator(page, Preset.T.sugar).nth(3);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 100,
+      y: 100,
+    });
+    const phosphate4 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(4);
+    const sugar4 = getMonomerLocator(page, Preset.T.sugar).nth(4);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 200,
+      y: 200,
+    });
+    const phosphate5 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(5);
+    const sugar5 = getMonomerLocator(page, Preset.T.sugar).nth(5);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 300,
+      y: 200,
+    });
+    const phosphate6 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(6);
+    const sugar6 = getMonomerLocator(page, Preset.T.sugar).nth(6);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 400,
+      y: 200,
+    });
+    const phosphate7 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(7);
+    const sugar7 = getMonomerLocator(page, Preset.T.sugar).nth(7);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 500,
+      y: 200,
+    });
+    const phosphate8 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(8);
+    const sugar8 = getMonomerLocator(page, Preset.T.sugar).nth(8);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 600,
+      y: 200,
+    });
+    const sugar9 = getMonomerLocator(page, Preset.T.sugar).nth(9);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+
+    await bondTwoMonomers(page, phosphate, sugar1);
+    await bondTwoMonomers(page, phosphate1, sugar2);
+    await bondTwoMonomers(page, phosphate2, sugar3);
+    await bondTwoMonomers(page, phosphate3, sugar4);
+    await bondTwoMonomers(page, phosphate4, sugar5);
+    await bondTwoMonomers(page, phosphate5, sugar6);
+    await bondTwoMonomers(page, phosphate6, sugar7);
+    await bondTwoMonomers(page, phosphate7, sugar8);
+    await bondTwoMonomers(page, phosphate8, sugar9);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Create snake bond for mix chains with nucleotides and peptides', async ({
+    FlexCanvas: _,
+  }) => {
+    const [peptide1] = await addBondedMonomersToCanvas(
+      page,
+      Peptide.Tza,
+      100,
+      200,
+      100,
+      100,
+      3,
+    );
+    await addBondedMonomersToCanvas(page, Peptide.bAla, 400, 200, 50, 50, 4);
+
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 200,
+      y: 200,
+    });
+    const phosphate = getMonomerLocator(page, Preset.A.phosphate ?? {}).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Preset.C, {
+      x: 300,
+      y: 500,
+    });
+    const phosphate1 = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(1);
+    const sugar1 = getMonomerLocator(page, Preset.C.sugar).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 400,
+      y: 300,
+    });
+    const phosphate2 = getMonomerLocator(page, Preset.G.phosphate ?? {}).nth(2);
+    const sugar2 = getMonomerLocator(page, Preset.G.sugar).nth(2);
+
+    await bondTwoMonomers(page, phosphate, sugar1);
+    await bondTwoMonomers(page, phosphate1, sugar2);
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      peptide1,
+      undefined,
+      AttachmentPoint.R1,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create snake bond for chain with nucleoside', async () => {
+    await Library(page).switchToRNATab();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+
+    await Library(page).dragMonomerOnCanvas(Preset.A, {
+      x: 200,
+      y: 200,
+    });
+    const phosphate = getMonomerLocator(page, Preset.A.phosphate ?? {}).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 700,
+      y: 300,
+    });
+    const sugar = getMonomerLocator(page, Preset.G.sugar).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
+      x: 500,
+      y: 500,
+    });
+    const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Base.A, {
+      x: 600,
+      y: 600,
+    });
+    const baseOfNucleoside = getMonomerLocator(page, Base.A).nth(1);
+
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+    await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
+    await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
+    await bondTwoMonomers(page, sugarOfNucleoside, sugar);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create snake bond for chain with side chains', async ({
+    FlexCanvas: _,
+  }) => {
+    await Library(page).dragMonomerOnCanvas(Preset.C, {
+      x: 50,
+      y: 50,
+    });
+    const phosphate = getMonomerLocator(page, Preset.C.phosphate ?? {}).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Preset.G, {
+      x: 350,
+      y: 150,
+    });
+    const phosphate1 = getMonomerLocator(page, Preset.G.phosphate ?? {}).nth(1);
+    const sugar1 = getMonomerLocator(page, Preset.G.sugar).nth(1);
+
+    await Library(page).dragMonomerOnCanvas(Preset.T, {
+      x: 550,
+      y: 150,
+    });
+    const phosphate2 = getMonomerLocator(page, Preset.T.phosphate ?? {}).nth(2);
+    const sugar2 = getMonomerLocator(page, Preset.T.sugar).nth(2);
+
+    await Library(page).dragMonomerOnCanvas(Preset.U, {
+      x: 900,
+      y: 300,
+    });
+
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
+      x: 200,
+      y: 200,
+    });
+    const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(4);
+
+    await Library(page).dragMonomerOnCanvas(Base.nC6n8A, {
+      x: 200,
+      y: 350,
+    });
+    const baseOfNucleoside = getMonomerLocator(page, Base.nC6n8A).nth(0);
+    const [peptide] = await addBondedMonomersToCanvas(
+      page,
+      Peptide.A,
+      350,
+      350,
+      50,
+      50,
+      3,
+    );
+
+    const [hcyPeptide, hcyPeptide1] = await addBondedMonomersToCanvas(
+      page,
+      Peptide.Hcy,
+      350,
+      250,
+      50,
+      0,
+      2,
+    );
+
+    const [balPeptide] = await addBondedMonomersToCanvas(
+      page,
+      Peptide.bAla,
+      500,
+      500,
+      50,
+      0,
+      2,
+    );
+
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 520,
+      y: 500,
+    });
+    const balPeptide1 = getMonomerLocator(page, Peptide.bAla).nth(2);
+    await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
+    await bondTwoMonomers(
+      page,
+      baseOfNucleoside,
+      peptide,
+      AttachmentPoint.R2,
+      AttachmentPoint.R1,
+    );
+
+    await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
+    await bondTwoMonomers(page, sugarOfNucleoside, sugar1);
+    await bondTwoMonomers(page, phosphate1, sugar2);
+    await bondTwoMonomers(
+      page,
+      phosphate2,
+      hcyPeptide,
+      undefined,
+      AttachmentPoint.R1,
+    );
+    await bondTwoMonomers(page, hcyPeptide1, balPeptide);
+    await bondTwoMonomers(
+      page,
+      hcyPeptide1,
+      balPeptide1,
+      undefined,
+      AttachmentPoint.R1,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create snake mode for single monomer and nucleoside', async () => {
+    await Library(page).dragMonomerOnCanvas(Peptide.bAla, {
+      x: 300,
+      y: 300,
+    });
+
+    await Library(page).dragMonomerOnCanvas(Sugar.R, {
+      x: 500,
+      y: 500,
+    });
+    const sugarOfNucleoside = getMonomerLocator(page, Sugar.R).nth(0);
+
+    await Library(page).dragMonomerOnCanvas(Base.A, {
+      x: 600,
+      y: 600,
+    });
+    const baseOfNucleoside = getMonomerLocator(page, Base.A).nth(0);
+
+    await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
+
+    await takeEditorScreenshot(page);
+
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check if monomers are located close to each other Snake bond become a straight line', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Monomers are located close to each other Snake bond become a straight line.
+    */
+    await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getMonomerLocator(page, Peptide.meE).hover();
+    await dragMouseTo(page, 550, 350);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('When monomers are too close under each other snake bond shape has straight connection', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: When monomers are too close under each other snake bond shape has straight 
+    connection and they are not supposed to twist.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/3607 need to be fixed.
+    Then update expected screenshot.
+    */
+    await openFileAndAddToCanvasMacro(page, `KET/two-peptides-connected.ket`);
+    await takeEditorScreenshot(page);
+    await getMonomerLocator(page, Peptide.meE).hover();
+    await dragMouseTo(page, 500, 300);
+    await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check if even very long chain fit into canvas (algorithm calculate the length of rows)', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Very long chain fit into canvas (algorithm calculate the length of rows).
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/long-peptide-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check that switch to Flex mode on a snake chain change it into a chain with straight lines', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Check that switch to Flex mode on a snake chain change it into a chain with 
+    straight lines press it again change it into curved lines.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/long-peptide-chain.ket`,
+    );
+    await resetZoomLevelToDefault(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check move any peptide from middle of chain above main snake chain', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide moved from middle of chain above and under main snake chain.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await scrollUp(page, 200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await getMonomerLocator(page, Peptide.meS).hover();
+    await dragMouseTo(page, 450, 150);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check move any peptide from middle of chain above main flex chain', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide moved from middle of chain above and under main snake chain.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await page.mouse.wheel(0, 400);
+    await page.mouse.wheel(0, -400);
+
+    await takeEditorScreenshot(page);
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
+    await dragMouseTo(page, 450, 150);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Bonds connecting through R3, R4, ... Rn attachment points remain straight lines', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Bonds connecting through R3, R4, ... Rn attachment points remain straight lines.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/two-peptides-in-chain-connected-through-r3-r4.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  const testCases = [
+    {
+      filename: 'KET/rna-chain-connected-to-peptide-chain.ket',
+      description:
+        'Bonds connecting RNA monomers to monomers of different types (peptide monomers) remain straight.',
+      waitForMonomerPreview: true,
+    },
+    {
+      filename: 'KET/rna-chain-connected-to-chem.ket',
+      description:
+        'Bonds connecting RNA monomers to monomers of different types (CHEM monomers) remain straight.',
+    },
+  ];
+
+  for (const testCase of testCases) {
+    test(testCase.description, async () => {
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await openFileAndAddToCanvasAsNewProject(page, testCase.filename);
+
+      // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+      await page.mouse.wheel(400, 0);
+      await page.mouse.wheel(-400, 0);
+
+      if (testCase.waitForMonomerPreview) {
+        await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      }
+      await takeEditorScreenshot(page);
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Check deleting any peptide from middle of chain in snake mode', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide deleted from middle of chain in snake mode.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await CommonLeftToolbar(page).erase();
+    await getMonomerLocator(page, Peptide.DHis1B).click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check deleting any peptide from corner of chain in snake mode', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide deleted from corner of chain in snake mode.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await CommonLeftToolbar(page).erase();
+    await getMonomerLocator(page, Peptide.meR).click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select sequence in snake mode and move to new position', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Sequence moved to the new position without any distortion.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
+    await dragMouseTo(page, 450, 550);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select part of sequence in flex mode and move to new position', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Part of sequence moved to the new position without any distortion.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await page.mouse.wheel(0, 400);
+    await page.mouse.wheel(0, -400);
+
+    await takeEditorScreenshot(page);
+    await selectPartOfMolecules(page);
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
+    await dragMouseTo(page, 450, 650);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select part of sequence in snake mode and move to new position', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Part of sequence moved to the new position without any distortion.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/peptides-flex-chain.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await selectPartOfMolecules(page);
+    await getMonomerLocator(page, Peptide.DHis1B).hover();
+    await dragMouseTo(page, 450, 650);
+    await clickOnCanvas(page, 100, 100, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Snake mode works on the chain of the CHEM connected through R2-R1', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode works on the chain of the CHEM connected through R2-R1.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/chems-connected-through-r2-r1.ket`,
+    );
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await page.mouse.wheel(400, 400);
+    await page.mouse.wheel(-400, -400);
+
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await clickOnCanvas(page, 450, 650, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Snake mode works on the chain of the CHEM connected through R2-R1 and igore others connections', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode works on the chain of the CHEM connected through R2-R1 
+    and igore others connections.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      `KET/chems-connected-through-r2-r1-and-r1-r2.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await clickOnCanvas(page, 450, 650, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Snake mode is working for side connection', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode is not applied on structure and it starts from 5FAM monomer because it 
+    has no R1 attachment point and there are no similar options for the chain beginning.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4026 need to be fixed.
+    Then update expected screenshot.
+    */
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/sequence-with-side-connection.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for large chains', async ({
+    FlexCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 2000 or more rna items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-2000.ket`);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    test.slow();
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    // ---
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-rna-4000.ket`);
+    await moveMouseAway(page);
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await page.mouse.wheel(0, 400);
+    await page.mouse.wheel(0, -400);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    test.slow();
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-4000.ket`);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 8000 peptides items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+
+    // Workaround against fake scroll bars that sometimes shown even if they are not intended to
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    // ---
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(page, `KET/sequence-peptides-8000.ket`);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Activate Snake mode and open external rna-modified file', async ({
+    SnakeCanvas: _,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: File opened in snake mode.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4122 need to be fixed.
+    Then update expected screenshot.
+    */
+    await openFileAndAddToCanvasMacro(
+      page,
+      `Molfiles-V3000/rna-mod-phosphate-example.mol`,
+      MacroFileType.MOLv3000,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check snake layout to monomers connected through R1 to R2 and R3 to R2', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Both snake bonds are connected to the default position of attachment point used for this bond
+    */
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check snake layout to peptides chains connected through R1-R1, R2-R2 and R2 to R1', async () => {
+    /* 
+    Test case: Snake Mode
+    Description: Bonds connected through R1-R1 and R2-R2 connections should remain straight line. Connected through R2-R1 snake layout.
+    */
+    const SCROLL_DELTA = 700;
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+    await openFileAndAddToCanvasMacro(
+      page,
+      `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
+    );
+    await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+    await takeEditorScreenshot(page);
+    await scrollDown(page, SCROLL_DELTA);
+    await takeEditorScreenshot(page);
+  });
+});

@@ -2,10 +2,14 @@
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
-import SelectTool from './select';
+import SelectTool from './select/select';
 import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {
+  beforeAll(() => {
+    global.window.PointerEvent = MouseEvent as any;
+  });
+
   /**
    * Steps to check manually:
    * Select one atom / functional group using Select Tool
@@ -36,7 +40,7 @@ describe('Rotate controller', () => {
 
     // @ts-ignore
     controller.show();
-    expect(paper).toBeCalledTimes(0);
+    expect(paper).toHaveBeenCalledTimes(0);
 
     visibleAtoms.push(2);
     // @ts-ignore
@@ -53,7 +57,8 @@ describe('Rotate controller', () => {
    * 2. click Rotate Tool
    */
   it('hides when active tool is not SelectTool', () => {
-    const editor = new Editor(document, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     const NonSelectTool = new RotateTool(editor, undefined);
     const paper = jest.fn();
     const visibleAtoms = [0, 1];
@@ -77,7 +82,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.show();
 
-    expect(paper).toBeCalledTimes(0);
+    expect(paper).toHaveBeenCalledTimes(0);
   });
 
   /**
@@ -85,12 +90,13 @@ describe('Rotate controller', () => {
    * Click `zoom in` or press `Ctrl+=`
    */
   it('rerenders while zooming', () => {
-    const editor = new Editor(document, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     editor.rotateController.rerender = jest.fn();
 
     editor.zoom(2);
 
-    expect(editor.rotateController.rerender).toBeCalledTimes(1);
+    expect(editor.rotateController.rerender).toHaveBeenCalledTimes(1);
   });
 
   /**
@@ -111,7 +117,7 @@ describe('Rotate controller', () => {
       stopPropagation: () => null,
     });
 
-    expect(changeCrossColor).toBeCalledTimes(0);
+    expect(changeCrossColor).toHaveBeenCalledTimes(0);
   });
 
   /**
@@ -126,7 +132,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.editor.render = {
       options: {
-        scale: 2,
+        microModeScale: 2,
         offset: new Vec2(1, 1),
       },
     } as any;
@@ -135,6 +141,46 @@ describe('Rotate controller', () => {
     expect(controller.center.x).toBe(3);
     // @ts-ignore
     expect(controller.center.y).toBe(3);
+  });
+
+  it('adds test id to rotation center handle hitbox', () => {
+    const setAttribute = jest.fn();
+    const cross = {
+      attr: jest.fn().mockReturnThis(),
+    };
+    const circle = {
+      attr: jest.fn().mockReturnThis(),
+      node: { setAttribute },
+    };
+    const crossSet = {
+      push: jest.fn(),
+      translate: jest.fn(),
+    };
+
+    const controller = new RotateController({ selection: () => null } as any);
+    // @ts-ignore
+    controller.originalCenter = new Vec2(1, 1);
+    // @ts-ignore
+    controller.editor.render = {
+      paper: {
+        path: jest.fn().mockReturnValue(cross),
+        circle: jest.fn().mockReturnValue(circle),
+        set: jest.fn().mockReturnValue(crossSet),
+      },
+      options: {
+        microModeScale: 1,
+        offset: new Vec2(),
+      } as any,
+    };
+
+    // @ts-ignore
+    controller.drawCross();
+
+    expect(setAttribute).toHaveBeenCalledWith(
+      'data-testid',
+      'rotation-center-handle',
+    );
+    expect(crossSet.push).toHaveBeenCalledWith(cross, circle);
   });
 
   it('shows half predefined degrees', () => {
@@ -199,7 +245,8 @@ describe('Rotate controller', () => {
    * 2. Undo
    */
   it(`cancels rotation without modifying history stack`, () => {
-    const editor = new Editor(document, {});
+    const ketcherId = '1';
+    const editor = new Editor(ketcherId, document, {}, {});
     editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {
@@ -210,9 +257,9 @@ describe('Rotate controller', () => {
 
     editor.rotateController.revert();
     const selectTool = new SelectTool(editor, 'rectangle');
-    selectTool.mouseup(new MouseEvent('mouseup'));
+    selectTool.mouseup(new PointerEvent('mouseup'));
 
-    expect(updateRender).toBeCalled();
+    expect(updateRender).toHaveBeenCalled();
     expect(selectTool.isMouseDown).toBe(false);
 
     expect(editor.historyStack).toHaveLength(0);

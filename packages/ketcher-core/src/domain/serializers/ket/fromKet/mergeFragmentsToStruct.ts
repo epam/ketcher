@@ -1,6 +1,6 @@
-import { Struct } from 'domain/entities';
-import { atomToStruct, bondToStruct } from './moleculeToStruct';
-import { KetItem } from './types';
+import type { Struct } from 'domain/entities';
+import { atomToStruct, bondToStruct } from './atomBondToStruct';
+import type { KetItem } from './types';
 
 export function mergeFragmentsToStruct(
   ketItem: KetItem,
@@ -13,7 +13,7 @@ export function mergeFragmentsToStruct(
       fragment.bonds?.forEach((bond) =>
         struct.bonds.add(bondToStruct(bond, atomsOffset)),
       );
-      atomsOffset += fragment.atoms?.length || 0;
+      atomsOffset += fragment.atoms?.length ?? 0;
     });
   }
   return struct;

@@ -30,8 +30,8 @@ type OwnProps = Pick<BottomToolbarProps, 'className'>;
 const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
-  active: state.actionState && state.actionState.activeTool,
-  status: state.actionState || {},
+  active: state.actionState?.activeTool,
+  status: state.actionState ?? {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,

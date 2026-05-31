@@ -19,11 +19,14 @@ import { AnalyzingFile, AnalyzingFileProps } from './AnalyzingFile';
 
 import { OpenOptions, OpenOptionsProps } from './OpenOptions';
 import { TextEditor, TextEditorProps } from './TextEditor';
+import CDXStructuresViewer from './CDXStructuresViewer';
+import { CDXStructuresViewerProps } from './CDXStructuresViewer/CDXStructuresViewer';
 
 type ViewStates = {
   idle: string;
   textEditor: string;
   imageRec: string;
+  presentationViewer: string;
 };
 
 type SwitchProps = {
@@ -32,7 +35,8 @@ type SwitchProps = {
   isAnalyzingFile: boolean;
 } & OpenOptionsProps &
   TextEditorProps &
-  AnalyzingFileProps;
+  AnalyzingFileProps &
+  CDXStructuresViewerProps;
 
 export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
   if (props.isAnalyzingFile) {
@@ -42,7 +46,9 @@ export const ViewSwitcher: FC<SwitchProps> = (props: SwitchProps) => {
       case props.states.idle:
         return <OpenOptions {...props} />;
       case props.states.textEditor:
-        return <TextEditor {...props} />;
+        return <TextEditor {...props} testId="open-structure-textarea" />;
+      case props.states.presentationViewer:
+        return <CDXStructuresViewer {...props} />;
       default:
         return null;
     }

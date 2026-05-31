@@ -13,46 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Operation } from 'domain/entities/Operation';
-
-export class MonomerAddOperation implements Operation {
-  constructor(private monomer: BaseMonomer, private callback?: () => void) {}
-
-  public execute(renderersManager: RenderersManager) {
-    renderersManager.addMonomer(this.monomer, this.callback);
-  }
-}
-
-export class MonomerMoveOperation implements Operation {
-  constructor(private peptide: BaseMonomer) {}
-
-  public execute(renderersManager: RenderersManager) {
-    renderersManager.moveMonomer(this.peptide);
-  }
-}
-
-export class MonomerHoverOperation implements Operation {
-  constructor(
-    private peptide: BaseMonomer,
-    private needRedrawAttachmentPoints: boolean,
-  ) {}
-
-  public execute(renderersManager: RenderersManager) {
-    renderersManager.hoverMonomer(
-      this.peptide,
-      this.needRedrawAttachmentPoints,
-    );
-  }
-}
-
-export class MonomerDeleteOperation implements Operation {
-  constructor(private peptide: BaseMonomer) {}
-
-  public execute(renderersManager: RenderersManager) {
-    renderersManager.deleteMonomer(this.peptide);
-  }
-}
+export * from './AttachmentPointHoverOperation';
+export * from './FlipMonomerOperation';
+export * from './MonomerAddOperation';
+export * from './MonomerDeleteOperation';
+export * from './monomerFactory';
+export * from './MonomerHoverOperation';
+export * from './MonomerItemModifyOperation';
+export * from './MonomerMoveOperation';
+export * from './RotateMonomerOperation';
+export * from './ShiftMonomerOperation';

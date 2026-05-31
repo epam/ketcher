@@ -1,0 +1,909 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer3026"
+            },
+            {
+                "$ref": "monomer3027"
+            },
+            {
+                "$ref": "monomer3029"
+            },
+            {
+                "$ref": "monomer3030"
+            },
+            {
+                "$ref": "monomer3032"
+            },
+            {
+                "$ref": "monomer3033"
+            },
+            {
+                "$ref": "monomer3043"
+            },
+            {
+                "$ref": "monomer3059"
+            },
+            {
+                "$ref": "monomer3060"
+            },
+            {
+                "$ref": "monomer3061"
+            },
+            {
+                "$ref": "monomer3062"
+            },
+            {
+                "$ref": "monomer3063"
+            },
+            {
+                "$ref": "monomer3064"
+            },
+            {
+                "$ref": "monomer3065"
+            },
+            {
+                "$ref": "monomer3085"
+            },
+            {
+                "$ref": "monomer3086"
+            },
+            {
+                "$ref": "monomer3087"
+            },
+            {
+                "$ref": "monomer3088"
+            },
+            {
+                "$ref": "monomer3089"
+            },
+            {
+                "$ref": "monomer3090"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3026",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3027",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3029",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3030",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3032",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3033",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3027",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3029",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3030",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3032",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3033",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3043",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3059",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3060",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3061",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3062",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3063",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3064",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3060",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3061",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3062",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3063",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3064",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3065",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3085",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3086",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3087",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3088",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3089",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3090",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3086",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3087",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3088",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3089",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3043",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3059",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer3065",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3085",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-SGNA___S Propanetriol (GNA sugar)"
+            },
+            {
+                "$ref": "monomerTemplate-ibun___Isobutylamino"
+            },
+            {
+                "$ref": "monomerTemplate-A___Alanine"
+            }
+        ]
+    },
+    "monomer3026": {
+        "type": "monomer",
+        "id": "3026",
+        "position": {
+            "x": 0.675,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomerTemplate-SGNA___S Propanetriol (GNA sugar)": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.16458967921719403,
+                    -0.23762726051729519,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.7114239455977917,
+                    -1.1851477388805833,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.586125518054093,
+                    -1.1857308732622212,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.7099661096436979,
+                    0.7106221358230401,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.5847405738977038,
+                    0.7127359979564761,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.9294433125325247,
+                    -0.23682545074254358,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.476350470710827,
+                    0.7106221358230401,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.3509791513694234,
+                    0.7112781620023824,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "SGNA___S Propanetriol (GNA sugar)",
+        "fullName": "S Propanetriol (GNA sugar)",
+        "alias": "SGNA",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "R"
+    },
+    "monomer3027": {
+        "type": "monomer",
+        "id": "3027",
+        "position": {
+            "x": 2.174999999999999,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomerTemplate-ibun___Isobutylamino": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    0.00046658198968072283,
+                    0.00026661827981755594,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.8665094094070567,
+                    0.49990927465791735,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    0.8665094094070567,
+                    1.499727823973752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.7330188188141133,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.59952822822117,
+                    0.49990927465791735,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.465504401068592,
+                    0.00026661827981755594,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.59952822822117,
+                    1.499727823973752,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "ibun___Isobutylamino",
+        "fullName": "Isobutylamino",
+        "alias": "ibun",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer3029": {
+        "type": "monomer",
+        "id": "3029",
+        "position": {
+            "x": 3.6749999999999985,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3030": {
+        "type": "monomer",
+        "id": "3030",
+        "position": {
+            "x": 5.175000000000003,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3032": {
+        "type": "monomer",
+        "id": "3032",
+        "position": {
+            "x": 6.675000000000003,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3033": {
+        "type": "monomer",
+        "id": "3033",
+        "position": {
+            "x": 8.175000000000004,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3043": {
+        "type": "monomer",
+        "id": "3043",
+        "position": {
+            "x": 9.675000000000006,
+            "y": -7.724999999999999
+        },
+        "alias": "A",
+        "templateId": "A___Alanine"
+    },
+    "monomerTemplate-A___Alanine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    -1.2549,
+                    -0.392,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.272,
+                    0.2633,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.3103,
+                    1.7393,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0523,
+                    -0.392,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.0829,
+                    -1.5722,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.0353,
+                    0.2633,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.3334,
+                    0.0905,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "A___Alanine",
+        "fullName": "Alanine",
+        "alias": "A",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        5
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    },
+    "monomer3059": {
+        "type": "monomer",
+        "id": "3059",
+        "position": {
+            "x": 11.175000000000006,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3060": {
+        "type": "monomer",
+        "id": "3060",
+        "position": {
+            "x": 12.675000000000006,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3061": {
+        "type": "monomer",
+        "id": "3061",
+        "position": {
+            "x": 14.175000000000006,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3062": {
+        "type": "monomer",
+        "id": "3062",
+        "position": {
+            "x": 15.675000000000006,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3063": {
+        "type": "monomer",
+        "id": "3063",
+        "position": {
+            "x": 17.174999999999986,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3064": {
+        "type": "monomer",
+        "id": "3064",
+        "position": {
+            "x": 18.674999999999986,
+            "y": -7.724999999999999
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3065": {
+        "type": "monomer",
+        "id": "3065",
+        "position": {
+            "x": 20.174999999999986,
+            "y": -7.724999999999999
+        },
+        "alias": "A",
+        "templateId": "A___Alanine"
+    },
+    "monomer3085": {
+        "type": "monomer",
+        "id": "3085",
+        "position": {
+            "x": 21.674999999999986,
+            "y": -7.724999999999999
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3086": {
+        "type": "monomer",
+        "id": "3086",
+        "position": {
+            "x": 0.675,
+            "y": -9.225
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3087": {
+        "type": "monomer",
+        "id": "3087",
+        "position": {
+            "x": 2.174999999999999,
+            "y": -9.225
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3088": {
+        "type": "monomer",
+        "id": "3088",
+        "position": {
+            "x": 3.6749999999999985,
+            "y": -9.225
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    },
+    "monomer3089": {
+        "type": "monomer",
+        "id": "3089",
+        "position": {
+            "x": 5.175000000000003,
+            "y": -9.225
+        },
+        "alias": "SGNA",
+        "templateId": "SGNA___S Propanetriol (GNA sugar)"
+    },
+    "monomer3090": {
+        "type": "monomer",
+        "id": "3090",
+        "position": {
+            "x": 6.675000000000003,
+            "y": -9.225
+        },
+        "alias": "ibun",
+        "templateId": "ibun___Isobutylamino"
+    }
+}

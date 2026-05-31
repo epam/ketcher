@@ -1,6 +1,9 @@
-import { Struct } from 'domain/entities';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
+import type ReAtom from './restruct/reatom';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -8,6 +11,8 @@ import { Render } from './raphaelRender';
  */
 const renderCache = new Map();
 let previousOptions: any;
+const MIN_ATTACHMENT_POINT_SIZE = 8;
+const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
@@ -18,18 +23,48 @@ export class RenderStruct {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
       convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
-      newStruct.sgroups.delete(0);
+      if (!newStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
+        newStruct.sgroups.delete(0);
+      }
       return newStruct;
     }
     return struct;
   }
 
+  static removeSmallAttachmentPointLabelsInModal(
+    render: Render,
+    options: any = {},
+  ) {
+    if (!options.labelInMonomerConnectionsModal) {
+      return;
+    }
+
+    render.ctab.atoms.forEach((atom: ReAtom) => {
+      if (!atom.label) {
+        return;
+      }
+      const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
+
+      if (!isAttachmentPointAtom) {
+        return;
+      }
+
+      const isSmall =
+        atom.label.path.node.getBoundingClientRect().width <
+        MIN_ATTACHMENT_POINT_SIZE;
+
+      if (isSmall) {
+        atom.label.path.node.remove();
+      }
+    });
+  }
+
   static render(
-    el: HTMLElement | null,
+    wrapperElement: HTMLElement | null,
     struct: Struct | null,
     options: any = {},
   ) {
-    if (el && struct) {
+    if (wrapperElement && struct) {
       const { cachePrefix = '', needCache = true } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
@@ -39,23 +74,66 @@ export class RenderStruct {
       }
 
       if (renderCache.has(cacheKey) && needCache) {
-        el.innerHTML = renderCache.get(cacheKey);
+        wrapperElement.innerHTML = renderCache.get(cacheKey);
         return;
       }
 
-      const preparedStruct = this.prepareStruct(struct);
+      const preparedStruct = this.prepareStruct(struct.clone());
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();
       preparedStruct.markFragments();
-
-      const rnd = new Render(el, {
+      const structureSize = preparedStruct.getCoordBoundingBox();
+      const structureSizeInPixels = Coordinates.modelToCanvas(
+        new Vec2(
+          structureSize.max.x - structureSize.min.x,
+          structureSize.max.y - structureSize.min.y,
+        ),
+      );
+      const wrapperElementBoundingRect = wrapperElement.getBoundingClientRect();
+      const isStructureLessThanWrapper =
+        structureSizeInPixels.x < wrapperElementBoundingRect.width &&
+        structureSizeInPixels.y < wrapperElementBoundingRect.height;
+      const structureRectangleSize = Math.max(
+        structureSizeInPixels.x,
+        structureSizeInPixels.y,
+      );
+      const svgSize = isStructureLessThanWrapper
+        ? Math.min(
+            structureRectangleSize,
+            wrapperElementBoundingRect.width,
+            wrapperElementBoundingRect.height,
+          )
+        : undefined;
+      const extendedOptions = {
         autoScale: true,
         ...options,
-      });
+      };
 
-      preparedStruct.rescale();
+      if (window.isPolymerEditorTurnedOn) {
+        extendedOptions.fontsz = 30;
+        extendedOptions.fontszsub = 20;
+        extendedOptions.width = svgSize;
+        extendedOptions.height = svgSize;
+      }
+
+      const rnd = new Render(wrapperElement, extendedOptions);
+
+      if (!window.isPolymerEditorTurnedOn) {
+        preparedStruct.rescale();
+      }
+
       rnd.setMolecule(preparedStruct);
+
+      if (window.isPolymerEditorTurnedOn) {
+        // Raphael sets overflow:hidden as an inline style on the SVG element,
+        // which clips bond strokes at the bounding-box edge and makes them
+        // appear thinner than bonds in the interior. Override it so strokes
+        // can paint the few pixels beyond the viewBox that they need.
+        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+      }
+
+      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);
@@ -74,6 +152,10 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
 ) {
   struct.sgroups.forEach((sgroup) => {
+    if (sgroup.isSuperatomWithoutLabel) {
+      return;
+    }
+
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;

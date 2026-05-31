@@ -20,6 +20,7 @@ export function arrowToKet(arrowNode) {
   return {
     type: 'arrow',
     data: getNodeWithInvertedYCoord(arrowNode.data),
+    selected: arrowNode.selected,
   };
 }
 
@@ -29,5 +30,6 @@ export function plusToKet(plusNode) {
     type: 'plus',
     location: [coord.x, -coord.y, coord.z],
     prop: plusNode.data,
+    selected: plusNode.selected,
   };
 }

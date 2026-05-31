@@ -32,19 +32,32 @@ import {
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  IndigoStandalone,
+  ExplicitHydrogensCommandData,
+  CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import indigoModuleFn from 'indigo-ketcher';
+import indigoModuleFn from '_indigo-ketcher-import-alias_';
+
+const normalizeError = (error: unknown): Error => {
+  if (error instanceof Error) return error;
+  if (typeof error === 'string') return new Error(error);
+
+  try {
+    return new Error(JSON.stringify(error));
+  } catch {
+    return new Error(String(error));
+  }
+};
 
 interface IndigoOptions {
   set: (key: string, value: string) => void;
 }
 
 type HandlerType = (
-  indigo: IndigoStandalone,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  indigo: any,
   indigoOptions: IndigoOptions,
 ) => string;
 
@@ -54,10 +67,12 @@ function handle(
   handler: HandlerType,
   options?: CommandOptions,
   messageType?: Command,
+  inputData?: string,
 ) {
-  module.then((indigo: IndigoStandalone) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  module.then((indigo: any) => {
     const indigoOptions = new indigo.MapStringString();
-    setOptions(indigoOptions, options || {});
+    setOptions(indigoOptions, options ?? {});
     let msg: OutputMessage<string>;
     try {
       const payload = handler(indigo, indigoOptions);
@@ -65,12 +80,15 @@ function handle(
         type: messageType,
         payload,
         hasError: false,
+        inputData,
       };
     } catch (error) {
+      const errorMessage = normalizeError(error).message;
       msg = {
         type: messageType,
         hasError: true,
-        error: error as string,
+        error: errorMessage,
+        inputData,
       };
     }
 
@@ -98,10 +116,9 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           ...data.options,
           'render-output-format': data.outputFormat,
           'render-background-color': data.backgroundColor,
-          'render-coloring': true,
-          'render-bond-line-width': data.bondThickness,
         },
         Command.GenerateImageAsBase64,
+        data.struct,
       );
       break;
     }
@@ -228,6 +245,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, data.format, indigoOptions),
         data.options,
         Command.Convert,
+        data.struct,
       );
       break;
     }
@@ -245,6 +263,35 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, 'inchi-key', indigoOptions),
         undefined,
         Command.GetInChIKey,
+      );
+      break;
+    }
+
+    case Command.ExplicitHydrogens: {
+      const data: ExplicitHydrogensCommandData =
+        message.data as ExplicitHydrogensCommandData;
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.convert_explicit_hydrogens(
+            data.struct,
+            data.mode,
+            data.format,
+            indigoOptions,
+          ),
+        undefined,
+        Command.ExplicitHydrogens,
+      );
+      break;
+    }
+
+    case Command.CalculateMacromoleculeProperties: {
+      const data: CalculateMacromoleculePropertiesCommandData =
+        message.data as CalculateMacromoleculePropertiesCommandData;
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.calculateMacroProperties(data.struct, indigoOptions),
+        data.options,
+        Command.CalculateMacromoleculeProperties,
       );
       break;
     }

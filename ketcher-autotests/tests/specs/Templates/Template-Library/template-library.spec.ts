@@ -1,0 +1,176 @@
+import { test, expect } from '@fixtures';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
+import {
+  clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  getEditorScreenshot,
+  takeEditorScreenshot,
+  waitForPageInit,
+  waitForRender,
+} from '@utils';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { TemplateEditDialog } from '@tests/pages/molecules/canvas/TemplateEditDialog';
+import {
+  LabelDisplayAtStereogenicCentersOption,
+  StereochemistrySetting,
+} from '@tests/pages/constants/settingsDialog/Constants';
+import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
+import {
+  AromaticsTemplate,
+  BetaDSugarsTemplate,
+  FunctionalGroupsTabItems,
+  TemplateLibraryTab,
+} from '@tests/pages/constants/structureLibraryDialog/Constants';
+
+test.describe('Templates - Template Library', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Template with chiral flag 0 with ignoreChiralFlag enabled/disabled', async ({
+    page,
+  }) => {
+    // Phenylalanine mustard was chosen, because it has chiral flag 0, which allows us
+    // to test ignoreChiralFlag, which has an effect on the structure only in this case
+    const offsetX = 300;
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+    // Using "On" label style, to always show the stereo labels, so we can see the difference
+    await setSettingsOption(
+      page,
+      StereochemistrySetting.LabelDisplayAtStereogenicCenters,
+      LabelDisplayAtStereogenicCentersOption.On,
+    );
+
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
+    await clickOnCanvas(page, x - offsetX, y, { from: 'pageTopLeft' });
+    await setSettingsOption(page, StereochemistrySetting.IgnoreTheChiralFlag);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectTemplate(
+      TemplateLibraryTab.Aromatics,
+      AromaticsTemplate.PhenylalanineMustard,
+    );
+    await clickOnCanvas(page, x + offsetX, y, { from: 'pageTopLeft' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Structure Library UI', async ({ page }) => {
+    // Test case: EPMLSOPKET-4265
+    // Overview Templates Library structure
+
+    await BottomToolbar(page).structureLibrary();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open Structure Library tooltip', async ({ page }) => {
+    // Test case: EPMLSOPKET-4265
+    // Verify Structure LIbrary tooltip
+    const { structureLibraryButton } = BottomToolbar(page);
+    await expect(structureLibraryButton).toHaveAttribute(
+      'title',
+      'Structure Library (Shift+T)',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Template Library', async ({ page }) => {
+    // Test case: EPMLSOPKET-4266
+    // Verify correct display of Template Library
+    const deltaX = 0;
+    const deltaY = 220;
+    const anyX = 638;
+    const anyY = 524;
+    await BottomToolbar(page).structureLibrary();
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.mouse.move(anyX, anyY);
+      await page.mouse.wheel(deltaX, deltaY);
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Functional groups tab', async ({ page }) => {
+    // Test case: EPMLSOPKET-4267
+    // Verify Functional Group tab
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).switchToFunctionalGroupTab();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Functional groups - adding structure', async ({ page }) => {
+    // Test case: EPMLSOPKET-4267
+    // Add structure from Functional Group into canvas
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).selectFunctionalGroup(
+      FunctionalGroupsTabItems.FMOC,
+    );
+    await clickInTheMiddleOfTheCanvas(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Edit templates - name with just spaces', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will contain just spaces
+    const inputText = '   ';
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).edit();
+    await StructureLibraryDialog(page).openTemplateLibrarySection(
+      TemplateLibraryTab.BetaDSugars,
+    );
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Templates - Template Library', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Edit templates', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify correct display of Template Edit window
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await getEditorScreenshot(page);
+  });
+
+  test('Edit templates - name field with no character', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify validation if name field not contain any characters
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await getEditorScreenshot(page);
+  });
+
+  test('Text field 128 characters limit test', async ({ page }) => {
+    // Verify maximum character validation on the name field
+    const number = 129;
+    const inputText = 'A'.repeat(number);
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await waitForRender(page, async () => {
+      await TemplateEditDialog(page).setMoleculeName(inputText);
+    });
+    await getEditorScreenshot(page);
+  });
+});

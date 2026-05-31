@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
 
 interface TextMoveData {
@@ -48,7 +48,7 @@ export class TextMove extends BaseOperation {
     item.setPos(renderItem.getReferencePoints());
 
     renderItem.visel.translate(
-      Scale.obj2scaled(difference, restruct.render.options),
+      Scale.modelToCanvas(difference, restruct.render.options),
     );
 
     this.data.d = difference.negated();

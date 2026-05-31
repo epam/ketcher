@@ -1,9 +1,18 @@
 module.exports = {
   testMatch: ['**/__tests__/**/?(*.)+(spec|test).+(ts|js)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
+  testEnvironment: 'jsdom',
   transform: {
     '\\.js?$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          warnOnly: true,
+        },
+      },
+    ],
+    '\\.ket': '<rootDir>/textFileTransformer.js',
   },
   moduleNameMapper: {
     'application(.*)$': '<rootDir>/src/application/$1',
@@ -12,11 +21,6 @@ module.exports = {
     'utilities(.*)$': '<rootDir>/src/utilities/$1',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
-  globals: {
-    'ts-jest': {
-      diagnostics: {
-        warnOnly: true,
-      },
-    },
-  },
+  globals: { ketcher: {} },
+  setupFiles: ['./jest.setup.js'],
 };

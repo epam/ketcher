@@ -1,8 +1,8 @@
 import utils from 'application/editor/shared/utils';
-import { ReStruct } from 'application/render';
-import { Vec2 } from 'domain/entities';
+import type { ReStruct } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from '../OperationType';
-import Base from '../base';
+import Base from '../BaseOperation';
 
 interface RxnArrowRotateData {
   id: number;
@@ -12,7 +12,7 @@ interface RxnArrowRotateData {
 }
 
 export class RxnArrowRotate extends Base {
-  data: RxnArrowRotateData;
+  readonly data: RxnArrowRotateData;
 
   constructor(id: number, angle: number, center: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_ROTATE);
@@ -34,7 +34,7 @@ export class RxnArrowRotate extends Base {
 
     const options = reStruct.render.options;
     const drawingCenter = this.data.center
-      .scaled(options.scale)
+      .scaled(options.microModeScale)
       .add(options.offset);
 
     reStruct.rxnArrows.get(arrowId)?.visel.rotate(degree, drawingCenter);

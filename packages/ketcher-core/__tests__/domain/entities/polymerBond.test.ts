@@ -6,13 +6,13 @@ describe('Polymer Bond', () => {
     createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(0.25, 0.25, 2.25, 2.5);
 
-    polymerBond.moveToLinkedMonomers();
+    polymerBond.moveToLinkedEntities();
 
     expect(polymerBond.finished).toBe(true);
-    expect(polymerBond.startPosition.x).toBe(10);
-    expect(polymerBond.startPosition.y).toBe(10);
-    expect(polymerBond.endPosition.x).toBe(90);
-    expect(polymerBond.endPosition.y).toBe(100);
+    expect(polymerBond.startPosition.x).toBe(0.25);
+    expect(polymerBond.startPosition.y).toBe(0.25);
+    expect(polymerBond.endPosition.x).toBe(2.25);
+    expect(polymerBond.endPosition.y).toBe(2.5);
   });
 
   it('should change selection', () => {

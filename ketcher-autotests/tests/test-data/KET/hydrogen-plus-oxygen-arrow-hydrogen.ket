@@ -1,0 +1,91 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": 14.700000000000001,
+                            "y": -8,
+                            "z": 0
+                        },
+                        {
+                            "x": 16.700000000000003,
+                            "y": -8,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "plus",
+                "location": [
+                    12.200000000000001,
+                    -8,
+                    0
+                ],
+                "prop": {}
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    10.950000000000001,
+                    -8,
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.950000000000001,
+            "y": 7,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    13.700000000000001,
+                    -8,
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 13.700000000000001,
+            "y": 7,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    17.7,
+                    -8,
+                    0
+                ]
+            }
+        ]
+    }
+}

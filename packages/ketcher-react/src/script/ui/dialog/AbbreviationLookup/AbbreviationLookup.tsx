@@ -59,14 +59,14 @@ interface Props {
 }
 
 export const AbbreviationLookup = ({ options }: Props) => {
-  const inputRef = useRef<HTMLInputElement | null>();
-  const autocompleteRef = useRef<HTMLInputElement | null>();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const autocompleteRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useDispatch();
 
   const cursorPosition = useSelector(selectCursorPosition);
   const usedCursorPositionRef = useRef(cursorPosition);
-  const [portalStyle, setPortalSize] = useState({} as CSSProperties);
+  const [portalStyle, setPortalStyle] = useState({} as CSSProperties);
 
   const initialLookupValue = useSelector(selectAbbreviationLookupValue);
   const [lookupValue, setLookupValue] = useState(initialLookupValue);
@@ -75,8 +75,6 @@ export const AbbreviationLookup = ({ options }: Props) => {
   );
 
   useLayoutEffect(() => {
-    inputRef.current?.focus();
-
     const containerHeight = autocompleteRef.current?.offsetHeight ?? 0;
     const containerWidth = autocompleteRef.current?.offsetWidth ?? 0;
 
@@ -93,10 +91,12 @@ export const AbbreviationLookup = ({ options }: Props) => {
     const left = Math.min(Math.max(0, calculatedLeft), maxLeft);
     const top = Math.min(Math.max(0, calculatedTop), maxTop);
 
-    setPortalSize({
+    setPortalStyle({
       left: `${left}px`,
       top: `${top}px`,
     });
+
+    inputRef.current?.focus();
 
     // TODO extract to a separate hook or utils
     return () => {
@@ -194,13 +194,14 @@ export const AbbreviationLookup = ({ options }: Props) => {
                   setLookupValue(event.target.value);
                   setLoweredLookupValue(event.target.value.toLowerCase());
                 }}
+                data-testid={`AbbreviationLookup-input`}
               />
             </div>
           );
         }}
         renderOption={(props, option) => {
           return (
-            <li {...props} title={option.label}>
+            <li {...props} title={option.label} key={option.label}>
               <div className={classes.optionItemContent}>
                 {highlightOptionLabel(option, loweredLookupValue)}
               </div>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1" BoundingBox="216.002579 299.711395 617.868530 173.163605">
+        <fragment id="4">
+            <n id="73" NodeType="Fragment">
+                <fragment id="76">
+                    <n id="32" p="268.937866 123.966911"/>
+                    <n id="33" p="289.918457 102.829559"/>
+                    <n id="34" p="247.796295 102.278839"/>
+                    <n id="36" p="268.388092 81.165604"/>
+                    <n id="77" NodeType="ExternalConnectionPoint"/>
+                    <b id="65" B="32" E="33"/>
+                    <b id="66" B="34" E="32"/>
+                    <b id="71" B="33" E="36"/>
+                    <b id="72" B="36" E="34"/>
+                    <b id="79" B="77" E="36"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>Base</s>
+                </t>
+            </n>
+            <n id="74" NodeType="Fragment" BondOrdering="82 78">
+                <fragment id="80" ConnectionOrder="81 83">
+                    <n id="21" p="299.127167 51.003300"/>
+                    <n id="22" p="299.016327 21.221409"/>
+                    <n id="81" NodeType="ExternalConnectionPoint"/>
+                    <n id="23" p="268.842041 50.616875"/>
+                    <n id="83" NodeType="ExternalConnectionPoint"/>
+                    <n id="24" p="268.767120 21.221409"/>
+                    <b id="55" B="21" E="22"/>
+                    <b id="56" B="22" E="24"/>
+                    <b id="57" B="24" E="23"/>
+                    <b id="58" B="23" E="21"/>
+                    <b id="84" B="81" E="22"/>
+                    <b id="85" B="83" E="23"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>Sugar</s>
+                </t>
+            </n>
+            <n id="75" NodeType="Fragment">
+                <fragment id="86">
+                    <n id="25" p="329.638184 51.113934"/>
+                    <n id="26" p="350.748993 0.003018"/>
+                    <n id="27" p="350.755005 72.224709"/>
+                    <n id="28" p="380.755127 72.224709"/>
+                    <n id="29" p="401.865906 51.113934"/>
+                    <n id="30" p="401.862885 21.110773"/>
+                    <n id="31" p="380.755127 -0.000000"/>
+                    <n id="35" p="328.341309 21.397448"/>
+                    <n id="87" NodeType="ExternalConnectionPoint"/>
+                    <b id="59" B="25" E="27"/>
+                    <b id="60" B="27" E="28"/>
+                    <b id="61" B="28" E="29"/>
+                    <b id="62" B="29" E="30"/>
+                    <b id="63" B="30" E="31"/>
+                    <b id="64" B="31" E="26"/>
+                    <b id="68" B="26" E="35"/>
+                    <b id="69" B="35" E="25"/>
+                    <b id="88" B="87" E="35"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>Phosphate</s>
+                </t>
+            </n>
+            <n id="5" p="51.330914 53.584183"/>
+            <n id="6" p="51.220078 23.802296"/>
+            <n id="7" p="21.045771 53.197762"/>
+            <n id="8" p="20.970882 23.802296"/>
+            <n id="9" p="81.841919 53.694820"/>
+            <n id="10" p="102.952698 2.583890"/>
+            <n id="11" p="102.958733 74.805580"/>
+            <n id="12" p="132.958878 74.805580"/>
+            <n id="13" p="154.069641 53.694820"/>
+            <n id="14" p="154.066650 23.691658"/>
+            <n id="15" p="132.958878 2.580886"/>
+            <n id="16" p="21.141586 126.547806"/>
+            <n id="17" p="42.122196 105.410454"/>
+            <n id="18" p="0.000000 104.859711"/>
+            <n id="19" p="80.545021 23.978333"/>
+            <n id="20" p="20.591854 83.746506"/>
+            <b id="37" B="5" E="6"/>
+            <b id="38" B="6" E="8"/>
+            <b id="39" B="8" E="7"/>
+            <b id="40" B="7" E="5"/>
+            <b id="41" B="9" E="11"/>
+            <b id="42" B="11" E="12"/>
+            <b id="43" B="12" E="13"/>
+            <b id="44" B="13" E="14"/>
+            <b id="45" B="14" E="15"/>
+            <b id="46" B="15" E="10"/>
+            <b id="47" B="16" E="17"/>
+            <b id="48" B="18" E="16"/>
+            <b id="49" B="6" E="19"/>
+            <b id="50" B="10" E="19"/>
+            <b id="51" B="19" E="9"/>
+            <b id="52" B="20" E="7"/>
+            <b id="53" B="17" E="20"/>
+            <b id="54" B="20" E="18"/>
+            <b id="78" B="74" E="73"/>
+            <b id="82" B="75" E="74"/>
+        </fragment>
+    </page>
+</CDXML>

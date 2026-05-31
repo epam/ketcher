@@ -1,0 +1,104 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+import type { Command } from 'domain/entities/Command';
+import type { CoreEditor } from './Editor';
+import assert from 'assert';
+import { ketcherProvider } from 'application/ketcherProvider';
+const HISTORY_SIZE = 32; // put me to options
+
+export type HistoryOperationType = 'undo' | 'redo';
+
+export class EditorHistory {
+  historyStack: Command[] | [] = [];
+  historyPointer = 0;
+  editor!: CoreEditor;
+
+  private static _instance: object | null = null;
+
+  constructor(editor: CoreEditor) {
+    this.editor = editor;
+    this.historyPointer = 0;
+  }
+
+  static getInstance(editor: CoreEditor): EditorHistory {
+    const instance = EditorHistory._instance;
+    if (EditorHistory.isInstance(instance)) {
+      return instance;
+    }
+
+    const createdInstance = new EditorHistory(editor);
+    EditorHistory._instance = createdInstance;
+
+    return createdInstance;
+  }
+
+  private static isInstance(value: object | null): value is EditorHistory {
+    return value instanceof EditorHistory;
+  }
+
+  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+    const latestCommand = this.historyStack[this.historyStack.length - 1];
+    if (megreWithLatestHistoryCommand && latestCommand) {
+      latestCommand.merge(command);
+    } else {
+      this.historyStack.splice(this.historyPointer, HISTORY_SIZE + 1, command);
+      if (this.historyStack.length > HISTORY_SIZE) {
+        this.historyStack.shift();
+      }
+      this.historyPointer = this.historyStack.length;
+    }
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+  }
+
+  undo() {
+    if (this.historyPointer === 0) {
+      return;
+    }
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+    assert(this.editor);
+
+    this.historyPointer--;
+    const lastCommand = this.historyStack[this.historyPointer];
+    lastCommand.invert(this.editor.renderersContainer);
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
+  }
+
+  redo() {
+    if (this.historyPointer === this.historyStack.length) {
+      return;
+    }
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
+    assert(this.editor);
+
+    const lastCommand = this.historyStack[this.historyPointer];
+    lastCommand.execute(this.editor.renderersContainer);
+    this.historyPointer++;
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
+  }
+
+  public get previousCommand() {
+    return this.historyStack[this.historyPointer - 1];
+  }
+
+  destroy() {
+    EditorHistory._instance = null;
+  }
+}

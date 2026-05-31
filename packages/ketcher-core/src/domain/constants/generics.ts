@@ -80,6 +80,7 @@ export const Generics: GenericsType = {
           { label: 'T', description: 'Tritium' },
           { label: 'R', description: 'Pseudoatom' },
           { label: 'Pol', description: 'Polymer Bead' },
+          { label: '*', description: 'Any atom, including hydrogen' },
         ],
       },
     ],

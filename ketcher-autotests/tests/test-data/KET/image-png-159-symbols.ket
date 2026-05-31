@@ -1,0 +1,24 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "type": "rasterImage",
+                "center": {
+                    "x": 17.99196428571428,
+                    "y": -6.833333333333335,
+                    "z": 0
+                },
+                "data": {
+                    "bitmap": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAuUlEQVR4nM3SvWpCQRAF4K+w0c4UWqTUJBCLG/CnEyxShBB8hsRCO+3t8xZ5W",
+                    "halfSize": {
+                        "x": 0.2,
+                        "y": 0.2,
+                        "z": 0
+                    }
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    }
+}

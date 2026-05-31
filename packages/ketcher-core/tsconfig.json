@@ -3,7 +3,7 @@
     "outDir": "dist",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
@@ -11,7 +11,6 @@
     "noImplicitThis": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
@@ -23,12 +22,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": "./",
     "paths": {
-      "domain/*": ["src/domain/*"],
-      "application/*": ["src/application/*"],
-      "infrastructure/*": ["src/infrastructure/*"],
-      "utilities": ["src/utilities"]
+      "src": ["./src"],
+      "src/*": ["./src/*"],
+      "domain/*": ["./src/domain/*"],
+      "application/*": ["./src/application/*"],
+      "infrastructure/*": ["./src/infrastructure/*"],
+      "utilities": ["./src/utilities"]
     },
     "plugins": [
       {

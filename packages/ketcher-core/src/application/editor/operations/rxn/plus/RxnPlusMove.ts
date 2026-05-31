@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../../base';
+import { BaseOperation } from '../../BaseOperation';
 import { OperationType } from '../../OperationType';
-import { ReStruct } from '../../../../render';
+import type { ReStruct } from '../../../../render';
 import { Scale } from 'domain/helpers';
 
 export class RxnPlusMove extends BaseOperation {
@@ -38,7 +38,7 @@ export class RxnPlusMove extends BaseOperation {
     struct.rxnPluses.get(id)!.pp.add_(d); // eslint-disable-line no-underscore-dangle
 
     const rxn = restruct.rxnPluses.get(id)!;
-    const scaled = Scale.obj2scaled(d, restruct.render.options);
+    const scaled = Scale.modelToCanvas(d, restruct.render.options);
     rxn.visel.translate(scaled);
 
     this.data.d = d.negated();

@@ -20,21 +20,22 @@ export type TextEditorProps = {
   structStr: string;
   inputHandler: (str: string) => void;
   autoFocus?: boolean;
+  testId?: string;
 };
 
 export const TextEditor = ({
   structStr,
   inputHandler,
   autoFocus = false,
+  testId,
 }: TextEditorProps) => {
   return (
-    <>
-      <textarea
-        className={classes.textareaEditor}
-        value={structStr}
-        onChange={(event) => inputHandler(event.target.value)}
-        autoFocus={autoFocus}
-      />
-    </>
+    <textarea
+      className={classes.textareaEditor}
+      value={structStr}
+      data-testid={testId}
+      onChange={(event) => inputHandler(event.target.value)}
+      autoFocus={autoFocus}
+    />
   );
 };

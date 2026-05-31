@@ -1,0 +1,348 @@
+/* eslint-disable no-magic-numbers */
+import { Page, test } from '@fixtures';
+import {
+  takeEditorScreenshot,
+  openFileAndAddToCanvas,
+  dragMouseTo,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  waitForPageInit,
+  waitForRender,
+  clickOnCanvas,
+  deleteByKeyboard,
+  dragTo,
+} from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { AtomsSetting } from '@tests/pages/constants/settingsDialog/Constants';
+import { setSettingsOption } from '@tests/pages/molecules/canvas/SettingsDialog';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
+
+test.describe('Lasso Selection tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const xDelta = 30;
+  const yDelta = 60;
+  const xAxis = 250;
+  const yAxis = 200;
+
+  async function selectObjects(page: Page, xAxis: number, yAxis: number) {
+    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(point.x - xAxis, point.y - yAxis);
+    await page.mouse.down();
+    await page.mouse.move(point.x + xAxis, point.y - yAxis);
+    await page.mouse.move(point.x + xAxis, point.y + yAxis);
+    await page.mouse.move(point.x - xAxis, point.y + yAxis);
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
+    return point;
+  }
+
+  async function clickCanvas(page: Page) {
+    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
+  }
+
+  test('Selection of atom/bond/molecule', async ({ page }) => {
+    /*
+     * Test case: EPMLSOPKET-1338
+     * Description: Hover and selection of atom/bond/molecule
+     */
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    const atomPoint = await getAtomLocator(page, { atomLabel: 'C' })
+      .first()
+      .boundingBox();
+    if (atomPoint) {
+      await page.mouse.move(atomPoint.x, atomPoint.y);
+      await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+      await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click();
+    }
+    await takeEditorScreenshot(page);
+    await clickCanvas(page);
+    await getBondLocator(page, { bondId: 6 }).click({ force: true });
+    await takeEditorScreenshot(page);
+    await clickCanvas(page);
+
+    await page.keyboard.down('Shift');
+    if (atomPoint) {
+      await clickOnCanvas(page, atomPoint.x, atomPoint.y, {
+        from: 'pageTopLeft',
+      });
+    }
+    await getBondLocator(page, { bondId: 6 }).click({ force: true });
+    await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
+    await clickCanvas(page);
+
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
+    await selectObjects(page, xAxis, yAxis);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Drag atom/bond/molecule', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1339
+     * Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
+     */
+    const selectCoords = { x: 100, y: 100 };
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    const point = await selectObjects(page, selectCoords.x, selectCoords.y);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 19 }).click({
+      force: true,
+    });
+    await dragMouseTo(page, point.x + xDelta, point.y - yDelta);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select the reaction components', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1340
+     * Description: Hover and selection of plus sign and reaction arrow
+     */
+    const yShift = 5;
+    const shiftCoords = { x: 270, y: 10 };
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(point.x - shiftCoords.x, point.y + shiftCoords.y);
+    await page.mouse.down();
+    await page.mouse.up();
+    await clickCanvas(page);
+
+    await page.mouse.move(point.x, point.y + yShift);
+    await page.mouse.down();
+    await page.mouse.up();
+    await clickCanvas(page);
+
+    await page.keyboard.down('Shift');
+    await clickOnCanvas(
+      page,
+      point.x - shiftCoords.x,
+      point.y + shiftCoords.y,
+      { from: 'pageTopLeft' },
+    );
+    await clickOnCanvas(page, point.x, point.y + yShift, {
+      from: 'pageTopLeft',
+    });
+    await page.keyboard.up('Shift');
+    await clickCanvas(page);
+
+    await selectAllStructuresOnCanvas(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Drag the reaction components', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1342
+     * Description: Selected structures and components are moved to the another place.
+     */
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    const point = await selectObjects(page, xAxis, yAxis);
+    const xShift = 100;
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 37 }).click({
+      force: true,
+    });
+    await dragMouseTo(page, point.x - xShift, point.y - yAxis);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Fuse atoms together', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1343
+     * Description: Atoms are fused.
+     */
+    await openFileAndAddToCanvas(page, 'KET/two-benzene-with-atoms.ket');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 1 }).click({
+      force: true,
+    });
+    await dragTo(
+      page,
+      getAtomLocator(page, { atomLabel: 'C', atomId: 1 }),
+      getAtomLocator(page, { atomLabel: 'C', atomId: 12 }),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Fuse bonds together', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-2861
+     * Description: When benzene is merged with stereo bond, benzene's bond is changed.
+     * When stereo bond is merged with benzene, benzene's bond is not changed.
+     * No new labels (abs, Chiral) appears.
+     */
+    const selectCoords = { x: 50, y: 50 };
+    await drawBenzeneRing(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
+    await clickOnCanvas(page, 670, 260, {
+      from: 'pageTopLeft',
+    });
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await selectObjects(page, selectCoords.x, selectCoords.y);
+    await getBondLocator(page, { bondId: 11 }).hover({ force: true });
+    await dragMouseTo(page, 680, 250);
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).undo();
+    await getBondLocator(page, { bondId: 11 }).click({ force: true });
+    const shiftCoords2 = { x: 5, y: 15 };
+    const bondLocator = getBondLocator(page, { bondId: 10 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
+
+    await dragMouseTo(
+      page,
+      centerX - xDelta + shiftCoords2.x,
+      centerY + yDelta + shiftCoords2.y,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete with selection', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1345
+     * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
+     */
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+    await selectObjects(page, yAxis, yAxis);
+    await deleteByKeyboard(page);
+
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 23 }).click({
+      force: true,
+    });
+    await deleteByKeyboard(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('UndoRedo moving of structures', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1345
+     * Description: Undo/Redo should work correctly for the actions for the selected objects.
+     */
+    const randomCoords = { x: 20, y: 20 };
+    const shiftCoords = { x: 70, y: 50 };
+    const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await openFileAndAddToCanvas(page, 'Rxn-V2000/benzene-chain-reaction.rxn');
+    await setSettingsOption(page, AtomsSetting.DisplayCarbonExplicitly);
+    await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
+
+    await getAtomLocator(page, { atomLabel: 'C', atomId: 4 }).click({
+      force: true,
+    });
+    const atomPoint = await getAtomLocator(page, { atomLabel: 'C', atomId: 0 })
+      .first()
+      .boundingBox();
+    if (atomPoint) {
+      await dragMouseTo(
+        page,
+        atomPoint.x - randomCoords.x,
+        atomPoint.y - randomCoords.y,
+      );
+    }
+
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await getBondLocator(page, { bondId: 6 }).click({ force: true });
+    const bondLocator = getBondLocator(page, { bondId: 6 });
+    const box = await bondLocator.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await dragMouseTo(page, centerX + shiftCoords.x, centerY + shiftCoords.y);
+
+    await selectObjects(page, yAxis, yAxis);
+    await clickOnCanvas(
+      page,
+      centerX + shiftCoords.x,
+      centerY + shiftCoords.y,
+      { from: 'pageTopLeft' },
+    );
+    await dragMouseTo(
+      page,
+      centerPoint.x + randomCoords.x,
+      centerPoint.y - randomCoords.y,
+    );
+    await CommonTopLeftToolbar(page).undo();
+
+    const plusSignCoords = [
+      { x: 270, y: 10 },
+      { x: 40, y: 30 },
+    ];
+    await page.mouse.move(
+      centerPoint.x - plusSignCoords[0].x,
+      centerPoint.y + plusSignCoords[0].y,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      centerPoint.x + plusSignCoords[1].x,
+      centerPoint.y - plusSignCoords[1].y,
+    );
+    await page.mouse.up();
+
+    const equalSignCoords = [
+      { x: 0, y: 5 },
+      { x: 30, y: 20 },
+    ];
+    await page.mouse.move(
+      centerPoint.x + equalSignCoords[0].x,
+      centerPoint.y + equalSignCoords[0].y,
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      centerPoint.x + equalSignCoords[1].x,
+      centerPoint.y - equalSignCoords[1].y,
+    );
+    await page.mouse.up();
+
+    const loopCount = 3;
+    for (let index = 0; index < loopCount; index++) {
+      await CommonTopLeftToolbar(page).undo();
+    }
+    for (let index = 0; index < loopCount; index++) {
+      await CommonTopLeftToolbar(page).redo();
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test("Don't break the selection if the user's cursor goes beyond the canvas", async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-8923
+     * Description: Don't break the selection if the user's cursor goes beyond the canvas.
+     * GitHub issue: https://github.com/epam/ketcher/issues/2060
+     */
+    const yShift = 100;
+    const xShift = 500;
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
+    await clickOnCanvas(page, xAxis, yAxis, { from: 'pageTopLeft' });
+    await CommonLeftToolbar(page).areaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
+    await page.mouse.move(xAxis - xDelta, yAxis - yDelta);
+    await page.mouse.down();
+    await page.mouse.move(xShift, -yShift);
+    await page.mouse.move(xShift, yAxis + yShift);
+    await page.mouse.move(xAxis - xDelta, yAxis + yShift);
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
+});

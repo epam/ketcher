@@ -22,11 +22,16 @@ export const Accordion = ({
   expanded,
   className,
   onSummaryClick,
+  dataTestIdDetails,
 }: IAccordionProps) => {
   return (
     <Container className={className}>
       <SummaryContainer onClick={onSummaryClick}>{summary}</SummaryContainer>
-      <DetailsContainer expanded={expanded}>{details}</DetailsContainer>
+      {expanded && (
+        <DetailsContainer data-testid={dataTestIdDetails} expanded={expanded}>
+          {details}
+        </DetailsContainer>
+      )}
     </Container>
   );
 };

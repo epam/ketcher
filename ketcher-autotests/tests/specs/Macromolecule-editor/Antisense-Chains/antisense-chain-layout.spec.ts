@@ -1,0 +1,1229 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable max-len */
+/* eslint-disable no-magic-numbers */
+
+import { Page, test } from '@fixtures';
+import {
+  takeEditorScreenshot,
+  MacroFileType,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  openFileAndAddToCanvasMacro,
+  MonomerType,
+  zoomInByKeyboard,
+  resetZoomLevelToDefault,
+  moveMouseAway,
+  takeElementScreenshot,
+  getCoordinatesOfTheMiddleOfTheCanvas,
+  dragMouseTo,
+  SymbolType,
+} from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+  MonomerLocatorOptions,
+} from '@utils/macromolecules/monomer';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { Sugar } from '@tests/pages/constants/monomers/Sugars';
+import { Base } from '@tests/pages/constants/monomers/Bases';
+import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
+import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
+import { Chem } from '@tests/pages/constants/monomers/Chem';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+
+let page: Page;
+
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
+});
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+
+interface IMonomer {
+  id: number;
+  monomerDescription: string;
+  alias?: string;
+  type: MonomerType | 'Nucleotide' | 'Nucleoside';
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
+  KETFile?: string;
+  HELMString?: string;
+  eligibleForAntisense: boolean;
+  baseWithR3R1ConnectionPresent: boolean;
+  monomerLocatorOptions: MonomerLocatorOptions;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+  shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
+  issueNumber?: string;
+}
+
+interface IPolymer {
+  polymerDescription?: string;
+  contentType: MacroFileType.KetFormat | MacroFileType.HELM;
+  KETFile?: string;
+  HELMString?: string;
+  checks: ('side chain' | '')[];
+  monomerLocatorOptions: MonomerLocatorOptions;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+  shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
+  issueNumber?: string;
+}
+
+async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
+  if (polymer.HELMString) {
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      polymer.HELMString,
+    );
+  }
+  if (polymer.KETFile) {
+    await openFileAndAddToCanvasMacro(page, polymer.KETFile);
+  }
+}
+
+const shortMonomerList: IMonomer[] = [
+  {
+    id: 1,
+    monomerDescription: '1. Peptide A (from library)',
+    alias: 'A',
+    type: MonomerType.Peptide,
+    contentType: MacroFileType.HELM,
+    HELMString: 'PEPTIDE1{A}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Peptide.A,
+  },
+  {
+    id: 2,
+    monomerDescription: '2. Ambiguous peptide X (alternatives, from library)',
+    alias: 'X',
+    type: MonomerType.Peptide,
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Peptide.X,
+  },
+  {
+    id: 3,
+    monomerDescription: '3. Sugar R (from library)',
+    alias: 'R',
+    type: MonomerType.Sugar,
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Sugar.R,
+  },
+  {
+    id: 4,
+    monomerDescription: '4. Base A (from library)',
+    alias: 'A',
+    type: MonomerType.Base,
+    contentType: MacroFileType.KetFormat,
+    KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Base.A,
+  },
+  {
+    id: 5,
+    monomerDescription: '5. Ambiguous DNA Base N (alternatives, from library)',
+    alias: 'N',
+    type: MonomerType.Base,
+    contentType: MacroFileType.KetFormat,
+    KETFile:
+      'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Base.DNA_N,
+  },
+  {
+    id: 6,
+    monomerDescription: '6. Phosphate P (from library)',
+    alias: 'P',
+    type: MonomerType.Phosphate,
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{p}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Phosphate.P,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/3061',
+  },
+  {
+    id: 7,
+    monomerDescription: '7. Unsplit monomer 2-damdA (from library)',
+    alias: '2-damdA',
+    type: MonomerType.UnsplitNucleotide,
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Nucleotide._2_damdA,
+  },
+  {
+    id: 8,
+    monomerDescription: '8. Unknown monomer',
+    alias: 'Unknown',
+    type: MonomerType.UnknownMonomer,
+    contentType: MacroFileType.KetFormat,
+    KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: {
+      monomerAlias: 'Unknown',
+      monomerType: MonomerType.UnknownMonomer,
+    },
+  },
+  {
+    id: 9,
+    monomerDescription: '9. CHEM 4aPEGMal (from library)',
+    alias: '4aPEGMal',
+    type: MonomerType.CHEM,
+    contentType: MacroFileType.HELM,
+    HELMString: 'CHEM1{[4aPEGMal]}$$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Chem._4aPEGMal,
+  },
+  {
+    id: 10,
+    monomerDescription: '10. Nucleoside - R(A)',
+    alias: 'A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.A,
+  },
+  {
+    id: 11,
+    monomerDescription: '11. Nucleotide A - R(A)P',
+    alias: 'A',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.A,
+  },
+  {
+    id: 12,
+    monomerDescription:
+      '12. Nucleotide of DNA base N with sugar R and phosphate P - R(A,C,G,T)P',
+    alias: 'N',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.DNA_N,
+  },
+  {
+    id: 13,
+    monomerDescription:
+      '13. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+    alias: 'nC6n8A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.nC6n8A,
+  },
+  {
+    id: 14,
+    monomerDescription:
+      '14. Nucleoside of sugar R, base that have extra covalent bond and phosphate P - R([nC6n8A])P',
+    alias: 'nC6n8A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.nC6n8A,
+  },
+  {
+    id: 15,
+    monomerDescription:
+      '15. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+    alias: 'nC6n8A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.nC6n8A,
+  },
+  {
+    id: 16,
+    monomerDescription:
+      '16. Nucleoside of sugar R, base that have extra hydrogen bond and phosphate P - R([nC6n8A])P',
+    alias: 'nC6n8A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.nC6n8A,
+  },
+];
+
+for (const leftMonomer of shortMonomerList) {
+  for (const rightMonomer of shortMonomerList) {
+    test(`1-${leftMonomer.id}-${rightMonomer.id}. Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Check if hydrogen bonds connect monomers inside one chain, those
+       *              hydrogen bonds should be considered as side chain connections for layout purposes
+       * Case:
+       *       1. Load two monomers on the canvas
+       *       2. Connect them with hydrogen bond
+       *       3. Switch to the flex/snake mode to refresh layout
+       *       4. Take screenshot to validate layout (connection should be considered as side chain)
+       */
+      test.setTimeout(30000);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+        `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+          leftMonomer.issueNumber ?? ''
+        } issue(s).`,
+      );
+
+      await loadMonomerOnCanvas(page, leftMonomer);
+      let leftMonomerAlias;
+      if (leftMonomer.type === 'Nucleoside') {
+        leftMonomerAlias = 'R';
+      } else if (leftMonomer.type === 'Nucleotide') {
+        leftMonomerAlias = 'P';
+      } else {
+        leftMonomerAlias = leftMonomer.alias;
+      }
+      const leftMonomerLocator = getMonomerLocator(page, {
+        monomerAlias: leftMonomerAlias,
+      }).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+      let rightMonomerAlias;
+      if (rightMonomer.type === 'Nucleoside') {
+        rightMonomerAlias = 'R';
+      } else if (rightMonomer.type === 'Nucleotide') {
+        rightMonomerAlias = 'P';
+      } else {
+        rightMonomerAlias = rightMonomer.alias;
+      }
+
+      const rightMonomerLocators = getMonomerLocator(page, {
+        monomerAlias: rightMonomerAlias,
+      });
+
+      const rightMonomerLocator =
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
+
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
+      );
+
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    });
+  }
+}
+
+const eligibleForAntisenseMonomerList: IMonomer[] = [
+  {
+    id: 1,
+    monomerDescription: 'Nucleoside base A - R(A)',
+    alias: 'A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.A,
+  },
+  {
+    id: 2,
+    monomerDescription:
+      'Nucleoside with ambiguous alternative RNA base W - R(A,U)',
+    alias: 'W',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,U)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.RNA_W,
+  },
+  {
+    id: 3,
+    monomerDescription: 'Nucleoside with ambiguous mixed RNA base % - R(A+U)',
+    alias: '%',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+U)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
+  },
+  {
+    id: 4,
+    monomerDescription:
+      'Nucleoside with ambiguous alternative DNA base H - R(A,C,T)',
+    alias: 'H',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,C,T)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.DNA_H,
+  },
+  {
+    id: 5,
+    monomerDescription: 'Nucleoside with ambiguous mixed DNA base % - R(A+C+T)',
+    alias: '%',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+C+T)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
+  },
+  {
+    id: 6,
+    monomerDescription: 'Nucleotide base A - R(A)P',
+    alias: 'A',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.A,
+  },
+  {
+    id: 7,
+    monomerDescription:
+      'Nucleotide with ambiguous alternative RNA base W - R(A,U)P',
+    alias: 'W',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,U)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.RNA_W,
+  },
+  {
+    id: 8,
+    monomerDescription: 'Nucleotide with ambiguous mixed RNA base % - R(A+U)P',
+    alias: '%',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+U)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
+  },
+  {
+    id: 9,
+    monomerDescription:
+      'Nucleotide with ambiguous alternative DNA base H - R(A,C,T)P',
+    alias: 'H',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,C,T)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: Base.DNA_H,
+  },
+  {
+    id: 10,
+    monomerDescription:
+      'Nucleotide with ambiguous mixed DNA base % - R(A+C+T)P',
+    alias: '%',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+C+T)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
+  },
+  {
+    id: 11,
+    monomerDescription: 'Unsplit monomer 2-damdA (from library)',
+    alias: '2_damdA',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Nucleotide._2_damdA,
+    // shouldFail: true,
+    // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
+  },
+];
+
+for (const leftMonomer of eligibleForAntisenseMonomerList) {
+  for (const rightMonomer of eligibleForAntisenseMonomerList) {
+    test(`2-${leftMonomer.id}-${rightMonomer.id}. Creating sense/antisense connection for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Check if monomers who participate in those H-bonds should be oriented
+       *                 towards each other (one of the chains should be "flipped")
+       * Case:
+       *       1. Load two monomers (eligable for antisense) on the canvas
+       *       2. Bond its bases with hydrogen bond
+       *       3. Switch to the flex/snake mode to refresh layout
+       *       4. Take screenshot to validate layout (connection should be considered as side chain)
+       */
+      test.setTimeout(20000);
+
+      await loadMonomerOnCanvas(page, leftMonomer);
+
+      const leftMonomerLocator = getMonomerLocator(
+        page,
+        leftMonomer.monomerLocatorOptions,
+      ).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+
+      const rightMonomerLocators = getMonomerLocator(
+        page,
+        rightMonomer.monomerLocatorOptions,
+      );
+
+      const rightMonomerLocator =
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
+
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
+      );
+
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    });
+  }
+}
+
+test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if they are of the same size, the chain whose center is lower on the canvas`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that shorter chain (fewer monomers) should get "flipped", and if they are of the same size, the chain whose center is lower on the canvas
+   * Case:
+   *       1. Load short chain on the canvas
+   *       2. Load long chain on the canvas
+   *       3. Take screenshot to validate initial state
+   *       4. Connect to bases with hydrogen bond
+   *       5. Switch to Flex mode and back to Snake - chains got filipped
+   *       6. Take screenshot to validate flipping
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await bondTwoMonomers(
+    page,
+    getMonomerLocator(page, { monomerAlias: 'A' }),
+    getMonomerLocator(page, { monomerAlias: 'U' }),
+    undefined,
+    undefined,
+    MacroBondTool.Hydrogen,
+  );
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await resetZoomLevelToDefault(page);
+});
+
+test(`4. For R3-R1 sugar-base side connections (when the base does not have hydrogen bonds),' +
+  ' that base should be oriented like other bases in the chain (or if there is a tie, bellow the sugar)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: For R3-R1 sugar-base side connections (when the base does not have hydrogen bonds),
+   *              that base should be oriented like other bases in the chain (or if there is a tie,
+   *              bellow the sugar)
+   * Case:
+   *       1. Load short chain on the canvas
+   *       2. Load long chain on the canvas
+   *       3. Take screenshot to validate initial state
+   *       4. Connect to bases with hydrogen bond
+   *       5. Switch to Flex mode and back to Snake - all bases from bottom chain got filipped
+   *       6. Take screenshot to validate flipping
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+  for (let i = 0; i < 5; i++) await zoomInByKeyboard(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await bondTwoMonomers(
+    page,
+    getMonomerLocator(page, { monomerAlias: 'A' }),
+    getMonomerLocator(page, { monomerAlias: 'U' }),
+    undefined,
+    undefined,
+    MacroBondTool.Hydrogen,
+  );
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await resetZoomLevelToDefault(page);
+});
+
+const longChain: IMonomer = {
+  id: 1,
+  monomerDescription: '',
+  type: 'Nucleotide',
+  contentType: MacroFileType.HELM,
+  HELMString:
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+    'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+    'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}' +
+    '$RNA1,PEPTIDE1,9:R2-1:R1|RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|' +
+    'RNA3,PEPTIDE3,9:R2-1:R1|PEPTIDE2,RNA3,4:R2-1:R1$$$V2.0',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: Base.U,
+};
+
+test(`5. Check that backbones should be placed parallel to each other`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that backbones should be placed parallel to each other
+   * Case:
+   *       1. Load very long chain on the canvas
+   *       2. Create antisense chain
+   *       3. Take screenshot to validate parallel backbones
+   */
+  test.setTimeout(20000);
+
+  const chain = longChain;
+
+  if (chain.HELMString) {
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      chain.HELMString,
+    );
+  }
+
+  await selectAllStructuresOnCanvas(page);
+  const monomer = getMonomerLocator(page, chain.monomerLocatorOptions).first();
+  await ContextMenu(page, monomer).click(
+    MonomerOption.CreateAntisenseRNAStrand,
+  );
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`6. Check that chains should be placed in such a way that the left-most monomer' +
+  ' that has a hydrogen bond from the non-"flipped" chain has the monomer that is ' +
+  'connected to it via a hydrogen bond from the other chain bellow it`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that chains should be placed in such a way that the left-most monomer
+   *              that has a hydrogen bond from the non-"flipped" chain has the monomer that is
+   *              connected to it via a hydrogen bond from the other chain bellow it
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA4{R(G)P.R(G)P.R(G)P.R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
+      'PEPTIDE2,RNA3,4:R2-1:R1|RNA3,RNA4,8:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`7. Check that distance between all monomers should be minimum one bond length`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that distance between all monomers should be minimum one bond length
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate distance between monomers
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA4{R(G)P.R(G)P.R(G)P.R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
+      'PEPTIDE2,RNA3,4:R2-1:R1|RNA3,RNA4,8:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`8. Check that multiple backbones/chains can be placed in on a line if they are both connected via H-bonds to the same chain (but not to each other!!!)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that multiple backbones/chains can be placed in on a line if they
+   *              are both connected via H-bonds to the same chain (but not to each other!!!)
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA4{R(G)P.R(G)P.R(G)P}|RNA5{R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
+      'PEPTIDE2,RNA3,4:R2-1:R1|RNA1,RNA4,5:pair-2:pair|RNA2,RNA5,5:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`9. Check if there is a circular hydrogen bond connection between three or more chains, 
+      those hydrogen bonds should be considered as side chain connection for layout purposes`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check if there is a circular hydrogen bond connection between three or more chains,
+   *              those hydrogen bonds should be considered as side chain connection for layout purposes
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(C)P.R(A)P.R(A)P}|' +
+      'RNA2{R(G)P.R(T)P.R(U)P}|' +
+      'RNA3{R(C)P.R(A)P.R(A)P}$' +
+      'RNA1,RNA2,8:pair-8:pair|' +
+      'RNA2,RNA3,2:pair-2:pair|' +
+      'RNA3,RNA1,8:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+for (const leftMonomer of eligibleForAntisenseMonomerList) {
+  for (const rightMonomer of eligibleForAntisenseMonomerList) {
+    test(`10-${leftMonomer.id}-${rightMonomer.id}. Sequence mode: Creating sense/antisense connection for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Sense and antisense chains should be treated as completely separate chains
+       *              in sequence mode, without any hydrogen bonds connecting them
+       * Case:
+       *       1. Load two monomers (eligable for antisense) on the canvas
+       *       2. Bond its bases with hydrogen bond
+       *       3. Switch to the sequence mode
+       *       4. Take screenshot to validate that sense and antisense chains are treated as separate chains
+       */
+      test.setTimeout(20000);
+
+      await loadMonomerOnCanvas(page, leftMonomer);
+
+      const leftMonomerLocator = getMonomerLocator(
+        page,
+        leftMonomer.monomerLocatorOptions,
+      ).first();
+
+      await loadMonomerOnCanvas(page, rightMonomer);
+
+      const rightMonomerLocators = getMonomerLocator(
+        page,
+        rightMonomer.monomerLocatorOptions,
+      );
+
+      const rightMonomerLocator =
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
+
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
+      );
+
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Sequence,
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Snake,
+      );
+    });
+  }
+}
+
+for (const leftMonomer of shortMonomerList) {
+  for (const rightMonomer of shortMonomerList) {
+    test(
+      `11-${leftMonomer.id}-${rightMonomer.id}. Sequence mode: Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`,
+      { tag: ['@IncorrectResultBecauseOfBug'] },
+      async () => {
+        /*
+         * Test task: https://github.com/epam/ketcher/issues/6184
+         * Description: Check if hydrogen bonds connect monomers between chains (but not between bases), those
+         *              hydrogen bonds should be considered as side chain connections and shown correct at sequence mode
+         * Case:
+         *       1. Load two monomers on the canvas
+         *       2. Connect them with hydrogen bond
+         *       3. Switch to the sequence mode
+         *       4. Take screenshot to validate layout (connection should be considered as side chain)
+         *
+         *  WARNING: Some test tesults are wrong because of bug: https://github.com/epam/ketcher/issues/6204
+         *  Screenshots must be updated after fix and fixme should be removed
+         */
+        test.setTimeout(20000);
+
+        // Test should be skipped if related bug exists
+        test.fixme(
+          leftMonomer.shouldFail === true || rightMonomer.shouldFail === true,
+          `That test fails because of ${leftMonomer.issueNumber ?? ''} ${
+            leftMonomer.issueNumber ?? ''
+          } issue(s).`,
+        );
+
+        await loadMonomerOnCanvas(page, leftMonomer);
+        let leftMonomerAlias;
+        if (leftMonomer.type === 'Nucleoside') {
+          leftMonomerAlias = 'R';
+        } else if (leftMonomer.type === 'Nucleotide') {
+          leftMonomerAlias = 'P';
+        } else {
+          leftMonomerAlias = leftMonomer.alias;
+        }
+        const leftMonomerLocator = getMonomerLocator(page, {
+          monomerAlias: leftMonomerAlias,
+        }).first();
+        await loadMonomerOnCanvas(page, rightMonomer);
+        let rightMonomerAlias;
+        if (rightMonomer.type === 'Nucleoside') {
+          rightMonomerAlias = 'R';
+        } else if (rightMonomer.type === 'Nucleotide') {
+          rightMonomerAlias = 'P';
+        } else {
+          rightMonomerAlias = rightMonomer.alias;
+        }
+
+        const rightMonomerLocators = getMonomerLocator(page, {
+          monomerAlias: rightMonomerAlias,
+        });
+
+        const rightMonomerLocator =
+          (await rightMonomerLocators.count()) > 1
+            ? rightMonomerLocators.nth(1)
+            : rightMonomerLocators.nth(0);
+
+        await bondTwoMonomers(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          MacroBondTool.Hydrogen,
+        );
+
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Sequence,
+        );
+        await takeEditorScreenshot(page, { hideMonomerPreview: true });
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Snake,
+        );
+      },
+    );
+  }
+}
+
+test('12. AxoLabs: No-shift complementary pair establishes hydrogen bonds', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that no-shift complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with no-shift complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'\n5'-UGCp-3'`,
+  );
+  const baseGLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'G',
+    hydrogenConnectionNumber: 1,
+  });
+  await CommonLeftToolbar(page).handTool();
+  await baseGLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGLocator, {
+    padding: 195,
+  });
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseGSymbolLocator, {
+    padding: 55,
+  });
+});
+
+test('13. AxoLabs: Shifted alignment establishes partial hydrogen bonds (AUGCA/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (AUGCA/UGC) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'\n5'-UGC-3'`,
+  );
+  const baseCLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'C',
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
+  await CommonLeftToolbar(page).handTool();
+  await baseCLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseCLocator, {
+    padding: 255,
+  });
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const baseCSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'C',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseCSymbolLocator, {
+    padding: 55,
+  });
+});
+
+test('14. AxoLabs: Shifted alignment establishes partial hydrogen bonds (ACG/ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that shifted alignment establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'\n5'-ACGp-3'`,
+  );
+  const baseGLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'G',
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
+  await CommonLeftToolbar(page).handTool();
+  await baseGLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGLocator, {
+    padding: 240,
+  });
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseGSymbolLocator, {
+    padding: 55,
+  });
+});
+
+test('15. AxoLabs: Even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that even number of strings pairs 1-2 and 3-4 (shifted pair + ACG/UGC) establishes partial hydrogen bonds
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AUGCA-3'\n5'-UGC-3'\n5'-ACGp-3'\n5'-UGC-3'`,
+  );
+  const phosphatePLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+    monomerAlias: 'P',
+  }).nth(8);
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 300,
+  });
+
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const phosphatePSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'p',
+    dataSymbolType: SymbolType.Phosphate,
+  });
+  await CommonLeftToolbar(page).areaSelectionTool();
+  await CommonLeftToolbar(page).handTool();
+  await phosphatePSymbolLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, phosphatePSymbolLocator, {
+    padding: 150,
+  });
+});
+
+test('16. AxoLabs: Odd number of strings leaves last unpaired (ACG/UGC + ACG)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9098
+   * Description: Check that odd number of strings leaves last unpaired (ACG/UGC + ACG) establishes partial hydrogen bonds only for first two pairs, but not for the third one
+   * Steps:
+   * 1. Load macro with shifted alignment (ACG/ACG) and one additional string on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-ACGp-3'\n5'-UGCp-3'\n5'-ACGp-3'`,
+  );
+  const sugarRLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Sugar,
+    monomerAlias: 'R',
+  }).nth(4);
+  await takeElementScreenshot(page, sugarRLocator, {
+    padding: 210,
+  });
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const baseGSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'G',
+    isAntisense: false,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 0,
+  }).nth(1);
+  await CommonLeftToolbar(page).handTool();
+  await baseGSymbolLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseGSymbolLocator, {
+    padding: 150,
+  });
+});
+
+test('17. AxoLabs: DNA complementary alignment establishes hydrogen bonds (AAT/TT)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that DNA complementary pair establishes hydrogen bonds
+   * Steps:
+   * 1. Load macro with DNA complementary pair on the canvas
+   * 2. Take screenshot to validate that hydrogen bonds are present
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-AATm-3'\n5'-TmTm-3'`,
+  );
+  const baseTLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Base,
+    monomerAlias: 'T',
+    hydrogenConnectionNumber: 1,
+  }).nth(0);
+  await CommonLeftToolbar(page).handTool();
+  await baseTLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, baseTLocator, {
+    padding: 135,
+  });
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const baseTSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'T',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  }).nth(1);
+  await takeElementScreenshot(page, baseTSymbolLocator, {
+    padding: 55,
+  });
+});
+
+test('18. AxoLabs: Tie alignment chooses left-most position (GAG/C)', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/9106
+   * Description: Check that tie in alignment index chooses the left-most position
+   * Steps:
+   * 1. Load macro with tie alignment case on the canvas
+   * 2. Take screenshot to validate placement and hydrogen bonds
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    `5'-GAGp-3'\n5'-Cp-3'`,
+  );
+  const phosphatePLocator = getMonomerLocator(page, {
+    monomerType: MonomerType.Phosphate,
+    monomerAlias: 'P',
+  }).nth(3);
+  await CommonLeftToolbar(page).handTool();
+  await phosphatePLocator.hover({
+    force: true,
+  });
+  const locators = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, locators.x, locators.y);
+  await takeElementScreenshot(page, phosphatePLocator, {
+    padding: 195,
+  });
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
+  const baseCSymbolLocator = getSymbolLocator(page, {
+    symbolAlias: 'C',
+    isAntisense: true,
+    dataSymbolType: SymbolType.RNA,
+    hydrogenConnectionNumber: 1,
+  });
+  await takeElementScreenshot(page, baseCSymbolLocator, {
+    padding: 55,
+  });
+});

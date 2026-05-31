@@ -13,91 +13,118 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool } from 'application/editor/tools/Tool';
-import { Peptide } from 'domain/entities/Peptide';
-import { Chem } from 'domain/entities/Chem';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
-import { BaseMonomerRenderer } from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { type BaseMonomer, AmbiguousMonomer, Vec2 } from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import {
+  type BaseMonomerRenderer,
+  AmbiguousMonomerRenderer,
+} from 'application/render/renderers';
+import type { MonomerOrAmbiguousType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Scale } from 'domain/helpers';
+import { Coordinates } from '../shared/coordinates';
+import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
-class MonomerTool implements Tool {
-  private monomerPreview:
-    | Peptide
-    | Chem
-    | Sugar
-    | RNABase
-    | Phosphate
+class MonomerTool implements BaseTool {
+  private monomerPreview: BaseMonomer | AmbiguousMonomer | undefined;
+
+  private monomerPreviewRenderer:
+    | BaseMonomerRenderer
+    | AmbiguousMonomerRenderer
     | undefined;
 
-  private monomerPreviewRenderer: BaseMonomerRenderer | undefined;
-  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
-  readonly MONOMER_PREVIEW_OFFSET_X = 8;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 12;
-  constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
+  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.8;
+  readonly MONOMER_PREVIEW_OFFSET_X = 30;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 30;
+  history: EditorHistory;
+  constructor(
+    private readonly editor: CoreEditor,
+    private readonly monomer: MonomerOrAmbiguousType,
+  ) {
     this.editor = editor;
     this.monomer = monomer;
+    this.history = EditorHistory.getInstance(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    const editorSettings = provideEditorSettings();
-    const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
-      this.monomer,
-      // We convert monomer coordinates from pixels to angstroms
-      // because the model layer (like BaseMonomer) should not work with pixels
-      Scale.scaled2obj(
-        new Vec2(
-          this.editor.lastCursorPosition.x -
-            this.monomerPreviewRenderer.width / 2,
-          this.editor.lastCursorPosition.y -
-            this.monomerPreviewRenderer.height / 2,
-        ),
-        editorSettings,
+    let modelChanges;
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPositionOfCanvas.x,
+        this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
+    if (isAmbiguousMonomerLibraryItem(this.monomer)) {
+      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
+        this.monomer,
+        position,
+      );
+    } else {
+      modelChanges = this.editor.drawingEntitiesManager.addMonomer(
+        this.monomer,
+        // We convert monomer coordinates from pixels to angstroms
+        // because the model layer (like BaseMonomer) should not work with pixels
+        position,
+      );
+    }
 
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
+    this.editor.calculateAndStoreNextAutochainPosition(
+      modelChanges.operations[0].monomer as BaseMonomer,
+    );
   }
 
   mousemove() {
-    const editorSettings = provideEditorSettings();
-    this.monomerPreview?.moveAbsolute(
-      Scale.scaled2obj(
-        new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
-        ),
-        editorSettings,
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
       ),
     );
+    this.monomerPreview?.moveAbsolute(position);
     this.monomerPreviewRenderer?.move();
   }
 
   public mouseLeaveClientArea() {
+    this.hidePreview();
+  }
+
+  public mouseover() {
+    if (!this.monomerPreview) {
+      if (isAmbiguousMonomerLibraryItem(this.monomer)) {
+        const variantMonomer = new AmbiguousMonomer(this.monomer);
+        this.monomerPreview = variantMonomer;
+        this.monomerPreviewRenderer = new AmbiguousMonomerRenderer(
+          variantMonomer,
+          this.MONOMER_PREVIEW_SCALE_FACTOR,
+        );
+      } else {
+        const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
+
+        this.monomerPreview = new Monomer(this.monomer);
+        this.monomerPreviewRenderer = new MonomerRenderer(
+          this.monomerPreview,
+          this.MONOMER_PREVIEW_SCALE_FACTOR,
+          false,
+        );
+      }
+
+      this.monomerPreviewRenderer?.show(this.editor.theme);
+    }
+  }
+
+  hidePreview() {
     this.monomerPreviewRenderer?.remove();
     this.monomerPreviewRenderer = undefined;
     this.monomerPreview = undefined;
   }
 
-  public mouseover() {
-    if (!this.monomerPreview) {
-      const [Monomer, MonomerRenderer] = monomerFactory(this.monomer);
-
-      this.monomerPreview = new Monomer(this.monomer);
-      this.monomerPreviewRenderer = new MonomerRenderer(
-        this.monomerPreview,
-        this.MONOMER_PREVIEW_SCALE_FACTOR,
-      );
-      this.monomerPreviewRenderer?.show(this.editor.theme);
-    }
+  destroy(): void {
+    this.hidePreview();
   }
 }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="C" x2="13.8348" y2="-7.97507"/>
+            <atom id="a1" elementType="C" x2="15.5652" y2="-7.97459"/>
+            <atom id="a2" elementType="C" x2="14.7016" y2="-7.47497"/>
+            <atom id="a3" elementType="C" x2="15.5652" y2="-8.97553"/>
+            <atom id="a4" elementType="C" x2="13.8348" y2="-8.98002"/>
+            <atom id="a5" elementType="C" x2="14.7038" y2="-9.47503"/>
+            <atom id="a6" elementType="H" x2="14.7022" y2="-6.47497"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a2 a0" order="2">
+                <bondStereo atomRefs4="a1 a2 a0 a4">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a0 a4" order="1"/>
+            <bond atomRefs2="a4 a5" order="2">
+                <bondStereo atomRefs4="a0 a4 a5 a3">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a5 a3" order="1"/>
+            <bond atomRefs2="a3 a1" order="2">
+                <bondStereo atomRefs4="a5 a3 a1 a2">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a1 a2" order="1"/>
+            <bond atomRefs2="a2 a6" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a2 a0 a4 a5 a3 a1 a6" role="SuperatomSgroup">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>

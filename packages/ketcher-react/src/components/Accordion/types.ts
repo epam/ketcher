@@ -20,6 +20,7 @@ export interface IAccordionProps {
   expanded: boolean;
   onSummaryClick: React.MouseEventHandler<HTMLDivElement>;
   className?: string;
+  dataTestIdDetails?: string;
 }
 
 export interface IDetailsContainerProps {

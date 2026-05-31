@@ -82,6 +82,28 @@ export const OperationType = Object.freeze({
   DRAWING_ENTITY_SELECT: 'Select drawing entity',
   DRAWING_ENTITY_HOVER: 'Hover drawing entity',
   SHOW_POLYMER_BOND_INFORMATION: 'Show polymer bond information',
+  IMAGE_UPSERT: 'Upsert image',
+  IMAGE_DELETE: 'Delete image',
+  IMAGE_MOVE: 'Move image',
+  IMAGE_RESIZE: 'Resize image',
+  MULTITAIL_ARROW_UPSERT: 'Upsert multitail arrow',
+  MULTITAIL_ARROW_DELETE: 'Delete multitail arrow',
+  MULTITAIL_ARROW_MOVE: 'Move multitail arrow',
+  MULTITAIL_ARROW_ADD_TAIL: 'Add multitail arrow tail',
+  MULTITAIL_ARROW_REMOVE_TAIL: 'Remove multitail arrow tail',
+  MULTITAIL_ARROW_RESIZE_HEAD_TAIL: 'Resize head tail',
+  MULTITAIL_ARROW_MOVE_HEAD_TAIL: 'Move head tail',
+  ROTATE_MONOMER: 'Rotate monomer',
+  FLIP_MONOMER: 'Flip monomer',
+  SHIFT_MONOMER: 'Shift monomer',
+  MONOMER_CREATION_ASSIGN_AA: 'Monomer creation :: Assign attachment atom',
+  MONOMER_CREATION_ASSIGN_LGA: 'Monomer creation :: Assign leaving atom',
+  MONOMER_CREATION_REASSIGN_AP: 'Monomer creation :: Reassign attachment point',
+  MONOMER_CREATION_REASSIGN_LGA:
+    'Monomer creation :: Reassign leaving group atom',
+  MONOMER_CREATION_REMOVE_AP: 'Monomer creation :: Remove attachment point',
+  MONOMER_CREATION_MARK_RNA_COMPONENT:
+    'Monomer creation :: Mark as RNA component',
 });
 
 export enum OperationPriority {

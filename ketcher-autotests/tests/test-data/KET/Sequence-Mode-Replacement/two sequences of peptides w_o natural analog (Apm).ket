@@ -1,0 +1,400 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer593"
+            },
+            {
+                "$ref": "monomer594"
+            },
+            {
+                "$ref": "monomer595"
+            },
+            {
+                "$ref": "monomer596"
+            },
+            {
+                "$ref": "monomer597"
+            },
+            {
+                "$ref": "monomer598"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer593",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer594",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer594",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer595",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer596",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer597",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer597",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer598",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer593",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer596",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer594",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer597",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer595",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer598",
+                    "attachmentPointId": "R3"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Apm___L-2-aminopimelic acid"
+            }
+        ]
+    },
+    "monomer593": {
+        "type": "monomer",
+        "id": "593",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    },
+    "monomerTemplate-Apm___L-2-aminopimelic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.6535855032126249,
+                    -0.4450779144235471,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.6530038920862955,
+                    -1.5361803874174373,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.5973222570728118,
+                    -2.0828948461670413,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.5968133473372739,
+                    -2.95531153566109,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.353271318519405,
+                    -1.6473408139371373,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.2913144729002211,
+                    -2.0828948461670413,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.29066016038310055,
+                    0.10163654432605668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.29000584786598,
+                    1.192739017319947,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2342515114617054,
+                    1.7393807746787595,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2336699003353762,
+                    2.83048324767265,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.0476270413007702,
+                    -1.6480678278450491,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.4777208388887828,
+                    3.2660372799025534,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.988746545092475,
+                    3.2676367104999593,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    11
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    12
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Apm___L-2-aminopimelic acid",
+        "fullName": "L-2-aminopimelic acid",
+        "alias": "Apm",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "X"
+    },
+    "monomer594": {
+        "type": "monomer",
+        "id": "594",
+        "position": {
+            "x": 2.75,
+            "y": -1.25
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    },
+    "monomer595": {
+        "type": "monomer",
+        "id": "595",
+        "position": {
+            "x": 4.25,
+            "y": -1.25
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    },
+    "monomer596": {
+        "type": "monomer",
+        "id": "596",
+        "position": {
+            "x": 1.25,
+            "y": -2.75
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    },
+    "monomer597": {
+        "type": "monomer",
+        "id": "597",
+        "position": {
+            "x": 2.75,
+            "y": -2.75
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    },
+    "monomer598": {
+        "type": "monomer",
+        "id": "598",
+        "position": {
+            "x": 4.25,
+            "y": -2.75
+        },
+        "alias": "Apm",
+        "templateId": "Apm___L-2-aminopimelic acid"
+    }
+}

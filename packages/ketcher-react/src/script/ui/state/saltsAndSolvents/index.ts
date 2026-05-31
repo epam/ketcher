@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { AnyAction } from 'redux';
-import { appUpdate } from '../options';
+import { appUpdate } from '../options/actions';
 import {
   SaltsAndSolventsProvider,
   FunctionalGroupsProvider,
@@ -36,20 +36,15 @@ const initialState: SaltsAndSolventsState = {
   mode: MODES.FG,
 };
 
-const saltsAndSolventsReducer = (
-  state = initialState,
-  { type, payload }: AnyAction,
-) => {
-  switch (type) {
-    case 'SALTS_AND_SOLVENTS_INIT':
-      return { ...state, ...payload };
-
-    default:
-      return state;
+const saltsAndSolventsReducer = (state = initialState, action: AnyAction) => {
+  const { type, payload } = action;
+  if (type === 'SALTS_AND_SOLVENTS_INIT') {
+    return { ...state, ...payload };
   }
+  return state;
 };
 
-const initSaltsAndSolvents = (lib: SdfItem[]) => ({
+export const initSaltsAndSolvents = (lib: SdfItem[]) => ({
   type: 'SALTS_AND_SOLVENTS_INIT',
   payload: { lib },
 });

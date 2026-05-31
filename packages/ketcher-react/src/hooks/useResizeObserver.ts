@@ -27,7 +27,7 @@ type Size = {
 };
 
 type Options<THTMLElement extends HTMLElement> = {
-  ref?: RefObject<THTMLElement> | THTMLElement | null | undefined;
+  ref?: RefObject<THTMLElement> | THTMLElement | null;
 };
 
 type HookResponse<THTMLElement extends HTMLElement> = {

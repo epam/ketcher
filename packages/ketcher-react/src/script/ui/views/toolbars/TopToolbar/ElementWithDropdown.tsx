@@ -103,7 +103,7 @@ const MenuItemWithDropdown = ({
 
   return (
     <ElementAndDropdown>
-      {topElement && topElement}
+      {topElement}
       {dropDownElements.filter((element) => !element.props.isHidden).length !==
         0 && (
         <DropDownButton
@@ -116,7 +116,9 @@ const MenuItemWithDropdown = ({
       )}
       <Collapse in={isExpanded} timeout="auto" onClick={collapse} unmountOnExit>
         <ClickAwayListener onClickAway={collapse}>
-          <DropDownContent>{dropDownElements}</DropDownContent>
+          <DropDownContent data-testid="selection-toolbar">
+            {dropDownElements}
+          </DropDownContent>
         </ClickAwayListener>
       </Collapse>
     </ElementAndDropdown>

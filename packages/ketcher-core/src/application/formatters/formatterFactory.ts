@@ -15,22 +15,20 @@
  ***************************************************************************/
 
 import {
-  FormatterFactoryOptions,
-  StructFormatter,
+  type FormatterFactoryOptions,
+  type StructFormatter,
   SupportedFormat,
 } from './structFormatter.types';
-import {
-  KetSerializer,
-  MolSerializer,
-  MolSerializerOptions,
-} from 'domain/serializers';
-import { StructService, StructServiceOptions } from 'domain/services';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import { MolSerializer } from 'domain/serializers/mol/molSerializer';
+import type { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';
 
 export class FormatterFactory {
-  #structService: StructService;
+  readonly #structService: StructService;
 
   constructor(structService: StructService) {
     this.#structService = structService;
@@ -70,6 +68,7 @@ export class FormatterFactory {
   create(
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
+    queryPropertiesAreUsed?: boolean,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options);
@@ -81,9 +80,18 @@ export class FormatterFactory {
         break;
 
       case SupportedFormat.mol:
-        formatter = new MolfileV2000Formatter(
-          new MolSerializer(molSerializerOptions),
-        );
+        if (queryPropertiesAreUsed) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
+        } else {
+          formatter = new MolfileV2000Formatter(
+            new MolSerializer(molSerializerOptions),
+          );
+        }
         break;
 
       case SupportedFormat.cml:

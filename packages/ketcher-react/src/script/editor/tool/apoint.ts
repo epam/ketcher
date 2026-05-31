@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import assert from 'assert';
-import { FunctionalGroup } from 'ketcher-core';
+import { Atom, FunctionalGroup } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 import { editRGroupAttachmentPoint } from './apoint.utils';
@@ -60,6 +60,13 @@ class APointTool implements Tool {
         functionalGroups,
         ci.id,
       );
+      const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+        molecule,
+        ci.id,
+      );
+      if (isAtomSuperatomLeavingGroup) {
+        return;
+      }
 
       if (atomId !== null) {
         atomResult.push(atomId);
@@ -76,8 +83,10 @@ class APointTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
     if (ci && ci.map === 'atoms') {

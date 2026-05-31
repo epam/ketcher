@@ -1,0 +1,12 @@
+<svg height="24px" width="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.9794 6V1.63636H2.63778V3.53267H4.81321V1.63636H5.47372V6H4.81321V4.0973H2.63778V6H1.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M9.9794 6V1.63636H10.6378V3.53267H12.8132V1.63636H13.4737V6H12.8132V4.0973H10.6378V6H9.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M1.9794 14V9.63636H2.63778V11.5327H4.81321V9.63636H5.47372V14H4.81321V12.0973H2.63778V14H1.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M9.9794 14V9.63636H10.6378V11.5327H12.8132V9.63636H13.4737V14H12.8132V12.0973H10.6378V14H9.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M15.4855 6.8855L19 10.4V3.37097L15.4855 6.8855Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M15.4855 17.9855L19 21.5V14.4709L15.4855 17.9855Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <circle cx="8" cy="20" r="2" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <circle cx="8" cy="8" r="2" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M19 18.7C21.2091 18.7 23 16.9091 23 14.7V10C23 7.79086 21.2091 6 19 6V7.5C20.3807 7.5 21.5 8.61929 21.5 10V14.7C21.5 16.0807 20.3807 17.2 19 17.2V18.7Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+
+</svg>

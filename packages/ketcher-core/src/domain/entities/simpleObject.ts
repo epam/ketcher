@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2';
+import { type Point, Vec2 } from './vec2';
+import {
+  type initiallySelectedType,
+  BaseMicromoleculeEntity,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum SimpleObjectMode {
   ellipse = 'ellipse',
@@ -25,13 +29,15 @@ export enum SimpleObjectMode {
 export interface SimpleObjectAttributes {
   mode: SimpleObjectMode;
   pos?: Array<Point>;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class SimpleObject {
+export class SimpleObject extends BaseMicromoleculeEntity {
   pos: Array<Vec2>;
   mode: SimpleObjectMode;
 
   constructor(attributes?: SimpleObjectAttributes) {
+    super(attributes?.initiallySelected);
     this.pos = [];
 
     if (attributes?.pos) {
@@ -41,7 +47,7 @@ export class SimpleObject {
       }
     }
 
-    this.mode = attributes?.mode || SimpleObjectMode.line;
+    this.mode = attributes?.mode ?? SimpleObjectMode.line;
   }
 
   clone(): SimpleObject {
@@ -49,12 +55,9 @@ export class SimpleObject {
   }
 
   center(): Vec2 {
-    switch (this.mode) {
-      case SimpleObjectMode.rectangle: {
-        return Vec2.centre(this.pos[0], this.pos[1]);
-      }
-      default:
-        return this.pos[0];
+    if (this.mode === SimpleObjectMode.rectangle) {
+      return Vec2.centre(this.pos[0], this.pos[1]);
     }
+    return this.pos[0];
   }
 }

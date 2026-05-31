@@ -43,7 +43,12 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
 }) => {
   return (
     <div className={styles.optionsContainer}>
-      <div onClick={selectClipboard} className={styles.dropContainer}>
+      <button
+        onClick={selectClipboard}
+        className={styles.dropContainer}
+        data-testid="paste-from-clipboard-button"
+        type="button"
+      >
         <div className={styles.dropIconWrapper}>
           <Icon name={ICON_NAMES.PASTE} />
         </div>
@@ -53,7 +58,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         <div className={styles.buttonLabelWrapper}>
           <p className={styles.buttonLabel}>Paste from clipboard</p>
         </div>
-      </div>
+      </button>
 
       <FileDrop
         onDropAccepted={fileLoadHandler}
@@ -61,6 +66,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         buttonLabel="Open from file"
         textLabel="or drag file here"
         iconName={ICON_NAMES.FILE}
+        testId="open-from-file-button"
       />
 
       <FileDrop
@@ -76,6 +82,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         buttonLabel="Open from image"
         textLabel="or drag file here"
         iconName={ICON_NAMES.IMAGE}
+        testId="open-from-image-button"
       />
     </div>
   );

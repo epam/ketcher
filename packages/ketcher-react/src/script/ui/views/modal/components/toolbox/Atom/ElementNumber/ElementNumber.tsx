@@ -25,13 +25,18 @@ type Props = ElementNumberProps;
 
 const ElementNumber = (props: Props) => {
   const { label } = props;
-  const value = Elements.get(capitalize(label))?.number || '';
+  const value = Elements.get(capitalize(label))?.number ?? '';
 
   return (
     <label>
       {/* eslint-disable jsx-a11y/label-has-associated-control */}
       <span>Number</span>
-      <input type="text" readOnly value={value} />
+      <input
+        type="text"
+        readOnly
+        value={value}
+        data-testid={'element-number'}
+      />
       {/* eslint-enable jsx-a11y/label-has-associated-control */}
     </label>
   );

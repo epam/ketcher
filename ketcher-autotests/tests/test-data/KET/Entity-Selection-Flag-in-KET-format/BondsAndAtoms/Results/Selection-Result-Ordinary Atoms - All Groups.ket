@@ -1,0 +1,850 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "rg1"
+            },
+            {
+                "$ref": "rg2"
+            },
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            },
+            {
+                "$ref": "mol16"
+            },
+            {
+                "$ref": "mol17"
+            },
+            {
+                "$ref": "mol18"
+            },
+            {
+                "$ref": "mol19"
+            },
+            {
+                "$ref": "mol20"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "rg1": {
+        "rlogic": {
+            "number": 1
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    2.67235944451917,
+                    -3.4400467577343354,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.67235944451917,
+            "y": 2.4400467577343354,
+            "z": 0
+        }
+    },
+    "rg2": {
+        "rlogic": {
+            "number": 2
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    4.828668264443843,
+                    -3.4400467577343354,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    5.745831291923116,
+                    -3.4302897042505114,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    6.770321907724435,
+                    -3.430289704250513,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 4.828668264443843,
+            "y": 2.4400467577343354,
+            "z": 0
+        }
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "type": "rg-label",
+                "location": [
+                    2.012602391035349,
+                    -0.7460812278020792,
+                    0
+                ],
+                "$refs": [
+                    "rg-1"
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.012602391035349,
+            "y": -0.2539187721979208,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    2.049201139808858,
+                    -7.781622015341516,
+                    0
+                ],
+                "attachmentPoints": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.049201139808858,
+            "y": 6.781622015341516,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    3.346889253157194,
+                    -7.752350854890049,
+                    0
+                ],
+                "attachmentPoints": 2,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 3.346889253157194,
+            "y": 6.752350854890049,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    4.722633794376099,
+                    -7.807836747922404,
+                    0
+                ],
+                "attachmentPoints": 3,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 4.722633794376099,
+            "y": 6.807836747922404,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "type": "rg-label",
+                "location": [
+                    4.608527194767406,
+                    -0.7887536394800359,
+                    0
+                ],
+                "$refs": [
+                    "rg-1",
+                    "rg-2",
+                    "rg-3",
+                    "rg-4",
+                    "rg-5",
+                    "rg-6",
+                    "rg-7",
+                    "rg-8",
+                    "rg-9",
+                    "rg-10",
+                    "rg-11",
+                    "rg-12",
+                    "rg-13",
+                    "rg-14",
+                    "rg-15",
+                    "rg-16",
+                    "rg-17",
+                    "rg-18",
+                    "rg-19",
+                    "rg-20",
+                    "rg-21",
+                    "rg-22",
+                    "rg-23",
+                    "rg-24",
+                    "rg-25",
+                    "rg-26",
+                    "rg-27",
+                    "rg-28",
+                    "rg-29",
+                    "rg-30",
+                    "rg-31",
+                    "rg-32"
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 4.608527194767406,
+            "y": -0.2112463605199637,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    28.030569300859185,
+                    -7.227835420275423,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 28.030569300859185,
+            "y": 6.227835420275423,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    21.158989604218817,
+                    -2.010148634574075,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.066395578214276,
+                    -1.9808774741226083,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    20.261340683707196,
+                    -1.9906345276064288,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "MUL",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ],
+                "mul": 200
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.158989604218817,
+            "y": 1.010148634574075,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    20.242714282655797,
+                    -4.322599800182217,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    21.168715386141933,
+                    -4.3214476107227595,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.06429313971715,
+                    -4.341326346511679,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ],
+                "subscript": "Polymer label - Head-to-tail",
+                "connectivity": "HT"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.242714282655797,
+            "y": 3.322599800182217,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    20.575041870977834,
+                    -7.249323799048407,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    21.354687172206646,
+                    -7.257928663072771,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.172208497911285,
+                    -7.248536238410227,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ],
+                "subscript": "Polymer label - Head-to-head",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.575041870977834,
+            "y": 6.249323799048407,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    20.504611434368428,
+                    -9.781890997210503,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    21.308203414807856,
+                    -9.776372538664347,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.198751790261838,
+                    -9.761988952615418,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ],
+                "subscript": "Polymer label - Either unknown",
+                "connectivity": "EU"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.504611434368428,
+            "y": 8.781890997210503,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    20.524712573376952,
+                    -11.982681283543222,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    21.34045155278495,
+                    -11.980094589661622,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.245735293059184,
+                    -11.963595448017294,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ],
+                "name": "Superatom - 3 a",
+                "expanded": true,
+                "id": 0
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.524712573376952,
+            "y": 10.982681283543222,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    20.624712573376954,
+                    -14.254115471473966,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    21.528265034139345,
+                    -14.271042884560003,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "Ge",
+                "location": [
+                    22.404277613962115,
+                    -14.225272582464214,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "queryComponent",
+                "atoms": [
+                    0,
+                    1,
+                    2
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.624712573376954,
+            "y": 13.254115471473966,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    2.446262290448397,
+                    -9.637186294047282,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0
+                ],
+                "context": "Atom",
+                "fieldName": "Field name",
+                "fieldData": "Field name value Absolute"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.446262290448397,
+            "y": 8.637186294047282,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    2.0914817457982444,
+                    -11.81833834262514,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0
+                ],
+                "placement": false,
+                "context": "Atom",
+                "fieldName": "Field name",
+                "fieldData": "Field name value Relative"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.0914817457982444,
+            "y": 10.81833834262514,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    2.2622105853467804,
+                    -14.987303872557398,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Atom",
+                "fieldName": "Field name",
+                "fieldData": "Field name value Attached"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 2.2622105853467804,
+            "y": 13.987303872557394,
+            "z": 0
+        }
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.424828225196132,
+                    -1.9674762228961153,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "MUL",
+                "atoms": [
+                    0
+                ],
+                "mul": 200
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.424828225196132,
+            "y": 0.9674762228961153,
+            "z": 0
+        }
+    },
+    "mol16": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.424828225196132,
+                    -4.738910410826856,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0
+                ],
+                "subscript": "Polymer label - Head-to-Tail",
+                "connectivity": "HT"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.424828225196132,
+            "y": 3.738910410826856,
+            "z": 0
+        }
+    },
+    "mol17": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.415071171712304,
+                    -7.129858705725238,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0
+                ],
+                "subscript": "Polymer label - Head-to-head",
+                "connectivity": "HH"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.415071171712304,
+            "y": 6.129858705725238,
+            "z": 0
+        }
+    },
+    "mol18": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.334585278679954,
+                    -9.626292893655975,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SRU",
+                "atoms": [
+                    0
+                ],
+                "subscript": "Polymer label - Either unknown",
+                "connectivity": "EU"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.334585278679954,
+            "y": 8.626292893655975,
+            "z": 0
+        }
+    },
+    "mol19": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.448613492615246,
+                    -12.057484135070538,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0
+                ],
+                "name": "SuperAtom",
+                "expanded": true,
+                "id": 0
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.448613492615246,
+            "y": 11.057484135070538,
+            "z": 0
+        }
+    },
+    "mol20": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    11.577884653066713,
+                    -14.578918323001282,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "queryComponent",
+                "atoms": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.577884653066713,
+            "y": 13.578918323001282,
+            "z": 0
+        }
+    }
+}

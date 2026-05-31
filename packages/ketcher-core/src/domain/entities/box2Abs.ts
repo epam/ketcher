@@ -99,6 +99,11 @@ export class Box2Abs {
     return this.p0;
   }
 
+  hasZeroArea() {
+    const size = this.sz();
+    return size.x === 0 && size.y === 0;
+  }
+
   static fromRelBox(relBox: any): Box2Abs {
     return new Box2Abs(
       relBox.x,

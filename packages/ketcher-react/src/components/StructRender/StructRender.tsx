@@ -37,9 +37,15 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   }
 };
 
-const StructRender = ({ struct, options, className }: IStructRenderProps) => {
+const StructRender = ({
+  struct,
+  options,
+  className,
+  fullsize,
+  update,
+  testId,
+}: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const container = renderRef.current;
 
@@ -48,9 +54,16 @@ const StructRender = ({ struct, options, className }: IStructRenderProps) => {
       const normalizedStruct = normalizeStruct(struct);
       RenderStruct.render(container, normalizedStruct, options);
     }
-  }, [struct, options]);
+  }, [struct, options, update]);
 
-  return <Container ref={renderRef} className={className}></Container>;
+  return (
+    <Container
+      data-testid={testId ?? 'monomer-preview-micro'}
+      ref={renderRef}
+      className={className}
+      fullsize={fullsize}
+    ></Container>
+  );
 };
 
 export default StructRender;

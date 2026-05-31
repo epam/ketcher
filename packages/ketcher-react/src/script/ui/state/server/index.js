@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
-import { appUpdate, setStruct } from '../options';
+import { appUpdate } from '../options/actions';
+import { setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
 import { checkErrors } from '../modal/form';
@@ -83,7 +84,13 @@ function ketcherCheck(struct, checkParams) {
 export function check(optsTypes) {
   return (dispatch, getState) => {
     const { editor, server } = getState();
-    const ketcherErrors = ketcherCheck(editor.struct(), optsTypes);
+    const struct = editor.struct();
+
+    // recalculate implicit hydrogens before validation
+    // because for atoms in collapsed sgroups it can be not calculated
+    struct.setImplicitHydrogen(undefined, true);
+
+    const ketcherErrors = ketcherCheck(struct, optsTypes);
 
     const options = getState().options.getServerSettings();
     options.data = { types: without(['valence', 'chiral_flag'], optsTypes) };
@@ -152,6 +159,7 @@ export function serverTransform(method, data, struct) {
           load(loadedStruct, {
             rescale: method === 'layout',
             reactionRelayout: method === 'clean',
+            method,
           }),
         );
       })
@@ -178,40 +186,57 @@ function resetStereoFlagsPosition(struct) {
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection();
   let selectedAtoms = [];
+  let selectedBonds = [];
   const aidMap = new Map();
+  const bidMap = new Map();
   const currentStruct = (struct || editor.struct()).clone(
     null,
     null,
     false,
     aidMap,
+    null,
+    null,
+    null,
+    null,
+    null,
+    bidMap,
   );
+  const expSel = editor.explicitSelected();
   if (selection) {
-    selectedAtoms = (
-      selection.atoms ? selection.atoms : editor.explicitSelected().atoms
-    ).map((aid) => aidMap.get(aid));
+    selectedAtoms = (selection.atoms ? selection.atoms : expSel.atoms).map(
+      (aid) => aidMap.get(aid),
+    );
+    selectedBonds = (selection.bonds ? selection.bonds : expSel.bonds).map(
+      (bid) => bidMap.get(bid),
+    );
   }
   if (method === 'layout') {
     resetStereoFlagsPosition(currentStruct);
   }
+
   const ketSerializer = new KetSerializer();
+  const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
+    ...selection,
+    atoms: selectedAtoms,
+    bonds: selectedBonds,
+  });
+
   return server.then(() =>
     server[method](
-      Object.assign(
-        {
-          struct: ketSerializer.serialize(currentStruct),
-        },
-        method !== 'calculate' && method !== 'check'
+      {
+        struct: serializedStruct,
+        ...(method !== 'calculate' && method !== 'check'
           ? {
               output_format: ChemicalMimeType.KET,
             }
-          : null,
-        selectedAtoms && selectedAtoms.length > 0
+          : null),
+        ...(selectedAtoms && selectedAtoms.length > 0
           ? {
               selected: selectedAtoms,
             }
-          : null,
-        options.data,
-      ),
+          : null),
+        ...options.data,
+      },
       omit('data', options),
     ),
   );

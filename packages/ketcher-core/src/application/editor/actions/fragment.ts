@@ -28,13 +28,18 @@ import {
   SGroupDataMove,
   SimpleObjectMove,
   TextMove,
+  ImageMove,
+  MultitailArrowMove,
 } from '../operations';
-import { Pile, RGroup, Vec2 } from 'domain/entities';
+import { Pile } from 'domain/entities/pile';
+import { RGroup } from 'domain/entities/rgroup';
+import { Vec2 } from 'domain/entities/vec2';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);
@@ -47,6 +52,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.atoms) {
     const atomSet = new Pile(lists.atoms);
     const bondlist: Array<number> = [];
+    const relatedSgroups = getRelSGroupsBySelection(struct, lists.atoms);
 
     restruct.bonds.forEach((bond, bid) => {
       if (atomSet.has(bond.b.begin) && atomSet.has(bond.b.end)) {
@@ -73,7 +79,8 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
 
     loops.forEach((loopId) => {
-      if (restruct.reloops.get(loopId) && restruct.reloops.get(loopId).visel) {
+      const loop = restruct.reloops.get(loopId);
+      if (loop?.visel) {
         // hack
         action.addOp(new LoopMove(loopId, d));
       }
@@ -83,9 +90,16 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
       action.addOp(new AtomMove(aid, d, !atomsToInvalidate.has(aid)));
     });
 
-    if (lists.sgroupData && lists.sgroupData.length === 0) {
-      const sgroups = getRelSGroupsBySelection(struct, lists.atoms);
-      sgroups.forEach((sg) => {
+    relatedSgroups.forEach((sgroup) => {
+      sgroup?.atoms.forEach((aid) => {
+        if (!atomSet.has(aid)) {
+          action.addOp(new AtomMove(aid, d, true));
+        }
+      });
+    });
+
+    if (lists.sgroupData?.length === 0) {
+      relatedSgroups.forEach((sg) => {
         action.addOp(new SGroupDataMove(sg.id, d));
       });
     }
@@ -127,6 +141,18 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
+  if (lists[IMAGE_KEY]) {
+    lists[IMAGE_KEY].forEach((image) => {
+      action.addOp(new ImageMove(image, d));
+    });
+  }
+
+  if (lists[MULTITAIL_ARROW_KEY]) {
+    lists[MULTITAIL_ARROW_KEY].forEach((multitailArrow) => {
+      action.addOp(new MultitailArrowMove(multitailArrow, d));
+    });
+  }
+
   return action.perform(restruct);
 }
 
@@ -136,11 +162,13 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
   if (!flag) {
     const struct = restruct.molecule;
     const frag = restruct.molecule.frags.get(frid);
-    frag.stereoAtoms.forEach((aid) => {
-      if (struct.atoms.get(aid).stereoLabel === null) {
-        action.addOp(new FragmentDeleteStereoAtom(frid, aid));
-      }
-    });
+    if (frag) {
+      frag.stereoAtoms.forEach((aid) => {
+        if (struct.atoms.get(aid).stereoLabel === null) {
+          action.addOp(new FragmentDeleteStereoAtom(frid, aid));
+        }
+      });
+    }
   }
 
   action.addOp(new FragmentStereoFlag(frid));

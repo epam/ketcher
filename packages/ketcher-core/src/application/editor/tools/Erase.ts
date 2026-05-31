@@ -13,32 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor } from 'application/editor';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 class EraserTool implements BaseTool {
-  constructor(private editor: CoreEditor) {
+  readonly name = 'eraser-tool';
+  private readonly history: EditorHistory;
+  constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
-    if (this.editor.drawingEntitiesManager.selectedEntities.length) {
+    this.history = EditorHistory.getInstance(editor);
+    if (
+      this.editor.drawingEntitiesManager.selectedEntities.length &&
+      this.editor.mode.modeName !== 'sequence-layout-mode'
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 
   mousedown(event) {
     const selectedItemRenderer = event.target.__data__;
+
+    if (selectedItemRenderer instanceof BaseSequenceRenderer) {
+      return;
+    }
+
     if (selectedItemRenderer instanceof BaseRenderer) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteDrawingEntity(
           selectedItemRenderer.drawingEntity,
+          true,
+          true,
         );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.events.selectEntities.dispatch(
+        this.editor.drawingEntitiesManager.selectedEntities.map(
+          (entity) => entity[1],
+        ),
+      );
     }
   }
 
-  destroy() {}
+  // TODO move hover logic somewhere to apply it for all or several tools from one place.
+  //  Currently it is duplicated from select-rectangle tool
+  mouseOverDrawingEntity(event) {
+    const renderer = event.target.__data__;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  mouseLeaveDrawingEntity(event) {
+    const renderer: BaseRenderer = event.target.__data__;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  destroy() {
+    // intentional no-op: this tool holds no resources that require cleanup
+  }
 }
 
 export { EraserTool };

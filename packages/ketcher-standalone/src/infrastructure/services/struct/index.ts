@@ -18,3 +18,4 @@ import StandaloneStructService from './standaloneStructService';
 import StandaloneStructServiceProvider from './standaloneStructServiceProvider';
 
 export { StandaloneStructService, StandaloneStructServiceProvider };
+export * from './constants';

@@ -7,17 +7,26 @@ import {
   PolymerBondDeleteOperation,
 } from 'application/editor/operations/polymerBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import {
   DrawingEntityHoverOperation,
+  DrawingEntityMoveOperation,
   DrawingEntitySelectOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
-  MonomerMoveOperation,
 } from 'application/editor/operations/monomer';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../helpers/dom';
+import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Struct } from 'domain/entities/struct';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -28,16 +37,18 @@ describe('Drawing Entities Manager', () => {
     );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerAddOperation);
-    expect(drawingEntitiesManager.monomers.get(1)).toBeInstanceOf(Peptide);
+    expect(drawingEntitiesManager.monomers.get(0)).toBeInstanceOf(Peptide);
   });
 
   it('should create polymer bond', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const { command, polymerBond } = drawingEntitiesManager.addPolymerBond(
-      new Peptide(peptideMonomerItem),
-      new Vec2(0, 0),
-      new Vec2(10, 10),
-    );
+    const { command, polymerBond } =
+      drawingEntitiesManager.startPolymerBondCreation(
+        new Peptide(peptideMonomerItem),
+        new Vec2(0, 0),
+        new Vec2(10, 10),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
+      );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondAddOperation);
     expect(polymerBond).toBeInstanceOf(PolymerBond);
@@ -46,28 +57,81 @@ describe('Drawing Entities Manager', () => {
     );
   });
 
-  it('should delete peptide', () => {
+  it('should create correct polymer bond when second monomer has only R2 point', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
+    const firstPeptide = new Peptide(peptideMonomerItem);
+    firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
+    firstPeptide.potentialAttachmentPointsToBonds = { R1: null, R2: null };
+    const secondPeptide = new Peptide(peptideMonomerItem);
+    secondPeptide.attachmentPointsToBonds = { R2: null };
+    secondPeptide.potentialAttachmentPointsToBonds = { R2: null };
+
+    const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
+      firstPeptide,
+      new Vec2(0, 0),
+      new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
+    );
+
+    const resultingOperations =
+      drawingEntitiesManager.intendToFinishBondCreation(
+        secondPeptide,
+        polymerBond,
+        true,
+      ).operations;
+
+    expect(resultingOperations).toHaveLength(2);
+    expect(resultingOperations[0]).toMatchObject({
+      peptide: {
+        potentialAttachmentPointsToBonds: {
+          R1: polymerBond,
+          R2: null,
+        },
+        attachmentPointsToBonds: {
+          R1: null,
+          R2: null,
+        },
+      },
+    });
+  });
+
+  it('should delete peptide', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
+    const renderersManager = new RenderersManager({ theme: {} });
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
     const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
     expect(peptide).toBeInstanceOf(Peptide);
     const command = drawingEntitiesManager.deleteMonomer(peptide);
+    renderersManager.update(command);
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerDeleteOperation);
     expect(drawingEntitiesManager.monomers.size).toEqual(0);
   });
 
   it('should delete polymer bond', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
-    const { polymerBond } = drawingEntitiesManager.addPolymerBond(
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
+    const renderersManager = new RenderersManager({ theme: {} });
+    const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
       new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
     );
     expect(
       Array.from(drawingEntitiesManager.polymerBonds)[0][1],
     ).toBeInstanceOf(PolymerBond);
     const command = drawingEntitiesManager.deletePolymerBond(polymerBond);
+    renderersManager.update(command);
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondDeleteOperation);
     expect(drawingEntitiesManager.polymerBonds.size).toEqual(0);
@@ -75,7 +139,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should select drawing entity', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const drawingEntity = new Peptide(peptideMonomerItem) as DrawingEntity;
+    const drawingEntity = new Peptide(peptideMonomerItem);
     const command = drawingEntitiesManager.selectDrawingEntity(drawingEntity);
     expect(drawingEntity.selected).toBeTruthy();
     expect(command.operations.length).toEqual(1);
@@ -84,15 +148,19 @@ describe('Drawing Entities Manager', () => {
 
   it('should move peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const peptide = new Peptide(peptideMonomerItem);
-    const command = drawingEntitiesManager.moveMonomer(
-      peptide,
+    const renderersManager = new RenderersManager({ theme: {} });
+    jest.spyOn(renderersManager, 'moveDrawingEntity').mockImplementation();
+    drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
+    const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
+    peptide.turnOnSelection();
+    const command = drawingEntitiesManager.moveSelectedDrawingEntities(
       new Vec2(100, 200),
     );
+    renderersManager.update(command);
     expect(peptide.position.x).toEqual(100);
     expect(peptide.position.y).toEqual(200);
     expect(command.operations.length).toEqual(1);
-    expect(command.operations[0]).toBeInstanceOf(MonomerMoveOperation);
+    expect(command.operations[0]).toBeInstanceOf(DrawingEntityMoveOperation);
   });
 
   it('should hover drawing entity', () => {
@@ -114,5 +182,40 @@ describe('Drawing Entities Manager', () => {
     expect(peptide.hovered).toBeFalsy();
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerHoverOperation);
+  });
+
+  it('should normalize invalid selection flags for reaction entities', () => {
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+
+    drawingEntitiesManager.addRxnArrow(
+      RxnArrowMode.OpenAngle,
+      [new Vec2(0, 0), new Vec2(10, 0)],
+      undefined,
+      INVALID,
+    );
+    drawingEntitiesManager.addRxnPlus(new Vec2(5, 5), INVALID);
+
+    expect(
+      Array.from(drawingEntitiesManager.rxnArrows.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+    expect(
+      Array.from(drawingEntitiesManager.rxnPluses.values())[0],
+    ).toMatchObject({
+      initiallySelected: undefined,
+    });
+
+    const struct = new Struct();
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
+      drawingEntitiesManager,
+      struct,
+    );
+
+    const rxnArrow = Array.from(struct.rxnArrows.values())[0];
+    const rxnPlus = Array.from(struct.rxnPluses.values())[0];
+
+    expect(rxnArrow.getInitiallySelected()).toBeUndefined();
+    expect(rxnPlus.getInitiallySelected()).toBeUndefined();
   });
 });

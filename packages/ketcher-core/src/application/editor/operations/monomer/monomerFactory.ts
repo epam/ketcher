@@ -1,66 +1,20 @@
-import {
-  PeptideRenderer,
-  ChemRenderer,
-  BaseMonomerRenderer,
-  RNABaseRenderer,
-  SugarRenderer,
-  PhosphateRenderer,
-} from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
-import { Peptide } from 'domain/entities/Peptide';
-import { Chem } from 'domain/entities/Chem';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { monomerClass } from 'application/formatters/types/ket';
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 
-type DerivedClass<T> = new (...args: unknown[]) => T;
-const MONOMER_CONST = {
-  PEPTIDE: 'PEPTIDE',
-  CHEM: 'CHEM',
-  RNA: 'RNA',
-  R: 'R', // states for Ribose
-  P: 'P', // states for Phosphate
-  SUGAR: 'SUGAR',
-  BASE: 'BASE',
-  PHOSPHATE: 'PHOSPHATE',
-};
-
-export const monomerFactory = (
-  monomer: MonomerItemType,
-): [
-  Monomer: typeof BaseMonomer,
-  MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
-  monomerClass: monomerClass,
-] => {
-  let Monomer;
-  let MonomerRenderer;
-  let monomerClass: monomerClass;
-
-  if (monomer.props.MonomerType === MONOMER_CONST.CHEM) {
-    Monomer = Chem;
-    MonomerRenderer = ChemRenderer;
-    monomerClass = 'CHEM';
-  } else if (monomer.props.MonomerType === MONOMER_CONST.PEPTIDE) {
-    Monomer = Peptide;
-    MonomerRenderer = PeptideRenderer;
-    monomerClass = 'PEPTIDE';
-  } else {
-    if (monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R) {
-      Monomer = Sugar;
-      MonomerRenderer = SugarRenderer;
-      monomerClass = 'RNA';
-    } else if (monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P) {
-      Monomer = Phosphate;
-      MonomerRenderer = PhosphateRenderer;
-      monomerClass = 'RNA';
-    } else {
-      Monomer = RNABase;
-      MonomerRenderer = RNABaseRenderer;
-      monomerClass = 'RNA';
-    }
-  }
-
-  return [Monomer, MonomerRenderer, monomerClass];
-};
+// Re-export shim — the canonical implementation now lives in the render layer.
+// Kept here so that existing callers (Editor, tools/Monomer, tools/RnaPreset,
+// AutochainPreviewView) continue to resolve without changes.
+export { monomerFactory } from 'application/render/renderers/monomerFactory';

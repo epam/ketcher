@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Base from '../base';
+import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { Scale } from 'domain/helpers';
 
@@ -40,7 +40,7 @@ export class RxnArrowMove extends Base {
     item.pos.forEach((p) => p.add_(d));
     restruct.rxnArrows
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options));
+      .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
     if (!this.data.noinvalidate) {
       Base.invalidateItem(restruct, 'rxnArrows', id, 1);

@@ -1,0 +1,892 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "rg4"
+            },
+            {
+                "$ref": "rg3"
+            },
+            {
+                "$ref": "rg1"
+            },
+            {
+                "$ref": "rg2"
+            },
+            {
+                "$ref": "rg7"
+            },
+            {
+                "$ref": "rg8"
+            },
+            {
+                "$ref": "rg5"
+            },
+            {
+                "$ref": "rg13"
+            },
+            {
+                "$ref": "rg12"
+            },
+            {
+                "$ref": "rg10"
+            },
+            {
+                "$ref": "rg11"
+            },
+            {
+                "$ref": "rg16"
+            },
+            {
+                "$ref": "rg17"
+            },
+            {
+                "$ref": "rg14"
+            },
+            {
+                "$ref": "rg6"
+            },
+            {
+                "$ref": "rg15"
+            },
+            {
+                "$ref": "rg9"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "rg4": {
+        "rlogic": {
+            "number": 4
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.63928626396651,
+                    -0.3578850566507388,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.639286267230352,
+                    -0.3578850566507388,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "=",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.639286267230352,
+            "y": -0.6421149433492612,
+            "z": 0
+        }
+    },
+    "rg3": {
+        "rlogic": {
+            "number": 3
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.664287328728522,
+                    -0.38288495317786353,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.664287331992357,
+                    -0.38288495317786353,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": ":",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.664287331992357,
+            "y": -0.6171150468221365,
+            "z": 0
+        }
+    },
+    "rg1": {
+        "rlogic": {
+            "number": 1
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -0.7607119423575606,
+                    -0.3078841899936213,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.23928806090627752,
+                    -0.3078841899936213,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "#",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 0.23928806090627752,
+            "y": -0.6921158100063787,
+            "z": 0
+        }
+    },
+    "rg2": {
+        "rlogic": {
+            "number": 2
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.789287312817299,
+                    -0.3078841899936213,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.78928731608114,
+                    -0.3078841899936213,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "-",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.78928731608114,
+            "y": -0.6921158100063787,
+            "z": 0
+        }
+    },
+    "rg7": {
+        "rlogic": {
+            "number": 7
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    6.664278199825416,
+                    -5.088600660125537,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.664289647181086,
+                    -5.0885930307309755,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.164289642285329,
+                    -4.222565195873154,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    6.164285827588047,
+                    -5.954613236194247,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "\\",
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 7.664289647181086,
+            "y": 3.2225651958731536,
+            "z": 0
+        }
+    },
+    "rg8": {
+        "rlogic": {
+            "number": 8
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    13.76427669711977,
+                    -5.138599897349276,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.764288144475442,
+                    -5.1385922679547145,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.264288139579682,
+                    -4.272564433096892,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    13.264288139579682,
+                    -6.004616288115259,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "/",
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.764288144475442,
+            "y": 3.2725644330968917,
+            "z": 0
+        }
+    },
+    "rg5": {
+        "rlogic": {
+            "number": 5
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.4392916536331,
+                    -0.3885842440821454,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.439291680187317,
+                    -0.3885842440821454,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "~",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.4392916536331,
+            "y": -0.6114157559178546,
+            "z": 0
+        }
+    },
+    "rg13": {
+        "rlogic": {
+            "number": 13
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.60178486885865,
+                    -9.920384958548798,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.601784804825696,
+                    -9.920384958548798,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "=;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.601784804825696,
+            "y": 8.920384958548798,
+            "z": 0
+        }
+    },
+    "rg12": {
+        "rlogic": {
+            "number": 12
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.626786268422181,
+                    -9.94538485339351,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.626786204389218,
+                    -9.94538485339351,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": ":;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.626786204389218,
+            "y": 8.94538485339351,
+            "z": 0
+        }
+    },
+    "rg10": {
+        "rlogic": {
+            "number": 10
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -0.7982123010947939,
+                    -9.870384095256576,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.20178763487224316,
+                    -9.870384095256576,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "#;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 0.20178763487224316,
+            "y": 8.870384095256576,
+            "z": 0
+        }
+    },
+    "rg11": {
+        "rlogic": {
+            "number": 11
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.7517865805828645,
+                    -9.870384095256576,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.751786516549908,
+                    -9.870384095256576,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "-;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.751786516549908,
+            "y": 8.870384095256576,
+            "z": 0
+        }
+    },
+    "rg16": {
+        "rlogic": {
+            "number": 16
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    6.6267773414100954,
+                    -14.65110024366157,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.626788721468198,
+                    -14.651092614267522,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.126788817517637,
+                    -13.785064837690602,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    6.126785002820613,
+                    -15.51711276145041,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "\\;@",
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 7.626788721468198,
+            "y": 12.785064837690602,
+            "z": 0
+        }
+    },
+    "rg17": {
+        "rlogic": {
+            "number": 17
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    13.726775360897259,
+                    -14.701099477520518,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.726786740955363,
+                    -14.701091848126477,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.2267868370048,
+                    -13.83506407154955,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    13.2267868370048,
+                    -15.567115810006374,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    0,
+                    1
+                ],
+                "customQuery": "/;@",
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.726786740955363,
+            "y": 12.83506407154955,
+            "z": 0
+        }
+    },
+    "rg14": {
+        "rlogic": {
+            "number": 14
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.40178986820343,
+                    -9.951084143914244,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.40178996205445,
+                    -9.951084143914244,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "~;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.40178986820343,
+            "y": 8.951084143914244,
+            "z": 0
+        }
+    },
+    "rg6": {
+        "rlogic": {
+            "number": 6
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    25.626788314966653,
+                    -0.36875031832231375,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    24.62678834457725,
+                    -0.36875031832231375,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "/?",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.626788314966653,
+            "y": -0.6312496816776862,
+            "z": 0
+        }
+    },
+    "rg15": {
+        "rlogic": {
+            "number": 15
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    25.576788316447185,
+                    -9.968750034060605,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    24.576788346057782,
+                    -9.968750034060605,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "\\?",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.576788316447185,
+            "y": 8.968750034060605,
+            "z": 0
+        }
+    },
+    "rg9": {
+        "rlogic": {
+            "number": 9
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    31.176788150627864,
+                    -5.443750168048548,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    30.176788180238454,
+                    -5.443750168048548,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "atoms": [
+                    1,
+                    0
+                ],
+                "customQuery": "-&/&\\&/?&\\?&=&#&:&~&@,-,/,\\,/?,\\?,=,#,:,~,@,-;/;\\;/?;\\?;=;#;:;~;@,-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@&-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@;-&!/&!\\&!/?&!\\?&!=&!#&!:&!~&!@,!-,!/,!\\,!/?,!\\?,!=,!#,!:,!~,!@,!-;!/;!\\;!/?;!\\?;!=;!#;!:;!~;@",
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.176788150627864,
+            "y": 4.443750168048548,
+            "z": 0
+        }
+    }
+}

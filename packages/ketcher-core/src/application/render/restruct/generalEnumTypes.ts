@@ -20,7 +20,9 @@
 */
 export enum LayerMap {
   background = 'background',
+  images = 'images',
   selectionPlate = 'selectionPlate',
+  selectionPoints = 'selectionPoints',
   hovering = 'hovering',
   atom = 'atom',
   bondSkeleton = 'bondSkeleton',
@@ -37,7 +39,7 @@ export enum StereoColoringType {
   Off = 'Off',
 }
 
-export enum StereLabelStyleType {
+export enum StereoLabelStyleType {
   IUPAC = 'Iupac',
   Classic = 'Classic',
   On = 'On',

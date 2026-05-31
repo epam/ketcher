@@ -1,0 +1,31 @@
+{
+    "ket_version": "2.0.0",
+    "root": {
+        "nodes": [
+            {
+                "type": "text",
+                "boundingBox": {
+                    "x": 14.700000000000001,
+                    "y": -7.9750000000000005,
+                    "width": 2.112109375000001,
+                    "height": 0.5499999999999998
+                },
+                "paragraphs": [
+                    {
+                        "parts": [
+                            {
+                                "text": "TEST321",
+                                "bold": true,
+                                "font": {
+                                    "size": 20
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "connections": [],
+        "templates": []
+    }
+}

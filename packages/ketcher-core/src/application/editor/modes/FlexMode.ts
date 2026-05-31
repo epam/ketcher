@@ -1,0 +1,77 @@
+import type { LayoutMode } from 'application/editor/modes/types';
+import { BaseMode } from 'application/editor/modes/BaseMode';
+import { Coordinates } from '../internal';
+import { provideEditorInstance } from '../editorSingleton';
+import { Command } from 'domain/entities/Command';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { registerMode } from './modesRegistry';
+
+export class FlexMode extends BaseMode {
+  constructor(previousMode?: LayoutMode) {
+    super('flex-layout-mode', previousMode);
+  }
+
+  initialize() {
+    const command = super.initialize();
+    const editor = provideEditorInstance();
+
+    const antisenseChanges =
+      editor.drawingEntitiesManager.recalculateAntisenseChains();
+
+    const modelChanges =
+      editor.drawingEntitiesManager.applyFlexLayoutMode(true);
+
+    command.merge(editor.drawingEntitiesManager.recalculateCanvasMatrix());
+
+    modelChanges.merge(antisenseChanges);
+    editor.renderersContainer.update(modelChanges);
+
+    return command;
+  }
+
+  getNewNodePosition() {
+    const editor = provideEditorInstance();
+
+    return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
+  }
+
+  applyAdditionalPasteOperations(
+    mergedDrawingEntities: DrawingEntitiesManager,
+  ) {
+    const command = new Command();
+    const editor = provideEditorInstance();
+
+    editor.drawingEntitiesManager.recalculateAntisenseChains();
+    command.merge(
+      editor.drawingEntitiesManager.selectDrawingEntities(
+        mergedDrawingEntities.allEntitiesArray,
+      ),
+    );
+
+    if (!editor.drawingEntitiesManager.hasAntisenseChains) {
+      return command;
+    }
+
+    command.merge(
+      editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
+    );
+
+    command.setUndoOperationsByPriority();
+
+    return command;
+  }
+
+  isPasteAllowedByMode(): boolean {
+    return true;
+  }
+
+  isPasteAvailable(): boolean {
+    return true;
+  }
+
+  scrollForView(): void {
+    // intentional no-op: flex mode does not implement automatic scroll for view
+  }
+}
+
+registerMode('flex-layout-mode', FlexMode);

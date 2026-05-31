@@ -14,16 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, SimpleObjectMode, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { SimpleObjectMode } from 'domain/entities/simpleObject';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 interface MinDistanceWithReferencePoint {
   minDist: number;
@@ -34,7 +36,7 @@ interface StyledPath {
   stylesApplied: boolean;
 }
 class ReSimpleObject extends ReObject {
-  private item: any;
+  private readonly item: any;
   private selectionSet: any;
   private selectionPointsSet: any;
 
@@ -73,7 +75,7 @@ class ReSimpleObject extends ReObject {
         } else {
           // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
           // in such case distance need to be calculated as a distance between line and current point
-          dist = calculateDistanceToLine(pos, point);
+          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
         }
         break;
       }
@@ -119,7 +121,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        dist = calculateDistanceToLine(pos, point);
+        dist = point.calculateDistanceToLine([pos[0], pos[1]]);
         break;
       }
 
@@ -143,15 +145,20 @@ class ReSimpleObject extends ReObject {
     });
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) =>
-        !acc ? current : acc.minDist < current.minDist ? acc : current,
+      (acc, current) => {
+        if (!acc) {
+          return current;
+        }
+
+        return acc.minDist < current.minDist ? acc : current;
+      },
       null,
     );
 
     return minDist;
   }
 
-  getReferencePoints(onlyOnObject = false): Array<Vec2> {
+  getReferencePoints(): Array<Vec2> {
     const refPoints: Array<Vec2> = [];
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse:
@@ -169,7 +176,45 @@ class ReSimpleObject extends ReObject {
           new Vec2(p0.x + 0.5 * w, p0.y + h),
           new Vec2(p0.x, p0.y + 0.5 * h),
         );
-        if (!onlyOnObject || this.item.mode === SimpleObjectMode.rectangle) {
+        refPoints.push(
+          p0,
+          new Vec2(p0.x, p0.y + h),
+          new Vec2(p0.x + w, p0.y + h),
+          new Vec2(p0.x + w, p0.y),
+        );
+        break;
+      }
+      case SimpleObjectMode.line: {
+        this.item.pos.forEach((i) => refPoints.push(new Vec2(i.x, i.y, 0)));
+        break;
+      }
+
+      default: {
+        throw new Error('Unsupported shape type');
+      }
+    }
+    return refPoints;
+  }
+
+  getReferencePointsOnObject(): Array<Vec2> {
+    const refPoints: Array<Vec2> = [];
+    switch (this.item.mode) {
+      case SimpleObjectMode.ellipse:
+      case SimpleObjectMode.rectangle: {
+        const p0: Vec2 = new Vec2(
+          Math.min(this.item.pos[0].x, this.item.pos[1].x),
+          Math.min(this.item.pos[0].y, this.item.pos[1].y),
+        );
+        const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
+        const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
+
+        refPoints.push(
+          new Vec2(p0.x + 0.5 * w, p0.y),
+          new Vec2(p0.x + w, p0.y + 0.5 * h),
+          new Vec2(p0.x + 0.5 * w, p0.y + h),
+          new Vec2(p0.x, p0.y + 0.5 * h),
+        );
+        if (this.item.mode === SimpleObjectMode.rectangle) {
           refPoints.push(
             p0,
             new Vec2(p0.x, p0.y + h),
@@ -191,56 +236,66 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
-  getHoverPathStyle(
-    path: any,
-    render: Render,
-    isOuterShapeOfHoverPath: boolean,
-  ) {
-    if (isOuterShapeOfHoverPath) {
-      return path.attr(render.options.hoverStyle);
-    } else {
-      return path.attr({ ...render.options.hoverStyle, fill: '#fff' });
-    }
+  getBorderHoverPath(path: any, render: Render) {
+    return path.attr({ ...render.options.hoverStyle, fill: 'none' });
+  }
+
+  getFillHoverPath(path: any, render: Render) {
+    return path.attr(render.options.innerHoverStyle);
   }
 
   hoverPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = [];
 
     this.item.pos.forEach((p, index) => {
-      point[index] = Scale.obj2scaled(p, render.options);
+      point[index] = Scale.modelToCanvas(p, render.options);
     });
-    const scaleFactor = render.options.scale;
+    const scaleFactor = render.options.microModeScale;
 
     const paths: Array<StyledPath> = [];
 
     // TODO: It seems that inheritance will be the better approach here
+    const lineOffset = scaleFactor / 8;
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse: {
         const rad = Vec2.diff(point[1], point[0]);
         const rx = rad.x / 2;
         const ry = rad.y / 2;
-        const outerEllipse = render.paper.ellipse(
-          tfx(point[0].x + rx),
-          tfx(point[0].y + ry),
-          tfx(Math.abs(rx) + scaleFactor / 8),
-          tfx(Math.abs(ry) + scaleFactor / 8),
+        const centerX = toFixed(point[0].x + rx);
+        const centerY = toFixed(point[0].y + ry);
+        const outerBorderEllipse = render.paper.ellipse(
+          centerX,
+          centerY,
+          toFixed(Math.abs(rx) + lineOffset),
+          toFixed(Math.abs(ry) + lineOffset),
         );
         paths.push({
-          path: this.getHoverPathStyle(outerEllipse, render, true),
+          path: this.getBorderHoverPath(outerBorderEllipse, render),
+          stylesApplied: true,
+        });
+
+        const fillEllipse = render.paper.ellipse(
+          centerX,
+          centerY,
+          toFixed(Math.abs(rx)),
+          toFixed(Math.abs(ry)),
+        );
+        paths.push({
+          path: this.getFillHoverPath(fillEllipse, render),
           stylesApplied: true,
         });
         if (
           Math.abs(rx) - scaleFactor / 8 > 0 &&
           Math.abs(ry) - scaleFactor / 8 > 0
         ) {
-          const innerEllipse = render.paper.ellipse(
-            tfx(point[0].x + rx),
-            tfx(point[0].y + ry),
-            tfx(Math.abs(rx) - scaleFactor / 8),
-            tfx(Math.abs(ry) - scaleFactor / 8),
+          const innerBorderEllipse = render.paper.ellipse(
+            centerX,
+            centerY,
+            toFixed(Math.abs(rx) - lineOffset),
+            toFixed(Math.abs(ry) - lineOffset),
           );
           paths.push({
-            path: this.getHoverPathStyle(innerEllipse, render, false),
+            path: this.getBorderHoverPath(innerBorderEllipse, render),
             stylesApplied: true,
           });
         }
@@ -248,50 +303,40 @@ class ReSimpleObject extends ReObject {
       }
 
       case SimpleObjectMode.rectangle: {
-        const outerRect = render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
-          tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
-          tfx(
-            Math.max(point[0].x, point[1].x) -
-              Math.min(point[0].x, point[1].x) +
-              scaleFactor / 4,
-          ),
-          tfx(
-            Math.max(point[0].y, point[1].y) -
-              Math.min(point[0].y, point[1].y) +
-              scaleFactor / 4,
-          ),
+        const leftX = Math.min(point[0].x, point[1].x);
+        const topY = Math.min(point[0].y, point[1].y);
+        const rightX = Math.max(point[0].x, point[1].x) - leftX;
+        const bottomY = Math.max(point[0].y, point[1].y) - topY;
+
+        const outerBorderRect = render.paper.rect(
+          toFixed(leftX - lineOffset),
+          toFixed(topY - lineOffset),
+          toFixed(rightX + 2 * lineOffset),
+          toFixed(bottomY + 2 * lineOffset),
         );
         paths.push({
-          path: this.getHoverPathStyle(outerRect, render, true),
+          path: this.getBorderHoverPath(outerBorderRect, render),
           stylesApplied: true,
         });
-        if (
-          Math.max(point[0].x, point[1].x) -
-            Math.min(point[0].x, point[1].x) -
-            scaleFactor / 4 >
-            0 &&
-          Math.max(point[0].y, point[1].y) -
-            Math.min(point[0].y, point[1].y) -
-            scaleFactor / 4 >
-            0
-        ) {
+        const fillRect = render.paper.rect(
+          toFixed(leftX),
+          toFixed(topY),
+          toFixed(rightX),
+          toFixed(bottomY),
+        );
+        paths.push({
+          path: this.getFillHoverPath(fillRect, render),
+          stylesApplied: true,
+        });
+        if (rightX - 2 * lineOffset > 0 && bottomY - 2 * lineOffset > 0) {
           const innerRect = render.paper.rect(
-            tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
-            tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
-            tfx(
-              Math.max(point[0].x, point[1].x) -
-                Math.min(point[0].x, point[1].x) -
-                scaleFactor / 4,
-            ),
-            tfx(
-              Math.max(point[0].y, point[1].y) -
-                Math.min(point[0].y, point[1].y) -
-                scaleFactor / 4,
-            ),
+            toFixed(leftX + lineOffset),
+            toFixed(topY + lineOffset),
+            toFixed(rightX - 2 * lineOffset),
+            toFixed(bottomY - 2 * lineOffset),
           );
           paths.push({
-            path: this.getHoverPathStyle(innerRect, render, false),
+            path: this.getBorderHoverPath(innerRect, render),
             stylesApplied: true,
           });
         }
@@ -342,7 +387,7 @@ class ReSimpleObject extends ReObject {
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         paths.push({
-          path: this.getHoverPathStyle(render.paper.path(poly), render, true),
+          path: render.paper.path(poly).attr(render.options.hoverStyle),
           stylesApplied: true,
         });
         break;
@@ -369,11 +414,11 @@ class ReSimpleObject extends ReObject {
 
   makeSelectionPlate(restruct: ReStruct, paper: any, styles: any): any {
     const pos = this.item.pos.map((p) => {
-      return Scale.obj2scaled(p, restruct.render.options) || new Vec2();
+      return Scale.modelToCanvas(p, restruct.render.options) || new Vec2();
     });
 
     const refPoints = this.getReferencePoints();
-    const scaleFactor = restruct.render.options.scale;
+    const scaleFactor = restruct.render.options.microModeScale;
     this.selectionSet = restruct.render.paper.set();
     this.selectionPointsSet = restruct.render.paper.set();
     this.selectionSet.push(
@@ -382,7 +427,7 @@ class ReSimpleObject extends ReObject {
       ),
     );
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.obj2scaled(rp, restruct.render.options);
+      const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       this.selectionPointsSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
@@ -390,23 +435,25 @@ class ReSimpleObject extends ReObject {
       );
     });
     restruct.addReObjectPath(
-      LayerMap.selectionPlate,
+      LayerMap.selectionPoints,
       this.visel,
       this.selectionPointsSet,
     );
     return this.selectionSet;
   }
 
-  togglePoints(displayFlag: boolean) {
-    displayFlag
-      ? this.selectionPointsSet?.show()
-      : this.selectionPointsSet?.hide();
+  showPoints() {
+    this.selectionPointsSet?.show();
+  }
+
+  hidePoints() {
+    this.selectionPointsSet?.hide();
   }
 
   show(restruct: ReStruct, options: any): void {
     const render = restruct.render;
     const pos = this.item.pos.map((p) => {
-      return Scale.obj2scaled(p, options) || new Vec2();
+      return Scale.modelToCanvas(p, options) || new Vec2();
     });
 
     const path = generatePath(this.item.mode, render.paper, pos);
@@ -416,24 +463,6 @@ class ReSimpleObject extends ReObject {
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
-}
-function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
-  let dist: number;
-  if (
-    (point.x < Math.min(pos[0].x, pos[1].x) ||
-      point.x > Math.max(pos[0].x, pos[1].x)) &&
-    (point.y < Math.min(pos[0].y, pos[1].y) ||
-      point.y > Math.max(pos[0].y, pos[1].y))
-  ) {
-    dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point));
-  } else {
-    const a = Vec2.dist(pos[0], pos[1]);
-    const b = Vec2.dist(pos[0], point);
-    const c = Vec2.dist(pos[1], point);
-    const per = (a + b + c) / 2;
-    dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c));
-  }
-  return dist;
 }
 
 function generatePath(mode: SimpleObjectMode, paper, pos: [Vec2, Vec2]): any {

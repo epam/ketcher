@@ -14,22 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, RxnArrow, RxnArrowMode, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { type RxnArrowMode, RxnArrow } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 type Arrow = {
   pos: Array<Vec2>;
   mode: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 };
 
 type ArrowParams = {
@@ -61,7 +64,7 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const pos = item.pos;
 
-    let dist: number = calculateDistanceToLine(pos, point);
+    let dist: number = point.calculateDistanceToLine([pos[0], pos[1]]);
 
     if (RxnArrow.isElliptical(item)) {
       // currently an elliptical arrow is highlighted if a pointer is close to one of the 3 virtual lines
@@ -70,8 +73,8 @@ class ReRxnArrow extends ReObject {
       const [startPoint, endPoint, middlePoint] = this.getReferencePoints();
       dist = Math.min(
         dist,
-        calculateDistanceToLine([startPoint, middlePoint], point),
-        calculateDistanceToLine([middlePoint, endPoint], point),
+        point.calculateDistanceToLine([startPoint, middlePoint]),
+        point.calculateDistanceToLine([middlePoint, endPoint]),
       );
     }
 
@@ -90,8 +93,13 @@ class ReRxnArrow extends ReObject {
     });
 
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
-      (acc, current) =>
-        !acc ? current : acc.minDist < current.minDist ? acc : current,
+      (acc, current) => {
+        if (!acc) {
+          return current;
+        }
+
+        return acc.minDist < current.minDist ? acc : current;
+      },
       null,
     );
 
@@ -126,12 +134,12 @@ class ReRxnArrow extends ReObject {
   }
 
   makeAdditionalInfo(restruct: ReStruct) {
-    const scaleFactor = restruct.render.options.scale;
+    const scaleFactor = restruct.render.options.microModeScale;
     const refPoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
 
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.obj2scaled(rp, restruct.render.options);
+      const scaledRP = Scale.modelToCanvas(rp, restruct.render.options);
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
@@ -160,10 +168,10 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const height =
       RxnArrow.isElliptical(item) && item.height
-        ? item.height * options.scale
+        ? item.height * options.microModeScale
         : 0;
     const pos = item.pos.map((p) => {
-      return Scale.obj2scaled(p, options) || new Vec2();
+      return Scale.modelToCanvas(p, options) || new Vec2();
     });
     const { length, angle } = this.getArrowParams(
       pos[0].x,
@@ -205,6 +213,11 @@ class ReRxnArrow extends ReObject {
 
   show(restruct: ReStruct, _id, options) {
     const path = this.generatePath(restruct.render, options, 'arrow');
+    path.node?.setAttribute('data-testid', 'rxn-arrow');
+    path.node?.setAttribute('data-arrowtype', this.item.mode + '-arrow');
+    if (typeof this.item.arrowId === 'number') {
+      path.node?.setAttribute('data-arrow-id', String(this.item.arrowId));
+    }
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);
@@ -213,26 +226,8 @@ class ReRxnArrow extends ReObject {
   }
 }
 
-function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
-  let dist: number;
-  if (
-    (point.x < Math.min(pos[0].x, pos[1].x) ||
-      point.x > Math.max(pos[0].x, pos[1].x)) &&
-    (point.y < Math.min(pos[0].y, pos[1].y) ||
-      point.y > Math.max(pos[0].y, pos[1].y))
-  ) {
-    dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point));
-  } else {
-    const a = Vec2.dist(pos[0], pos[1]);
-    const b = Vec2.dist(pos[0], point);
-    const c = Vec2.dist(pos[1], point);
-    const per = (a + b + c) / 2;
-    dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c));
-  }
-  return dist;
-}
 function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
-  if (+tfx(height) === 0) {
+  if (+toFixed(height) === 0) {
     const minX = Math.min(a.x, b.x);
     const minY = Math.min(a.y, b.y);
     const x = minX + Math.abs(a.x - b.x) / 2;

@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Box2Abs,
-  FunctionalGroup,
-  Pile,
-  Pool,
-  RGroupAttachmentPoint,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
+import type { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
@@ -38,13 +38,16 @@ import ReRxnPlus from './rerxnplus';
 import ReSGroup from './resgroup';
 import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
-import { Render } from '../raphaelRender';
-import Visel from './visel';
+import type { Render } from '../raphaelRender';
+import type Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
+import { ReImage } from 'application/render/restruct/reImage';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { ReMultitailArrow } from './remultitailArrow';
 
 class ReStruct {
-  public static maps = {
+  public static readonly maps = {
     atoms: ReAtom,
     bonds: ReBond,
     rxnPluses: ReRxnPlus,
@@ -58,12 +61,16 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
+    [IMAGE_KEY]: ReImage,
+    [MULTITAIL_ARROW_KEY]: ReMultitailArrow,
   } as const;
 
   public render: Render;
   public molecule: Struct;
   public atoms: Map<number, ReAtom> = new Map();
   public bonds: Map<number, ReBond> = new Map();
+  public visibleAtoms: Map<number, ReAtom> = new Map();
+  public visibleBonds: Map<number, ReBond> = new Map();
   public reloops: Map<number, ReLoop> = new Map();
   public rxnPluses: Map<number, ReRxnPlus> = new Map();
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
@@ -74,22 +81,34 @@ class ReStruct {
   public sgroups: Map<number, ReSGroup> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
-  private simpleObjects: Map<number, ReSimpleObject> = new Map();
+  public simpleObjects: Map<number, ReSimpleObject> = new Map();
   public texts: Map<number, ReText> = new Map();
-  private initialized = false;
-  private layers: Array<any> = [];
-  public connectedComponents: Pool = new Pool();
-  private ccFragmentType: Pool = new Pool();
-  private structChanged = false;
+  public images = new Map<number, ReImage>();
+  public multitailArrows = new Map<number, ReMultitailArrow>();
 
-  private atomsChanged: Map<number, 1> = new Map();
-  private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map();
-  private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
-  private rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
-  private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
-  private textsChanged: Map<number, ReText> = new Map();
+  private initialized = false;
+  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
+  public connectedComponents: Pool = new Pool();
+  private readonly ccFragmentType: Pool = new Pool();
+  private structChanged = false;
+  public needRecalculateVisibleAtomsAndBonds = false;
+
+  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
+  private readonly atomsChanged: Map<number, 1> = new Map();
+  private readonly simpleObjectsChanged: Map<number, ReSimpleObject> =
+    new Map();
+
+  private readonly rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
+  private readonly rxnPlusesChanged: Map<number, ReRxnPlus> = new Map();
+  private readonly enhancedFlagsChanged: Map<number, ReEnhancedFlag> =
+    new Map();
+
+  private readonly bondsChanged: Map<number, ReEnhancedFlag> = new Map();
+  private readonly textsChanged: Map<number, ReText> = new Map();
+  private readonly imagesChanged = new Map<number, ReImage>();
+  private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
+
   constructor(
     molecule,
     render: Render | { skipRaphaelInitialization: boolean; theme },
@@ -153,10 +172,13 @@ class ReStruct {
       this.sgroups.set(id, new ReSGroup(item));
       if (item.type === 'DAT' && !item.data.attached) {
         this.sgroupData.set(id, new ReDataSGroupData(item));
-      } // [MK] sort of a hack, we use the SGroup id for the data field id
-      if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
-        this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
       }
+    });
+    molecule.images.forEach((item, id) => {
+      this.images.set(id, new ReImage(item));
+    });
+    molecule.multitailArrows.forEach((item, id) => {
+      this.multitailArrows.set(id, new ReMultitailArrow(item));
     });
   }
 
@@ -171,7 +193,6 @@ class ReStruct {
         atom,
         sgroups,
         functionalGroups,
-        false,
       );
     });
   }
@@ -286,7 +307,6 @@ class ReStruct {
   ): void {
     // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return;
-
     const paths = Array.isArray(path) ? path : [path];
 
     paths.forEach((path) => {
@@ -300,6 +320,28 @@ class ReStruct {
       visel.add(path, bb, ext);
       path.insertBefore(this.layers[LayerMap[group]]);
     });
+  }
+
+  moveReObjectOnTopOfLayer(visel: Visel, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    visel.paths.forEach((path) => {
+      path.insertBefore(layer);
+    });
+  }
+
+  movePathOnTopOfLayer(path, layerKey: LayerMap) {
+    const layer = this.layers[layerKey];
+
+    if (!layer) {
+      return;
+    }
+
+    path.insertBefore(layer);
   }
 
   clearMarks(): void {
@@ -320,6 +362,10 @@ class ReStruct {
 
   markAtom(aid: number, mark: number): void {
     this.markItem('atoms', aid, mark);
+  }
+
+  markRgroupAttachmentPoint(rgAPid: number, mark: number): void {
+    this.markItem('rgroupAttachmentPoints', rgAPid, mark);
   }
 
   markItem(map: string, id: number, mark: number): void {
@@ -405,11 +451,14 @@ class ReStruct {
     let boundingBox: Box2Abs | null = null;
     Object.keys(ReStruct.maps).forEach((elementKey) => {
       selection[elementKey]?.forEach((elementId) => {
-        const box = this[elementKey].get(elementId).getVBoxObj(this.render);
-        if (box) {
-          boundingBox = boundingBox
-            ? Box2Abs.union(boundingBox, box)
-            : box.clone();
+        const element = this[elementKey].get(elementId);
+        if (element) {
+          const box = element.getVBoxObj(this.render);
+          if (box) {
+            boundingBox = boundingBox
+              ? Box2Abs.union(boundingBox, box)
+              : box.clone();
+          }
         }
       });
     });
@@ -425,13 +474,54 @@ class ReStruct {
     this.eachItem((item) => scaleVisel(item.visel, s));
   }
 
+  /** Visel is a shorthand for VISual ELement */
   clearVisels(): void {
     this.eachItem((item) => this.clearVisel(item.visel));
+  }
+
+  recalculateVisibleAtomsAndBonds() {
+    this.visibleAtoms = new Map();
+    this.visibleBonds = new Map();
+
+    this.atoms.forEach((atom, aid) => {
+      if (
+        (!FunctionalGroup.isAtomInContractedFunctionalGroup(
+          atom.a,
+          this.molecule.sgroups,
+          this.molecule.functionalGroups,
+        ) ||
+          this.molecule
+            .getGroupFromAtomId(aid)
+            ?.getContractedPosition(this.molecule).atomId === aid) &&
+        !Atom.isHiddenLeavingGroupAtom(this.molecule, aid)
+      ) {
+        this.visibleAtoms.set(aid, atom);
+      }
+    });
+
+    this.bonds.forEach((bond, bid) => {
+      if (
+        !FunctionalGroup.isBondInContractedFunctionalGroup(
+          bond.b,
+          this.molecule.sgroups,
+          this.molecule.functionalGroups,
+        ) &&
+        !SGroup.isBondInContractedSGroup(bond.b, this.molecule.sgroups) &&
+        !Bond.isBondToHiddenLeavingGroup(this.molecule, bond.b)
+      ) {
+        this.visibleBonds.set(bid, bond);
+      }
+    });
   }
 
   update(force: boolean): boolean {
     // eslint-disable-line max-statements
     force = force || !this.initialized;
+
+    if (force || this.needRecalculateVisibleAtomsAndBonds) {
+      this.recalculateVisibleAtomsAndBonds();
+      this.needRecalculateVisibleAtomsAndBonds = false;
+    }
 
     // check items to update
     Object.keys(ReStruct.maps).forEach((map) => {
@@ -466,13 +556,12 @@ class ReStruct {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        if (this[map].get(id).visel) {
+        if (this[map].has(id) && this[map].get(id).visel) {
           this.clearVisel(this[map].get(id).visel);
         }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });
-
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel);
@@ -519,6 +608,8 @@ class ReStruct {
     this.showEnhancedFlags();
     this.showSimpleObjects();
     this.showTexts();
+    this.showImages();
+    this.showMultitailArrows();
     this.clearMarks();
 
     return true;
@@ -611,15 +702,12 @@ class ReStruct {
     }
     this.clearVisel(reloop.visel);
 
-    const bondlist: Array<number> = [];
-
     reloop.loop.hbs.forEach((hbid) => {
       const hb = this.molecule.halfBonds.get(hbid);
       if (!hb) return;
       hb.loop = -1;
       this.markBond(hb.bid, 1);
       this.markAtom(hb.begin, 1);
-      bondlist.push(hb.bid);
     });
 
     this.reloops.delete(loopId);
@@ -683,14 +771,13 @@ class ReStruct {
         return;
       }
 
-      rgroupAttachmentPoint?.show(this);
+      rgroupAttachmentPoint?.show(this, id);
     });
   }
 
   private showAtoms(): void {
     // eslint-disable-line max-statements
     const options = this.render.options;
-
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
@@ -714,6 +801,25 @@ class ReStruct {
       const bond = this.bonds.get(bid);
       if (bond) {
         bond.show(this, bid, options);
+      }
+    });
+  }
+
+  showImages() {
+    const options = this.render.options;
+    this.imagesChanged.forEach((_, id) => {
+      const image = this.images.get(id);
+      if (image) {
+        image.show(this, options);
+      }
+    });
+  }
+
+  showMultitailArrows() {
+    this.multitailArrowsChanged.forEach((_, id) => {
+      const multitailArrow = this.multitailArrows.get(id);
+      if (multitailArrow) {
+        multitailArrow.show(this, this.render.options);
       }
     });
   }
@@ -745,7 +851,9 @@ class ReStruct {
             const sGroupAtoms = atoms.filter(
               (atom) => atom.sgroup === item?.item?.id,
             );
-            item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
+            item.selected =
+              sGroupAtoms.length > 0 &&
+              sGroupAtoms.some((atom) => atom.selected);
           }
 
           let selected = selection?.[map]
@@ -757,7 +865,6 @@ class ReStruct {
           }
 
           this.showItemSelection(item, selected);
-          item.selectionPlate?.toBack();
         });
       }
     });
@@ -797,11 +904,11 @@ class ReStruct {
           fill: '#7f7',
           stroke: '#7f7',
         });
-        if (item.togglePoints) item.togglePoints(true);
+        item.showPoints?.();
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide();
-      if (item.togglePoints) item.togglePoints(false);
+      item.hidePoints?.();
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
         fill: '#fff',
@@ -837,9 +944,15 @@ function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
 function scaleRPath(path, scaleFactor: number): void {
   if (path.type === 'set') {
     // TODO: rework scaling
-    for (let i = 0; i < path.length; ++i) scaleRPath(path[i], scaleFactor);
+    const pathItems = Array.from(
+      { length: path.length },
+      (_, index) => path[index],
+    );
+    for (const pathItem of pathItems) {
+      scaleRPath(pathItem, scaleFactor);
+    }
   } else {
-    if (!(typeof path.attrs === 'undefined')) {
+    if (typeof path.attrs !== 'undefined') {
       if ('font-size' in path.attrs) {
         path.attr('font-size', path.attrs['font-size'] * scaleFactor);
       } else if ('stroke-width' in path.attrs) {
@@ -851,7 +964,7 @@ function scaleRPath(path, scaleFactor: number): void {
 }
 
 function scaleVisel(visel, s) {
-  for (let i = 0; i < visel.paths.length; ++i) scaleRPath(visel.paths[i], s);
+  for (const viselPath of visel.paths) scaleRPath(viselPath, s);
 }
 
 /**

@@ -17,7 +17,7 @@
 import { BaseCallProps, BaseProps } from '../../../modal.types';
 import classes from './RemoveFG.module.less';
 import { useAppContext } from '../../../../../../../hooks';
-import { fromSgroupDeletion } from 'ketcher-core';
+import { fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 
 interface RemoveFGProps extends BaseProps {
   fgIds: any;
@@ -26,8 +26,8 @@ interface RemoveFGProps extends BaseProps {
 type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
-  const { getKetcherInstance } = useAppContext();
-  const editor = getKetcherInstance().editor as any;
+  const { ketcherId } = useAppContext();
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as any;
   const { fgIds } = props;
 
   const remove = function () {
@@ -47,6 +47,7 @@ const RemoveFG = (props: Props) => {
       onSubmit={(event) => event.preventDefault()}
       tabIndex={-1}
       className={classes.window}
+      data-testid="edit-abbreviation-window"
     >
       <header className={classes.header}>Edit Abbreviation</header>
       <div className={classes.question}>
@@ -60,10 +61,12 @@ const RemoveFG = (props: Props) => {
           value={'Cancel'}
           className={classes.buttonCancel}
           onClick={() => exit('onOk', false)}
+          data-testid="Cancel"
         />
         <input
           type="button"
           value={'Remove Abbreviation'}
+          data-testid="remove-abbreviation-button"
           className={classes.buttonOk}
           onClick={() => exit('onOk', remove())}
         />

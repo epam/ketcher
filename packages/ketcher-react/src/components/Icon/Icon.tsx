@@ -16,10 +16,30 @@
 import { IIconProps } from './types';
 import { getIconByName } from './utils/getIconByName';
 
-const Icon = ({ name, className, onClick }: IIconProps) => {
+const Icon = ({
+  name,
+  className,
+  title,
+  onClick,
+  onMouseOver,
+  onMouseOut,
+  onDoubleClick,
+  dataTestId,
+}: IIconProps) => {
   const Component = getIconByName(name);
 
-  return <Component className={className} onClick={onClick} />;
+  return (
+    <Component
+      className={className}
+      title={title}
+      onClick={onClick}
+      data-testid={dataTestId}
+      // TODO wrap icon into a button and use mouse events there
+      onMouseOver={onMouseOver}
+      onMouseOut={onMouseOut}
+      onDoubleClick={onDoubleClick}
+    />
+  );
 };
 
 export default Icon;

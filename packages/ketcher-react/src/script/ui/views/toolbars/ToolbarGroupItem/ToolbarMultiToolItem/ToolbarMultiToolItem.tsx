@@ -30,8 +30,8 @@ import { chooseMultiTool } from './variants/chooseMultiTool';
 import classes from './ToolbarMultiToolItem.module.less';
 import { usePortalOpening } from './usePortalOpening';
 import { usePortalStyle } from './usePortalStyle';
-import { SettingsManager } from '../../../../utils/settingsManager';
 import { getIconName, Icon } from 'components';
+import { SettingsManager } from 'ketcher-core';
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant;
@@ -114,7 +114,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
     if (!currentId) {
       currentId =
-        options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
+        options.filter((option) => !status[option.id]?.hidden)[0]?.id ??
         options[0].id;
     }
   }
@@ -134,11 +134,13 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   const [Component, portalClassName] = chooseMultiTool(variant);
   const iconName = getIconName(currentId);
+  const isDisabled = currentStatus?.disabled === true;
   return displayMultiToolItem && iconName ? (
     <div
       ref={ref}
       className={classes.root}
-      data-testid={`${dataTestId || iconName}-in-toolbar`}
+      data-testid={`${id}-drop-down-button`}
+      data-is-selected={selected ? 'true' : 'false'}
     >
       <ActionButton
         {...actionButtonProps}
@@ -147,14 +149,15 @@ const ToolbarMultiToolItem = (props: Props) => {
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
-        dataTestId={dataTestId || iconName}
+        dataTestId={dataTestId ?? iconName}
       />
-      {!isOpen && (
+      {!isOpen && !isDisabled && (
         <Icon
           className={`${classes.icon} ${
             currentStatus?.selected && classes.iconSelected
           }`}
           name="dropdown"
+          dataTestId={`dropdown-expand`}
           onClick={onOpenOptions}
         />
       )}
@@ -168,6 +171,7 @@ const ToolbarMultiToolItem = (props: Props) => {
             portalClassName,
           )}
           style={portalStyle}
+          testId="multi-tool-dropdown"
         >
           <Component
             options={options}

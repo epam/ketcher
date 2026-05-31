@@ -15,11 +15,15 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
-import { ReSGroup, ReStruct } from '../../../render';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Vec2 } from 'domain/entities/vec2';
+import { type ReStruct, ReSGroup } from '../../../render';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -29,6 +33,11 @@ type Data = {
   pp?: any;
   expanded?: boolean;
   name?: string;
+  oldSgroup?: SGroup;
+};
+
+const SGROUP_TYPE_MAPPING = {
+  nucleotideComponent: SGroup.TYPES.SUP,
 };
 
 class SGroupCreate extends BaseOperation {
@@ -40,6 +49,8 @@ class SGroupCreate extends BaseOperation {
     pp?: any,
     expanded?: boolean,
     name?: string,
+    oldSgroup?: SGroup,
+    private readonly monomer?: BaseMonomer,
   ) {
     super(OperationType.S_GROUP_CREATE);
     this.data = {
@@ -48,23 +59,40 @@ class SGroupCreate extends BaseOperation {
       pp,
       expanded,
       name,
+      oldSgroup,
     };
   }
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroup = new SGroup(this.data.type);
-    const { sgid, pp, expanded, name } = this.data;
+    const { sgid, pp, expanded, name, oldSgroup } = this.data;
+    let sgroup: SGroup;
+
+    if (oldSgroup && oldSgroup instanceof MonomerMicromolecule) {
+      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer);
+    } else if (this.monomer) {
+      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, this.monomer);
+    } else {
+      sgroup = new SGroup(
+        SGROUP_TYPE_MAPPING[this.data.type] || this.data.type,
+      );
+    }
 
     sgroup.id = sgid;
     struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      struct.sgroups.get(sgid)!.pp = new Vec2(pp);
+      sgroup.pp = new Vec2(pp);
     }
 
     if (expanded) {
       sgroup.data.expanded = expanded;
+      if (sgroup instanceof MonomerMicromolecule) {
+        if (Object.isFrozen(sgroup.monomer.monomerItem)) {
+          sgroup.monomer.monomerItem = { ...sgroup.monomer.monomerItem };
+        }
+        sgroup.monomer.monomerItem.expanded = expanded;
+      }
     }
 
     if (name) {
@@ -108,6 +136,7 @@ class SGroupDelete extends BaseOperation {
     if (!sgroup) return;
     this.data.type = sgroup?.item?.type;
     this.data.pp = sgroup?.item?.pp;
+    this.data.oldSgroup = sgroup.item;
 
     if (sgroup?.item?.type === 'DAT' && sgroupData) {
       restruct.clearVisel(sgroupData.visel);
@@ -125,7 +154,7 @@ class SGroupDelete extends BaseOperation {
     ) {
       let relatedFGroupId;
       this.data.name = sgroup.item.data.name;
-      this.data.expanded = (sgroup.item as SGroup).isExpanded();
+      this.data.expanded = sgroup.item.isExpanded();
       restruct.molecule.functionalGroups.forEach((fg, fgid) => {
         if (fg.relatedSGroupId === sgid) {
           relatedFGroupId = fgid;
@@ -150,3 +179,4 @@ export * from './sgroupAtom';
 export * from './SGroupAttr';
 export * from './SGroupDataMove';
 export * from './sgroupHierarchy';
+export * from './sgroupAttachmentPoints';

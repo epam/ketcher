@@ -20,13 +20,13 @@ import initEditor from '../state/editor';
 import { onAction } from '../state';
 import action from '../action';
 
-const dispatchAction = (dispatch, actionName) => {
-  dispatch(onAction(action[actionName].action));
+const dispatchAction = (dispatch, actionName, event) => {
+  dispatch(onAction(action[actionName].action(event)));
 };
 
 const mapDispatchToProps = (dispatch) => {
-  const onZoomIn = () => dispatchAction(dispatch, 'zoom-in');
-  const onZoomOut = () => dispatchAction(dispatch, 'zoom-out');
+  const onZoomIn = (event) => dispatchAction(dispatch, 'zoom-in', event);
+  const onZoomOut = (event) => dispatchAction(dispatch, 'zoom-out', event);
 
   return {
     ...dispatch(initEditor),
@@ -35,12 +35,14 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const Editor = connect(
-  (state) => ({
+const Editor = connect((state) => {
+  const serverSettings = state.options.getServerSettings();
+
+  return {
     options: state.options.settings,
+    serverSettings,
     indigoVerification: state.requestsStatuses.indigoVerification,
-  }),
-  mapDispatchToProps,
-)(StructEditor);
+  };
+}, mapDispatchToProps)(StructEditor);
 
 export default Editor;

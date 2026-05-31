@@ -1,0 +1,26 @@
+@import 'src/style/variables.less';
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 32px;
+  height: 24px;
+  border: 1px solid @color-primary-light;
+  border-radius: 2px;
+  background-color: @color-primary-light;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.chipStrip {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+}

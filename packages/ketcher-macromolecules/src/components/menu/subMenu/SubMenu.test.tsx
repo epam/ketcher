@@ -1,0 +1,98 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material/styles';
+import { Provider as StoreProvider } from 'react-redux';
+import { Menu, MenuContext } from 'components/menu';
+import { configureAppStore } from 'state';
+import { defaultTheme } from 'theming/defaultTheme';
+
+const mockClickHandler = jest.fn();
+const MOCK_NAME = 'select-lasso';
+
+const mockValue = {
+  activate: mockClickHandler,
+  isActive: (itemKey) => itemKey === MOCK_NAME,
+};
+
+const mockMenuItems = [
+  <Menu.Item key="help" itemId="help" />,
+  <Menu.Item key="settings" itemId="settings" />,
+  <Menu.Item key="undo" itemId="undo" />,
+];
+
+const mockSubMenu = () => {
+  return (
+    <MenuContext.Provider value={mockValue}>
+      <Menu.Submenu vertical>{...mockMenuItems}</Menu.Submenu>
+    </MenuContext.Provider>
+  );
+};
+
+describe('Test SubMenu component', () => {
+  beforeEach(() => {
+    const ketcherRoot = document.createElement('div');
+    ketcherRoot.className = 'Ketcher-polymer-editor-root';
+    document.body.appendChild(ketcherRoot);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('should be rendered without crashing', () => {
+    const { asFragment } = render(withThemeAndStoreProvider(mockSubMenu()));
+    expect(asFragment).toMatchSnapshot();
+  });
+
+  it('should call provided callback when header icon is clicked', () => {
+    render(withThemeAndStoreProvider(mockSubMenu()));
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    expect(mockClickHandler).toHaveBeenCalled();
+  });
+
+  it('should render opened dropdown above toolbar overlays', () => {
+    const customOverlayZIndex = 321;
+    const customTheme = {
+      ...createTheme(),
+      ketcher: {
+        ...defaultTheme,
+        zIndex: {
+          ...defaultTheme.zIndex,
+          overlay: customOverlayZIndex,
+        },
+      },
+    };
+
+    render(
+      <ThemeProvider theme={customTheme}>
+        <StoreProvider store={configureAppStore()}>
+          {mockSubMenu()}
+        </StoreProvider>
+      </ThemeProvider>,
+    );
+
+    fireEvent.click(screen.getByTestId('dropdown-expand'));
+
+    const dropdown = screen.getByTestId('multi-tool-dropdown');
+    const collapse = dropdown.closest('.MuiCollapse-root');
+
+    expect(collapse).not.toBeNull();
+    expect(collapse).toHaveStyle(`z-index: ${customOverlayZIndex}`);
+  });
+});

@@ -15,25 +15,22 @@
  ***************************************************************************/
 
 import {
-  FormatterFactory,
-  Ketcher,
   defaultBondThickness,
   KetcherLogger,
+  ketcherProvider,
+  KetSerializer,
 } from 'ketcher-core';
 
 async function copyImageToClipboard() {
   const state = global.currentState;
   const editor = state.editor;
-  const server = state.server;
   const options = state.options;
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
-
   try {
-    const factory = new FormatterFactory(server);
-    const service = factory.create('ket', options);
-    const structStr = await service.getStructureFromStructAsync(struct);
-    const ketcher = new Ketcher(editor, server, {}, factory);
+    const ketcher = ketcherProvider.getKetcher(editor.ketcherId);
+    const ketSerializer = new KetSerializer();
+    const structStr = ketSerializer.serialize(struct);
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',

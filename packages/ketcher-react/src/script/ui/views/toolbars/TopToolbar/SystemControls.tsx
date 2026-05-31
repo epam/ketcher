@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { shortcutStr } from '../shortcutStr';
+import { useEffect, useState } from 'react';
+import { shortcutStr } from 'ketcher-core';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
@@ -24,7 +25,6 @@ interface SystemControlsProps {
   className?: string;
   onSettingsOpen: () => void;
   onAboutOpen: () => void;
-  onHistoryClick: () => void;
   onFullscreen: () => void;
   onHelp: () => void;
 }
@@ -41,7 +41,7 @@ const getIfFullScreen = () => {
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
-  flex-grow: 1;
+  flex-grow: 0;
   justify-content: flex-end;
 `;
 
@@ -55,6 +55,27 @@ export const SystemControls = ({
   onAboutOpen,
   className,
 }: SystemControlsProps) => {
+  const [isFullscreen, setIsFullscreen] = useState(getIfFullScreen);
+
+  useEffect(() => {
+    const syncFullscreenMode = () => setIsFullscreen(getIfFullScreen());
+
+    document.addEventListener('fullscreenchange', syncFullscreenMode);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenMode);
+    document.addEventListener('mozfullscreenchange', syncFullscreenMode);
+    document.addEventListener('MSFullscreenChange', syncFullscreenMode);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreenMode);
+      document.removeEventListener(
+        'webkitfullscreenchange',
+        syncFullscreenMode,
+      );
+      document.removeEventListener('mozfullscreenchange', syncFullscreenMode);
+      document.removeEventListener('MSFullscreenChange', syncFullscreenMode);
+    };
+  }, []);
+
   return (
     <ControlsPanel className={className}>
       {/* Uncomment upon History log implementation */}
@@ -93,7 +114,7 @@ export const SystemControls = ({
       <TopToolbarIconButton
         title="Fullscreen mode"
         onClick={onFullscreen}
-        iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
+        iconName={isFullscreen ? 'fullscreen-exit' : 'fullscreen-enter'}
         disabled={disabledButtons.includes('fullscreen')}
         isHidden={hiddenButtons.includes('fullscreen')}
         testId="fullscreen-mode-button"

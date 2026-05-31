@@ -13,10 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import type { Struct } from 'domain/entities/struct';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export interface Serializer<T> {
   deserialize: (content: string) => T;
   serialize: (struct: T) => string;
-  deserializeMacromolecule?: (content: string) => void;
-  serializeMacromolecules?: (content: string) => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface KetFileNode<T = any> {
+  type: string;
+  fragment?: Struct;
+  center: Vec2;
+  data?: T;
+  selected?: boolean;
 }

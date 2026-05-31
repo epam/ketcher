@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SdfItem, StructAssociatedData } from './sdf.types';
+import type { SdfItem, StructAssociatedData } from './sdf.types';
 
 import { MolSerializer } from '../mol/molSerializer';
-import { Serializer } from '../serializers.types';
-import { MolSerializerOptions } from '../mol';
+import type { Serializer } from '../serializers.types';
+import type { MolSerializerOptions } from '../mol';
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm;
 export class SdfSerializer implements Serializer<Array<SdfItem>> {
@@ -29,10 +29,10 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   }
 
   deserialize(content: string): Array<SdfItem> {
-    let m: any;
     const result: Array<SdfItem> = [];
     const molSerializer = new MolSerializer(this.molSerializerOptions);
-    while ((m = DelimeterRegex.exec(content)) !== null) {
+    let m: any = DelimeterRegex.exec(content);
+    while (m !== null) {
       const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
       if (end !== -1) {
@@ -44,10 +44,17 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
         const struct = molSerializer.deserialize(chunk.substring(0, end + 6));
         const props = propChunks.reduce(
           (acc: StructAssociatedData, pc: string) => {
-            const m = pc.match(/^> [ \d]*<(\S+)>/);
+            const m = /^> [ \d]*<(\S+)>/.exec(pc);
             if (m) {
               const field = m[1];
-              const value = pc.split('\n')[1].trim();
+              const valueArr = pc.split('\n').slice(1, -1);
+              let value = '';
+              if (valueArr.length > 1) {
+                value = valueArr.join(',');
+              } else {
+                value = pc.split('\n')[1].trim();
+              }
+
               acc[field] = Number.isFinite(value) ? +value : value.toString(); // eslint-disable-line
             }
             return acc;
@@ -57,6 +64,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
 
         result.push({ struct, props });
       }
+      m = DelimeterRegex.exec(content);
     }
     return result;
   }

@@ -1,65 +1,64 @@
-import { Action, FunctionalGroup, setExpandSGroup } from 'ketcher-core'
-import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
-import { highlightFG } from 'src/script/ui/state/functionalGroups'
-import { ItemEventParams } from '../contextMenu.types'
+import { Action, ketcherProvider, setExpandMonomerSGroup } from 'ketcher-core';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
+import { highlightFG } from 'src/script/ui/state/functionalGroups';
+import {
+  FunctionalGroupsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
+
+type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract
  */
 const useFunctionalGroupEoc = () => {
-  const { getKetcherInstance } = useAppContext()
-  const dispatch = useDispatch()
+  const { ketcherId } = useAppContext();
+  const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: ItemEventParams, toExpand: boolean) => {
-      const editor = getKetcherInstance().editor as Editor
-      const molecule = editor.render.ctab
-      const selectedFunctionalGroups = props?.functionalGroups
-      const action = new Action()
+    ({ props }: Params, toExpand: boolean) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      const molecule = editor.render.ctab;
+      const selectedFunctionalGroups = props?.functionalGroups;
+      const action = new Action();
 
       selectedFunctionalGroups?.forEach((functionalGroup) => {
         action.mergeWith(
-          setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
-            expanded: toExpand
-          })
-        )
-      })
+          setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
+            expanded: toExpand,
+          }),
+        );
+      });
 
-      editor.update(action)
-      editor.rotateController.rerender()
-      highlightFG(dispatch, { group: null, id: null })
+      editor.update(action);
+      editor.rotateController.rerender();
+      highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance]
-  )
+    [dispatch, ketcherId],
+  );
 
-  const hidden = useCallback(
-    ({ props }: ItemEventParams, toExpand: boolean) => {
-      return Boolean(
-        props?.functionalGroups?.every((functionalGroup) =>
-          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded
-        )
-      )
-    },
-    []
-  )
-  const disabled = useCallback(({ props }: ItemEventParams) => {
-    const editor = getKetcherInstance().editor as Editor
-    const molecule = editor.render.ctab.molecule
+  const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
+    // If trying to contract (toExpand is false), hide the option if any functional group has no name
+    if (!toExpand) {
+      const hasEmptyName = props?.functionalGroups?.some(
+        (functionalGroup) => !functionalGroup.name?.trim(),
+      );
+      if (hasEmptyName) {
+        return true;
+      }
+    }
+
     return Boolean(
-      props?.functionalGroups?.every(
-        (functionalGroup) =>
-          FunctionalGroup.getAttachmentPointCount(
-            functionalGroup?.relatedSGroup,
-            molecule
-          ) > 1
-      )
-    )
-  }, [])
+      props?.functionalGroups?.every((functionalGroup) =>
+        toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+      ),
+    );
+  }, []);
 
-  return [handler, hidden, disabled] as const
-}
+  return [handler, hidden] as const;
+};
 
-export default useFunctionalGroupEoc
+export default useFunctionalGroupEoc;

@@ -14,19 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AlignDescriptors, CanvasLoad } from '../operations'
+import { AlignDescriptors, CanvasLoad } from '../operations';
 
-import { Action } from './action'
+import { Action } from './action';
+import type { Struct } from 'domain/entities/struct';
+import type { ReStruct } from 'application/render';
 
-export function fromNewCanvas(restruct, struct) {
-  const action = new Action()
+/** Get action applied {@link struct} to {@link restruct}. */
+export function fromNewCanvas(restruct: ReStruct, struct: Struct) {
+  const action = new Action();
 
-  action.addOp(new CanvasLoad(struct))
-  return action.perform(restruct)
+  action.addOp(new CanvasLoad(struct));
+  return action.perform(restruct);
 }
 
 export function fromDescriptorsAlign(restruct) {
-  const action = new Action()
-  action.addOp(new AlignDescriptors())
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new AlignDescriptors());
+  return action.perform(restruct);
 }

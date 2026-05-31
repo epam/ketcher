@@ -14,38 +14,61 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ButtonsConfig, KetcherBuilder } from './builders'
+import { Root } from 'react-dom/client';
+import { ButtonsConfig, KetcherBuilder } from './builders';
 
-import { StructServiceProvider } from 'ketcher-core'
+import { StructServiceProvider } from 'ketcher-core';
+import { CustomButton } from './builders/ketcher/CustomButtons';
 
 interface Config {
-  element: HTMLDivElement | null
-  staticResourcesUrl: string
-  structServiceProvider: StructServiceProvider
-  buttons?: ButtonsConfig
-  errorHandler: (message: string) => void
+  element: HTMLDivElement | null;
+  appRoot: Root;
+  staticResourcesUrl: string;
+  structServiceProvider: StructServiceProvider;
+  buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
+  errorHandler: (message: string) => void;
+  togglerComponent?: JSX.Element;
+  ketcherId: string;
 }
+
+export type { Config, ButtonsConfig };
+export * from './providers';
 
 async function buildKetcherAsync({
   element,
+  appRoot,
   staticResourcesUrl,
   structServiceProvider,
   buttons,
-  errorHandler
+  errorHandler,
+  togglerComponent,
+  customButtons,
+  ketcherId: prevKetcherId,
 }: Config) {
-  const builder = new KetcherBuilder()
+  const builder = new KetcherBuilder();
 
-  await builder.appendApiAsync(structServiceProvider)
-  builder.appendServiceMode(structServiceProvider.mode)
-  await builder.appendUiAsync(
+  const structService = builder.appendApiAsync(structServiceProvider);
+  builder.appendServiceMode(structServiceProvider.mode);
+  const ketcher = builder.build();
+  structService.addKetcherId(ketcher.id);
+
+  const { cleanup, setServer } = await builder.appendUiAsync(
+    prevKetcherId,
+    ketcher.id,
     element,
+    appRoot,
     staticResourcesUrl,
     errorHandler,
-    buttons
-  )
+    buttons,
+    togglerComponent,
+    customButtons,
+  );
 
-  return builder.build()
+  return { ketcher, cleanup, builder, setServer };
 }
 
-export type { Config, ButtonsConfig }
-export default buildKetcherAsync
+export default buildKetcherAsync;
+
+export * from './ui/views/toolbars/ArrowScroll';
+export * from './ui/views/toolbars/ToolbarGroupItem/ToolbarMultiToolItem/usePortalStyle';

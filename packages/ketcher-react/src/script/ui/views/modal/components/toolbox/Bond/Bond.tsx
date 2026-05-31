@@ -14,26 +14,93 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import Form, { Field } from '../../../../../component/form/form/form'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import Form, {
+  CustomQueryField,
+  Field,
+} from '../../../../../component/form/form/form';
 
-import { Dialog } from '../../../../components'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
-import classes from './Bond.module.less'
+import { Dialog } from '../../../../components';
+import Select from '../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
+import classes from './Bond.module.less';
+import { useMemo, useRef, useState } from 'react';
+import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
+import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../../../../components/ContextMenu/utils';
 
-interface BondProps extends BaseProps {
-  center: number
-  topology: number
-  type: string
+interface BondSettings {
+  type: string;
+  topology: number | null;
+  center: number | null;
+  customQuery: string;
 }
+interface BondProps extends BaseProps, BondSettings {}
 
-type Props = BondProps & BaseCallProps
+type Props = BondProps &
+  BaseCallProps & {
+    isMonomerCreationWizardActive?: boolean;
+  };
 
 const Bond = (props: Props) => {
-  const { formState, ...rest } = props
-  const bondProps = bondSchema.properties
+  const { formState, isMonomerCreationWizardActive = false, ...rest } = props;
+  const bondProps = bondSchema.properties;
+  const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
+  const previousSettings = useRef<BondSettings>({
+    type: 'single',
+    topology: 0,
+    center: 0,
+    customQuery: '',
+  });
+  const bondTypeOptions = useMemo(
+    () =>
+      getSelectOptionsFromSchema(bondProps.type).map((option) => ({
+        ...option,
+        disabled:
+          isMonomerCreationWizardActive &&
+          MONOMER_WIZARD_DISALLOWED_BOND_TYPES.includes(option.value),
+      })),
+    [bondProps.type, isMonomerCreationWizardActive],
+  );
+  const customValid = useMemo(
+    () => ({
+      customQuery: (customQuery: string) =>
+        customQueryValid(customQuery, isCustomQuery),
+    }),
+    [isCustomQuery],
+  );
+  const handleCustomQueryCheckBoxChange = (
+    value: boolean,
+    formState: BondSettings,
+    _,
+    updateFormState: (settings: BondSettings) => void,
+  ) => {
+    if (isMonomerCreationWizardActive) {
+      return;
+    }
+
+    setIsCustomQuery(value);
+    if (value) {
+      const { type, topology, center, customQuery } = formState;
+      previousSettings.current = {
+        type,
+        topology,
+        center,
+        customQuery,
+      };
+    }
+    updateFormState(
+      value
+        ? {
+            type: '',
+            topology: null,
+            center: null,
+            customQuery: getBondCustomQuery(formState),
+          }
+        : previousSettings.current,
+    );
+  };
+
   return (
     <Dialog
       title="Bond Properties"
@@ -45,26 +112,96 @@ const Bond = (props: Props) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <Form schema={bondSchema} init={rest} {...formState}>
+      <Form
+        schema={bondSchema}
+        init={rest}
+        {...formState}
+        customValid={customValid}
+      >
         <Field
           name="type"
           component={Select}
-          options={getSelectOptionsFromSchema(bondProps.type)}
+          options={bondTypeOptions}
+          disabled={isCustomQuery}
+          formName="bond-properties"
+          data-testid="type"
         />
         <Field
           name="topology"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.topology)}
+          disabled={isCustomQuery || isMonomerCreationWizardActive}
+          formName="bond-properties"
+          data-testid="topology"
         />
         <Field
           name="center"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.center)}
+          disabled={isCustomQuery || isMonomerCreationWizardActive}
+          formName="bond-properties"
+          data-testid="reacting-center"
         />
+        {!SettingsManager.disableCustomQuery && (
+          <div
+            className={classes.customQueryWrapper}
+            aria-disabled={isMonomerCreationWizardActive}
+          >
+            <CustomQueryField
+              name="customQuery"
+              labelPos="after"
+              className={classes.checkbox}
+              disabled={!isCustomQuery || isMonomerCreationWizardActive}
+              checkboxValue={isCustomQuery}
+              onCheckboxChange={handleCustomQueryCheckBoxChange}
+              data-testid="bond-custom-query"
+            />
+          </div>
+        )}
       </Form>
     </Dialog>
-  )
+  );
+};
+
+function customQueryValid(customQuery: string, isCustomQuery: boolean) {
+  if (!isCustomQuery) {
+    return true;
+  }
+  const regex = new RegExp(bondSchema.properties.customQuery.pattern as string);
+  const isValid = regex.test(customQuery);
+  return isValid;
 }
 
-export type { BondProps }
-export default Bond
+function getBondCustomQuery(bond: BondSettings) {
+  let queryAttrsText = '';
+  const { type, topology } = bond;
+  const patterns = {
+    bondType: {
+      single: '-',
+      double: '=',
+      triple: '#',
+      aromatic: ':',
+      any: '~',
+      up: '/',
+      down: '\\',
+    },
+    topology: {
+      [CoreBond.PATTERN.TOPOLOGY.RING]: '@',
+      [CoreBond.PATTERN.TOPOLOGY.CHAIN]: '!@',
+    },
+  };
+
+  if (type in patterns.bondType) {
+    queryAttrsText += patterns.bondType[type];
+  }
+
+  if (topology && topology in patterns.topology) {
+    if (queryAttrsText) {
+      queryAttrsText += ';';
+    }
+    queryAttrsText += patterns.topology[topology];
+  }
+  return queryAttrsText;
+}
+export type { BondProps };
+export default Bond;

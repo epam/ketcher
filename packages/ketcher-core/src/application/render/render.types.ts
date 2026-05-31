@@ -1,77 +1,131 @@
-import { RxnArrowMode, Vec2 } from 'domain/entities'
-import { StereLabelStyleType } from 'application/render/restruct'
+import type { RxnArrowMode } from 'domain/entities/rxnArrow';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 
-type RenderOptionStyles = Record<string, string | number>
+export type RenderOptionStyles = Record<string, string | number>;
 
-export type RenderOptions = {
-  width?: number
-  height?: number
-
-  rotationStep?: number
-  doubleBondWidth: number
-  stereoBondWidth: number
-  bondThickness: number
-
-  downScale?: boolean
-  rescaleAmount?: number
-  radiusScaleFactor: number
-
-  'dearomatize-on-load'?: boolean
-  ignoreChiralFlag?: boolean
-  disableQueryElements?: string[] | null
-
-  showAtomIds: boolean
-  showBondIds: boolean
-  showHalfBondIds: boolean
-  showLoopIds: boolean
-  showValenceWarnings: boolean
-  autoScale: boolean
-  autoScaleMargin: number
-  maxBondLength: number
-  atomColoring: boolean
-  hideImplicitHydrogen: boolean
-  hideTerminalLabels: boolean
-  carbonExplicitly: boolean
-  showCharge: boolean
-  showHydrogenLabels: string
-  showValence: boolean
-  aromaticCircle: boolean
-  scale: number
-  zoom: number
-  offset: Vec2
-  lineWidth: number
-
-  bondSpace: number
-  stereoBond: number
-  subFontSize: number
-  font: string
-  fontsz: number
-  fontszsub: number
-  fontRLabel: number
-  fontRLogic: number
-
-  /* styles */
-  lineattr: RenderOptionStyles
-  selectionStyle: RenderOptionStyles
-  hoverStyle: RenderOptionStyles
-  sgroupBracketStyle: RenderOptionStyles
-  lassoStyle: RenderOptionStyles
-  hoverStyleSimpleObject: RenderOptionStyles
-  atomSelectionPlateRadius: number
-  contractedFunctionalGroupSize: number
-
-  stereoLabelStyle?: StereLabelStyleType
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
 }
 
+export enum UsageInMacromolecule {
+  MonomerConnectionsModal,
+  MonomerPreview,
+  BondPreview,
+}
+
+export type RenderOptions = {
+  width?: number;
+  height?: number;
+
+  rotationStep?: number;
+  bondSpacing: number;
+  bondLength: number;
+  bondLengthUnit: MeasurementUnits;
+  stereoBondWidth: number;
+  stereoBondWidthUnit: MeasurementUnits;
+  bondThickness: number;
+  bondThicknessUnit: MeasurementUnits;
+
+  downScale?: boolean;
+  rescaleAmount?: number;
+  radiusScaleFactor: number;
+
+  'dearomatize-on-load'?: boolean;
+  ignoreChiralFlag?: boolean;
+  disableQueryElements?: string[] | null;
+
+  showAtomIds: boolean;
+  showBondIds: boolean;
+  showHalfBondIds: boolean;
+  showLoopIds: boolean;
+  showValenceWarnings: boolean;
+  autoScale: boolean;
+  autoScaleMargin: number;
+  maxBondLength: number;
+  atomColoring: boolean;
+  hideImplicitHydrogen: boolean;
+  hideTerminalLabels: boolean;
+  carbonExplicitly: boolean;
+  showCharge: boolean;
+  showHydrogenLabels: string;
+  showValence: boolean;
+  aromaticCircle: boolean;
+  microModeScale: number;
+  macroModeScale: number;
+  zoom: number;
+  offset: Vec2;
+  lineWidth: number;
+
+  bondSpace: number;
+  stereoBond: number;
+  subFontSize: number;
+  font: string;
+  fontsz: number;
+  fontszUnit: MeasurementUnits;
+  fontszsubUnit: MeasurementUnits;
+  fontszsub: number;
+  fontRLabel: number;
+  fontRLogic: number;
+
+  hashSpacing: number;
+  hashSpacingUnit: MeasurementUnits;
+
+  /* styles */
+  lineattr: RenderOptionStyles;
+  multitailArrow: RenderOptionStyles;
+  arrowSnappingStyle: RenderOptionStyles;
+  bondSnappingStyle: RenderOptionStyles;
+  selectionStyle: RenderOptionStyles;
+  hoverStyle: RenderOptionStyles;
+  innerHoverStyle: RenderOptionStyles;
+  movingStyle: RenderOptionStyles;
+  sgroupBracketStyle: RenderOptionStyles;
+  lassoStyle: RenderOptionStyles;
+  selectionStyleSimpleObject: RenderOptionStyles;
+  hoverStyleSimpleObject: RenderOptionStyles;
+  atomSelectionPlateRadius: number;
+  contractedFunctionalGroupSize: number;
+
+  stereoLabelStyle?: StereoLabelStyleType;
+
+  previewOpacity: number;
+
+  connectedMonomerAttachmentPoints?: string[];
+  currentlySelectedMonomerAttachmentPoint?: string;
+  labelInMonomerConnectionsModal?: boolean;
+  labelInPreview?: boolean;
+
+  // Converted
+  fontszInPx: number;
+  fontszsubInPx: number;
+  bondSpacingInPx: number;
+  bondThicknessInPx: number;
+  stereoBondWidthInPx: number;
+  hashSpacingInPx: number;
+  usageInMacromolecule?: UsageInMacromolecule;
+  viewOnlyMode?: boolean;
+};
+
 export interface RelativeBox {
-  x: number
-  y: number
-  width: number
-  height: number
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 export interface ArrowItem {
-  mode?: RxnArrowMode
-  pos: Vec2[]
-  height: number
+  mode?: RxnArrowMode;
+  pos: Vec2[];
+  height: number;
 }
+
+export type ViewBox = {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
+};

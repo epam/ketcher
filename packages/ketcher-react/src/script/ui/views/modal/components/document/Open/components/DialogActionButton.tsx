@@ -15,27 +15,30 @@
  ***************************************************************************/
 
 type Props = {
-  clickHandler: () => void
-  disabled: boolean
-  label: string
-  styles: string
-  title?: string
-}
+  clickHandler: () => void;
+  disabled: boolean;
+  label: string;
+  styles: string;
+  title?: string;
+  testId?: string;
+};
 
 export const DialogActionButton = ({
   clickHandler,
   label,
   title,
   styles,
-  disabled
+  disabled,
+  testId,
 }: Props) => (
   <input
     key="Open"
     type="button"
     className={styles}
+    data-testid={testId}
     value={label}
-    title={title || label}
+    title={title ?? label}
     disabled={disabled}
     onClick={clickHandler}
   />
-)
+);

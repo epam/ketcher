@@ -21,11 +21,14 @@ limitations under the License.
 ### Enumeration Members
 
 - [background](LayerMap.md#background)
-- [data](LayerMap.md#data)
-- [hovering](LayerMap.md#hovering)
-- [indices](LayerMap.md#indices)
 - [selectionPlate](LayerMap.md#selectionplate)
+- [hovering](LayerMap.md#hovering)
+- [bondSkeleton](LayerMap.md#bondSkeleton)
+- [atom](LayerMap.md#atom)
 - [warnings](LayerMap.md#warnings)
+- [data](LayerMap.md#data)
+- [additionalInfo](LayerMap.md#additionalInfo)
+- [indices](LayerMap.md#indices)
 
 ## Enumeration Members
 
@@ -35,7 +38,7 @@ limitations under the License.
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:18](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L18)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:22](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L22)
 
 ___
 
@@ -45,7 +48,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:22](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L22)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:28](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L28)
 
 ___
 
@@ -55,7 +58,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:20](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L20)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:24](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L24)
 
 ___
 
@@ -65,7 +68,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:23](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L23)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:30](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L30)
 
 ___
 
@@ -75,7 +78,7 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:19](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L19)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:23](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L23)
 
 ___
 
@@ -85,4 +88,28 @@ ___
 
 #### Defined in
 
-[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:21](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L21)
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:27](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L27)
+
+### atom
+
+• **atom**
+
+#### Defined in
+
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:25](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L25)
+
+### additionalInfo
+
+• **additionalInfo**
+
+#### Defined in
+
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:29](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L29)
+
+### bondSkeleton
+
+• **bondSkeleton**
+
+#### Defined in
+
+[packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts:26](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/render/restruct/generalEnumTypes.ts#L26)

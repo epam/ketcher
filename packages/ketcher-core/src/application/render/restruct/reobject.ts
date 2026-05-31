@@ -14,76 +14,84 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs } from 'domain/entities'
-import ReStruct from './restruct'
-import { Render } from '../raphaelRender'
-import { Scale } from 'domain/helpers'
-import Visel from './visel'
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
+import { Scale } from 'domain/helpers';
+import Visel from './visel';
+import { IMAGE_KEY } from 'domain/constants';
 
 class ReObject {
-  public visel: Visel
-  public hover = false
-  public hovering: any = null
-  public selected = false
-  public selectionPlate: any = null
+  public visel: Visel;
+  public hover = false;
+  public hovering: any = null;
+  public selected = false;
+  public selectionPlate: any = null;
 
   constructor(viselType: string) {
-    this.visel = new Visel(viselType)
+    this.visel = new Visel(viselType);
   }
 
-  changeSelectionStyle(options: any) {
-    const { hoverStyle } = options
-    this.hovering?.attr({
-      fill: this.selected ? hoverStyle.fillSelected : hoverStyle.fill,
-      'fill-opacity': this.selected ? 1 : 0
-    })
+  changeSelectionStyle(options: any, drawOutline = true) {
+    const { hoverStyle } = options;
+    if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
+      this.hovering?.attr({
+        'fill-opacity': this.selected ? 1 : 0,
+      });
+    } else {
+      this.hovering?.attr({
+        fill: hoverStyle.fill,
+        'fill-opacity': this.selected ? 1 : 0,
+        stroke: drawOutline ? hoverStyle.stroke : 'none',
+      });
+    }
   }
 
   getVBoxObj(render: Render): Box2Abs | null {
-    let vbox = this.visel.boundingBox
-    if (vbox === null) return null
+    let vbox = this.visel.boundingBox;
+    if (vbox === null) return null;
     if (render.options.offset) {
-      vbox = vbox.translate(render.options.offset.negated())
+      vbox = vbox.translate(render.options.offset.negated());
     }
-    return vbox.transform(Scale.scaled2obj, render.options)
+    return vbox.transform(Scale.canvasToModel, render.options);
   }
 
-  setHover(hover: boolean, render: Render): void {
+  setHover(hover: boolean, render: Render, drawOutline = true): void {
     // TODO render should be field
-    const { options } = render
+    const { options } = render;
     if (hover) {
-      let noredraw = 'hovering' in this && this.hovering !== null
+      let noredraw = 'hovering' in this && this.hovering !== null;
       if (noredraw) {
         if (this.hovering.type === 'set') {
-          if (!this.hovering[0]) return
-          noredraw = !this.hovering[0].removed
+          if (!this.hovering[0]) return;
+          noredraw = !this.hovering[0].removed;
         } else {
-          noredraw = !this.hovering.removed
+          noredraw = !this.hovering.removed;
         }
       }
       if (noredraw) {
-        this.changeSelectionStyle(options)
-        this.hovering.show()
+        this.changeSelectionStyle(options, drawOutline);
+        this.hovering.show();
       } else {
-        render.paper.setStart()
-        this.drawHover(render)
-        this.hovering = render.paper.setFinish()
+        render.paper.setStart();
+        this.drawHover(render, drawOutline);
+        this.hovering = render.paper.setFinish();
       }
     } else if (this.hovering) {
-      this.changeSelectionStyle(options)
-      this.hovering.hide()
+      this.changeSelectionStyle(options, drawOutline);
+      this.hovering.hide();
     }
 
-    this.hover = hover
+    this.hover = hover;
   }
 
-  drawHover(_render: Render): any {
-    throw new Error('ReObject.drawHover is not overridden.')
+  drawHover(_render: Render, _drawOutline?: boolean): any {
+    throw new Error('ReObject.drawHover is not overridden.');
   }
 
   makeSelectionPlate(_restruct: ReStruct, _paper: any, _styles: any): any {
-    throw new Error('ReObject.makeSelectionPlate is not overridden')
+    throw new Error('ReObject.makeSelectionPlate is not overridden');
   }
 }
 
-export default ReObject
+export default ReObject;

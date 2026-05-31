@@ -14,43 +14,77 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
-import { Ketcher, StructService } from 'ketcher-core'
+import {
+  AppContext,
+  ErrorsContext,
+  SettingsContext,
+} from './../../../contexts';
+import { StructService } from 'ketcher-core';
 
-import App from './App.container'
-import { Provider } from 'react-redux'
-import { createRoot } from 'react-dom/client'
-import createStore from '../state'
-import { initKeydownListener } from '../state/hotkeys'
-import { initResize } from '../state/toolbar'
+import App from './App.container';
+import { Provider } from 'react-redux';
+import { Root } from 'react-dom/client';
+import createStore, { setServer } from '../state';
+import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
+import { initResize } from '../state/toolbar';
+import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
+  prevKetcherId: string,
+  ketcherId: string,
   element: HTMLDivElement | null,
+  appRoot: Root,
   staticResourcesUrl: string,
   options: any,
   server: StructService,
-  setEditor: (editor: any) => void
+  resolve: (args: {
+    editor: any;
+    setServer: (server: StructService) => void;
+  }) => void,
+  togglerComponent?: JSX.Element,
 ) {
-  const store = createStore(options, server, setEditor)
-  store.dispatch(initKeydownListener(element))
-  store.dispatch(initResize())
+  // hack to return server setter to Editor.tsx
+  // because it does not have access to store
+  // eslint-disable-next-line prefer-const
+  let getServerSetter: () => (structService: StructService) => void;
 
-  const root = createRoot(element!)
-  root.render(
+  const setEditor = (editor) => {
+    const setServer = getServerSetter();
+    resolve({ editor, setServer });
+  };
+  const store = createStore(options, server, setEditor);
+
+  getServerSetter = () => {
+    return (structService: StructService) => {
+      store.dispatch(setServer(structService));
+    };
+  };
+
+  store.dispatch(initKeydownListener(element));
+  store.dispatch(initMouseListener(element));
+  store.dispatch(initResize());
+
+  appRoot.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
             value={{
-              getKetcherInstance: () => (window as any).ketcher as Ketcher
+              ketcherId,
+              prevKetcherId,
             }}
           >
-            <App />
+            <App togglerComponent={togglerComponent} />
           </AppContext.Provider>
         </ErrorsContext.Provider>
       </SettingsContext.Provider>
-    </Provider>
-  )
+    </Provider>,
+  );
+
+  return () => {
+    store.dispatch(removeKeydownListener(element));
+    store.dispatch(removeMouseListeners(element));
+  };
 }
 
-export { initApp }
+export { initApp };

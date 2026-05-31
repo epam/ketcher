@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ButtonsConfig'
-export * from './KetcherBuilder'
+export * from './ButtonsConfig';
+export * from './KetcherBuilder';

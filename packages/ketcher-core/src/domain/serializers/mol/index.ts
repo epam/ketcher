@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './mol.types'
-export * from './molSerializer'
+export * from './mol.types';
+export * from './molSerializer';

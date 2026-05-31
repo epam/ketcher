@@ -1,0 +1,517 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import { type ZoomBehavior, zoom, select, ZoomTransform, drag } from 'd3';
+import type { BaseTool } from 'application/editor/tools/Tool';
+import { canvasSelector, drawnStructuresSelector } from '../constants';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { Vec2 } from 'domain/entities/vec2';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { clamp, isNumber } from 'lodash';
+import { notifyRenderComplete } from 'application/render/internal';
+import type { StructureBbox } from 'application/render/renderers/types';
+
+export enum SCROLL_POSITION {
+  CENTER = 'CENTER',
+  BOTTOM = 'BOTTOM',
+}
+
+interface ScrollBar {
+  name: string;
+  offsetStart: number;
+  offsetEnd: number;
+  maxWidth: number;
+  maxHeight: number;
+  bar?: D3SvgElementSelection<SVGRectElement, void>;
+}
+
+// in percents
+const AUTO_SCROLL_OFFSET_X = 10;
+const AUTO_SCROLL_OFFSET_Y = 10;
+
+export class ZoomTool implements BaseTool {
+  public canvas: D3SvgElementSelection<SVGGElement, void>;
+  public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+  private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
+  private zoomLevel: number;
+  private _zoomTransform: ZoomTransform;
+  private resizeObserver: ResizeObserver | null = null;
+  drawingEntitiesManager: DrawingEntitiesManager;
+  private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
+  private scrollBars!: {
+    horizontal: ScrollBar;
+    vertical: ScrollBar;
+  };
+
+  COLOR = '#a5afb9';
+  MIN_LENGTH = 40;
+  RADIUS = 2;
+  MARGIN = 5;
+  HORIZONTAL_DIST_TO_EDGE = 16;
+  VERTICAL_DIST_TO_EDGE = 4;
+  WIDTH = 4;
+  MINZOOMSCALE = 0.2;
+  MAXZOOMSCALE = 4;
+
+  // eslint-disable-next-line no-use-before-define
+  private static _instance: ZoomTool;
+  public static get instance() {
+    return ZoomTool._instance;
+  }
+
+  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+    return ZoomTool._instance;
+  }
+
+  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
+    this.canvasWrapper = select(canvasSelector);
+    this.canvas = select(drawnStructuresSelector);
+
+    this.zoomLevel = 1;
+    this._zoomTransform = new ZoomTransform(1, 0, 0);
+    this.drawingEntitiesManager = drawingEntitiesManager;
+
+    this.initActions();
+  }
+
+  initActions() {
+    this.zoom = zoom<SVGSVGElement, void>()
+      .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
+      .wheelDelta(this.defaultWheelDelta)
+      .filter((e) => {
+        e.preventDefault();
+        if (e.ctrlKey && e.type === 'wheel') {
+          return true;
+        }
+        return false;
+      })
+      .on('zoom', this.zoomAction.bind(this))
+      .on('end', () => {
+        notifyRenderComplete();
+      });
+    this.canvasWrapper.call(this.zoom);
+
+    this.canvasWrapper.on('wheel', (event) => {
+      if (event.ctrlKey) {
+        event.preventDefault();
+      } else {
+        this.mouseWheeled(event);
+      }
+    });
+  }
+
+  setZoomLevel(zoomLevel: number) {
+    this.zoomLevel = zoomLevel;
+  }
+
+  getZoomLevel() {
+    return this.zoomLevel;
+  }
+
+  setZoomTransform(transform: ZoomTransform) {
+    this._zoomTransform = transform;
+  }
+
+  public get zoomTransform() {
+    return this._zoomTransform;
+  }
+
+  zoomAction({ transform }) {
+    this.canvas.attr('transform', transform);
+    this.zoomLevel = transform.k;
+    this._zoomTransform = transform;
+    this.drawScrollBars();
+    requestAnimationFrame(() => {
+      this.dispatchZoomEventHandlers(transform);
+    });
+  }
+
+  subscribeOnZoomEvent(zoomEventHandler: (transform?: ZoomTransform) => void) {
+    this.zoomEventHandlers.push(zoomEventHandler);
+  }
+
+  unsubscribeOnZoomEvent(
+    zoomEventHandler: (transform?: ZoomTransform) => void,
+  ) {
+    this.zoomEventHandlers = this.zoomEventHandlers.filter(
+      (handler) => handler !== zoomEventHandler,
+    );
+  }
+
+  dispatchZoomEventHandlers(transform: ZoomTransform) {
+    this.zoomEventHandlers.forEach((zoomEventHandler) => {
+      zoomEventHandler(transform);
+    });
+  }
+
+  drawScrollBars(forceHide = false) {
+    if (this.canvas.node() && this.canvasWrapper.node()) {
+      this.initScrollBars();
+      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
+      this.renderScrollBar(this.scrollBars.vertical, forceHide);
+    }
+  }
+
+  renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
+    const hasOffset = scrollBar.offsetStart < 0 || scrollBar.offsetEnd < 0;
+    if (hasOffset && !forceHide) {
+      if (scrollBar.bar) {
+        this.updateScrollBarAttrs(scrollBar);
+      } else {
+        this.drawScrollBar(scrollBar);
+      }
+    } else {
+      scrollBar.bar?.remove();
+      scrollBar.bar = undefined;
+    }
+  }
+
+  drawScrollBar(scrollBar: ScrollBar) {
+    scrollBar.bar = this.canvasWrapper.append('rect');
+    const dragged = drag().on(
+      'drag',
+      this.dragged(scrollBar.name).bind(this),
+    ) as never;
+    scrollBar.bar?.call(dragged);
+    this.updateScrollBarAttrs(scrollBar);
+  }
+
+  updateScrollBarAttrs(scrollBar: ScrollBar) {
+    const { start, length } = this.calculateDynamicAttr(scrollBar);
+
+    if (scrollBar.name === 'horizontal') {
+      scrollBar.bar
+        ?.attr('x', start)
+        .attr('y', scrollBar.maxHeight - this.HORIZONTAL_DIST_TO_EDGE)
+        .attr('width', length)
+        .attr('height', this.WIDTH);
+    } else {
+      scrollBar.bar
+        ?.attr('x', scrollBar.maxHeight - this.VERTICAL_DIST_TO_EDGE)
+        .attr('y', start)
+        .attr('width', this.WIDTH)
+        .attr('height', length);
+    }
+
+    scrollBar.bar
+      ?.attr('rx', this.RADIUS)
+      .attr('draggable', true)
+      .attr('cursor', 'pointer')
+      .attr('stroke', this.COLOR)
+      .attr('fill', this.COLOR)
+      .attr('data-testid', scrollBar.name + '-bar')
+      .attr('class', 'dynamic-element');
+  }
+
+  calculateDynamicAttr(scrollBar: ScrollBar) {
+    const start = clamp(
+      -scrollBar.offsetStart,
+      this.MARGIN,
+      scrollBar.maxWidth - this.MIN_LENGTH - this.MARGIN,
+    );
+    const end =
+      scrollBar.maxWidth -
+      clamp(-scrollBar.offsetEnd, this.MARGIN, scrollBar.maxWidth);
+    const length = Math.max(end - start, this.MIN_LENGTH);
+    return { start, length };
+  }
+
+  dragged = (name: string) => (event) => {
+    if (name === 'horizontal') {
+      this.zoom?.translateBy(this.canvasWrapper, -event.dx, 0);
+    } else {
+      this.zoom?.translateBy(this.canvasWrapper, 0, -event.dy);
+    }
+  };
+
+  public scrollTo(
+    position: Vec2,
+    stickToBottom = false,
+    xOffset?,
+    yOffset?,
+    isOffsetInPercents = true,
+    needScrollVertical = true,
+  ) {
+    const canvasWrapperHeight =
+      this.canvasWrapper.node()?.height.baseVal.value || 0;
+
+    const canvasWrapperWidth =
+      this.canvasWrapper.node()?.width.baseVal.value || 0;
+
+    // Calculate X offset
+    let xOffsetValue: number;
+    if (isNumber(xOffset) && !isOffsetInPercents) {
+      xOffsetValue = xOffset;
+    } else {
+      const xOffsetOrDefault = isNumber(xOffset)
+        ? xOffset
+        : AUTO_SCROLL_OFFSET_X;
+      xOffsetValue = (canvasWrapperWidth * xOffsetOrDefault) / 100;
+    }
+
+    // Calculate Y offset
+    let yOffsetValue: number;
+    if (isNumber(yOffset) && !isOffsetInPercents) {
+      yOffsetValue = yOffset;
+    } else {
+      const yOffsetOrDefault = isNumber(yOffset)
+        ? yOffset
+        : AUTO_SCROLL_OFFSET_Y;
+      yOffsetValue = (canvasWrapperHeight * yOffsetOrDefault) / 100;
+    }
+
+    const offset = new Vec2(
+      canvasWrapperWidth / 2 - xOffsetValue,
+      canvasWrapperHeight / 2 - yOffsetValue,
+    );
+    const currentY = this._zoomTransform?.y ?? 0;
+
+    // Calculate Y position for translateTo
+    let yPosition: number;
+    if (needScrollVertical) {
+      const multiplier = stickToBottom ? -1 : 1;
+      yPosition = position.y + this.unzoomValue(offset.y * multiplier);
+    } else {
+      yPosition = this.unzoomValue(canvasWrapperHeight / 2 - currentY);
+    }
+
+    this.zoom?.translateTo(
+      this.canvasWrapper,
+      position.x + this.unzoomValue(offset.x),
+      yPosition,
+    );
+  }
+
+  public scrollBy(x: number, y: number) {
+    this.zoom?.translateBy(
+      this.canvasWrapper,
+      this.unzoomValue(x),
+      this.unzoomValue(y),
+    );
+  }
+
+  public scrollToVerticalCenter(structCenterY: number) {
+    const centerPointOfModel =
+      this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();
+    const offsetY = centerPointOfModel.y - structCenterY;
+    this.zoom?.translateBy(this.canvasWrapper, 0, offsetY);
+  }
+
+  public scrollToVerticalBottom() {
+    this.drawScrollBars();
+
+    if (this.scrollBars.vertical.offsetEnd < 0) {
+      this.zoom?.translateBy(
+        this.canvasWrapper,
+        0,
+        this.scrollBars.vertical.offsetEnd / this.zoomLevel,
+      );
+    }
+  }
+
+  mouseWheeled(event) {
+    const isShiftKeydown = event.shiftKey;
+    const boxNode = this.canvasWrapper.node();
+    if (boxNode && (event.deltaX || event.deltaY)) {
+      const x = -event.deltaX / this.zoomLevel;
+      const y = -event.deltaY / this.zoomLevel;
+      if (isShiftKeydown) {
+        this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
+      } else {
+        this.zoom?.translateBy(this.canvasWrapper, x, y);
+      }
+    }
+  }
+
+  initScrollBars() {
+    const boundingBox = this.canvas.node()?.getBoundingClientRect() as DOMRect;
+    const wrapperBoundingBox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect() as DOMRect;
+    const canvasWrapperHeight =
+      this.canvasWrapper.node()?.height.baseVal.value || 0;
+
+    const canvasWrapperWidth =
+      this.canvasWrapper.node()?.width.baseVal.value || 0;
+    this.scrollBars = {
+      horizontal: {
+        name: 'horizontal',
+        offsetStart: boundingBox.left - wrapperBoundingBox.left,
+        offsetEnd: wrapperBoundingBox.width - boundingBox.right,
+        maxWidth: canvasWrapperWidth,
+        maxHeight: canvasWrapperHeight,
+        bar: this.scrollBars?.horizontal?.bar,
+      },
+      vertical: {
+        name: 'vertical',
+        offsetStart: boundingBox.top - wrapperBoundingBox.top,
+        offsetEnd: wrapperBoundingBox.height - boundingBox.bottom,
+        maxWidth: canvasWrapperHeight,
+        maxHeight: canvasWrapperWidth,
+        bar: this.scrollBars?.vertical?.bar,
+      },
+    };
+  }
+
+  private get zoomStep() {
+    return 0.1;
+  }
+
+  public zoomIn(zoomStep = this.zoomStep) {
+    this.zoomToLeftTopCorner(this.zoomLevel + zoomStep);
+  }
+
+  public zoomOut(zoomStep = this.zoomStep) {
+    this.zoomToLeftTopCorner(this.zoomLevel - zoomStep);
+  }
+
+  public zoomToLeftTopCorner(_newZoomLevel: number) {
+    let newZoomLevel = _newZoomLevel;
+
+    newZoomLevel = Math.min(newZoomLevel, this.MAXZOOMSCALE);
+    newZoomLevel = Math.max(newZoomLevel, this.MINZOOMSCALE);
+
+    const { x, y } = this._zoomTransform;
+    const scaleFactor = newZoomLevel / this.zoomLevel;
+
+    // Calculate the new translation to zoom to the top-left corner
+    const newX = x * scaleFactor;
+    const newY = y * scaleFactor;
+
+    this.zoom?.transform(
+      this.canvasWrapper,
+      new ZoomTransform(newZoomLevel, newX, newY),
+    );
+  }
+
+  public zoomTo(zoomLevel: number) {
+    this.zoomToLeftTopCorner(zoomLevel);
+  }
+
+  public resetZoom() {
+    const canvasWrapperNode = this.canvasWrapper.node();
+
+    if (!canvasWrapperNode?.transform?.baseVal) {
+      return;
+    }
+
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+  }
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.drawScrollBars();
+    });
+    this.resizeObserver.observe(this.canvasWrapper.node() as SVGSVGElement);
+  };
+
+  defaultWheelDelta(event) {
+    let wheelDeltaFactor = 0.002;
+
+    if (event.deltaMode === 1) {
+      wheelDeltaFactor = 0.05;
+    } else if (event.deltaMode) {
+      wheelDeltaFactor = 1;
+    }
+
+    return -event.deltaY * wheelDeltaFactor;
+  }
+
+  scaleCoordinates(position: Vec2) {
+    const newX = this._zoomTransform.applyX(position.x);
+    const newY = this._zoomTransform.applyY(position.y);
+    return new Vec2(newX, newY);
+  }
+
+  invertZoom(position: Vec2) {
+    const newX = this._zoomTransform.invertX(position.x);
+    const newY = this._zoomTransform.invertY(position.y);
+    return new Vec2(newX, newY);
+  }
+
+  unzoomValue(value: number) {
+    return value / this.zoomLevel;
+  }
+
+  zoomValue(value: number) {
+    return value * this.zoomLevel;
+  }
+
+  destroy() {
+    this.scrollBars?.horizontal?.bar?.remove();
+    this.scrollBars?.vertical?.bar?.remove();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.zoom = null;
+    this.zoomEventHandlers = [];
+  }
+
+  isFitToCanvasHeight(height) {
+    const canvasWrapperHeight = this.canvasWrapperHeight;
+
+    return (
+      height <
+      this.unzoomValue(
+        canvasWrapperHeight -
+          (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+      )
+    );
+  }
+
+  public zoomStructureToFitHalfOfCanvas(structureBbox: StructureBbox) {
+    const MAX_AUTOSCALE = 2;
+    const OFFSET_FROM_CANVAS_BORDER = 2;
+    const canvasWrapperSize = this.canvasWrapperSize;
+
+    if (structureBbox.width < canvasWrapperSize.width / 2) {
+      const scale = canvasWrapperSize.width / 2 / structureBbox.width;
+      this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
+      this.scrollTo(
+        new Vec2(structureBbox.left, structureBbox.top),
+        false,
+        OFFSET_FROM_CANVAS_BORDER,
+        OFFSET_FROM_CANVAS_BORDER,
+      );
+    }
+  }
+
+  public get canvasWrapperHeight() {
+    // TODO create class for Canvas and move this getter there
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.height ?? 0;
+  }
+
+  public get canvasWrapperWidth() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.width ?? 0;
+  }
+
+  public get canvasWrapperSize() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return {
+      width: canvasWrapperBbox?.width ?? 0,
+      height: canvasWrapperBbox?.height ?? 0,
+    };
+  }
+}
+
+export default ZoomTool;

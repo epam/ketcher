@@ -1,0 +1,36 @@
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { SequenceNode } from 'domain/entities/monomer-chains/types';
+
+export function isNodeRestrictedForHydrogenBondCreation(
+  node: SequenceNode | undefined,
+) {
+  return (
+    !node ||
+    node instanceof LinkerSequenceNode ||
+    node instanceof BackBoneSequenceNode ||
+    node instanceof EmptySequenceNode
+  );
+}
+
+export function isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+  twoStrandedNode?: ITwoStrandedChainItem,
+) {
+  const senseNodeHydrogenBonds =
+    twoStrandedNode?.senseNode?.monomers.reduce((acc, monomer) => {
+      return acc.concat(monomer.hydrogenBonds);
+    }, [] as HydrogenBond[]) || [];
+
+  return Boolean(
+    isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.senseNode) ||
+      isNodeRestrictedForHydrogenBondCreation(twoStrandedNode?.antisenseNode) ||
+      twoStrandedNode?.antisenseNode?.monomers.some((monomer) =>
+        monomer.hydrogenBonds.some((hydrogenBond) => {
+          return senseNodeHydrogenBonds.includes(hydrogenBond);
+        }),
+      ),
+  );
+}

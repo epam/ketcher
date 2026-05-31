@@ -14,13 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { SGroup, Struct } from 'domain/entities';
+
 export interface MolSerializerOptions {
-  reactionRelayout: boolean
-  badHeaderRecover: boolean
-  ignoreErrors: boolean
-  noRgroups: boolean
-  preserveIndigoDesc: boolean
-  ignoreChiralFlag?: boolean
+  reactionRelayout: boolean;
+  badHeaderRecover: boolean;
+  ignoreErrors: boolean;
+  noRgroups: boolean;
+  preserveIndigoDesc: boolean;
+  ignoreChiralFlag?: boolean;
 }
 
-export type MolfileFormat = 'v2000' | 'v3000'
+export type MolfileFormat = 'v2000' | 'v3000';
+
+export type Mapping = {
+  [key in number]: number;
+};
+
+export type SGroupMap = Record<number, SGroup>;
+
+export type AtomMap = Record<number, number>;
+
+export type PostLoadHandler = (
+  sgroup: SGroup,
+  mol?: Struct,
+  atomMap?: AtomMap,
+) => void;

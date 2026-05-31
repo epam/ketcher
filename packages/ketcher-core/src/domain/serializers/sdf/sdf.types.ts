@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities'
+import type { Struct } from 'domain/entities/struct';
 
 export interface StructAssociatedData {
-  [key: string]: string | number
+  [key: string]: string | number;
 }
 
 export interface SdfItem {
-  struct: Struct
-  props: StructAssociatedData
+  struct: Struct;
+  props: StructAssociatedData;
 }

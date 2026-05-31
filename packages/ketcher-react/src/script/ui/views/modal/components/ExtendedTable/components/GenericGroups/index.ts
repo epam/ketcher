@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './GenericGroups'
+export { default } from './GenericGroups';
 
 export enum groupNames {
   atomsGen = 'atoms-gen',
@@ -25,5 +25,5 @@ export enum groupNames {
   acyclicHetero = 'acyclic-hetero',
   groupCyclic = 'group-cyclic',
   cyclicHetero = 'cyclic-hetero',
-  cyclicCarbo = 'cyclic-carbo'
+  cyclicCarbo = 'cyclic-carbo',
 }

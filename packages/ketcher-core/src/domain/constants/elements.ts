@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Element } from './element.types'
+import type { Element } from './element.types';
 
 const elementsArray: Array<Element> = [
   {
@@ -26,7 +26,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 1.00794
+    mass: 1.00794,
   },
   {
     number: 2,
@@ -37,7 +37,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    mass: 4.0026022
+    mass: 4.0026022,
   },
   {
     number: 3,
@@ -48,7 +48,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    mass: 6.94
+    mass: 6.94,
   },
   {
     number: 4,
@@ -59,7 +59,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    mass: 9.01218315
+    mass: 9.01218315,
   },
   {
     number: 5,
@@ -70,7 +70,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 10.81
+    mass: 10.81,
   },
   {
     number: 6,
@@ -81,7 +81,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 12.011
+    mass: 12.011,
   },
   {
     number: 7,
@@ -92,7 +92,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 14.007
+    mass: 14.007,
   },
   {
     number: 8,
@@ -104,7 +104,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 15.999
+    mass: 15.999,
   },
   {
     number: 9,
@@ -116,7 +116,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'halogen',
-    mass: 18.9984031636
+    mass: 18.9984031636,
   },
   {
     number: 10,
@@ -127,7 +127,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    mass: 20.17976
+    mass: 20.17976,
   },
   {
     number: 11,
@@ -138,7 +138,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    mass: 22.989769282
+    mass: 22.989769282,
   },
   {
     number: 12,
@@ -149,7 +149,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    mass: 24.305
+    mass: 24.305,
   },
   {
     number: 13,
@@ -160,7 +160,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 26.98153857
+    mass: 26.98153857,
   },
   {
     number: 14,
@@ -171,7 +171,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 28.085
+    mass: 28.085,
   },
   {
     number: 15,
@@ -182,7 +182,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 30.9737619985
+    mass: 30.9737619985,
   },
   {
     number: 16,
@@ -194,7 +194,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 32.06
+    mass: 32.06,
   },
   {
     number: 17,
@@ -206,7 +206,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'halogen',
-    mass: 35.45
+    mass: 35.45,
   },
   {
     number: 18,
@@ -217,7 +217,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    mass: 39.9481
+    mass: 39.9481,
   },
   {
     number: 19,
@@ -228,7 +228,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    mass: 39.09831
+    mass: 39.09831,
   },
   {
     number: 20,
@@ -239,7 +239,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    mass: 40.0784
+    mass: 40.0784,
   },
   {
     number: 21,
@@ -250,7 +250,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 44.9559085
+    mass: 44.9559085,
   },
   {
     number: 22,
@@ -261,7 +261,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 47.8671
+    mass: 47.8671,
   },
   {
     number: 23,
@@ -272,7 +272,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 50.94151
+    mass: 50.94151,
   },
   {
     number: 24,
@@ -283,7 +283,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 51.99616
+    mass: 51.99616,
   },
   {
     number: 25,
@@ -294,7 +294,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 54.9380443
+    mass: 54.9380443,
   },
   {
     number: 26,
@@ -305,7 +305,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 55.8452
+    mass: 55.8452,
   },
   {
     number: 27,
@@ -316,7 +316,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 58.9331944
+    mass: 58.9331944,
   },
   {
     number: 28,
@@ -327,7 +327,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 58.69344
+    mass: 58.69344,
   },
   {
     number: 29,
@@ -338,7 +338,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 63.5463
+    mass: 63.5463,
   },
   {
     number: 30,
@@ -349,7 +349,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 65.382
+    mass: 65.382,
   },
   {
     number: 31,
@@ -360,7 +360,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 69.7231
+    mass: 69.7231,
   },
   {
     number: 32,
@@ -371,7 +371,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 72.6308
+    mass: 72.6308,
   },
   {
     number: 33,
@@ -382,7 +382,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 74.9215956
+    mass: 74.9215956,
   },
   {
     number: 34,
@@ -394,7 +394,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'other-nonmetal',
-    mass: 78.9718
+    mass: 78.9718,
   },
   {
     number: 35,
@@ -406,7 +406,7 @@ const elementsArray: Array<Element> = [
     state: 'liquid',
     origin: 'primordial',
     type: 'halogen',
-    mass: 79.904
+    mass: 79.904,
   },
   {
     number: 36,
@@ -417,7 +417,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    mass: 83.7982
+    mass: 83.7982,
   },
   {
     number: 37,
@@ -428,7 +428,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    mass: 85.46783
+    mass: 85.46783,
   },
   {
     number: 38,
@@ -439,7 +439,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    mass: 87.621
+    mass: 87.621,
   },
   {
     number: 39,
@@ -450,7 +450,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 88.905842
+    mass: 88.905842,
   },
   {
     number: 40,
@@ -461,7 +461,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 91.2242
+    mass: 91.2242,
   },
   {
     number: 41,
@@ -472,7 +472,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 92.906372
+    mass: 92.906372,
   },
   {
     number: 42,
@@ -483,7 +483,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 95.951
+    mass: 95.951,
   },
   {
     number: 43,
@@ -494,7 +494,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'transition',
-    mass: 98
+    mass: 98,
   },
   {
     number: 44,
@@ -505,7 +505,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 101.072
+    mass: 101.072,
   },
   {
     number: 45,
@@ -516,7 +516,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 102.905502
+    mass: 102.905502,
   },
   {
     number: 46,
@@ -527,7 +527,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 106.421
+    mass: 106.421,
   },
   {
     number: 47,
@@ -538,7 +538,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 107.86822
+    mass: 107.86822,
   },
   {
     number: 48,
@@ -549,7 +549,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 112.4144
+    mass: 112.4144,
   },
   {
     number: 49,
@@ -560,7 +560,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 114.8181
+    mass: 114.8181,
   },
   {
     number: 50,
@@ -571,7 +571,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 118.7107
+    mass: 118.7107,
   },
   {
     number: 51,
@@ -582,7 +582,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 121.7601
+    mass: 121.7601,
   },
   {
     number: 52,
@@ -593,7 +593,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'metalloid',
-    mass: 127.603
+    mass: 127.603,
   },
   {
     number: 53,
@@ -605,7 +605,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'halogen',
-    mass: 126.904473
+    mass: 126.904473,
   },
   {
     number: 54,
@@ -616,7 +616,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'primordial',
     type: 'noble',
-    mass: 131.2936
+    mass: 131.2936,
   },
   {
     number: 55,
@@ -627,7 +627,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkali',
-    mass: 132.905451966
+    mass: 132.905451966,
   },
   {
     number: 56,
@@ -638,7 +638,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'alkaline-earth',
-    mass: 137.3277
+    mass: 137.3277,
   },
   {
     number: 57,
@@ -649,7 +649,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 138.905477
+    mass: 138.905477,
   },
   {
     number: 58,
@@ -660,7 +660,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 140.1161
+    mass: 140.1161,
   },
   {
     number: 59,
@@ -671,7 +671,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 140.907662
+    mass: 140.907662,
   },
   {
     number: 60,
@@ -682,7 +682,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 144.2423
+    mass: 144.2423,
   },
   {
     number: 61,
@@ -693,7 +693,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'lanthanide',
-    mass: 145
+    mass: 145,
   },
   {
     number: 62,
@@ -704,7 +704,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 150.362
+    mass: 150.362,
   },
   {
     number: 63,
@@ -715,7 +715,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 151.9641
+    mass: 151.9641,
   },
   {
     number: 64,
@@ -726,7 +726,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 157.253
+    mass: 157.253,
   },
   {
     number: 65,
@@ -737,7 +737,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 158.925352
+    mass: 158.925352,
   },
   {
     number: 66,
@@ -748,7 +748,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 162.5001
+    mass: 162.5001,
   },
   {
     number: 67,
@@ -759,7 +759,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 164.930332
+    mass: 164.930332,
   },
   {
     number: 68,
@@ -770,7 +770,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 167.2593
+    mass: 167.2593,
   },
   {
     number: 69,
@@ -781,7 +781,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 168.934222
+    mass: 168.934222,
   },
   {
     number: 70,
@@ -792,7 +792,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 173.0451
+    mass: 173.0451,
   },
   {
     number: 71,
@@ -803,7 +803,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'lanthanide',
-    mass: 174.96681
+    mass: 174.96681,
   },
   {
     number: 72,
@@ -814,7 +814,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 178.492
+    mass: 178.492,
   },
   {
     number: 73,
@@ -825,7 +825,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 180.947882
+    mass: 180.947882,
   },
   {
     number: 74,
@@ -836,7 +836,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 183.841
+    mass: 183.841,
   },
   {
     number: 75,
@@ -847,7 +847,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 186.2071
+    mass: 186.2071,
   },
   {
     number: 76,
@@ -858,7 +858,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 190.233
+    mass: 190.233,
   },
   {
     number: 77,
@@ -869,7 +869,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 192.2173
+    mass: 192.2173,
   },
   {
     number: 78,
@@ -880,7 +880,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 195.0849
+    mass: 195.0849,
   },
   {
     number: 79,
@@ -891,7 +891,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'transition',
-    mass: 196.9665695
+    mass: 196.9665695,
   },
   {
     number: 80,
@@ -902,7 +902,7 @@ const elementsArray: Array<Element> = [
     state: 'liquid',
     origin: 'primordial',
     type: 'transition',
-    mass: 200.5923
+    mass: 200.5923,
   },
   {
     number: 81,
@@ -913,7 +913,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 204.38
+    mass: 204.38,
   },
   {
     number: 82,
@@ -924,7 +924,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 207.21
+    mass: 207.21,
   },
   {
     number: 83,
@@ -935,7 +935,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'post-transition',
-    mass: 208.980401
+    mass: 208.980401,
   },
   {
     number: 84,
@@ -946,7 +946,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'metalloid',
-    mass: 209
+    mass: 209,
   },
   {
     number: 85,
@@ -957,7 +957,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'halogen',
-    mass: 210
+    mass: 210,
   },
   {
     number: 86,
@@ -968,7 +968,7 @@ const elementsArray: Array<Element> = [
     state: 'gas',
     origin: 'decay',
     type: 'noble',
-    mass: 222
+    mass: 222,
   },
   {
     number: 87,
@@ -979,7 +979,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'alkali',
-    mass: 223
+    mass: 223,
   },
   {
     number: 88,
@@ -990,7 +990,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'alkaline-earth',
-    mass: 226
+    mass: 226,
   },
   {
     number: 89,
@@ -1001,7 +1001,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'transition',
-    mass: 227
+    mass: 227,
   },
   {
     number: 90,
@@ -1012,7 +1012,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'actinide',
-    mass: 232.03774
+    mass: 232.03774,
   },
   {
     number: 91,
@@ -1023,7 +1023,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    mass: 231.035882
+    mass: 231.035882,
   },
   {
     number: 92,
@@ -1034,7 +1034,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'primordial',
     type: 'actinide',
-    mass: 238.028913
+    mass: 238.028913,
   },
   {
     number: 93,
@@ -1045,7 +1045,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    mass: 237
+    mass: 237,
   },
   {
     number: 94,
@@ -1056,7 +1056,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'decay',
     type: 'actinide',
-    mass: 244
+    mass: 244,
   },
   {
     number: 95,
@@ -1067,7 +1067,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 243
+    mass: 243,
   },
   {
     number: 96,
@@ -1078,7 +1078,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 247
+    mass: 247,
   },
   {
     number: 97,
@@ -1089,7 +1089,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 247
+    mass: 247,
   },
   {
     number: 98,
@@ -1100,7 +1100,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 251
+    mass: 251,
   },
   {
     number: 99,
@@ -1111,7 +1111,7 @@ const elementsArray: Array<Element> = [
     state: 'solid',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 252
+    mass: 252,
   },
   {
     number: 100,
@@ -1121,7 +1121,7 @@ const elementsArray: Array<Element> = [
     title: 'Fermium',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 257
+    mass: 257,
   },
   {
     number: 101,
@@ -1131,7 +1131,7 @@ const elementsArray: Array<Element> = [
     title: 'Mendelevium',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 258
+    mass: 258,
   },
   {
     number: 102,
@@ -1141,7 +1141,7 @@ const elementsArray: Array<Element> = [
     title: 'Nobelium',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 259
+    mass: 259,
   },
   {
     number: 103,
@@ -1151,7 +1151,7 @@ const elementsArray: Array<Element> = [
     title: 'Lawrencium',
     origin: 'synthetic',
     type: 'actinide',
-    mass: 266
+    mass: 266,
   },
   {
     number: 104,
@@ -1161,7 +1161,7 @@ const elementsArray: Array<Element> = [
     title: 'Rutherfordium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 267
+    mass: 267,
   },
   {
     number: 105,
@@ -1171,7 +1171,7 @@ const elementsArray: Array<Element> = [
     title: 'Dubnium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 268
+    mass: 268,
   },
   {
     number: 106,
@@ -1181,7 +1181,7 @@ const elementsArray: Array<Element> = [
     title: 'Seaborgium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 269
+    mass: 269,
   },
   {
     number: 107,
@@ -1191,7 +1191,7 @@ const elementsArray: Array<Element> = [
     title: 'Bohrium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 270
+    mass: 270,
   },
   {
     number: 108,
@@ -1201,7 +1201,7 @@ const elementsArray: Array<Element> = [
     title: 'Hassium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 269
+    mass: 269,
   },
   {
     number: 109,
@@ -1211,7 +1211,7 @@ const elementsArray: Array<Element> = [
     title: 'Meitnerium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 278
+    mass: 278,
   },
   {
     number: 110,
@@ -1221,7 +1221,7 @@ const elementsArray: Array<Element> = [
     title: 'Darmstadtium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 281
+    mass: 281,
   },
   {
     number: 111,
@@ -1231,7 +1231,7 @@ const elementsArray: Array<Element> = [
     title: 'Roentgenium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 282
+    mass: 282,
   },
   {
     number: 112,
@@ -1241,7 +1241,7 @@ const elementsArray: Array<Element> = [
     title: 'Copernicium',
     origin: 'synthetic',
     type: 'transition',
-    mass: 285
+    mass: 285,
   },
   {
     number: 113,
@@ -1251,7 +1251,7 @@ const elementsArray: Array<Element> = [
     title: 'Nihonium',
     origin: 'synthetic',
     type: 'post-transition',
-    mass: 286
+    mass: 286,
   },
   {
     number: 114,
@@ -1261,7 +1261,7 @@ const elementsArray: Array<Element> = [
     title: 'Flerovium',
     origin: 'synthetic',
     type: 'post-transition',
-    mass: 289
+    mass: 289,
   },
   {
     number: 115,
@@ -1271,7 +1271,7 @@ const elementsArray: Array<Element> = [
     title: 'Moscovium',
     origin: 'synthetic',
     type: 'post-transition',
-    mass: 289
+    mass: 289,
   },
   {
     number: 116,
@@ -1281,7 +1281,7 @@ const elementsArray: Array<Element> = [
     title: 'Livermorium',
     origin: 'synthetic',
     type: 'post-transition',
-    mass: 293
+    mass: 293,
   },
   {
     number: 117,
@@ -1291,7 +1291,7 @@ const elementsArray: Array<Element> = [
     title: 'Tennessine',
     origin: 'synthetic',
     type: 'halogen',
-    mass: 294
+    mass: 294,
   },
   {
     number: 118,
@@ -1301,19 +1301,20 @@ const elementsArray: Array<Element> = [
     title: 'Oganesson',
     origin: 'synthetic',
     type: 'noble',
-    mass: 294
-  }
-]
+    mass: 294,
+  },
+];
 
 const elementsMap = elementsArray.reduce((acc, element) => {
-  acc.set(element.label, element)
-  acc.set(element.number, element)
-  return acc
-}, new Map<string | number, Element>())
+  acc.set(element.label, element);
+  acc.set(element.number, element);
+  return acc;
+}, new Map<string | number, Element>());
 
 export const Elements = {
   get: (key: number | string): Element | undefined => elementsMap.get(key),
   filter: (predicate: (element: Element) => boolean): Array<Element> => {
-    return elementsArray.filter(predicate)
-  }
-}
+    return elementsArray.filter(predicate);
+  },
+  getAll: () => [...elementsArray],
+};

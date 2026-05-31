@@ -1,0 +1,231 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+import type { Tool, IRnaPreset } from 'application/editor/tools/Tool';
+import { Sugar } from 'domain/entities/Sugar';
+import { type BaseMonomer, Vec2 } from 'domain/entities';
+
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import type { BaseMonomerRenderer } from 'application/render/renderers';
+import type { MonomerItemType } from 'domain/types';
+import { monomerFactory } from '../operations/monomer/monomerFactory';
+import type { RNABase } from 'domain/entities/RNABase';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Coordinates } from '../shared/coordinates';
+
+import { SnakeLayoutCellWidth } from 'domain/constants';
+import type { IKetTemplateConnection } from 'application/formatters';
+import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
+
+class RnaPresetTool implements Tool {
+  rnaBase: MonomerItemType | undefined;
+  sugar: MonomerItemType | undefined;
+  phosphate: MonomerItemType | undefined;
+  connections: IKetTemplateConnection[] | undefined;
+
+  private rnaBasePreview: RNABase | undefined;
+  private phosphatePreview: Phosphate | undefined;
+  private sugarPreview: Sugar | undefined;
+  private rnaBasePreviewRenderer: BaseMonomerRenderer | undefined;
+  private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
+  private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
+  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.5;
+  readonly MONOMER_PREVIEW_OFFSET_X = 30;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 30;
+  readonly RNA_BASE_PREVIEW_OFFSET_X = 1;
+  readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
+  readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
+  history: EditorHistory;
+
+  constructor(private readonly editor: CoreEditor, preset: IRnaPreset) {
+    this.editor = editor;
+    if (preset?.base) {
+      this.rnaBase = preset?.base;
+    }
+    if (preset?.phosphate) {
+      this.phosphate = preset?.phosphate;
+    }
+    this.connections = preset?.connections || [];
+    if (preset?.sugar) {
+      this.sugar = preset?.sugar;
+    }
+    if (preset?.connections) {
+      this.connections = preset?.connections;
+    }
+    this.history = EditorHistory.getInstance(this.editor);
+  }
+
+  mousedown() {
+    if (!this.sugar || !this.sugarPreviewRenderer) {
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
+    let phosphatePosition: Vec2 | undefined;
+    if (this.phosphatePreviewRenderer) {
+      const phosphateOffset =
+        getRnaPresetPhosphatePosition(this) === 'left'
+          ? -SnakeLayoutCellWidth
+          : SnakeLayoutCellWidth;
+      phosphatePosition = Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPositionOfCanvas.x + phosphateOffset,
+          this.editor.lastCursorPositionOfCanvas.y,
+        ),
+      );
+    }
+
+    const { command: modelChanges, monomers } =
+      this.editor.drawingEntitiesManager.addRnaPreset({
+        sugar: this.sugar,
+        sugarPosition: Coordinates.canvasToModel(
+          new Vec2(
+            this.editor.lastCursorPositionOfCanvas.x,
+            this.editor.lastCursorPositionOfCanvas.y,
+          ),
+        ),
+        phosphate: this.phosphate,
+        phosphatePosition,
+        rnaBase: this.rnaBase,
+        rnaBasePosition: this.rnaBasePreviewRenderer
+          ? Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x,
+                this.editor.lastCursorPositionOfCanvas.y + SnakeLayoutCellWidth,
+              ),
+            )
+          : undefined,
+        connections: this.connections,
+      });
+
+    this.history.update(modelChanges);
+    this.editor.renderersContainer.update(modelChanges);
+    this.editor.calculateAndStoreNextAutochainPosition(
+      (monomers.find((monomer) => monomer instanceof Phosphate) ||
+        monomers.find((monomer) => monomer instanceof Sugar)) as BaseMonomer,
+    );
+  }
+
+  mousemove() {
+    this.sugarPreview?.moveAbsolute(
+      Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+      ),
+    );
+
+    this.rnaBasePreview?.moveAbsolute(
+      Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            this.RNA_BASE_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y +
+            this.MONOMER_PREVIEW_OFFSET_Y +
+            this.RNA_BASE_PREVIEW_OFFSET_Y,
+        ),
+      ),
+    );
+
+    this.phosphatePreview?.moveAbsolute(
+      Coordinates.canvasToModel(
+        new Vec2(
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            (getRnaPresetPhosphatePosition(this) === 'left'
+              ? -this.PHOSPHATE_PREVIEW_OFFSET_X
+              : this.PHOSPHATE_PREVIEW_OFFSET_X),
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+      ),
+    );
+
+    this.rnaBasePreviewRenderer?.move();
+    this.phosphatePreviewRenderer?.move();
+    this.sugarPreviewRenderer?.move();
+  }
+
+  public mouseLeaveClientArea() {
+    this.sugarPreviewRenderer?.remove();
+    this.sugarPreviewRenderer = undefined;
+    this.sugarPreview = undefined;
+    this.phosphatePreviewRenderer?.remove();
+    this.phosphatePreviewRenderer = undefined;
+    this.phosphatePreview = undefined;
+    this.rnaBasePreviewRenderer?.remove();
+    this.rnaBasePreviewRenderer = undefined;
+    this.rnaBasePreview = undefined;
+  }
+
+  public mouseover() {
+    if (!this.sugar) {
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
+    if (this.sugarPreview) {
+      return;
+    }
+
+    const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
+    this.sugarPreview = new Sugar(this.sugar) as Sugar;
+
+    this.sugarPreviewRenderer = new SugarRenderer(
+      this.sugarPreview,
+      this.MONOMER_PREVIEW_SCALE_FACTOR,
+    );
+
+    this.sugarPreviewRenderer?.show(this.editor.theme);
+
+    if (this.rnaBase) {
+      const [RNABase, RNABaseRenderer] = monomerFactory(this.rnaBase);
+      this.rnaBasePreview = new RNABase(this.rnaBase) as RNABase;
+      this.rnaBasePreviewRenderer = new RNABaseRenderer(
+        this.rnaBasePreview,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+      );
+
+      this.rnaBasePreviewRenderer?.show(this.editor.theme);
+    }
+
+    if (this.phosphate) {
+      const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
+
+      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
+
+      this.phosphatePreviewRenderer = new PhosphateRenderer(
+        this.phosphatePreview,
+        this.MONOMER_PREVIEW_SCALE_FACTOR,
+      );
+
+      this.phosphatePreviewRenderer?.show(this.editor.theme);
+    }
+  }
+
+  hidePreview() {
+    this.rnaBasePreviewRenderer?.remove();
+    this.phosphatePreviewRenderer?.remove();
+    this.sugarPreviewRenderer?.remove();
+  }
+
+  destroy(): void {
+    this.hidePreview();
+  }
+}
+
+export { RnaPresetTool };

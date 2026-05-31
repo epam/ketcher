@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ButtonConfig } from './ButtonConfig'
-import { ButtonName } from './ButtonName'
+import { ButtonConfig } from './ButtonConfig';
+import { ButtonName } from './ButtonName';
 
 export type ButtonsConfig = {
-  [buttonName in ButtonName]?: ButtonConfig
-}
+  [buttonName in ButtonName]?: ButtonConfig;
+};

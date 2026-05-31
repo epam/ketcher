@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 export type ButtonName =
   // top
@@ -54,6 +55,7 @@ export type ButtonName =
   | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
   | 'reaction-arrow-elliptical-arc-arrow-open-angle'
   | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
+  | typeof MULTITAIL_ARROW_TOOL_NAME
   // mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'
@@ -73,3 +75,4 @@ export type ButtonName =
   | 'text'
   // right
   | 'enhanced-stereo'
+  | 'create-monomer';

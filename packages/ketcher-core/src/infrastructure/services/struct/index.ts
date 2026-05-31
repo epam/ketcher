@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './remoteStructService'
-export * from './remoteStructServiceProvider'
+export * from './remoteStructService';
+export * from './remoteStructServiceProvider';

@@ -14,115 +14,178 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup } from 'ketcher-core'
-import { PropsWithChildren, useCallback } from 'react'
-import { useContextMenu } from 'react-contexify'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
 import {
-  ClosestItem,
-  CONTEXT_MENU_ID,
-  ContextMenuShowProps,
+  FunctionalGroup,
+  ketcherProvider,
+  MULTITAIL_ARROW_KEY,
+} from 'ketcher-core';
+import { FC, PropsWithChildren, useCallback } from 'react';
+import { useContextMenu } from 'react-contexify';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
+import {
+  ContextMenuProps,
   ContextMenuTriggerType,
-  GetIsItemInSelectionArgs
-} from './contextMenu.types'
-import { Selection } from '../../../../editor/Editor'
-import { onlyHasProperty } from './utils'
+  CONTEXT_MENU_ID,
+} from './contextMenu.types';
+import {
+  getIsItemInSelection,
+  getMenuPropsForClosestItem,
+  getMenuPropsForSelection,
+} from './ContextMenuTrigger.utils';
+import TemplateTool from 'src/script/editor/tool/template';
 
-const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
-  const { getKetcherInstance } = useAppContext()
-  const { show } = useContextMenu<ContextMenuShowProps>()
+const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
+  const { ketcherId } = useAppContext();
+  const { show } = useContextMenu<ContextMenuProps>();
 
   const getSelectedGroupsInfo = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const struct = editor.struct()
-    const selectedAtomIds = editor.selection()?.atoms
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+    const struct = editor.struct();
+    const selectedAtomIds = editor.selection()?.atoms;
     // Map and Set can do deduplication
-    const selectedFunctionalGroups = new Map<number, FunctionalGroup>()
-    const selectedSGroupsIds: Set<number> = new Set()
+    const selectedFunctionalGroups = new Map<number, FunctionalGroup>();
+    const selectedSGroupsIds: Set<number> = new Set();
 
     selectedAtomIds?.forEach((atomId) => {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         atomId,
-        true
-      )
+        true,
+      );
 
-      functionalGroup !== null &&
+      const relatedSGroup = functionalGroup?.relatedSGroup;
+
+      if (
+        functionalGroup !== null &&
+        relatedSGroup &&
+        !relatedSGroup.isSuperatomWithoutLabel
+      ) {
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
-          functionalGroup
-        )
+          functionalGroup,
+        );
+      }
 
-      const sGroupId = struct.sgroups.find((_, sGroup) =>
-        sGroup.atoms.includes(atomId)
-      )
+      const sGroupId = struct.sgroups.find(
+        (_, sGroup) =>
+          !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
+      );
 
-      sGroupId !== null && selectedSGroupsIds.add(sGroupId)
-    })
+      sGroupId !== null && selectedSGroupsIds.add(sGroupId);
+    });
 
     return {
       selectedFunctionalGroups,
-      selectedSGroupsIds
-    }
-  }, [getKetcherInstance])
+      selectedSGroupsIds,
+    };
+  }, [ketcherId]);
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
-      event.preventDefault()
+      event.preventDefault();
 
-      const editor = getKetcherInstance().editor as Editor
-      const closestItem = editor.findItem(event, null)
-      const selection = editor.selection()
+      const ketcher = ketcherProvider.getKetcher(ketcherId);
+      const editor = ketcher.editor as Editor;
+
+      if (editor.render.options.viewOnlyMode) {
+        return;
+      }
+
+      const currentTool = editor.tool();
+      if (currentTool instanceof TemplateTool) {
+        currentTool.cancel();
+      }
+
+      // TODO: Consider a better approach to handle context menus for auxiliary UI elements
+      const target = event.target as Element;
+      if (editor.isMonomerCreationWizardActive) {
+        const rLabelElement = target.closest('[data-attachment-point-alias]');
+        if (rLabelElement) {
+          const attachmentPointName = rLabelElement.getAttribute(
+            'data-attachment-point-alias',
+          );
+          if (attachmentPointName) {
+            show({
+              id: CONTEXT_MENU_ID.FOR_ATTACHMENT_POINT_LABEL + ketcherId,
+              event,
+              props: {
+                attachmentPointName,
+                ketcherId,
+              },
+            });
+            return;
+          }
+        }
+      }
+
+      const closestItem = editor.findItem(event, null);
+      const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
-        getSelectedGroupsInfo()
+        getSelectedGroupsInfo();
 
-      let showProps: ContextMenuShowProps = null
-      let triggerType: ContextMenuTriggerType
+      let showProps: ContextMenuProps | null = null;
+      let triggerType: ContextMenuTriggerType;
 
       if (!closestItem) {
-        if (selection) {
+        const isLeftMouseButtonPressed = event.buttons === 1;
+        const isRotationReverted = isLeftMouseButtonPressed;
+        if (selection && !isRotationReverted) {
           // if it was a click outside of any item
-          editor.selection(null)
+          editor.selection(null);
         }
-        return
+
+        return;
       } else if (!selection) {
-        triggerType = ContextMenuTriggerType.ClosestItem
+        triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
         getIsItemInSelection({
           item: closestItem,
           selection,
           selectedFunctionalGroups,
-          selectedSGroupsIds
+          selectedSGroupsIds,
         })
       ) {
-        if (!selection.bonds && !selection.atoms) {
-          triggerType = ContextMenuTriggerType.None
+        if (
+          !selection.bonds &&
+          !selection.atoms &&
+          !selection.rgroupAttachmentPoints
+        ) {
+          if (selection[MULTITAIL_ARROW_KEY]) {
+            triggerType = ContextMenuTriggerType.ClosestItem;
+          } else {
+            triggerType = ContextMenuTriggerType.None;
+          }
         } else {
-          triggerType = ContextMenuTriggerType.Selection
+          triggerType = ContextMenuTriggerType.Selection;
         }
       } else {
         // closestItem is outside of selection
-        editor.selection(null)
-        triggerType = ContextMenuTriggerType.ClosestItem
+        editor.selection(null);
+        triggerType = ContextMenuTriggerType.ClosestItem;
       }
 
       switch (triggerType) {
         case ContextMenuTriggerType.None: {
-          return
+          return;
         }
 
         case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(editor, closestItem)
-          break
+          showProps = getMenuPropsForClosestItem(
+            editor,
+            closestItem,
+            ketcherId,
+          );
+          break;
         }
 
         case ContextMenuTriggerType.Selection: {
           showProps = getMenuPropsForSelection(
             selection,
-            selectedFunctionalGroups
-          )
-          break
+            selectedFunctionalGroups,
+            ketcherId,
+          );
+          break;
         }
       }
 
@@ -130,156 +193,21 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
         show({
           id: showProps.id,
           event,
-          props: showProps
-        })
+          props: { ...showProps, ketcherId },
+        });
     },
-    [getKetcherInstance, getSelectedGroupsInfo, show]
-  )
+    [getSelectedGroupsInfo, show, ketcherId],
+  );
 
   return (
-    <div style={{ height: '100%' }} onContextMenu={handleDisplay}>
+    <div
+      style={{ height: '100%' }}
+      onContextMenu={handleDisplay}
+      role="application"
+    >
       {children}
     </div>
-  )
-}
+  );
+};
 
-const getIsItemInSelection = ({
-  item,
-  selection,
-  selectedSGroupsIds,
-  selectedFunctionalGroups
-}: GetIsItemInSelectionArgs): boolean => {
-  if (!item || !selection) {
-    return false
-  }
-
-  switch (item.map) {
-    case 'sgroups':
-      return selectedSGroupsIds.has(item.id)
-
-    case 'functionalGroups':
-      return Array.from(selectedFunctionalGroups.keys()).includes(item.id)
-
-    default:
-      return (
-        item.map in selection &&
-        Array.isArray(selection[item.map]) &&
-        selection[item.map].includes(item.id)
-      )
-  }
-}
-
-function getMenuPropsForClosestItem(
-  editor: Editor,
-  closestItem: ClosestItem
-): ContextMenuShowProps | null {
-  const struct = editor.struct()
-
-  switch (closestItem.map) {
-    case 'bonds': {
-      const functionalGroup = FunctionalGroup.findFunctionalGroupByBond(
-        struct,
-        struct.functionalGroups,
-        closestItem.id,
-        true
-      )
-
-      return functionalGroup === null
-        ? {
-            id: CONTEXT_MENU_ID.FOR_BONDS,
-            bondIds: [closestItem.id]
-          }
-        : {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
-          }
-    }
-
-    case 'atoms': {
-      const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
-        struct.functionalGroups,
-        closestItem.id,
-        true
-      )
-
-      return functionalGroup === null
-        ? {
-            id: CONTEXT_MENU_ID.FOR_ATOMS,
-            atomIds: [closestItem.id]
-          }
-        : {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
-          }
-    }
-
-    case 'sgroups':
-    case 'functionalGroups': {
-      const sGroup = struct.sgroups.get(closestItem.id)
-      const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
-        struct.functionalGroups,
-        sGroup
-      )
-
-      return functionalGroup
-        ? {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
-          }
-        : null
-    }
-
-    default:
-      return null
-  }
-}
-
-const IGNORED_MAPS_LIST = ['enhancedFlags']
-
-function getMenuPropsForSelection(
-  selection: Selection | null,
-  selectedFunctionalGroups: Map<number, FunctionalGroup>
-): ContextMenuShowProps | null {
-  if (!selection) {
-    return null
-  }
-
-  const bondsInSelection = 'bonds' in selection
-  const atomsInSelection = 'atoms' in selection
-
-  if (selectedFunctionalGroups.size > 0) {
-    const functionalGroups = Array.from(selectedFunctionalGroups.values())
-    return {
-      id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-      functionalGroups
-    }
-  } else if (bondsInSelection && !atomsInSelection) {
-    return {
-      id: CONTEXT_MENU_ID.FOR_BONDS,
-      bondIds: selection.bonds,
-      extraItemsSelected: !onlyHasProperty(
-        selection,
-        'bonds',
-        IGNORED_MAPS_LIST
-      )
-    }
-  } else if (atomsInSelection && !bondsInSelection) {
-    return {
-      id: CONTEXT_MENU_ID.FOR_ATOMS,
-      atomIds: selection.atoms,
-      extraItemsSelected: !onlyHasProperty(
-        selection,
-        'atoms',
-        IGNORED_MAPS_LIST
-      )
-    }
-  } else {
-    return {
-      id: CONTEXT_MENU_ID.FOR_SELECTION,
-      bondIds: selection.bonds,
-      atomIds: selection.atoms
-    }
-  }
-}
-
-export default ContextMenuTrigger
+export default ContextMenuTrigger;

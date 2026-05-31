@@ -1,0 +1,201 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "alias": "Alias Li",
+                "location": [
+                    12.83942706217925,
+                    -8.292963969108222,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "alias": "Alias Ge",
+                "location": [
+                    15.733466677472972,
+                    -8.34899793481263,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "alias": "Alias In",
+                "location": [
+                    14.701327699339132,
+                    -8.337770557779205,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "alias": "Alias Sb",
+                "location": [
+                    16.87156618020111,
+                    -8.380423534567008,
+                    0
+                ],
+                "explicitValence": 5
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "alias": "Alias Cr",
+                "location": [
+                    18.068388152860695,
+                    -8.3634610670231,
+                    0
+                ],
+                "explicitValence": 6
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "alias": "Alias Mg",
+                "location": [
+                    19.17365362755405,
+                    -8.372559292917767,
+                    0
+                ],
+                "explicitValence": 7
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "alias": "Alias He",
+                "location": [
+                    11.99849035097106,
+                    -8.311074411562346,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "alias": "Alias Ru",
+                "location": [
+                    20.481184345194205,
+                    -8.3451438273046,
+                    0
+                ],
+                "explicitValence": 8
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "alias": "Alias S",
+                "location": [
+                    13.709939864726277,
+                    -8.322293012503277,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "alias": "Alias Any Atom",
+                "location": [
+                    11.195159740827307,
+                    -8.331796201161833,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    24.46720430107527,
+                    -8.309812031407509,
+                    0
+                ],
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ]
+    }
+}

@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './TextCreateDelete'
-export * from './TextUpdate'
-export * from './TextMove'
+export * from './TextCreateDelete';
+export * from './TextUpdate';
+export * from './TextMove';

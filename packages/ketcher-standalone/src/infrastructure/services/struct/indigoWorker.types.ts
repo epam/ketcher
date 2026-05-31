@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { IKetMacromoleculesContent } from 'ketcher-core';
+
+// TODO add typings for Indigo standalone object
 
 export const enum Command {
   Info,
@@ -26,7 +29,9 @@ export const enum Command {
   Check,
   Calculate,
   GenerateImageAsBase64,
-  GenerateInchIKey
+  GetInChIKey,
+  ExplicitHydrogens,
+  CalculateMacromoleculeProperties,
 }
 
 export const enum WorkerEvent {
@@ -41,7 +46,9 @@ export const enum WorkerEvent {
   Check = 'check',
   Calculate = 'calculate',
   GenerateImageAsBase64 = 'generateImageAsBase64',
-  GenerateInchIKey = 'generateInchIKey'
+  GetInChIKey = 'getInChIKey',
+  ExplicitHydrogens = 'convert_explicit_hydrogens',
+  CalculateMacromoleculeProperties = 'calculateMacroProperties',
 }
 
 export enum SupportedFormat {
@@ -52,33 +59,49 @@ export enum SupportedFormat {
   CML = 'cml',
   InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux',
+  InChIKey = 'inchi-key',
   Ket = 'ket',
   CDX = 'cdx',
-  CDXML = 'cdxml'
+  CDXML = 'cdxml',
+  SDF = 'sdf',
+  FASTA = 'fasta',
+  SEQUENCE = 'sequence',
+  SEQUENCE_3_LETTER = 'peptide-sequence-3-letter',
+  IDT = 'idt',
+  AXOLABS = 'axo-labs',
+  HELM = 'helm',
+  BILN = 'biln',
+  RDF = 'rdf',
+  MonomerLibrary = 'monomer-library',
 }
 
 export interface WithStruct {
-  struct: string
+  struct: string;
 }
 
 export interface WithFormat {
-  format: SupportedFormat
+  format: SupportedFormat;
 }
 
 export interface WithSelection {
-  selectedAtoms: Array<number>
+  selectedAtoms: Array<number>;
 }
 
 export interface CommandOptions {
-  [key: string]: string | number | boolean | undefined
+  [key: string]:
+    | IKetMacromoleculesContent
+    | string
+    | number
+    | boolean
+    | undefined;
 }
 
 export interface CommandData {
-  options?: CommandOptions
+  options?: CommandOptions;
 }
 
 export interface CheckCommandData extends CommandData, WithStruct {
-  types: Array<string>
+  types: Array<string>;
 }
 
 export interface ConvertCommandData
@@ -89,8 +112,9 @@ export interface ConvertCommandData
 export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 
 export interface GenerateImageCommandData extends CommandData, WithStruct {
-  outputFormat: 'png' | 'svg'
-  backgroundColor?: string
+  outputFormat: 'png' | 'svg';
+  backgroundColor?: string;
+  bondThickness?: number;
 }
 
 export interface LayoutCommandData
@@ -125,29 +149,59 @@ export type CalculateProps =
   | 'monoisotopic-mass'
   | 'gross'
   | 'gross-formula'
-  | 'mass-composition'
+  | 'mass-composition';
 
 export interface CalculateCommandData
   extends CommandData,
     WithStruct,
     WithSelection {
-  properties: Array<string>
+  properties: Array<string>;
 }
 
 export interface AutomapCommandData
   extends CommandData,
     WithStruct,
     WithFormat {
-  mode: string
+  mode: string;
 }
 
-export interface OutputMessage<T> {
-  type?: Command
-  hasError?: boolean
-  payload?: T
-  error?: string
+export interface ExplicitHydrogensCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {
+  mode: 'auto' | 'fold' | 'unfold';
 }
+
+export interface CalculateMacromoleculePropertiesCommandData
+  extends CommandData,
+    WithStruct {}
+
+interface OutputMessageBase {
+  type?: Command;
+  hasError?: boolean;
+}
+
+interface OutputMessageWithError extends OutputMessageBase {
+  hasError: true;
+  error: string;
+  inputData?: string;
+}
+
+interface OutputMessageWithoutError<T> extends OutputMessageBase {
+  hasError?: false;
+  payload: T;
+  inputData?: string;
+}
+
+export type OutputMessage<T> =
+  | OutputMessageWithError
+  | OutputMessageWithoutError<T>;
+
 export interface InputMessage<T> {
-  type: Command
-  data: T
+  type: Command;
+  data: T;
+}
+
+export interface OutputMessageWrapper<T = string> {
+  data: OutputMessage<T>;
 }

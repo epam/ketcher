@@ -14,25 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react';
 
-import { HexColorPicker, HexColorInput } from 'react-colorful'
-import classes from './ColorPicker.module.less'
-import clsx from 'clsx'
-import Icon from '../../../component/view/icon'
+import { HexColorPicker, HexColorInput } from 'react-colorful';
+import classes from './ColorPicker.module.less';
+import clsx from 'clsx';
+import { Icon } from 'components';
 
 interface ColorPickerProps {
-  value: string
-  name: string
-  schema: any
-  type?: string
+  value: string;
+  name: string;
 }
 
 interface ColorPickerCallProps {
-  onChange: (value: string) => void
+  onChange: (value: string) => void;
 }
 
-type Props = ColorPickerProps & ColorPickerCallProps
+type Props = ColorPickerProps & ColorPickerCallProps;
 
 const presetColors = [
   '#FF4545',
@@ -41,95 +39,121 @@ const presetColors = [
   '#3ACACC',
   '#4434FF',
   '#9C9C9C',
-  '#000000'
-]
+  '#000000',
+];
 
 const ColorPicker = (props: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isPaletteOpen, setIsPaletteOpen] = useState(false)
-  const { onChange, value } = props
+  const [isOpen, setIsOpen] = useState(false);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const { onChange, value } = props;
+  const paletteId = 'color-picker-' + useId();
 
   const handleChange = useCallback(
     (color) => {
-      onChange(color)
+      onChange(color);
     },
-    [onChange]
-  )
+    [onChange],
+  );
 
   const throttle = useCallback((func, limit) => {
-    let inThrottle
+    let inThrottle;
     return (e) => {
       if (!inThrottle) {
-        func(e)
-        inThrottle = true
-        setTimeout(() => (inThrottle = false), limit)
+        func(e);
+        inThrottle = true;
+        setTimeout(() => {
+          inThrottle = false;
+        }, limit);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleClick = useCallback(
     throttle((e) => {
-      e.preventDefault()
-      setIsOpen((prev) => !prev)
-      setIsPaletteOpen(false)
+      e.preventDefault();
+      setIsOpen((prev) => !prev);
+      setIsPaletteOpen(false);
     }, 200),
-    []
-  )
+    [],
+  );
 
   const handlePaletteOpen = () => {
-    setIsPaletteOpen(true)
-  }
+    setIsPaletteOpen(true);
+  };
   const handleColorChange = (color) => {
-    handleChange(color)
-  }
+    handleChange(color);
+  };
 
   const handleBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
-      handleClick(e)
+      handleClick(e);
     }
-  }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick(e);
+    }
+  };
+
+  const handleWrapperKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
 
   return (
     <div
       className={classes.colorPickerWrapper}
       data-testid={isOpen ? 'color-picker-field-open' : 'color-picker-field'}
       onClick={(e) => e.preventDefault()}
+      onKeyDown={handleWrapperKeyDown}
+      role="none"
     >
-      <div
+      <button
+        type="button"
         className={clsx({
           [classes.colorPickerInput]: true,
-          [classes.selectedInput]: isOpen
+          [classes.selectedInput]: isOpen,
         })}
+        aria-controls={paletteId}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
       >
         <div
           className={classes.colorPickerPreview}
-          data-testid="color-picker-preview"
+          data-testid={`${props.name}-color-picker-preview`}
           style={{ backgroundColor: value }}
         />
 
         <Icon
           className={clsx({
             [classes.expandIcon]: true,
-            [classes.turnedIcon]: !isOpen
+            [classes.turnedIcon]: !isOpen,
           })}
           name="chevron"
         />
-      </div>
+      </button>
       {isOpen && (
         <div
           className={clsx(
             classes.colorPickerWrap,
-            isPaletteOpen && classes.withPalette
+            isPaletteOpen && classes.withPalette,
           )}
+          id={paletteId}
           onBlur={handleBlur}
           data-testid="color-picker-preset"
+          role="none"
         >
           <div className={classes.presetColors}>
             <button
               className={clsx(
                 classes.chooseColor,
-                isPaletteOpen && classes.clicked
+                isPaletteOpen && classes.clicked,
               )}
               onClick={handlePaletteOpen}
               autoFocus
@@ -161,7 +185,7 @@ const ColorPicker = (props: Props) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ColorPicker
+export default ColorPicker;

@@ -14,11 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './SpecialSymbolsList.module.less'
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon, IconName } from 'components';
+import classes from './SpecialSymbolsList.module.less';
 
-const SpecialSymbolsList = ({ select }) => {
-  const symbols = [
+interface SpecialSymbolsListProps {
+  id: string;
+  onSelect: (event: React.MouseEvent<HTMLButtonElement>, value: string) => void;
+}
+
+const SpecialSymbolsList = ({
+  onSelect,
+  ...props
+}: Omit<React.HTMLAttributes<HTMLMenuElement>, 'onSelect'> &
+  SpecialSymbolsListProps) => {
+  const symbols: IconName[] = [
     'α',
     'β',
     'γ',
@@ -65,25 +74,26 @@ const SpecialSymbolsList = ({ select }) => {
     '≈',
     '=/',
     '≤',
-    '≥'
-  ]
+    '≥',
+  ];
   return (
-    <div className={classes.window}>
-      {symbols.map((symbol, id) => {
+    <menu className={classes.window} {...props}>
+      {symbols.map((symbol) => {
         return (
           <button
             className={classes.button}
-            key={`symbol-${id}`}
+            key={symbol}
             value={symbol}
-            onMouseDown={(event) => {
-              select(event, symbol)
+            onClick={(event) => {
+              onSelect(event, symbol);
             }}
+            role="menuitem"
           >
             <Icon name={symbol} />
           </button>
-        )
+        );
       })}
-    </div>
-  )
-}
-export { SpecialSymbolsList }
+    </menu>
+  );
+};
+export { SpecialSymbolsList };

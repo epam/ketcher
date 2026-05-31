@@ -14,65 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
+import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
+import { FragmentDeleteStereoAtom } from './FragmentDeleteStereoAtom';
 
-// todo: separate classes: now here is circular dependency in `invert` method
+FragmentAddStereoAtom.InverseConstructor = FragmentDeleteStereoAtom;
+FragmentDeleteStereoAtom.InverseConstructor = FragmentAddStereoAtom;
 
-type Data = {
-  frid: any
-  aid: any
-}
-
-// todo : merge add and delete stereo atom
-class FragmentAddStereoAtom extends BaseOperation {
-  data: Data
-
-  constructor(fragmentId: any, atomId: any) {
-    super(OperationType.FRAGMENT_ADD_STEREO_ATOM, 100)
-    this.data = { frid: fragmentId, aid: atomId }
-  }
-
-  execute(restruct: ReStruct) {
-    const { aid, frid } = this.data
-
-    const frag = restruct.molecule.frags.get(frid)
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, true)
-
-      BaseOperation.invalidateEnhancedFlag(restruct, frid)
-    }
-  }
-
-  invert() {
-    return new FragmentDeleteStereoAtom(this.data.frid, this.data.aid)
-  }
-}
-
-class FragmentDeleteStereoAtom extends BaseOperation {
-  data: Data
-
-  constructor(fragmentId: any, atomId: any) {
-    super(OperationType.FRAGMENT_DELETE_STEREO_ATOM, 90)
-    this.data = { frid: fragmentId, aid: atomId }
-  }
-
-  execute(restruct: ReStruct) {
-    const { aid, frid } = this.data
-
-    const frag = restruct.molecule.frags.get(frid)
-    if (frag) {
-      frag.updateStereoAtom(restruct.molecule, aid, frid, false)
-
-      BaseOperation.invalidateEnhancedFlag(restruct, frid)
-    }
-  }
-
-  invert() {
-    const { aid, frid } = this.data
-    return new FragmentAddStereoAtom(frid, aid)
-  }
-}
-
-export { FragmentAddStereoAtom, FragmentDeleteStereoAtom }
+export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };

@@ -14,21 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Neighbor, Struct } from 'domain/entities'
+import type { Bond } from 'domain/entities/bond';
+import type { Neighbor, Struct } from 'domain/entities/struct';
 
 function isCorrectStereoCenter(
   bond: Bond,
   beginNeighs: Array<Neighbor> | undefined,
   endNeighs: Array<Neighbor> | undefined,
-  struct: Struct
+  struct: Struct,
 ) {
-  const beginAtom = struct.atoms.get(bond.begin)
+  const beginAtom = struct.atoms.get(bond.begin);
 
-  let EndAtomNeigh: number | undefined = NaN
+  let EndAtomNeigh: number | undefined = NaN;
 
   if (endNeighs?.length === 2) {
     EndAtomNeigh =
-      endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid
+      endNeighs[0].aid === bond.begin ? endNeighs[1].aid : endNeighs[0].aid;
   }
 
   if (bond.stereo > 0) {
@@ -37,7 +38,7 @@ function isCorrectStereoCenter(
       beginNeighs?.length === 2 &&
       Number(beginAtom?.implicitH) % 2 === 0
     ) {
-      return false
+      return false;
     }
 
     if (
@@ -46,19 +47,19 @@ function isCorrectStereoCenter(
       Number(beginAtom?.implicitH) % 2 === 0 &&
       struct.atomGetNeighbors(EndAtomNeigh)?.length === 1
     ) {
-      return false
+      return false;
     }
 
     if (beginNeighs?.length === 1) {
-      return false
+      return false;
     }
 
-    return true
+    return true;
   } else {
-    return false
+    return false;
   }
 }
 
 export const StereoValidator = {
-  isCorrectStereoCenter
-}
+  isCorrectStereoCenter,
+};

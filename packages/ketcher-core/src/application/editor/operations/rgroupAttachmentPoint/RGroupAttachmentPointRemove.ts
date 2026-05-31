@@ -1,0 +1,53 @@
+import type { ReStruct } from 'application/render';
+import assert from 'assert';
+import { OperationPriority, OperationType } from '../OperationType';
+import BaseOperation from '../BaseOperation';
+
+type Data = { atomId: number; attachmentPointType; attachmentPointId: number };
+
+const INITIAL_DATA = {
+  atomId: 0,
+  attachmentPointType: 1,
+  attachmentPointId: 0,
+};
+
+class RGroupAttachmentPointRemove extends BaseOperation {
+  readonly data: Data;
+  static InverseConstructor: new () => BaseOperation;
+
+  constructor(attachmentPointId = INITIAL_DATA.attachmentPointId) {
+    super(
+      OperationType.R_GROUP_ATTACHMENT_POINT_REMOVE,
+      OperationPriority.R_GROUP_ATTACHMENT_POINT_REMOVE,
+    );
+    this.data = {
+      ...INITIAL_DATA,
+      attachmentPointId,
+    };
+  }
+
+  execute(restruct: ReStruct) {
+    const { attachmentPointId } = this.data;
+    const struct = restruct.molecule;
+    const item = struct.rgroupAttachmentPoints.get(attachmentPointId);
+    const reItem = restruct.rgroupAttachmentPoints.get(attachmentPointId);
+    assert(item != null && reItem != null);
+
+    this.data.atomId = item.atomId;
+    this.data.attachmentPointType = item.type;
+
+    restruct.markItemRemoved();
+    restruct.clearVisel(reItem.visel);
+    restruct.rgroupAttachmentPoints.delete(attachmentPointId);
+
+    struct.rgroupAttachmentPoints.delete(attachmentPointId);
+  }
+
+  invert() {
+    const inverted = new RGroupAttachmentPointRemove.InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
+  }
+}
+
+export { RGroupAttachmentPointRemove };

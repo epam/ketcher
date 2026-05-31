@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './DefaultMultiTool.module.less'
+import classes from './DefaultMultiTool.module.less';
 
-export * from './DefaultMultiTool'
-export { classes }
+export * from './DefaultMultiTool';
+export { classes };

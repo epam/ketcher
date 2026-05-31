@@ -14,64 +14,63 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useDispatch } from 'react-redux'
-import { indigoVerification } from '../script/ui/state/request'
-import { Ketcher, KetcherAsyncEvents } from 'ketcher-core'
-import { useEffect } from 'react'
-import { useAppContext } from './useAppContext'
-import { KETCHER_INIT_EVENT_NAME } from '../constants'
+import { indigoVerification } from '../script/ui/state/request';
+import { Ketcher, KetcherAsyncEvents, ketcherProvider } from 'ketcher-core';
+import { useEffect } from 'react';
+import { useAppContext } from './useAppContext';
+import { ketcherInitEventName } from '../constants';
+import { useAppDispatch } from '../script/ui/state/hooks';
 
 export const useSubscriptionOnEvents = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch();
 
-  const { getKetcherInstance } = useAppContext()
+  const { ketcherId } = useAppContext();
 
   const loadingHandler = () => {
-    dispatch(indigoVerification(true))
-  }
+    dispatch(indigoVerification(true));
+  };
   const actionResultHandler = () => {
-    dispatch(indigoVerification(false))
-  }
+    dispatch(indigoVerification(false));
+  };
 
   const subscribe = (ketcher: Ketcher) => {
-    ketcher.eventBus.addListener(KetcherAsyncEvents.LOADING, loadingHandler)
+    ketcher.eventBus.addListener(KetcherAsyncEvents.LOADING, loadingHandler);
     ketcher.eventBus.addListener(
       KetcherAsyncEvents.SUCCESS,
-      actionResultHandler
-    )
+      actionResultHandler,
+    );
     ketcher.eventBus.addListener(
       KetcherAsyncEvents.FAILURE,
-      actionResultHandler
-    )
-  }
+      actionResultHandler,
+    );
+  };
 
   const unsubscribe = (ketcher: Ketcher) => {
-    ketcher.eventBus.removeListener(KetcherAsyncEvents.LOADING, loadingHandler)
+    ketcher.eventBus.removeListener(KetcherAsyncEvents.LOADING, loadingHandler);
     ketcher.eventBus.removeListener(
       KetcherAsyncEvents.SUCCESS,
-      actionResultHandler
-    )
+      actionResultHandler,
+    );
     ketcher.eventBus.removeListener(
       KetcherAsyncEvents.FAILURE,
-      actionResultHandler
-    )
-  }
+      actionResultHandler,
+    );
+  };
 
   useEffect(() => {
     const subscribeOnInit = () => {
-      subscribe(getKetcherInstance())
-    }
+      subscribe(ketcherProvider.getKetcher(ketcherId));
+    };
 
     const unsubscribeOnUnMount = () => {
-      unsubscribe(getKetcherInstance())
-    }
+      unsubscribe(ketcherProvider.getKetcher(ketcherId));
+    };
 
-    window.addEventListener(KETCHER_INIT_EVENT_NAME, () => {
-      subscribeOnInit()
-    })
+    const initEventName = ketcherInitEventName(ketcherId);
+    window.addEventListener(initEventName, subscribeOnInit);
     return () => {
-      unsubscribeOnUnMount()
-      window.removeEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit)
-    }
-  }, [])
-}
+      unsubscribeOnUnMount();
+      window.removeEventListener(initEventName, subscribeOnInit);
+    };
+  }, []);
+};

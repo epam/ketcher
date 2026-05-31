@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import React from 'react';
 
 export interface ISettingsContext {
-  staticResourcesUrl: string
+  staticResourcesUrl: string;
 }
 
 const settingsContext = React.createContext<ISettingsContext>(
-  {} as ISettingsContext
-)
+  {} as ISettingsContext,
+);
 
-export default settingsContext
+export default settingsContext;

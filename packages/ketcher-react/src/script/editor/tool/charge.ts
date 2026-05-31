@@ -14,54 +14,58 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import { Atom, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class ChargeTool implements Tool {
-  private readonly editor: Editor
-  private readonly charge: any
+  private readonly editor: Editor;
+  private readonly charge: any;
 
   constructor(editor, charge) {
-    this.editor = editor
-    this.editor.selection(null)
-    this.charge = charge
+    this.editor = editor;
+    this.editor.selection(null);
+    this.charge = charge;
   }
 
   mousemove(event) {
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const ci = this.editor.findItem(event, ['atoms'])
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
-    ) {
-      this.editor.hover(ci)
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const ci = this.editor.findItem(event, ['atoms']);
+    const atom = ci && ci.map === 'atoms' ? molecule.atoms.get(ci.id) : null;
+    if (atom && this.isChargeableAtom(atom)) {
+      this.editor.hover(ci);
     } else {
-      this.editor.hover(null, null, event)
+      this.editor.hover(null, null, event);
     }
-    return true
+    return true;
   }
 
   click(event) {
-    const editor = this.editor
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const rnd = editor.render
-    const ci = editor.findItem(event, ['atoms', 'bonds'])
-    const atomResult: Array<number> = []
-    const result: Array<number> = []
+    const editor = this.editor;
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const rnd = editor.render;
+    const ci = editor.findItem(event, ['atoms', 'bonds']);
+    const atomResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
+      const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+        molecule,
+        ci.id,
+      );
+      if (isAtomSuperatomLeavingGroup) {
+        return;
+      }
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -69,36 +73,44 @@ class ChargeTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
-    if (
-      ci &&
-      ci.map === 'atoms' &&
-      Elements.get(molecule.atoms.get(ci.id)?.label as string | number)
-    ) {
-      this.editor.hover(ci)
-      this.editor.update(
-        fromAtomsAttrs(
-          rnd.ctab,
-          ci.id,
-          {
-            charge: molecule.atoms.get(ci.id)?.charge + this.charge
-          },
-          null
-        )
-      )
+    if (ci && ci.map === 'atoms') {
+      const atom = molecule.atoms.get(ci.id);
+      if (atom && this.isChargeableAtom(atom)) {
+        this.editor.hover(ci);
+        this.editor.update(
+          fromAtomsAttrs(
+            rnd.ctab,
+            ci.id,
+            {
+              charge: (atom.charge ?? 0) + this.charge,
+            },
+            null,
+          ),
+        );
+      }
     }
-    return true
+    return true;
+  }
+
+  private isChargeableAtom(atom: Atom): boolean {
+    // An atom can have a charge if it's not an atom list or R-group label
+    // This allows charges on regular periodic table elements (C, N, O, etc.)
+    // and pseudo atoms (star atoms *, query atoms like Q, X, etc.)
+    return !atom.atomList && !atom.rglabel;
   }
 }
 
-export default ChargeTool
+export default ChargeTool;

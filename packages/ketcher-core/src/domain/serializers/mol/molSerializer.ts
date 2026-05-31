@@ -14,72 +14,76 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from './mol.types'
-import { Molfile } from './molfile'
-import { Serializer } from '../serializers.types'
-import { Struct } from 'domain/entities'
+import type { MolSerializerOptions } from './mol.types';
+import { Molfile } from './molfile';
+import type { Serializer } from '../serializers.types';
+import type { Struct } from 'domain/entities/struct';
+import { KetcherLogger } from 'utilities';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 export class MolSerializer implements Serializer<Struct> {
-  static DefaultOptions: MolSerializerOptions = {
+  static readonly DefaultOptions: MolSerializerOptions = {
     badHeaderRecover: false,
     ignoreErrors: false,
     noRgroups: false,
     preserveIndigoDesc: false,
-    reactionRelayout: false
-  }
+    reactionRelayout: false,
+  };
 
-  readonly options: MolSerializerOptions
+  readonly options: MolSerializerOptions;
 
   constructor(options?: Partial<MolSerializerOptions>) {
-    this.options = { ...MolSerializer.DefaultOptions, ...options }
+    this.options = { ...MolSerializer.DefaultOptions, ...options };
   }
 
   deserialize(content: string): Struct {
-    const molfile = new Molfile()
-    const lines = content?.split(/\r\n|[\n\r]/g)
+    const molfile = new Molfile();
+    const lines = content?.split(/\r\n|[\n\r]/g);
 
     const parseCTFileParams = {
       molfileLines: lines,
       shouldReactionRelayout: this.options.reactionRelayout,
-      ignoreChiralFlag: this.options.ignoreChiralFlag
-    }
+      ignoreChiralFlag: this.options.ignoreChiralFlag,
+    };
 
     try {
-      return molfile.parseCTFile(parseCTFileParams)
-    } catch (ex) {
+      return molfile.parseCTFile(parseCTFileParams);
+    } catch (e) {
+      KetcherLogger.error('molSerializer::MolSerializer::deserialize', e);
       if (this.options.badHeaderRecover) {
         try {
           // check whether there's an extra empty line on top
           // this often happens when molfile text is pasted into the dialog window
           return molfile.parseCTFile({
             ...parseCTFileParams,
-            molfileLines: lines.slice(1)
-          })
-        } catch (ex1) {
-          //
+            molfileLines: lines.slice(1),
+          });
+        } catch (e1) {
+          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e1);
         }
         try {
           // check for a missing first line
           // this sometimes happens when pasting
           return molfile.parseCTFile({
             ...parseCTFileParams,
-            molfileLines: [''].concat(lines)
-          })
-        } catch (ex2) {
-          //
+            molfileLines: [''].concat(lines),
+          });
+        } catch (e2) {
+          KetcherLogger.error('molSerializer::MolSerializer::deserialize', e2);
         }
       }
-      throw ex
+      throw e;
     }
   }
 
-  serialize(struct: Struct): string {
+  serialize(_struct: Struct): string {
+    const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+
     return new Molfile().saveMolecule(
       struct,
       this.options.ignoreErrors,
       this.options.noRgroups,
       this.options.preserveIndigoDesc,
-      this.options.ignoreChiralFlag
-    )
+    );
   }
 }

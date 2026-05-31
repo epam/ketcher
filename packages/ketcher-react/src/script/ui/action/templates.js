@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import templates from '../data/templates'
-import isHidden from './isHidden'
+import templates from '../data/templates';
+import isHidden from './isHidden';
 
 const templateLib = {
   'template-lib': {
     shortcut: 'Shift+t',
-    title: 'Custom Templates',
+    title: 'Structure Library',
     action: { dialog: 'templates', prop: { tab: null } },
     selected: (editor) => editor._tool.mode === 'classic',
     disabled: (editor, server, options) => !options.app.templates,
-    hidden: (options) => isHidden(options, 'template-lib')
-  }
-}
+    hidden: (options) => isHidden(options, 'template-lib'),
+  },
+};
 
 export default templates.reduce((res, struct, i) => {
   res[`template-${i}`] = {
@@ -34,8 +34,8 @@ export default templates.reduce((res, struct, i) => {
     shortcut: 't',
     action: {
       tool: 'template',
-      opts: { struct }
-    }
-  }
-  return res
-}, templateLib)
+      opts: { struct },
+    },
+  };
+  return res;
+}, templateLib);

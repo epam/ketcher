@@ -14,68 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
+import { UpdateIfThen } from './UpdateIfThen';
+import { RestoreIfThen } from './RestoreIfThen';
 
-// todo: separate classes: now here is circular dependency in `invert` method
+UpdateIfThen.InverseConstructor = RestoreIfThen;
+RestoreIfThen.InverseConstructor = UpdateIfThen;
 
-class UpdateIfThen extends BaseOperation {
-  rgid_new: any
-  rgid_old: any
-  ifThenHistory: any
-  skipRgids: any[]
-
-  constructor(rgNew: any, rgOld: any, skipRgids: any = []) {
-    super(OperationType.UPDATE_IF_THEN)
-    this.rgid_new = rgNew
-    this.rgid_old = rgOld
-    this.ifThenHistory = new Map()
-    this.skipRgids = skipRgids || []
-  }
-
-  execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-
-    struct.rgroups.forEach((rg, rgid) => {
-      if (rg.ifthen === this.rgid_old && !this.skipRgids.includes(rgid)) {
-        rg.ifthen = this.rgid_new
-        this.ifThenHistory.set(rgid, this.rgid_old)
-        struct.rgroups.set(rgid, rg)
-      }
-    })
-  }
-
-  invert() {
-    return new RestoreIfThen(this.rgid_new, this.rgid_old, this.ifThenHistory)
-  }
-}
-
-class RestoreIfThen extends BaseOperation {
-  rgid_new: any
-  rgid_old: any
-  ifThenHistory: any
-
-  constructor(rgNew: any, rgOld: any, history: any) {
-    super(OperationType.RESTORE_IF_THEN)
-    this.rgid_new = rgNew
-    this.rgid_old = rgOld
-    this.ifThenHistory = history || new Map()
-  }
-
-  execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-
-    this.ifThenHistory.forEach((rg, rgid) => {
-      const rgValue = struct.rgroups.get(rgid)!
-      rgValue.ifthen = rg
-      struct.rgroups.set(rgid, rgValue)
-    })
-  }
-
-  invert() {
-    return new UpdateIfThen(this.rgid_old, this.rgid_new)
-  }
-}
-
-export { UpdateIfThen, RestoreIfThen }
+export { UpdateIfThen, RestoreIfThen };

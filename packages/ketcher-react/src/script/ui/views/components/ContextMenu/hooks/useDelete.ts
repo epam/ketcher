@@ -1,30 +1,36 @@
-import { fromFragmentDeletion } from 'ketcher-core'
-import { useCallback } from 'react'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
-import { ItemEventParams } from '../contextMenu.types'
+import { fromFragmentDeletion, ketcherProvider } from 'ketcher-core';
+import { useCallback } from 'react';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
+import {
+  ItemEventParams,
+  SelectionContextMenuProps,
+} from '../contextMenu.types';
+
+type Params = ItemEventParams<SelectionContextMenuProps>;
 
 const useDelete = () => {
-  const { getKetcherInstance } = useAppContext()
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
-      const editor = getKetcherInstance().editor as Editor
-      const molecule = editor.render.ctab
+    async ({ props }: Params) => {
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+      const molecule = editor.render.ctab;
       const itemsToDelete = editor.selection() || {
         bonds: props?.bondIds,
-        atoms: props?.atomIds
-      }
+        atoms: props?.atomIds,
+      };
 
-      const action = fromFragmentDeletion(molecule, itemsToDelete)
-      editor.update(action)
+      const action = fromFragmentDeletion(molecule, itemsToDelete);
+      editor.update(action);
 
-      editor.selection(null)
+      editor.selection(null);
+      editor.focusCliparea();
     },
-    [getKetcherInstance]
-  )
+    [ketcherId],
+  );
 
-  return handler
-}
+  return handler;
+};
 
-export default useDelete
+export default useDelete;

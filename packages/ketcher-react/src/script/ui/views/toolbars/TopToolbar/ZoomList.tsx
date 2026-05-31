@@ -14,23 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { zoomList } from '../../../action/zoom'
+import { zoomList } from '../../../action/zoom';
 
 function toPercent(value: number): string {
-  const percentLimit = 100
-  return (value * percentLimit).toFixed()
+  const percentLimit = 100;
+  return (value * percentLimit).toFixed();
 }
 
 interface ZoomListProps {
-  zoom: number
-  setZoom: (zoom: number) => void
+  zoom: number;
+  setZoom: (zoom: number) => void;
 }
 
 const ZoomList = ({ zoom, setZoom }: ZoomListProps) => {
   const handleChange = (event) => {
-    const parsedValue = parseFloat(event.target.value)
-    setZoom(parsedValue)
-  }
+    const parsedValue = parseFloat(event.target.value);
+    setZoom(parsedValue);
+  };
 
   return (
     <select value={zoom} onChange={handleChange}>
@@ -40,8 +40,8 @@ const ZoomList = ({ zoom, setZoom }: ZoomListProps) => {
         </option>
       ))}
     </select>
-  )
-}
+  );
+};
 
-export type { ZoomListProps }
-export { ZoomList }
+export type { ZoomListProps };
+export { ZoomList };

@@ -14,261 +14,294 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  DraftInlineStyleType,
-  RawDraftContentBlock,
-  RawDraftContentState,
-  RawDraftInlineStyleRange
-} from 'draft-js'
-import { Text, TextCommand, Vec2 } from 'domain/entities'
-import { flatten, isEqual } from 'lodash/fp'
+import { Box2Abs } from 'domain/entities/box2Abs';
+import type { Text } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
+import { flatten } from 'lodash/fp';
 
-import { LayerMap } from './generalEnumTypes'
-import ReObject from './reobject'
-import ReStruct from './restruct'
-import { Scale } from 'domain/helpers'
-import { RaphaelBaseElement } from 'raphael'
+import { LayerMap } from './generalEnumTypes';
+import ReObject from './reobject';
+import type ReStruct from './restruct';
+import { Scale } from 'domain/helpers';
+import type { RaphaelBaseElement } from 'raphael';
 
-interface CustomRawDraftInlineStyleRange
-  extends Omit<RawDraftInlineStyleRange, 'style'> {
-  style:
-    | DraftInlineStyleType
-    | TextCommand.Subscript
-    | TextCommand.Superscript
-    | TextCommand.FontSize
+export interface SerializedTextNode {
+  detail?: number;
+  format: number;
+  mode?: string;
+  style: string;
+  text: string;
+  type: string;
+  version?: number;
 }
 
-const SCALE = 40 // from ketcher-core
+export interface SerializedParagraphNode {
+  children: Array<SerializedTextNode | { type: string }>;
+  direction?: string;
+  format?: string | number;
+  indent?: number;
+  type: string;
+  version?: number;
+}
+
+export interface SerializedRootNode {
+  children: Array<SerializedParagraphNode>;
+  direction?: string;
+  format?: string | number;
+  indent?: number;
+  type: string;
+  version?: number;
+}
+
+export interface SerializedEditorState {
+  root: SerializedRootNode;
+}
+
+const IS_BOLD = 1;
+const IS_ITALIC = 2;
+const IS_SUBSCRIPT = 32;
+const IS_SUPERSCRIPT = 64;
+
+const SCALE = 40; // from ketcher-core
 
 class ReText extends ReObject {
-  private item: Text
-  paths: Array<Array<RaphaelBaseElement>> = []
+  private readonly item: Text;
+  paths: Array<Array<RaphaelBaseElement>> = [];
 
   constructor(text: Text) {
-    super('text')
-    this.item = text
+    super('text');
+    this.item = text;
   }
 
   static isSelectable() {
-    return true
+    return true;
   }
 
   getReferencePoints(): Array<Vec2> {
-    if (!this.paths.length) return []
+    if (!this.paths.length) return [];
 
-    const { p0, p1 } = this.getRelBox(this.paths)
+    const { p0, p1 } = this.getRelBox(this.paths);
 
-    const p = this.item.position
-    const width = Math.abs(Vec2.diff(p0, p1).x) / SCALE
-    const height = Math.abs(Vec2.diff(p0, p1).y) / SCALE
+    const p = this.item.position;
+    const width = Math.abs(Vec2.diff(p0, p1).x) / SCALE;
+    const height = Math.abs(Vec2.diff(p0, p1).y) / SCALE;
 
-    const refPoints: Array<Vec2> = []
+    const refPoints: Array<Vec2> = [];
 
     refPoints.push(
       this.item.position,
       new Vec2(p.x, p.y + height),
       new Vec2(p.x + width, p.y + height),
-      new Vec2(p.x + width, p.y)
-    )
+      new Vec2(p.x + width, p.y),
+    );
 
-    return refPoints
+    return refPoints;
+  }
+
+  getVBoxObj(): Box2Abs {
+    const [leftTopPoint, _, rightBottomPoint] = this.getReferencePoints();
+    return new Box2Abs(leftTopPoint, rightBottomPoint);
   }
 
   hoverPath(render: any): any {
-    const { p0, p1 } = this.getRelBox(this.paths)
-    const topLeft = p0.sub(render.options.offset)
-    const { x: width, y: height } = p1.sub(p0)
+    const { p0, p1 } = this.getRelBox(this.paths);
+    const topLeft = p0.sub(render.options.offset);
+    const { x: width, y: height } = p1.sub(p0);
 
-    return render.paper.rect(topLeft.x, topLeft.y, width, height, 5)
+    return render.paper.rect(topLeft.x, topLeft.y, width, height, 5);
   }
 
   getRelBox(paths: Array<Array<RaphaelBaseElement>>): { p0: Vec2; p1: Vec2 } {
-    const firstElOfFirstRow: RaphaelBaseElement = paths[0][0]
-    const leftEdge = firstElOfFirstRow.getBBox().x
+    const firstElOfFirstRow: RaphaelBaseElement = paths[0][0];
+    const leftEdge = firstElOfFirstRow.getBBox().x;
 
-    const firstRow: Array<RaphaelBaseElement> = paths[0]
+    const firstRow: Array<RaphaelBaseElement> = paths[0];
     const topEdge: number = Math.min(
-      ...firstRow.map((path) => path.getBBox().y)
-    )
+      ...firstRow.map((path) => path.getBBox().y),
+    );
 
     const widestRow: Array<RaphaelBaseElement> = paths.reduce(
       (widestRow, nextRow) =>
         this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
           ? nextRow
           : widestRow,
-      paths[0]
-    )
+      paths[0],
+    );
     const lastElOfWidestRow: RaphaelBaseElement =
-      widestRow[widestRow.length - 1]
+      widestRow[widestRow.length - 1];
     const rightEdge: number =
-      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width
+      lastElOfWidestRow.getBBox().x + lastElOfWidestRow.getBBox().width;
 
-    const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1]
+    const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1];
     const bottomEdge: number = Math.max(
-      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height)
-    )
+      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
+    );
 
     return {
       p0: new Vec2(leftEdge, topEdge),
-      p1: new Vec2(rightEdge, bottomEdge)
-    }
+      p1: new Vec2(rightEdge, bottomEdge),
+    };
   }
 
   getRowWidth(row: Array<RaphaelBaseElement>): number {
     return row.reduce((rowWidth, nextRow) => {
-      rowWidth += nextRow.getBBox().width
-      return rowWidth
-    }, 0)
+      rowWidth += nextRow.getBBox().width;
+      return rowWidth;
+    }, 0);
   }
 
   drawHover(render: any): any {
-    if (!this.paths.length) return null
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
-    return ret
+    if (!this.paths.length) return null;
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    return ret;
   }
 
   makeSelectionPlate(restruct: ReStruct, paper: any, options: any): any {
-    if (!this.paths.length || !paper) return null
-    return this.hoverPath(restruct.render).attr(options.selectionStyle)
+    if (!this.paths.length || !paper) return null;
+    return this.hoverPath(restruct.render).attr(options.selectionStyle);
   }
 
   show(restruct: ReStruct, _id: number, options: any): void {
-    const render = restruct.render
-    const paper = render.paper
-    const paperScale = Scale.obj2scaled(this.item.position!, options)
+    const render = restruct.render;
+    const paper = render.paper;
+    const paperScale = Scale.modelToCanvas(this.item.position, options);
 
-    let shiftY = 0
-    this.paths = []
+    let shiftY = 0;
+    this.paths = [];
     // TODO: create parser in ketcher-core package
-    const rawContentState: RawDraftContentState | null = this.item.content
-      ? (JSON.parse(this.item.content) as RawDraftContentState)
-      : null
-    if (!rawContentState) {
-      return
+
+    let editorState: SerializedEditorState | null = null;
+    try {
+      if (this.item.content) {
+        const parsed = JSON.parse(this.item.content);
+        // Support Lexical format only (convert at import time).
+        if (parsed && parsed.root) {
+          editorState = parsed as SerializedEditorState;
+        } else {
+          console.warn(
+            'Unsupported editor state format in text content; expected Lexical JSON.',
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error processing text content:', error);
     }
 
-    rawContentState.blocks.forEach((block: RawDraftContentBlock) => {
-      const ranges: Array<[number, number, Record<string, any>]> =
-        this.getRanges(block, options)
-      let shiftX = 0
-      const row: Array<RaphaelBaseElement> = []
-      ranges.forEach(([start, end, styles]) => {
-        block.text = block.text.replace(/[^\S\r\n]/g, '\u00a0')
-        const path = paper
-          .text(
-            paperScale.x,
-            paperScale.y,
-            block.text.substring(start, end + 1) || '\u00a0'
-          )
-          .attr({
+    if (!editorState?.root) {
+      console.log('No valid editorState, skipping render');
+      return;
+    }
+
+    const paragraphs = editorState.root.children.filter(
+      (child) => child.type === 'paragraph',
+    );
+
+    paragraphs.forEach((paragraph: SerializedParagraphNode) => {
+      const textNodes = paragraph.children.filter(
+        (child): child is SerializedTextNode => child.type === 'text',
+      );
+
+      let shiftX = 0;
+      const row: Array<RaphaelBaseElement> = [];
+
+      if (textNodes.length === 0) {
+        const path = paper.text(paperScale.x, paperScale.y, '\u00a0').attr({
+          font: options.font,
+          'font-size': options.fontszInPx,
+          'text-anchor': 'start',
+          fill: '#000000',
+        });
+        path.node.setAttribute('data-testid', 'text-label');
+        path.node.setAttribute(
+          'data-text-id',
+          restruct.molecule.texts.keyOf(this.item),
+        );
+        path.translateAbs(0, shiftY);
+        row.push(path);
+      } else {
+        textNodes.forEach((textNode: SerializedTextNode) => {
+          const styles = this.getStylesFromTextNode(textNode, options);
+          const text =
+            textNode.text.replace(/[^\S\r\n]/g, '\u00a0') || '\u00a0';
+
+          const path = paper.text(paperScale.x, paperScale.y, text).attr({
             font: options.font,
-            'font-size': options.fontsz,
+            'font-size': options.fontszInPx,
             'text-anchor': 'start',
             fill: '#000000',
-            ...styles
-          })
-        path.translateAbs(shiftX, shiftY + (styles.shiftY || 0))
-        row.push(path)
-        shiftX += path.getBBox().width
-      })
+            ...styles,
+          });
+          path.node.setAttribute('data-testid', 'text-label');
+          path.node.setAttribute(
+            'data-text-id',
+            restruct.molecule.texts.keyOf(this.item),
+          );
+          path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
+          row.push(path);
+          shiftX += path.getBBox().width;
+        });
+      }
 
-      this.paths.push(row)
+      this.paths.push(row);
 
-      const { p0, p1 } = this.getRelBox([row])
-      shiftY += Math.abs(Vec2.diff(p0, p1).y)
-    })
+      const { p0, p1 } = this.getRelBox([row]);
+      shiftY += Math.abs(Vec2.diff(p0, p1).y);
+    });
 
-    this.item.setPos(this.getReferencePoints())
+    this.item.setPos(this.getReferencePoints());
 
     render.ctab.addReObjectPath(
       LayerMap.data,
       this.visel,
       flatten(this.paths),
       null,
-      true
-    )
+      true,
+    );
   }
 
-  getRanges(
-    block: RawDraftContentBlock,
-    options: any
-  ): Array<[number, number, Record<string, any>]> {
-    const ranges: Array<[number, number, Record<string, any>]> = []
+  getStylesFromTextNode(
+    textNode: SerializedTextNode,
+    options: any,
+  ): Record<string, any> {
+    const styles: Record<string, any> = {};
+    const format = textNode.format || 0;
 
-    let start = 0
-    let styles: Record<string, any> = this.getStyles(block, start, options)
-    for (let i = 1; i < block.text.length; i++) {
-      const nextStyles = this.getStyles(block, i, options)
-
-      if (!isEqual(styles, nextStyles)) {
-        ranges.push([start, i - 1, styles])
-        styles = nextStyles
-        start = i
+    // Parse font-size from style string
+    let customFontSize: number | null = null;
+    if (textNode.style) {
+      const fontSizeMatch = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(
+        textNode.style,
+      );
+      if (fontSizeMatch) {
+        customFontSize = parseFloat(fontSizeMatch[1]);
+        styles['font-size'] = customFontSize + 'px';
       }
     }
-    ranges.push([start, block.text.length - 1, styles])
 
-    return ranges
-  }
+    if (format & IS_BOLD) {
+      styles['font-weight'] = 'bold';
+    }
 
-  getStyles(
-    block: RawDraftContentBlock,
-    index: number,
-    options: any
-  ): Record<string, string> {
-    const ranges = block.inlineStyleRanges.filter(
-      (inlineRange: CustomRawDraftInlineStyleRange) =>
-        inlineRange.offset <= index &&
-        index < inlineRange.offset + inlineRange.length
-    )
+    if (format & IS_ITALIC) {
+      styles['font-style'] = 'italic';
+    }
 
-    const customFontSize: number | null = ranges.reduce(
-      (acc: number | null, range: any) => {
-        if (range.style.includes(TextCommand.FontSize)) {
-          return range.style.match(/\d+/)?.[0]
-        }
-        return acc
-      },
-      null
-    )
+    const fontsz = customFontSize ?? options.fontszInPx;
+    const fontszsub = (customFontSize ?? options.fontszsubInPx) * 0.5;
 
-    return ranges.reduce(
-      (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize || options.fontsz
-        const fontszsub = (customFontSize || options.fontszsub) * 0.5
-        switch (textRange.style) {
-          case TextCommand.Bold:
-            styles['font-weight'] = 'bold'
-            break
+    if (format & IS_SUBSCRIPT) {
+      styles['font-size'] = fontszsub + 'px';
+      styles.shiftY = fontsz / 4;
+    }
 
-          case TextCommand.Italic:
-            styles['font-style'] = 'italic'
-            break
+    if (format & IS_SUPERSCRIPT) {
+      styles['font-size'] = fontszsub + 'px';
+      styles.shiftY = -fontsz / 3;
+    }
 
-          case TextCommand.Subscript:
-            styles['font-size'] = fontszsub + 'px'
-            styles.shiftY = fontsz / 4
-
-            break
-
-          case TextCommand.Superscript:
-            styles['font-size'] = fontszsub + 'px'
-            styles.shiftY = -fontsz / 3
-            break
-
-          case `${TextCommand.FontSize}_${customFontSize}px`:
-            styles['font-size'] = customFontSize + 'px'
-            break
-
-          default:
-        }
-
-        return styles
-      },
-      {}
-    )
+    return styles;
   }
 }
 
-export default ReText
+export default ReText;

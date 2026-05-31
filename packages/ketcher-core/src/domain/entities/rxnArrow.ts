@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2'
+import { type Point, Vec2 } from './vec2';
+import {
+  type initiallySelectedType,
+  BaseMicromoleculeEntity,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum RxnArrowMode {
   OpenAngle = 'open-angle',
@@ -22,6 +26,7 @@ export enum RxnArrowMode {
   FilledBow = 'filled-bow',
   DashedOpenAngle = 'dashed-open-angle',
   Failed = 'failed',
+  Retrosynthetic = 'retrosynthetic',
   BothEndsFilledTriangle = 'both-ends-filled-triangle',
   EquilibriumFilledTriangle = 'equilibrium-filled-triangle',
   EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow',
@@ -33,51 +38,56 @@ export enum RxnArrowMode {
   EllipticalArcFilledBow = 'elliptical-arc-arrow-filled-bow',
   EllipticalArcFilledTriangle = 'elliptical-arc-arrow-filled-triangle',
   EllipticalArcOpenAngle = 'elliptical-arc-arrow-open-angle',
-  EllipticalArcOpenHalfAngle = 'elliptical-arc-arrow-open-half-angle'
+  EllipticalArcOpenHalfAngle = 'elliptical-arc-arrow-open-half-angle',
 }
 
 export interface RxnArrowAttributes {
-  mode: RxnArrowMode
-  pos?: Array<Point>
-  height?: number
+  mode: RxnArrowMode;
+  pos?: Array<Point>;
+  height?: number;
+  initiallySelected?: initiallySelectedType;
+  arrowId?: number;
 }
 
-export class RxnArrow {
-  mode: RxnArrowMode
-  pos: Array<Vec2>
-  height?: number
+export class RxnArrow extends BaseMicromoleculeEntity {
+  mode: RxnArrowMode;
+  pos: Array<Vec2>;
+  height?: number;
+  arrowId?: number;
 
   static isElliptical(arrow) {
     return [
       RxnArrowMode.EllipticalArcFilledBow,
       RxnArrowMode.EllipticalArcFilledTriangle,
       RxnArrowMode.EllipticalArcOpenHalfAngle,
-      RxnArrowMode.EllipticalArcOpenAngle
-    ].includes(arrow.mode)
+      RxnArrowMode.EllipticalArcOpenAngle,
+    ].includes(arrow.mode);
   }
 
   constructor(attributes: RxnArrowAttributes) {
-    this.pos = []
+    super(attributes?.initiallySelected);
+    this.pos = [];
+    this.arrowId = attributes.arrowId;
 
     if (attributes.pos) {
       for (let i = 0; i < attributes.pos.length; i++) {
-        const currentP = attributes.pos[i]
-        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
+        const currentP = attributes.pos[i];
+        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2();
       }
     }
-    this.mode = attributes.mode
-    const defaultHeight = 2
+    this.mode = attributes.mode;
+    const defaultHeight = 1;
 
     if (RxnArrow.isElliptical(this)) {
-      this.height = attributes.height ?? defaultHeight
+      this.height = attributes.height ?? defaultHeight;
     }
   }
 
   clone() {
-    return new RxnArrow(this)
+    return new RxnArrow(this);
   }
 
   center(): Vec2 {
-    return Vec2.centre(this.pos[0], this.pos[1])
+    return Vec2.centre(this.pos[0], this.pos[1]);
   }
 }

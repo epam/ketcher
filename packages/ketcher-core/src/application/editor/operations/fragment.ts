@@ -14,68 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render'
+import { FragmentAdd } from './FragmentAdd';
+import { FragmentDelete } from './FragmentDelete';
+import { FragmentSetProperties } from './FragmentSetProperties';
 
-import { BaseOperation } from './base'
-import { Fragment } from 'domain/entities'
-import { OperationType } from './OperationType'
+FragmentAdd.InverseConstructor = FragmentDelete;
+FragmentDelete.InverseConstructor = FragmentAdd;
 
-// todo: separate classes: now here is circular dependency in `invert` method
-
-class FragmentAdd extends BaseOperation {
-  frid: any
-
-  constructor(fragmentId?: any) {
-    super(OperationType.FRAGMENT_ADD)
-    this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
-  }
-
-  execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const frag = new Fragment()
-
-    if (this.frid === null) {
-      this.frid = struct.frags.add(frag)
-    } else {
-      struct.frags.set(this.frid, frag)
-    }
-
-    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add restruct.notifyFragmentAdded
-    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
-  }
-
-  invert() {
-    return new FragmentDelete(this.frid)
-  }
-}
-
-class FragmentDelete extends BaseOperation {
-  frid: any
-
-  constructor(fragmentId: any) {
-    super(OperationType.FRAGMENT_DELETE, 100)
-    this.frid = fragmentId
-  }
-
-  execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    if (!struct.frags.get(this.frid)) {
-      return
-    }
-
-    BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1)
-    restruct.frags.delete(this.frid)
-    struct.frags.delete(this.frid) // TODO add restruct.notifyFragmentRemoved
-
-    const enhancedFalg = restruct.enhancedFlags.get(this.frid)
-    if (!enhancedFalg) return
-    restruct.clearVisel(enhancedFalg.visel)
-    restruct.enhancedFlags.delete(this.frid)
-  }
-
-  invert() {
-    return new FragmentAdd(this.frid)
-  }
-}
-
-export { FragmentAdd, FragmentDelete }
+export { FragmentAdd, FragmentDelete, FragmentSetProperties };

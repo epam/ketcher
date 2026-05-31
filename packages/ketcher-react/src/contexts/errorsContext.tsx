@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import React from 'react';
 
 export interface IErrorsContext {
-  errorHandler: (message: string) => void
+  errorHandler: (message: string) => void;
 }
 
-const errorsContext = React.createContext<IErrorsContext>({} as IErrorsContext)
+const errorsContext = React.createContext<IErrorsContext>({} as IErrorsContext);
 
-export default errorsContext
+export default errorsContext;

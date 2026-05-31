@@ -16,160 +16,252 @@
 
 import {
   FormatterFactory,
-  Pile,
   SGroup,
-  getStereoAtomsMap,
   identifyStructFormat,
   Struct,
   SupportedFormat,
-  emitEventRequestIsFinished
-} from 'ketcher-core'
+  notifyRequestCompleted,
+  Editor,
+  KetcherLogger,
+  SettingsManager,
+  getSelectionFromStruct,
+} from 'ketcher-core';
 
-import { supportedSGroupTypes } from './constants'
-import { setAnalyzingFile } from './request'
-import tools from '../action/tools'
-import { SettingsManager } from '../utils/settingsManager'
+import { supportedSGroupTypes } from './constants';
+import { setAnalyzingFile } from './request';
+import tools from '../action/tools';
+import { isNumber } from 'lodash';
 
 export function onAction(action) {
-  if (action && action.dialog) {
+  if (action?.dialog) {
     return {
       type: 'MODAL_OPEN',
-      data: { name: action.dialog, prop: action.prop }
-    }
+      data: { name: action.dialog, prop: action.prop },
+    };
   }
-  if (action && action.thunk) {
-    return action.thunk
+  if (action?.thunk) {
+    return action.thunk;
   }
 
   return {
     type: 'ACTION',
-    action
-  }
+    action,
+  };
 }
 
 export function loadStruct(struct) {
   return (_dispatch, getState) => {
-    const editor = getState().editor
-    editor.struct(struct)
-  }
+    const editor = getState().editor;
+    editor.struct(struct);
+  };
 }
 
-function parseStruct(
+export function parseStruct(
   struct: string | Struct,
   server,
-  options?
+  options?,
 ): Promise<Struct> {
   if (typeof struct === 'string') {
-    options = options || {}
-    const { rescale, fragment, ...formatterOptions } = options
+    options = options || {};
+    const {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      rescale,
+      fragment,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      ...formatterOptions
+    } = options;
 
-    const format = identifyStructFormat(struct)
+    const format = identifyStructFormat(struct);
     if (format === SupportedFormat.cdx) {
-      struct = `base64::${struct.replace(/\s/g, '')}`
+      struct = `base64::${struct.replace(/\s/g, '')}`;
     }
-    const factory = new FormatterFactory(server)
-
-    const service = factory.create(format, formatterOptions)
-    return service.getStructureFromStringAsync(struct)
+    const factory = new FormatterFactory(server);
+    const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
+    const service = factory.create(
+      format,
+      formatterOptions,
+      queryPropertiesAreUsed,
+    );
+    return service.getStructureFromStringAsync(struct);
   } else {
-    return Promise.resolve(struct)
+    return Promise.resolve(struct);
   }
 }
 
 // Removing from what should be saved - structure, which was added to paste tool,
 // but not yet rendered on canvas
 export function removeStructAction(): {
-  type: string
-  action?: Record<string, unknown>
+  type: string;
+  action?: Record<string, unknown>;
 } {
-  const savedSelectedTool = SettingsManager.selectionTool
+  const savedSelectedTool = SettingsManager.selectionTool;
 
-  return onAction(savedSelectedTool || tools['select-rectangle'].action)
+  return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
-export function load(struct: Struct, options?) {
+export function load(struct: string | Struct, options?) {
   return async (dispatch, getState) => {
-    const state = getState()
-    const editor = state.editor
-    const server = state.server
-    const errorHandler = editor.errorHandler
+    const state = getState();
+    const editor = state.editor as Editor;
+    const server = state.server;
+    const serverSettings = state.options.getServerSettings();
+    const errorHandler = editor.errorHandler;
+    options = options || {};
+    let { isPaste, method, ...otherOptions } = options;
+    otherOptions = {
+      ...serverSettings,
+      ...otherOptions,
+    };
 
-    options = options || {}
-    options = {
-      ...options,
-      'dearomatize-on-load': editor.options()['dearomatize-on-load'],
-      ignoreChiralFlag: editor.options().ignoreChiralFlag
-    }
-
-    dispatch(setAnalyzingFile(true))
+    dispatch(setAnalyzingFile(true));
 
     try {
-      const parsedStruct = await parseStruct(struct, server, options)
-      const { fragment } = options
+      const parsedStruct = await parseStruct(struct, server, otherOptions);
+      const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
-        (sGroup) => !supportedSGroupTypes[sGroup.type]
-      )
+        (sGroup) => !supportedSGroupTypes[sGroup.type],
+      );
+      const hasMoleculeToMonomerConnections = parsedStruct.bonds.find(
+        (_, bond) => {
+          return (
+            isNumber(bond.beginSuperatomAttachmentPointNumber) ||
+            isNumber(bond.endSuperatomAttachmentPointNumber)
+          );
+        },
+      );
 
       if (hasUnsupportedGroups) {
-        await editor.event.confirm.dispatch()
+        await editor.event.confirm.dispatch();
         parsedStruct.sgroups = parsedStruct.sgroups.filter(
-          (_key, sGroup) => supportedSGroupTypes[sGroup.type]
-        )
+          (_key, sGroup) => supportedSGroupTypes[sGroup.type],
+        );
       }
 
-      parsedStruct.rescale() // TODO: move out parsing?
+      // scaling works bad with molecule-to-monomer connections
+      if (!hasMoleculeToMonomerConnections) {
+        parsedStruct.rescale(); // TODO: move out parsing?
+      }
 
       if (editor.struct().atoms.size) {
         // NB: reset id
-        const oldStruct = editor.struct().clone()
+        const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
-          const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId))
-          const atomSet = new Pile(sg.atoms)
-          const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet)
-          SGroup.bracketPos(sg, parsedStruct, crossBonds)
-          if (offset) sg.updateOffset(offset)
-        })
+          const sgroup = oldStruct.sgroups.get(sgId);
+          const offset = sgroup ? SGroup.getOffset(sgroup) : null;
+          SGroup.bracketPos(sg, parsedStruct);
+          if (offset) sg.updateOffset(offset);
+        });
       }
 
-      parsedStruct.findConnectedComponents()
-      parsedStruct.setImplicitHydrogen()
+      if (
+        method === 'toggleExplicitHydrogens' &&
+        editor.isMonomerCreationWizardActive &&
+        editor.monomerCreationState
+      ) {
+        // If toggle explicit hydrogen is called, we should not apply it for marked leaving group atoms in monomer creation wizard
+        const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-      const stereAtomsMap = getStereoAtomsMap(
-        parsedStruct,
-        Array.from(parsedStruct.bonds.values())
-      )
+        // Find leaving group atoms in new struct
+        const leavingGroupAtoms = parsedStruct.atoms.filter((atomId) =>
+          Array.from(assignedAttachmentPoints.values()).some(
+            ([, leavingAtomId]) => leavingAtomId === atomId,
+          ),
+        );
 
-      parsedStruct.atoms.forEach((atom, id) => {
-        if (parsedStruct?.atomGetNeighbors(id)?.length === 0) {
-          atom.stereoLabel = null
-          atom.stereoParity = 0
-        } else {
-          const stereoProp = stereAtomsMap.get(id)
-          if (stereoProp) {
-            atom.stereoLabel = stereoProp.stereoLabel
-            atom.stereoParity = stereoProp.stereoParity
+        const currentStruct = editor.struct();
+
+        // Find outgoing bonds to explicit hydrogens from leaving group atoms (they are not present in old struct)
+        const newBondsToLeavingGroupAtoms = parsedStruct.bonds.filter(
+          (_, bond) =>
+            (leavingGroupAtoms.has(bond.begin) &&
+              !currentStruct.atoms.has(bond.end)) ||
+            (leavingGroupAtoms.has(bond.end) &&
+              !currentStruct.atoms.has(bond.begin)),
+        );
+
+        // Find explicit hydrogen atoms
+        const explicitHydrogenAtomsForLeavingGroupAtoms = new Set(
+          Array.from(newBondsToLeavingGroupAtoms.values()).map((bond) =>
+            leavingGroupAtoms.has(bond.begin) ? bond.end : bond.begin,
+          ),
+        );
+
+        // Filter out explicit hydrogen atoms for leaving atoms and bonds to these hydrogens from leaving group atoms
+        parsedStruct.atoms = parsedStruct.atoms.filter(
+          (atomId) => !explicitHydrogenAtomsForLeavingGroupAtoms.has(atomId),
+        );
+        parsedStruct.bonds = parsedStruct.bonds.filter(
+          (bondId) => !newBondsToLeavingGroupAtoms.has(bondId),
+        );
+
+        // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count.
+        // Atom ids may diverge after Indigo transformations, so skip stale ids defensively.
+        leavingGroupAtoms.forEach((_, atomId) => {
+          const originalAtom = currentStruct.atoms.get(atomId);
+          if (!originalAtom || !parsedStruct.atoms.has(atomId)) {
+            return;
           }
-        }
-      })
+          parsedStruct.atoms.set(atomId, originalAtom);
+        });
+      }
 
-      parsedStruct.markFragments()
+      parsedStruct.findConnectedComponents();
+      parsedStruct.setImplicitHydrogen();
+      parsedStruct.setStereoLabelsToAtoms();
+      parsedStruct.markFragments();
+      parsedStruct.applyMonomersTransformations();
 
       if (fragment) {
         if (parsedStruct.isBlank()) {
-          dispatch(removeStructAction())
+          dispatch(removeStructAction());
         } else {
-          dispatch(onAction({ tool: 'paste', opts: parsedStruct }))
+          dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct)
+        editor.struct(parsedStruct, method === 'layout');
       }
-      dispatch(setAnalyzingFile(false))
-      dispatch({ type: 'MODAL_CLOSE' })
-    } catch (err: any) {
-      dispatch(setAnalyzingFile(false))
-      err && errorHandler(err.message)
+
+      editor.zoomAccordingContent(parsedStruct);
+
+      const isIndigoFunctionCalled = !!method;
+      if (!isPaste && !isIndigoFunctionCalled) {
+        editor.centerStruct();
+      }
+      if (!fragment) {
+        // do not update selection if fragment is added
+        editor.selection(getSelectionFromStruct(editor.struct()));
+      }
+      editor.struct().disableInitiallySelected();
+      dispatch(setAnalyzingFile(false));
+      dispatch({ type: 'MODAL_CLOSE' });
+    } catch (e: any) {
+      KetcherLogger.error('shared.ts::load', e);
+      dispatch(setAnalyzingFile(false));
+      if (e) {
+        errorHandler?.(e.message);
+      }
     } finally {
-      emitEventRequestIsFinished()
+      notifyRequestCompleted();
     }
-  }
+  };
+}
+
+export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { message: 'Paste' | 'Copy' | 'Cut' } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { message: command } },
+  };
+}
+
+export function openInfoModalWithCustomMessage(message: string): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { customText: string } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { customText: message } },
+  };
 }

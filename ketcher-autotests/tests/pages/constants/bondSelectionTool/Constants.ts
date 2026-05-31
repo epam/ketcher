@@ -1,0 +1,43 @@
+export enum MicroBondTool {
+  Single = 'bond-single',
+  Double = 'bond-double',
+  Triple = 'bond-triple',
+  Any = 'bond-any',
+  Aromatic = 'bond-aromatic',
+  SingleDouble = 'bond-singledouble',
+  SingleAromatic = 'bond-singlearomatic',
+  DoubleAromatic = 'bond-doublearomatic',
+  Dative = 'bond-dative',
+  Hydrogen = 'bond-hydrogen',
+  SingleUp = 'bond-up',
+  SingleDown = 'bond-down',
+  SingleUpDown = 'bond-updown',
+  DoubleCisTrans = 'bond-crossed',
+}
+
+export enum MacroBondTool {
+  Single = 'single-bond',
+  Hydrogen = 'hydrogen-bond',
+}
+
+export enum MacroBondType {
+  Single = 'covalent',
+  Hydrogen = 'hydrogen',
+}
+
+export enum MicroBondType {
+  Single = '1',
+  Double = '2',
+  Triple = '3',
+  Any = '8',
+  Aromatic = '4',
+  SingleDouble = '5',
+  SingleAromatic = '6',
+  DoubleAromatic = '7',
+  Dative = '9',
+  Hydrogen = '10',
+  SingleUp = '13',
+  SingleDown = '23',
+  SingleUpDown = '19',
+  DoubleCisTrans = '18',
+}

@@ -24,180 +24,299 @@ import {
   RxnPlusAdd,
   SimpleObjectAdd,
   TextCreate,
-  CalcImplicitH
-} from '../operations'
-import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
+  CalcImplicitH,
+  FragmentSetProperties,
+  BondAttr,
+  AtomAttr,
+  ImageUpsert,
+  MultitailArrowUpsert,
+} from '../operations';
+import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
-import { Action } from './action'
-import { Vec2 } from 'domain/entities'
-import { fromSgroupAddition } from './sgroup'
+import { Action } from './action';
+import type { MultitailArrow } from 'domain/entities/multitailArrow';
+import { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import { fromSgroupAddition } from './sgroup';
+import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { Image } from 'domain/entities/image';
+
+type CreatedItems = {
+  atoms: number[];
+  bonds: number[];
+  rxnArrows: number[];
+  rxnPluses: number[];
+  texts: number[];
+  images: number[];
+  simpleObjects: number[];
+  multitailArrows: number[];
+};
 
 export interface PasteItems {
-  atoms: number[]
-  bonds: number[]
+  atoms: number[];
+  bonds: number[];
 }
 
 export function fromPaste(
   restruct,
   pstruct,
   point,
-  angle = 0
-): [Action, PasteItems] {
-  const xy0 = getStructCenter(pstruct)
-  const offset = Vec2.diff(point, xy0)
+  angle = 0,
+  isPreview = false,
+  needMoveFromTopLeftPoint = false,
+): [Action, PasteItems, CreatedItems] {
+  const xy0 = needMoveFromTopLeftPoint
+    ? pstruct.getCoordBoundingBox().min
+    : getStructCenter(pstruct);
+  const offset = Vec2.diff(point, xy0);
 
-  const action = new Action()
+  const action = new Action();
 
-  const aidMap = new Map<number, number>()
-  const fridMap = new Map<number, number>()
+  const aidMap = new Map();
+  const fridMap = new Map();
 
   const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
-    bonds: []
-  }
+    bonds: [],
+  };
+
+  const items: CreatedItems = {
+    atoms: [],
+    bonds: [],
+    rxnArrows: [],
+    rxnPluses: [],
+    texts: [],
+    images: [],
+    simpleObjects: [],
+    multitailArrows: [],
+  };
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment)) {
+    if (!fridMap.has(atom.fragment) && !pstruct.isAtomFromMacromolecule(aid)) {
       fridMap.set(
         atom.fragment,
-        (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
-      )
+        (
+          action.addOp(
+            new FragmentAdd(null, atom.fragment.properties).perform(restruct),
+          ) as FragmentAdd
+        ).frid,
+      );
     }
 
     const tmpAtom = Object.assign(atom.clone(), {
-      fragment: fridMap.get(atom.fragment)
-    })
+      fragment: fridMap.get(atom.fragment),
+    });
     const operation = new AtomAdd(
       tmpAtom,
-      Vec2.diff(atom.pp, xy0).rotate(angle).add(point)
-    ).perform(restruct) as AtomAdd
-    action.addOp(operation)
-    aidMap.set(aid, operation.data.aid)
+      Vec2.diff(atom.pp, xy0).rotate(angle).add(point),
+    ).perform(restruct) as AtomAdd;
+    action.addOp(operation);
+    aidMap.set(aid, operation.data.aid as number);
 
-    pasteItems.atoms.push(operation.data.aid)
-  })
+    pasteItems.atoms.push(operation.data.aid as number);
+    items.atoms.push(operation.data.aid as number);
+
+    action.mergeWith(
+      fromRGroupAttachmentPointAddition(
+        restruct,
+        tmpAtom.attachmentPoints,
+        operation.data.aid as number,
+      ),
+    );
+  });
 
   pstruct.frags.forEach((frag, frid) => {
-    if (!frag) return
+    if (!frag) return;
+    if (frag.properties) {
+      action.addOp(
+        new FragmentSetProperties(fridMap.get(frid), frag.properties).perform(
+          restruct,
+        ),
+      );
+    }
     frag.stereoAtoms.forEach((aid) =>
       action.addOp(
         new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
-          restruct
-        )
-      )
-    )
-  })
+          restruct,
+        ),
+      ),
+    );
+  });
 
   pstruct.bonds.forEach((bond) => {
     const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
-      bond
-    ).perform(restruct) as BondAdd
-    action.addOp(operation)
+      bond,
+      false,
+    ).perform(restruct) as BondAdd;
+    action.addOp(operation);
 
-    pasteItems.bonds.push(operation.data.bid)
-  })
+    pasteItems.bonds.push(operation.data.bid as number);
+    items.bonds.push(operation.data.bid as number);
+    new BondAttr(
+      operation.data.bid as number,
+      'isPreview',
+      isPreview,
+      false,
+    ).perform(restruct);
+  });
 
-  pasteItems.atoms.forEach((aid) => {
-    action.addOp(new CalcImplicitH([aid]).perform(restruct))
-  })
-
-  pstruct.sgroups.forEach((sg) => {
-    const newsgid = restruct.molecule.sgroups.newId()
-    const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
+  pstruct.sgroups.forEach((sg: SGroup) => {
+    const newsgid = restruct.molecule.sgroups.newId();
+    const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
+    let attachmentPoints;
+    try {
+      attachmentPoints = sg.cloneAttachmentPoints(aidMap);
+    } catch (e) {
+      // For macromolecules, attachment points may reference atoms not in aidMap
+      // This is expected behavior, use empty array instead
+      attachmentPoints = [];
+    }
+    if (
+      sg.isNotContractible(pstruct) &&
+      !(sg instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sg)
+    ) {
+      sg.setAttr('expanded', true);
+    }
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
       sgAtoms,
       sg.data,
       newsgid,
+      attachmentPoints,
       sg.pp ? sg.pp.add(offset) : null,
-      sg.type === 'SUP' ? sg.data.expanded : null,
-      sg.data.name
-    )
-    sgAction.operations.reverse().forEach((oper) => {
-      action.addOp(oper)
-    })
-  })
+      sg.type === 'SUP' ? sg.isExpanded() : null,
+      sg.data.name,
+      sg,
+    );
+    sgAction.operations.reverse();
+    sgAction.operations.forEach((oper) => {
+      action.addOp(oper);
+    });
+  });
+
+  pasteItems.atoms.forEach((aid) => {
+    action.addOp(new CalcImplicitH([aid]).perform(restruct));
+    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
+  });
 
   pstruct.rxnArrows.forEach((rxnArrow) => {
-    action.addOp(
-      new RxnArrowAdd(
-        rxnArrow.pos.map((p) => p.add(offset)),
-        rxnArrow.mode
-      ).perform(restruct)
-    )
-  })
+    const operation = new RxnArrowAdd(
+      rxnArrow.pos.map((p) => p.add(offset)),
+      rxnArrow.mode,
+      undefined,
+      rxnArrow.height,
+    ).perform(restruct);
+    action.addOp(operation);
+    items.rxnArrows.push(operation.data.id);
+  });
 
   pstruct.rxnPluses.forEach((plus) => {
-    action.addOp(new RxnPlusAdd(plus.pp.add(offset)).perform(restruct))
-  })
+    const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
+    action.addOp(operation);
+    items.rxnPluses.push(operation.data.plid);
+  });
 
   pstruct.simpleObjects.forEach((simpleObject) => {
-    action.addOp(
-      new SimpleObjectAdd(
-        simpleObject.pos.map((p) => p.add(offset)),
-        simpleObject.mode
-      ).perform(restruct)
-    )
-  })
+    const operation = new SimpleObjectAdd(
+      simpleObject.pos.map((p) => p.add(offset)),
+      simpleObject.mode,
+    ).perform(restruct);
+    action.addOp(operation);
+    items.simpleObjects.push(operation.data.id);
+  });
 
   pstruct.texts.forEach((text) => {
-    action.addOp(
-      new TextCreate(
-        text.content,
-        text.position.add(offset),
-        text.pos.map((p) => p.add(offset))
-      ).perform(restruct)
-    )
-  })
+    const operation = new TextCreate(
+      text.content,
+      text.position.add(offset),
+      text.pos.map((p) => p.add(offset)),
+    ).perform(restruct);
+    action.addOp(operation);
+    items.texts.push(operation.data.id);
+  });
+
+  pstruct.images.forEach((image: Image) => {
+    const clonedImage = image.clone();
+    clonedImage.addPositionOffset(offset);
+    const operation = new ImageUpsert(clonedImage).perform(restruct);
+    action.addOp(operation);
+    items.images.push(operation.data.id);
+  });
+
+  pstruct.multitailArrows.forEach((multitailArrow: MultitailArrow) => {
+    const clonedMultitailArrow = multitailArrow.clone();
+    clonedMultitailArrow.move(offset);
+    const operation = new MultitailArrowUpsert(clonedMultitailArrow).perform(
+      restruct,
+    );
+    action.addOp(operation);
+    items.multitailArrows.push(operation.data.id);
+  });
 
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((__frag, frid) => {
       action.addOp(
-        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct)
-      )
-    })
-    const ifThen = pstruct.rgroups.get(rgid).ifthen
-    const newRgId = pstruct.rgroups.get(ifThen) ? ifThen : 0
+        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct),
+      );
+    });
+    const ifThen = pstruct.rgroups.get(rgid).ifthen;
+    const newRgId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
     action
       .mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))
-      .mergeWith(fromUpdateIfThen(restruct, newRgId, rg.ifthen))
-  })
+      .mergeWith(fromUpdateIfThen(restruct, newRgId, rg.ifthen));
+  });
 
-  action.operations.reverse()
-  return [action, pasteItems]
+  action.operations.reverse();
+  return [action, pasteItems, items];
 }
 
-function getStructCenter(struct) {
-  // TODO: Review, function may not work sometimes
-  const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
-  if (
-    struct.sgroups.size === 1 &&
-    !struct.sgroups.get(onlyOneStructsSgroupId).data.expanded
-  ) {
-    return struct.atoms.get(0).pp
+function getStructCenter(struct: Struct): Vec2 {
+  const isOnlyOneSGroup = struct.sgroups.size === 1;
+  if (isOnlyOneSGroup) {
+    const sgroupIterator = struct.sgroups.keys().next();
+    if (!sgroupIterator.done) {
+      const onlyOneStructsSgroupId = sgroupIterator.value;
+      const sgroup = struct.sgroups.get(onlyOneStructsSgroupId);
+      if (sgroup?.isContracted()) {
+        return sgroup.getContractedPosition(struct).position;
+      }
+    }
   }
   if (struct.atoms.size > 0) {
-    let xmin = 1e50
-    let ymin = xmin
-    let xmax = -xmin
-    let ymax = -ymin
+    let xmin = 1e50;
+    let ymin = xmin;
+    let xmax = -xmin;
+    let ymax = -ymin;
 
     struct.atoms.forEach((atom) => {
-      xmin = Math.min(xmin, atom.pp.x)
-      ymin = Math.min(ymin, atom.pp.y)
-      xmax = Math.max(xmax, atom.pp.x)
-      ymax = Math.max(ymax, atom.pp.y)
-    })
-    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2) // TODO: check
+      xmin = Math.min(xmin, atom.pp.x);
+      ymin = Math.min(ymin, atom.pp.y);
+      xmax = Math.max(xmax, atom.pp.x);
+      ymax = Math.max(ymax, atom.pp.y);
+    });
+    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).center()
-  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp
-  if (struct.simpleObjects.size > 0) return struct.simpleObjects.get(0).center()
-  if (struct.texts.size > 0) return struct.texts.get(0).position
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp;
+  if (struct.simpleObjects.size > 0)
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    return struct.simpleObjects.get(0)!.center();
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.texts.size > 0) return struct.texts.get(0)!.position;
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.images.size > 0) return struct.images.get(0)!.center();
+  if (struct.multitailArrows.size > 0)
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    return struct.multitailArrows.get(0)!.center();
 
-  return null
+  return new Vec2(0, 0);
 }

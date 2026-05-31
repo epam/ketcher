@@ -13,297 +13,267 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ReSGroup } from 'application/render'
-import assert from 'assert'
-import { FunctionalGroupsProvider } from '../helpers'
-import { Atom } from './atom'
-import { Bond } from './bond'
-import { Pool } from './pool'
-import { SGroup } from './sgroup'
-import { Struct } from './struct'
+import type { ReSGroup } from 'application/render';
+import assert from 'assert';
+import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
+import type { Atom } from './atom';
+import type { Bond } from './bond';
+import type { Pool } from './pool';
+import { SGroup } from './sgroup';
+import type { Struct } from './struct';
+import type { HalfBond } from './halfBond';
+
+const isSaltOrSolvent = (moleculeName: string): boolean => {
+  const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance();
+  const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
+  return saltsAndSolvents.some(
+    ({ name, abbreviation }) =>
+      name === moleculeName || moleculeName === abbreviation,
+  );
+};
+
+const getSGroupBonds = (molecule: Struct, sgroup: SGroup): number[] => {
+  const atoms = sgroup.allAtoms
+    ? Array.from(molecule.atoms.keys())
+    : (sgroup.atoms as number[]);
+  const bonds: number[] = [];
+
+  molecule.bonds.forEach((bond, bid) => {
+    if (atoms.includes(bond.begin) && atoms.includes(bond.end)) {
+      bonds.push(bid);
+    }
+  });
+
+  return bonds;
+};
 
 export class FunctionalGroup {
-  #sgroup: SGroup
+  readonly #sgroup: SGroup;
 
   constructor(sgroup: SGroup) {
-    assert(sgroup != null)
+    assert(sgroup != null);
 
-    this.#sgroup = sgroup
+    this.#sgroup = sgroup;
+    sgroup.setFunctionalGroup(this);
   }
 
   get name(): string {
-    return this.#sgroup.data.name
+    return this.#sgroup.data.name;
   }
 
   get relatedSGroupId(): number {
-    return this.#sgroup.id
+    return this.#sgroup.id;
   }
 
   get isExpanded(): boolean {
-    return this.#sgroup.data.expanded
+    return this.#sgroup.data.expanded;
   }
 
   get relatedSGroup(): SGroup {
-    return this.#sgroup
+    return this.#sgroup;
   }
 
   static isFunctionalGroup(sgroup): boolean {
-    const provider = FunctionalGroupsProvider.getInstance()
-    const functionalGroups = provider.getFunctionalGroupsList()
+    const provider = FunctionalGroupsProvider.getInstance();
+    const functionalGroups = provider.getFunctionalGroupsList();
     const {
       data: { name },
-      type
-    } = sgroup
+      type,
+    } = sgroup;
     return (
       type === 'SUP' &&
       (functionalGroups.some((type) => type.name === name) ||
-        SGroup.isSaltOrSolvent(name))
-    )
+        isSaltOrSolvent(name))
+    );
   }
 
-  static getFunctionalGroupByName(searchName: string): Struct | null {
-    const provider = FunctionalGroupsProvider.getInstance()
-    const functionalGroups = provider.getFunctionalGroupsList()
-
-    let foundGroup
-    if (searchName) {
-      foundGroup = functionalGroups.find(({ name, abbreviation }) => {
-        return name === searchName || abbreviation === searchName
-      })
-    }
-
-    return foundGroup || null
-  }
-
-  static atomsInFunctionalGroup(functionalGroups, atom): number | null {
+  static atomsInFunctionalGroup(
+    functionalGroups,
+    atom,
+    isNeedCheckForGroups = false,
+  ): number | null {
     if (functionalGroups.size === 0) {
-      return null
+      return null;
     }
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atom)) return atom
+      const isFunctionalGroup = isNeedCheckForGroups
+        ? this.isFunctionalGroup(fg.relatedSGroup)
+        : true;
+      if (isFunctionalGroup && fg.relatedSGroup.atoms.includes(atom))
+        return atom;
     }
-    return null
+    return null;
   }
 
   static bondsInFunctionalGroup(
     molecule,
     functionalGroups,
-    bond
+    bond,
   ): number | null {
     if (functionalGroups.size === 0) {
-      return null
+      return null;
     }
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
-      if (bonds.includes(bond)) return bond
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
+      if (bonds.includes(bond)) return bond;
     }
-    return null
+    return null;
+  }
+
+  static isRGroupAttachmentPointInsideFunctionalGroup(
+    molecule: Struct,
+    id: number,
+  ) {
+    const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
+    assert(rgroupAttachmentPoint != null);
+    const attachedAtom = rgroupAttachmentPoint.atomId;
+    return FunctionalGroup.atomsInFunctionalGroup(
+      molecule.functionalGroups,
+      attachedAtom,
+    );
   }
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
-    atomId: number
-  ): number | null
+    atomId: number,
+  ): number | null;
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
-    isFunctionalGroupReturned: true
-  ): FunctionalGroup | null
+    isFunctionalGroupReturned: true,
+  ): FunctionalGroup | null;
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
-    isFunctionalGroupReturned?: boolean
+    isFunctionalGroupReturned?: boolean,
   ): number | FunctionalGroup | null {
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atomId))
-        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId
+      if (
+        !fg.relatedSGroup.isSuperatomWithoutLabel &&
+        fg.relatedSGroup.atoms.includes(atomId)
+      )
+        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
     }
-    return null
+    return null;
   }
 
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
-    bondId: number | null
-  ): number | null
+    bondId: number | null,
+  ): number | null;
 
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
     bondId: number | null,
-    isFunctionalGroupReturned: true
-  ): FunctionalGroup | null
+    isFunctionalGroupReturned: true,
+  ): FunctionalGroup | null;
 
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
     bondId: number | null,
-    isFunctionalGroupReturned?: boolean
+    isFunctionalGroupReturned?: boolean,
   ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
-      const bonds = SGroup.getBonds(molecule, fg.relatedSGroup)
-      if (bonds.includes(bondId)) {
-        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId
+      const bonds = getSGroupBonds(molecule, fg.relatedSGroup);
+      if (
+        bondId !== null &&
+        !fg.relatedSGroup.isSuperatomWithoutLabel &&
+        bonds.includes(bondId)
+      ) {
+        return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
       }
     }
-    return null
+    return null;
   }
 
   static findFunctionalGroupBySGroup(
     functionalGroups: Pool<FunctionalGroup>,
-    sGroup?: SGroup
+    sGroup?: SGroup,
   ) {
     const key = functionalGroups.find(
-      (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id
-    )
-    return key !== null ? functionalGroups.get(key) : undefined
+      (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id,
+    );
+    return key !== null ? functionalGroups.get(key) : undefined;
   }
 
   static clone(functionalGroup: FunctionalGroup): FunctionalGroup {
-    return new FunctionalGroup(functionalGroup.#sgroup)
-  }
-
-  static isAttachmentBond(sgroup, { begin, end }) {
-    return (
-      (sgroup.atoms.includes(begin) && !sgroup.atoms.includes(end)) ||
-      (sgroup.atoms.includes(end) && !sgroup.atoms.includes(begin))
-    )
-  }
-
-  // Checks, if S-Group is standalone or attached to some other structure
-  static isAttachedSGroup(sgroup, molecule) {
-    const { bonds } = molecule
-    for (const bond of bonds.values()) {
-      if (FunctionalGroup.isAttachmentBond(sgroup, bond)) {
-        return true
-      }
-    }
-    return false
-  }
-
-  /**
-   * This function determines, if an atom is used for attachment to other structure.
-   * For example, having sgroup CF3, which looks like
-   *              F
-   *              |
-   *            F-C-F
-   *              |
-   *         other struct
-   * C – is an attachment point
-   */
-  static isAttachmentPointAtom(atomId: number, molecule: Struct): boolean {
-    const { sgroups, bonds } = molecule
-    const isAtomInSameFunctionalGroup = (otherAtomId, sgroup) =>
-      sgroup.atoms.includes(otherAtomId)
-    for (const sgroup of sgroups.values()) {
-      const isSGroup =
-        FunctionalGroup.isFunctionalGroup(sgroup) || SGroup.isSuperAtom(sgroup)
-      const isSGroupFound = sgroup.atoms.includes(atomId)
-      if (!isSGroup || !isSGroupFound) {
-        continue
-      }
-      for (const bond of bonds.values()) {
-        const isBondBeginInSGroupAndBondEndOutside =
-          bond.begin === atomId &&
-          !isAtomInSameFunctionalGroup(bond.end, sgroup)
-        const isBondEndInSGroupAndBondBeginOutside =
-          bond.end === atomId &&
-          !isAtomInSameFunctionalGroup(bond.begin, sgroup)
-        const isAttachmentBond =
-          isBondBeginInSGroupAndBondEndOutside ||
-          isBondEndInSGroupAndBondBeginOutside
-        if (isAttachmentBond) {
-          return true
-        }
-      }
-      // if atom in S-Group, which is not attached to any structure, then
-      // atoms[0] is considered as attachment point
-      if (!this.isAttachedSGroup(sgroup, molecule)) {
-        return sgroup.atoms[0] === atomId
-      }
-    }
-    return false
-  }
-
-  static getAttachmentPointCount(sGroup, molecule): number {
-    return sGroup.atoms?.reduce((count, currentAtom) => {
-      if (FunctionalGroup.isAttachmentPointAtom(currentAtom, molecule)) {
-        count++
-      }
-      return count
-    }, 0)
-  }
-
-  static isFirstAtomInFunctionalGroup(sgroups, aid): boolean {
-    for (const sg of sgroups.values()) {
-      if (FunctionalGroup.isFunctionalGroup(sg) && aid === sg.atoms[0]) {
-        return true
-      }
-    }
-    return false
+    return new FunctionalGroup(functionalGroup.#sgroup);
   }
 
   static isAtomInContractedFunctionalGroup(
     atom: Atom,
-    sgroups,
+    sgroups: Map<number, ReSGroup> | Pool<SGroup>,
     functionalGroups,
-    sgroupsFromReStruct: boolean
   ): boolean {
-    const contractedFunctionalGroups: number[] = []
-    if (sgroupsFromReStruct) {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(
-            sg.item.id,
-            functionalGroups
-          )
-        ) {
-          contractedFunctionalGroups.push(sg.item.id)
-        }
-      })
-    } else {
-      sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
-        ) {
-          contractedFunctionalGroups.push(sg.id)
-        }
-      })
-    }
-    return contractedFunctionalGroups.some((sg) => atom.sgs.has(sg))
+    return [...atom.sgs.values()].some((sgid) => {
+      const sgroup = sgroups.get(sgid);
+
+      if (!sgroup) {
+        return false;
+      }
+
+      return FunctionalGroup.isContractedFunctionalGroup(
+        'item' in sgroup ? sgroup.item : sgroup,
+        functionalGroups,
+      );
+    });
   }
 
   static isBondInContractedFunctionalGroup(
     bond: Bond,
     sGroups: Map<number, ReSGroup> | Pool<SGroup>,
-    functionalGroups: Pool<FunctionalGroup>
+    functionalGroups: Pool<FunctionalGroup>,
   ) {
-    return [...sGroups.values()].some((sGroup) => {
-      const sGroupId = 'item' in sGroup ? sGroup.item.id : sGroup.id
-      const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms
+    return [...sGroups.values()].some((_sGroup) => {
+      const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
+      const atomsInSGroup = sGroup?.atoms;
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
-        sGroupId,
-        functionalGroups
-      )
+        sGroup,
+        functionalGroups,
+      );
       return (
         isContracted &&
         atomsInSGroup.includes(bond.begin) &&
         atomsInSGroup.includes(bond.end)
-      )
-    })
+      );
+    });
   }
 
-  static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {
-    let isFunctionalGroup = false
-    let expanded = false
-    functionalGroups.forEach((fg) => {
-      if (fg.relatedSGroupId === sgroupId) {
-        isFunctionalGroup = true
-        expanded = fg.isExpanded
+  static isHalfBondInContractedFunctionalGroup(
+    halfBond: HalfBond,
+    struct: Struct,
+  ) {
+    const bond = struct.bonds.get(halfBond.bid);
+    assert(bond != null);
+    return this.isBondInContractedFunctionalGroup(
+      bond,
+      struct.sgroups,
+      struct.functionalGroups,
+    );
+  }
+
+  static isContractedFunctionalGroup(sgroup, functionalGroups): boolean {
+    let isFunctionalGroup = false;
+    let expanded = false;
+
+    if (sgroup instanceof SGroup) {
+      if (sgroup.functionalGroup) {
+        isFunctionalGroup = true;
+        expanded = sgroup.functionalGroup.isExpanded;
       }
-    })
-    return !expanded && isFunctionalGroup
+    } else {
+      functionalGroups.forEach((fg) => {
+        if (fg.relatedSGroupId === sgroup) {
+          isFunctionalGroup = true;
+          expanded = fg.isExpanded;
+        }
+      });
+    }
+    return !expanded && isFunctionalGroup;
   }
 }

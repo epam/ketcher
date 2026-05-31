@@ -16,7 +16,7 @@
 - [atoms](SGroup.md#atoms)
 - [bonds](SGroup.md#bonds)
 - [bracketBox](SGroup.md#bracketbox)
-- [bracketDir](SGroup.md#bracketdir)
+- [bracketDirection](SGroup.md#bracketDirection)
 - [data](SGroup.md#data)
 - [hover](SGroup.md#hover)
 - [hovering](SGroup.md#hovering)
@@ -64,8 +64,8 @@
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type     |
+| :----- | :------- |
 | `type` | `string` |
 
 #### Defined in
@@ -82,7 +82,7 @@
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:73](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L73)
 
-___
+---
 
 ### areas
 
@@ -92,7 +92,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:64](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L64)
 
-___
+---
 
 ### atomSet
 
@@ -102,7 +102,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:70](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L70)
 
-___
+---
 
 ### atoms
 
@@ -112,7 +112,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:69](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L69)
 
-___
+---
 
 ### bonds
 
@@ -122,7 +122,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:74](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L74)
 
-___
+---
 
 ### bracketBox
 
@@ -132,17 +132,17 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:62](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L62)
 
-___
+---
 
-### bracketDir
+### bracketDirection
 
-• **bracketDir**: [`Vec2`](Vec2.md)
+• **bracketDirection**: [`Vec2`](Vec2.md)
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:63](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L63)
 
-___
+---
 
 ### data
 
@@ -152,7 +152,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:78](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L78)
 
-___
+---
 
 ### hover
 
@@ -162,7 +162,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:65](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L65)
 
-___
+---
 
 ### hovering
 
@@ -172,7 +172,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:66](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L66)
 
-___
+---
 
 ### id
 
@@ -182,7 +182,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:60](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L60)
 
-___
+---
 
 ### label
 
@@ -192,7 +192,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:61](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L61)
 
-___
+---
 
 ### neiAtoms
 
@@ -202,7 +202,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:76](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L76)
 
-___
+---
 
 ### parentAtomSet
 
@@ -212,7 +212,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:71](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L71)
 
-___
+---
 
 ### patoms
 
@@ -222,17 +222,17 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:72](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L72)
 
-___
+---
 
 ### pp
 
-• **pp**: ``null`` \| [`Vec2`](Vec2.md)
+• **pp**: `null` \| [`Vec2`](Vec2.md)
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:77](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L77)
 
-___
+---
 
 ### selected
 
@@ -242,7 +242,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:67](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L67)
 
-___
+---
 
 ### selectionPlate
 
@@ -252,7 +252,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:68](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L68)
 
-___
+---
 
 ### type
 
@@ -262,7 +262,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:59](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L59)
 
-___
+---
 
 ### xBonds
 
@@ -272,7 +272,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:75](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L75)
 
-___
+---
 
 ### TYPES
 
@@ -280,8 +280,8 @@ ___
 
 #### Type declaration
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type     |
+| :---- | :------- |
 | `ANY` | `string` |
 | `COM` | `string` |
 | `COP` | `string` |
@@ -310,8 +310,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                  |
+| :------- | :-------------------- |
 | `struct` | [`Struct`](Struct.md) |
 
 #### Returns
@@ -322,7 +322,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:154](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L154)
 
-___
+---
 
 ### checkAttr
 
@@ -330,10 +330,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `attr` | `string` |
-| `value` | `any` |
+| Name    | Type     |
+| :------ | :------- |
+| `attr`  | `string` |
+| `value` | `any`    |
 
 #### Returns
 
@@ -343,7 +343,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:146](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L146)
 
-___
+---
 
 ### getAttr
 
@@ -351,8 +351,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name   | Type     |
+| :----- | :------- |
 | `attr` | `string` |
 
 #### Returns
@@ -363,7 +363,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:125](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L125)
 
-___
+---
 
 ### getAttrs
 
@@ -377,7 +377,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:130](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L130)
 
-___
+---
 
 ### setAttr
 
@@ -385,10 +385,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `attr` | `string` |
-| `value` | `any` |
+| Name    | Type     |
+| :------ | :------- |
+| `attr`  | `string` |
+| `value` | `any`    |
 
 #### Returns
 
@@ -398,7 +398,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:139](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L139)
 
-___
+---
 
 ### updateOffset
 
@@ -406,8 +406,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type              |
+| :------- | :---------------- |
 | `offset` | [`Vec2`](Vec2.md) |
 
 #### Returns
@@ -418,7 +418,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:150](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L150)
 
-___
+---
 
 ### addAtom
 
@@ -426,10 +426,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                  |
+| :------- | :-------------------- |
 | `sgroup` | [`SGroup`](SGroup.md) |
-| `aid` | `number` |
+| `aid`    | `number`              |
 
 #### Returns
 
@@ -439,7 +439,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:259](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L259)
 
-___
+---
 
 ### bracketPos
 
@@ -447,10 +447,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `sGroup` | `any` |
-| `mol` | `any` |
+| Name                | Type     |
+| :------------------ | :------- |
+| `sGroup`            | `any`    |
+| `mol`               | `any`    |
 | `crossBondsPerAtom` | `Object` |
 
 #### Returns
@@ -461,7 +461,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:296](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L296)
 
-___
+---
 
 ### clone
 
@@ -469,9 +469,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `sgroup` | [`SGroup`](SGroup.md) |
+| Name     | Type                       |
+| :------- | :------------------------- |
+| `sgroup` | [`SGroup`](SGroup.md)      |
 | `aidMap` | `Map`<`number`, `number`\> |
 
 #### Returns
@@ -482,7 +482,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:242](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L242)
 
-___
+---
 
 ### filter
 
@@ -490,10 +490,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `_mol` | `any` |
-| `sg` | `any` |
+| Name      | Type  |
+| :-------- | :---- |
+| `_mol`    | `any` |
+| `sg`      | `any` |
 | `atomMap` | `any` |
 
 #### Returns
@@ -504,7 +504,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:238](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L238)
 
-___
+---
 
 ### filterAtoms
 
@@ -512,10 +512,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type  |
+| :------ | :---- |
 | `atoms` | `any` |
-| `map` | `any` |
+| `map`   | `any` |
 
 #### Returns
 
@@ -525,7 +525,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:219](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L219)
 
-___
+---
 
 ### getAtoms
 
@@ -533,10 +533,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type  |
+| :---- | :---- |
 | `mol` | `any` |
-| `sg` | `any` |
+| `sg`  | `any` |
 
 #### Returns
 
@@ -546,7 +546,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:420](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L420)
 
-___
+---
 
 ### getBonds
 
@@ -554,10 +554,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name  | Type  |
+| :---- | :---- |
 | `mol` | `any` |
-| `sg` | `any` |
+| `sg`  | `any` |
 
 #### Returns
 
@@ -567,7 +567,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:429](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L429)
 
-___
+---
 
 ### getBracketParameters
 
@@ -575,14 +575,14 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `mol` | `any` |
-| `crossBondsPerAtom` | `Object` |
-| `atomSet` | [`Pile`](Pile.md)<`number`\> |
-| `bb` | `any` |
-| `d` | `any` |
-| `n` | `any` |
+| Name                | Type                         |
+| :------------------ | :--------------------------- |
+| `mol`               | `any`                        |
+| `crossBondsPerAtom` | `Object`                     |
+| `atomSet`           | [`Pile`](Pile.md)<`number`\> |
+| `bb`                | `any`                        |
+| `d`                 | `any`                        |
+| `n`                 | `any`                        |
 
 #### Returns
 
@@ -592,7 +592,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:339](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L339)
 
-___
+---
 
 ### getCrossBonds
 
@@ -600,9 +600,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `mol` | `any` |
+| Name            | Type                         |
+| :-------------- | :--------------------------- |
+| `mol`           | `any`                        |
 | `parentAtomSet` | [`Pile`](Pile.md)<`number`\> |
 
 #### Returns
@@ -613,7 +613,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:272](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L272)
 
-___
+---
 
 ### getMassCentre
 
@@ -621,9 +621,9 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `mol` | `any` |
+| Name    | Type  |
+| :------ | :---- |
+| `mol`   | `any` |
 | `atoms` | `any` |
 
 #### Returns
@@ -634,7 +634,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:521](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L521)
 
-___
+---
 
 ### getObjBBox
 
@@ -642,10 +642,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type  |
+| :------ | :---- |
 | `atoms` | `any` |
-| `mol` | `any` |
+| `mol`   | `any` |
 
 #### Returns
 
@@ -655,27 +655,27 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:408](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L408)
 
-___
+---
 
 ### getOffset
 
-▸ `Static` **getOffset**(`sgroup`): ``null`` \| [`Vec2`](Vec2.md)
+▸ `Static` **getOffset**(`sgroup`): `null` \| [`Vec2`](Vec2.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                  |
+| :------- | :-------------------- |
 | `sgroup` | [`SGroup`](SGroup.md) |
 
 #### Returns
 
-``null`` \| [`Vec2`](Vec2.md)
+`null` \| [`Vec2`](Vec2.md)
 
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:214](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L214)
 
-___
+---
 
 ### prepareMulForSaving
 
@@ -683,10 +683,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type  |
+| :------- | :---- |
 | `sgroup` | `any` |
-| `mol` | `any` |
+| `mol`    | `any` |
 
 #### Returns
 
@@ -696,7 +696,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:440](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L440)
 
-___
+---
 
 ### removeAtom
 
@@ -704,10 +704,10 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name     | Type                  |
+| :------- | :-------------------- |
 | `sgroup` | [`SGroup`](SGroup.md) |
-| `aid` | `number` |
+| `aid`    | `number`              |
 
 #### Returns
 
@@ -717,7 +717,7 @@ ___
 
 [packages/ketcher-core/src/domain/entities/sgroup.ts:263](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroup.ts#L263)
 
-___
+---
 
 ### removeNegative
 
@@ -725,8 +725,8 @@ ___
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
+| Name    | Type  |
+| :------ | :---- |
 | `atoms` | `any` |
 
 #### Returns

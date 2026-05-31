@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { range } from 'lodash/fp'
+import { range } from 'lodash/fp';
 
-const PERIODIC_TABLE_COLUMNS = 19
+const PERIODIC_TABLE_COLUMNS = 19;
 
 function Header() {
   return (
@@ -27,7 +27,7 @@ function Header() {
         ))}
       </tr>
     </tbody>
-  )
+  );
 }
 
-export default Header
+export default Header;

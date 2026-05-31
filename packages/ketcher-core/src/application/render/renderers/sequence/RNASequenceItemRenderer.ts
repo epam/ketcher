@@ -1,0 +1,66 @@
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { Nucleoside } from 'domain/entities/Nucleoside';
+import type { Nucleotide } from 'domain/entities/Nucleotide';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+
+export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
+  constructor(
+    public node: Nucleoside | Nucleotide,
+    _firstNodeInChainPosition: Vec2,
+    _monomerIndexInChain: number,
+    _isLastMonomerInChain: boolean,
+    _chain: Chain,
+    _nodeIndexOverall: number,
+    _editingNodeIndexOverall: number,
+    public monomerSize: { width: number; height: number },
+    public scaledMonomerPosition: Vec2,
+    _twoStrandedNode: ITwoStrandedChainItem,
+    _previousRowsWithAntisense = 0,
+  ) {
+    super(
+      node,
+      _firstNodeInChainPosition,
+      _monomerIndexInChain,
+      _isLastMonomerInChain,
+      _chain,
+      _nodeIndexOverall,
+      _editingNodeIndexOverall,
+      monomerSize,
+      scaledMonomerPosition,
+      _twoStrandedNode,
+      _previousRowsWithAntisense,
+    );
+  }
+
+  get symbolToDisplay(): string {
+    return this.node.rnaBase instanceof AmbiguousMonomer
+      ? this.node.rnaBase.label
+      : this.node.rnaBase.monomerItem?.props.MonomerNaturalAnalogCode || '@';
+  }
+
+  protected drawCommonModification(node: Nucleoside | Nucleotide) {
+    if (node.rnaBase.isModification) {
+      let modificationFillColor = '#CAD3DD';
+
+      if (this.node.monomer.selected) {
+        modificationFillColor = this.isSequenceEditInRnaBuilderModeTurnedOn
+          ? '#41A8B2'
+          : '#3ACA6A';
+      }
+
+      this.backgroundElement?.attr('fill', modificationFillColor);
+    }
+
+    if (node.sugar.isModification) {
+      this.backgroundElement
+        ?.attr(
+          'stroke',
+          this.isSequenceEditInRnaBuilderModeTurnedOn ? '#24545A' : '#585858',
+        )
+        .attr('stroke-width', '1px');
+    }
+  }
+}

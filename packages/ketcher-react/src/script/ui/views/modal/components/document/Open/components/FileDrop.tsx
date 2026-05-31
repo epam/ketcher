@@ -14,20 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useMemo } from 'react'
-import { useDropzone, DropzoneOptions } from 'react-dropzone'
+import { useMemo } from 'react';
+import { useDropzone, DropzoneOptions } from 'react-dropzone';
 
-import parentStyles from './OpenOptions.module.less'
-import styles from './FileDrop.module.less'
-import Icon from 'src/script/ui/component/view/icon'
+import parentStyles from './OpenOptions.module.less';
+import styles from './FileDrop.module.less';
+import { Icon, IconName } from 'components';
 
 type FileDropProps = {
-  buttonLabel: string
-  textLabel: string
-  iconName: string
-  disabled?: boolean
-  disabledText?: string
-} & DropzoneOptions
+  buttonLabel: string;
+  textLabel: string;
+  iconName: IconName;
+  disabled?: boolean;
+  disabledText?: string;
+  testId?: string;
+} & DropzoneOptions;
 
 const FileDrop = ({
   buttonLabel,
@@ -35,28 +36,45 @@ const FileDrop = ({
   iconName,
   disabled,
   disabledText,
+  testId,
   ...rest
 }: FileDropProps) => {
-  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
-    ...rest
-  })
+    onFileDialogOpen: () => {
+      if (document.fullscreenElement) {
+        (
+          window as unknown as Record<string, unknown>
+        ).isKetcherFullscreenBeforeFilePicker = true;
+      }
+    },
+    onFileDialogCancel: () => {
+      const windowContext = window as unknown as Record<string, unknown>;
+      if (windowContext.isKetcherFullscreenBeforeFilePicker) {
+        document.documentElement.requestFullscreen?.().catch(() => {
+          /* Restore fullscreen silently if failed */
+        });
+        windowContext.isKetcherFullscreenBeforeFilePicker = false;
+      }
+    },
+    ...rest,
+  });
 
   const getClassesString = useMemo((): string => {
     const classes = [
       parentStyles.dropContainer,
       isDragActive ? styles.isHovered : null,
-      disabled ? styles.isDisabled : null
-    ]
-    return classes.join(' ')
-  }, [isDragActive])
+      disabled ? styles.isDisabled : null,
+    ];
+    return classes.join(' ');
+  }, [isDragActive, disabled]);
 
   return (
     <div
-      onKeyDown={open}
+      data-testid={testId}
       {...getRootProps({
-        className: getClassesString
+        className: getClassesString,
       })}
     >
       <input {...getInputProps()} />
@@ -76,7 +94,7 @@ const FileDrop = ({
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { FileDrop }
+export { FileDrop };

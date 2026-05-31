@@ -1,0 +1,488 @@
+/* eslint-disable no-magic-numbers */
+import { Locator, Page } from '@playwright/test';
+import { moveMouseAway } from '../moveMouseAway';
+import { MonomerType } from '../types';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  MacroBondType,
+  MacroBondTool,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
+import { AttachmentPoint, getAttachmentPointLocator } from './monomer';
+import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
+
+export enum BondType {
+  None = 0,
+  Single = 1,
+  Double = 2,
+  Triple = 3,
+  Aromatic = 4,
+  SingleDouble = 5,
+  SingleAromatic = 6,
+  DoubleAromatic = 7,
+  Any = 8,
+  Dative = 9,
+  Hydrogen = 10,
+}
+export enum BondStereo {
+  None = 0,
+  Up = 1,
+  Either = 4,
+  Down = 6,
+  CisTrans = 3,
+}
+
+export async function bondTwoMonomers(
+  page: Page,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
+  attachmentPoint1?: AttachmentPoint,
+  attachmentPoint2?: AttachmentPoint,
+  bondType: MacroBondTool = MacroBondTool.Single,
+) {
+  await CommonLeftToolbar(page).bondTool(bondType);
+  await firstMonomer.hover({ force: true });
+  await page.mouse.down();
+  await secondMonomer.hover({ force: true });
+  await page.mouse.up();
+  await MonomerPreviewTooltip(page).hide();
+  const attachmentPointsDialog = AttachmentPointsDialog(page);
+  if (
+    (attachmentPoint1 || attachmentPoint2) &&
+    (await attachmentPointsDialog.isVisible())
+  ) {
+    await attachmentPointsDialog.selectAttachmentPoints({
+      leftMonomer: attachmentPoint1,
+      rightMonomer: attachmentPoint2,
+    });
+
+    await attachmentPointsDialog.connect();
+  }
+
+  return getBondLocator(page, {
+    fromMonomerId:
+      (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+    toMonomerId:
+      (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+  });
+}
+
+async function getMinFreeAttachmentPoint(
+  monomer: Locator,
+): Promise<AttachmentPoint | undefined> {
+  // Find the attribute with the minimum index that has a value of "false"
+  const minIndexWithFalse = await monomer.evaluate((el) => {
+    // Get all attributes of a monomer
+    const attributes = Array.from(el.attributes);
+
+    // Filter attributes that match the pattern "data-R<number>" and the value "false"
+    const falseAttributes = attributes
+      .map((attr) => {
+        // Checking the attribute name
+        const match = attr.name.match(/^data-R(\d+)$/);
+        // Check the value
+        return match && attr.value === 'false' ? Number(match[1]) : null;
+      })
+      // Remove null
+      .filter((index): index is number => index !== null);
+
+    // Return the minimum index if attributes are found, or null
+    return falseAttributes.length > 0 ? Math.min(...falseAttributes) : null;
+  });
+
+  if (minIndexWithFalse) {
+    return AttachmentPoint[
+      `R${minIndexWithFalse.toString()}` as keyof typeof AttachmentPoint
+    ];
+  }
+  return undefined;
+}
+
+function isMonomerAttachmentPoint(value: string): value is AttachmentPoint {
+  return Object.values(AttachmentPoint).includes(value as AttachmentPoint);
+}
+
+export async function getAvailableAttachmentPoints(
+  monomer: Locator,
+): Promise<AttachmentPoint[]> {
+  const attributes = await monomer.evaluate((element) =>
+    Array.from(element.attributes)
+      .filter((attr) => attr.name.startsWith('data-R'))
+      .map((attr) => ({ name: attr.name, value: attr.value })),
+  );
+
+  const falseAttributes = attributes
+    .filter((attr) => attr.value === 'false')
+    .map((attr) => attr.name.replace('data-', ''))
+    .filter(isMonomerAttachmentPoint);
+
+  return falseAttributes;
+}
+
+async function chooseFreeAttachmentPointsInDialogIfAppeared(
+  page: Page,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
+  firstMonomerAttachmentPoint?: AttachmentPoint,
+  secondMonomerAttachmentPoint?: AttachmentPoint,
+): Promise<{
+  leftMonomerAttachmentPoint: AttachmentPoint | undefined;
+  rightMonomerAttachmentPoint: AttachmentPoint | undefined;
+}> {
+  if (await page.getByRole('dialog').isVisible()) {
+    if (!firstMonomerAttachmentPoint) {
+      firstMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
+        firstMonomer,
+      );
+    }
+    if (!secondMonomerAttachmentPoint) {
+      secondMonomerAttachmentPoint = await getMinFreeAttachmentPoint(
+        secondMonomer,
+      );
+    }
+
+    if (firstMonomerAttachmentPoint && secondMonomerAttachmentPoint) {
+      await page.getByTitle(firstMonomerAttachmentPoint).first().click();
+
+      (await page.getByTitle(secondMonomerAttachmentPoint).count()) > 1
+        ? await page.getByTitle(secondMonomerAttachmentPoint).nth(1).click()
+        : await page.getByTitle(secondMonomerAttachmentPoint).first().click();
+    }
+
+    await AttachmentPointsDialog(page).connect();
+
+    return {
+      leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+      rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
+    };
+  }
+  const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
+  const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
+
+  const firstMonomerAvailableAttachmentPoints =
+    await getAvailableAttachmentPoints(firstMonomer);
+  const secondMonomerAvailableAttachmentPoints =
+    await getAvailableAttachmentPoints(secondMonomer);
+
+  if (!firstMonomerAttachmentPoint && !secondMonomerAttachmentPoint) {
+    if (
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
+    ) {
+      firstMonomerAttachmentPoint = AttachmentPoint.R2;
+      secondMonomerAttachmentPoint = AttachmentPoint.R1;
+    } else if (
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
+    ) {
+      firstMonomerAttachmentPoint = AttachmentPoint.R1;
+      secondMonomerAttachmentPoint = AttachmentPoint.R2;
+    }
+
+    if (
+      firstMonomerType === MonomerType.Sugar &&
+      secondMonomerType === MonomerType.Base &&
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
+    ) {
+      firstMonomerAttachmentPoint = AttachmentPoint.R3;
+      secondMonomerAttachmentPoint = AttachmentPoint.R1;
+    }
+
+    if (
+      firstMonomerType === MonomerType.Base &&
+      secondMonomerType === MonomerType.Sugar &&
+      firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+      secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
+    ) {
+      firstMonomerAttachmentPoint = AttachmentPoint.R1;
+      secondMonomerAttachmentPoint = AttachmentPoint.R3;
+    }
+
+    return {
+      leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+      rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
+    };
+  }
+
+  if (
+    firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2)
+  ) {
+    secondMonomerAttachmentPoint = AttachmentPoint.R2;
+  }
+
+  if (
+    firstMonomerAttachmentPoint === AttachmentPoint.R2 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
+  ) {
+    secondMonomerAttachmentPoint = AttachmentPoint.R1;
+  }
+
+  if (
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R2) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R1
+  ) {
+    firstMonomerAttachmentPoint = AttachmentPoint.R2;
+  }
+
+  if (
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R2
+  ) {
+    firstMonomerAttachmentPoint = AttachmentPoint.R1;
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    firstMonomerAttachmentPoint === AttachmentPoint.R1 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3)
+  ) {
+    secondMonomerAttachmentPoint = AttachmentPoint.R3;
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R3
+  ) {
+    firstMonomerAttachmentPoint = AttachmentPoint.R1;
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    firstMonomerAttachmentPoint === AttachmentPoint.R3 &&
+    !secondMonomerAttachmentPoint &&
+    secondMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R1)
+  ) {
+    secondMonomerAttachmentPoint = AttachmentPoint.R1;
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    !firstMonomerAttachmentPoint &&
+    firstMonomerAvailableAttachmentPoints.includes(AttachmentPoint.R3) &&
+    secondMonomerAttachmentPoint === AttachmentPoint.R1
+  ) {
+    firstMonomerAttachmentPoint = AttachmentPoint.R3;
+  }
+
+  if (firstMonomerAvailableAttachmentPoints.length === 1) {
+    firstMonomerAttachmentPoint = firstMonomerAvailableAttachmentPoints[0];
+  }
+  if (secondMonomerAvailableAttachmentPoints.length === 1) {
+    secondMonomerAttachmentPoint = secondMonomerAvailableAttachmentPoints[0];
+  }
+
+  return {
+    leftMonomerAttachmentPoint: firstMonomerAttachmentPoint,
+    rightMonomerAttachmentPoint: secondMonomerAttachmentPoint,
+  };
+}
+
+export async function bondTwoMonomersPointToPoint(
+  page: Page,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
+  firstMonomerAttachmentPoint?: AttachmentPoint,
+  secondMonomerAttachmentPoint?: AttachmentPoint,
+  bondType?: MacroBondTool,
+  // if true - first free from left connection point will be selected in the dialog for both monomers
+  chooseAttachmentPointsInDialogIfAppeared = false,
+): Promise<Locator> {
+  if (bondType) {
+    await CommonLeftToolbar(page).bondTool(bondType);
+  } else {
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  }
+
+  await firstMonomer.getByTestId('shape').hover({ force: true });
+
+  if (firstMonomerAttachmentPoint) {
+    const firstAttachmentPoint = getAttachmentPointLocator(
+      firstMonomer,
+      firstMonomerAttachmentPoint,
+    );
+    await firstAttachmentPoint.hover({ force: true });
+  }
+  await page.mouse.down();
+
+  await secondMonomer.getByTestId('shape').hover({ force: true });
+  if (secondMonomerAttachmentPoint) {
+    const secondAttachmentPoint = getAttachmentPointLocator(
+      secondMonomer,
+      secondMonomerAttachmentPoint,
+    );
+    await secondAttachmentPoint.hover({ force: true });
+  }
+  await page.mouse.up();
+
+  await moveMouseAway(page);
+
+  if (chooseAttachmentPointsInDialogIfAppeared) {
+    const { leftMonomerAttachmentPoint, rightMonomerAttachmentPoint } =
+      await chooseFreeAttachmentPointsInDialogIfAppeared(
+        page,
+        firstMonomer,
+        secondMonomer,
+        firstMonomerAttachmentPoint,
+        secondMonomerAttachmentPoint,
+      );
+    firstMonomerAttachmentPoint = leftMonomerAttachmentPoint;
+    secondMonomerAttachmentPoint = rightMonomerAttachmentPoint;
+  }
+
+  const monomerOrAtom = await secondMonomer.getAttribute('data-testid');
+
+  let bondLocator: Locator = page.locator('');
+  if (monomerOrAtom === 'monomer') {
+    bondLocator = getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toMonomerId:
+        (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
+    });
+  } else if (monomerOrAtom === 'atom') {
+    bondLocator = getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
+      fromAttachmentPoint: firstMonomerAttachmentPoint,
+      toAttachmentPoint: secondMonomerAttachmentPoint,
+    });
+  }
+
+  return bondLocator;
+}
+
+export async function bondMonomerPointToMoleculeAtom(
+  page: Page,
+  monomer: Locator,
+  atom: Locator,
+  attachmentPoint?: AttachmentPoint,
+  connectionPointShift?: { x: number; y: number },
+  bondType?: MacroBondTool,
+) {
+  if (bondType) {
+    await CommonLeftToolbar(page).bondTool(bondType);
+  } else {
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  }
+
+  await monomer.getByTestId('shape').hover({ force: true });
+
+  if (attachmentPoint) {
+    const connectionPoint = getAttachmentPointLocator(monomer, attachmentPoint);
+    await connectionPoint.hover({ force: true });
+  }
+  await page.mouse.down();
+
+  if (connectionPointShift) {
+    const atomBoundingBox = await atom.boundingBox();
+
+    if (atomBoundingBox) {
+      await page.mouse.move(
+        atomBoundingBox.x + atomBoundingBox.width / 2 + connectionPointShift.x,
+        atomBoundingBox.y + atomBoundingBox.height / 2 + connectionPointShift.y,
+      );
+    }
+  } else {
+    await atom.hover({ force: true });
+  }
+
+  await page.mouse.up();
+
+  await moveMouseAway(page);
+}
+
+export function getBondLocator(
+  page: Page,
+  {
+    bondType,
+    bondStereo,
+    bondId,
+    topology,
+    reactingCenter,
+    fromMonomerId,
+    toMonomerId,
+    toAtomId,
+    fromAttachmentPoint,
+    toAttachmentPoint,
+    fromAtomId,
+    fromSGroupId,
+    toSGroupId,
+  }: {
+    bondType?: MacroBondType | MicroBondType | number;
+    bondStereo?: BondStereo;
+    bondId?: string | number;
+    topology?: string | number;
+    reactingCenter?: string | number;
+    fromMonomerId?: string | number;
+    toMonomerId?: string | number;
+    toAtomId?: string | number;
+    fromAttachmentPoint?: string;
+    toAttachmentPoint?: string;
+    fromAtomId?: string | number;
+    fromSGroupId?: string | number;
+    toSGroupId?: string | number;
+  },
+): Locator {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'bond';
+
+  if (bondType !== undefined) attributes['data-bondtype'] = String(bondType);
+  if (bondStereo !== undefined) {
+    attributes['data-bondstereo'] = String(bondStereo);
+  }
+  if (bondId !== undefined) attributes['data-bondid'] = String(bondId);
+  if (topology !== undefined) {
+    attributes['data-topology'] = String(topology);
+  }
+  if (reactingCenter !== undefined) {
+    attributes['data-reacting-center'] = String(reactingCenter);
+  }
+  if (fromMonomerId !== undefined) {
+    attributes['data-frommonomerid'] = String(fromMonomerId);
+  }
+  if (toMonomerId !== undefined) {
+    attributes['data-tomonomerid'] = String(toMonomerId);
+  }
+  if (toAtomId !== undefined) attributes['data-toatomid'] = String(toAtomId);
+  if (fromAttachmentPoint !== undefined) {
+    attributes['data-fromattachmentpoint'] = fromAttachmentPoint;
+  }
+  if (toAttachmentPoint !== undefined) {
+    attributes['data-toattachmentpoint'] = toAttachmentPoint;
+  }
+  if (fromAtomId !== undefined) {
+    attributes['data-fromatomid'] = String(fromAtomId);
+  }
+  if (fromSGroupId !== undefined) {
+    attributes['data-fromsgroupid'] = String(fromSGroupId);
+  }
+  if (toSGroupId !== undefined) {
+    attributes['data-tosgroupid'] = String(toSGroupId);
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = page.locator(attributeSelectors);
+
+  return locator;
+}

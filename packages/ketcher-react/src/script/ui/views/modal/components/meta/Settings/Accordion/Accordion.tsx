@@ -14,42 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useState } from 'react'
-import classes from './Accordion.module.less'
-import clsx from 'clsx'
-import Icon from '../../../../../../component/view/icon'
+import React, { useState } from 'react';
+import classes from './Accordion.module.less';
+import clsx from 'clsx';
+import { Icon } from 'components';
 
 const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General'
-  ])
+    'General',
+  ]);
 
   const handleAccordionChange = (accordion) => () => {
-    const isExpand = !expandedAccordions.includes(accordion)
+    const isExpand = !expandedAccordions.includes(accordion);
     setExpandedAccordions(
       isExpand
         ? [...expandedAccordions, accordion]
         : [...expandedAccordions].filter(
-            (expandedAccordion) => expandedAccordion !== accordion
-          )
-    )
-  }
+            (expandedAccordion) => expandedAccordion !== accordion,
+          ),
+    );
+  };
 
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {
-        const shouldGroupBeRended = expandedAccordions.includes(label)
+        const shouldGroupBeRended = expandedAccordions.includes(label);
         return (
           <div key={key}>
-            <div
+            <button
               onClick={handleAccordionChange(label)}
               className={classes.accordionSummaryWrapper}
+              data-testid={`${label}-accordion`}
+              type="button"
             >
               <div className={classes.accordionSummary}>
                 <Icon
                   className={clsx({
                     [classes.expandIcon]: true,
-                    [classes.turnedIcon]: !shouldGroupBeRended
+                    [classes.turnedIcon]: !shouldGroupBeRended,
                   })}
                   name="chevron"
                 />
@@ -61,20 +63,20 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
                   <span className={classes.changeMarker}></span>
                 )}
               </div>
-            </div>
+            </button>
             <div
               className={clsx({
                 [classes.accordionDetailsWrapper]: true,
-                [classes.hiddenAccordion]: !shouldGroupBeRended
+                [classes.hiddenAccordion]: !shouldGroupBeRended,
               })}
             >
               <div className={classes.accordionDetails}>{content}</div>
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default Accordion
+export default Accordion;

@@ -1,0 +1,57 @@
+import { IKetIdtAliases } from 'ketcher-core';
+import { useMemo } from 'react';
+import { PresetPosition } from 'state';
+import { removeSlashesFromIdtAlias } from 'helpers';
+
+type Props = {
+  presetName: string | undefined;
+  position: PresetPosition;
+  idtAliases: IKetIdtAliases | undefined;
+};
+
+const useIDTAliasesTextForPreset = ({
+  presetName,
+  position,
+  idtAliases,
+}: Props) => {
+  return useMemo(() => {
+    if (!presetName || !idtAliases) {
+      return null;
+    }
+
+    if (presetName.includes('MOE')) {
+      const { base, modifications } = idtAliases;
+
+      const endpoint5 =
+        removeSlashesFromIdtAlias(modifications?.endpoint5) ?? `5${base}`;
+      const internal =
+        removeSlashesFromIdtAlias(modifications?.internal) ?? `i${base}`;
+      const endpoint3 =
+        removeSlashesFromIdtAlias(modifications?.endpoint3) ?? `3${base}`;
+
+      switch (position) {
+        case PresetPosition.Library: {
+          const isAllPositionsHaveSameBase = [
+            endpoint5,
+            internal,
+            endpoint3,
+          ].every((alias) => alias.includes(base));
+          if (isAllPositionsHaveSameBase) {
+            return base;
+          }
+          return `${endpoint5}, ${internal}`;
+        }
+        case PresetPosition.ChainStart:
+          return endpoint5;
+        case PresetPosition.ChainMiddle:
+          return internal;
+        case PresetPosition.ChainEnd:
+          return endpoint3;
+      }
+    }
+
+    return removeSlashesFromIdtAlias(idtAliases.base);
+  }, [presetName, position, idtAliases]);
+};
+
+export default useIDTAliasesTextForPreset;

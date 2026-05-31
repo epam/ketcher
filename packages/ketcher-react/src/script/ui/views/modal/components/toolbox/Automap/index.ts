@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Automap.container'
+export { default } from './Automap.container';

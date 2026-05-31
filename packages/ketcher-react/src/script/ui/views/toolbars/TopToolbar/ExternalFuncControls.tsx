@@ -14,23 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementWithDropdown } from './ElementWithDropdown'
-import { IconButton } from './IconButton'
+import { ElementWithDropdown } from './ElementWithDropdown';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface ExternalFuncProps {
-  isCollapsed: boolean
-  onLayout: () => void
-  onClean: () => void
-  onAromatize: () => void
-  onDearomatize: () => void
-  onCalculate: () => void
-  onCheck: () => void
-  onAnalyse: () => void
-  onMiew: () => void
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  indigoVerification: boolean
-  shortcuts: { [key in string]: string }
+  isCollapsed: boolean;
+  onLayout: () => void;
+  onClean: () => void;
+  onAromatize: () => void;
+  onDearomatize: () => void;
+  onCalculate: () => void;
+  onCheck: () => void;
+  onAnalyse: () => void;
+  onMiew: () => void;
+  onToggleExplicitHydrogens: () => void;
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  indigoVerification: boolean;
+  shortcuts: { [key in string]: string };
 }
 
 export const ExternalFuncControls = ({
@@ -43,56 +44,71 @@ export const ExternalFuncControls = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onToggleExplicitHydrogens,
   disabledButtons,
   indigoVerification,
   hiddenButtons,
-  shortcuts
+  shortcuts,
 }: ExternalFuncProps) => {
   const externalFuncButtons = [
     {
       name: 'arom',
       title: 'Aromatize',
-      handler: onAromatize
+      handler: onAromatize,
+      testId: 'Aromatize button',
     },
     {
       name: 'dearom',
       title: 'Dearomatize',
-      handler: onDearomatize
+      handler: onDearomatize,
+      testId: 'Dearomatize button',
     },
     {
       name: 'layout',
       title: 'Layout',
-      handler: onLayout
+      handler: onLayout,
+      testId: 'Layout button',
     },
     {
       name: 'clean',
       title: 'Clean Up',
-      handler: onClean
+      handler: onClean,
+      testId: 'Clean Up button',
     },
     {
       name: 'cip',
       title: 'Calculate CIP',
-      handler: onCalculate
+      handler: onCalculate,
+      testId: 'Calculate CIP button',
     },
     {
       name: 'check',
       title: 'Check Structure',
-      handler: onCheck
+      handler: onCheck,
+      testId: 'Check Structure button',
     },
     {
       name: 'analyse',
       title: 'Calculated Values',
-      handler: onAnalyse
+      handler: onAnalyse,
+      testId: 'Calculated Values button',
+    },
+    {
+      name: 'explicit-hydrogens',
+      title: 'Add/Remove explicit hydrogens',
+      handler: onToggleExplicitHydrogens,
+      testId: 'Add/Remove explicit hydrogens button',
     },
     {
       name: 'miew',
       title: '3D Viewer',
-      handler: onMiew
-    }
-  ]
+      handler: onMiew,
+      testId: '3D Viewer button',
+    },
+  ];
 
   const getButtonElement = (button) => (
-    <IconButton
+    <TopToolbarIconButton
       title={button.title}
       onClick={button.handler}
       iconName={button.name}
@@ -100,16 +116,17 @@ export const ExternalFuncControls = ({
       disabled={indigoVerification || disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
+      testId={button.testId}
     />
-  )
+  );
 
   const firstButtonObj = externalFuncButtons.find(
-    (button) => !hiddenButtons.includes(button.name)
-  )
+    (button) => !hiddenButtons.includes(button.name),
+  );
 
   const collapsibleElements = externalFuncButtons
     .filter((button) => button !== firstButtonObj)
-    .map((button) => getButtonElement(button))
+    .map((button) => getButtonElement(button));
 
   if (isCollapsed) {
     return (
@@ -117,7 +134,7 @@ export const ExternalFuncControls = ({
         topElement={getButtonElement(firstButtonObj)}
         dropDownElements={collapsibleElements}
       />
-    )
+    );
   }
 
   return (
@@ -125,5 +142,5 @@ export const ExternalFuncControls = ({
       {firstButtonObj && getButtonElement(firstButtonObj)}
       {<>{collapsibleElements}</>}
     </>
-  )
-}
+  );
+};

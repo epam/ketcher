@@ -14,34 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
-import { Struct } from 'domain/entities'
+import { BaseOperation } from './BaseOperation';
+import { OperationType } from './OperationType';
+import type { ReStruct } from '../../render';
+import type { Struct } from 'domain/entities/struct';
+import { KetcherLogger } from 'utilities';
 
 export class CanvasLoad extends BaseOperation {
   data: {
-    struct?: Struct
-  }
+    struct?: Struct;
+  };
 
   constructor(struct?: Struct) {
-    super(OperationType.CANVAS_LOAD)
-    this.data = { struct }
+    super(OperationType.CANVAS_LOAD);
+    this.data = { struct };
   }
 
   execute(restruct: ReStruct) {
-    const oldStruct = restruct.molecule
-    restruct.clearVisels() // TODO: What is it?
+    KetcherLogger.log('CanvasLoad.execute(), start');
+    if (restruct.molecule === this.data.struct)
+      throw new Error(
+        `Unexpected data.struct loaded is equal to the restruct.molecule current`,
+      );
+
+    restruct.clearVisels(); // TODO: What is it?
+    const oldStruct = restruct.molecule;
     if (this.data.struct) {
-      restruct.render.setMolecule(this.data.struct)
+      restruct.render.setMolecule(this.data.struct, true);
     }
 
-    this.data.struct = oldStruct
+    this.data.struct = oldStruct;
+    KetcherLogger.log('CanvasLoad.execute(), end');
   }
 
   invert() {
-    const inverted = new CanvasLoad()
-    inverted.data = this.data
-    return inverted
+    const inverted = new CanvasLoad();
+    inverted.data = this.data;
+    return inverted;
   }
 }

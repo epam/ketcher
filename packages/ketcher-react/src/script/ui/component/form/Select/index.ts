@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Select'
-export * from './Select'
+export { default } from './Select';
+export * from './Select';

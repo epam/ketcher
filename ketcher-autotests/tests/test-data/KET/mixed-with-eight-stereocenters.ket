@@ -1,0 +1,430 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    2.35,
+                    6.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.2159,
+                    6.9751,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.0819,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&1"
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.948,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.8139,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&2"
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.68,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.546,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&3"
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.4121,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.2781,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&4"
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.1441,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.0102,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&5"
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.8762,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.7422,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&6"
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.6082,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.4743,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&7"
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.3403,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.0723,
+                    6.9752,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.0821,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.8141,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.5462,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.2782,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.0103,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.7423,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.4744,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.2063,
+                    6.4752,
+                    0
+                ],
+                "stereoLabel": "&8"
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.2064,
+                    5.475,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.9384,
+                    6.4752,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    18
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    19
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    20
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    21
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    22
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    23
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    25
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    24,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    24
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    26
+                ]
+            }
+        ]
+    }
+}

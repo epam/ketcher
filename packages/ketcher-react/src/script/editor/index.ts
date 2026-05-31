@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Editor } from './Editor'
+import { Editor } from './Editor';
 
-export { Editor }
-export default Editor
+export { Editor };
+export * from './shared/closest.types';
+export default Editor;

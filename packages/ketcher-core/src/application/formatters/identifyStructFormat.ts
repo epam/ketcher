@@ -14,77 +14,108 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SupportedFormat } from './structFormatter.types'
+import { KetcherLogger } from 'utilities';
+import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
-  stringifiedStruct: string
+  stringifiedStruct: string,
+  isMacromolecules = false,
 ): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
-  const sanitizedString = stringifiedStruct.trim()
+  const sanitizedString = stringifiedStruct.trim();
 
   try {
     if (JSON.parse(sanitizedString)) {
-      return SupportedFormat.ket
+      return SupportedFormat.ket;
     }
-  } catch (er) {} // eslint-disable-line
+  } catch (e) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
+  } // eslint-disable-line
 
-  if (sanitizedString.indexOf('$RXN') !== -1) {
-    return SupportedFormat.rxn
+  const isRXN = sanitizedString.includes('$RXN');
+  const isSDF = sanitizedString.includes('\n$$$$');
+  const isV2000 = sanitizedString.includes('V2000');
+  const isV3000 = sanitizedString.includes('V3000');
+
+  if (isRXN) {
+    return SupportedFormat.rxn;
   }
 
-  if (sanitizedString.indexOf('V2000') !== -1) {
-    return SupportedFormat.mol
+  if (isSDF) {
+    if (isV2000) {
+      return SupportedFormat.sdf;
+    } else {
+      return SupportedFormat.sdfV3000;
+    }
   }
 
-  if (sanitizedString.indexOf('V3000') !== -1) {
-    return SupportedFormat.molV3000
+  if (isV2000) {
+    return SupportedFormat.mol;
   }
 
-  const match = sanitizedString.match(/^(M {2}END|\$END MOL)$/m)
+  if (isV3000) {
+    return SupportedFormat.molV3000;
+  }
+
+  const match = /^(M {2}END|\$END MOL)$/m.exec(sanitizedString);
 
   if (match) {
-    const end = (match.index || 0) + match[0].length
+    const end = (match.index ?? 0) + match[0].length;
     if (
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     ) {
-      return SupportedFormat.mol
+      return SupportedFormat.mol;
     }
   }
 
   if (
-    sanitizedString[0] === '<' &&
+    sanitizedString.startsWith('<') &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
-    return SupportedFormat.cml
+    return SupportedFormat.cml;
   }
 
   const clearStr = sanitizedString
     .replace(/\s/g, '')
-    .replace(/(\\r)|(\\n)/g, '')
+    .replace(/(\\r)|(\\n)/g, '');
   const isBase64String =
-    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/
-  const cdxHeader = 'VjCD0100'
+    /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+  const cdxHeader = 'VjCD0100';
   if (
     clearStr.length % 4 === 0 &&
     isBase64String.test(clearStr) &&
     window.atob(clearStr).startsWith(cdxHeader)
   ) {
-    return SupportedFormat.cdx
+    return SupportedFormat.cdx;
   }
 
-  if (sanitizedString.slice(0, 5) === 'InChI') {
-    return SupportedFormat.inChI
+  if (sanitizedString.startsWith('InChI')) {
+    return SupportedFormat.inChI;
   }
 
-  if (sanitizedString.indexOf('\n') === -1) {
+  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
     // TODO: smiles regexp
-    return SupportedFormat.smiles
+    return SupportedFormat.smiles;
   }
 
   if (sanitizedString.indexOf('<CDXML') !== -1) {
-    return SupportedFormat.cdxml
+    return SupportedFormat.cdxml;
   }
 
-  return SupportedFormat.unknown
+  if (sanitizedString.startsWith('>')) {
+    return SupportedFormat.fasta;
+  }
+
+  const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
+  const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
+  const isIdt = /([a-zA-Z0-9]+)\/*([a-zA-Z0-9*-]+)/.test(sanitizedString);
+
+  if (!isThreeLetter && isIdt) {
+    return SupportedFormat.idt;
+  } else if (isSequence) {
+    return SupportedFormat.sequence;
+  }
+
+  return SupportedFormat.unknown;
 }

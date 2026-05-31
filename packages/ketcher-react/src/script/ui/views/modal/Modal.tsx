@@ -14,56 +14,66 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useRef } from 'react'
+import { useRef } from 'react';
 
-import { BaseCallProps } from './modal.types'
-import classes from './Modal.module.less'
-import selectClasses from '../../component/form/Select/Select.module.less'
-import clsx from 'clsx'
-import mediaSizes from './mediaSizes'
-import modals from '../../dialog'
-import useResizeObserver from 'use-resize-observer/polyfilled'
+import { BaseCallProps, ModalContainerProps } from './modal.types';
+import classes from './Modal.module.less';
+import selectClasses from '../../component/form/Select/Select.module.less';
+import clsx from 'clsx';
+import mediaSizes from './mediaSizes';
+import modals from '../../dialog';
+import useResizeObserver from 'use-resize-observer/polyfilled';
 
 interface ModalProps extends BaseCallProps {
   modal: {
-    name: string
-    form: any
-    prop: any
-  }
+    name: string;
+    form: any;
+    prop: any;
+  };
 }
 
-type Props = ModalProps & BaseCallProps
+type Props = ModalProps & BaseCallProps & ModalContainerProps;
 
-function Modal(props: Props) {
-  const { modal, ...rest } = props
-  const containerRef = useRef<HTMLDivElement>(null)
+type ModalContentProps = Omit<Props, 'modal'> & {
+  modal: NonNullable<Props['modal']>;
+};
+
+function ModalContent({ modal, ...rest }: ModalContentProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: containerRef
-  })
+    ref: containerRef,
+  });
 
-  if (!modal) return null
-
-  const Component = modals[modal.name]
+  const Component = modals[modal.name];
 
   if (!Component)
-    throw new Error(`There is no modal window named ${modal.name}`)
+    throw new Error(`There is no modal window named ${modal.name}`);
 
   return (
     <div
       className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
       ref={containerRef}
+      data-testid={`${modal.name}-dialog`}
     >
       <Component
         className={clsx({
           [classes.smallScreen]:
             (height && height <= mediaSizes.smallHeight) ||
-            (width && width <= mediaSizes.smallWidth)
+            (width && width <= mediaSizes.smallWidth),
         })}
         {...rest}
       />
     </div>
-  )
+  );
 }
 
-export type { ModalProps }
-export { Modal }
+function Modal(props: Props) {
+  const { modal, ...rest } = props;
+
+  if (!modal) return null;
+
+  return <ModalContent modal={modal} {...rest} />;
+}
+
+export type { ModalProps };
+export { Modal };

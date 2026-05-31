@@ -42,6 +42,7 @@ const AtomElement = ({ formState }: BaseProps) => {
               onChange,
             )
           }
+          data-testid="label-input"
           autoFocus
         />
         <ElementNumber label={label} />

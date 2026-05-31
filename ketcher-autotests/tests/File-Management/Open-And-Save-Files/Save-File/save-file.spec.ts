@@ -401,4 +401,32 @@ test.describe('Open/Save/Paste files', () => {
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await page.getByText('Warnings').click();
   });
+
+  test('Save *.ket file with atom list and atom properties', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3387
+     * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
+     */
+    await openFileAndAddToCanvas(
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
+      page,
+    );
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
 });

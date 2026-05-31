@@ -106,6 +106,7 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.type)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="type"
         />
         <Field
           name="topology"
@@ -113,6 +114,7 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.topology)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="topology"
         />
         <Field
           name="center"
@@ -120,6 +122,7 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.center)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="reacting-center"
         />
         <div className={classes.customQueryWrapper}>
           <CustomQueryField

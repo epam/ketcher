@@ -28,5 +28,6 @@ export * from 'application/render';
 export * from 'application/editor';
 export * from 'application/ketcher';
 export * from 'application/ketcherBuilder';
+export * from 'application/utils';
 
 export * from 'utilities';

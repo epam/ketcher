@@ -22,7 +22,7 @@ import {
   identifyStructFormat,
   Struct,
   SupportedFormat,
-  emitEventRequestIsFinished,
+  notifyRequestCompleted,
   Editor,
   KetcherLogger,
 } from 'ketcher-core';
@@ -185,7 +185,7 @@ export function load(struct: Struct, options?) {
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
     } finally {
-      emitEventRequestIsFinished();
+      notifyRequestCompleted();
     }
   };
 }

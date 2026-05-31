@@ -28,6 +28,7 @@ import { Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
 import { LogSettings, LogLevel, runAsyncAction } from 'utilities';
+import { getStructure } from './utils';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -70,15 +71,6 @@ function parseStruct(
   return service.getStructureFromStringAsync(structStr);
 }
 
-function getStructure(
-  structureFormat = SupportedFormat.rxn,
-  formatterFactory: FormatterFactory,
-  struct: Struct,
-): Promise<string> {
-  const formatter = formatterFactory.create(structureFormat);
-  return formatter.getStructureFromStructAsync(struct);
-}
-
 export class Ketcher {
   logging: LogSettings;
   #structService: StructService;
@@ -114,6 +106,10 @@ export class Ketcher {
       level: LogLevel.ERROR,
       showTrace: false,
     };
+  }
+
+  get formatterFactory() {
+    return this.#formatterFactory;
   }
 
   get indigo() {

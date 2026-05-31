@@ -152,7 +152,7 @@ function Field(props) {
       schema={desc}
       {...fieldOpts}
       {...rest}
-      data-testid="file-name-input"
+      data-testid={`${name}-input`}
     />
   );
 
@@ -164,11 +164,13 @@ function Field(props) {
       title={rest.title || desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
+      data-testid={props['data-testid']}
     >
       <span
         className={classes.inputWrapper}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        data-testid={props['data-testid'] + '-input-span'}
       >
         {formField}
       </span>
@@ -272,6 +274,7 @@ function CustomQueryField(props) {
           schema={{ default: false, type: 'boolean' }}
           value={checkboxValue}
           onChange={handleCheckboxChange}
+          data-testid="custom-query-checkbox"
         />
       </Label>
       <span

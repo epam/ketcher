@@ -21,6 +21,7 @@ import {
   ServiceMode,
   StructService,
   StructServiceProvider,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';
@@ -116,6 +117,7 @@ class KetcherBuilder {
       ketcher.setMolecule(initialMol);
     }
 
+    ketcherProvider.setKetcherInstance(ketcher);
     return ketcher;
   }
 }

@@ -40,6 +40,7 @@ import {
   BackBoneSequenceNode,
   LinkerSequenceNode,
   ToolName,
+  isReactionArrowItemId,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -370,7 +371,11 @@ export const EditorEvents = () => {
     const onMoveHandler = (e) => {
       handleClosePreview();
       const isLeftClick = e.buttons === 1;
-      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+      if (
+        !isLeftClick ||
+        (!noPreviewTools.includes(activeTool) &&
+          !isReactionArrowItemId(activeTool))
+      ) {
         handleOpenPreview(e);
       }
     };

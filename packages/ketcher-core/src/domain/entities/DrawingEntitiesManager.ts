@@ -117,7 +117,9 @@ import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
   RxnArrowAddOperation,
   RxnArrowDeleteOperation,
+  RxnArrowResizeOperation,
 } from 'application/editor/operations/coreRxn/rxnArrow';
+import { getSnappedArrowVector } from 'application/editor/operations/rxn/RxnArrowResize';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import {
@@ -3963,6 +3965,69 @@ export class DrawingEntitiesManager {
           rxnArrow.arrowId,
           arrow,
         ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  private getSnappedArrowEndPosition(
+    arrow: RxnArrow,
+    endIndex: 0 | 1,
+    newPosition: Vec2,
+    isSnappingEnabled: boolean,
+  ): Vec2 {
+    if (!isSnappingEnabled) {
+      return new Vec2(newPosition);
+    }
+
+    const anchorIndex = endIndex === 0 ? 1 : 0;
+    const anchor = arrow.startEndPosition[anchorIndex];
+    const currentArrowVector = newPosition.sub(anchor);
+    const snappedArrowVector = getSnappedArrowVector(currentArrowVector);
+
+    return anchor.add(snappedArrowVector);
+  }
+
+  public resizeRxnArrow(
+    arrow: RxnArrow,
+    endIndex: 0 | 1,
+    newPosition: Vec2,
+    isSnappingEnabled = true,
+  ) {
+    const snappedPosition = this.getSnappedArrowEndPosition(
+      arrow,
+      endIndex,
+      newPosition,
+      isSnappingEnabled,
+    );
+    const previousPosition = new Vec2(arrow.startEndPosition[endIndex]);
+    const command = new Command();
+    const operation = new RxnArrowResizeOperation(
+      arrow,
+      endIndex,
+      snappedPosition,
+      previousPosition,
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public createRxnArrowResizeHistoryCommand(
+    arrow: RxnArrow,
+    endIndex: 0 | 1,
+    previousPosition: Vec2,
+    newPosition: Vec2,
+  ) {
+    const command = new Command();
+    const operation = new RxnArrowResizeOperation(
+      arrow,
+      endIndex,
+      new Vec2(newPosition),
+      new Vec2(previousPosition),
     );
 
     command.addOperation(operation);

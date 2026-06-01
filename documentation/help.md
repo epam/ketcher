@@ -602,9 +602,9 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 A chemical structure can be loaded into the monomer creation wizard in molecules mode, after a selection is made, and the _Create a monomer_ button on the left toolbar is clicked:
 
-<img src=images/Monomer-Creation-Wizard-3.9..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-3.16..png width = "450"/>
 <img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
-<img src=images/Monomer-Creation-Wizard-2-3.11..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-2-3.16..png width = "450"/>
 
 The selected structure can contain bonds to non-selected parts of the structure and/or R-groups. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
 
@@ -617,7 +617,7 @@ Using the `Attributes` panel, the user is able to define following monomer prope
 - Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids);
 - Phosphate position (5' or 3'; only when defining presets).
 
-<img src=images/Monomer-Creation-Wizard-3-3.11..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-3-3.16..png width = "450"/>
 
 User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by switching between the atoms:
 
@@ -635,7 +635,7 @@ or _Mark as a connection point_:
 
 The Attachment points section of the _Attributes_ panel allows the users to delete an already set attachment point, change the R-number, or change the leaving group atom(s):
 
-<img src=images/Monomer-Creation-Wizard-9-3.11..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-9-3.16..png width = "450"/>
 
 After _Submit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an appropriate shape and colour) in macromolecules mode, and that monomer in the library:
 
@@ -643,10 +643,10 @@ After _Submit_ is clicked, the user will see an expanded monomer in molecules mo
 
 In addition to adding single monomers, users are able to define three monomers (sugar, base, and phosphate) and save a preset containing them:
 
-<img src=images/Monomer-Creation-Wizard-12-3.11..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-12-3.16..png width = "450"/>
 
 Nucleotide components are defined by selecting their atoms and marking them as base, sugar, and phosphate in appropriate tabs:
-<img src=images/Monomer-Creation-Wizard-13-3.11..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-13-3.16..png width = "450"/>
 
 **Note**: _Fragment Selection tool_ can help with selecting appropriate nucleotide components. While in the Monomer Creation Wizard, atoms and bonds already marked as a particular component will not be selected using that tool.
 

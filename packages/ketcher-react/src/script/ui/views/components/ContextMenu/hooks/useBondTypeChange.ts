@@ -1,14 +1,17 @@
 import {
-  BondAttributes,
+  type BondAttributes,
   fromBondsAttrs,
   ketcherProvider,
   bondChangingAction,
 } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import tools from '../../../../action/tools';
-import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
+import type {
+  BondsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 

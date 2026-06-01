@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomQueryProperties } from 'domain/entities/atom';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AtomQueryProperties } from 'domain/entities/atom';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 

@@ -1,16 +1,16 @@
 import ReObject from './reobject';
-import { Line, MultitailArrow } from 'domain/entities/multitailArrow';
+import { type Line, MultitailArrow } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 import { LayerMap } from './generalEnumTypes';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import type ReStruct from './restruct';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 
 type TestSelectionPoint = ReturnType<RaphaelPaper['circle']>;
 

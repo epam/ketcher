@@ -4,7 +4,7 @@ import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../helpers/dom';
-import { SelectBase } from 'application/editor/tools/select';
+import type { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {

@@ -24,7 +24,7 @@ import {
 import { Dialog } from '../../../../components';
 import Input from '../../../../../component/form/Input/Input';
 import OpenButton from '../../../../../component/view/openbutton';
-import { FileContent } from '../../../../../component/view/openButton.types';
+import type { FileContent } from '../../../../../component/view/openButton.types';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import classes from './Recognize.module.less';
 import { connect } from 'react-redux';
@@ -33,7 +33,7 @@ import { range } from 'lodash/fp';
 import { recognize } from '../../../../../state/server';
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
 import { Icon, StructRender } from 'components';
-import { ketcherProvider, Struct } from 'ketcher-core';
+import { type Struct, ketcherProvider } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 
 type StructStringOrPromise = string | Promise<unknown> | null;

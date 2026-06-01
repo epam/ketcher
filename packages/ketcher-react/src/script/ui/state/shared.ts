@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import {
+  type Struct,
+  type Editor,
   FormatterFactory,
   SGroup,
   identifyStructFormat,
-  Struct,
   SupportedFormat,
   notifyRequestCompleted,
-  Editor,
   KetcherLogger,
   SettingsManager,
   getSelectionFromStruct,

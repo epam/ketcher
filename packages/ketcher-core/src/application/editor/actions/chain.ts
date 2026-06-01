@@ -20,7 +20,7 @@ import { Action } from './action';
 import { Vec2 } from 'domain/entities/vec2';
 import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
-import { ReAtom, ReStruct } from 'application/render';
+import type { ReAtom, ReStruct } from 'application/render';
 
 export const removeInfoLabelFromAtoms = (restruct: ReStruct) => {
   restruct.atoms.forEach((atom: ReAtom) => {

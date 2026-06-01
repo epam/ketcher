@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AppContext, { IAppContext } from './appContext';
-import ErrorsContext, { IErrorsContext } from './errorsContext';
-import SettingsContext, { ISettingsContext } from './settingsContext';
+import AppContext, { type IAppContext } from './appContext';
+import ErrorsContext, { type IErrorsContext } from './errorsContext';
+import SettingsContext, { type ISettingsContext } from './settingsContext';
 
 import FormContext from './formContext';
 export type {

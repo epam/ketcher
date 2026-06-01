@@ -21,7 +21,7 @@ import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import { ifDef } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
-import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { atomToStruct, bondToStruct } from './atomBondToStruct';
 
 export function toRlabel(values) {

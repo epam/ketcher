@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { Bond } from 'domain/entities/bond';
 
 export class Loop {

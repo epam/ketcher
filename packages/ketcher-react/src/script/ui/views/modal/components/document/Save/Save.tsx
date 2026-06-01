@@ -16,10 +16,23 @@
 
 import * as structFormat from '../../../../../data/convert/structConverter';
 
-import React, { Component, createRef, RefObject } from 'react';
+import {
+  type ClipboardEvent,
+  type ContextType,
+  type MouseEvent,
+  type RefObject,
+  Component,
+  createRef,
+} from 'react';
 import { createSelector } from 'reselect';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
+  type Struct,
+  type StructService,
+  type OutputFormatType,
+  type StructServiceOptions,
+  type GenerateImageOptions,
+  type SupportedFormatProperties,
   FormatterFactory,
   KetSerializer,
   formatProperties,
@@ -30,8 +43,6 @@ import {
   Atom,
   isClipboardAPIAvailable,
   legacyCopy,
-  Struct,
-  StructService,
   SupportedFormat,
   OutputFormatType,
   StructServiceOptions,
@@ -54,8 +65,8 @@ import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 import { IconButton } from 'components';
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import type { AnyAction } from 'redux';
 
 const saveSchema = {
   title: 'Save',
@@ -101,7 +112,7 @@ interface PreviewContentProps {
   classes: typeof classes;
   structStr: string;
   textAreaRef: RefObject<HTMLTextAreaElement | null>;
-  handleCopy: (event: React.MouseEvent | React.ClipboardEvent) => void;
+  handleCopy: (event: MouseEvent | ClipboardEvent) => void;
 }
 
 interface FormState {
@@ -251,7 +262,7 @@ const PreviewContent = ({
 
 class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   static readonly contextType = ErrorsContext;
-  declare context: React.ContextType<typeof ErrorsContext>;
+  declare context: ContextType<typeof ErrorsContext>;
   private readonly isRxn: boolean;
   private readonly textAreaRef: RefObject<HTMLTextAreaElement | null>;
   private readonly saveSchema: typeof saveSchema;
@@ -1137,7 +1148,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     );
   };
 
-  handleCopy = (event: React.MouseEvent | React.ClipboardEvent): void => {
+  handleCopy = (event: MouseEvent | ClipboardEvent): void => {
     const { structStr } = this.state;
 
     try {

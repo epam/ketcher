@@ -33,7 +33,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import { without } from 'lodash/fp';
-import ReStruct from 'application/render/restruct/restruct';
+import type ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 
 export function fromAtomAddition(restruct, pos, atom) {

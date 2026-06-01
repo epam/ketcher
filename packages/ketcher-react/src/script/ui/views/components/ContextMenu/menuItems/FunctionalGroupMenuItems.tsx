@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item } from 'react-contexify';
 import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc';
 import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove';
-import {
+import type {
   FunctionalGroupsContextMenuProps,
   MenuItemsProps,
 } from '../contextMenu.types';

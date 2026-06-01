@@ -16,18 +16,21 @@
 
 import { FormulaInput, FrozenInput } from './components';
 
-import { ReactElement, useEffect } from 'react';
-import { Action } from 'redux';
+import { type ReactElement, useEffect } from 'react';
+import type { Action } from 'redux';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 import { range } from 'lodash/fp';
 import { Dialog } from '../../../../components';
-import { DialogParams } from '../../../../../../../components/Dialog/Dialog';
+import type { DialogParams } from '../../../../../../../components/Dialog/Dialog';
 import { analyse } from '../../../../../state/server';
 import { changeRound } from '../../../../../state/options';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-import { AnalyseValues, StoreState } from '../../../../../state/store.types';
+import type {
+  AnalyseValues,
+  StoreState,
+} from '../../../../../state/store.types';
 import classes from './Analyse.module.less';
 
 interface RoundSettings {

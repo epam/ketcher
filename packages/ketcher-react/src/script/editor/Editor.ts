@@ -15,16 +15,26 @@
  ***************************************************************************/
 
 import {
+  type Editor as KetcherEditor,
+  type FloatingToolsParams,
+  type IKetAttachmentPoint,
+  type IKetTemplateConnection,
+  type IKetMonomerTemplate,
+  type MonomerCreationInitialValues,
+  type MonomerCreationState,
+  type Pool,
+  type ReStruct,
+  type SGroupAttachmentPoint,
+  type RnaPresetComponentKey,
+  type ComponentStructureUpdateData,
   Action,
   Atom,
   AtomLabel,
   AttachmentPointName,
   Bond,
   Coordinates,
-  Editor as KetcherEditor,
   Elements,
   fillNaturalAnalogueForPhosphateAndSugar,
-  FloatingToolsParams,
   fromAtomsAttrs,
   fromBondAddition,
   fromDescriptorsAlign,
@@ -38,9 +48,6 @@ import {
   getAttachmentPointNumberFromLabel,
   getHELMClassByKetMonomerClass,
   getNextFreeAttachmentPoint,
-  IKetAttachmentPoint,
-  IKetTemplateConnection,
-  IKetMonomerTemplate,
   IMAGE_KEY,
   isSingleRGroupAttachmentPoint,
   KetcherLogger,
@@ -49,15 +56,12 @@ import {
   KetTemplateType,
   KetConnectionType,
   MacromoleculesConverter,
-  MonomerCreationState,
   monomerFactory,
   MULTITAIL_ARROW_KEY,
   normalizeMonomerAtomsPositions,
   Pile,
-  Pool,
   provideEditorSettings,
   Render,
-  ReStruct,
   Scale,
   setMonomerTemplatePrefix,
   SGroup,
@@ -75,8 +79,6 @@ import {
   setMonomerGroupTemplatePrefix,
   KetMonomerClass,
   MonomerCreationComponentStructureUpdateEvent,
-  RnaPresetComponentKey,
-  ComponentStructureUpdateData,
   LayerMap,
   Visel,
   paperPathFromSVGElement,
@@ -89,15 +91,15 @@ import {
 } from 'subscription';
 
 import closest from './shared/closest';
-import { ChangeEventData, customOnChangeHandler } from './utils';
+import { type ChangeEventData, customOnChangeHandler } from './utils';
 import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
 import { Highlighter } from './highlighter';
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
-import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
+import type { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
-import {
+import type {
   HoverTarget,
   Tool,
   ToolConstructorInterface,
@@ -975,15 +977,37 @@ class Editor implements KetcherEditor {
 
   private changeEventSubscriber: any = null;
 
-  openMonomerCreationWizard() {
+  openMonomerCreationWizard(
+    selectionOverride?: Selection,
+    editInstanceInitialValues?: MonomerCreationInitialValues,
+    editInstanceAttachmentPoints?: ReadonlyArray<SGroupAttachmentPoint>,
+  ) {
     const currentStruct = this.render.ctab.molecule;
-    const selection = this.selection() ?? {
-      atoms: Array.from(this.struct().atoms.keys()),
-      bonds: Array.from(this.struct().bonds.keys()),
+    const rawSelection = selectionOverride ??
+      this.selection() ?? {
+        atoms: Array.from(this.struct().atoms.keys()),
+        bonds: Array.from(this.struct().bonds.keys()),
+      };
+    const selection: Selection = {
+      rxnArrows: [],
+      rxnPluses: [],
+      texts: [],
+      rgroupAttachmentPoints: [],
+      ...rawSelection,
     };
 
     this.originalSelection = selection;
     const selectedStruct = this.structSelected(selection);
+
+    if (editInstanceInitialValues) {
+      selectedStruct.functionalGroups.clear();
+      Array.from(selectedStruct.sgroups.keys()).forEach((sgid) => {
+        selectedStruct.sGroupDelete(sgid);
+      });
+      this.terminalRGroupAtoms = [];
+      this.potentialLeavingAtomsForAutoAssignment = [];
+      this.potentialLeavingAtomsForManualAssignment = [];
+    }
 
     /*
      * Upon cloning the structure each entity gets a new id thus losing the mapping between the new and original one
@@ -1003,6 +1027,28 @@ class Editor implements KetcherEditor {
       AttachmentPointName,
       [number, number]
     >();
+
+    editInstanceAttachmentPoints?.forEach((attachmentPoint) => {
+      if (!attachmentPoint.attachmentPointNumber) {
+        return;
+      }
+
+      const attachmentAtomId = originalToSelectedAtomsIdMap.get(
+        attachmentPoint.atomId,
+      );
+      const leavingAtomId = originalToSelectedAtomsIdMap.get(
+        attachmentPoint.leaveAtomId as number,
+      );
+
+      if (!isNumber(attachmentAtomId) || !isNumber(leavingAtomId)) {
+        return;
+      }
+
+      assignedAttachmentPoints.set(
+        getAttachmentPointLabel(attachmentPoint.attachmentPointNumber),
+        [attachmentAtomId, leavingAtomId],
+      );
+    });
 
     const sideTerminalSGroupAtoms = this.terminalRGroupAtoms.filter(
       ([, attachmentPointLabel]) =>
@@ -1228,6 +1274,7 @@ class Editor implements KetcherEditor {
       potentialAttachmentPoints,
       problematicAttachmentPoints: new Set(),
       hasDefaultAttachmentPoints,
+      ...(editInstanceInitialValues ? { editInstanceInitialValues } : {}),
     };
 
     this.originalHistoryStack = this.historyStack;

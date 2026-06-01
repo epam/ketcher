@@ -1,13 +1,13 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item } from 'react-contexify';
-import {
+import type {
   MenuItemsProps,
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import useRGroupAttachmentPointRemove from '../hooks/useRGroupAttachmentPointRemove';
 import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
 import { useAppContext } from 'src/hooks/useAppContext';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { ketcherProvider } from 'ketcher-core';

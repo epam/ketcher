@@ -1834,8 +1834,12 @@ export class CoreEditor {
     }
   }
 
-  public onSelectTool(tool: ToolName, options?: object) {
-    this.selectTool(tool, options);
+  public onSelectTool(
+    tool: ToolName | string,
+    options?: { toolName?: ToolName },
+  ) {
+    const actualTool = (options?.toolName ?? tool) as ToolName;
+    this.selectTool(actualTool, options);
   }
 
   private onCreateBond(payload: {

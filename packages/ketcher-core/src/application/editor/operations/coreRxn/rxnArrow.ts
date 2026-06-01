@@ -17,6 +17,7 @@
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 import type { Operation } from 'domain/entities/Operation';
 import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export class RxnArrowAddOperation implements Operation {
   public rxnArrow: RxnArrow;
@@ -58,6 +59,29 @@ export class RxnArrowDeleteOperation implements Operation {
 
   public invert(renderersManager: RenderersManager) {
     this.addArrowChangeModel(this.rxnArrow);
+    renderersManager.addRxnArrow(this.rxnArrow);
+  }
+}
+
+export class RxnArrowResizeOperation implements Operation {
+  public priority = 2;
+
+  constructor(
+    public rxnArrow: RxnArrow,
+    public endIndex: 0 | 1,
+    public newPosition: Vec2,
+    public previousPosition: Vec2,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.rxnArrow.resize(this.endIndex, this.newPosition);
+    renderersManager.deleteRxnArrow(this.rxnArrow);
+    renderersManager.addRxnArrow(this.rxnArrow);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.rxnArrow.resize(this.endIndex, this.previousPosition);
+    renderersManager.deleteRxnArrow(this.rxnArrow);
     renderersManager.addRxnArrow(this.rxnArrow);
   }
 }

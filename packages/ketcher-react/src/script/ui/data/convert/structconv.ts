@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Atom, AttachmentPoints } from 'ketcher-core';
 import {
   AtomList,
+  type Atom,
   Bond,
+  type AttachmentPoints,
   Elements,
   StereoLabel,
   getAtomType,

@@ -1544,8 +1544,18 @@ export class SequenceMode extends BaseMode {
           if (
             this.needToEditAntisense &&
             (this.isSyncEditMode
-              ? previousTwoStrandedNodeInSameChain?.antisenseNode ??
-                currentTwoStrandedNode?.antisenseNode
+              ? (previousTwoStrandedNodeInSameChain?.senseNode &&
+                  !(
+                    previousTwoStrandedNodeInSameChain.senseNode instanceof
+                    EmptySequenceNode
+                  ) &&
+                  previousTwoStrandedNodeInSameChain.antisenseNode) ||
+                (currentTwoStrandedNode?.senseNode &&
+                  !(
+                    currentTwoStrandedNode.senseNode instanceof
+                    EmptySequenceNode
+                  ) &&
+                  currentTwoStrandedNode.antisenseNode)
               : !(
                   previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
                   EmptySequenceNode

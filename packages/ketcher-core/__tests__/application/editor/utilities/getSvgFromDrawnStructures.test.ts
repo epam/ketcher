@@ -137,8 +137,11 @@ describe('getSvgFromDrawnStructures', () => {
       'svg',
     ) as unknown as SVGSVGElement;
     canvas.innerHTML = `<g class="drawn-structures"><text>t</text></g>`;
-    // call with unknown type string casted to any
-    const result = getSvgFromDrawnStructures(canvas, 'unknown' as any);
+    // call with unknown type string forced through compile-time type
+    const result = getSvgFromDrawnStructures(
+      canvas,
+      'unknown' as unknown as 'preview' | 'file',
+    );
     expect(result).toBe("<svg xmlns='http://www.w3.org/2000/svg' />");
   });
 });

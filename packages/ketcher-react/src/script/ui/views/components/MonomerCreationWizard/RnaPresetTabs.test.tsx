@@ -221,37 +221,6 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     expect(mockEditor.highlights.clear).toHaveBeenCalled();
   });
 
-  it('should not create highlights when highlightEnabled is false', () => {
-    wizardState.base.structure = {
-      atoms: [1, 2, 3],
-      bonds: [1, 2],
-    };
-
-    render(
-      <Provider store={mockStore}>
-        <RnaPresetTabs
-          wizardState={wizardState}
-          editor={mockEditor}
-          wizardStateDispatch={mockDispatch}
-          phosphatePosition={undefined}
-          onPhosphatePositionChange={mockOnPhosphatePositionChange}
-        />
-      </Provider>,
-    );
-
-    // Clear the initial calls
-    mockEditor.highlights.clear.mockClear();
-    mockEditor.highlights.create.mockClear();
-
-    // Click the highlight checkbox to disable it
-    const highlightCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(highlightCheckbox);
-
-    // Should clear but not create new highlights
-    expect(mockEditor.highlights.clear).toHaveBeenCalled();
-    expect(mockEditor.highlights.create).not.toHaveBeenCalled();
-  });
-
   it('should apply active highlight color to the active tab component', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
     wizardState.base.structure = {

@@ -32,7 +32,6 @@ import {
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import type { Editor } from '../../../../editor';
-import inputStyles from '../../../component/form/Input/Input.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
   type RnaPresetComponentType,
@@ -78,7 +77,6 @@ const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
 
 export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const [selectedTab, setSelectedTab] = useState(0);
-  const [isHighlightEnabled, setIsHighlightEnabled] = useState(true);
   const structureSelection = useSelector(selectionSelector);
   const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
   const hasSelectedAtoms = Boolean(structureSelection?.atoms?.length);
@@ -158,12 +156,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const applyHighlights = useCallback(
-    (activeTabIndex: number, highlightEnabled: boolean) => {
+    (activeTabIndex: number) => {
       editor.highlights.clear();
-
-      if (!highlightEnabled) {
-        return;
-      }
 
       // Apply highlights for all components based on whether they're active or not
       RNA_COMPONENT_KEYS.forEach((componentKey, index) => {
@@ -190,13 +184,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
   const handleChange = (_, newValue: number) => {
     setSelectedTab(newValue);
-    applyHighlights(newValue, isHighlightEnabled);
-  };
-
-  const handleHighlightToggle = () => {
-    const newHighlightEnabled = !isHighlightEnabled;
-    setIsHighlightEnabled(newHighlightEnabled);
-    applyHighlights(selectedTab, newHighlightEnabled);
+    applyHighlights(newValue);
   };
 
   const handleFieldChange = (
@@ -253,15 +241,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       return;
     }
 
-    applyHighlights(selectedTab, isHighlightEnabled);
+    applyHighlights(selectedTab);
     editor.selection(null);
-  }, [
-    applyHighlights,
-    currentTabStructure,
-    editor,
-    isHighlightEnabled,
-    selectedTab,
-  ]);
+  }, [applyHighlights, currentTabStructure, editor, selectedTab]);
 
   // Sync connection (readonly) attachment points with the canvas whenever the
   // active RNA component tab or the wizard state changes.
@@ -315,7 +297,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
 
       // Then, switch to the appropriate tab
       setSelectedTab(tabIndex);
-      applyHighlights(selectedTab, isHighlightEnabled);
+      applyHighlights(selectedTab);
     };
 
     window.addEventListener(
@@ -329,13 +311,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
         handleMarkAsComponent,
       );
     };
-  }, [
-    wizardState,
-    handleClickCreateComponent,
-    applyHighlights,
-    selectedTab,
-    isHighlightEnabled,
-  ]);
+  }, [wizardState, handleClickCreateComponent, applyHighlights, selectedTab]);
 
   const hasErrorInTab = (
     wizardState: WizardState | RnaPresetWizardStatePresetFieldValue,
@@ -574,16 +550,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           );
         })}
       </div>
-      <label className={styles.highlightCheckboxWrapper}>
-        <input
-          type="checkbox"
-          data-testid="highlight-toggle"
-          checked={isHighlightEnabled}
-          onChange={handleHighlightToggle}
-          className={inputStyles.input}
-        />
-        <span className={inputStyles.checkbox} /> Highlight
-      </label>
     </div>
   );
 };

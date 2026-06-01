@@ -3044,7 +3044,7 @@ class Editor implements KetcherEditor {
       new Pile(selection.images),
       new Pile(selection[MULTITAIL_ARROW_KEY]),
       bondIdMap,
-      true,
+      true /* needCloneAttachmentPoints */,
     );
 
     // Copy by its own as Struct.clone doesn't support

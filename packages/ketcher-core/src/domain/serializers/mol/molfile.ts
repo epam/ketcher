@@ -272,13 +272,23 @@ export class Molfile {
 
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
-    const isAbsFlag =
-      Array.from(this.molecule!.frags.values()).some((fr) =>
-        fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
-      ) ||
-      Array.from(this.molecule!.atoms.values()).some(
-        (atom) => atom.stereoLabel === StereoLabel.Abs,
-      );
+    // Atoms can carry an Abs stereo label even when no fragment is flagged as Abs
+    // (e.g., after copy/paste); both paths must raise the chiral flag.
+    let isAbsFlag = false;
+    for (const fr of this.molecule!.frags.values()) {
+      if (fr?.enhancedStereoFlag === StereoFlag.Abs) {
+        isAbsFlag = true;
+        break;
+      }
+    }
+    if (!isAbsFlag) {
+      for (const atom of this.molecule!.atoms.values()) {
+        if (atom.stereoLabel === StereoLabel.Abs) {
+          isAbsFlag = true;
+          break;
+        }
+      }
+    }
 
     this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
     this.writePaddedNumber(0, 3);

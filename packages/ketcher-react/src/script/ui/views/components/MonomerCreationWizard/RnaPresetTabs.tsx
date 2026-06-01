@@ -258,23 +258,18 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   ]);
 
   // Sync connection (readonly) attachment points with the canvas whenever the
-  // active RNA component tab or the wizard state changes.
+  // active RNA component tab or the wizard state changes. All assigned APs
+  // (R-labels) stay visible on every tab so users can see the full attachment-
+  // point picture while editing a single component.
   useEffect(() => {
+    editor.setVisibleAssignedAttachmentPoints(undefined);
+
     const activeComponentKey = RNA_COMPONENT_KEYS[selectedTab - 1];
+
     if (!activeComponentKey) {
-      // Preset tab: show only user-assigned APs (the ones not occupied by
-      // default inter-component connections). Connection APs are not rendered
-      // on the Preset tab, so clear them from the canvas as well.
-      editor.setVisibleAssignedAttachmentPoints(undefined);
       editor.setConnectionAttachmentPoints(new Map());
       return;
     }
-
-    // Component tab: restrict visible assigned APs to those belonging to this
-    // component only, so APs from other components are hidden on the canvas.
-    editor.setVisibleAssignedAttachmentPoints(
-      componentAttachmentPoints[activeComponentKey],
-    );
 
     const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
@@ -283,14 +278,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       phosphatePosition as PhosphatePosition | undefined,
     );
     editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [
-    editor,
-    selectedTab,
-    struct,
-    wizardState,
-    phosphatePosition,
-    componentAttachmentPoints,
-  ]);
+  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
 
   useEffect(() => {
     return () => {

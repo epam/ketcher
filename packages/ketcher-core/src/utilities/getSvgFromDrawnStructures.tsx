@@ -63,11 +63,35 @@ const isNonExportElement = (el: Element) => {
   return false;
 };
 
+const sanitizeInlineExportStyles = (markup: string) => {
+  return markup
+    .replace(/\bcursor:\s*pointer;\s*/g, '')
+    .replace(/\bclip-path:\s*url\([^)]*\);?\s*/g, '')
+    .replace(/\bmask:\s*url\([^)]*\);?\s*/g, '');
+};
+
 const getExportBoundingRect = (canvas: SVGSVGElement): ExportBounds | null => {
+  const drawnStructures = canvas.querySelector('.drawn-structures');
+  const drawnStructuresGroup =
+    drawnStructures instanceof SVGGraphicsElement ? drawnStructures : null;
+
+  const screenToSvgMatrix =
+    typeof canvas.getScreenCTM === 'function'
+      ? canvas.getScreenCTM()?.inverse()
+      : null;
+  const shouldSkipDrawnStructureDescendants =
+    !!drawnStructuresGroup && !!screenToSvgMatrix;
+
   const candidates = Array.from(canvas.querySelectorAll('*')).filter((el) => {
     if (!(el instanceof SVGGraphicsElement)) return false;
     if (el.closest('defs')) return false;
     if (isNonExportElement(el)) return false;
+    if (
+      shouldSkipDrawnStructureDescendants &&
+      drawnStructuresGroup.contains(el)
+    ) {
+      return false;
+    }
 
     return true;
   });
@@ -77,31 +101,27 @@ const getExportBoundingRect = (canvas: SVGSVGElement): ExportBounds | null => {
   let maxSvgX = Number.NEGATIVE_INFINITY;
   let maxSvgY = Number.NEGATIVE_INFINITY;
 
-  const screenToSvgMatrix = canvas.getScreenCTM()?.inverse();
-
-  candidates.forEach((el) => {
-    if (!(el instanceof SVGGraphicsElement)) return;
-
+  const updateBoundsFromGraphicElement = (el: SVGGraphicsElement) => {
     try {
       const bbox = el.getBBox();
-      if (!bbox.width && !bbox.height) return;
+      if (bbox.width || bbox.height) {
+        const ctm = el.getCTM();
+        if (ctm) {
+          const corners = [
+            new DOMPoint(bbox.x, bbox.y),
+            new DOMPoint(bbox.x + bbox.width, bbox.y),
+            new DOMPoint(bbox.x, bbox.y + bbox.height),
+            new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
+          ].map((point) => point.matrixTransform(ctm));
 
-      const ctm = el.getCTM();
-      if (!ctm) return;
-
-      const corners = [
-        new DOMPoint(bbox.x, bbox.y),
-        new DOMPoint(bbox.x + bbox.width, bbox.y),
-        new DOMPoint(bbox.x, bbox.y + bbox.height),
-        new DOMPoint(bbox.x + bbox.width, bbox.y + bbox.height),
-      ].map((point) => point.matrixTransform(ctm));
-
-      corners.forEach((point) => {
-        minSvgX = Math.min(minSvgX, point.x);
-        minSvgY = Math.min(minSvgY, point.y);
-        maxSvgX = Math.max(maxSvgX, point.x);
-        maxSvgY = Math.max(maxSvgY, point.y);
-      });
+          corners.forEach((point) => {
+            minSvgX = Math.min(minSvgX, point.x);
+            minSvgY = Math.min(minSvgY, point.y);
+            maxSvgX = Math.max(maxSvgX, point.x);
+            maxSvgY = Math.max(maxSvgY, point.y);
+          });
+        }
+      }
     } catch {
       // Some elements can throw on getBBox in specific states; handled by fallback below.
     }
@@ -126,6 +146,14 @@ const getExportBoundingRect = (canvas: SVGSVGElement): ExportBounds | null => {
         });
       }
     }
+  };
+
+  if (drawnStructuresGroup && !isNonExportElement(drawnStructuresGroup)) {
+    updateBoundsFromGraphicElement(drawnStructuresGroup);
+  }
+
+  candidates.forEach((el) => {
+    updateBoundsFromGraphicElement(el);
   });
 
   if (Number.isFinite(minSvgX) && Number.isFinite(minSvgY)) {
@@ -202,7 +230,8 @@ export const getSvgFromDrawnStructures = (
     el.removeAttribute('clip-path');
     el.removeAttribute('mask');
   });
-  // keep all rendered elements in export to avoid losing structural annotations
+  // Keep transient UI overlays out of export (selection/hover/scrollbars/handles).
+  // Structural annotations should use dedicated classes instead of dynamic-element.
   // set default cursor, mostly for sequence mode
   wrapper
     .querySelectorAll('text')
@@ -215,11 +244,8 @@ export const getSvgFromDrawnStructures = (
     if (el.hasAttribute('opacity')) el.removeAttribute('opacity');
   });
   svgInnerHTML = wrapper.innerHTML;
-  // remove "cursor: pointer" style only from elements where it appears standalone,
-  // preserving other style properties on bond path elements (stroke, fill, stroke-width, etc.)
-  svgInnerHTML = svgInnerHTML?.replace(/\bcursor:\s*pointer;\s*/g, '');
-  svgInnerHTML = svgInnerHTML?.replace(/\bclip-path:\s*url\([^)]*\);?\s*/g, '');
-  svgInnerHTML = svgInnerHTML?.replace(/\bmask:\s*url\([^)]*\);?\s*/g, '');
+  // remove transient pointer/clip/mask inline styles from exported markup
+  svgInnerHTML = sanitizeInlineExportStyles(svgInnerHTML);
 
   if (type === 'preview') {
     // Preview must show full labels even when source markup uses clipping/ellipsis UI styles.
@@ -280,6 +306,8 @@ export const getSvgFromDrawnStructures = (
 
     // Continue with measured bounds below so preview and file use the same framing logic.
   }
+
+  svgInnerHTML = sanitizeInlineExportStyles(svgInnerHTML);
 
   wrapper.setAttribute('xmlns', SVG_NAMESPACE_URI);
   wrapper.setAttribute('width', `${canvas.clientWidth || 1}`);

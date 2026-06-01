@@ -1,9 +1,5 @@
-jest.mock('utilities', () => ({
-  KetcherLogger: { error: jest.fn() },
-}));
-
-import { KetcherLogger } from 'utilities';
 import { getSvgFromDrawnStructures } from '../../../../src/utilities/getSvgFromDrawnStructures';
+import { KetcherLogger } from '../../../../src/utilities/KetcherLogger';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -32,8 +28,13 @@ const makeRect = (
 };
 
 describe('getSvgFromDrawnStructures', () => {
+  const defaultRect = makeRect(100, 200, 300, 400);
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
+    jest
+      .spyOn(SVGElement.prototype, 'getBoundingClientRect')
+      .mockImplementation(() => defaultRect);
   });
 
   test('returns preview SVG and cleans up dynamic elements with numeric margin', () => {
@@ -54,23 +55,17 @@ describe('getSvgFromDrawnStructures', () => {
       </g>
     `;
 
-    // mock getBoundingClientRect on the drawn-structures element
-    const drawn = canvas.getElementsByClassName(
-      'drawn-structures',
-    )[0] as Element & { getBoundingClientRect?: () => any };
-    drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
-
     const result = getSvgFromDrawnStructures(canvas, 'preview', 5);
     expect(typeof result).toBe('string');
 
-    // Expected viewBox calculations using constants from implementation
-    // viewBoxX = 100 - 50 - 5 = 45
-    // viewBoxY = 200 - 54 - 5 = 141
-    // width = 300 + 5*2 = 310
-    // height = 400 + 5*2 = 410
-    expect(result).toContain("width='100%'");
-    expect(result).toContain("height='100%'");
-    expect(result).toContain("viewBox='45 141 310 410'");
+    // With fallback client-rect bounds preview uses minimal margins of 20.
+    // viewBoxX = 100 - 50 - 20 = 30
+    // viewBoxY = 200 - 54 - 20 = 126
+    // width = 300 + 20*2 = 340
+    // height = 400 + 20*2 = 440
+    expect(result).toContain("width='340'");
+    expect(result).toContain("height='440'");
+    expect(result).toContain("viewBox='30 126 340 440'");
 
     // rectangle-selection-area and dynamic-element should be removed
     expect(result).not.toContain('rectangle-selection-area');
@@ -98,11 +93,6 @@ describe('getSvgFromDrawnStructures', () => {
       </g>
     `;
 
-    const drawn = canvas.getElementsByClassName(
-      'drawn-structures',
-    )[0] as Element & { getBoundingClientRect?: () => any };
-    drawn.getBoundingClientRect = () => makeRect(100, 200, 300, 400);
-
     // Pass margins object - implementation adds DEFAULT_MARGIN to each component
     const result = getSvgFromDrawnStructures(canvas, 'file', {
       horizontal: 2,
@@ -126,6 +116,8 @@ describe('getSvgFromDrawnStructures', () => {
   });
 
   test('logs error and returns undefined when drawn-structures missing or innerHTML empty', () => {
+    const loggerErrorSpy = jest.spyOn(KetcherLogger, 'error');
+
     const canvas = document.createElementNS(
       SVG_NS,
       'svg',
@@ -136,9 +128,7 @@ describe('getSvgFromDrawnStructures', () => {
 
     const result = getSvgFromDrawnStructures(canvas, 'file');
     expect(result).toBeUndefined();
-    expect((KetcherLogger as any).error).toHaveBeenCalledWith(
-      'Cannot get drawn structures!',
-    );
+    expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot get drawn structures!');
   });
 
   test('returns minimal empty svg for unknown type', () => {
@@ -147,11 +137,6 @@ describe('getSvgFromDrawnStructures', () => {
       'svg',
     ) as unknown as SVGSVGElement;
     canvas.innerHTML = `<g class="drawn-structures"><text>t</text></g>`;
-    const drawn = canvas.getElementsByClassName(
-      'drawn-structures',
-    )[0] as Element & { getBoundingClientRect?: () => any };
-    drawn.getBoundingClientRect = () => makeRect(0, 0, 1, 1);
-
     // call with unknown type string casted to any
     const result = getSvgFromDrawnStructures(canvas, 'unknown' as any);
     expect(result).toBe("<svg xmlns='http://www.w3.org/2000/svg' />");

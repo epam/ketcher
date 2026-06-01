@@ -195,6 +195,9 @@ const NON_EXPORT_ELEMENT_CLASSES = ['dynamic-element', 'blinking'];
 const SELECTION_OVERLAY_COLOR = '#57ff8f';
 const ROTATION_GUIDE_COLOR = '#b4b9d6';
 const SCROLLBAR_TRACK_COLOR = '#b2bbc3';
+const MIN_PNG_RASTER_SCALE = 2;
+const MAX_PNG_RASTER_SCALE = 4;
+const MAX_PNG_CANVAS_PIXELS = 16777216;
 
 // Extracted components for better performance and React best practices
 const LoadingState = ({ classes }: LoadingStateProps) => (
@@ -453,11 +456,47 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     const height = Number.parseFloat(el.getAttribute('height') || '0') || 0;
 
     if (width > 0 && height > 0) {
-      return width <= 6 && height >= 120;
+      const isVerticalScrollbarTrack = width <= 6 && height >= 120;
+      const isHorizontalScrollbarTrack = height <= 6 && width >= 120;
+      return isVerticalScrollbarTrack || isHorizontalScrollbarTrack;
     }
 
     const box = el.getBBox();
-    return box.width <= 6 && box.height >= 120;
+    return (
+      (box.width <= 6 && box.height >= 120) ||
+      (box.height <= 6 && box.width >= 120)
+    );
+  };
+
+  private isImageResizeHandleElement = (el: SVGGraphicsElement) => {
+    const testId = (el.getAttribute('data-testid') || '').toLowerCase();
+    return testId.startsWith('imageresize-');
+  };
+
+  private isInvisibleImageResizeHandleCircle = (el: SVGGraphicsElement) => {
+    if (el.tagName.toLowerCase() !== 'circle') {
+      return false;
+    }
+
+    const fill = (el.getAttribute('fill') || '').toLowerCase();
+    const fillOpacity = Number.parseFloat(
+      el.getAttribute('fill-opacity') || '1',
+    );
+    const pointerEvents = (
+      el.getAttribute('pointer-events') || ''
+    ).toLowerCase();
+    const radius = Number.parseFloat(el.getAttribute('r') || '0') || 0;
+    const strokeWidth =
+      Number.parseFloat(el.getAttribute('stroke-width') || '0') || 0;
+
+    return (
+      fill === '#000000' &&
+      fillOpacity === 0 &&
+      pointerEvents === 'none' &&
+      radius >= 4 &&
+      radius <= 6 &&
+      strokeWidth >= 1
+    );
   };
 
   private isTransientSelectionOverlayElement = (el: SVGGraphicsElement) => {
@@ -542,9 +581,6 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
   private getSanitizedExportSvg = (sourceSvg: SVGSVGElement): SVGSVGElement => {
     const clonedSvg = sourceSvg.cloneNode(true) as SVGSVGElement;
 
-    // Embedded HTML nodes can carry UI artifacts (e.g. scrollbar tracks) into image exports.
-    clonedSvg.querySelectorAll('foreignObject').forEach((el) => el.remove());
-
     clonedSvg.querySelector('#rectangle-selection-area')?.remove();
     NON_EXPORT_LAYER_CLASSES.forEach((layerClass) => {
       clonedSvg.querySelectorAll(`.${layerClass}`).forEach((el) => el.remove());
@@ -569,6 +605,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         this.isTransientSelectionRect(svgEl) ||
         this.isTransientSelectionHandleRect(svgEl) ||
         this.isTransientScrollbarRect(svgEl) ||
+        this.isImageResizeHandleElement(svgEl) ||
         this.isTransientSelectionOverlayElement(svgEl) ||
         this.isTransientRotationGuideElement(svgEl)
       ) {
@@ -579,16 +616,12 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
     clonedSvg.querySelectorAll('circle, path, g').forEach((el) => {
       const svgEl = el as unknown as SVGGraphicsElement;
       if (
+        this.isImageResizeHandleElement(svgEl) ||
+        this.isInvisibleImageResizeHandleCircle(svgEl) ||
         this.isTransientSelectionOverlayElement(svgEl) ||
         this.isTransientRotationGuideElement(svgEl)
       ) {
         el.remove();
-      }
-    });
-
-    clonedSvg.querySelectorAll('g').forEach((el) => {
-      if (el.hasAttribute('opacity')) {
-        el.removeAttribute('opacity');
       }
     });
 
@@ -747,9 +780,35 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       const image = new Image();
 
       image.onload = () => {
+        const sourceWidth = Math.max(1, image.naturalWidth || image.width || 1);
+        const sourceHeight = Math.max(
+          1,
+          image.naturalHeight || image.height || 1,
+        );
+        const deviceScale =
+          typeof window !== 'undefined' && window.devicePixelRatio
+            ? window.devicePixelRatio
+            : 1;
+        const requestedScale = Math.min(
+          MAX_PNG_RASTER_SCALE,
+          Math.max(MIN_PNG_RASTER_SCALE, deviceScale),
+        );
+        const pixelScaleLimit = Math.sqrt(
+          MAX_PNG_CANVAS_PIXELS / (sourceWidth * sourceHeight),
+        );
+        const rasterScale = Math.max(
+          1,
+          Math.min(requestedScale, pixelScaleLimit),
+        );
+        const rasterWidth = Math.max(1, Math.round(sourceWidth * rasterScale));
+        const rasterHeight = Math.max(
+          1,
+          Math.round(sourceHeight * rasterScale),
+        );
+
         const canvas = document.createElement('canvas');
-        canvas.width = image.naturalWidth || image.width;
-        canvas.height = image.naturalHeight || image.height;
+        canvas.width = rasterWidth;
+        canvas.height = rasterHeight;
         const context = canvas.getContext('2d');
 
         if (!context) {
@@ -758,7 +817,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           return;
         }
 
-        context.drawImage(image, 0, 0);
+        context.imageSmoothingEnabled = true;
+        context.setTransform(rasterScale, 0, 0, rasterScale, 0, 0);
+        context.drawImage(image, 0, 0, sourceWidth, sourceHeight);
         URL.revokeObjectURL(objectUrl);
         resolve(canvas.toDataURL('image/png'));
       };

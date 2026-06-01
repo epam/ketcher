@@ -82,19 +82,21 @@ const getExportBoundingRect = (canvas: SVGSVGElement): ExportBounds | null => {
   const shouldSkipDrawnStructureDescendants =
     !!drawnStructuresGroup && !!screenToSvgMatrix;
 
-  const candidates = Array.from(canvas.querySelectorAll('*')).filter((el) => {
-    if (!(el instanceof SVGGraphicsElement)) return false;
-    if (el.closest('defs')) return false;
-    if (isNonExportElement(el)) return false;
-    if (
-      shouldSkipDrawnStructureDescendants &&
-      drawnStructuresGroup.contains(el)
-    ) {
-      return false;
-    }
+  const candidates = Array.from(canvas.querySelectorAll('*')).filter(
+    (el): el is SVGGraphicsElement => {
+      if (!(el instanceof SVGGraphicsElement)) return false;
+      if (el.closest('defs')) return false;
+      if (isNonExportElement(el)) return false;
+      if (
+        shouldSkipDrawnStructureDescendants &&
+        drawnStructuresGroup.contains(el)
+      ) {
+        return false;
+      }
 
-    return true;
-  });
+      return true;
+    },
+  );
 
   let minSvgX = Number.POSITIVE_INFINITY;
   let minSvgY = Number.POSITIVE_INFINITY;

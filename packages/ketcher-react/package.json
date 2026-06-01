@@ -21,8 +21,8 @@
   "bugs": {
     "url": "https://github.com/epam/ketcher/issues"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {

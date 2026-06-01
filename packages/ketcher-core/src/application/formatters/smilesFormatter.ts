@@ -18,8 +18,4 @@ export class SmilesFormatter {
   static isContainsCoordinates(smiles: string) {
     return /\([\d.,;-]+\)/.test(smiles);
   }
-
-  static isContainsCoordinates(smiles: string) {
-    return /\([\d.,;-]+\)/.test(smiles);
-  }
 }

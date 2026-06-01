@@ -14,17 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   StructService,
   StructServiceOptions,
   StructServiceProvider,
 } from 'domain/services';
 
-import { Editor } from 'application/editor';
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
-import { ketcherProvider } from './utils';
+import { ketcherProvider } from './ketcherProvider';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -41,13 +40,12 @@ export class KetcherBuilder {
 
   withStructServiceProvider(
     structServiceProvider: StructServiceProvider,
-  ): KetcherBuilder {
+  ): this {
     this.#structServiceProvider = structServiceProvider;
     return this;
   }
 
-  build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
-    assert(editor != null);
+  build(serviceOptions?: StructServiceOptions): Ketcher {
     assert(this.#structServiceProvider != null);
 
     const mergedServiceOptions: StructServiceOptions = {
@@ -57,13 +55,13 @@ export class KetcherBuilder {
     const structService: StructService =
       this.#structServiceProvider!.createStructService(mergedServiceOptions);
     const ketcher = new Ketcher(
-      editor,
       structService,
       new FormatterFactory(structService),
     );
+    structService.addKetcherId(ketcher.id);
     ketcher[this.#structServiceProvider.mode] = true;
 
-    ketcherProvider.setKetcherInstance(ketcher);
+    ketcherProvider.addKetcherInstance(ketcher);
     return ketcher;
   }
 }

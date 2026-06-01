@@ -19,21 +19,23 @@ import {
   AutomapCommandData,
   CalculateCipCommandData,
   CalculateCommandData,
+  CalculateMacromoleculePropertiesCommandData,
   CalculateProps,
   CheckCommandData,
   CleanCommandData,
   Command,
   CommandOptions,
-  WorkerEvent,
   ConvertCommandData,
   DearomatizeCommandData,
+  ExplicitHydrogensCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  SupportedFormat,
   OutputMessageWrapper,
+  SupportedFormat,
+  WorkerEvent,
 } from './indigoWorker.types';
 import {
   AromatizeData,
@@ -53,19 +55,30 @@ import {
   ConvertResult,
   DearomatizeData,
   DearomatizeResult,
+  ExplicitHydrogensData,
+  ExplicitHydrogensResult,
   GenerateImageOptions,
+  getLabelRenderModeForIndigo,
   InfoResult,
   LayoutData,
   LayoutResult,
   RecognizeResult,
   StructService,
   StructServiceOptions,
+  pickStandardServerOptions,
+  CalculateMacromoleculePropertiesData,
+  CalculateMacromoleculePropertiesResult,
+  provideEditorInstance,
 } from 'ketcher-core';
 
+import EventEmitter from 'events';
+import {
+  STRUCT_SERVICE_INITIALIZED_EVENT,
+  STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
+} from './constants';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import IndigoWorker from 'web-worker:./indigoWorker';
-import EventEmitter from 'events';
+import { indigoWorker } from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;
@@ -125,6 +138,40 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.SDF;
       break;
     }
+    case ChemicalMimeType.FASTA: {
+      format = SupportedFormat.FASTA;
+      break;
+    }
+    case ChemicalMimeType.SEQUENCE: {
+      format = SupportedFormat.SEQUENCE;
+      break;
+    }
+    case ChemicalMimeType.PeptideSequenceThreeLetter: {
+      format = SupportedFormat.SEQUENCE_3_LETTER;
+      break;
+    }
+    case ChemicalMimeType.IDT: {
+      format = SupportedFormat.IDT;
+      break;
+    }
+    case ChemicalMimeType.AXOLABS: {
+      format = SupportedFormat.AXOLABS;
+      break;
+    }
+    case ChemicalMimeType.HELM: {
+      format = SupportedFormat.HELM;
+      break;
+    }
+    case ChemicalMimeType.BILN: {
+      format = SupportedFormat.BILN;
+      break;
+    }
+    case ChemicalMimeType.RDF:
+      format = SupportedFormat.RDF;
+      break;
+    case ChemicalMimeType.MonomerLibrary:
+      format = SupportedFormat.MonomerLibrary;
+      break;
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');
@@ -135,33 +182,17 @@ function convertMimeTypeToOutputFormat(
 }
 
 function mapCalculatedPropertyName(property: CalculateProps) {
-  let mappedProperty: CalculateProps | undefined;
-  switch (property) {
-    case 'gross-formula': {
-      mappedProperty = 'gross';
-      break;
-    }
-    default:
-      mappedProperty = property;
-      break;
+  if (property === 'gross-formula') {
+    return 'gross';
   }
-
-  return mappedProperty;
+  return property;
 }
 
 function mapWarningGroup(property: string) {
-  let mappedProperty: string | undefined;
-  switch (property) {
-    case 'OVERLAP_BOND': {
-      mappedProperty = 'overlapping_bonds';
-      break;
-    }
-    default:
-      mappedProperty = property.toLowerCase();
-      break;
+  if (property === 'OVERLAP_BOND') {
+    return 'overlapping_bonds';
   }
-
-  return mappedProperty;
+  return property.toLowerCase();
 }
 
 const messageTypeToEventMapping: {
@@ -179,17 +210,46 @@ const messageTypeToEventMapping: {
   [Command.Calculate]: WorkerEvent.Calculate,
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
+  [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
+  [Command.CalculateMacromoleculeProperties]:
+    WorkerEvent.CalculateMacromoleculeProperties,
 };
+
+// Worker action that resolves with a `{ struct, format: Mol }` payload,
+// shared by every command whose result type is `WithStruct & WithFormat`
+// (Aromatize/Dearomatize/ExplicitHydrogens — all extend the same shape).
+function makeMolResultAction(
+  resolve: (value: { struct: string; format: ChemicalMimeType.Mol }) => void,
+  reject: (reason?: unknown) => void,
+) {
+  return ({ data }: OutputMessageWrapper) => {
+    const msg: OutputMessage<string> = data;
+    if (!msg.hasError) {
+      resolve({ struct: msg.payload, format: ChemicalMimeType.Mol });
+    } else {
+      reject(new Error(msg.error));
+    }
+  };
+}
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private readonly worker: IndigoWorker;
+  private readonly worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
+  private ketcherId: string | null = null;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
-    this.worker = new IndigoWorker();
+    this.worker = indigoWorker;
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+      if (e.data.type === Command.Info) {
+        const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
+          ? this.callIndigoNoRenderLoadedCallback
+          : this.callIndigoLoadedCallback;
+
+        callbackMethod();
+      }
+
       const message: OutputMessage<string> = e.data;
       if (message.type !== undefined) {
         const event = messageTypeToEventMapping[message.type];
@@ -198,14 +258,37 @@ class IndigoService implements StructService {
     };
   }
 
+  public addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
+  }
+
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+    if (!this.ketcherId) {
+      throw new Error('Cannot getting options because there are no ketcherId');
+    }
+
+    return pickStandardServerOptions(this.ketcherId, options);
+  }
+
+  private callIndigoNoRenderLoadedCallback() {
+    window.dispatchEvent(new Event(STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT));
+  }
+
+  private callIndigoLoadedCallback() {
+    window.dispatchEvent(new Event(STRUCT_SERVICE_INITIALIZED_EVENT));
+  }
+
   async getInChIKey(struct: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
         if (!msg.hasError) {
-          resolve(msg.payload || '');
+          resolve(msg.payload ?? '');
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -214,8 +297,7 @@ class IndigoService implements StructService {
         data: { struct },
       };
 
-      this.EE.removeListener(WorkerEvent.GetInChIKey, action);
-      this.EE.addListener(WorkerEvent.GetInChIKey, action);
+      this.EE.once(WorkerEvent.GetInChIKey, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -234,12 +316,11 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
-      this.EE.removeListener(WorkerEvent.Info, action);
-      this.EE.addListener(WorkerEvent.Info, action);
+      this.EE.once(WorkerEvent.Info, action);
 
       this.worker.postMessage({ type: Command.Info });
     });
@@ -249,29 +330,48 @@ class IndigoService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
-    const { output_format: outputFormat, struct } = data;
+    const {
+      output_format: outputFormat,
+      input_format: inputFormat,
+      struct,
+    } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: ConvertResult = {
-            struct: msg.payload,
-            format: outputFormat,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === struct) {
+          if (!msg.hasError) {
+            const result: ConvertResult = {
+              struct: msg.payload,
+              format: outputFormat,
+            };
+            resolve(result);
+          } else {
+            reject(new Error(msg.error));
+          }
         }
       };
-      if (options?.['input-format']) {
-        delete options['input-format'];
-      }
+      const monomerLibrary = JSON.stringify(
+        provideEditorInstance()?.monomersLibraryParsedJson,
+      );
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
+        ...this.getStandardServerOptions(options),
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'reaction-component-margin-size-unit':
+          options?.['reaction-component-margin-size-unit'],
+        'reaction-component-margin-size':
+          options?.['reaction-component-margin-size'],
+        'image-resolution': options?.['image-resolution'],
+        'input-format': inputFormat,
+        'molfile-saving-mode': options?.['molfile-saving-mode'],
+        'monomer-library-saving-mode': options?.['monomer-library-saving-mode'],
+        'molfile-saving-skip-date': options?.['molfile-saving-skip-date'],
+        'sequence-type': options?.['sequence-type'],
+        'output-content-type': options?.['output-content-type'],
+        monomerLibrary,
       };
 
       const commandData: ConvertCommandData = {
@@ -285,8 +385,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.Convert);
-      this.EE.addListener(WorkerEvent.Convert, action);
+      this.EE.once(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -321,14 +420,28 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
+        ...this.getStandardServerOptions(options),
         'output-content-type': 'application/json',
+
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
+        'render-font-size': options?.['render-font-size'],
+        'render-font-size-unit': options?.['render-font-size-unit'],
+        'render-font-size-sub': options?.['render-font-size-sub'],
+        'render-font-size-sub-unit': options?.['render-font-size-sub-unit'],
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'reaction-component-margin-size-unit':
+          options?.['reaction-component-margin-size-unit'],
+        'reaction-component-margin-size':
+          options?.['reaction-component-margin-size'],
+        'image-resolution': options?.['image-resolution'],
       };
 
       const commandData: LayoutCommandData = {
@@ -342,8 +455,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Layout, action);
-      this.EE.addListener(WorkerEvent.Layout, action);
+      this.EE.once(WorkerEvent.Layout, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -363,20 +475,15 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
       };
 
       const commandData: CleanCommandData = {
         struct,
         format,
-        options: commandOptions,
-        selectedAtoms: selected || [],
+        options: this.getStandardServerOptions(options),
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CleanCommandData> = {
@@ -384,8 +491,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Clean, action);
-      this.EE.addListener(WorkerEvent.Clean, action);
+      this.EE.once(WorkerEvent.Clean, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -398,29 +504,13 @@ class IndigoService implements StructService {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: AromatizeResult = {
-            struct: msg.payload,
-            format: ChemicalMimeType.Mol,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
-        }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
+    return new Promise<AromatizeResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: AromatizeCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<AromatizeCommandData> = {
@@ -428,8 +518,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Aromatize, action);
-      this.EE.addListener(WorkerEvent.Aromatize, action);
+      this.EE.once(WorkerEvent.Aromatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -442,29 +531,13 @@ class IndigoService implements StructService {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: AromatizeResult = {
-            struct: msg.payload,
-            format: ChemicalMimeType.Mol,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
-        }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
+    return new Promise<DearomatizeResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: DearomatizeCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<DearomatizeCommandData> = {
@@ -472,8 +545,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Dearomatize, action);
-      this.EE.addListener(WorkerEvent.Dearomatize, action);
+      this.EE.once(WorkerEvent.Dearomatize, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -496,19 +568,14 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
       };
 
       const commandData: CalculateCipCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CalculateCipCommandData> = {
@@ -516,8 +583,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.CalculateCip, action);
-      this.EE.addListener(WorkerEvent.CalculateCip, action);
+      this.EE.once(WorkerEvent.CalculateCip, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -540,20 +606,15 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
       };
 
       const commandData: AutomapCommandData = {
         struct,
         format,
         mode,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CalculateCipCommandData> = {
@@ -561,8 +622,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Automap, action);
-      this.EE.addListener(WorkerEvent.Automap, action);
+      this.EE.once(WorkerEvent.Automap, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -581,27 +641,22 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr;
               const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value;
+              acc[mappedPropertyName] = value as string;
 
               return acc;
             },
-            {},
+            {} as CheckResult,
           );
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
       };
 
       const commandData: CheckCommandData = {
         struct,
         types,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CheckCommandData> = {
@@ -609,8 +664,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Check, action);
-      this.EE.addListener(WorkerEvent.Check, action);
+      this.EE.once(WorkerEvent.Check, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -641,20 +695,15 @@ class IndigoService implements StructService {
           }, {} as CalculateResult);
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
-      };
-
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
       };
 
       const commandData: CalculateCommandData = {
         struct,
         properties,
-        options: commandOptions,
-        selectedAtoms: selected || [],
+        options: this.getStandardServerOptions(options),
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CalculateCommandData> = {
@@ -662,8 +711,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Calculate, action);
-      this.EE.addListener(WorkerEvent.Calculate, action);
+      this.EE.once(WorkerEvent.Calculate, action);
 
       this.worker.postMessage(inputMessage);
     });
@@ -674,35 +722,56 @@ class IndigoService implements StructService {
   }
 
   generateImageAsBase64(
-    data: string,
+    inputData: string,
     options: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '',
-      bondThickness: 1,
     },
   ): Promise<string> {
-    const { outputFormat, backgroundColor, bondThickness, ...restOptions } =
-      options;
+    const { outputFormat, backgroundColor, ...restOptions } = options;
+
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          resolve(msg.payload);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === inputData) {
+          if (!msg.hasError) {
+            resolve(msg.payload);
+          } else {
+            reject(new Error(msg.error));
+          }
         }
       };
 
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...restOptions,
+        ...this.getStandardServerOptions(restOptions),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
+        'render-coloring': restOptions['render-coloring'],
+        'render-font-size': restOptions['render-font-size'],
+        'render-font-size-unit': restOptions['render-font-size-unit'],
+        'render-font-size-sub': restOptions['render-font-size-sub'],
+        'render-font-size-sub-unit': restOptions['render-font-size-sub-unit'],
+        'image-resolution': restOptions['image-resolution'],
+        'bond-length-unit': restOptions['bond-length-unit'],
+        'bond-length': restOptions['bond-length'],
+        'render-bond-thickness': restOptions['render-bond-thickness'],
+        'render-bond-thickness-unit': restOptions['render-bond-thickness-unit'],
+        'render-bond-spacing': restOptions['render-bond-spacing'],
+        'render-stereo-bond-width': restOptions['render-stereo-bond-width'],
+        'render-stereo-bond-width-unit':
+          restOptions['render-stereo-bond-width-unit'],
+        'render-stereo-style': restOptions['render-stereo-style'],
+        'render-hash-spacing': restOptions['render-hash-spacing'],
+        'render-hash-spacing-unit': restOptions['render-hash-spacing-unit'],
+        'render-output-sheet-width': restOptions['render-output-sheet-width'],
+        'render-output-sheet-height': restOptions['render-output-sheet-height'],
       };
 
       const commandData: GenerateImageCommandData = {
-        struct: data,
+        struct: inputData,
         outputFormat: outputFormat || 'png',
         backgroundColor,
-        bondThickness,
         options: commandOptions,
       };
 
@@ -711,11 +780,79 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
-      this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action);
+      this.EE.once(WorkerEvent.GenerateImageAsBase64, action);
 
       this.worker.postMessage(inputMessage);
     });
+  }
+
+  toggleExplicitHydrogens(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    const { struct, output_format: outputFormat } = data;
+    const format = convertMimeTypeToOutputFormat(outputFormat);
+    const mode = 'auto';
+
+    return new Promise<ExplicitHydrogensResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
+
+      const commandData: ExplicitHydrogensCommandData = {
+        struct,
+        format,
+        mode,
+        options: this.getStandardServerOptions(options),
+      };
+
+      const inputMessage: InputMessage<ExplicitHydrogensCommandData> = {
+        type: Command.ExplicitHydrogens,
+        data: commandData,
+      };
+
+      this.EE.once(WorkerEvent.ExplicitHydrogens, action);
+
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    const { struct } = data;
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = data;
+
+        if (!msg.hasError) {
+          resolve(JSON.parse(msg.payload));
+        } else {
+          reject(new Error(msg.error));
+        }
+      };
+
+      const commandData: CalculateMacromoleculePropertiesCommandData = {
+        struct,
+        options: {
+          ...this.getStandardServerOptions(options),
+          upc: options?.upc,
+          nac: options?.nac,
+        },
+      };
+      const inputMessage: InputMessage<CalculateMacromoleculePropertiesData> = {
+        type: Command.CalculateMacromoleculeProperties,
+        data: commandData,
+      };
+
+      this.EE.once(WorkerEvent.CalculateMacromoleculeProperties, action);
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  public destroy() {
+    this.worker.terminate();
+    this.worker.onmessage = null;
   }
 }
 

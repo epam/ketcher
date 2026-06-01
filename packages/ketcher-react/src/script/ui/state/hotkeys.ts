@@ -16,6 +16,7 @@
 
 import * as clipArea from '../component/cliparea/cliparea';
 
+import type { Editor } from 'ketcher-core';
 import {
   KetSerializer,
   formatProperties,
@@ -23,7 +24,6 @@ import {
   KetcherLogger,
   ketcherProvider,
   SupportedFormat,
-  Editor,
   getStructure,
   MolSerializer,
   runAsyncAction,

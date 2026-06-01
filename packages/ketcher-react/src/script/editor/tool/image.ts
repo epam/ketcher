@@ -1,5 +1,6 @@
-import { ClosestItemWithMap } from '../shared/closest.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 import {
+  type ImageReferencePositionInfo,
   CoordinateTransformation,
   Scale,
   Vec2,
@@ -9,9 +10,8 @@ import {
   IMAGE_KEY,
   fromImageMove,
   fromImageResize,
-  ImageReferencePositionInfo,
 } from 'ketcher-core';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import type Editor from '../Editor';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';

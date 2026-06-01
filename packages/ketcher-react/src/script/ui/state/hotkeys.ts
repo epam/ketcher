@@ -17,13 +17,13 @@
 import * as clipArea from '../component/cliparea/cliparea';
 
 import {
+  type Editor,
   KetSerializer,
   formatProperties,
   ChemicalMimeType,
   KetcherLogger,
   ketcherProvider,
   SupportedFormat,
-  Editor,
   getStructure,
   MolSerializer,
   runAsyncAction,

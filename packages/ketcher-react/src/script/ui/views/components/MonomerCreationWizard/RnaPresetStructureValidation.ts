@@ -1,6 +1,6 @@
 import { Bond } from 'ketcher-core';
 
-import {
+import type {
   RnaPresetWizardComponentStateFieldId,
   RnaPresetWizardState,
 } from './MonomerCreationWizard.types';

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright 2021 EPAM Systems
+ * Copyright 2023 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import FormContext, { type FormContextValue } from './../contexts/formContext';
-import React from 'react';
-
-export function useFormContext(): FormContextValue {
-  const context = React.useContext(FormContext);
-  if (!context) {
-    throw new Error('useFormContext must be used within a Form component');
-  }
-  return context;
+export enum groupNames {
+  atomsGen = 'atoms-gen',
+  specialNodes = 'special-nodes',
+  groupGen = 'group-gen',
+  groupAcyclic = 'group-acyclic',
+  acyclicCarbo = 'acyclic-carbo',
+  acyclicHetero = 'acyclic-hetero',
+  groupCyclic = 'group-cyclic',
+  cyclicHetero = 'cyclic-hetero',
+  cyclicCarbo = 'cyclic-carbo',
 }

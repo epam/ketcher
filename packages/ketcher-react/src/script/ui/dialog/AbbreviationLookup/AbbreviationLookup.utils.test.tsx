@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FilterOptionsState } from '@mui/material';
+import type { FilterOptionsState } from '@mui/material';
 import {
   filterOptions,
   getOptionLabel,
   getSimilarity,
   highlightOptionLabel,
 } from './AbbreviationLookup.utils';
-import { AbbreviationOption } from './AbbreviationLookup.types';
+import type { AbbreviationOption } from './AbbreviationLookup.types';
 import {
   createGenericOption,
   createOption,

@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import {
+  type Atom,
+  type Bond,
+  type FlipDirection,
+  type Vec2,
   Action,
-  Atom,
-  Bond,
-  FlipDirection,
   FunctionalGroup,
-  Vec2,
   fromFlip,
   fromItemsFuse,
   fromRotate,
@@ -35,8 +35,8 @@ import {
 } from 'ketcher-core';
 import assert from 'assert';
 import { intersection, throttle } from 'lodash';
-import Editor, { Selection } from '../Editor';
-import { Tool } from './Tool';
+import type { Editor, Selection } from '../Editor';
+import type { Tool } from './Tool';
 import { normalizeAngle } from '../utils/normalizeAngle';
 
 type SnapMode = 'one-bond' | 'multiple-bonds';

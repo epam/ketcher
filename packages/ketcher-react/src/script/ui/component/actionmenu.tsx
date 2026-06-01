@@ -14,15 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react';
+import {
+  type ComponentProps,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+} from 'react';
 
-import action, { Tools, UiAction, UiActionAction } from '../action';
+import action, {
+  type Tools,
+  type UiAction,
+  type UiActionAction,
+} from '../action';
 import clsx from 'clsx';
 import { hiddenAncestor } from '../state/toolbar';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
-type IconName = React.ComponentProps<typeof Icon>['name'];
+type IconName = ComponentProps<typeof Icon>['name'];
 
 interface ItemStatus {
   selected?: boolean;
@@ -163,7 +173,7 @@ function ActionButton({
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {
       onAction(action.action);
       event.stopPropagation();
@@ -268,9 +278,9 @@ function ActionMenu({
     return items;
   }, []);
 
-  const handleMenuItemClick = (event: React.MouseEvent) =>
+  const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
-  const handleMenuItemKeyDown = (event: React.KeyboardEvent) => {
+  const handleMenuItemKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openHandle(event, props.onOpen);
@@ -313,7 +323,7 @@ function toolMargin(
   menuName: string,
   menu: MenuItem[],
   visibleTools: VisibleToolsMap,
-): React.CSSProperties {
+): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way
   const iconHeight =
@@ -345,7 +355,7 @@ function toolMargin(
 }
 
 function openHandle(
-  event: React.MouseEvent | React.KeyboardEvent,
+  event: MouseEvent | KeyboardEvent,
   onOpen: (id: string | undefined, isSelected: boolean) => void,
 ): void {
   const currentTarget = event.currentTarget as HTMLElement;

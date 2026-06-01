@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import {
+  type Atom,
+  type AttachmentPoints,
   AtomList,
   Bond,
   Elements,

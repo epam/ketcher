@@ -1,12 +1,12 @@
 import {
+  type RnaPresetComponentKey,
+  type Struct,
   AttachmentPointName,
-  RnaPresetComponentKey,
-  Struct,
 } from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
-  PhosphatePosition,
+  type PhosphatePosition,
   getRequiredAttachmentPointsForPhosphatePosition,
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';

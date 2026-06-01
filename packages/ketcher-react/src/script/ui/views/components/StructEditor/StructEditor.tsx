@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import {
+  type ComponentType,
+  type ElementType,
+  type RefObject,
   Component,
-  ComponentType,
-  ElementType,
-  RefObject,
   createRef,
 } from 'react';
 
@@ -31,7 +31,7 @@ import { omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
-import { KetcherLogger, Struct, ketcherProvider } from 'ketcher-core';
+import { type Struct, KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
 import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';

@@ -1,12 +1,12 @@
 import {
-  Action,
-  getItemsToFuse,
+  type Action,
+  type getItemsToFuse,
+  type ImageReferencePositionInfo,
+  type Vec2,
   IMAGE_KEY,
-  ImageReferencePositionInfo,
-  Vec2,
 } from 'ketcher-core';
-import { ClosestItemWithMap } from '../../shared/closest.types';
-import {
+import type { ClosestItemWithMap } from '../../shared/closest.types';
+import type {
   CommonArrowDragContext,
   MultitailArrowClosestItem,
   ReactionArrowClosestItem,

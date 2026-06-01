@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { App, AppCallProps } from './App';
+import { type AppCallProps, App } from './App';
 
 import { checkServer } from '../state/server';
 import { connect } from 'react-redux';

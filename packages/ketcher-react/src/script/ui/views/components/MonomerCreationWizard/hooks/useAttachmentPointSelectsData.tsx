@@ -1,10 +1,10 @@
 import {
+  type AttachmentPointName,
   AtomLabel,
-  AttachmentPointName,
   getAttachmentPointNumberFromLabel,
 } from 'ketcher-core';
-import { Editor } from '../../../../../editor';
-import { Option } from '../../../../component/form/Select';
+import type { Editor } from '../../../../../editor';
+import type { Option } from '../../../../component/form/Select';
 
 export type AttachmentPointSelectData = {
   nameOptions: Array<Option>;

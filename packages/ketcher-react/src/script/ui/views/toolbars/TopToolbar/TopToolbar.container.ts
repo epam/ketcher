@@ -16,7 +16,7 @@
 
 import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index';

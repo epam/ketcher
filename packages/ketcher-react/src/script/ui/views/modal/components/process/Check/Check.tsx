@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { FC, useEffect, useState } from 'react';
+import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Form, {
+  type FormState,
   Field,
-  FormState,
 } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
@@ -329,6 +329,6 @@ const CheckDialogAny = CheckDialog as any;
 const Check = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CheckDialogAny) as React.ComponentType<CheckDialogOwnProps>;
+)(CheckDialogAny) as ComponentType<CheckDialogOwnProps>;
 
 export default Check;

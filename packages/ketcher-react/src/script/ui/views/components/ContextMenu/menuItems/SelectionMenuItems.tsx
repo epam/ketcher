@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item, Submenu, Separator } from 'react-contexify';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -14,8 +14,8 @@ import {
   getBondNames,
   monomerWizardDisallowedBondNames,
 } from '../utils';
-import Editor from 'src/script/editor';
-import {
+import type Editor from 'src/script/editor';
+import type {
   MenuItemsProps,
   SelectionContextMenuProps,
 } from '../contextMenu.types';

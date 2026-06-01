@@ -1,7 +1,7 @@
 import {
-  BaseMonomer,
+  type BaseMonomer,
+  type MonomerCreationInitialValues,
   KetMonomerClass,
-  MonomerCreationInitialValues,
 } from 'ketcher-core';
 
 const COPY_SUFFIX = '_Copy';

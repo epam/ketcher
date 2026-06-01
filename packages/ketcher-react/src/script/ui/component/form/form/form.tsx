@@ -16,13 +16,13 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import { Validator, ValidationError, Schema } from 'jsonschema';
+import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
 import {
+  type FormContextValue,
+  type FormSchema,
+  type SchemaProperty,
   FormContext,
-  FormContextValue,
-  FormSchema,
-  SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';

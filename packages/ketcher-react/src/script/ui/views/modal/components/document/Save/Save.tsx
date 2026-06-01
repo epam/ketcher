@@ -570,10 +570,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       bounds.width + horizontalMargin * 2 + EXPORT_EDGE_GUARD_HORIZONTAL * 2;
     const viewBoxHeight =
       bounds.height + verticalMargin * 2 + EXPORT_EDGE_GUARD_VERTICAL * 2;
-    const svgInnerHTML = clonedSvg.innerHTML.replace(
-      /\bcursor:\s*pointer;\s*/g,
-      '',
-    );
+    const svgInnerHTML = clonedSvg.innerHTML
+      .replace(/&nbsp;/g, '&#160;')
+      .replace(/\bcursor:\s*pointer;\s*/g, '');
 
     return `<svg width='${viewBoxWidth}' height='${viewBoxHeight}' viewBox='${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}' xmlns='${SVG_NAMESPACE_URI}' xmlns:xlink='${SVG_XLINK_NAMESPACE_URI}'>${svgInnerHTML}</svg>`;
   };
@@ -768,7 +767,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
       this.previewObjectUrl = undefined;
     }
 
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    const svgBlob = new Blob([svgData], {
+      type: 'image/svg+xml;charset=utf-8',
+    });
     this.previewObjectUrl = URL.createObjectURL(svgBlob);
     return this.previewObjectUrl;
   };
@@ -865,7 +866,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
 
       if (svgData) {
         if (format === 'svg') {
-          const svgBlob = new Blob([svgData], { type: 'image/svg+xml' });
+          const svgBlob = new Blob([svgData], {
+            type: 'image/svg+xml;charset=utf-8',
+          });
           saveAs(svgBlob, `${filename}.svg`);
           this.props.onOk();
           return;

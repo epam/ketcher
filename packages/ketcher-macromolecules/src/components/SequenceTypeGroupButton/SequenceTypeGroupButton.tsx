@@ -25,6 +25,10 @@ import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { setSelectedTabIndex } from 'state/library';
 import { LIBRARY_TAB_INDEX, MONOMER_TYPES } from 'src/constants';
+import {
+  getPersistedSequenceType,
+  persistSequenceType,
+} from 'helpers/sequenceTypeStorage';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -97,8 +101,11 @@ export const SequenceTypeGroupButton = () => {
         ),
       );
       setActiveSequenceType(mode);
+      persistSequenceType(mode);
     });
-    editor?.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
+    editor?.events.changeSequenceTypeEnterMode.dispatch(
+      getPersistedSequenceType(),
+    );
 
     return () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);

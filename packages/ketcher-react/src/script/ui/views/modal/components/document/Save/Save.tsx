@@ -44,10 +44,6 @@ import {
   isClipboardAPIAvailable,
   legacyCopy,
   SupportedFormat,
-  OutputFormatType,
-  StructServiceOptions,
-  GenerateImageOptions,
-  SupportedFormatProperties,
   provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';

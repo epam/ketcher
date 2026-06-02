@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { FC, useEffect, useState } from 'react';
+import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
+import type { AnyAction } from 'redux';
 import Form, {
+  type FormState,
   Field,
-  FormState,
 } from '../../../../../component/form/form/form';
 import { Dialog } from '../../../../components';
 import ErrorsCheck from './components';
@@ -330,7 +330,7 @@ const Check = connect(
   mapDispatchToProps,
 )(
   // @ts-expect-error - @types/react version conflict with connect()
-  CheckDialog as React.ComponentType<CheckDialogProps>,
-) as unknown as React.ComponentType<CheckDialogOwnProps>;
+  CheckDialog as ComponentType<CheckDialogProps>,
+) as unknown as ComponentType<CheckDialogOwnProps>;
 
 export default Check;

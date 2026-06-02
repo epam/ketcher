@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../operations/BaseOperation';
-import { ReStruct } from '../../render';
+import type { BaseOperation } from '../operations/BaseOperation';
+import type { ReStruct } from '../../render';
 //
 // Undo/redo actions
 //

@@ -1,5 +1,5 @@
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export type ConnectionDirectionInDegrees = 0 | 90 | 180 | 270;
 export type ConnectionDirectionOfLastCell = {

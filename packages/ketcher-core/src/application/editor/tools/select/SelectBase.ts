@@ -15,30 +15,35 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor/Editor';
+import {
+  type HydrogenBond,
+  type PolymerBond,
+  BaseMonomer,
+  Vec2,
+} from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
 import {
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment } from 'application/editor/tools/types';
+import type { MonomersAlignment } from 'application/editor/tools/types';
 import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';
 
@@ -473,8 +478,7 @@ abstract class SelectBase implements BaseTool {
     movementDelta: Vec2,
   ) {
     const results: GroupCenterSnapResult[] = [];
-    const selectedEntitiesBbox =
-      DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    const selectedEntitiesBbox = getStructureBbox(selectedEntities);
     const selectedEntitiesCenter = new Vec2(
       selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
       selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
@@ -486,10 +490,7 @@ abstract class SelectBase implements BaseTool {
       for (let j = i + 1; j < connectedMonomers.length; j++) {
         const monomerA = connectedMonomers[i];
         const monomerB = connectedMonomers[j];
-        const pairBbox = DrawingEntitiesManager.getStructureBbox([
-          monomerA,
-          monomerB,
-        ]);
+        const pairBbox = getStructureBbox([monomerA, monomerB]);
         const pairCenter = new Vec2(
           pairBbox.left + pairBbox.width / 2,
           pairBbox.top + pairBbox.height / 2,

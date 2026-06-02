@@ -1,18 +1,18 @@
 import {
-  Action,
+  type Action,
+  type Struct,
+  type Visel,
   CoordinateTransformation,
-  Struct,
   Vec2,
-  Visel,
   fromMultipleMove,
   getHoverToFuse,
   getItemsToFuse,
 } from 'ketcher-core';
 import { dropAndMerge } from '../tool/helper/dropAndMerge';
-import { ClosestItemWithMap } from '../shared/closest.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { selMerge } from './select';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';

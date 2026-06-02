@@ -36,7 +36,7 @@ import SGroupTool from './sgroup';
 import SimpleObjectTool from './simpleobject';
 import TemplateTool from './template';
 import TextTool from './text';
-import { ToolConstructorInterface } from './Tool';
+import type { ToolConstructorInterface } from './Tool';
 import { ImageTool } from './image';
 import { SelectCommonTool } from './select';
 import CreateMonomerTool from './create-monomer';

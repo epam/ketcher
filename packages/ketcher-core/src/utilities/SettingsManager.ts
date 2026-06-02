@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { KetcherLogger } from './KetcherLogger';
-import { LayoutMode } from 'application/editor/modes/types';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 export type SelectionToolSettings = {
   tool: 'select';

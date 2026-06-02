@@ -1,4 +1,4 @@
-import { BaseRenderer, Ketcher } from 'ketcher-core';
+import type { BaseRenderer, Ketcher } from 'ketcher-core';
 
 declare global {
   export interface Window {

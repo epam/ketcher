@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import {
+  type Text,
+  type Vec2,
   Action,
-  Text,
-  Vec2,
   fromMultipleMove,
   fromTextCreation,
   fromTextDeletion,
@@ -25,7 +25,7 @@ import {
   KetcherLogger,
   CoordinateTransformation,
 } from 'ketcher-core';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
 interface Result {

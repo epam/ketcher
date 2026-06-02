@@ -1041,7 +1041,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupBase({
       atomIds: [0, 1, 2, 3, 4],
       bondIds: [0, 1, 2, 3],
-      symbol: Base.Base.alias,
+      code: Base.Base.alias,
       name: 'B1',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
@@ -1056,7 +1056,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
       bondIds: [5, 6],
-      symbol: Sugar.Sugar.alias,
+      code: Sugar.Sugar.alias,
       name: 'S1',
       HELMAlias: 'SugAlias',
     });
@@ -1067,7 +1067,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupPhosphate({
       atomIds: [8, 9, 10, 11, 12],
       bondIds: [8, 9, 10, 11],
-      symbol: Phosphate.Phosphate.alias,
+      code: Phosphate.Phosphate.alias,
       name: 'P1',
       HELMAlias: 'PhosAlias',
     });
@@ -1196,7 +1196,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupBase({
       atomIds: [0, 1, 2, 3, 4],
       bondIds: [0, 1, 2, 3],
-      symbol: Base.Base.alias,
+      code: Base.Base.alias,
       name: 'B1',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
@@ -1211,7 +1211,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupSugar({
       atomIds: [5, 6, 7],
       bondIds: [5, 6],
-      symbol: Sugar.Sugar.alias,
+      code: Sugar.Sugar.alias,
       name: 'S1',
       HELMAlias: 'SugAlias',
     });
@@ -1219,7 +1219,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await presetSection.setupPhosphate({
       atomIds: [8, 9, 10, 11, 12],
       bondIds: [8, 9, 10, 11],
-      symbol: Phosphate.Phosphate.alias,
+      code: Phosphate.Phosphate.alias,
       name: 'P1',
       HELMAlias: 'PhosAlias',
     });

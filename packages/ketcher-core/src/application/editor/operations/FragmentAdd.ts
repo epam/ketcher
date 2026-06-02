@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
+import { type ReStruct, ReEnhancedFlag, ReFrag } from '../../render';
 
 import { BaseOperation } from './BaseOperation';
-import { Fragment, StructProperty } from 'domain/entities';
+import { type StructProperty, Fragment } from 'domain/entities';
 import { OperationType } from './OperationType';
 
 class FragmentAdd extends BaseOperation {

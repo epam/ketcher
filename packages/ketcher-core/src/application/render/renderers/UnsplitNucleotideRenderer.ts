@@ -1,7 +1,7 @@
-import { Selection } from 'd3';
+import type { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import type { D3SvgElementSelection } from 'application/render/types';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,

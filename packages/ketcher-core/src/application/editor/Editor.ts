@@ -516,26 +516,36 @@ export class CoreEditor {
       const newModificationAliasesSet = new Set(newModificationAliases);
       const hasIntraMonomerModificationCollision =
         newModificationAliasesSet.size !== newModificationAliases.length;
-      const hasCrossMonomerModificationCollision =
-        newModificationAliasesSet.size > 0 &&
-        this._monomersLibrary.some((monomer) => {
+      let crossMonomerCollision:
+        | { alias: string; otherMonomerName: string }
+        | undefined;
+      if (newModificationAliasesSet.size > 0) {
+        for (const monomer of this._monomersLibrary) {
           if (areSameMonomers(monomer, newMonomer)) {
-            return false;
+            continue;
           }
-          return getModificationIdtAliases(monomer).some((alias) =>
-            newModificationAliasesSet.has(alias),
+          const collidingAlias = getModificationIdtAliases(monomer).find(
+            (alias) => newModificationAliasesSet.has(alias),
           );
-        });
-      if (
-        hasIntraMonomerModificationCollision ||
-        hasCrossMonomerModificationCollision
-      ) {
+          if (collidingAlias) {
+            crossMonomerCollision = {
+              alias: collidingAlias,
+              otherMonomerName: monomer.props.MonomerName,
+            };
+            break;
+          }
+        }
+      }
+      if (hasIntraMonomerModificationCollision || crossMonomerCollision) {
         const aliasDetails = formatAliasDetails(newMonomer);
-        const errorMessage = `Editor::updateMonomersLibrary: IDT alias must be unique per position (5', internal, 3') across the whole library for monomer ${
+        const conflictDetail = crossMonomerCollision
+          ? ` Conflicting alias "${crossMonomerCollision.alias}" is already used by monomer ${crossMonomerCollision.otherMonomerName}.`
+          : ` The same alias is used at more than one position (5'/internal/3') within this monomer.`;
+        const errorMessage = `Editor::updateMonomersLibrary: IDT modification alias (5'/internal/3') must be unique across all positions and all monomers in the library for monomer ${
           newMonomer.props.MonomerName
         }${
           aliasDetails ? ` (${aliasDetails})` : ''
-        }. The monomer was not added to the library.`;
+        }.${conflictDetail} The monomer was not added to the library.`;
         console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;

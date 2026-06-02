@@ -505,11 +505,16 @@ describe('CoreEditor', () => {
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          "IDT alias must be unique per position (5', internal, 3')",
+          "IDT modification alias (5'/internal/3') must be unique",
         ),
       );
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('CHEM_DUP_INTRA'),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'The same alias is used at more than one position',
+        ),
       );
       expect(editor.monomersLibrary.length).toBe(sizeBefore);
     });
@@ -574,11 +579,16 @@ describe('CoreEditor', () => {
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          "IDT alias must be unique per position (5', internal, 3')",
+          "IDT modification alias (5'/internal/3') must be unique",
         ),
       );
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining('CHEM_CROSS_B'),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Conflicting alias "SharedMod" is already used by monomer CHEM_CROSS_A',
+        ),
       );
       expect(editor.monomersLibrary.length).toBe(sizeAfterA);
     });

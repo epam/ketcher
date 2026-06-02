@@ -1,11 +1,11 @@
 import { renderHook } from '@testing-library/react';
 import useFunctionalGroupEoc from './useFunctionalGroupEoc';
-import type { FunctionalGroup } from 'ketcher-core';
 import {
   Action,
   ketcherProvider,
   setExpandMonomerSGroup,
   setExpandSGroup,
+  type FunctionalGroup,
 } from 'ketcher-core';
 import type {
   ItemEventParams,

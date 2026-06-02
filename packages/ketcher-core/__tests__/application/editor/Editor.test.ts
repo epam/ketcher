@@ -468,6 +468,121 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should reject monomer when same IDT modification alias is used at multiple positions within the same monomer', () => {
+      const sizeBefore = editor.monomersLibrary.length;
+      const monomerWithIntraDuplicateAliases = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_DUP_INTRA' }],
+        },
+        'monomerTemplate-CHEM_DUP_INTRA': {
+          type: 'monomerTemplate',
+          id: 'CHEM_DUP_INTRA',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem Intra Dup',
+          name: 'CHEM_DUP_INTRA',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_DUP_INTRA',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_DUP_INTRA',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBaseI',
+            modifications: {
+              endpoint5: 'DupTag',
+              internal: 'DupTag',
+              endpoint3: 'DupTag',
+            },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(
+        JSON.stringify(monomerWithIntraDuplicateAliases),
+      );
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "IDT alias must be unique per position (5', internal, 3')",
+        ),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('CHEM_DUP_INTRA'),
+      );
+      expect(editor.monomersLibrary.length).toBe(sizeBefore);
+    });
+
+    it('should reject monomer when IDT modification alias collides at a different position in another monomer', () => {
+      const monomerA = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_CROSS_A' }],
+        },
+        'monomerTemplate-CHEM_CROSS_A': {
+          type: 'monomerTemplate',
+          id: 'CHEM_CROSS_A',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem Cross A',
+          name: 'CHEM_CROSS_A',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_CROSS_A',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_CROSS_A',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBaseA',
+            modifications: {
+              endpoint3: 'SharedMod',
+            },
+          },
+        },
+      };
+      const monomerB = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_CROSS_B' }],
+        },
+        'monomerTemplate-CHEM_CROSS_B': {
+          type: 'monomerTemplate',
+          id: 'CHEM_CROSS_B',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem Cross B',
+          name: 'CHEM_CROSS_B',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_CROSS_B',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_CROSS_B',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: 'IdtBaseB',
+            modifications: {
+              endpoint5: 'SharedMod',
+            },
+          },
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(monomerA));
+      const sizeAfterA = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerB));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          "IDT alias must be unique per position (5', internal, 3')",
+        ),
+      );
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('CHEM_CROSS_B'),
+      );
+      expect(editor.monomersLibrary.length).toBe(sizeAfterA);
+    });
+
     it('should reject monomer with IDT alias exceeding 10 characters without slashes', () => {
       const monomerWithLongIdtAlias = {
         root: {

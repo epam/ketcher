@@ -438,6 +438,7 @@ export class CoreEditor {
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -446,6 +447,7 @@ export class CoreEditor {
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
+        console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -455,6 +457,7 @@ export class CoreEditor {
         !isValidHelmAliasLength(newMonomer.props.aliasHELM)
       ) {
         const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
+        console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -493,6 +496,47 @@ export class CoreEditor {
         }${
           aliasDetails ? ` (${aliasDetails})` : ''
         }. The monomer was not added to the library.`;
+        console.error(errorMessage);
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
+      // Per Indigo#3161: an IDT modification alias (5'/internal/3') must be
+      // unique across the whole library — including across positions and
+      // within a single monomer. Base alias collisions are handled above.
+      const getModificationIdtAliases = (monomer: MonomerItemType) => {
+        const modifications = monomer.props?.idtAliases?.modifications;
+        return [
+          modifications?.endpoint5,
+          modifications?.internal,
+          modifications?.endpoint3,
+        ].filter((alias): alias is string => Boolean(alias));
+      };
+      const newModificationAliases = getModificationIdtAliases(newMonomer);
+      const newModificationAliasesSet = new Set(newModificationAliases);
+      const hasIntraMonomerModificationCollision =
+        newModificationAliasesSet.size !== newModificationAliases.length;
+      const hasCrossMonomerModificationCollision =
+        newModificationAliasesSet.size > 0 &&
+        this._monomersLibrary.some((monomer) => {
+          if (areSameMonomers(monomer, newMonomer)) {
+            return false;
+          }
+          return getModificationIdtAliases(monomer).some((alias) =>
+            newModificationAliasesSet.has(alias),
+          );
+        });
+      if (
+        hasIntraMonomerModificationCollision ||
+        hasCrossMonomerModificationCollision
+      ) {
+        const aliasDetails = formatAliasDetails(newMonomer);
+        const errorMessage = `Editor::updateMonomersLibrary: IDT alias must be unique per position (5', internal, 3') across the whole library for monomer ${
+          newMonomer.props.MonomerName
+        }${
+          aliasDetails ? ` (${aliasDetails})` : ''
+        }. The monomer was not added to the library.`;
+        console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -500,6 +544,7 @@ export class CoreEditor {
       // Validate base IDT alias is present when idtAliases is defined
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
+        console.error(errorMessage);
         KetcherLogger.error(errorMessage);
         return;
       }
@@ -520,6 +565,7 @@ export class CoreEditor {
 
         if (hasInvalidSlash) {
           const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
+          console.error(errorMessage);
           KetcherLogger.error(errorMessage);
           return;
         }
@@ -533,6 +579,7 @@ export class CoreEditor {
             .map(({ alias: field, value }) => `${field}="${value}"`)
             .join(', ');
           const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
+          console.error(errorMessage);
           KetcherLogger.error(errorMessage);
           return;
         }

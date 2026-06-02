@@ -1551,10 +1551,14 @@ export class SequenceMode extends BaseMode {
                   ) &&
                   previousTwoStrandedNodeInSameChain.antisenseNode) ||
                 (currentTwoStrandedNode?.antisenseNode &&
-                  !(
-                    currentTwoStrandedNode.antisenseNode instanceof
+                  (!(
+                    currentTwoStrandedNode.senseNode instanceof
                     EmptySequenceNode
-                  ))
+                  ) ||
+                    !(
+                      currentTwoStrandedNode.antisenseNode instanceof
+                      EmptySequenceNode
+                    )))
               : !(
                   previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
                   EmptySequenceNode

@@ -707,7 +707,8 @@ class ReAtom extends ReObject {
         problematicAtoms,
         connectionAttachmentPoints,
       } = render.monomerCreationState;
-      // Use the restricted set when a component tab is active, otherwise show all.
+      // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
+      // otherwise all assigned attachment points are shown.
       const assignedAttachmentPoints =
         visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;

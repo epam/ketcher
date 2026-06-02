@@ -112,7 +112,6 @@ class ReAtom extends ReObject {
     const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
-    this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
       render,
       drawOutline,
@@ -121,17 +120,16 @@ class ReAtom extends ReObject {
     return ret;
   }
 
-  private attachHighlightTriggerForAttachmentPointAtom(
-    hoverElement: any,
-    render: Render,
-  ) {
+  // The attachment point name this atom belongs to (as AA or LGA), or null.
+  // Used to sync the Attributes panel highlight with canvas hover.
+  private getAttachmentPointName(render: Render): AttachmentPointName | null {
     if (!render.monomerCreationState) {
-      return;
+      return null;
     }
 
     const atomId = render.ctab.molecule.atoms.keyOf(this.a);
     if (atomId === null) {
-      return;
+      return null;
     }
 
     const { assignedAttachmentPoints } = render.monomerCreationState;
@@ -143,31 +141,7 @@ class ReAtom extends ReObject {
       return attachmentAtomId === atomId || leavingAtomId === atomId;
     });
 
-    if (attachmentPointEntry) {
-      const [attachmentPointName] = attachmentPointEntry;
-      hoverElement.hover(
-        () => {
-          window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'highlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-        () => {
-          window.dispatchEvent(
-            new CustomEvent<AttachmentPointName>(
-              'resetHighlightAttachmentPointControls',
-              {
-                detail: attachmentPointName,
-              },
-            ),
-          );
-        },
-      );
-    }
+    return attachmentPointEntry ? attachmentPointEntry[0] : null;
   }
 
   private drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -217,7 +191,26 @@ class ReAtom extends ReObject {
   }
 
   setHover(hover: boolean, render: Render, drawOutline = true) {
+    const hoverChanged = hover !== this.hover;
     super.setHover(hover, render, drawOutline);
+
+    // Sync the Attributes panel highlight on actual hover transitions. This is
+    // driven by the editor's geometric hover tracking rather than DOM events on
+    // the hover plate, so it stays stable even when the cursor is directly over
+    // the atom label (which would otherwise steal pointer events from the plate).
+    if (hoverChanged) {
+      const attachmentPointName = this.getAttachmentPointName(render);
+      if (attachmentPointName) {
+        window.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            hover
+              ? 'highlightAttachmentPointControls'
+              : 'resetHighlightAttachmentPointControls',
+            { detail: attachmentPointName },
+          ),
+        );
+      }
+    }
 
     if (!hover || this.selected) {
       this.expandedMonomerAttachmentPoints?.hide();

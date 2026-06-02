@@ -35,6 +35,7 @@ import type { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { AttachmentPointName } from 'domain/types';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -136,6 +137,49 @@ class ReBond extends ReObject {
     const ret = this.makeHoverPlate(render, drawOutline);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
+  }
+
+  setHover(hover: boolean, render: Render, drawOutline = true) {
+    const hoverChanged = hover !== this.hover;
+    super.setHover(hover, render, drawOutline);
+
+    // Sync the Attributes panel highlight when hovering the bond that connects
+    // an attachment atom and its leaving group, mirroring the AA/LGA atom hover.
+    if (hoverChanged) {
+      const attachmentPointName = this.getAttachmentPointName(render);
+      if (attachmentPointName) {
+        window.dispatchEvent(
+          new CustomEvent<AttachmentPointName>(
+            hover
+              ? 'highlightAttachmentPointControls'
+              : 'resetHighlightAttachmentPointControls',
+            { detail: attachmentPointName },
+          ),
+        );
+      }
+    }
+  }
+
+  // The attachment point name this bond connects (AA ↔ LGA), or null.
+  private getAttachmentPointName(render: Render): AttachmentPointName | null {
+    if (!render.monomerCreationState) {
+      return null;
+    }
+
+    const { assignedAttachmentPoints } = render.monomerCreationState;
+    const { begin, end } = this.b;
+
+    const attachmentPointEntry = Array.from(
+      assignedAttachmentPoints.entries(),
+    ).find(([, atomsPair]) => {
+      const [attachmentAtomId, leavingAtomId] = atomsPair;
+      return (
+        (begin === attachmentAtomId && end === leavingAtomId) ||
+        (begin === leavingAtomId && end === attachmentAtomId)
+      );
+    });
+
+    return attachmentPointEntry ? attachmentPointEntry[0] : null;
   }
 
   getSelectionPoints(render: Render, isHighlight = false) {

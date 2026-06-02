@@ -56,16 +56,35 @@ const AttachmentPoint = ({
   const [highlight, setHighlight] = useState(false);
 
   useEffect(() => {
+    // The same AP is represented on canvas by several elements (the R-label,
+    // the attachment atom, the leaving-group atom, and the bond between them),
+    // each dispatching its own enter/leave events. Moving the cursor between
+    // two of them can deliver a stale "reset" right after a fresh "highlight",
+    // which would wrongly clear the row. Counting active hovers keeps the row
+    // highlighted until the cursor has truly left every element of this AP.
+    let hoverCount = 0;
+
     const handleAttachmentPointHighlight = (event: Event) => {
       const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
         .detail;
-      setHighlight(attachmentPointName === name);
+      if (attachmentPointName === name) {
+        hoverCount += 1;
+        setHighlight(true);
+      } else {
+        // Only one AP is hovered at a time, so another AP's highlight means
+        // this row is no longer hovered (also recovers any unbalanced count).
+        hoverCount = 0;
+        setHighlight(false);
+      }
     };
     const handleResetAttachmentPointHighlight = (event: Event) => {
       const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
         .detail;
       if (attachmentPointName === name) {
-        setHighlight(false);
+        hoverCount = Math.max(0, hoverCount - 1);
+        if (hoverCount === 0) {
+          setHighlight(false);
+        }
       }
     };
 

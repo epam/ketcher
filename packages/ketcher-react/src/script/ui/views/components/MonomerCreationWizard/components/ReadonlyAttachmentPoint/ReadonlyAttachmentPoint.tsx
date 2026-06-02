@@ -74,14 +74,29 @@ const ReadonlyAttachmentPoint = ({
 
   // Canvas hover → panel highlight
   useEffect(() => {
+    // Several canvas elements can represent the same AP, each dispatching its
+    // own enter/leave events. Counting active hovers keeps the row highlighted
+    // until the cursor has left every element of this AP, so a stale "reset"
+    // arriving after a fresh "highlight" cannot wrongly clear it.
+    let hoverCount = 0;
+
     const handleHighlight = (event: Event) => {
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
-      setHighlight(apName === name);
+      if (apName === name) {
+        hoverCount += 1;
+        setHighlight(true);
+      } else {
+        hoverCount = 0;
+        setHighlight(false);
+      }
     };
     const handleReset = (event: Event) => {
       const apName = (event as CustomEvent<AttachmentPointName>).detail;
       if (apName === name) {
-        setHighlight(false);
+        hoverCount = Math.max(0, hoverCount - 1);
+        if (hoverCount === 0) {
+          setHighlight(false);
+        }
       }
     };
 

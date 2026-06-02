@@ -265,6 +265,10 @@ const mapDispatchToProps = (
 const PeriodTable = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(PeriodTableWrapper);
+)(
+  // Workaround: @types/react version conflict with connect()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  PeriodTableWrapper as any,
+);
 
 export default PeriodTable;

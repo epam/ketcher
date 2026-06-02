@@ -55,5 +55,8 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
   },
 });
 
-const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(Open);
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const OpenAny = Open as any;
+const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(OpenAny);
 export default OpenContainer;

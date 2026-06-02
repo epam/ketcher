@@ -14,6 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
+interface PileSetLike<T> {
+  readonly size: number;
+  has(value: T): boolean;
+  keys(): IterableIterator<T>;
+}
+
 export class Pile<TValue = any> extends Set<TValue> {
   // TODO: it's used only in dfs.js in one place in some strange way.
   // Should be removed after dfs.js refactoring
@@ -25,13 +31,13 @@ export class Pile<TValue = any> extends Set<TValue> {
     return null;
   }
 
-  equals(setB: Pile): boolean {
-    return this.isSuperset(setB) && setB.isSuperset(this);
+  equals(setB: PileSetLike<unknown>): boolean {
+    return this.size === setB.size && this.isSuperset(setB);
   }
 
-  isSuperset(subset: Pile): boolean {
-    for (const item of subset) {
-      if (!this.has(item)) return false;
+  isSuperset(subset: PileSetLike<unknown>): boolean {
+    for (const item of subset.keys()) {
+      if (!this.has(item as TValue)) return false;
     }
 
     return true;
@@ -41,17 +47,26 @@ export class Pile<TValue = any> extends Set<TValue> {
     return new Pile(Array.from(this).filter(expression));
   }
 
-  union(setB: Pile): Pile<TValue> {
-    const union = new Pile(this);
+  union<U>(setB: PileSetLike<U>): Pile<TValue | U> {
+    const union = new Pile<TValue | U>(this);
 
-    for (const item of setB) union.add(item);
+    for (const item of setB.keys()) {
+      union.add(item as U);
+    }
 
     return union;
   }
 
-  intersection(setB: Pile): Pile<TValue> {
-    const thisSet = new Pile(this);
-    return new Pile([...thisSet].filter((item) => setB.has(item)));
+  intersection<U>(setB: PileSetLike<U>): Pile<TValue & U> {
+    const intersection = new Pile<TValue & U>();
+
+    for (const item of this) {
+      if ((setB as PileSetLike<unknown>).has(item as unknown)) {
+        intersection.add(item as TValue & U);
+      }
+    }
+
+    return intersection;
   }
 
   /**

@@ -195,4 +195,8 @@ export default connect((store: any) => ({
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
   sGroup: functionGroupInfoSelector(store)?.sGroup || null,
   render: store.editor?.render?.ctab?.render,
-}))(InfoPanel);
+}))(
+  // Workaround: @types/react version conflict with connect()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  InfoPanel as any,
+);

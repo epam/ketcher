@@ -407,6 +407,10 @@ const onModalClose = (props, dispatch) => {
   props.onCancel();
 };
 
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TemplateDialogAny = TemplateDialog as any;
+
 export default connect(
   (store: any) => ({
     ...omit(['attach'], store.templates),
@@ -425,4 +429,4 @@ export default connect(
     onCancel: () => onModalClose(props, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
   }),
-)(TemplateDialog);
+)(TemplateDialogAny);

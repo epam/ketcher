@@ -27,6 +27,10 @@ const mapDispatchToProps = (dispatch: Dispatch): FloatingToolsCallProps => ({
 const FloatingToolContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FloatingTools);
+)(
+  // Workaround: @types/react version conflict with connect()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  FloatingTools as any,
+);
 
 export { FloatingToolContainer };

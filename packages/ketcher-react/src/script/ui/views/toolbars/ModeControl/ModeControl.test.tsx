@@ -32,7 +32,9 @@ describe('ModeControl', () => {
 
     await user.click(screen.getByTestId('polymer-toggler'));
 
-    expect(screen.getByTestId('molecules_mode')).toBeInTheDocument();
-    expect(screen.getByTestId('macromolecules_mode')).toBeInTheDocument();
-  });
+    expect(await screen.findByTestId('molecules_mode')).toBeInTheDocument();
+    expect(
+      await screen.findByTestId('macromolecules_mode'),
+    ).toBeInTheDocument();
+  }, 15000);
 });

@@ -27,5 +27,8 @@ const mapStateToProps = (state: any): StateProps => ({
   isMonomerCreationWizardActive: state.editor.isMonomerCreationWizardActive,
 });
 
-const AtomContainer = connect(mapStateToProps)(Atom);
+// Workaround: @types/react version conflict with connect()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const AtomAny = Atom as any;
+const AtomContainer = connect(mapStateToProps)(AtomAny);
 export default AtomContainer;

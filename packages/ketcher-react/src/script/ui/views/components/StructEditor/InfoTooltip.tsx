@@ -151,4 +151,8 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
 
 export default connect((store: any) => ({
   render: store.editor?.render?.ctab?.render,
-}))(InfoTooltip);
+}))(
+  // Workaround: @types/react version conflict with connect()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  InfoTooltip as any,
+);

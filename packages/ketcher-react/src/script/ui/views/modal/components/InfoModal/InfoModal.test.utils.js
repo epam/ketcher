@@ -12,10 +12,12 @@ export function renderWithMockStore(
       },
     },
   },
-  store = createStore(modalReducer, initialState),
+  store,
 ) {
+  const createdStore = store || createStore(modalReducer, initialState);
+
   return {
-    ...rtlRender(<Provider store={store}>{component}</Provider>),
-    store,
+    ...rtlRender(<Provider store={createdStore}>{component}</Provider>),
+    store: createdStore,
   };
 }

@@ -132,8 +132,8 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
-    "ts-jest": "^29.4.6",
-    "typescript": "^4.5.2"
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   },
   "files": [
     "dist"

@@ -1,26 +1,11 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 import clsx from 'clsx';
-import { type HTMLAttributes, forwardRef } from 'react';
 import styles from './ModificationTypeDropdown.module.less';
 import monomerWizardStyles from '../../MonomerCreationWizard.module.less';
 import {
   compareByTitleWithNaturalFirst,
   provideEditorInstance,
 } from 'ketcher-core';
-
-const OptionsListbox = forwardRef<HTMLDivElement, HTMLAttributes<HTMLElement>>(
-  (props, ref) => {
-    return (
-      <div
-        {...props}
-        ref={ref}
-        className={clsx(props.className, styles.optionsList)}
-      />
-    );
-  },
-);
-
-OptionsListbox.displayName = 'OptionsListbox';
 
 interface IOptionType {
   title: string;
@@ -128,7 +113,7 @@ export default function ModificationTypeDropdown(
           </li>
         );
       }}
-      ListboxComponent={OptionsListbox}
+      ListboxProps={{ className: styles.optionsList }}
       sx={{ width: '100%' }}
       freeSolo
       forcePopupIcon

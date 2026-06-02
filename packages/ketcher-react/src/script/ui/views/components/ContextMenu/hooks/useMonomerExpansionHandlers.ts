@@ -3,6 +3,7 @@ import {
   Action,
   AmbiguousMonomer,
   MonomerMicromolecule,
+  setExpandSGroup,
   setExpandMonomerSGroup,
   ketcherProvider,
 } from 'ketcher-core';
@@ -34,17 +35,26 @@ const useMonomerExpansionHandlers = () => {
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
+      const isMultiSelection = (selectedFunctionalGroups?.length ?? 0) > 1;
 
       selectedFunctionalGroups?.forEach((fg) => {
         if (!canExpandMonomer(fg)) {
           return;
         }
 
-        action.mergeWith(
-          setExpandMonomerSGroup(molecule, fg.relatedSGroupId, {
-            expanded: toExpand,
-          }),
-        );
+        if (isMultiSelection) {
+          action.mergeWith(
+            setExpandSGroup(molecule, fg.relatedSGroupId, {
+              expanded: toExpand,
+            }),
+          );
+        } else {
+          action.mergeWith(
+            setExpandMonomerSGroup(molecule, fg.relatedSGroupId, {
+              expanded: toExpand,
+            }),
+          );
+        }
       });
 
       editor.update(action);

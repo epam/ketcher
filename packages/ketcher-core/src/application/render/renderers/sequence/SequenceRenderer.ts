@@ -71,6 +71,10 @@ export type TwoStrandedNodeSelection = BaseNodeSelection & {
 export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
+export type SetCaretPositionOptions = {
+  afterRowEnd?: boolean;
+};
+
 export class SequenceRenderer {
   private static caretPositionValue = -1;
   private static lastUserDefinedCaretPositionValue = 0;
@@ -457,7 +461,21 @@ export class SequenceRenderer {
     this.sequenceBondRenderers.add(bondRenderer);
   }
 
-  public static setCaretPosition(caretPosition: number) {
+  private static isCaretAfterRowEndValue = false;
+
+  public static get isCaretAfterRowEnd() {
+    return this.isCaretAfterRowEndValue;
+  }
+
+  private static set isCaretAfterRowEnd(value: boolean) {
+    this.isCaretAfterRowEndValue = value;
+  }
+
+  public static setCaretPosition(
+    caretPosition: number,
+    options?: SetCaretPositionOptions,
+  ) {
+    this.isCaretAfterRowEnd = options?.afterRowEnd ?? false;
     const editor = provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -466,9 +484,11 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      renderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
+        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -482,8 +502,10 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      renderer?.redrawCaret(caretPosition);
-      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
@@ -755,6 +777,151 @@ export class SequenceRenderer {
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
     return operation;
+  }
+
+  private static redrawCaretOnRenderer(
+    renderer: BaseSequenceItemRenderer,
+    afterRowEnd: boolean,
+  ) {
+    renderer.removeCaret();
+    if (afterRowEnd) {
+      renderer.showCaretAfterNode();
+    } else {
+      renderer.showCaret();
+    }
+  }
+
+  private static redrawCaretOnBothStrands(
+    node: ITwoStrandedChainItem,
+    afterRowEnd: boolean,
+  ) {
+    this.isCaretAfterRowEnd = afterRowEnd;
+    const renderer = node.senseNode?.renderer;
+
+    if (!(renderer instanceof BaseSequenceItemRenderer)) {
+      return;
+    }
+
+    this.redrawCaretOnRenderer(renderer, afterRowEnd);
+    if (renderer.antisenseNodeRenderer) {
+      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, afterRowEnd);
+    }
+  }
+
+  public static get isCurrentCaretAtLastInFullRow(): boolean {
+    const currentNode = this.currentEdittingNode;
+    const currentRow = this.currentChainRow;
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    return (
+      Boolean(currentNode) &&
+      currentNode === lastNodeInRow &&
+      !(lastNodeInRow?.senseNode instanceof EmptySequenceNode)
+    );
+  }
+
+  public static moveCaretForwardOrToRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      this.isCaretAfterRowEnd = false;
+      this.moveCaretForward();
+
+      return;
+    }
+
+    if (this.isCurrentCaretAtLastInFullRow) {
+      const lastNodeInRow =
+        this.currentChainRow[this.currentChainRow.length - 1];
+
+      if (!lastNodeInRow) {
+        return;
+      }
+
+      this.redrawCaretOnBothStrands(lastNodeInRow, true);
+    } else {
+      this.moveCaretForward();
+    }
+  }
+
+  public static moveCaretBackOrFromRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      const currentNode = this.currentEdittingNode;
+
+      if (currentNode) {
+        this.redrawCaretOnBothStrands(currentNode, false);
+      }
+
+      return;
+    }
+
+    const currentNode = this.currentEdittingNode;
+
+    if (!currentNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentNode);
+
+    if (currentNodeIndexInRow === 0) {
+      this.moveCaretBack();
+
+      if (this.isCurrentCaretAtLastInFullRow) {
+        const lastNodeInRow =
+          this.currentChainRow[this.currentChainRow.length - 1];
+
+        if (!lastNodeInRow) {
+          return;
+        }
+
+        this.redrawCaretOnBothStrands(lastNodeInRow, true);
+      }
+
+      return;
+    }
+
+    this.moveCaretBack();
+  }
+
+  public static moveCaretToRowStart() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentNodeIndexInRow =
+      this.currentChainRow.indexOf(currentEdittingNode);
+
+    SequenceRenderer.setCaretPosition(
+      this.caretPosition - currentNodeIndexInRow,
+    );
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+  }
+
+  public static moveCaretToRowEnd() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    if (!lastNodeInRow) {
+      return;
+    }
+
+    const isPartialRow = lastNodeInRow.senseNode instanceof EmptySequenceNode;
+
+    const offset = currentRow.length - 1 - currentNodeIndexInRow;
+
+    SequenceRenderer.setCaretPosition(this.caretPosition + offset, {
+      afterRowEnd: !isPartialRow,
+    });
+
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
   public static get currentChainIndex() {

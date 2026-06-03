@@ -16,7 +16,7 @@
 
 import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
-import { PeriodTableType } from '../../types';
+import type { PeriodTableType } from '../../types';
 
 interface TypeSchemaItem {
   title: string;

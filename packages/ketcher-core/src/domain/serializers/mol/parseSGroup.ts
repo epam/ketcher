@@ -18,9 +18,9 @@ import { Pool } from 'domain/entities/pool';
 import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 
-import { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
+import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
 import assert from 'assert';
 

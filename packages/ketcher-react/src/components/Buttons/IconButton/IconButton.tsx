@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { StyledIcon } from './styles';
-import { IIconButtonProps } from './types';
+import type { IIconButtonProps } from './types';
 import { IconButtonBase } from './IconButtonBase';
 
 export const IconButton = ({ iconName, ...props }: IIconButtonProps) => {

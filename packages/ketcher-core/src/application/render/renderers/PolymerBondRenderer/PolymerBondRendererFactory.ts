@@ -1,7 +1,7 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export enum LayoutMode {

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
-import { FC, useEffect, useMemo, useState } from 'react';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';

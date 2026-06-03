@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MultitailArrow } from 'domain/entities/multitailArrow';
+import type { MultitailArrow } from 'domain/entities/multitailArrow';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { ReStruct, ReMultitailArrow } from 'application/render';
+import { type ReStruct, ReMultitailArrow } from 'application/render';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 interface MultitailArrowUpsertData {

@@ -1,5 +1,5 @@
 import styles from './Notification.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 import clsx from 'clsx';
 import {
   WizardNotificationId,

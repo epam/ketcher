@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import {
   fromAtomAddition,
   fromAtomsAttrs,
@@ -14,14 +14,14 @@ import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
 import { getSelectedAtoms } from '../../editor/tool/select';
 import { onAction } from './shared';
-import { Editor } from '../../editor';
+import type { Editor } from '../../editor';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import {
+  type ElementFormData,
   fromAtom,
   toAtom,
   fromBond,
   toBond,
-  ElementFormData,
 } from '../data/convert/structconv';
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';

@@ -26,21 +26,21 @@ import { HalfBond } from './halfBond';
 import { Loop } from './loop';
 import { Pile } from './pile';
 import { Pool } from './pool';
-import { RGroup } from './rgroup';
-import { RxnArrow } from './rxnArrow';
-import { RxnPlus } from './rxnPlus';
+import type { RGroup } from './rgroup';
+import type { RxnArrow } from './rxnArrow';
+import type { RxnPlus } from './rxnPlus';
 import { SGroup } from './sgroup';
 import { SGroupForest } from './sgroupForest';
-import { SimpleObject } from './simpleObject';
-import { Text } from './text';
+import type { SimpleObject } from './simpleObject';
+import type { Text } from './text';
 import { Vec2 } from './vec2';
-import { Highlight } from './highlight';
-import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
+import type { Highlight } from './highlight';
+import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
-import { Image } from './image';
+import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
-import { MultitailArrow } from './multitailArrow';
+import type { MultitailArrow } from './multitailArrow';
 import {
   flipPointByCenter,
   rotateDelta,

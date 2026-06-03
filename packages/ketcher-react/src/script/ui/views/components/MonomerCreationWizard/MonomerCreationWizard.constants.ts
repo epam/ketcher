@@ -4,7 +4,7 @@ import {
   KetMonomerClass,
 } from 'ketcher-core';
 
-import {
+import type {
   MonomerTypeSelectItem,
   WizardNotificationMessageMap,
   WizardNotificationTypeMap,

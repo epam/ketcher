@@ -1,5 +1,5 @@
-import { Selection } from 'd3';
-import { RNABase } from 'domain/entities/RNABase';
+import type { Selection } from 'd3';
+import type { RNABase } from 'domain/entities/RNABase';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,

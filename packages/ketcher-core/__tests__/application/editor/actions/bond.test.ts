@@ -1,7 +1,7 @@
 import * as utils from 'application/editor/actions/utils';
 
-import { Action, fromBondAddition } from 'application/editor/actions';
-import { ReStruct } from 'application/render';
+import { type Action, fromBondAddition } from 'application/editor/actions';
+import type { ReStruct } from 'application/render';
 
 import { restruct, singleBond } from '../../../mock-data';
 

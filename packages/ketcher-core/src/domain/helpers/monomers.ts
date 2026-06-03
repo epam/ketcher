@@ -1,19 +1,19 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { Peptide } from 'domain/entities/Peptide';
 import type { RNABase } from 'domain/entities/RNABase';
 import type { Sugar } from 'domain/entities/Sugar';
 import {
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
+  type AmbiguousMonomerType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
-  AmbiguousMonomerType,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { IVariantMonomer } from 'domain/entities/types';
+import type { IVariantMonomer } from 'domain/entities/types';
 import {
+  type KetMonomerTemplateAtom,
   KetMonomerClass,
-  KetMonomerTemplateAtom,
 } from 'application/formatters/types/ket';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { IRnaPreset } from 'application/editor/tools/Tool';

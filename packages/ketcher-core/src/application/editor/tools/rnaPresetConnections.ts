@@ -1,8 +1,8 @@
 import {
-  IKetTemplateConnection,
+  type IKetTemplateConnection,
   KetConnectionType,
 } from 'application/formatters';
-import {
+import type {
   IRnaPreset,
   RnaPhosphatePosition,
 } from 'application/editor/tools/Tool';

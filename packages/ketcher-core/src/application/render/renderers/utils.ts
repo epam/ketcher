@@ -4,7 +4,7 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { Chem } from 'domain/entities/Chem';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {

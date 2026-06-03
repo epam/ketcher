@@ -188,8 +188,13 @@ describe('resgroup should draw nucleotide component S-groups', () => {
 
     const sGroup = new SGroup('nucleotideComponent');
     const reSgroup = new ReSGroup(sGroup);
+    const atomIdWithAttachmentPoint = 2;
     sGroup.data.class = SUPERATOM_CLASS.BASE;
-    SGroup.addAtom(sGroup, 2, restruct.molecule as unknown as Struct);
+    SGroup.addAtom(
+      sGroup,
+      atomIdWithAttachmentPoint,
+      restruct.molecule as unknown as Struct,
+    );
 
     reSgroup.draw(reStruct, sGroup);
 

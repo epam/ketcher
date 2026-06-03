@@ -36,13 +36,14 @@ const useMonomerExpansionHandlers = () => {
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
       const isMultiSelection = (selectedFunctionalGroups?.length ?? 0) > 1;
+      const useGenericPath = isMultiSelection && !toExpand;
 
       selectedFunctionalGroups?.forEach((fg) => {
         if (!canExpandMonomer(fg)) {
           return;
         }
 
-        if (isMultiSelection) {
+        if (useGenericPath) {
           action.mergeWith(
             setExpandSGroup(molecule, fg.relatedSGroupId, {
               expanded: toExpand,

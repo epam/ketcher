@@ -49,7 +49,7 @@ describe('useFunctionalGroupEoc', () => {
   });
 
   describe('handler function', () => {
-    it('uses setExpandSGroup for multi-selection to avoid monomer-specific path', () => {
+    it('uses setExpandSGroup for multi-selection collapse to avoid unstable monomer-specific path', () => {
       const { result } = renderHook(() => useFunctionalGroupEoc());
       const [handler] = result.current;
 
@@ -90,6 +90,40 @@ describe('useFunctionalGroupEoc', () => {
         .value.editor;
       expect(editor.update).toHaveBeenCalledTimes(1);
       expect(editor.rotateController.rerender).toHaveBeenCalledTimes(1);
+    });
+
+    it('uses setExpandMonomerSGroup for multi-selection expand to preserve readable layout', () => {
+      const { result } = renderHook(() => useFunctionalGroupEoc());
+      const [handler] = result.current;
+
+      const functionalGroup1 = {
+        name: 'FG1',
+        isExpanded: false,
+        relatedSGroupId: 1,
+      } as FunctionalGroup;
+      const functionalGroup2 = {
+        name: 'FG2',
+        isExpanded: false,
+        relatedSGroupId: 2,
+      } as FunctionalGroup;
+
+      const params: ItemEventParams<FunctionalGroupsContextMenuProps> = {
+        props: {
+          id: 'test',
+          functionalGroups: [functionalGroup1, functionalGroup2],
+        },
+      } as ItemEventParams<FunctionalGroupsContextMenuProps>;
+
+      handler(params, true);
+
+      expect(setExpandMonomerSGroup).toHaveBeenCalledTimes(2);
+      expect(setExpandMonomerSGroup).toHaveBeenNthCalledWith(1, {}, 1, {
+        expanded: true,
+      });
+      expect(setExpandMonomerSGroup).toHaveBeenNthCalledWith(2, {}, 2, {
+        expanded: true,
+      });
+      expect(setExpandSGroup).not.toHaveBeenCalled();
     });
   });
 

@@ -77,7 +77,7 @@ describe('setExpandMonomerSGroup', () => {
     (getAttachmentPointStereoBond as jest.Mock).mockReset();
   });
 
-  it('falls back to generic S-group expand/collapse for monomers with >2 attachment points', () => {
+  it('falls back to generic S-group collapse for monomers with >2 attachment points', () => {
     const struct = new Struct();
     const atom1Id = struct.atoms.add(
       new Atom({ label: 'C', pp: new Vec2(0, 0) }),

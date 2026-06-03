@@ -168,10 +168,10 @@ export function setExpandMonomerSGroup(
     return action;
   }
 
-  // Monomer-specific expand/collapse adjustments are tuned for simple
-  // attachment topologies and can destabilize structures with >2 attachment
-  // points after mode switches. For such monomers, use generic S-Group logic.
-  if (sGroup.getAttachmentPoints().length > 2) {
+  // Monomer-specific collapse adjustments are tuned for simple attachment
+  // topologies and can destabilize structures with >2 attachment points after
+  // mode switches. For collapse in such monomers, use generic S-Group logic.
+  if (!attrs.expanded && sGroup.getAttachmentPoints().length > 2) {
     return setExpandSGroup(restruct, sgid, attrs);
   }
 

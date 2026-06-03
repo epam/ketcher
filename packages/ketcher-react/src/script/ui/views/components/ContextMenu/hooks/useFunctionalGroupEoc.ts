@@ -30,9 +30,10 @@ const useFunctionalGroupEoc = () => {
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
       const isMultiSelection = (selectedFunctionalGroups?.length ?? 0) > 1;
+      const useGenericPath = isMultiSelection && !toExpand;
 
       selectedFunctionalGroups?.forEach((functionalGroup) => {
-        if (isMultiSelection) {
+        if (useGenericPath) {
           action.mergeWith(
             setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
               expanded: toExpand,

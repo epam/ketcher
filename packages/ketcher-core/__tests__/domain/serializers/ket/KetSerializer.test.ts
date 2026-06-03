@@ -15,6 +15,8 @@ import {
   RxnArrow,
   RxnPlus,
   SimpleObject,
+  SGroup,
+  Struct,
   Text,
   Vec2,
 } from 'domain/entities';
@@ -266,6 +268,24 @@ describe('serialize (ToKet)', () => {
     expect(spy.mock.results[2].value.sgroups[4].type).toEqual('SUP');
     expect(spy.mock.results[2].value.sgroups[5].subscript).toEqual('n');
     expect(spy.mock.results[2].value.sgroups[5].connectivity).toEqual('HT');
+  });
+  it('serializes and deserializes nucleotide component S-groups', () => {
+    const struct = new Struct();
+    const sgroup = new SGroup('nucleotideComponent');
+    sgroup.atoms = [0];
+    sgroup.data.class = 'BASE';
+    struct.sgroups.add(sgroup);
+
+    const serialized = moleculeToKet.moleculeToKet(struct);
+    expect(serialized.sgroups[0]).toEqual({
+      type: 'nucleotideComponent',
+      atoms: [0],
+      class: 'BASE',
+    });
+
+    const deserialized = moleculeToStruct.sgroupToStruct(serialized.sgroups[0]);
+    expect(deserialized.type).toEqual('nucleotideComponent');
+    expect(deserialized.data.class).toEqual('BASE');
   });
   it('rgroupToKet', () => {
     const spy = jest.spyOn(rgroupToKet, 'rgroupToKet');

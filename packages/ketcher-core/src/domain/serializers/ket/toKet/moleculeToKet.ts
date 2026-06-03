@@ -216,6 +216,10 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       );
       break;
     }
+    case 'nucleotideComponent': {
+      ifDef(result, 'class', source.data.class);
+      break;
+    }
     case 'DAT': {
       const data = source.data;
       ifDef(result, 'placement', data.absolute, true);

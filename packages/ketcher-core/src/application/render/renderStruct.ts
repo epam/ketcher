@@ -23,6 +23,9 @@ export class RenderStruct {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
       convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
+      if (window.isPolymerEditorTurnedOn) {
+        return newStruct;
+      }
       if (!newStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
         newStruct.sgroups.delete(0);
       }

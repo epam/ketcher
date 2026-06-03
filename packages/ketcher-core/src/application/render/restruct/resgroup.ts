@@ -148,6 +148,14 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
           break;
         }
+        case 'nucleotideComponent': {
+          SGroupdrawBracketsOptions.lowerIndexText =
+            SUPERATOM_CLASS_TEXT[sgroup.data.class];
+          SGroupdrawBracketsOptions.upperIndexText = null;
+          SGroupdrawBracketsOptions.indexAttribute = { 'font-style': 'italic' };
+          SGroupdrawBracketsOptions.superatomClass = sgroup.data.class;
+          break;
+        }
         case 'DAT': {
           set = drawGroupDat(remol, sgroup);
           break;
@@ -166,6 +174,7 @@ class ReSGroup extends ReObject {
         'GEN',
         'COP',
         'queryComponent',
+        'nucleotideComponent',
       ];
       if (
         sgroupTypesWithBrackets.includes(sgroup.type) &&

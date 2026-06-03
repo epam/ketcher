@@ -14,36 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SimpleObject, SimpleObjectMode } from 'domain/entities/simpleObject';
+import { SimpleObject } from 'domain/entities/simpleObject';
 import { Struct } from 'domain/entities/struct';
-import { Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
-  let object;
-
-  if (ketItem.data.mode === 'circle') {
-    const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
-    const pos0 = ketItem.data.pos[0];
-    object = {
-      mode: SimpleObjectMode.ellipse,
-      pos: [
-        {
-          x: pos0.x - Math.abs(radius),
-          y: pos0.y - Math.abs(radius),
-          z: pos0.z - Math.abs(radius),
-        },
-        {
-          x: pos0.x + Math.abs(radius),
-          y: pos0.y + Math.abs(radius),
-          z: pos0.z + Math.abs(radius),
-        },
-      ],
-    };
-  } else {
-    object = ketItem.data;
-  }
-
+  const object = ketItem.data;
   const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
   simpleObject.setInitiallySelected(ketItem.selected);
   struct.simpleObjects.add(simpleObject);

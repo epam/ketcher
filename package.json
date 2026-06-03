@@ -58,7 +58,9 @@
     "prettier-config-standard": "^5.0.0",
     "stylelint": "^14.16.1",
     "stylelint-config-prettier": "^9.0.5",
-    "stylelint-config-standard": "^23.0.0"
+    "stylelint-config-standard": "^23.0.0",
+    "typescript": "4.7.4",
+    "@types/d3-dispatch": "3.0.6"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -71,6 +73,7 @@
   "overrides": {
     "nth-check": "^2.1.1",
     "@isaacs/brace-expansion": "5.0.1",
+    "brace-expansion": "5.0.6",
     "css-minimizer-webpack-plugin@3.4.1": {
       "serialize-javascript": "7.0.5"
     },
@@ -93,7 +96,7 @@
       "uuid": "11.1.1"
     },
     "webpack-dev-server": "5.2.4",
-    "brace-expansion": "5.0.6"
+    "@types/d3-dispatch": "3.0.6"
   },
   "dependencies": {
     "@playwright/test": "^1.59.1",

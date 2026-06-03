@@ -185,6 +185,7 @@ function ActionButton({
       ref={menuRef}
       disabled={disabled}
       onClick={onClick}
+      role="menuitem"
       title={shortcut ? `${action.title} (${shortcut})` : action.title}
     >
       <Icon name={name} />
@@ -304,8 +305,7 @@ function ActionMenu({
             })}
             onClick={handleMenuItemClick}
             onKeyDown={handleMenuItemKeyDown}
-            role="menuitem"
-            tabIndex={0}
+            role="none"
           >
             {showMenuOrButton(action, item, props.status[itemKey], props)}
             {isMenuItemWithMenu(item) &&

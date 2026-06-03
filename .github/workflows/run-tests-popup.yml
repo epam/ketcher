@@ -97,13 +97,12 @@ jobs:
           fi
           npx playwright test --project=chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $UPDATE_FLAG
       - name: Commit updated snapshots
-        if: ${{ github.event.inputs.update_snapshots == 'true' }}
+        if: always()
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git config --global --add safe.directory '*'
-          cd ketcher-autotests
-          git add 'tests/specs/**/*linux.png'
+          find ketcher-autotests/tests/specs -name '*linux.png' -print0 | xargs -0 git add
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else

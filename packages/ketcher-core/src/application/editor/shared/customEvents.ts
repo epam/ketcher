@@ -1,6 +1,6 @@
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import type { AttachmentPointId } from 'application/render';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 
 export const MonomerCreationAttachmentPointClickEvent =
   'MonomerCreationAttachmentPointClick';

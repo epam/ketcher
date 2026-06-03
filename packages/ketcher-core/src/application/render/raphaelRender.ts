@@ -17,28 +17,37 @@
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
-import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { AttachmentPointName } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+};
 
 export type RnaComponentAtoms = Map<
   RnaPresetComponentKey,
   { atoms: number[]; bonds: number[] }
 >;
 
-export type AttachmentPointId = string;
+export type AttachmentPointId = number;
 
 export type AssignedAttachmentPoint = {
   name: AttachmentPointName;
@@ -101,6 +110,7 @@ export type MonomerCreationState = {
   isRnaPresetMode?: boolean;
   // Connection APs: inter-component links (readonly). Maps AP id to name and [component atom id, other-component atom id]
   connectionAttachmentPoints?: AssignedAttachmentPoints;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
 } | null;
 
 export const getNextAttachmentPointId = (
@@ -111,7 +121,7 @@ export const getNextAttachmentPointId = (
     monomerCreationState.assignedAttachmentPoints.size;
   monomerCreationState.nextAttachmentPointId = nextAttachmentPointId + 1;
 
-  return `${nextAttachmentPointId}`;
+  return nextAttachmentPointId;
 };
 
 export class Render {

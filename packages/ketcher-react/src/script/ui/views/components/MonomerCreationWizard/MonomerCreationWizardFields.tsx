@@ -2,13 +2,19 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
 import {
-  AtomLabel,
-  AssignedAttachmentPoints,
-  AttachmentPointId,
-  AttachmentPointName,
   ketcherProvider,
+  type AtomLabel,
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
+  type AttachmentPointName,
 } from 'ketcher-core';
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -16,13 +22,13 @@ import NaturalAnaloguePicker, {
 import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import AttributeField from './components/AttributeField/AttributeField';
-import {
+import type {
   StringWizardFormFieldId,
   WizardState,
 } from './MonomerCreationWizard.types';
 import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
-import Editor from '../../../../editor';
+import type Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
 import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import Accordion from '@mui/material/Accordion';

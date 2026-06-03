@@ -1,15 +1,15 @@
-import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
-import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
-import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
+import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
+import type { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
   isBondBetweenSugarAndBaseOfRna,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/polymerBondMonomerConnections';
 import { AttachmentPointName } from 'domain/types';
-import { BaseMonomer } from './BaseMonomer';
+import type { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
 import { HalfMonomerSize } from 'domain/constants';
 

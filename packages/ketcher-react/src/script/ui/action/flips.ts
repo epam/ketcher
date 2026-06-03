@@ -1,4 +1,9 @@
-import { Atom, ReBond, ReStruct, isAttachmentBond } from 'ketcher-core';
+import {
+  type ReBond,
+  type ReStruct,
+  Atom,
+  isAttachmentBond,
+} from 'ketcher-core';
 
 export function isFlipDisabled(editor): boolean {
   const selection: { atoms: number[]; bonds: number[] } = editor.selection();

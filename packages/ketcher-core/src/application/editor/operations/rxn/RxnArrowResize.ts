@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import assert from 'assert';
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';

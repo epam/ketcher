@@ -15,11 +15,14 @@
  ***************************************************************************/
 
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { AttachmentPointId, MonomerCreationState } from 'application/render';
+import type {
+  AttachmentPointId,
+  MonomerCreationState,
+} from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
-import Restruct from 'application/render/restruct/restruct';
+import type { AttachmentPointName } from 'domain/types';
+import type Restruct from 'application/render/restruct/restruct';
 
 export class ReassignAttachmentPointOperation extends BaseOperation {
   constructor(

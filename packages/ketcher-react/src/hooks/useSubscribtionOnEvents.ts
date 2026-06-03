@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { indigoVerification } from '../script/ui/state/request';
-import { Ketcher, KetcherAsyncEvents, ketcherProvider } from 'ketcher-core';
+import {
+  type Ketcher,
+  KetcherAsyncEvents,
+  ketcherProvider,
+} from 'ketcher-core';
 import { useEffect } from 'react';
 import { useAppContext } from './useAppContext';
 import { ketcherInitEventName } from '../constants';

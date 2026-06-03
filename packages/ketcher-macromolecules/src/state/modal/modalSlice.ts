@@ -21,7 +21,7 @@ interface ModalState {
   name: string | null;
   isOpen: boolean;
   additionalProps: AdditionalModalProps | null;
-  errorTooltipText: string;
+  errorTooltips: string[];
   errorModalText: string;
   errorModalTitle: string;
 }
@@ -30,7 +30,7 @@ const initialState: ModalState = {
   name: null,
   isOpen: false,
   additionalProps: null,
-  errorTooltipText: '',
+  errorTooltips: [],
   errorModalText: '',
   errorModalTitle: '',
 };
@@ -70,10 +70,14 @@ export const modalSlice = createSlice({
       state.additionalProps = null;
     },
     openErrorTooltip: (state, action: PayloadAction<string>) => {
-      state.errorTooltipText = action.payload;
+      if (!state.errorTooltips.includes(action.payload)) {
+        state.errorTooltips.push(action.payload);
+      }
     },
-    closeErrorTooltip: (state) => {
-      state.errorTooltipText = '';
+    closeErrorTooltip: (state, action: PayloadAction<string | undefined>) => {
+      state.errorTooltips = action.payload
+        ? state.errorTooltips.filter((text) => text !== action.payload)
+        : [];
     },
     openErrorModal: (
       state,
@@ -111,8 +115,8 @@ export const selectModalIsOpen = (state: RootState): boolean =>
 export const selectAdditionalProps = (
   state: RootState,
 ): AdditionalModalProps | null => state.modal.additionalProps;
-export const selectErrorTooltipText = (state: RootState): boolean =>
-  state.modal.errorTooltipText;
+export const selectErrorTooltips = (state: RootState): string[] =>
+  state.modal.errorTooltips;
 export const selectErrorModalText = (state: RootState): string => {
   return state.modal.errorModalText;
 };

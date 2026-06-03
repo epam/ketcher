@@ -1,16 +1,16 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import {
-  AssignedAttachmentPoints,
-  AttachmentPointId,
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
   getAttachmentPointNames,
   getNextAttachmentPointId,
-  MonomerCreationState,
-  ReStruct,
+  type MonomerCreationState,
+  type ReStruct,
 } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
 
 export class AssignLeavingGroupAtomOperation extends BaseOperation {

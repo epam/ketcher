@@ -17,8 +17,8 @@
 import { Atom, StereoLabel } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { StereoFlag } from 'domain/entities/fragment';
 import { Vec2 } from 'domain/entities/vec2';
@@ -31,14 +31,14 @@ import {
 
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { AttachmentPointId, Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import {
-  RenderOptions,
-  RenderOptionStyles,
+  type RenderOptions,
+  type RenderOptionStyles,
   UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
@@ -148,16 +148,22 @@ class ReAtom extends ReObject {
       hoverElement.hover(
         () => {
           window.dispatchEvent(
-            new CustomEvent<string>('highlightAttachmentPointControls', {
-              detail: attachmentPointId,
-            }),
+            new CustomEvent<AttachmentPointId>(
+              'highlightAttachmentPointControls',
+              {
+                detail: attachmentPointId,
+              },
+            ),
           );
         },
         () => {
           window.dispatchEvent(
-            new CustomEvent<string>('resetHighlightAttachmentPointControls', {
-              detail: attachmentPointId,
-            }),
+            new CustomEvent<AttachmentPointId>(
+              'resetHighlightAttachmentPointControls',
+              {
+                detail: attachmentPointId,
+              },
+            ),
           );
         },
       );
@@ -701,7 +707,8 @@ class ReAtom extends ReObject {
         problematicAtoms,
         connectionAttachmentPoints,
       } = render.monomerCreationState;
-      // Use the restricted set when a component tab is active, otherwise show all.
+      // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
+      // otherwise all assigned attachment points are shown.
       const assignedAttachmentPoints =
         visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;
@@ -847,7 +854,7 @@ class ReAtom extends ReObject {
             );
             element.node?.setAttribute(
               'data-attachment-point-id',
-              attachmentPointId,
+              String(attachmentPointId),
             );
             element.node?.setAttribute(
               'data-testid',
@@ -873,9 +880,12 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#ffffff' });
 
               window.dispatchEvent(
-                new CustomEvent<string>('highlightAttachmentPointControls', {
-                  detail: attachmentPointId,
-                }),
+                new CustomEvent<AttachmentPointId>(
+                  'highlightAttachmentPointControls',
+                  {
+                    detail: attachmentPointId,
+                  },
+                ),
               );
             },
             // Mouse leave
@@ -894,7 +904,7 @@ class ReAtom extends ReObject {
               rLabelElement.attr({ fill: '#333333' });
 
               window.dispatchEvent(
-                new CustomEvent<string>(
+                new CustomEvent<AttachmentPointId>(
                   'resetHighlightAttachmentPointControls',
                   {
                     detail: attachmentPointId,
@@ -972,7 +982,7 @@ class ReAtom extends ReObject {
                 hitArea.attr({ opacity: 0.15 });
                 connectionApNames.forEach((apId) => {
                   window.dispatchEvent(
-                    new CustomEvent<string>(
+                    new CustomEvent<AttachmentPointId>(
                       'highlightAttachmentPointControls',
                       { detail: apId },
                     ),
@@ -983,7 +993,7 @@ class ReAtom extends ReObject {
                 hitArea.attr({ opacity: 0 });
                 connectionApNames.forEach((apId) => {
                   window.dispatchEvent(
-                    new CustomEvent<string>(
+                    new CustomEvent<AttachmentPointId>(
                       'resetHighlightAttachmentPointControls',
                       { detail: apId },
                     ),

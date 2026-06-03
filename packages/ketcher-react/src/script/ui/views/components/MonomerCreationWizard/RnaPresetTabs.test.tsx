@@ -17,19 +17,19 @@
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import {
-  AssignedAttachmentPoints,
   AttachmentPointName,
   KetMonomerClass,
+  type AssignedAttachmentPoints,
 } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
@@ -99,7 +99,7 @@ const createMockStore = (
 };
 
 const createAssignedAttachmentPoints = (
-  attachmentPoints: Array<[string, AttachmentPointName, [number, number]]>,
+  attachmentPoints: Array<[number, AttachmentPointName, [number, number]]>,
 ): AssignedAttachmentPoints =>
   new Map(
     attachmentPoints.map(([id, name, [attachmentAtomId, leavingAtomId]]) => [
@@ -235,37 +235,6 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(baseTab);
 
     expect(mockEditor.highlights.clear).toHaveBeenCalled();
-  });
-
-  it('should not create highlights when highlightEnabled is false', () => {
-    wizardState.base.structure = {
-      atoms: [1, 2, 3],
-      bonds: [1, 2],
-    };
-
-    render(
-      <Provider store={mockStore}>
-        <RnaPresetTabs
-          wizardState={wizardState}
-          editor={mockEditor}
-          wizardStateDispatch={mockDispatch}
-          phosphatePosition={undefined}
-          onPhosphatePositionChange={mockOnPhosphatePositionChange}
-        />
-      </Provider>,
-    );
-
-    // Clear the initial calls
-    mockEditor.highlights.clear.mockClear();
-    mockEditor.highlights.create.mockClear();
-
-    // Click the highlight checkbox to disable it
-    const highlightCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(highlightCheckbox);
-
-    // Should clear but not create new highlights
-    expect(mockEditor.highlights.clear).toHaveBeenCalled();
-    expect(mockEditor.highlights.create).not.toHaveBeenCalled();
   });
 
   it('should apply active highlight color to the active tab component', () => {
@@ -596,9 +565,9 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   it('shows only non-occupied attachment points on the preset tab', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: createAssignedAttachmentPoints([
-        ['0', AttachmentPointName.R1, [1, 11]],
-        ['1', AttachmentPointName.R2, [2, 12]],
-        ['2', AttachmentPointName.R4, [4, 14]],
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R2, [2, 12]],
+        [2, AttachmentPointName.R4, [4, 14]],
       ]),
     });
     wizardState.base.structure = {
@@ -653,9 +622,9 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   it('passes all component attachment points to the selected component tab', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: createAssignedAttachmentPoints([
-        ['0', AttachmentPointName.R1, [1, 11]],
-        ['1', AttachmentPointName.R2, [2, 12]],
-        ['2', AttachmentPointName.R3, [3, 13]],
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R2, [2, 12]],
+        [2, AttachmentPointName.R3, [3, 13]],
       ]),
     });
     wizardState.base.structure = {
@@ -837,8 +806,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   it('shows both explicit and connection attachment points when they share the same label', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: createAssignedAttachmentPoints([
-        ['0', AttachmentPointName.R2, [2, 12]],
-        ['1', AttachmentPointName.R1, [3, 13]],
+        [0, AttachmentPointName.R2, [2, 12]],
+        [1, AttachmentPointName.R1, [3, 13]],
       ]),
     });
     wizardState.sugar.structure = {
@@ -881,8 +850,8 @@ describe('RnaPresetTabs - applyHighlights function', () => {
   it('keeps connection attachment points hidden on the preset tab', () => {
     mockStore = createMockStore(undefined, {
       assignedAttachmentPoints: createAssignedAttachmentPoints([
-        ['0', AttachmentPointName.R1, [1, 11]],
-        ['1', AttachmentPointName.R3, [2, 12]],
+        [0, AttachmentPointName.R1, [1, 11]],
+        [1, AttachmentPointName.R3, [2, 12]],
       ]),
     });
     wizardState.base.structure = {

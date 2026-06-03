@@ -14,24 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from 'domain/entities/atom';
+import type { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { HalfBond } from 'domain/entities/halfBond';
-import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { HalfBond } from 'domain/entities/halfBond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap, StereoColoringType } from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { RenderOptions, RenderOptionStyles } from '../render.types';
+import type { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
 import Visel from './visel';
 import { Coordinates } from 'application/editor/shared/coordinates';

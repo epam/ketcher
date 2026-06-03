@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect, useRef } from 'react';
-import TemplateTable, { Template } from './TemplateTable';
+import { type Dispatch, type FC, useState, useEffect, useRef } from 'react';
+import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
   changeGroup,

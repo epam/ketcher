@@ -1,5 +1,5 @@
-import { Selection } from 'd3';
-import { Sugar } from 'domain/entities/Sugar';
+import type { Selection } from 'd3';
+import type { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,

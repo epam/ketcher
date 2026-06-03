@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, Point } from './vec2';
+import { type Point, Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 
 // TODO: move to infrastructure

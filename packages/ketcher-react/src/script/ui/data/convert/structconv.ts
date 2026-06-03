@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import {
+  type Atom,
+  type AttachmentPoints,
   AtomList,
-  Atom,
   Bond,
-  AttachmentPoints,
   Elements,
   StereoLabel,
   getAtomType,

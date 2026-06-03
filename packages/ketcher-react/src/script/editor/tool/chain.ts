@@ -30,8 +30,8 @@ import {
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class ChainTool implements Tool {

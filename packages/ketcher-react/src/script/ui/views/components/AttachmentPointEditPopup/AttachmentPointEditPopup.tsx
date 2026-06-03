@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import clsx from 'clsx';
-import {
+import type {
   AtomLabel,
   AttachmentPointId,
   AttachmentPointClickData,
@@ -11,7 +11,7 @@ import { useAttachmentPointSelectsData } from '../MonomerCreationWizard/hooks/us
 
 import styles from './AttachmentPointEditPopup.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
-import { Editor } from '../../../../editor';
+import type { Editor } from '../../../../editor';
 import assert from 'assert';
 
 type Props = {

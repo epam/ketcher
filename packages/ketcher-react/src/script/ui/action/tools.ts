@@ -28,8 +28,13 @@ import isHidden from './isHidden';
 import { toBondType } from '../data/convert/structconv';
 import { isFlipDisabled } from './flips';
 import { MONOMER_WIZARD_DISALLOWED_BOND_TYPES } from '../views/components/ContextMenu/utils';
+import type { UiAction } from './action.types';
 
-const toolActions = {
+type ToolActionEntry = Omit<UiAction, 'action'> & {
+  action?: UiAction['action'];
+};
+
+const toolActions: Record<string, ToolActionEntry> = {
   hand: {
     title: 'Hand tool',
     enabledInViewOnly: true,
@@ -399,7 +404,7 @@ const toolActions = {
   },
 };
 
-const bondCuts = {
+const bondCuts: Record<string, string> = {
   single: '1',
   double: '2',
   triple: '3',
@@ -412,23 +417,28 @@ const bondCuts = {
 };
 
 const typeSchema = bondSchema.properties.type;
+const bondTypes = typeSchema.enum as string[];
+const bondTypeNames = typeSchema.enumNames as string[];
 
-const monomerWizardDisallowedBondTypes = new Set(
+const monomerWizardDisallowedBondTypes: Set<string> = new Set(
   MONOMER_WIZARD_DISALLOWED_BOND_TYPES,
 );
 
-export default typeSchema.enum.reduce((res, type, i) => {
-  res[`bond-${type}`] = {
-    title: `${typeSchema.enumNames[i]} Bond`,
-    shortcut: bondCuts[type],
-    action: {
-      tool: 'bond',
-      opts: toBondType(type),
-    },
-    hidden: (options) => isHidden(options, `bond-${type}`),
-    ...(monomerWizardDisallowedBondTypes.has(type) && {
-      disabled: (editor) => editor.isMonomerCreationWizardActive,
-    }),
-  };
-  return res;
-}, toolActions);
+export default bondTypes.reduce<Record<string, ToolActionEntry>>(
+  (res, type, i) => {
+    res[`bond-${type}`] = {
+      title: `${bondTypeNames[i]} Bond`,
+      shortcut: bondCuts[type],
+      action: {
+        tool: 'bond',
+        opts: toBondType(type),
+      },
+      hidden: (options) => isHidden(options, `bond-${type}`),
+      ...(monomerWizardDisallowedBondTypes.has(type) && {
+        disabled: (editor) => editor.isMonomerCreationWizardActive,
+      }),
+    };
+    return res;
+  },
+  toolActions,
+);

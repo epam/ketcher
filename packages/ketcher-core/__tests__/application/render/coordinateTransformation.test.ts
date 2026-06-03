@@ -1,4 +1,4 @@
-import { CoordinateTransformation, Render } from 'application/render';
+import { type Render, CoordinateTransformation } from 'application/render';
 import { Vec2 } from 'domain/entities';
 
 describe('CoordinateTransformation', () => {

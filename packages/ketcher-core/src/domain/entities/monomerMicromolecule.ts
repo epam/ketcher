@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer: BaseMonomer) {

@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 
 type Data = {
   rgid: any;

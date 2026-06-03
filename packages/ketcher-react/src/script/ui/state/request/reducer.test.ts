@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import {
+  type RequestActionTypes,
   INDIGO_VERIFICATION,
   ANALYZING_FILE,
-  RequestActionTypes,
 } from './request.types';
 
 import reducer from '.';

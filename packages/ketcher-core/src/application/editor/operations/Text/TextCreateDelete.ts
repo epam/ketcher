@@ -15,7 +15,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReStruct, ReText } from '../../../render';
+import { type ReStruct, ReText } from '../../../render';
 import { Text } from 'domain/entities/text';
 import { Vec2 } from 'domain/entities/vec2';
 

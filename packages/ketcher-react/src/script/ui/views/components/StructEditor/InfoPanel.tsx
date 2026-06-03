@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, FC } from 'react';
+import { type FC, useState, useEffect } from 'react';
 import {
+  type Render,
+  type Struct,
   Scale,
   Vec2,
-  Render,
-  Struct,
   SGroup,
   CoordinateTransformation,
   MonomerMicromolecule,

@@ -1,11 +1,11 @@
 import {
-  AssignedAttachmentPoints,
   AttachmentPointName,
   KetMonomerClass,
-  Struct,
+  type AssignedAttachmentPoints,
+  type Struct,
 } from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
@@ -104,7 +104,7 @@ const createStruct = (bonds: Array<[number, number]>) => {
 };
 
 const createAssignedAttachmentPoints = (
-  attachmentPoints: Array<[string, AttachmentPointName, [number, number]]>,
+  attachmentPoints: Array<[number, AttachmentPointName, [number, number]]>,
 ): AssignedAttachmentPoints =>
   new Map(
     attachmentPoints.map(([id, name, [attachmentAtomId, leavingAtomId]]) => [
@@ -119,9 +119,9 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     wizardState.base.structure = { atoms: [1, 3], bonds: [] };
     wizardState.sugar.structure = { atoms: [2], bonds: [] };
     const assignedAttachmentPoints = createAssignedAttachmentPoints([
-      ['0', AttachmentPointName.R1, [1, 11]],
-      ['1', AttachmentPointName.R2, [2, 12]],
-      ['2', AttachmentPointName.R3, [3, 13]],
+      [0, AttachmentPointName.R1, [1, 11]],
+      [1, AttachmentPointName.R2, [2, 12]],
+      [2, AttachmentPointName.R3, [3, 13]],
     ]);
 
     expect(
@@ -133,7 +133,7 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     ).toEqual(
       new Map([
         [
-          '0',
+          0,
           {
             name: AttachmentPointName.R1,
             attachmentAtomId: 1,
@@ -141,7 +141,7 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
           },
         ],
         [
-          '2',
+          2,
           {
             name: AttachmentPointName.R3,
             attachmentAtomId: 3,
@@ -236,10 +236,10 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     wizardState.sugar.structure = { atoms: [2, 4], bonds: [] };
     wizardState.phosphate.structure = { atoms: [3], bonds: [] };
     const assignedAttachmentPoints = createAssignedAttachmentPoints([
-      ['0', AttachmentPointName.R1, [1, 11]],
-      ['1', AttachmentPointName.R2, [2, 12]],
-      ['2', AttachmentPointName.R3, [3, 13]],
-      ['3', AttachmentPointName.R4, [4, 14]],
+      [0, AttachmentPointName.R1, [1, 11]],
+      [1, AttachmentPointName.R2, [2, 12]],
+      [2, AttachmentPointName.R3, [3, 13]],
+      [3, AttachmentPointName.R4, [4, 14]],
     ]);
 
     const visibleAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
@@ -257,7 +257,7 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     expect(visibleAttachmentPoints).toEqual(
       new Map([
         [
-          '2',
+          2,
           {
             name: AttachmentPointName.R3,
             attachmentAtomId: 3,
@@ -265,7 +265,7 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
           },
         ],
         [
-          '3',
+          3,
           {
             name: AttachmentPointName.R4,
             attachmentAtomId: 4,
@@ -281,8 +281,8 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     wizardState.base.structure = { atoms: [1], bonds: [] };
     wizardState.sugar.structure = { atoms: [2], bonds: [] };
     const assignedAttachmentPoints = createAssignedAttachmentPoints([
-      ['0', AttachmentPointName.R1, [1, 11]],
-      ['1', AttachmentPointName.R2, [2, 12]],
+      [0, AttachmentPointName.R1, [1, 11]],
+      [1, AttachmentPointName.R2, [2, 12]],
     ]);
 
     expect(

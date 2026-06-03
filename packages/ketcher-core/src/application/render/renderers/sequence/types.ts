@@ -1,12 +1,12 @@
-import { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
-import { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
-import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
-import { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
-import { PeptideSequenceItemRenderer } from './PeptideSequenceItemRenderer';
-import { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
-import { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
-import { UnsplitNucleotideSequenceItemRenderer } from './UnsplitNucleotideSequenceItemRenderer';
-import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
+import type { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
+import type { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
+import type { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
+import type { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
+import type { PeptideSequenceItemRenderer } from './PeptideSequenceItemRenderer';
+import type { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
+import type { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
+import type { UnsplitNucleotideSequenceItemRenderer } from './UnsplitNucleotideSequenceItemRenderer';
+import type { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
 
 export type SequenceItemRenderer =
   | NucleotideSequenceItemRenderer

@@ -1,13 +1,13 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
-  BaseMonomer,
-  Chain,
+  type BaseMonomer,
+  type Chain,
+  type SubChainNode,
   LinkerSequenceNode,
   Nucleoside,
   Nucleotide,
   RNABase,
-  SubChainNode,
 } from 'domain/entities';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
@@ -17,16 +17,16 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { SettingsManager } from 'utilities';
 import {
-  ISnakeLayoutModelRow,
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutModelRow,
+  type ISnakeLayoutMonomersNode,
+  type ITwoStrandedSnakeLayoutNode,
   isTwoStrandedSnakeLayoutNode,
-  ITwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/types';
 import { SnakeLayoutModelChain } from 'domain/entities/snake-layout-model/SnakeLayoutModelChain';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 import { Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 

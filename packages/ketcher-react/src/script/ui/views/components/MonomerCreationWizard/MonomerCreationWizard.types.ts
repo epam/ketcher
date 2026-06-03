@@ -1,9 +1,9 @@
-import { KetMonomerClass } from 'application/formatters';
-import { IconName } from 'components';
-import { Editor } from '../../../../editor';
-import { Selection } from '../../../../editor/Editor';
-import { AssignedAttachmentPoints } from 'ketcher-core';
-import { ActionDispatch } from 'react';
+import type { KetMonomerClass } from 'application/formatters';
+import type { IconName } from 'components';
+import type { Editor } from '../../../../editor';
+import type { Selection } from '../../../../editor/Editor';
+import type { AssignedAttachmentPoints } from 'ketcher-core';
+import type { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass | 'rnaPreset';

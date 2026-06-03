@@ -1,17 +1,22 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import {
-  AssignedAttachmentPoint,
-  AssignedAttachmentPoints,
-  AttachmentPointId,
   getAttachmentPointAtomPair,
-  MonomerCreationState,
+  type AssignedAttachmentPoint,
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
+  type MonomerCreationState,
 } from 'application/render';
-import {
-  OperationType,
-  AssignLeavingGroupAtomOperation,
-} from 'application/editor';
+import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
+
+type AssignLeavingGroupAtomOperationCtor = new (
+  monomerCreationState: MonomerCreationState,
+  atomId: number,
+  attachmentPointName?: AssignedAttachmentPoint['name'],
+  assignedAttachmentPoints?: AssignedAttachmentPoints,
+  attachmentPointId?: AttachmentPointId,
+) => BaseOperation;
 
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
@@ -62,6 +67,12 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
 
   invert() {
     const leavingAtomId = this.atomPair[1];
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+    const { AssignLeavingGroupAtomOperation } = require('./' +
+      'AssignLeavingGroupAtomOperation') as {
+      AssignLeavingGroupAtomOperation: AssignLeavingGroupAtomOperationCtor;
+    };
 
     return new AssignLeavingGroupAtomOperation(
       this.monomerCreationState,

@@ -1,25 +1,31 @@
 import {
-  AssignedAttachmentPoints,
   AttachmentPointName,
-  RnaPresetComponentKey,
-  Struct,
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
+  type RnaPresetComponentKey,
+  type Struct,
 } from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
-  PhosphatePosition,
+  type PhosphatePosition,
   getRequiredAttachmentPointsForPhosphatePosition,
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
 type AttachmentPointMap = AssignedAttachmentPoints;
-type AttachmentPointId = AttachmentPointMap extends Map<infer Key, unknown>
-  ? Key
-  : never;
+
 type ComponentAttachmentPointNames = Record<
   RnaPresetComponentKey,
   AttachmentPointName[]
 >;
+
+const CONNECTION_ATTACHMENT_POINT_IDS = {
+  'sugar-base': -1,
+  'base-sugar': -2,
+  'sugar-phosphate': -3,
+  'phosphate-sugar': -4,
+} as const;
 
 const RNA_COMPONENT_KEYS: RnaPresetComponentKey[] = [
   'base',
@@ -155,7 +161,11 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
     attachmentAtomId: number,
     leavingAtomId: number,
   ) => {
-    result.set(id, { name, attachmentAtomId, leavingAtomId });
+    result.set(CONNECTION_ATTACHMENT_POINT_IDS[id], {
+      name,
+      attachmentAtomId,
+      leavingAtomId,
+    });
   };
 
   const baseAtoms = wizardState.base.structure?.atoms ?? [];

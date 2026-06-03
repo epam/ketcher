@@ -1,11 +1,11 @@
-import {
+import type {
   AttachmentPointId,
   AttachmentPointName,
   AtomLabel,
 } from 'ketcher-core';
 import { useEffect, useRef, useState } from 'react';
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';
-import Editor from '../../../../../../editor';
+import type Editor from '../../../../../../editor';
 import styles from '../AttachmentPoint/AttachmentPoint.module.less';
 import { createReadonlyAttachmentPointSelectData } from '../../hooks/useAttachmentPointSelectsData';
 
@@ -83,12 +83,12 @@ const ReadonlyAttachmentPoint = ({
     const handleHighlight = (event: Event) => {
       const attachmentPointId = (event as CustomEvent<AttachmentPointId>)
         .detail;
-      setHighlight(id ? attachmentPointId === id : attachmentPointId === name);
+      setHighlight(id !== undefined ? attachmentPointId === id : false);
     };
     const handleReset = (event: Event) => {
       const attachmentPointId = (event as CustomEvent<AttachmentPointId>)
         .detail;
-      if (id ? attachmentPointId === id : attachmentPointId === name) {
+      if (id !== undefined && attachmentPointId === id) {
         setHighlight(false);
       }
     };

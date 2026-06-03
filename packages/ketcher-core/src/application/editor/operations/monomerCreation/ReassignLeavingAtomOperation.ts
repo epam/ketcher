@@ -1,6 +1,6 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
-import {
+import type {
   AttachmentPointId,
   MonomerCreationState,
   ReStruct,

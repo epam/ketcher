@@ -1,4 +1,4 @@
-import {
+import type {
   AtomLabel,
   AttachmentPointId,
   AttachmentPointName,
@@ -7,7 +7,7 @@ import styles from './AttachmentPoint.module.less';
 
 import { useAttachmentPointSelectsData } from '../../hooks/useAttachmentPointSelectsData';
 import AttachmentPointControls from '../AttachmentPointControls/AttachmentPointControls';
-import Editor from '../../../../../../editor';
+import type Editor from '../../../../../../editor';
 import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
 

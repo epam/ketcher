@@ -1,7 +1,7 @@
 import styles from './Notification.module.less';
 import { type IconName, Icon } from 'components';
 import clsx from 'clsx';
-import {
+import type {
   WizardNotificationId,
   WizardNotificationType,
 } from '../../MonomerCreationWizard.types';

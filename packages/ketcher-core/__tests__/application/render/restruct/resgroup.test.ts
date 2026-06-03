@@ -102,7 +102,6 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       y: 6.574988999717658,
       z: 0,
     });
-
     restruct.rgroupAttachmentPoints.set(0, reRGroupAttachmentPoint);
     const option = {
       microModeScale: 20,

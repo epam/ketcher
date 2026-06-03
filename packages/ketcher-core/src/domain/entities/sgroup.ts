@@ -17,14 +17,14 @@
 import type { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
-import { ReStruct } from '../../application/render';
-import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { Pool } from 'domain/entities/pool';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { ReSGroup } from 'application/render';
+import type { ReStruct } from '../../application/render';
+import type { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { Pool } from 'domain/entities/pool';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
@@ -522,14 +522,19 @@ export class SGroup {
 
     atoms.forEach((aid) => {
       const atom = getAtom(aid);
+      if (!atom) return;
+
       let position;
-      let structBoundingBox;
+      let structBoundingBox: Box2Abs | null = null;
       if ('getVBoxObj' in atom && render) {
         structBoundingBox = atom.getVBoxObj(render);
-      } else {
+      } else if (atom.pp) {
         position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
+
+      if (!structBoundingBox) return;
+
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {

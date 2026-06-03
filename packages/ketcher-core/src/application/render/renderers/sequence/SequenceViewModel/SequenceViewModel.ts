@@ -1,18 +1,18 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import {
+import type {
   ChainsCollection,
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
+  type BaseMonomer,
+  type SubChainNode,
   EmptySequenceNode,
-  BaseMonomer,
-  SubChainNode,
   BackBoneSequenceNode,
   RNABase,
 } from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
-  ISequenceViewModelRow,
+  type ISequenceViewModelRow,
   SequenceViewModelChain,
 } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { isNumber } from 'lodash';

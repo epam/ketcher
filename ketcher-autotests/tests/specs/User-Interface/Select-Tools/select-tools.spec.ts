@@ -1,6 +1,6 @@
 import { expect, test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   waitForPageInit,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -25,7 +25,7 @@ test.describe('Select tools tests', () => {
     page,
   }) => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,

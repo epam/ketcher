@@ -16,7 +16,7 @@
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
-import { ReStruct } from '../../../render';
+import type { ReStruct } from '../../../render';
 
 type Data = {
   bid: any;
@@ -42,7 +42,7 @@ export class BondAttr extends BaseOperation {
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { attribute, bid, value } = this.data;
+      const { attribute, bid, value, needInvalidateBond } = this.data;
       const bond = restruct.molecule.bonds.get(bid)!;
 
       if (!this.data2) {
@@ -50,6 +50,7 @@ export class BondAttr extends BaseOperation {
           bid,
           attribute,
           value: bond[attribute],
+          needInvalidateBond,
         };
       }
 

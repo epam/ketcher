@@ -17,11 +17,11 @@
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Pile } from 'domain/entities/pile';
 import { SGroup } from 'domain/entities/sgroup';
-import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { Struct } from 'domain/entities/struct';
+import type { Atom } from 'domain/entities/atom';
+import type { Bond } from 'domain/entities/bond';
+import type { Struct } from 'domain/entities/struct';
 
-import { Mapping } from './mol.types';
+import type { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 import v3000 from './v3000';
@@ -128,26 +128,8 @@ function prepareSruForSaving(sgroup: SGroup, mol: Struct): void {
 }
 
 function prepareCopForSaving(sgroup: SGroup, mol: Struct): void {
-  const xBonds: number[] = [];
-  mol.bonds.forEach((bond, bid) => {
-    const a1 = getAtom(mol, bond.begin);
-    const a2 = getAtom(mol, bond.end);
-    if (
-      (a1.sgs.has(sgroup.id) && !a2.sgs.has(sgroup.id)) ||
-      (a2.sgs.has(sgroup.id) && !a1.sgs.has(sgroup.id))
-    ) {
-      xBonds.push(bid);
-    }
-  });
-  if (xBonds.length !== 0 && xBonds.length !== 2) {
-    const error = new Error(
-      'Unsupported cross-bonds number',
-    ) as SGroupSavingError;
-    error.id = sgroup.id;
-    error['error-type'] = 'cross-bond-number';
-    throw error;
-  }
-  sgroup.bonds = xBonds;
+  // Same cross-bond computation as SRU.
+  prepareSruForSaving(sgroup, mol);
 }
 
 function prepareSupForSaving(sgroup: SGroup, mol: Struct): void {
@@ -256,13 +238,8 @@ function saveCopToMolfile(
   atomMap: Mapping,
   bondMap: Mapping,
 ): string {
-  const idstr = (sgMap[sgroup.id] + '').padStart(3);
-
-  let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
-  return lines.join('\n');
+  // COP is serialized identically to SRU.
+  return saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
 }
 
 function saveSupToMolfile(
@@ -367,13 +344,8 @@ function saveGenToMolfile(
   atomMap: Mapping,
   bondMap: Mapping,
 ): string {
-  const idstr = (sgMap[sgroup.id] + '').padStart(3);
-
-  let lines: string[] = [];
-  lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
-  lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  lines = lines.concat(bracketsToMolfile(mol, sgroup, idstr));
-  return lines.join('\n');
+  // GEN is serialized identically to SRU.
+  return saveSruToMolfile(sgroup, mol, sgMap, atomMap, bondMap);
 }
 
 function makeAtomBondLines(

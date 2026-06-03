@@ -20,7 +20,7 @@ import { Atom, AttachmentPoints, StereoLabel } from 'domain/entities/atom';
 import { AtomList } from 'domain/entities/atomList';
 import { Bond } from 'domain/entities/bond';
 import { Pool } from 'domain/entities/pool';
-import { RGroup, RGroupAttributes } from 'domain/entities/rgroup';
+import { type RGroupAttributes, RGroup } from 'domain/entities/rgroup';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
@@ -29,7 +29,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Elements } from 'domain/constants';
 import sGroup from './parseSGroup';
 import utils from './utils';
-import { AtomMap, SGroupMap } from './mol.types';
+import type { AtomMap, SGroupMap } from './mol.types';
 
 const loadRGroupFragments = true; // TODO: set to load the fragments
 
@@ -398,9 +398,9 @@ function parsePropertyLines(
   while (shift < end) {
     const line = ctabLines[shift];
 
-    if (line.charAt(0) === 'A') {
+    if (line.startsWith('A')) {
       handleAliasProperty(line, ctabLines, ++shift, props);
-    } else if (line.charAt(0) === 'M') {
+    } else if (line.startsWith('M')) {
       const type = line.slice(3, 6);
       const propertyData = line.slice(6);
       const shouldBreak = processMPropertyLine(
@@ -576,7 +576,7 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
   ctabLines = ctabLines.slice(7);
   if (ctabLines[0].trim() !== '$CTAB') throw new Error('RGFile format invalid');
   let i = 1;
-  while (ctabLines[i].charAt(0) !== '$') i++;
+  while (!ctabLines[i].startsWith('$')) i++;
   if (ctabLines[i].trim() !== '$END CTAB') {
     throw new Error('RGFile format invalid');
   }
@@ -588,7 +588,6 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
     if (ctabLines.length === 0) throw new Error('Unexpected end of file');
     let line = ctabLines[0].trim();
     if (line === '$END MOL') {
-      ctabLines = ctabLines.slice(1);
       break;
     }
     if (line !== '$RGP') throw new Error('RGFile format invalid');
@@ -606,7 +605,7 @@ function parseRg2000(ctabLines: string[], ignoreChiralFlag?: boolean): Struct {
       }
       if (line !== '$CTAB') throw new Error('RGFile format invalid');
       i = 1;
-      while (ctabLines[i].charAt(0) !== '$') i++;
+      while (!ctabLines[i].startsWith('$')) i++;
       if (ctabLines[i].trim() !== '$END CTAB') {
         throw new Error('RGFile format invalid');
       }
@@ -646,14 +645,14 @@ function parseRxn2000(
   const nAgents = countsSplit[2] - 0;
   ctabLines = ctabLines.slice(1); // consume counts line
   const mols: Struct[] = [];
-  while (ctabLines.length > 0 && ctabLines[0].substr(0, 4) === '$MOL') {
+  while (ctabLines.length > 0 && ctabLines[0].startsWith('$MOL')) {
     ctabLines = ctabLines.slice(1);
     let n = 0;
-    while (n < ctabLines.length && ctabLines[n].substr(0, 4) !== '$MOL') n++;
+    while (n < ctabLines.length && !ctabLines[n].startsWith('$MOL')) n++;
 
     const lines = ctabLines.slice(0, n);
     let struct: Struct;
-    if (lines[0].search('\\$MDL') === 0) {
+    if (lines[0].startsWith('$MDL')) {
       struct = parseRg2000(lines, ignoreChiralFlag);
     } else {
       struct = parseCTab(lines.slice(3), ignoreChiralFlag);

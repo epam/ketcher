@@ -19,8 +19,8 @@ import { Fragment, StereoFlag } from 'domain/entities/fragment';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 
 class ReEnhancedFlag extends ReObject {

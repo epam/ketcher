@@ -30,7 +30,7 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
 import { Ruler } from '@tests/pages/macromolecules/tools/Ruler';
@@ -252,7 +252,7 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     const from = 'bnn';
     const targets = ['eop', '5hMedC', '5NitInd', 'DOTA'];
     for (const to of targets) {
-      await connectMonomersWithBonds(page, [from, to], MacroBondType.Hydrogen);
+      await connectMonomersWithBonds(page, [from, to], MacroBondTool.Hydrogen);
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -260,7 +260,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     });
   });
 
-  test('Case 4: Chemical elements not disappear when attempting to Expand the Structure in Micro mode after selecting one in Macro mode', async () => {
+  test('Case 4: Chemical elements not disappear when attempting to Expand the Structure in Micro mode after selecting one in Macro mode', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/7117
@@ -272,7 +274,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * 4. Select a monomer
      * 5. Switch to Micro and expand the structure
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Bugs/structure-with-two-a.ket',
@@ -494,7 +495,9 @@ test.describe('Ketcher bugs in 3.6.0', () => {
     );
   });
 
-  test('Case 14: System not shows positive charge modificator as extra + in addition to charge modified molecule', async () => {
+  test('Case 14: System not shows positive charge modificator as extra + in addition to charge modified molecule', async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/Indigo/issues/1686
@@ -506,7 +509,6 @@ test.describe('Ketcher bugs in 3.6.0', () => {
      * Bug not fixed https://github.com/epam/Indigo/issues/1686
      * When it will be fixed need to update the screenshot.
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openPPTXFileAndValidateStructurePreview(page, 'PPTX/Extra.plus.pptx');
     await takeEditorScreenshot(page);
   });

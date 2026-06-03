@@ -1,6 +1,6 @@
 import { Subscription } from 'subscription';
-import { ToolEventHandlerName } from 'application/editor/tools/Tool';
-import { CoreEditor } from 'application/editor/Editor';
+import type { ToolEventHandlerName } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
@@ -262,11 +262,6 @@ export const hotkeysConfiguration = {
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
-      // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      // Sequence mode handles Delete/Backspace itself (even when not editing),
-      // so skip tool switching here.
-      if (editor.isSequenceMode) return;
-
       const hasSelectedEntities =
         editor.drawingEntitiesManager.selectedEntities.length > 0;
 

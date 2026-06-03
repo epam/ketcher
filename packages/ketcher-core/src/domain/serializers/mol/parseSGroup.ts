@@ -18,9 +18,9 @@ import { Pool } from 'domain/entities/pool';
 import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 
-import { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
+import type { SGroupMap, AtomMap, PostLoadHandler } from './mol.types';
 import utils from './utils';
 import assert from 'assert';
 
@@ -150,10 +150,8 @@ function postLoadMer(_sgroup: SGroup): void {
 }
 
 function postLoadCop(sgroup: SGroup): void {
-  sgroup.data.connectivity = (sgroup.data.connectivity || 'eu')
-    .trim()
-    .toLowerCase();
-  sgroup.data.subtype = (sgroup.data.subtype || '').trim().toLowerCase();
+  // COP post-load is identical to GEN.
+  postLoadGen(sgroup);
 }
 
 function postLoadCro(_sgroup: SGroup): void {

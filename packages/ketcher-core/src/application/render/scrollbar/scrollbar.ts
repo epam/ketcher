@@ -1,6 +1,6 @@
-import { Render } from '../raphaelRender';
-import { ViewBox } from '../render.types';
-import { RaphaelElement, RaphaelRectAttr } from './types';
+import type { Render } from '../raphaelRender';
+import type { ViewBox } from '../render.types';
+import type { RaphaelElement, RaphaelRectAttr } from './types';
 
 export abstract class Scrollbar {
   protected bar: RaphaelElement | null = null;

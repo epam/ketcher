@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, KeyboardEvent } from 'react';
-import { Struct } from 'ketcher-core';
+import type { FC, KeyboardEvent } from 'react';
+import type { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
 import { Icon, StructRender } from 'components';
@@ -58,11 +58,11 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation || '';
+    return tmpl.props.abbreviation ?? '';
   }
   return (
-    tmpl.props.abbreviation ||
-    tmpl.struct.name ||
+    tmpl.props.abbreviation ??
+    tmpl.struct.name ??
     `${tmpl.props.group} template ${i + 1}`
   );
 }

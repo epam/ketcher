@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import { Box2Abs } from 'domain/entities/box2Abs';
-import { RxnPlus } from 'domain/entities/rxnPlus';
+import type { RxnPlus } from 'domain/entities/rxnPlus';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { Render } from '../raphaelRender';
-import ReStruct from './restruct';
-import { RenderOptions } from '../render.types';
+import type { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { RenderOptions } from '../render.types';
 
 class ReRxnPlus extends ReObject {
   item: RxnPlus;

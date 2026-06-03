@@ -282,6 +282,7 @@
         "fullName": "N-Methyl-Methionine",
         "alias": "meM",
         "aliasHELM": "meM",
+        "aliasBILN": "meM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

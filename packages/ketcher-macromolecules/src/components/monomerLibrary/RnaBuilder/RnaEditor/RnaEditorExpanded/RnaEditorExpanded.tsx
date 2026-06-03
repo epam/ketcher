@@ -419,40 +419,44 @@ export const RnaEditorExpanded = ({
     );
   };
 
-  const renderPhosphatePositionOption = (
-    position: RnaPhosphatePosition,
-    isDisabled: boolean,
-  ) => (
-    <Tooltip
-      key={position}
-      title={isDisabled ? phosphatePositionDisabledTooltip[position] : ''}
-    >
-      <span>
-        <button
-          type="button"
-          className={clsx(
-            styles.phosphatePositionOption,
-            isDisabled && styles.phosphatePositionOptionDisabled,
-          )}
-          disabled={isDisabled}
-          onClick={() => {
-            setPhosphatePosition(position);
-          }}
-        >
-          {renderPhosphateTriggerIcon(position, false, true)}
-        </button>
-      </span>
-    </Tooltip>
-  );
-
   const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
     position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
 
-  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
-    if (!newPreset?.phosphate) {
-      return null;
+  const renderPhosphatePositionOption = (
+    position: RnaPhosphatePosition,
+    isDisabled: boolean,
+  ) => {
+    let tooltip: string;
+    if (isDisabled) {
+      tooltip = phosphatePositionDisabledTooltip[position];
+    } else if (selectedPhosphatePosition === position) {
+      tooltip = getPhosphatePositionTooltip(position);
+    } else {
+      tooltip = `Switch to ${position}`;
     }
 
+    return (
+      <Tooltip key={position} title={tooltip}>
+        <span>
+          <button
+            type="button"
+            className={clsx(
+              styles.phosphatePositionOption,
+              isDisabled && styles.phosphatePositionOptionDisabled,
+            )}
+            disabled={isDisabled}
+            onClick={() => {
+              setPhosphatePosition(position);
+            }}
+          >
+            {renderPhosphateTriggerIcon(position, false, true)}
+          </button>
+        </span>
+      </Tooltip>
+    );
+  };
+
+  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
     const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
     const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
     const isPhosphateGroupActive =

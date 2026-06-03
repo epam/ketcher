@@ -19,12 +19,12 @@ import { uniqBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { Elements } from 'ketcher-core';
 
-import { Template } from '../../template/TemplateTable';
+import type { Template } from '../../template/TemplateTable';
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors';
 import { templatesLibSelector } from '../../../state/templates/selectors';
 import { saltsAndSolventsSelector } from '../../../state/saltsAndSolvents/selectors';
 import {
-  AbbreviationOption,
+  type AbbreviationOption,
   AbbreviationType,
 } from '../AbbreviationLookup.types';
 

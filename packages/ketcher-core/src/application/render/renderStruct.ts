@@ -1,8 +1,8 @@
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
-import ReAtom from './restruct/reatom';
+import type ReAtom from './restruct/reatom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 /**
@@ -124,6 +124,15 @@ export class RenderStruct {
       }
 
       rnd.setMolecule(preparedStruct);
+
+      if (window.isPolymerEditorTurnedOn) {
+        // Raphael sets overflow:hidden as an inline style on the SVG element,
+        // which clips bond strokes at the bounding-box edge and makes them
+        // appear thinner than bonds in the interior. Override it so strokes
+        // can paint the few pixels beyond the viewBox that they need.
+        (rnd.paper.canvas as SVGSVGElement).style.overflow = 'visible';
+      }
+
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {

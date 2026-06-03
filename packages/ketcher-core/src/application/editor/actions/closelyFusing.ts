@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import { Action } from './action';
-import { checkAtomValence, fromAtomMerge } from './atom';
+import { checkAtomValence } from './atom';
+import { fromAtomMerge } from './atomMerge';
 import { fromBondsMerge } from './bond';
 import utils from '../shared/utils';
 

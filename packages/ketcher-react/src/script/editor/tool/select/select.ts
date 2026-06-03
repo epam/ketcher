@@ -16,6 +16,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
+  type ReSGroup,
+  type ReStruct,
+  type Vec2,
   CoordinateTransformation,
   fromImageResize,
   fromItemsFuse,
@@ -30,10 +33,7 @@ import {
   KetcherLogger,
   MULTITAIL_ARROW_KEY,
   isControlKey,
-  ReSGroup,
-  ReStruct,
   SGroup,
-  Vec2,
   vectorUtils,
 } from 'ketcher-core';
 
@@ -41,16 +41,16 @@ import LassoHelper from '../helper/lasso';
 import { isMergingToMacroMolecule } from '../helper/isMacroMolecule';
 import { atomLongtapEvent } from '../atom';
 import SGroupTool from '../sgroup';
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 import { dropAndMerge } from '../helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
 import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
 import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
-import { Tool } from '../Tool';
+import type { Tool } from '../Tool';
 import { handleMovingPosibilityCursor } from '../../utils';
 import { getItemCursor } from '../../utils/getItemCursor';
-import {
+import type {
   ArrowMoveTool,
   MultitailArrowClosestItem,
   ReactionArrowClosestItem,
@@ -62,6 +62,7 @@ import {
   getNewSelectedItems,
   getSelectedAtoms,
   getSelectedBonds,
+  isItemSelected,
   onSelectionEnd,
   onSelectionLeave,
   onSelectionMove,
@@ -69,13 +70,13 @@ import {
   selMerge,
 } from './select.helpers';
 import {
-  DragContext,
+  type DragContext,
+  type SelectMode,
+  type SimpleObjectSelectionDragContext,
   isArrowDragContext,
   isImageSelectionDragContext,
   isSelectionMoveDragContext,
   isSimpleObjectSelectionDragContext,
-  SelectMode,
-  SimpleObjectSelectionDragContext,
 } from './select.types';
 import { createCopyOfSelected } from 'src/script/ui/action/createCopyOfSelected';
 
@@ -134,7 +135,17 @@ class SelectTool implements Tool {
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
     const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
+    // Only auto-expand the selection to the enclosing sgroup(s) when the
+    // clicked item is not already part of the current selection. Otherwise
+    // a click on, say, an inter-monomer bond would overwrite an existing
+    // multi-selection with the atoms/bonds of just the sgroup containing one
+    // of that bond's endpoints, breaking multi-drag.
+    const isClickedItemInSelection =
+      ci && isItemSelected(this.editor.selection(), ci, ctab);
+    if (
+      !isClickedItemInSelection &&
+      (newSelected.atoms?.length || newSelected.bonds?.length)
+    ) {
       this.editor.selection(newSelected);
     }
     const currentPosition = CoordinateTransformation.pageToModel(
@@ -200,7 +211,9 @@ class SelectTool implements Tool {
       this.editor.selection(selMerge(sel, selection, true));
     } else {
       this.editor.selection(null);
-      this.editor.selection(isSelected(selection, ci) ? selection : sel);
+      this.editor.selection(
+        isItemSelected(selection, ci, ctab) ? selection : sel,
+      );
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
@@ -403,6 +416,10 @@ class SelectTool implements Tool {
         this.editor.update(dragCtx.action);
         this.editor.update(true);
       }
+      this.dragCtx = null;
+      editor.event.message.dispatch({ info: false });
+      this.editor.rotateController.rerender();
+      return;
     }
 
     if (isSelectionMoveDragContext(dragCtx)) {

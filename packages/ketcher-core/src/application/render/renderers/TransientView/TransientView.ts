@@ -1,4 +1,4 @@
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 
 export abstract class TransientView {
   public static readonly viewName: string;

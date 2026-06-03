@@ -587,9 +587,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await dragMouseTo(page, 450, 250);
 
     await presetSection.setupBase({
-      atomIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      atomIds: [9, 10, 8, 0, 1, 2, 3, 4, 5, 6, 7],
       bondIds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-      symbol: Base.Base.alias,
+      code: Base.Base.alias,
       name: 'B1',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
@@ -598,7 +598,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await presetSection.setupSugar({
       atomIds: [16, 17, 18, 19, 20, 21, 22, 23],
       bondIds: [18, 19, 20, 21, 22, 23, 24, 25],
-      symbol: Sugar.Sugar.alias,
+      code: Sugar.Sugar.alias,
       name: 'S1',
       HELMAlias: 'SugAlias',
     });
@@ -606,7 +606,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await presetSection.setupPhosphate({
       atomIds: [11, 12, 13, 14, 15],
       bondIds: [13, 14, 15, 16],
-      symbol: Phosphate.Phosphate.alias,
+      code: Phosphate.Phosphate.alias,
       name: 'P1',
       HELMAlias: 'PhosAlias',
     });

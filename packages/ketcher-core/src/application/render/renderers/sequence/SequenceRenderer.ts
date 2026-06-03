@@ -1,11 +1,11 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
+  type ITwoStrandedChainItem,
   ChainsCollection,
-  ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import {
-  BaseMonomer,
+  type BaseMonomer,
   HydrogenBond,
   MonomerToAtomBond,
   Nucleotide,
@@ -13,7 +13,7 @@ import {
   Sugar,
   Vec2,
 } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
   getNextMonomerInChain,
@@ -25,10 +25,10 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { IBaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import {
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
@@ -40,8 +40,9 @@ import { NewSequenceButton } from 'application/render/renderers/sequence/ui-cont
 import { isNumber } from 'lodash';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
+import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -53,6 +54,10 @@ type BaseNodeSelection = {
   isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
   hasR1Connection?: boolean;
 };
+
+type SequenceBondRenderer =
+  | PolymerBondSequenceRenderer
+  | MonomerToAtomBondSequenceRenderer;
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
@@ -66,13 +71,19 @@ export type TwoStrandedNodeSelection = BaseNodeSelection & {
 export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
 
+export type SetCaretPositionOptions = {
+  afterRowEnd?: boolean;
+};
+
 export class SequenceRenderer {
   private static caretPositionValue = -1;
   private static lastUserDefinedCaretPositionValue = 0;
   private static chainsCollectionValue: ChainsCollection;
   private static lastChainStartPositionValue: Vec2;
-  private static sequenceViewModelValue: SequenceViewModel;
+
   private static newSequenceButtons: NewSequenceButton[] = [];
+  private static readonly sequenceBondRenderers =
+    new Set<SequenceBondRenderer>();
 
   public static get caretPosition(): number {
     return this.caretPositionValue;
@@ -107,11 +118,11 @@ export class SequenceRenderer {
   }
 
   public static get sequenceViewModel(): SequenceViewModel {
-    return this.sequenceViewModelValue;
+    return sequenceRendererStore.sequenceViewModel;
   }
 
   private static set sequenceViewModel(value: SequenceViewModel) {
-    this.sequenceViewModelValue = value;
+    sequenceRendererStore.setSequenceViewModel(value);
   }
 
   public static show(
@@ -339,7 +350,7 @@ export class SequenceRenderer {
                   polymerBond,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledHydrogenBonds.add(polymerBond);
 
@@ -357,7 +368,7 @@ export class SequenceRenderer {
                   node,
                 );
 
-                bondRenderer.show();
+                this.showBondRenderer(bondRenderer);
                 polymerBond.setRenderer(bondRenderer);
                 handledAttachmentPoints.add(attachmentPointName);
 
@@ -407,7 +418,7 @@ export class SequenceRenderer {
               } else {
                 bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
               }
-              bondRenderer.show();
+              this.showBondRenderer(bondRenderer);
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
 
@@ -439,13 +450,32 @@ export class SequenceRenderer {
           chain.firstNode,
           chain.lastNonEmptyNode,
         );
-        bondRenderer.show();
+        this.showBondRenderer(bondRenderer);
         polymerBond.setRenderer(bondRenderer);
       }
     });
   }
 
-  public static setCaretPosition(caretPosition: number) {
+  private static showBondRenderer(bondRenderer: SequenceBondRenderer) {
+    bondRenderer.show();
+    this.sequenceBondRenderers.add(bondRenderer);
+  }
+
+  private static isCaretAfterRowEndValue = false;
+
+  public static get isCaretAfterRowEnd() {
+    return this.isCaretAfterRowEndValue;
+  }
+
+  private static set isCaretAfterRowEnd(value: boolean) {
+    this.isCaretAfterRowEndValue = value;
+  }
+
+  public static setCaretPosition(
+    caretPosition: number,
+    options?: SetCaretPositionOptions,
+  ) {
+    this.isCaretAfterRowEnd = options?.afterRowEnd ?? false;
     const editor = provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -454,9 +484,11 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      renderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
+        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -470,8 +502,10 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      renderer?.redrawCaret(caretPosition);
-      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
+      const afterRowEnd =
+        this.isCaretAfterRowEnd && this.isCurrentCaretAtLastInFullRow;
+      renderer?.redrawCaret(caretPosition, afterRowEnd);
+      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition, afterRowEnd);
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
@@ -727,6 +761,7 @@ export class SequenceRenderer {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition ?? this.caretPosition,
+      (position) => SequenceRenderer.setCaretPosition(position),
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
@@ -737,10 +772,156 @@ export class SequenceRenderer {
     const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition ?? this.caretPosition,
+      (position) => SequenceRenderer.setCaretPosition(position),
     );
     SequenceRenderer.resetLastUserDefinedCaretPosition();
 
     return operation;
+  }
+
+  private static redrawCaretOnRenderer(
+    renderer: BaseSequenceItemRenderer,
+    afterRowEnd: boolean,
+  ) {
+    renderer.removeCaret();
+    if (afterRowEnd) {
+      renderer.showCaretAfterNode();
+    } else {
+      renderer.showCaret();
+    }
+  }
+
+  private static redrawCaretOnBothStrands(
+    node: ITwoStrandedChainItem,
+    afterRowEnd: boolean,
+  ) {
+    this.isCaretAfterRowEnd = afterRowEnd;
+    const renderer = node.senseNode?.renderer;
+
+    if (!(renderer instanceof BaseSequenceItemRenderer)) {
+      return;
+    }
+
+    this.redrawCaretOnRenderer(renderer, afterRowEnd);
+    if (renderer.antisenseNodeRenderer) {
+      this.redrawCaretOnRenderer(renderer.antisenseNodeRenderer, afterRowEnd);
+    }
+  }
+
+  public static get isCurrentCaretAtLastInFullRow(): boolean {
+    const currentNode = this.currentEdittingNode;
+    const currentRow = this.currentChainRow;
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    return (
+      Boolean(currentNode) &&
+      currentNode === lastNodeInRow &&
+      !(lastNodeInRow?.senseNode instanceof EmptySequenceNode)
+    );
+  }
+
+  public static moveCaretForwardOrToRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      this.isCaretAfterRowEnd = false;
+      this.moveCaretForward();
+
+      return;
+    }
+
+    if (this.isCurrentCaretAtLastInFullRow) {
+      const lastNodeInRow =
+        this.currentChainRow[this.currentChainRow.length - 1];
+
+      if (!lastNodeInRow) {
+        return;
+      }
+
+      this.redrawCaretOnBothStrands(lastNodeInRow, true);
+    } else {
+      this.moveCaretForward();
+    }
+  }
+
+  public static moveCaretBackOrFromRowEnd() {
+    if (this.isCaretAfterRowEnd) {
+      const currentNode = this.currentEdittingNode;
+
+      if (currentNode) {
+        this.redrawCaretOnBothStrands(currentNode, false);
+      }
+
+      return;
+    }
+
+    const currentNode = this.currentEdittingNode;
+
+    if (!currentNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentNode);
+
+    if (currentNodeIndexInRow === 0) {
+      this.moveCaretBack();
+
+      if (this.isCurrentCaretAtLastInFullRow) {
+        const lastNodeInRow =
+          this.currentChainRow[this.currentChainRow.length - 1];
+
+        if (!lastNodeInRow) {
+          return;
+        }
+
+        this.redrawCaretOnBothStrands(lastNodeInRow, true);
+      }
+
+      return;
+    }
+
+    this.moveCaretBack();
+  }
+
+  public static moveCaretToRowStart() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentNodeIndexInRow =
+      this.currentChainRow.indexOf(currentEdittingNode);
+
+    SequenceRenderer.setCaretPosition(
+      this.caretPosition - currentNodeIndexInRow,
+    );
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+  }
+
+  public static moveCaretToRowEnd() {
+    const currentEdittingNode = this.currentEdittingNode;
+
+    if (!currentEdittingNode) {
+      return;
+    }
+
+    const currentRow = this.currentChainRow;
+    const currentNodeIndexInRow = currentRow.indexOf(currentEdittingNode);
+    const lastNodeInRow = currentRow[currentRow.length - 1];
+
+    if (!lastNodeInRow) {
+      return;
+    }
+
+    const isPartialRow = lastNodeInRow.senseNode instanceof EmptySequenceNode;
+
+    const offset = currentRow.length - 1 - currentNodeIndexInRow;
+
+    SequenceRenderer.setCaretPosition(this.caretPosition + offset, {
+      afterRowEnd: !isPartialRow,
+    });
+
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
   public static get currentChainIndex() {
@@ -1246,11 +1427,31 @@ export class SequenceRenderer {
     );
   }
 
+  private static clearBondRenderers() {
+    this.sequenceBondRenderers.forEach((bondRenderer) => bondRenderer.remove());
+    this.sequenceBondRenderers.clear();
+  }
+
   public static clear() {
+    this.clearBondRenderers();
     this.sequenceViewModel?.forEachNode(({ twoStrandedNode }) => {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
+
+    if (this.chainsCollection) {
+      const handledBonds = new Set();
+      this.chainsCollection.chains.forEach((chain) => {
+        chain.monomers.forEach((monomer) => {
+          monomer.forEachBond((bond) => {
+            if (!handledBonds.has(bond)) {
+              handledBonds.add(bond);
+              bond.renderer?.remove();
+            }
+          });
+        });
+      });
+    }
     this.removeNewSequenceButtons();
     this.removeDelegatedEvents();
   }

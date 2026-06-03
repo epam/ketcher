@@ -16,12 +16,12 @@
 
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import { RGroup } from 'domain/entities/rgroup';
+import type { RGroup } from 'domain/entities/rgroup';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
-import { RenderOptions } from '../render.types';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
+import type { RenderOptions } from '../render.types';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';

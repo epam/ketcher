@@ -15,14 +15,14 @@
  ***************************************************************************/
 
 import { Box2Abs } from 'domain/entities/box2Abs';
-import { RxnArrow, RxnArrowMode } from 'domain/entities/rxnArrow';
+import { type RxnArrowMode, RxnArrow } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import Raphael from '../raphael-ext';
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
@@ -32,6 +32,7 @@ type Arrow = {
   pos: Array<Vec2>;
   mode: RxnArrowMode;
   height?: number;
+  arrowId?: number;
 };
 
 type ArrowParams = {
@@ -214,6 +215,9 @@ class ReRxnArrow extends ReObject {
     const path = this.generatePath(restruct.render, options, 'arrow');
     path.node?.setAttribute('data-testid', 'rxn-arrow');
     path.node?.setAttribute('data-arrowtype', this.item.mode + '-arrow');
+    if (typeof this.item.arrowId === 'number') {
+      path.node?.setAttribute('data-arrow-id', String(this.item.arrowId));
+    }
 
     const offset = options.offset;
     if (offset != null) path.translateAbs(offset.x, offset.y);

@@ -282,6 +282,7 @@
         "fullName": "Isoleucine",
         "alias": "I",
         "aliasHELM": "I",
+        "aliasBILN": "I",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

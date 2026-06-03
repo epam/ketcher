@@ -1,21 +1,21 @@
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 import { AttachmentPoints } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import {
+import type {
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
 } from 'domain/entities/rgroupAttachmentPoint';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { Scale } from 'domain/helpers';
-import ReAtom from './reatom';
+import type ReAtom from './reatom';
 import ReObject from './reobject';
-import ReStruct from './restruct';
+import type ReStruct from './restruct';
 import draw from '../draw';
-import { Render } from '../raphaelRender';
-import { RenderOptions, RenderOptionStyles } from '../render.types';
+import type { Render } from '../raphaelRender';
+import type { RenderOptions, RenderOptionStyles } from '../render.types';
 import { LayerMap } from './generalEnumTypes';
-import Visel from './visel';
+import type Visel from './visel';
 
 type AttachmentPointShape = {
   items?: Array<{ node?: SVGElement | null }>;

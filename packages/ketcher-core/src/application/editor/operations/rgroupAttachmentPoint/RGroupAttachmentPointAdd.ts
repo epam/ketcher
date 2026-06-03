@@ -1,10 +1,9 @@
-import { ReStruct, ReRGroupAttachmentPoint } from 'application/render';
+import { type ReStruct, ReRGroupAttachmentPoint } from 'application/render';
 import assert from 'assert';
 import {
+  type RGroupAttachmentPointType,
   RGroupAttachmentPoint,
-  RGroupAttachmentPointType,
 } from 'domain/entities';
-import { RGroupAttachmentPointRemove } from '.';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';
 
@@ -14,10 +13,17 @@ type Data = {
   attachmentPointId?: number;
 };
 
+const INITIAL_DATA: Data = {
+  atomId: 0,
+  attachmentPointType: 'primary',
+  attachmentPointId: undefined,
+};
+
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
+  static InverseConstructor: new () => BaseOperation;
 
-  constructor(data: Data) {
+  constructor(data: Data = INITIAL_DATA) {
     super(
       OperationType.R_GROUP_ATTACHMENT_POINT_ADD,
       OperationPriority.R_GROUP_ATTACHMENT_POINT_ADD,
@@ -56,7 +62,9 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     if (this.data.attachmentPointId === undefined) {
       throw Error(`Inverted attachmentPointId doesn't exist`);
     }
-    return new RGroupAttachmentPointRemove(this.data.attachmentPointId);
+    const inverted = new RGroupAttachmentPointAdd.InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 

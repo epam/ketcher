@@ -3,7 +3,7 @@ import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { EditorHistory } from '../EditorHistory';
 import type { CoreEditor } from '../Editor';
 import { provideEditorInstance } from '../editorSingleton';
-import { DEFAULT_LAYOUT_MODE, LayoutMode } from './types';
+import { type LayoutMode, DEFAULT_LAYOUT_MODE } from './types';
 import { getModeConstructor } from './modesRegistry';
 import {
   getStructStringFromClipboardData,
@@ -15,13 +15,13 @@ import {
   legacyPaste,
   normalizeError,
 } from 'utilities';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import { ChemicalMimeType } from 'domain/services';
 import { ketcherProvider } from 'application/ketcherProvider';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -72,6 +72,14 @@ export abstract class BaseMode {
   }
 
   async onKeyDown(event: KeyboardEvent) {
+    if (!this.checkIfTargetIsInput(event)) {
+      const hotKeys = initHotKeys(this.keyboardEventHandlers);
+      const shortcutKey = keyNorm.lookup(hotKeys, event);
+
+      if (this.keyboardEventHandlers[shortcutKey]) {
+        event.stopImmediatePropagation();
+      }
+    }
     await new Promise<void>((resolve) => {
       setTimeout(() => {
         const editor = provideEditorInstance();

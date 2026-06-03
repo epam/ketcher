@@ -19,11 +19,11 @@ import {
   ErrorsContext,
   SettingsContext,
 } from './../../../contexts';
-import { StructService } from 'ketcher-core';
+import type { StructService } from 'ketcher-core';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
-import { Root } from 'react-dom/client';
+import type { Root } from 'react-dom/client';
 import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';

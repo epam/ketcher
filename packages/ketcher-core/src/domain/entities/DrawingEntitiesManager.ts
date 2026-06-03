@@ -1,31 +1,32 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
+  type KetFileMultitailArrowNode,
+  type LinkerSequenceNode,
+  type RNABase,
+  type RxnArrowMode,
+  type SubChainNode,
   BaseMonomer,
   Chem,
-  KetFileMultitailArrowNode,
-  LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
   Pool,
-  RNABase,
-  RxnArrowMode,
   SGroupForest,
   Struct,
-  SubChainNode,
   Sugar,
 } from 'domain/entities';
-import { BondCIP } from 'domain/entities/types';
+import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -49,7 +50,7 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
@@ -58,8 +59,8 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import {
+  type GrouppedChain,
   ChainsCollection,
-  GrouppedChain,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
@@ -71,11 +72,8 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import {
-  IKetTemplateConnection,
-  KetMonomerClass,
-} from 'application/formatters';
-import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
+import type { IKetTemplateConnection } from 'application/formatters';
+import { type AtomProperties, Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
   AtomAddOperation,
@@ -91,23 +89,24 @@ import {
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
-  AtomLabel,
+  type AtomLabel,
   HalfMonomerSize,
   SnakeLayoutCellWidth,
 } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
+  KetMonomerClass,
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutMonomersNode,
   isTwoStrandedSnakeLayoutNode,
 } from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
@@ -125,16 +124,14 @@ import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
-import {
-  getMonomerTemplateRefFromMonomerItem,
-  KetFileNode,
-} from 'domain/serializers';
+import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
-import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
@@ -161,6 +158,10 @@ interface MonomerConnectedToSelection {
   bond: PolymerBond;
 }
 
+type ArrowWithId = {
+  arrowId?: number;
+};
+
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
@@ -176,6 +177,28 @@ export class DrawingEntitiesManager {
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
   public antisenseMonomerToSenseChain: Map<BaseMonomer, Chain> = new Map();
+  private nextArrowId = 0;
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+
+    return arrow;
+  }
+
+  private resetArrowIdCounter(): void {
+    this.nextArrowId = 0;
+  }
+
+  private static normalizeInitiallySelected(
+    initiallySelected?: initiallySelectedType,
+  ): boolean | undefined {
+    return typeof initiallySelected === 'boolean'
+      ? initiallySelected
+      : undefined;
+  }
 
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
@@ -193,7 +216,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomLeftMonomerPosition(): Vec2 {
-    const bbox = DrawingEntitiesManager.getStructureBbox(this.monomersArray);
+    const bbox = getStructureBbox(this.monomersArray);
 
     return new Vec2(bbox.left, bbox.bottom);
   }
@@ -317,6 +340,7 @@ export class DrawingEntitiesManager {
       mergedCommand.merge(command);
     });
     this.clearMicromoleculesHiddenEntities();
+    this.resetArrowIdCounter();
     return mergedCommand;
   }
 
@@ -346,7 +370,7 @@ export class DrawingEntitiesManager {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       return new AmbiguousMonomer(monomerItem, position, generateId);
     } else {
-      const [Monomer] = monomerFactory(monomerItem);
+      const [Monomer] = monomerEntityFactory(monomerItem);
 
       return new Monomer(monomerItem, position, { generateId });
     }
@@ -837,7 +861,7 @@ export class DrawingEntitiesManager {
     if (selectedEntities.length === 0) {
       return null;
     }
-    return DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    return getStructureBbox(selectedEntities);
   }
 
   public getSelectedEntitiesCenter(): Vec2 | null {
@@ -2060,7 +2084,7 @@ export class DrawingEntitiesManager {
 
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
-              const moleculeBbox = DrawingEntitiesManager.getStructureBbox(
+              const moleculeBbox = getStructureBbox(
                 twoStrandedSnakeLayoutNode.molecule,
               );
               const offset = Vec2.diff(
@@ -2383,6 +2407,8 @@ export class DrawingEntitiesManager {
         rxnArrow.type,
         rxnArrow.startEndPosition,
         rxnArrow.height,
+        rxnArrow.initiallySelected,
+        rxnArrow.arrowId,
       );
 
       const addedRxnArrow = rxnArrowAddCommand.operations[0]
@@ -2395,6 +2421,7 @@ export class DrawingEntitiesManager {
     this.multitailArrows.forEach((multitailArrow) => {
       const arrowAddCommand = targetDrawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
+        multitailArrow.arrowId,
       );
 
       const addedArrow = arrowAddCommand.operations[0]
@@ -2492,11 +2519,13 @@ export class DrawingEntitiesManager {
           entity.startEndPosition,
           entity.height,
           entity.initiallySelected,
+          undefined,
           entity,
         );
       } else if (entity instanceof MultitailArrow) {
         filteredDrawingEntitiesManager.addMultitailArrowArrowModelChange(
           entity.toKetNode(),
+          undefined,
           entity,
         );
       } else if (entity instanceof RxnPlus) {
@@ -3217,32 +3246,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  // TODO create separate class for BoundingBox
-  public static getStructureBbox(drawingEntities: DrawingEntity[]) {
-    let left = 0;
-    let right = 0;
-    let top = 0;
-    let bottom = 0;
-
-    drawingEntities.forEach((drawingEntity) => {
-      const monomerPosition = drawingEntity.position;
-
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-    });
-
-    return {
-      left,
-      right,
-      top,
-      bottom,
-      width: right - left,
-      height: bottom - top,
-    };
-  }
-
   private static antisenseChainBasesMap(isDnaAntisense: boolean) {
     const antisenseMap = {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
@@ -3386,7 +3389,7 @@ export class DrawingEntitiesManager {
         });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
+          const chainBbox = getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,
@@ -3833,15 +3836,24 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.rxnArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
-    const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
+    const rxnArrow = new RxnArrow(
+      type,
+      position,
+      height,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    rxnArrow.arrowId = arrowId;
+    this.ensureArrowId(rxnArrow);
 
     this.rxnArrows.set(rxnArrow.id, rxnArrow);
 
@@ -3853,16 +3865,19 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new RxnArrowAddOperation(
-      this.addRxnArrowModelChange.bind(
-        this,
-        type,
-        position,
-        height,
-        initiallySelected,
-      ),
+      (arrow?: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          type,
+          position,
+          height,
+          initiallySelected,
+          arrowId,
+          arrow,
+        ),
       this.deleteRxnArrowModelChange.bind(this),
     );
 
@@ -3876,13 +3891,15 @@ export class DrawingEntitiesManager {
     const operation = new RxnArrowDeleteOperation(
       rxnArrow,
       this.deleteRxnArrowModelChange.bind(this),
-      this.addRxnArrowModelChange.bind(
-        this,
-        rxnArrow.type,
-        rxnArrow.startEndPosition,
-        rxnArrow.height,
-        rxnArrow.initiallySelected,
-      ),
+      (arrow: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          rxnArrow.type,
+          rxnArrow.startEndPosition,
+          rxnArrow.height,
+          rxnArrow.initiallySelected,
+          rxnArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);
@@ -3896,15 +3913,19 @@ export class DrawingEntitiesManager {
 
   private addMultitailArrowArrowModelChange(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
     _arrow?: MultitailArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.multitailArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
     const multitailArrow = MultitailArrow.fromKet(multitailArrowKetNode);
+    multitailArrow.arrowId = arrowId;
+    this.ensureArrowId(multitailArrow);
 
     this.multitailArrows.set(multitailArrow.id, multitailArrow);
 
@@ -3913,10 +3934,16 @@ export class DrawingEntitiesManager {
 
   public addMultitailArrow(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new MultitailArrowAddOperation(
-      this.addMultitailArrowArrowModelChange.bind(this, multitailArrowKetNode),
+      (arrow?: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrowKetNode,
+          arrowId,
+          arrow,
+        ),
       this.deleteMultitailArrowModelChange.bind(this),
     );
 
@@ -3930,10 +3957,12 @@ export class DrawingEntitiesManager {
     const operation = new MultitailArrowDeleteOperation(
       multitailArrow,
       this.deleteMultitailArrowModelChange.bind(this),
-      this.addMultitailArrowArrowModelChange.bind(
-        this,
-        multitailArrow.toKetNode(),
-      ),
+      (arrow: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrow.toKetNode(),
+          multitailArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);
@@ -3956,7 +3985,10 @@ export class DrawingEntitiesManager {
       return _rxnPlus;
     }
 
-    const rxnPlus = new RxnPlus(position, initiallySelected);
+    const rxnPlus = new RxnPlus(
+      position,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
 
     this.rxnPluses.set(rxnPlus.id, rxnPlus);
 

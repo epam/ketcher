@@ -421,6 +421,7 @@
         "fullName": "Arginine",
         "alias": "R",
         "aliasHELM": "R",
+        "aliasBILN": "R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,

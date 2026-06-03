@@ -1,11 +1,11 @@
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import {
+  type SequenceNode,
+  type SubChainNode,
   IsChainCycled,
-  SequenceNode,
-  SubChainNode,
 } from 'domain/entities/monomer-chains/types';
 import { Peptide } from 'domain/entities/Peptide';
 import { Phosphate } from 'domain/entities/Phosphate';
@@ -21,7 +21,7 @@ import {
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 

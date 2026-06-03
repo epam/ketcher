@@ -5,7 +5,7 @@ import {
   CoordinateTransformation,
   getOptionsWithConvertedUnits,
 } from 'ketcher-core';
-import Editor from './Editor';
+import type Editor from './Editor';
 
 const HOVER_ICON_OPACITY = 0.7;
 
@@ -137,5 +137,12 @@ export class HoverIcon {
     this._label = icon.label;
     this.shouldBeShownWhenMouseBack = false;
     this.hide();
+  }
+
+  destroy() {
+    const clientArea = this.editor.render.clientArea;
+    document.removeEventListener('mousemove', this.onMouseMove);
+    clientArea.removeEventListener('mouseover', this.onMouseMove);
+    clientArea.removeEventListener('mouseleave', this.onMouseLeave);
   }
 }

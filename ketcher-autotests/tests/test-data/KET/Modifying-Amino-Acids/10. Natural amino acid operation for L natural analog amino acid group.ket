@@ -361,6 +361,7 @@
         "fullName": "Leucine",
         "alias": "L",
         "aliasHELM": "L",
+        "aliasBILN": "L",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,

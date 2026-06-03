@@ -1,9 +1,9 @@
-import { KetMonomerClass } from 'application/formatters';
-import { IconName } from 'components';
-import { Editor } from '../../../../editor';
-import { Selection } from '../../../../editor/Editor';
-import { AttachmentPointName } from 'domain/types';
-import { ActionDispatch } from 'react';
+import type { KetMonomerClass } from 'application/formatters';
+import type { IconName } from 'components';
+import type { Editor } from '../../../../editor';
+import type { Selection } from '../../../../editor/Editor';
+import type { AttachmentPointName } from 'domain/types';
+import type { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
   value: KetMonomerClass | 'rnaPreset';
@@ -16,7 +16,8 @@ export type WizardFormFieldId =
   | 'symbol'
   | 'name'
   | 'naturalAnalogue'
-  | 'aliasHELM';
+  | 'aliasHELM'
+  | 'aliasBILN';
 
 export type RnaPresetWizardStateFieldId =
   | 'base'
@@ -57,11 +58,21 @@ export type WizardNotificationId =
   | 'impureStructure'
   | 'notUniqueHELMAlias'
   | 'invalidHELMAlias'
+  | 'notUniqueBILNAlias'
+  | 'invalidBILNAlias'
   | 'invalidRnaPresetStructure'
+  | 'rnaPresetAtomsOutsideComponents'
+  | 'rnaPresetAtomsInMultipleComponents'
+  | 'rnaPresetMissingComponents'
+  | 'rnaPresetInvalidSugarConnectionBonds'
+  | 'rnaPresetUnexpectedBasePhosphateBond'
+  | 'rnaPresetInvalidSugarBaseConnectionAttachmentPoints'
+  | 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints'
   | 'notUniquePresetCode'
   | 'invalidPresetCode'
   | 'invalidPhosphatePositionAttachmentPoints'
-  | 'phosphatePositionNotSelected';
+  | 'phosphatePositionNotSelected'
+  | 'invalidName';
 
 export type WizardNotificationTypeMap = Record<
   WizardNotificationId,
@@ -93,6 +104,7 @@ export type RnaPresetWizardStatePresetFieldValue = {
   errors: {
     name?: boolean;
     phosphatePosition?: boolean;
+    components?: boolean;
   };
   notifications: WizardNotifications;
   manuallyModifiedSymbols: {
@@ -166,6 +178,7 @@ export type RnaPresetWizardAction =
       errors: {
         name?: boolean;
         phosphatePosition?: boolean;
+        components?: boolean;
       };
       rnaComponentKey: RnaPresetWizardStateFieldId;
     }

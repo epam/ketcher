@@ -56,8 +56,9 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
+  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/index';
 import { updateMonomersLibrary } from '@utils/library/updateLibrary';
@@ -349,7 +350,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.AminoAcid);
-    await createMonomerDialog.setSymbol('CHEM2');
+    await createMonomerDialog.setCode('CHEM2');
     await createMonomerDialog.selectNaturalAnalogue(
       NucleotideNaturalAnalogue.A,
     );
@@ -395,7 +396,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.AminoAcid);
-    await createMonomerDialog.setSymbol('CHEM1');
+    await createMonomerDialog.setCode('CHEM1');
     await createMonomerDialog.selectNaturalAnalogue(
       NucleotideNaturalAnalogue.A,
     );
@@ -426,6 +427,10 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await Library(page).hideLibrary();
     await expect(monomerOnCanvas).toBeVisible();
 
+    const pageCenter = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+    await monomerOnCanvas.hover();
+    await dragMouseTo(page, pageCenter.x, pageCenter.y + 100);
     await monomerOnCanvas.hover();
 
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -612,7 +617,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
     await selectAllStructuresOnCanvas(page);
     await createMonomer(page, {
       type: MonomerType.AminoAcid,
-      symbol: 'RNA',
+      code: 'RNA',
       name: 'GLY',
       naturalAnalogue: AminoAcidNaturalAnalogue.A,
     });
@@ -640,14 +645,14 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const monomerName = '1 2  3   4    5     6       End';
     await pasteFromClipboardAndAddToCanvas(page, 'BrBrBr');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await deselectAtomAndBonds(page, ['5']);
     await createMonomer(page, {
       type: MonomerType.CHEM,
-      symbol: 'LongName',
+      code: 'LongName',
       name: monomerName,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({

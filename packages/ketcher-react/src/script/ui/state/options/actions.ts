@@ -1,4 +1,4 @@
-import { AnyAction, Dispatch } from 'redux';
+import type { AnyAction, Dispatch } from 'redux';
 
 export const APP_OPTIONS_ACTION = 'APP_OPTIONS';
 export const OPTIONS_UPDATE_ACTION = 'UPDATE';

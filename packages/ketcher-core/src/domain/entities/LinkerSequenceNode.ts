@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -10,7 +10,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class LinkerSequenceNode {
   constructor(public monomer: BaseMonomer) {}

@@ -15,16 +15,16 @@
  ***************************************************************************/
 
 import {
+  type ReStruct,
+  type ImageReferencePositionInfo,
   Fragment,
   Vec2,
   Scale,
-  ReStruct,
   IMAGE_KEY,
-  ImageReferencePositionInfo,
   MULTITAIL_ARROW_KEY,
   FunctionalGroup,
 } from 'ketcher-core';
-import { ClosestItem, ClosestItemWithMap } from './closest.types';
+import type { ClosestItem, ClosestItemWithMap } from './closest.types';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;

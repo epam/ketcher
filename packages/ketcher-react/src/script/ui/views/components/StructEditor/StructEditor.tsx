@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import {
+  type ComponentType,
+  type ElementType,
+  type RefObject,
   Component,
-  ComponentType,
-  ElementType,
-  RefObject,
   createRef,
 } from 'react';
 
@@ -31,10 +31,11 @@ import { omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
-import { KetcherLogger, Struct, ketcherProvider } from 'ketcher-core';
+import { type Struct, KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
 import MonomerCreationWizard from '../MonomerCreationWizard/MonomerCreationWizard';
+import MonomerCreationWizardBackdrop from '../MonomerCreationWizard/MonomerCreationWizardBackdrop';
 import { Tooltip } from '../Tooltip';
 
 interface StructEditorProps {
@@ -84,6 +85,8 @@ function setupEditor(
   if (oldProps.options && options !== oldProps.options) {
     editor.options(options);
     editor.setServerSettings(props.serverSettings);
+  } else if (props.serverSettings !== oldProps.serverSettings) {
+    editor.setServerSettings(props.serverSettings);
   }
 
   Object.keys(editor.event).forEach((name) => {
@@ -100,8 +103,10 @@ function setupEditor(
     }
   });
 
-  editor.render.unobserveCanvasResize();
-  editor.render.observeCanvasResize();
+  if (struct !== oldProps.struct || options !== oldProps.options) {
+    editor.render.unobserveCanvasResize();
+    editor.render.observeCanvasResize();
+  }
 }
 
 function removeEditorHandlers(editor: Editor, props: StructEditorProps) {
@@ -196,7 +201,10 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
     );
   }
 
+  // NOSONAR - canvas editor must be updated before React renders to prevent
+  // white-screen states during struct changes; componentDidUpdate fires too late.
   UNSAFE_componentWillReceiveProps(props: StructEditorProps) {
+    // NOSONAR
     setupEditor(this.editor, props, this.props);
   }
 
@@ -284,7 +292,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'move': {
+        case 'move':
+        case 'mouseover': {
           this.editorRef.current?.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
@@ -301,13 +310,6 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
           break;
         }
 
-        case 'mouseover': {
-          this.editorRef.current?.classList.add(classes.enableCursor);
-          this.setState({
-            enableCursor: true,
-          });
-          break;
-        }
         default:
           break;
       }
@@ -388,6 +390,8 @@ class StructEditor extends Component<StructEditorProps, StructEditorState> {
         data-testid="ketcher-canvas"
         data-canvasmode="molecules-mode"
       >
+        <MonomerCreationWizardBackdrop />
+
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}

@@ -1,20 +1,23 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { D3SvgElementSelection } from 'application/render/types';
-import { line, Selection } from 'd3';
-import { BaseMonomer } from './entities/BaseMonomer';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { type Selection, line } from 'd3';
+import type { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
+  type Coordinates,
   canvasToMonomerCoordinates,
-  Coordinates,
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
-import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import {
+  type AttachmentPointConstructorParams,
+  AttachmentPointName,
+} from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
@@ -123,7 +126,7 @@ export class AttachmentPoint {
     const stroke = this.stroke;
 
     this.attachmentPoint = this.rootElement
-      .insert('g', ':first-child')
+      .append('g')
       .data([this])
       .style('pointer-events', 'none')
       .style('cursor', 'pointer')
@@ -148,7 +151,9 @@ export class AttachmentPoint {
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
-      .attr('data-testid', `${this.attachmentPointName}`)
+      .attr('data-testid', 'monomer-attachment-point')
+      .attr('data-attachment-point-alias', this.attachmentPointName)
+      .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
 
@@ -317,6 +322,10 @@ export class AttachmentPoint {
     this.hoverableArea = hoverableArea;
 
     return attachmentPoint;
+  }
+
+  public raise() {
+    this.element?.raise();
   }
 
   public updateAttachmentPointStyleForHover() {

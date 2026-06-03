@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SdfItem, StructAssociatedData } from './sdf.types';
+import type { SdfItem, StructAssociatedData } from './sdf.types';
 
 import { MolSerializer } from '../mol/molSerializer';
-import { Serializer } from '../serializers.types';
-import { MolSerializerOptions } from '../mol';
+import type { Serializer } from '../serializers.types';
+import type { MolSerializerOptions } from '../mol';
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm;
 export class SdfSerializer implements Serializer<Array<SdfItem>> {

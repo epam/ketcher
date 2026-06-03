@@ -640,6 +640,7 @@
         "fullName": "Alanine",
         "alias": "A",
         "aliasHELM": "A",
+        "aliasBILN": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

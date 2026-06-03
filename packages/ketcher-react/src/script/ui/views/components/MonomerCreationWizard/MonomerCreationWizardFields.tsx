@@ -2,12 +2,17 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
 import {
-  AtomLabel,
-  AttachmentPointName,
+  type AtomLabel,
+  type AttachmentPointName,
   ketcherProvider,
-  KetMonomerClass,
 } from 'ketcher-core';
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -15,26 +20,36 @@ import NaturalAnaloguePicker, {
 import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import AttributeField from './components/AttributeField/AttributeField';
-import {
+import type {
   StringWizardFormFieldId,
   WizardState,
 } from './MonomerCreationWizard.types';
 import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
-import Editor from '../../../../editor';
+import type Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
+import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
+import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  readonlyAttachmentPoints?: Array<{
+    name: AttachmentPointName;
+    leavingAtomLabel: AtomLabel;
+  }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
+  onReadonlyLeavingAtomChange?: (
+    apName: AttachmentPointName,
+    newLeavingAtomLabel: AtomLabel,
+  ) => void;
   showNaturalAnalogue?: boolean;
   attachmentPointsExtra?: ReactNode;
 }
@@ -53,12 +68,14 @@ const MonomerCreationWizardFields = (
   const {
     wizardState,
     assignedAttachmentPoints,
+    readonlyAttachmentPoints = [],
     onChangeModificationTypes,
     onFieldChange,
+    onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
   } = props;
   const { values, errors } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM } = values;
+  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
   const [modificationTypes, setModificationTypes] = useState<
     ModificationTypeItem[]
   >([]);
@@ -123,15 +140,13 @@ const MonomerCreationWizardFields = (
     return null;
   }
 
-  const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-    ].includes(type as KetMonomerClass);
+  const {
+    displayNaturalAnalogue,
+    displayModificationTypes,
+    displayAliases,
+    displayHelmAlias,
+    displayBilnAlias,
+  } = getMonomerPropertyVisibility(type);
 
   return (
     <div>
@@ -173,7 +188,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
+        {props.showNaturalAnalogue !== false && displayNaturalAnalogue && (
           <AttributeField
             title="Natural analogue"
             control={
@@ -212,7 +227,8 @@ const MonomerCreationWizardFields = (
             <Icon name="about" />
           </span>
         </div>
-        {assignedAttachmentPoints.size > 0 && (
+        {(assignedAttachmentPoints.size > 0 ||
+          readonlyAttachmentPoints.length > 0) && (
           <div className={styles.attachmentPoints}>
             {Array.from(assignedAttachmentPoints.entries()).map(
               ([name, atomPair]) => (
@@ -223,6 +239,17 @@ const MonomerCreationWizardFields = (
                   onLeavingAtomChange={handleLeavingAtomChange}
                   onRemove={handleAttachmentPointRemove}
                   key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                />
+              ),
+            )}
+            {readonlyAttachmentPoints.map(
+              ({ name: attachmentPointName, leavingAtomLabel }) => (
+                <ReadonlyAttachmentPoint
+                  key={`readonly-${attachmentPointName}`}
+                  name={attachmentPointName}
+                  leavingAtomLabel={leavingAtomLabel}
+                  editor={editor}
+                  onLeavingAtomChange={onReadonlyLeavingAtomChange}
                 />
               ),
             )}
@@ -319,27 +346,56 @@ const MonomerCreationWizardFields = (
                 Aliases
               </AccordionSummary>
               <AccordionDetails>
-                <p className={styles.inputLabel}>HELM</p>
-                <Autocomplete
-                  freeSolo
-                  options={[]}
-                  value={aliasHELM}
-                  onInputChange={(_event, newValue) =>
-                    onFieldChange('aliasHELM', newValue)
-                  }
-                  data-testid="helm-alias-input"
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      variant="standard"
-                      className={clsx(
-                        styles.inputField,
-                        errors.aliasHELM && styles.error,
+                {displayHelmAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>HELM</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasHELM}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasHELM', newValue)
+                      }
+                      data-testid="helm-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasHELM && styles.error,
+                          )}
+                          error={Boolean(errors.aliasHELM)}
+                        />
                       )}
-                      error={Boolean(errors.aliasHELM)}
                     />
-                  )}
-                />
+                  </div>
+                )}
+                {displayBilnAlias && (
+                  <div className={styles.aliasField}>
+                    <p className={styles.inputLabel}>BILN</p>
+                    <Autocomplete
+                      freeSolo
+                      options={[]}
+                      value={aliasBILN}
+                      onInputChange={(_event, newValue) =>
+                        onFieldChange('aliasBILN', newValue)
+                      }
+                      data-testid="biln-alias-input"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          className={clsx(
+                            styles.inputField,
+                            errors.aliasBILN && styles.error,
+                          )}
+                          error={Boolean(errors.aliasBILN)}
+                        />
+                      )}
+                    />
+                  </div>
+                )}
               </AccordionDetails>
             </Accordion>
           </div>

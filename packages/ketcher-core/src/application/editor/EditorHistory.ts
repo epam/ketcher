@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Command } from 'domain/entities/Command';
+import type { Command } from 'domain/entities/Command';
 import type { CoreEditor } from './Editor';
 import assert from 'assert';
 import { ketcherProvider } from 'application/ketcherProvider';

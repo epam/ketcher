@@ -1,7 +1,7 @@
-import { Tool } from '../Tool';
-import Editor from '../../Editor';
+import type { Tool } from '../Tool';
+import type Editor from '../../Editor';
 import LassoHelper from '../helper/lasso';
-import { SelectMode } from './select.types';
+import type { SelectMode } from './select.types';
 import {
   onSelectionEnd,
   onSelectionLeave,

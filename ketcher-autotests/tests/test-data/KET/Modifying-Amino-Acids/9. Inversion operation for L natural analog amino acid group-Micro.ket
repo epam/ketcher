@@ -360,6 +360,7 @@
         "fullName": "D-Leucine",
         "alias": "dL",
         "aliasHELM": "dL",
+        "aliasBILN": "dL",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

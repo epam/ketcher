@@ -18,9 +18,9 @@ import assert from 'assert';
 import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
-import { Pool } from './pool';
+import type { Pool } from './pool';
 import { SGroup } from './sgroup';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import type { HalfBond } from './halfBond';
 
 const isSaltOrSolvent = (moleculeName: string): boolean => {

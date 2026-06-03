@@ -11,8 +11,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Valence } from '@tests/pages/constants/atomProperties/Constants';
 import {
-  MacroBondType,
-  MicroBondDataIds,
+  MacroBondTool,
+  MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   ConnectionPointOption,
@@ -88,6 +88,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   AttachmentPoint,
+  getAttachmentPointLocator,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
@@ -168,10 +169,10 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await newSequenceButton.click();
 
     const singleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Single,
+      bondType: MicroBondType.Single,
     });
     const doubleBonds = getBondLocator(page, {
-      bondType: MicroBondDataIds.Double,
+      bondType: MicroBondType.Double,
     });
 
     expect(await singleBonds.count()).toBe(3);
@@ -749,10 +750,12 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
       `5'-(vinu)-3'`,
     );
 
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const vinU = getMonomerLocator(page, Nucleotide.vinU);
     await vinU.hover();
-    await expect(vinU.getByTestId(AttachmentPoint.R2)).toBeVisible();
+    await expect(
+      getAttachmentPointLocator(vinU, AttachmentPoint.R2),
+    ).toBeVisible();
   });
 
   test('Case 23: Do not save added/updated monomer in local storage', async ({
@@ -841,7 +844,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('TempSymbol');
+    await createMonomerDialog.setCode('TempSymbol');
     await createMonomerDialog.setName('TempName');
     await createMonomerDialog.submit();
     expect(
@@ -959,7 +962,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
 
@@ -1021,9 +1024,12 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(page, 600, 250);
+    await dragMouseTo(page, 600, 300);
 
-    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
     await ContextMenu(page, attachmentPointR1).click(
       ConnectionPointOption.EditConnectionPoint,
     );

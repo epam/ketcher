@@ -22,7 +22,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
@@ -30,8 +30,8 @@ import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
-import { RaphaelPaper } from 'raphael';
-import { RenderOptions } from '../render.types';
+import type { RaphaelPaper } from 'raphael';
+import type { RenderOptions } from '../render.types';
 import paperjs from 'paper';
 interface SGroupdrawBracketsOptions {
   set: any;
@@ -569,9 +569,6 @@ function showValue(
 }
 
 function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
-  SGroup.bracketPos(sgroup, restruct.molecule);
-  sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
-
   if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
 
   return sgroup.data.attached

@@ -421,7 +421,9 @@ const expandableMonomer: IMonomer = {
   monomerAlias: 'D',
 };
 
-test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async () => {
+test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
@@ -433,7 +435,6 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
    *       4. Take screenshot to witness final position
    *       5. Press Redo button
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
   await ContextMenu(
     page,
@@ -448,7 +449,9 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
   await takeEditorScreenshot(page);
 });
 
-test(`Verify switching back from micro mode to macro mode with expanded and collapsed monomers`, async () => {
+test(`Verify switching back from micro mode to macro mode with expanded and collapsed monomers`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify switching back from micro mode to macro mode with expanded and collapsed monomers
@@ -460,7 +463,6 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
    *       4. Switch to Micro mode
    *       6. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(page, expandableMonomer.KETFile);
   await ContextMenu(
     page,
@@ -484,7 +486,9 @@ const copyableMonomer: IMonomer = {
   monomerAlias: 'D',
 };
 
-test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async () => {
+test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that the system supports copy/paste functionality for collapsed monomers in micro mode
@@ -495,7 +499,6 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, copyableMonomer.KETFile);
   await takeEditorScreenshot(page);
@@ -515,7 +518,9 @@ const cutableMonomer: IMonomer = {
   monomerAlias: 'D',
 };
 
-test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async () => {
+test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that the system supports cut/paste functionality for collapsed monomers in micro mode
@@ -526,7 +531,6 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, cutableMonomer.KETFile);
   await takeEditorScreenshot(page);
@@ -540,7 +544,9 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
   await takeEditorScreenshot(page);
 });
 
-test(`Verify that the system supports copy/paste functionality for expanded monomers in micro mode`, async () => {
+test(`Verify that the system supports copy/paste functionality for expanded monomers in micro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that the system supports copy/paste functionality for expanded monomers in micro mode
@@ -553,7 +559,6 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, copyableMonomer.KETFile);
   await ContextMenu(
@@ -577,7 +582,9 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   );
 });
 
-test(`Verify that the system supports cut/paste functionality for expanded monomers in micro mode`, async () => {
+test(`Verify that the system supports cut/paste functionality for expanded monomers in micro mode`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that the system supports cut/paste functionality for expanded monomers in micro mode
@@ -590,7 +597,6 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(page, cutableMonomer.KETFile);
   await ContextMenu(
@@ -611,7 +617,9 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   );
 });
 
-test(`Verify that "Expand monomer" does not break cyclic structures when the ring is expanded`, async () => {
+test(`Verify that "Expand monomer" does not break cyclic structures when the ring is expanded`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that "Expand monomer" does not break cyclic structures when the ring is expanded
@@ -621,7 +629,6 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
    *       3. Expand all monomers from cycle
    *       4. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -659,7 +666,9 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
   );
 });
 
-test(`Verify that expanding multiple monomers works in a left-to-right order within a chain`, async () => {
+test(`Verify that expanding multiple monomers works in a left-to-right order within a chain`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that expanding multiple monomers works in a left-to-right order within a chain
@@ -669,7 +678,6 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -707,7 +715,9 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
   );
 });
 
-test(`Verify that expanding multiple monomers works in a top-to-bottom order within a chain`, async () => {
+test(`Verify that expanding multiple monomers works in a top-to-bottom order within a chain`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that expanding multiple monomers works in a top-to-bottom order within a chain
@@ -717,7 +727,6 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -755,7 +764,9 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
   );
 });
 
-test(`Verify that expanding monomers with big mircomolecule ring structures in the middle behaves correctly without breaking the chain`, async () => {
+test(`Verify that expanding monomers with big mircomolecule ring structures in the middle behaves correctly without breaking the chain`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that expanding monomers with big mircomolecule ring structures in the middle behaves correctly without breaking the chain
@@ -765,7 +776,6 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,
@@ -816,7 +826,9 @@ const monomers: monomer[] = [
   { name: 'oC64m5', AtomId: 25 },
 ];
 
-test(`Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear`, async () => {
+test(`Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear`, async ({
+  MoleculesCanvas: _,
+}) => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
    * Description: Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear
@@ -830,7 +842,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
-  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     page,

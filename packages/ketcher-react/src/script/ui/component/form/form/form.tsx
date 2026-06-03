@@ -16,13 +16,13 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import Ajv, { ErrorObject } from 'ajv';
+import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
 import {
+  type FormContextValue,
+  type FormSchema,
+  type SchemaProperty,
   FormContext,
-  FormContextValue,
-  FormSchema,
-  SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';
@@ -127,14 +127,19 @@ export interface CustomQueryFieldProps extends FieldProps {
   ) => void;
 }
 
-type AjvErrorWithInvalidMessage = ErrorObject & {
-  parentSchema?: { invalidMessage?: string | ((data: unknown) => string) };
+interface KetcherSchema extends Schema {
+  invalidMessage?: string | ((data: unknown) => string);
+}
+
+type FormValidationError = ValidationError & {
+  schema: KetcherSchema;
 };
 
 class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
+
   constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
@@ -143,12 +148,11 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+      const errs = getErrorsObj(errors as FormValidationError[]);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
-
     this._cachedSchema = schema;
     this._contextValue = { schema, stateStore: this };
   }
@@ -161,7 +165,7 @@ class Form extends Component<FormProps> {
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result); // hack: valid first state
+      this.schema.serialize(result);
       this.updateState(result);
     }
   }
@@ -169,7 +173,7 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors as AjvErrorWithInvalidMessage[]);
+    const errs = getErrorsObj(errors as FormValidationError[]);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 
@@ -178,25 +182,25 @@ class Form extends Component<FormProps> {
     const value = result[name];
     const extraValue = extraName ? result[extraName] : null;
 
-    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
-      const newState = { ...this.props.result, [fieldName]: fieldValue };
-      this.updateState(newState);
-      if (onChange) onChange(fieldValue);
-    };
-
     return {
       dataError: errors?.[name],
       value,
       extraValue,
-      onChange: (val: unknown) => handleOnChange(name, val),
-      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
+      onChange: (val: unknown) => {
+        const newState = { ...this.props.result, [name]: val };
+        this.updateState(newState);
+        if (onChange) onChange(val);
+      },
+      onExtraChange: (val: unknown) => {
+        const newState = { ...this.props.result, [extraName ?? '']: val };
+        this.updateState(newState);
+      },
     };
   }
 
   render() {
     const { schema, children } = this.props;
 
-    // Update the cached context value only if schema has changed
     if (this._cachedSchema !== schema) {
       this._cachedSchema = schema;
       this._contextValue = { schema, stateStore: this };
@@ -296,7 +300,7 @@ function Label({
   error: _error,
   children,
   ...props
-}: LabelProps) {
+}: Readonly<LabelProps>) {
   return (
     <label {...props}>
       {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
@@ -318,7 +322,7 @@ function usePopoverAnchor() {
   return { anchorEl, handleOpen, handleClose };
 }
 
-function Field(props: FieldProps) {
+function Field(props: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -373,7 +377,7 @@ function Field(props: FieldProps) {
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       error={dataError}
-      title={rest.title || desc.title}
+      title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
       data-testid={props['data-testid']}
@@ -400,7 +404,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function FieldWithModal(props: FieldWithModalProps) {
+function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -430,7 +434,7 @@ function FieldWithModal(props: FieldWithModalProps) {
     <Label
       className={className}
       error={dataError}
-      title={title || desc.title}
+      title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
     >
@@ -466,7 +470,7 @@ function FieldWithModal(props: FieldWithModalProps) {
   );
 }
 
-function CustomQueryField(props: CustomQueryFieldProps) {
+function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,
@@ -590,14 +594,17 @@ function propSchema(
     deserialize?: Record<string, string>;
   },
 ) {
-  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
+  const validator = new Validator();
   const schemaCopy = cloneDeep(schema);
-
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator as (data: string) => boolean);
+      validator.customFormats[formatName] = (value: string) =>
+        Boolean(formatValidator(value));
 
-      if (!schemaCopy.properties) return;
+      if (!schemaCopy.properties) {
+        return;
+      }
+
       const rest = omit(schemaCopy.properties[formatName], [
         'pattern',
         'maxLength',
@@ -612,18 +619,23 @@ function propSchema(
     });
   }
 
-  const validate = ajv.compile(schemaCopy);
-
   return {
-    key: schema.key || '',
+    key: schema.key ?? '',
     serialize: (inst: Record<string, unknown>) => {
-      const isValid = validate(inst);
-      const errors = validate.errors || [];
+      // Pass an explicit base URI so jsonschema's resolveUrl() always receives
+      // a valid absolute URL as `from`.  Without this, it calls
+      // resolveUrl(undefined, ...) → new URL(undefined, 'resolve://'), which
+      // throws "Invalid URL" in Chromium <130 (Playwright ≤1.44) because that
+      // engine parses the base 'resolve://' (empty host) before inspecting the
+      // first argument.
+      const result = validator.validate(inst, schemaCopy as Schema, {
+        base: 'https://ketcher.local/',
+      });
 
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
-        valid: isValid,
-        errors,
+        valid: result.valid,
+        errors: result.errors as unknown as FormValidationError[],
       };
     },
     deserialize: (inst: Record<string, unknown>) => {
@@ -658,20 +670,19 @@ function deserializeRewrite(
   return instance;
 }
 
-function getInvalidMessage(item: AjvErrorWithInvalidMessage): string {
-  if (!item.parentSchema?.invalidMessage) return item.message ?? '';
-  return typeof item.parentSchema.invalidMessage === 'function'
-    ? item.parentSchema.invalidMessage(item.data)
-    : item.parentSchema.invalidMessage;
+function getInvalidMessage(item: FormValidationError): string {
+  if (!item.schema?.invalidMessage) return item.message ?? '';
+  return typeof item.schema.invalidMessage === 'function'
+    ? item.schema.invalidMessage(item.instance)
+    : item.schema.invalidMessage;
 }
 
-function getErrorsObj(
-  errors: AjvErrorWithInvalidMessage[],
-): Record<string, string> {
+function getErrorsObj(errors: FormValidationError[]): Record<string, string> {
   const errs: Record<string, string> = {};
 
   errors.forEach((item) => {
-    const field = item.instancePath.slice(1);
+    // jsonschema uses "instance.fieldName"; strip the "instance." prefix
+    const field = item.property.replace(/^instance\./, '');
     if (!errs[field]) errs[field] = getInvalidMessage(item);
   });
 

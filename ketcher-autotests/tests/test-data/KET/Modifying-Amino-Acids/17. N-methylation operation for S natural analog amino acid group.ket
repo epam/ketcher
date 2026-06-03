@@ -340,6 +340,7 @@
         "fullName": "N-Methyl-Serine",
         "alias": "meS",
         "aliasHELM": "meS",
+        "aliasBILN": "meS",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

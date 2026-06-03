@@ -13,8 +13,8 @@ import { ContextMenu } from '../common/ContextMenu';
 import { getCoordinatesOfTheMiddleOfTheCanvas } from '../../utils/clicks';
 import { waitForRender } from '../../utils/common/loaders/waitForRender';
 import { moveMouseAway } from '../../utils/moveMouseAway';
-import { KETCHER_CANVAS } from '../constants/canvas/Constants';
 import { Preset } from '../constants/monomers/Presets';
+import { getVisibleCanvas } from '@utils/canvas';
 
 type PresetsSectionLocators = {
   newPresetsButton: Locator;
@@ -303,15 +303,14 @@ export const Library = (page: Page) => {
       coordinates: { x: number; y: number; fromCenter?: boolean },
       selectOnFavoritesTab = false,
     ) {
-      const canvas = await page
-        .getByTestId(KETCHER_CANVAS)
-        .filter({ has: page.locator(':visible') })
-        .boundingBox();
-      if (!canvas) {
+      const canvas = await getVisibleCanvas(page);
+      const canvasBB = await canvas.boundingBox();
+
+      if (!canvasBB) {
         throw new Error('Unable to get boundingBox for canvas');
       }
-      let x = canvas.x + coordinates.x;
-      let y = canvas.y + coordinates.y;
+      let x = canvasBB.x + coordinates.x;
+      let y = canvasBB.y + coordinates.y;
 
       if (coordinates.fromCenter) {
         const centerOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);

@@ -16,7 +16,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { ToolbarItem } from '../../toolbar.types';
+import type { ToolbarItem } from '../../toolbar.types';
 
 type HookParams = [string, string | null, ToolbarItem[]];
 

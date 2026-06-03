@@ -149,6 +149,7 @@
         "id": "A___Alanine",
         "fullName": "A",
         "alias": "A",
+        "aliasBILN": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,

@@ -1,6 +1,6 @@
-import { KetFileNode } from 'domain/serializers/serializers.types';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import {
-  KetFileMultitailArrowNode,
+  type KetFileMultitailArrowNode,
   MultitailArrow,
 } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';

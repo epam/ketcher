@@ -841,6 +841,7 @@
         "fullName": "Phenylalanine",
         "alias": "F",
         "aliasHELM": "F",
+        "aliasBILN": "F",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,

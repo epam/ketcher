@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { SimpleObject } from 'domain/entities/simpleObject';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {

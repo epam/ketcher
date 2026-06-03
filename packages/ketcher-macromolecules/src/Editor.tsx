@@ -436,14 +436,17 @@ function Editor({
         onClose={() => handleCloseErrorTooltip()}
         autoHideDuration={6000}
       >
-        <StyledToastContainer id="error-tooltip">
-          {errorTooltips.map((text) => (
+        <StyledToastContainer
+          id="error-tooltip-list"
+          data-testid="error-tooltip-list"
+        >
+          {errorTooltips.map((text, index) => (
             <StyledToast key={text}>
-              <StyledToastContent data-testid="error-tooltip">
+              <StyledToastContent data-testid={`error-tooltip-${index}`}>
                 {text}
               </StyledToastContent>
               <StyledIconButton
-                testId="error-tooltip-close"
+                testId={`error-tooltip-close-${index}`}
                 iconName="close"
                 onClick={() => handleCloseErrorTooltip(text)}
               ></StyledIconButton>

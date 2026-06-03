@@ -1,4 +1,6 @@
 import {
+  DISALLOWED_MONOMER_MODIFICATION_TYPES,
+  getDisallowedModificationTypes,
   HELM_ALIAS_MAX_LENGTH,
   isValidHelmAliasLength,
 } from '../../src/utilities/monomers';
@@ -15,6 +17,37 @@ describe('monomers utilities', () => {
       expect(
         isValidHelmAliasLength('A'.repeat(HELM_ALIAS_MAX_LENGTH + 1)),
       ).toBe(false);
+    });
+  });
+
+  describe('getDisallowedModificationTypes', () => {
+    it.each(DISALLOWED_MONOMER_MODIFICATION_TYPES)(
+      'flags the disallowed modification type "%s"',
+      (modificationType) => {
+        expect(getDisallowedModificationTypes([modificationType])).toEqual([
+          modificationType,
+        ]);
+      },
+    );
+
+    it('returns an empty array for allowed modification types', () => {
+      expect(
+        getDisallowedModificationTypes([
+          'Natural amino acid',
+          'Phosphorylation',
+        ]),
+      ).toEqual([]);
+    });
+
+    it('returns only the disallowed types from a mixed list', () => {
+      expect(
+        getDisallowedModificationTypes(['Natural amino acid', 'Unknown base']),
+      ).toEqual(['Unknown base']);
+    });
+
+    it('returns an empty array when modification types are missing or empty', () => {
+      expect(getDisallowedModificationTypes(undefined)).toEqual([]);
+      expect(getDisallowedModificationTypes([])).toEqual([]);
     });
   });
 });

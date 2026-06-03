@@ -982,6 +982,169 @@ describe('CoreEditor', () => {
         initialTemplatesCount + 1,
       );
     });
+
+    // In the KET format, modificationTypes is defined at the template level.
+    // During parsing (via templateToMonomerProps) it gets moved to
+    // props.modificationTypes, which the validation checks (#8133).
+    it('should reject monomer with a disallowed modificationType (Unknown base)', () => {
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-XUB' }],
+        },
+        'monomerTemplate-XUB': {
+          type: 'monomerTemplate',
+          id: 'XUB',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'XUB',
+          name: 'XUB',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown base'],
+          props: {
+            MonomerName: 'XUB',
+            MonomerClass: 'CHEM',
+            Name: 'XUB',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should reject monomer with a disallowed modificationType (Micromolecule)', () => {
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-MCM88' }],
+        },
+        'monomerTemplate-MCM88': {
+          type: 'monomerTemplate',
+          id: 'MCM88',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'MCM88',
+          name: 'MCM88',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Micromolecule'],
+          props: {
+            MonomerName: 'MCM88',
+            MonomerClass: 'CHEM',
+            Name: 'MCM88',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Offending modification type(s): Micromolecule',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should skip a disallowed monomer but still load a valid one from the same chunk', () => {
+      const mixedMonomers = {
+        root: {
+          templates: [
+            { $ref: 'monomerTemplate-BAD' },
+            { $ref: 'monomerTemplate-GOOD' },
+          ],
+        },
+        'monomerTemplate-BAD': {
+          type: 'monomerTemplate',
+          id: 'BAD',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'BAD',
+          name: 'BAD',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown monomer'],
+          props: {
+            MonomerName: 'BAD',
+            MonomerClass: 'CHEM',
+            Name: 'BAD',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+        'monomerTemplate-GOOD': {
+          type: 'monomerTemplate',
+          id: 'GOOD',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'GOOD',
+          name: 'GOOD',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Natural amino acid'],
+          props: {
+            MonomerName: 'GOOD',
+            MonomerClass: 'CHEM',
+            Name: 'GOOD',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.some(
+          (monomer) => monomer.props?.MonomerName === 'GOOD',
+        ),
+      ).toBe(true);
+      expect(
+        editor.monomersLibrary.some(
+          (monomer) => monomer.props?.MonomerName === 'BAD',
+        ),
+      ).toBe(false);
+    });
+
+    it('should accept a monomer with an allowed modificationType', () => {
+      const monomerWithAllowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-OK' }],
+        },
+        'monomerTemplate-OK': {
+          type: 'monomerTemplate',
+          id: 'OK',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'OK',
+          name: 'OK',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Natural amino acid'],
+          props: {
+            MonomerName: 'OK',
+            MonomerClass: 'CHEM',
+            Name: 'OK',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithAllowedType));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(
+          'modification type cannot be added to the library',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
   });
 
   describe('window blur handling', () => {

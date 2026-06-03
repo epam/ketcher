@@ -27,9 +27,9 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c rollup.config.ts --configPlugin typescript2 -m true",
-    "start": "cross-env NODE_ENV=development rollup -c rollup.config.ts --configPlugin typescript2 -m true -w",
-    "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:circ test:unit",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
+    "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
+    "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:circ": "dpdm --no-warning --no-tree -T --exit-code circular:1 --skip-dynamic-imports tree ./src/index.tsx",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
@@ -146,7 +146,8 @@
     },
     "./dist/index.css": {
       "import": "./dist/index.css",
-      "require": "./dist/index.css"
+      "require": "./dist/index.css",
+      "default": "./dist/index.css"
     }
   }
 }

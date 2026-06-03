@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
-import { Ketcher, StructServiceProvider } from 'ketcher-core';
+import { StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
 
@@ -45,7 +45,7 @@ const App = () => {
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
+        onInit={(ketcher) => {
           window.ketcher = ketcher;
           safePostMessage({
             eventType: 'init',

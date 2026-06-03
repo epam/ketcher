@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field, FormState } from '../../../component/form/form/form';
-import React, { FC } from 'react';
-import { StereoLabel, Struct } from 'ketcher-core';
+import Form, { type FormState, Field } from '../../../component/form/form/form';
+import type { ComponentType, FC } from 'react';
+import { type Struct, StereoLabel } from 'ketcher-core';
 
 import { Dialog } from '../../../views/components';
 import classes from './enhancedStereo.module.less';
@@ -206,4 +206,4 @@ const EnhancedStereoAny = EnhancedStereo as any;
 export default connect((state: State) => ({
   formState: state.modal.form || { result: {}, valid: false },
   struct: state.editor.struct(),
-}))(EnhancedStereoAny) as React.ComponentType<EnhancedStereoCallProps>;
+}))(EnhancedStereoAny) as ComponentType<EnhancedStereoCallProps>;

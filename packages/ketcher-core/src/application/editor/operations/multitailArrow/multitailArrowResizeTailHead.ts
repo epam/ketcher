@@ -1,6 +1,6 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export class MultitailArrowResizeTailHead extends BaseOperation {

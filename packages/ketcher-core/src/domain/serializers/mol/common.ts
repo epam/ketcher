@@ -17,11 +17,11 @@
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Pile } from 'domain/entities/pile';
 import { SGroup } from 'domain/entities/sgroup';
-import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { Struct } from 'domain/entities/struct';
+import type { Atom } from 'domain/entities/atom';
+import type { Bond } from 'domain/entities/bond';
+import type { Struct } from 'domain/entities/struct';
 
-import { Mapping } from './mol.types';
+import type { Mapping } from './mol.types';
 import utils from './utils';
 import v2000 from './v2000';
 import v3000 from './v3000';

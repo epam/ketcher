@@ -1,4 +1,4 @@
-import Editor from '../Editor';
+import type Editor from '../Editor';
 
 interface ToolEventHandler {
   click?(event: Event): void;

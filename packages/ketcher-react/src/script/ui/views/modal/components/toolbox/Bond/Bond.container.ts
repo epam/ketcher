@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types';
+import type { BaseProps } from '../../../modal.types';
 import Bond from './Bond';
 import { connect } from 'react-redux';
 

@@ -15,7 +15,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReRxnPlus, ReStruct } from '../../../../render';
+import { type ReStruct, ReRxnPlus } from '../../../../render';
 import { RxnPlus } from 'domain/entities/rxnPlus';
 import { Vec2 } from 'domain/entities/vec2';
 

@@ -1,6 +1,10 @@
-import { AttachmentPointName, KetMonomerClass, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  AttachmentPointName,
+  KetMonomerClass,
+} from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,

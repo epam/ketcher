@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import {
-  FC,
-  PropsWithChildren,
-  ReactElement,
+  type FC,
+  type PropsWithChildren,
+  type ReactElement,
   useEffect,
   useLayoutEffect,
   useRef,

@@ -18,7 +18,7 @@ import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
-import { Tools, UiActionAction } from '../../../../action';
+import type { Tools, UiActionAction } from '../../../../action';
 import { forwardRef } from 'react';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';

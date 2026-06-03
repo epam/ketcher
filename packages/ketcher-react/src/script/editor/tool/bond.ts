@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Struct,
   Bond,
   Vec2,
   bondChangingAction,
@@ -23,14 +24,13 @@ import {
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion,
-  Struct,
   vectorUtils,
   Atom,
   CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class BondTool implements Tool {

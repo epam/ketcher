@@ -1,6 +1,6 @@
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
+import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
 import { select } from 'd3';
 
 type ElementType = 'text' | 'background' | 'spacer';

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   AminoAcidNaturalAnalogue,
   ModificationType,
@@ -58,12 +58,14 @@ type ModificationSectionLocators = {
 type AliasesSectionLocators = {
   helmAliasEditbox: Locator;
   helmAliasEditboxClearButton: Locator;
+  bilnAliasEditbox: Locator;
+  bilnAliasEditboxClearButton: Locator;
 };
 
 type CreateMonomerDialogLocators = {
   window: Locator;
   typeCombobox: Locator;
-  symbolEditbox: Locator;
+  codeEditbox: Locator;
   nameEditbox: Locator;
   naturalAnalogueCombobox: Locator;
   infoIcon: Locator;
@@ -222,6 +224,10 @@ export const CreateMonomerDialog = (page: Page) => {
       helmAliasEditboxClearButton: page
         .getByTestId('helm-alias-input')
         .getByTestId('CloseIcon'),
+      bilnAliasEditbox: page.getByTestId('biln-alias-input'),
+      bilnAliasEditboxClearButton: page
+        .getByTestId('biln-alias-input')
+        .getByTestId('CloseIcon'),
     },
   );
 
@@ -230,7 +236,7 @@ export const CreateMonomerDialog = (page: Page) => {
   const locators: CreateMonomerDialogLocators = {
     window: page.getByTestId('monomer-creation-wizard'),
     typeCombobox: page.getByTestId('type-select'),
-    symbolEditbox: page.getByTestId('symbol-input'),
+    codeEditbox: page.getByTestId('symbol-input'),
     nameEditbox: page.getByTestId('name-input'),
     naturalAnalogueCombobox: page.getByTestId('natural-analogue-picker'),
     infoIcon: page.getByTestId('attachment-point-info-icon'),
@@ -317,8 +323,8 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.getByTestId(option).click();
     },
 
-    async setSymbol(value: string) {
-      await locators.symbolEditbox.fill(value);
+    async setCode(value: string) {
+      await locators.codeEditbox.fill(value);
     },
 
     async setName(value: string) {
@@ -383,7 +389,7 @@ export const CreateMonomerDialog = (page: Page) => {
       if (aliasesSectionState === 'false') {
         await aliasesSection.click();
       }
-      await aliasesSection.helmAliasEditbox.waitFor();
+      await expect(aliasesSection).toHaveAttribute('aria-expanded', 'true');
     },
 
     async collapseAliasesSection() {
@@ -476,6 +482,26 @@ export const CreateMonomerDialog = (page: Page) => {
       await page.waitForTimeout(0.3 * 1000);
     },
 
+    async clearBILNAlias() {
+      await this.expandAliasesSection();
+      const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
+      await bilnAliasEditbox.click();
+      const clearButton = aliasesSection.bilnAliasEditboxClearButton;
+      await clearButton.click();
+    },
+
+    async setBILNAlias(bilnAlias: string) {
+      await this.expandAliasesSection();
+      await this.clearBILNAlias();
+      const bilnAliasEditbox = aliasesSection.bilnAliasEditbox;
+      await bilnAliasEditbox.click();
+      await page.keyboard.type(bilnAlias);
+      // to avoid alias lost on submit due to async validation
+      await this.collapseAliasesSection();
+      await this.expandAliasesSection();
+      await page.waitForTimeout(0.3 * 1000);
+    },
+
     async waitForTerminalIndicatorTooltip(
       options: { state?: 'visible' | 'hidden' } = {},
     ) {
@@ -501,7 +527,7 @@ export async function createMonomer(
   page: Page,
   options: {
     type: MonomerType;
-    symbol: string;
+    code: string;
     name: string;
     naturalAnalogue?: AminoAcidNaturalAnalogue | NucleotideNaturalAnalogue;
     modificationTypes?: (
@@ -521,7 +547,7 @@ export async function createMonomer(
   const createMonomerDialog = CreateMonomerDialog(page);
   await LeftToolbar(page).createMonomer();
   await createMonomerDialog.selectType(options.type);
-  await createMonomerDialog.setSymbol(options.symbol);
+  await createMonomerDialog.setCode(options.code);
   await createMonomerDialog.setName(options.name);
   if (options.naturalAnalogue) {
     await createMonomerDialog.selectNaturalAnalogue(options.naturalAnalogue);

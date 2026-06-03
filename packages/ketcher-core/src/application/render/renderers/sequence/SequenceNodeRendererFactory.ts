@@ -7,24 +7,24 @@ import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 import { PeptideSequenceItemRenderer } from './PeptideSequenceItemRenderer';
 import { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
 import { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
 import { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
 import { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
-import { BaseMonomerRenderer } from '../BaseMonomerRenderer';
-import { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
+import type { BaseMonomerRenderer } from '../BaseMonomerRenderer';
+import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
 import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
 import { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
 import { UnsplitNucleotideSequenceItemRenderer } from './UnsplitNucleotideSequenceItemRenderer';
-import { SequenceNode } from 'domain/entities/monomer-chains/types';
+import type { SequenceNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SequenceNodeRendererFactory {
   static fromNode(

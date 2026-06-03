@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  type ReStruct,
   ReRGroupAttachmentPoint,
   ReSGroup,
-  ReStruct,
   Render,
 } from 'application/render';
 import {
+  type Struct,
   Bond,
   Pool,
   RGroupAttachmentPoint,
   SGroup,
-  Struct,
   Vec2,
 } from 'domain/entities';
 import { restruct } from '../../../mock-data';
 import { mockFn } from 'jest-mock-extended';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 
 describe('resgroup should draw brackets with attachment points correctly', () => {
   const mockBonds = [

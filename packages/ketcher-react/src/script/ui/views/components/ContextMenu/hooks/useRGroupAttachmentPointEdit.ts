@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import assert from 'assert';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
-import {
+import type Editor from 'src/script/editor';
+import type {
   ItemEventParams,
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
-import { Ketcher, ketcherProvider } from 'ketcher-core';
+import { type Ketcher, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
 

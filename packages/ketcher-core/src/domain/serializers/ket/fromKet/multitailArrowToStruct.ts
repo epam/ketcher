@@ -1,4 +1,4 @@
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { MultitailArrow } from 'domain/entities/multitailArrow';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

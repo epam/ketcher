@@ -1,7 +1,7 @@
 import { xor } from 'lodash/fp';
-import { Atom, Bond, ReStruct, SGroup } from 'ketcher-core';
-import Editor, { Selection } from '../../Editor';
-import LassoHelper from '../helper/lasso';
+import { type Atom, type Bond, type ReStruct, SGroup } from 'ketcher-core';
+import type { Editor, Selection } from '../../Editor';
+import type LassoHelper from '../helper/lasso';
 import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
 
 function uniqArray(dest, add, reversible: boolean) {

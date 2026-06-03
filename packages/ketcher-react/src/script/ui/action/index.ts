@@ -28,8 +28,8 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
-import { Tools, UiAction } from './action.types';
-import Editor from '../../editor/Editor';
+import type { Tools, UiAction } from './action.types';
+import type Editor from '../../editor/Editor';
 
 export * from './action.types';
 

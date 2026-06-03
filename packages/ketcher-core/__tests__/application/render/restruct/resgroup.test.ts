@@ -110,8 +110,9 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       height: 100,
     } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
-    render.ctab = restruct as unknown as ReStruct;
-    restruct.render = render as any;
+    const reStruct = restruct as unknown as ReStruct;
+    render.ctab = reStruct;
+    reStruct.render = render;
     sGroup = new SGroup('MUL');
     reSgroup = new ReSGroup(sGroup);
     sGroup.isNotContractible = mockFn().mockReturnValue(false);
@@ -129,7 +130,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     const bonds = new Pool();
     mockBonds.forEach((bond, i) => bonds.set(i, new Bond(bond)));
     restruct.molecule.bonds = bonds;
-    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
+    reSgroup.draw(restruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 
@@ -199,21 +200,14 @@ describe('resgroup should draw nucleotide component S-groups', () => {
 });
 
 describe('RenderStruct.prepareStruct in macromolecules mode', () => {
-  const isPolymerEditorTurnedOn = window.isPolymerEditorTurnedOn;
-
-  afterEach(() => {
-    window.isPolymerEditorTurnedOn = isPolymerEditorTurnedOn;
-  });
-
   it('should preserve S-groups for macromolecules rendering', () => {
     const struct = new Struct();
     const atomId = struct.atoms.add(new Atom({ label: 'C' }));
     const sGroup = new SGroup('GEN');
     SGroup.addAtom(sGroup, atomId, struct);
     sGroup.id = struct.sgroups.add(sGroup);
-    window.isPolymerEditorTurnedOn = true;
 
-    const preparedStruct = RenderStruct.prepareStruct(struct);
+    const preparedStruct = RenderStruct.prepareStruct(struct, true);
 
     expect(preparedStruct.sgroups.size).toBe(1);
   });

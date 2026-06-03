@@ -15,17 +15,17 @@
  ***************************************************************************/
 
 import {
+  type AtomAttributes,
+  type AtomQueryProperties,
   Atom,
-  AtomAttributes,
-  AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 
 import closest from '../shared/closest';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import type { EditorSelection } from '../editor.types';
 export type AtomType = 'single' | 'list' | 'pseudo';

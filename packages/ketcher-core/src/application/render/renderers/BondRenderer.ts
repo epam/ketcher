@@ -1,17 +1,17 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom } from 'domain/entities/CoreAtom';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
 import { Scale } from 'domain/helpers';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { ViewModel } from 'application/render/view-model/ViewModel';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
+import type { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
-import { D3SvgElementSelection } from 'application/render/types';
-import {
+import type { D3SvgElementSelection } from 'application/render/types';
+import type {
   SVGPathAttributes,
   BondVectors,
 } from 'application/render/renderers/BondPathRenderer/constants';

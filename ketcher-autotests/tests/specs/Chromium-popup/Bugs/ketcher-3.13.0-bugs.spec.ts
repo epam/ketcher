@@ -8,6 +8,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
   clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
@@ -265,6 +266,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 5: Submit monomer creation
     await dialog.submit();
+
+    await clickOnCanvas(page, 0, 0);
 
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
@@ -541,6 +544,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 5: Submit wizard
     await dialog.submit();
 
+    await clickOnCanvas(page, 0, 0);
+
     // Visual verification: take a screenshot where bad valence (if present) is visible.
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
       paddingWidth: 180,
@@ -685,7 +690,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // invalidRnaPresetStructure). Step 3 (phosphatePositionNotSelected) does not fire.
     const invalidPhosphatePositionMessage = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidPhosphatePositionAttachmentPoints,
+      ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
     );
     const notMinimalViableStructureMessage = NotificationMessageBanner(
       page,
@@ -695,7 +700,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     expect(
       await invalidPhosphatePositionMessage.getNotificationMessage(),
     ).toEqual(
-      '3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.',
+      'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
     );
     expect(
       await notMinimalViableStructureMessage.getNotificationMessage(),

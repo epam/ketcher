@@ -844,7 +844,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     await deselectAtomAndBonds(page);
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.CHEM);
-    await createMonomerDialog.setSymbol('TempSymbol');
+    await createMonomerDialog.setCode('TempSymbol');
     await createMonomerDialog.setName('TempName');
     await createMonomerDialog.submit();
     expect(
@@ -962,7 +962,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
 
@@ -1024,7 +1024,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(page, 600, 250);
+    await dragMouseTo(page, 600, 300);
 
     const attachmentPointR1 = getAttachmentPointLocator(
       page,

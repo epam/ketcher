@@ -1,7 +1,7 @@
 import {
+  type SVGPathAttributes,
+  type BondVectors,
   BondDashArrayMap,
-  SVGPathAttributes,
-  BondVectors,
   BondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import { BondType } from 'domain/entities/CoreBond';

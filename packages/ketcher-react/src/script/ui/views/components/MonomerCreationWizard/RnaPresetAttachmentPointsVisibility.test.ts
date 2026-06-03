@@ -1,6 +1,10 @@
-import { AttachmentPointName, KetMonomerClass, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  AttachmentPointName,
+  KetMonomerClass,
+} from 'ketcher-core';
 
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointsForRnaPresetComponent,
@@ -28,6 +32,7 @@ const createWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),
@@ -40,6 +45,7 @@ const createWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),
@@ -52,6 +58,7 @@ const createWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),

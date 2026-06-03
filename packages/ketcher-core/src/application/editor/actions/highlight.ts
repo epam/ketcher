@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from '../../render';
+import type { ReStruct } from '../../render';
 
 import { HighlightAdd, HighlightDelete } from '../operations/highlight';
 

@@ -466,6 +466,7 @@
         "fullName": "D-Lysine",
         "alias": "dK",
         "aliasHELM": "dK",
+        "aliasBILN": "dK",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

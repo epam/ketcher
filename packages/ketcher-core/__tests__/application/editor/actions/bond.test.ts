@@ -1,8 +1,8 @@
 import * as utils from 'application/editor/actions/utils';
 
-import { Action, fromBondAddition } from 'application/editor/actions';
+import { type Action, fromBondAddition } from 'application/editor/actions';
 import { Render, ReStruct } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import { Atom, Bond, Struct, Vec2 } from 'domain/entities';
 
 import { restruct, singleBond } from '../../../mock-data';

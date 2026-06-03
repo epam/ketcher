@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, RefObject, useEffect, useState } from 'react';
+import { type CSSProperties, type RefObject, useEffect, useState } from 'react';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 type HookParams = [

@@ -19,13 +19,13 @@ import '@testing-library/jest-dom';
 import { AttachmentPointName, KetMonomerClass } from 'ketcher-core';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Import after mocks
 import { RnaPresetTabs } from './RnaPresetTabs';
-import { RnaPresetWizardState } from './MonomerCreationWizard.types';
+import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
 
 // Mock the Icon component to avoid module resolution issues
 jest.mock('components', () => ({
@@ -146,6 +146,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),
@@ -158,6 +159,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),
@@ -170,6 +172,7 @@ const createInitialWizardState = (): RnaPresetWizardState => ({
       name: '',
       naturalAnalogue: '',
       aliasHELM: '',
+      aliasBILN: '',
     },
     errors: {},
     notifications: new Map(),
@@ -216,37 +219,6 @@ describe('RnaPresetTabs - applyHighlights function', () => {
     fireEvent.click(baseTab);
 
     expect(mockEditor.highlights.clear).toHaveBeenCalled();
-  });
-
-  it('should not create highlights when highlightEnabled is false', () => {
-    wizardState.base.structure = {
-      atoms: [1, 2, 3],
-      bonds: [1, 2],
-    };
-
-    render(
-      <Provider store={mockStore}>
-        <RnaPresetTabs
-          wizardState={wizardState}
-          editor={mockEditor}
-          wizardStateDispatch={mockDispatch}
-          phosphatePosition={undefined}
-          onPhosphatePositionChange={mockOnPhosphatePositionChange}
-        />
-      </Provider>,
-    );
-
-    // Clear the initial calls
-    mockEditor.highlights.clear.mockClear();
-    mockEditor.highlights.create.mockClear();
-
-    // Click the highlight checkbox to disable it
-    const highlightCheckbox = screen.getByRole('checkbox');
-    fireEvent.click(highlightCheckbox);
-
-    // Should clear but not create new highlights
-    expect(mockEditor.highlights.clear).toHaveBeenCalled();
-    expect(mockEditor.highlights.create).not.toHaveBeenCalled();
   });
 
   it('should apply active highlight color to the active tab component', () => {

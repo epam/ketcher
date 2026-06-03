@@ -8,8 +8,8 @@ type NotificationBannerLocators = {
 
 export const NotificationBanner = (page: Page) => {
   const locators: NotificationBannerLocators = {
-    message: page.getByTestId('notification-banner').first(),
-    closeButton: page.getByTestId('notification-banner-close-button').first(),
+    message: page.getByTestId('notification-banner'),
+    closeButton: page.getByTestId('notification-banner-close-button'),
   };
 
   return {

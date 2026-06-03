@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import {
+import type {
   SelectionContextMenuProps,
   ItemEventParams,
 } from '../contextMenu.types';
 import { ketcherProvider } from 'ketcher-core';
 import {
+  type RnaPresetComponentType,
   MonomerCreationMarkAsComponentAction,
-  RnaPresetComponentType,
 } from '../../MonomerCreationWizard/MonomerCreationWizard.constants';
 
 type Params = ItemEventParams<SelectionContextMenuProps>;

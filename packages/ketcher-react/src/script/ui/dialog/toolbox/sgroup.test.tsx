@@ -60,6 +60,21 @@ describe('Copolymer S-Group type availability', () => {
     renderAndOpenTypeSelect(2);
     expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
   });
+
+  it('should show Copolymer option when editing existing Copolymer S-Group', () => {
+    renderWithMockStore(<SGroup type="COP" selectedSruCount={2} />, {
+      modal: {
+        form: {
+          result: {
+            type: 'COP',
+          },
+        },
+      },
+    });
+    const typeSelect = screen.getAllByRole('combobox')[0];
+    fireEvent.mouseDown(typeSelect);
+    expect(screen.getByTestId('Copolymer-option')).toBeInTheDocument();
+  });
 });
 
 describe('S-Group DAT type rendering', () => {

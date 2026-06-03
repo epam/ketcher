@@ -1,14 +1,14 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { ARROW_HEAD_LENGHT, ARROW_HEAD_WIDTH } from 'application/render/draw';
-import { ReMultitailArrow } from 'application/render';
+import { ReMultitailArrow } from 'application/render/restruct/remultitailArrow';
 
 const ARROW_STROKE_WIDTH = 2;
 const MULTITAIL_ARROW_TEST_ID = 'multitail-arrow';

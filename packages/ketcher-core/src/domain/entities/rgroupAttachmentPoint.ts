@@ -1,6 +1,6 @@
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 
 export type RGroupAttachmentPointType = 'primary' | 'secondary';

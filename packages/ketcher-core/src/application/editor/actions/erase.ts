@@ -37,7 +37,7 @@ import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 

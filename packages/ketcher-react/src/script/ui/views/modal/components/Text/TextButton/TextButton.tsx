@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react';
-import { TextCommand } from 'ketcher-core';
+import type React from 'react';
+import type { TextCommand } from 'ketcher-core';
 import clsx from 'clsx';
 import styles from './TextButton.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 
 interface TextButtonProps {
   button: { command: TextCommand; name: IconName };

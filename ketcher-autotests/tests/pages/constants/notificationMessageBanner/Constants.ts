@@ -9,6 +9,9 @@ export enum ErrorMessage {
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
   invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  rnaPresetAtomsOutsideComponents = 'rnaPresetAtomsOutsideComponents',
+  incontinuousStructure = 'incontinuousStructure',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints = 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
   invalidPhosphatePositionAttachmentPoints = 'invalidPhosphatePositionAttachmentPoints',
   invalidPresetCode = 'invalidPresetCode',
 }

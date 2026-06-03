@@ -18,7 +18,7 @@
         "id": "0",
         "position": {
             "x": 8.700000000000001,
-            "y": -7.6000000000000005
+            "y": -7.525
         },
         "alias": "D",
         "templateId": "D___Aspartic acid"
@@ -194,6 +194,7 @@
         "id": "D___Aspartic acid",
         "fullName": "Aspartic acid",
         "alias": "D",
+        "aliasBILN": "D",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,

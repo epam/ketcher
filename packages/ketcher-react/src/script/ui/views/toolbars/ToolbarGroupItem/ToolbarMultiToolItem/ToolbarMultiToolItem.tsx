@@ -15,13 +15,16 @@
  ***************************************************************************/
 
 import {
+  type ActionButtonCallProps,
+  type ActionButtonProps,
   ActionButton,
-  ActionButtonCallProps,
-  ActionButtonProps,
 } from '../ActionButton';
-import { GroupDescriptor, MultiToolVariant } from './variants/variants.types';
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
-import action, { UiAction, UiActionAction } from '../../../../action';
+import type {
+  GroupDescriptor,
+  MultiToolVariant,
+} from './variants/variants.types';
+import type { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
+import action, { type UiAction, type UiActionAction } from '../../../../action';
 
 import { useRef } from 'react';
 import clsx from 'clsx';

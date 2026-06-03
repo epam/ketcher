@@ -76,7 +76,7 @@ test('Case 3: Verify library update functionality: Nucleotide', async () => {
    * Version 3.9
    */
   const sdfFile =
-    '\n  -INDIGO-10122513312D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Nucleotide1 9.9 -9.35 0.0 0 CLASS=RNA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 RNA/_Nucleotide1/_Nucleotide1 NATREPLACE=RNA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 5 4 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 C -0.866 -0.75 0.0 0\nM  V30 2 C 0.0 -0.25 0.0 0\nM  V30 3 H 0.0 0.75 0.0 0\nM  V30 4 H 0.866 -0.75 0.0 0\nM  V30 5 H 0.866 0.25 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 2 4\nM  V30 4 1 2 5\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 3) XBONDS=(1 2) BRKXYZ=(9 0.000000 -0.500000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 5) XBONDS=(1 4) BRKXYZ=(9 -0.433000 -0.250000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 3 SUP 3 ATOMS=(1 4) XBONDS=(1 3) BRKXYZ=(9 -0.433000 0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 4 SUP 4 ATOMS=(2 1 2) XBONDS=(3 2 3 4) BRKXYZ=(9 0.000000 0.500000 0.0-\nM  V30 00000 0.433000 -0.250000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(-\nM  V30 9 0.433000 0.250000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000-\nM  V30 000 0.000000) LABEL=_Nucleotide1 CLASS=RNA SAP=(3 2 3 Al) SAP=(3 2 5 B-\nM  V30 r) SAP=(3 2 4 Cx) NATREPLACE=RNA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <idtAliases>\nbase=_Nucleotide1,ep3=/N1_ep3/,ep5=/N1_ep5/,internal=/N1_i/\n\n$$$$\n';
+    '\n  -INDIGO-10122513312D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Nucleotide1 9.9 -9.35 0.0 0 CLASS=RNA SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 RNA/_Nucleotide1/_Nucleotide1 NATREPLACE=RNA/A\nM  V30 BEGIN CTAB\nM  V30 COUNTS 5 4 4 0 0\nM  V30 BEGIN ATOM\nM  V30 1 C -0.866 -0.75 0.0 0\nM  V30 2 C 0.0 -0.25 0.0 0\nM  V30 3 H 0.0 0.75 0.0 0\nM  V30 4 H 0.866 -0.75 0.0 0\nM  V30 5 H 0.866 0.25 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 2 4\nM  V30 4 1 2 5\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 3) XBONDS=(1 2) BRKXYZ=(9 0.000000 -0.500000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 5) XBONDS=(1 4) BRKXYZ=(9 -0.433000 -0.250000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 3 SUP 3 ATOMS=(1 4) XBONDS=(1 3) BRKXYZ=(9 -0.433000 0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 4 SUP 4 ATOMS=(2 1 2) XBONDS=(3 2 3 4) BRKXYZ=(9 0.000000 0.500000 0.0-\nM  V30 00000 0.433000 -0.250000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(-\nM  V30 9 0.433000 0.250000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000-\nM  V30 000 0.000000) LABEL=_Nucleotide1 CLASS=RNA SAP=(3 2 3 Al) SAP=(3 2 5 B-\nM  V30 r) SAP=(3 2 4 Cx) NATREPLACE=RNA/A\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <idtAliases>\nbase=_Nucl1,ep3=/N1_ep3/,ep5=/N1_ep5/,internal=/N1_i/\n\n$$$$\n';
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).toBeNull();
   expect(
@@ -114,7 +114,7 @@ test('Case 5: Verify library update functionality: Phosphate', async () => {
    * Version 3.9
    */
   const sdfFile =
-    '\n  -INDIGO-10092513102D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Phosphate1 11.8462 -10.075 0.0 0 CLASS=PHOSPHATE SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 PHOSPHATE/_Phosphate1/_Phosphate1 NATREPLACE=PHOSPHATE/P\nM  V30 BEGIN CTAB\nM  V30 COUNTS 16 15 6 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 15 H -2.598 -0.75 0.0 0\nM  V30 16 H -0.866 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 14 1 4 15\nM  V30 15 1 6 16\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(1 15) XBONDS=(1 14) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(1 16) XBONDS=(1 15) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 6 SUP 6 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(5 1 13 14 15 12) B-\nM  V30 RKXYZ=(9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000-\nM  V30 000 0.000000 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.000000 -\nM  V30 -0.500000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(9 0.433000 0.25-\nM  V30 0000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) L-\nM  V30 ABEL=_Phosphate1 CLASS=PHOSPHATE SAP=(3 2 1 Al) SAP=(3 12 13 Br) SAP=(-\nM  V30 3 2 14 Cx) SAP=(3 4 15 Dx) SAP=(3 6 16 Ex) NATREPLACE=PHOSPHATE/P\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\n_Phosphate_HELM\n\n>  <idtAliases>\nbase=_Phosphate1\n\n$$$$\n';
+    '\n  -INDIGO-10092513102D\n\n  0  0  0  0  0  0  0  0  0  0  0 V3000\nM  V30 BEGIN CTAB\nM  V30 COUNTS 1 0 0 0 0\nM  V30 BEGIN ATOM\nM  V30 1 _Phosphate1 11.8462 -10.075 0.0 0 CLASS=PHOSPHATE SEQID=1\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 END BOND\nM  V30 END CTAB\nM  V30 BEGIN TEMPLATE\nM  V30 TEMPLATE 1 PHOSPHATE/_Phosphate1/_Phosphate1 NATREPLACE=PHOSPHATE/P\nM  V30 BEGIN CTAB\nM  V30 COUNTS 16 15 6 0 0\nM  V30 BEGIN ATOM\nM  V30 1 H -5.196 0.75 0.0 0\nM  V30 2 C -4.33 0.25 0.0 0\nM  V30 3 C -3.464 0.75 0.0 0\nM  V30 4 C -2.598 0.25 0.0 0\nM  V30 5 C -1.732 0.75 0.0 0\nM  V30 6 C -0.866 0.25 0.0 0\nM  V30 7 C 0.0 0.75 0.0 0\nM  V30 8 C 0.866 0.25 0.0 0\nM  V30 9 C 1.732 0.75 0.0 0\nM  V30 10 C 2.598 0.25 0.0 0\nM  V30 11 C 3.464 0.75 0.0 0\nM  V30 12 C 4.33 0.25 0.0 0\nM  V30 13 H 5.196 0.75 0.0 0\nM  V30 14 H -4.33 -0.75 0.0 0\nM  V30 15 H -2.598 -0.75 0.0 0\nM  V30 16 H -0.866 -0.75 0.0 0\nM  V30 END ATOM\nM  V30 BEGIN BOND\nM  V30 1 1 1 2\nM  V30 2 1 2 3\nM  V30 3 1 3 4\nM  V30 4 1 4 5\nM  V30 5 1 5 6\nM  V30 6 1 6 7\nM  V30 7 1 7 8\nM  V30 8 1 8 9\nM  V30 9 1 9 10\nM  V30 10 1 10 11\nM  V30 11 1 11 12\nM  V30 12 1 12 13\nM  V30 13 1 2 14\nM  V30 14 1 4 15\nM  V30 15 1 6 16\nM  V30 END BOND\nM  V30 BEGIN SGROUP\nM  V30 1 SUP 1 ATOMS=(1 1) XBONDS=(1 1) BRKXYZ=(9 0.433000 -0.250000 0.000000-\nM  V30  0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS=-\nM  V30 LGRP\nM  V30 2 SUP 2 ATOMS=(1 13) XBONDS=(1 12) BRKXYZ=(9 -0.433000 -0.250000 0.000-\nM  V30 000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLA-\nM  V30 SS=LGRP\nM  V30 3 SUP 3 ATOMS=(1 14) XBONDS=(1 13) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 4 SUP 4 ATOMS=(1 15) XBONDS=(1 14) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 5 SUP 5 ATOMS=(1 16) XBONDS=(1 15) BRKXYZ=(9 0.000000 0.500000 0.00000-\nM  V30 0 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) LABEL=H CLASS-\nM  V30 =LGRP\nM  V30 6 SUP 6 ATOMS=(11 2 3 4 5 6 7 8 9 10 11 12) XBONDS=(5 1 13 14 15 12) B-\nM  V30 RKXYZ=(9 -0.433000 0.250000 0.000000 0.000000 -0.500000 0.000000 0.000-\nM  V30 000 0.000000 0.000000) BRKXYZ=(9 0.000000 -0.500000 0.000000 0.000000 -\nM  V30 -0.500000 0.000000 0.000000 0.000000 0.000000) BRKXYZ=(9 0.433000 0.25-\nM  V30 0000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000) L-\nM  V30 ABEL=_Phosphate1 CLASS=PHOSPHATE SAP=(3 2 1 Al) SAP=(3 12 13 Br) SAP=(-\nM  V30 3 2 14 Cx) SAP=(3 4 15 Dx) SAP=(3 6 16 Ex) NATREPLACE=PHOSPHATE/P\nM  V30 END SGROUP\nM  V30 END CTAB\nM  V30 END TEMPLATE\nM  END\n>  <type>\nmonomerTemplate\n\n>  <aliasHELM>\n_Phosphate_HELM\n\n>  <idtAliases>\nbase=_Phos1\n\n$$$$\n';
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).toBeNull();
   expect(
@@ -471,7 +471,7 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
     'monomerTemplate' +
     _betweenEntries +
     _idtAliases +
-    'base=_nucleotide1IDT,ep3=/nucleotide1_ep3/,ep5=/nucleotide1_ep5/,internal=/nucleotide1_internal/' +
+    'base=_nuc1IDT,ep3=/nuc1ep3/,ep5=/nuc1ep5/,internal=/nuc1int/' +
     _betweenEntries +
     _endToken;
 
@@ -482,16 +482,16 @@ test('Case 18: Update Library item with compound that contains MOLv3000 file wit
   ).toBeTruthy();
   expect(
     await Library(page).getMonomerIDTAliasBase(Nucleotide._Nucleotide1),
-  ).toContain('_nucleotide1IDT');
+  ).toContain('_nuc1IDT');
   expect(
     await Library(page).getMonomerIDTAliasEp3(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep3/');
+  ).toContain('/nuc1ep3/');
   expect(
     await Library(page).getMonomerIDTAliasEp5(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_ep5/');
+  ).toContain('/nuc1ep5/');
   expect(
     await Library(page).getMonomerIDTAliasInternal(Nucleotide._Nucleotide1),
-  ).toContain('/nucleotide1_internal/');
+  ).toContain('/nuc1int/');
 });
 
 test.fail(
@@ -829,3 +829,53 @@ test.fail(
     expect(await Library(page).isMonomerExist(Preset._A3)).toBeTruthy();
   },
 );
+
+test('Case 29: Update Library item with HELM alias longer than 23 symbols logs an error', async () => {
+  /*
+   * AUTOTEST_REQUEST_URL: N/A
+   * Description: updateMonomersLibrary rejects monomers with HELM aliases longer than 23 symbols.
+   * Scenario:
+   * 1. Go to Macro mode
+   * 2. Execute updateMonomersLibrary with an SDF monomer whose aliasHELM value has 24 symbols
+   * 3. Verify that API logs an error
+   *
+   * Version 3.16
+   */
+  const sdfFile =
+    _Base1Body +
+    _type +
+    'monomerTemplate' +
+    _betweenEntries +
+    _aliasHELM +
+    '123456789012345678901234' +
+    _betweenEntries +
+    _endToken;
+  type ConsoleCaptureWindow = typeof window & {
+    capturedConsoleErrors: string[];
+    originalConsoleError: typeof console.error;
+  };
+
+  await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
+
+    window.ketcher.logging.enabled = true;
+    testWindow.capturedConsoleErrors = [];
+    testWindow.originalConsoleError = console.error;
+    console.error = (...args) => {
+      testWindow.capturedConsoleErrors.push(args.flat().join(' '));
+    };
+  });
+
+  const error = await updateMonomersLibrary(page, sdfFile);
+  const consoleMessages = await page.evaluate(() => {
+    const testWindow = window as ConsoleCaptureWindow;
+
+    console.error = testWindow.originalConsoleError;
+    return testWindow.capturedConsoleErrors;
+  });
+
+  expect(error).toBeNull();
+  expect(consoleMessages.join('\n')).toContain(
+    'The HELM alias must be no more than 23 symbols long.',
+  );
+});

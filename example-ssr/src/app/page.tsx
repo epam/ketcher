@@ -1,5 +1,3 @@
-'use client';
-
 import { EditorComponent } from './editor';
 
 export default function Home() {

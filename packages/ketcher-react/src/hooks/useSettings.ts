@@ -18,6 +18,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAppDispatch } from '../script/ui/state/hooks';
 import { syncSettingsFromCore } from '../script/ui/state/options';
 import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
+import { ketcherProvider } from 'ketcher-core';
+import { useAppContext } from 'src/hooks/useAppContext';
 
 /**
  * React hook to access settings from ketcher-core settings service
@@ -39,6 +41,7 @@ import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
  */
 export function useSettings() {
   const dispatch = useAppDispatch();
+  const { ketcherId } = useAppContext();
 
   // Local state for settings (synced from service)
   const [settings, setSettings] = useState<Settings | null>(null);
@@ -47,8 +50,7 @@ export function useSettings() {
   useEffect(() => {
     // Check for ketcher instance with retry mechanism
     const checkAndSubscribe = () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ketcherInstance = (window as any).ketcher;
+      const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
       const settingsService: ISettingsService | undefined =
         ketcherInstance?.settingsService;
 

@@ -13,6 +13,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from 'react';
 import type {
   RnaPresetWizardAction,
@@ -31,7 +32,7 @@ import {
   selectionSelector,
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
-import type { Editor } from '../../../../editor';
+import { Editor } from '../../../../editor';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
   type RnaPresetComponentType,
@@ -91,6 +92,30 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();
+  const selectedAtomIds = structureSelection?.atoms ?? [];
+  // Derive bonds from the selected atoms instead of using
+  // `structureSelection.bonds`: canvas selections frequently carry only atoms
+  // (e.g. click-selection), and `Editor.isStructureContinuous` builds its
+  // adjacency list from bonds — an empty bond list would make a chemically
+  // connected selection look non-continuous. Memoized so the bond iteration
+  // does not re-run on every wizard keystroke / tab switch.
+  const isSelectionNonContinuous = useMemo(() => {
+    if (!hasSelectedAtoms) {
+      return false;
+    }
+    const selectedAtomIdsSet = new Set(selectedAtomIds);
+    const derivedBondIds = Array.from(struct.bonds.entries())
+      .filter(
+        ([, bond]) =>
+          selectedAtomIdsSet.has(bond.begin) &&
+          selectedAtomIdsSet.has(bond.end),
+      )
+      .map(([id]) => id);
+    return !Editor.isStructureContinuous(struct, {
+      atoms: selectedAtomIds,
+      bonds: derivedBondIds,
+    });
+  }, [hasSelectedAtoms, selectedAtomIds, struct]);
 
   const presetAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
     assignedAttachmentPoints,
@@ -440,7 +465,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                       monomerCreationWizardStyles.buttonSubmit,
                       styles.createComponentButton,
                     )}
-                    disabled={!hasSelectedAtoms}
+                    disabled={!hasSelectedAtoms || isSelectionNonContinuous}
                     onClick={() => handleClickCreateComponent(rnaComponentKey)}
                   >
                     Mark as {rnaComponentKey}

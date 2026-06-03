@@ -89,7 +89,7 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidPhosphatePositionAttachmentPoints:
     '3′ position requires phosphate R1 and sugar R2, 5′ position requires phosphate R2 and sugar R1.',
   phosphatePositionNotSelected:
-    "You must chose the position of the phosphate (5' or 3').",
+    "You must choose the position of the phosphate (5' or 3').",
   editAllPresetWarning: '',
   editAllPresetError: '',
 };

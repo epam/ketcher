@@ -21,7 +21,7 @@ const isNaturalAnalogueSupported = (
 
 const getInitialValues = (
   monomer: BaseMonomer,
-  shouldCopyValues: boolean,
+  shouldAppendCopySuffix: boolean,
 ): MonomerCreationInitialValues => {
   const { label, props } = monomer.monomerItem;
   const type = props.MonomerClass ?? KetMonomerClass.CHEM;
@@ -30,7 +30,7 @@ const getInitialValues = (
   const naturalAnalogue = isNaturalAnalogueSupported(type)
     ? props.MonomerNaturalAnalogCode
     : '';
-  const getValue = shouldCopyValues
+  const getValue = shouldAppendCopySuffix
     ? getCopiedValue
     : (value?: string) => value ?? '';
 

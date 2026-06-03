@@ -194,6 +194,19 @@ export type FinishNewMonomersCreationOptions = {
   phosphatePosition?: '3' | '5';
 };
 
+type EditableSGroupMonomer = {
+  monomer?: {
+    monomerItem?: {
+      label?: string;
+      props?: {
+        MonomerClass?: KetMonomerClass;
+        MonomerCode?: string;
+        MonomerName?: string;
+      };
+    };
+  };
+};
+
 class Editor implements KetcherEditor {
   ketcherId: string;
   #origin?: any;
@@ -1795,18 +1808,7 @@ class Editor implements KetcherEditor {
         const newMonomer = monomersData[0].monomer;
 
         finalStruct.sgroups.forEach((sgroup) => {
-          const sgroupWithMonomer = sgroup as {
-            monomer?: {
-              monomerItem?: {
-                label?: string;
-                props?: {
-                  MonomerClass?: KetMonomerClass;
-                  MonomerCode?: string;
-                  MonomerName?: string;
-                };
-              };
-            };
-          };
+          const sgroupWithMonomer = sgroup as EditableSGroupMonomer;
           const sgroupMonomer = sgroupWithMonomer.monomer;
           const { props, label } = sgroupMonomer?.monomerItem ?? {};
           const symbol = props?.MonomerCode ?? label;

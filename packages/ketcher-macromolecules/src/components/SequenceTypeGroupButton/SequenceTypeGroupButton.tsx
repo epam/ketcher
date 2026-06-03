@@ -91,8 +91,7 @@ export const SequenceTypeGroupButton = () => {
   };
 
   useEffect(() => {
-    editor?.events.selectMode.add(onToggleSequenceMode);
-    editor?.events.changeSequenceTypeEnterMode.add((mode: SequenceType) => {
+    const onChangeSequenceType = (mode: SequenceType) => {
       dispatch(
         setSelectedTabIndex(
           mode === MONOMER_TYPES.PEPTIDE
@@ -102,13 +101,16 @@ export const SequenceTypeGroupButton = () => {
       );
       setActiveSequenceType(mode);
       persistSequenceType(mode);
-    });
+    };
+    editor?.events.selectMode.add(onToggleSequenceMode);
+    editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
     editor?.events.changeSequenceTypeEnterMode.dispatch(
       getPersistedSequenceType(),
     );
 
     return () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);
+      editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
   }, [editor]);
 

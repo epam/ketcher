@@ -1,4 +1,4 @@
-import { SequenceType } from 'ketcher-core';
+import { KetcherLogger, SequenceType } from 'ketcher-core';
 import { SEQUENCE_TYPE_STORAGE_KEY } from 'src/constants';
 import {
   getPersistedSequenceType,
@@ -28,5 +28,19 @@ describe('sequenceTypeStorage', () => {
       JSON.stringify('NOT_A_TYPE'),
     );
     expect(getPersistedSequenceType()).toBe(SequenceType.RNA);
+  });
+
+  it('falls back to RNA when the stored value is malformed JSON', () => {
+    const loggerSpy = jest
+      .spyOn(KetcherLogger, 'error')
+      .mockImplementation(() => undefined);
+    // Raw, non-JSON string (bypassing JSON.stringify) simulates a corrupted or
+    // manually-edited value that makes JSON.parse throw inside getItem.
+    window.localStorage.setItem(SEQUENCE_TYPE_STORAGE_KEY, 'not-json{');
+
+    expect(getPersistedSequenceType()).toBe(SequenceType.RNA);
+    expect(loggerSpy).toHaveBeenCalled();
+
+    loggerSpy.mockRestore();
   });
 });

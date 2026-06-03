@@ -208,7 +208,10 @@ describe('RenderStruct.prepareStruct in macromolecules mode', () => {
     sGroup.id = struct.sgroups.add(sGroup);
 
     const preparedStruct = RenderStruct.prepareStruct(struct, true);
+    const preparedSGroup = preparedStruct.sgroups.get(sGroup.id);
 
     expect(preparedStruct.sgroups.size).toBe(1);
+    expect(preparedSGroup?.type).toBe(sGroup.type);
+    expect(preparedSGroup?.atoms).toEqual(sGroup.atoms);
   });
 });

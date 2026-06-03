@@ -60,7 +60,10 @@
     "stylelint-config-prettier": "^9.0.5",
     "stylelint-config-standard": "^23.0.0",
     "typescript": "4.7.4",
-    "@types/d3-dispatch": "3.0.6"
+    "@types/d3-dispatch": "3.0.6",
+    "ajv": "6.15.0",
+    "brace-expansion": "^1.1.15",
+    "ajv-keywords": "3.5.2"
   },
   "resolutions": {
     "react-error-overlay": "6.0.9"
@@ -73,7 +76,6 @@
   "overrides": {
     "nth-check": "^2.1.1",
     "@isaacs/brace-expansion": "5.0.1",
-    "brace-expansion": "5.0.6",
     "css-minimizer-webpack-plugin@3.4.1": {
       "serialize-javascript": "7.0.5"
     },
@@ -96,11 +98,37 @@
       "uuid": "11.1.1"
     },
     "webpack-dev-server": "5.2.4",
-    "@types/d3-dispatch": "3.0.6"
+    "@types/d3-dispatch": "3.0.6",
+    "ajv-keywords@3.5.2": {
+      "ajv": "6.15.0"
+    },
+    "schema-utils@2.7.0": {
+      "ajv": "6.15.0",
+      "ajv-keywords": "3.5.2"
+    },
+    "schema-utils@2.7.1": {
+      "ajv": "6.15.0",
+      "ajv-keywords": "3.5.2"
+    },
+    "schema-utils@3.3.0": {
+      "ajv": "6.15.0",
+      "ajv-keywords": "3.5.2"
+    },
+    "@eslint/eslintrc@2.1.4": {
+      "ajv": "6.15.0"
+    },
+    "@eslint/eslintrc@3.3.3": {
+      "ajv": "6.15.0"
+    },
+    "schema-utils@4.3.3": {
+      "ajv": "8.20.0",
+      "ajv-formats": "2.1.1",
+      "ajv-keywords": "5.1.0"
+    }
   },
   "dependencies": {
     "@playwright/test": "^1.59.1",
-    "minimatch": "^10.2.4",
+    "minimatch": "^10.2.5",
     "playwright": "^1.59.1",
     "playwright-core": "^1.59.1",
     "react-router": "^7.13.0",

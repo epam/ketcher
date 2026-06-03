@@ -16,6 +16,10 @@
 
 export * from './Editor';
 export * from './script';
+export type { ButtonsConfig } from './script/builders';
+export * from './script/providers';
+export * from './script/ui/views/toolbars/ArrowScroll';
+export * from './script/ui/views/toolbars/ToolbarGroupItem/ToolbarMultiToolItem/usePortalStyle';
 export * from './constants';
 export * from './components';
 export * from './utils';

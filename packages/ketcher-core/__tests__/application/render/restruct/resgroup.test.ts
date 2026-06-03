@@ -182,15 +182,16 @@ describe('resgroup should draw nucleotide component S-groups', () => {
       height: 100,
     } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
-    render.ctab = restruct as unknown as ReStruct;
-    restruct.render = render as any;
+    const reStruct = restruct as unknown as ReStruct;
+    render.ctab = reStruct;
+    reStruct.render = render;
 
     const sGroup = new SGroup('nucleotideComponent');
     const reSgroup = new ReSGroup(sGroup);
     sGroup.data.class = SUPERATOM_CLASS.BASE;
     SGroup.addAtom(sGroup, 2, restruct.molecule as unknown as Struct);
 
-    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
+    reSgroup.draw(reStruct, sGroup);
 
     expect(
       render.paper.canvas.querySelector('[data-label-text="Base"]'),

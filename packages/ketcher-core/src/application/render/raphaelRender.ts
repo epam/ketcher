@@ -33,6 +33,11 @@ import type { AttachmentPointName } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 
+export type EditAllInstancesPresetRequirements = {
+  type: KetMonomerClass;
+  attachmentPoints: AttachmentPointName[];
+};
+
 export type MonomerCreationInitialValues = {
   type: KetMonomerClass;
   symbol: string;
@@ -40,6 +45,10 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  editMode?: 'instance' | 'all';
+  originalType?: KetMonomerClass;
+  originalSymbol?: string;
+  presetRequirements?: EditAllInstancesPresetRequirements;
 };
 
 export type RnaComponentAtoms = Map<

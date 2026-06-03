@@ -122,6 +122,25 @@ const getInitialWizardStateForEdit = (
   };
 };
 
+const getAttachmentPointsText = (attachmentPoints: AttachmentPointName[]) =>
+  attachmentPoints.join(', ');
+
+const getEditAllPresetWarningMessage = (
+  initialValues: MonomerCreationInitialValues,
+) =>
+  `The edited version of the monomer must be the same monomer type and must have attachment point ${getAttachmentPointsText(
+    initialValues.presetRequirements?.attachmentPoints ?? [],
+  )}, because the monomer participates in a preset.`;
+
+const getEditAllPresetErrorMessage = (
+  initialValues: MonomerCreationInitialValues,
+) =>
+  `The changes made to the monomer prevent it from participating in a preset. The monomer must be a ${
+    initialValues.presetRequirements?.type
+  } and contain ${getAttachmentPointsText(
+    initialValues.presetRequirements?.attachmentPoints ?? [],
+  )} attachment points.`;
+
 // BILN alias errors remain visible until the next submit attempt.
 const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
@@ -845,6 +864,30 @@ const MonomerCreationWizardInternal = ({
     setHasActiveRnaPresetAtomValidationErrors,
   ] = useState(false);
 
+  useEffect(() => {
+    const initialValues = monomerCreationState.editInstanceInitialValues;
+
+    if (
+      initialValues?.editMode !== 'all' ||
+      !initialValues.presetRequirements
+    ) {
+      return;
+    }
+
+    wizardStateDispatch({
+      type: 'SetNotifications',
+      notifications: new Map([
+        [
+          'editAllPresetWarning',
+          {
+            type: 'warning',
+            message: getEditAllPresetWarningMessage(initialValues),
+          },
+        ],
+      ]),
+    });
+  }, [monomerCreationState.editInstanceInitialValues]);
+
   const handleConnectionLeavingAtomChange = useCallback(
     (
       apName: AttachmentPointName,
@@ -1228,7 +1271,10 @@ const MonomerCreationWizardInternal = ({
     const structure = editor.structSelected(wizardState.structure);
     const { values: valuesToSave } = wizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
-      validateInputs(valuesToSave);
+      validateInputs(
+        valuesToSave,
+        monomerCreationState.editInstanceInitialValues?.editMode === 'all',
+      );
     if (Object.keys(inputsErrors).length > 0) {
       wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
       wizardStateDispatch({
@@ -1236,6 +1282,36 @@ const MonomerCreationWizardInternal = ({
         notifications: inputsNotifications,
       });
       return;
+    }
+
+    const editAllInitialValues = monomerCreationState.editInstanceInitialValues;
+    const presetRequirements = editAllInitialValues?.presetRequirements;
+    if (editAllInitialValues?.editMode === 'all' && presetRequirements) {
+      const hasRequiredType = valuesToSave.type === presetRequirements.type;
+      const hasRequiredAttachmentPoints =
+        presetRequirements.attachmentPoints.every((attachmentPoint) =>
+          monomerAssignedAttachmentPoints.has(attachmentPoint),
+        );
+
+      if (!hasRequiredType || !hasRequiredAttachmentPoints) {
+        wizardStateDispatch({
+          type: 'RemoveNotification',
+          id: 'editAllPresetWarning',
+        });
+        wizardStateDispatch({
+          type: 'SetNotifications',
+          notifications: new Map([
+            [
+              'editAllPresetError',
+              {
+                type: 'error',
+                message: getEditAllPresetErrorMessage(editAllInitialValues),
+              },
+            ],
+          ]),
+        });
+        return;
+      }
     }
 
     const {

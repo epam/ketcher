@@ -1456,6 +1456,8 @@ class Editor implements KetcherEditor {
   ) {
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const isRnaType = Boolean(rnaPresetName);
+    const editAllInitialValues =
+      this.monomerCreationState?.editInstanceInitialValues;
 
     const libraryItems = monomersData.map((monomerData) => {
       const {
@@ -1785,6 +1787,42 @@ class Editor implements KetcherEditor {
       const selectedAtoms = new Set<number>();
       const selectedBonds = new Set<number>();
       const finalStruct = this.struct();
+
+      if (
+        editAllInitialValues?.editMode === 'all' &&
+        monomersData.length === 1
+      ) {
+        const newMonomer = monomersData[0].monomer;
+
+        finalStruct.sgroups.forEach((sgroup) => {
+          const sgroupWithMonomer = sgroup as {
+            monomer?: {
+              monomerItem?: {
+                label?: string;
+                props?: {
+                  MonomerClass?: KetMonomerClass;
+                  MonomerCode?: string;
+                  MonomerName?: string;
+                };
+              };
+            };
+          };
+          const sgroupMonomer = sgroupWithMonomer.monomer;
+          const { props, label } = sgroupMonomer?.monomerItem ?? {};
+          const symbol = props?.MonomerCode ?? label;
+
+          if (
+            !sgroup.isMonomer ||
+            props?.MonomerClass !== editAllInitialValues.originalType ||
+            symbol !== editAllInitialValues.originalSymbol
+          ) {
+            return;
+          }
+
+          sgroupWithMonomer.monomer = newMonomer;
+          sgroup.data.name = newMonomer.monomerItem.props.MonomerName;
+        });
+      }
 
       finalStruct.sgroups.forEach((sgroup) => {
         const sgroupMonomer = (sgroup as { monomer?: unknown }).monomer;

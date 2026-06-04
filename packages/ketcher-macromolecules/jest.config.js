@@ -4,7 +4,16 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: {
+          module: 'commonjs',
+          moduleResolution: 'node',
+          ignoreDeprecations: '6.0',
+        },
+      },
+    ],
     '\\.svg$': '<rootDir>/testFileTransformer.js',
     '\\.sdf$': '<rootDir>/textFileTransformer.js',
   },

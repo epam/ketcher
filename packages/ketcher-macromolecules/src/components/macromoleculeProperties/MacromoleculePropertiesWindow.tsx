@@ -57,7 +57,7 @@ import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 const NO_DATA_VALUE = '--';
-const CONCENTRATION_VALUE_PATTERN = /^(\d+([.,]\d*)?|[.,]\d*)?$/;
+const CONCENTRATION_INPUT_PATTERN = /^(\d+([.,]\d*)?|[.,]\d*)?$/;
 
 const hasSpecificProperty = (
   macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
@@ -398,7 +398,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 
 const BasicProperty = (props: BasicPropertyProps) => {
   const handleConcentrationChange = (value: string) => {
-    if (!CONCENTRATION_VALUE_PATTERN.test(value)) {
+    if (!CONCENTRATION_INPUT_PATTERN.test(value)) {
       return;
     }
 

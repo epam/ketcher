@@ -24,7 +24,7 @@ import {
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 
-const parseConcentrationValue = (value: string) => {
+const parseConcentrationValueOrDefault = (value: string) => {
   const concentration = Number(value.replace(',', '.'));
 
   return Number.isFinite(concentration) ? concentration : 0;
@@ -141,10 +141,10 @@ export const useRecalculateMacromoleculeProperties = () => {
         },
         {
           upc:
-            parseConcentrationValue(unipositiveIonsValue) /
+            parseConcentrationValueOrDefault(unipositiveIonsValue) /
             molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
           nac:
-            parseConcentrationValue(oligonucleotidesValue) /
+            parseConcentrationValueOrDefault(oligonucleotidesValue) /
             molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
         },
       );

@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
+import * as React from 'react';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { Provider as StoreProvider } from 'react-redux';
@@ -12,12 +13,12 @@ const muiTheme = createTheme();
 const mergedTheme = merge(muiTheme, { ketcher: defaultTheme });
 
 // Type declarations for global functions are in typings.d.ts
-global.withThemeProvider = function (component: JSX.Element) {
+global.withThemeProvider = function (component: React.JSX.Element) {
   return <ThemeProvider theme={mergedTheme}>{component}</ThemeProvider>;
 };
 
 global.withStoreProvider = function (
-  component: JSX.Element,
+  component: React.JSX.Element,
   initialState: RootState = {},
 ) {
   const store = configureAppStore(initialState);
@@ -25,7 +26,7 @@ global.withStoreProvider = function (
 };
 
 global.withThemeAndStoreProvider = function (
-  component: JSX.Element,
+  component: React.JSX.Element,
   initialState: RootState = {},
 ) {
   const store = configureAppStore(initialState);

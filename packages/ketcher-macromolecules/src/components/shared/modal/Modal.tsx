@@ -14,7 +14,7 @@ import { EmptyFunction } from 'helpers/emptyFunction';
 import styles from './Modal.module.less';
 
 interface ModalProps {
-  children: JSX.Element | Array<JSX.Element>;
+  children: React.JSX.Element | Array<React.JSX.Element>;
   title: string;
   isOpen: boolean;
   showCloseButton?: boolean;
@@ -137,7 +137,7 @@ export const Modal = ({
     [theme.ketcher.color.background.overlay],
   );
 
-  const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {
+  const subcomponents: Record<ModalSubcomponent, React.JSX.Element | null> = {
     Content: null,
     Footer: null,
   };

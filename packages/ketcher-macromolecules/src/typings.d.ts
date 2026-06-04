@@ -81,13 +81,13 @@ declare var withThemeAndStoreProvider: typeof jestHelpers.withThemeAndStoreProvi
 
 declare namespace jestHelpers {
   import type { RootState } from './state';
-  function withThemeProvider(arg: JSX.Element): React.Element;
+  function withThemeProvider(arg: React.JSX.Element): React.Element;
   function withStoreProvider(
-    arg: JSX.Element,
+    arg: React.JSX.Element,
     initialState?: RootState,
   ): React.Element;
   function withThemeAndStoreProvider(
-    arg: JSX.Element,
+    arg: React.JSX.Element,
     initialState?: RootState,
   ): React.Element;
 }

@@ -21,7 +21,7 @@ import { useInView } from 'react-intersection-observer';
 import { ArrowScroll } from 'ketcher-react';
 
 interface LayoutProps {
-  children: JSX.Element | Array<JSX.Element>;
+  children: React.JSX.Element | Array<React.JSX.Element>;
 }
 
 const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
@@ -184,7 +184,7 @@ const Top = (
 };
 
 export const Layout = ({ children }: LayoutProps) => {
-  const subcomponents: Record<LayoutSection, JSX.Element | null> = {
+  const subcomponents: Record<LayoutSection, React.JSX.Element | null> = {
     Left: null,
     Main: null,
     Right: null,

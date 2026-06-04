@@ -69,7 +69,7 @@ const RulerScale = ({
   }, [layoutMode, transform]);
 
   const svgChildren = useMemo(() => {
-    const children: JSX.Element[] = [];
+    const children: React.JSX.Element[] = [];
 
     positions.forEach((position, i) => {
       if (layoutMode === 'sequence-layout-mode') {

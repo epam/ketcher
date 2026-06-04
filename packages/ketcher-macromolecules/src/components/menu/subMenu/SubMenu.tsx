@@ -89,7 +89,7 @@ const SubMenu = ({
   };
 
   const subComponents = React.Children.map(
-    children as JSX.Element[],
+    children as React.JSX.Element[],
     (child) => {
       return child.type === MenuItem ? child : null;
     },

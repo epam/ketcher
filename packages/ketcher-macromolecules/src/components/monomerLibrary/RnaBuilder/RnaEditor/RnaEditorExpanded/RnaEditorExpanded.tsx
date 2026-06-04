@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import * as React from 'react';
 import {
   buildRnaPresetConnections,
   Entities,
@@ -609,7 +610,7 @@ export const RnaEditorExpanded = ({
     };
   }, [editor, sequenceSelection]);
 
-  let mainButton: JSX.Element;
+  let mainButton: React.JSX.Element;
   const isSaveButtonDisabled =
     !selectIsPresetReadyToSave(newPreset) ||
     saveButtonDisabledByPhosphatePosition;

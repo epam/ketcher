@@ -26,7 +26,7 @@ const Group = ({
   isHorizontal,
 }: React.PropsWithChildren<GroupProps>) => {
   const subComponents = React.Children.map(
-    children as JSX.Element[],
+    children as React.JSX.Element[],
     (child) => {
       return child;
     },
@@ -59,7 +59,7 @@ const Menu = ({
   );
 
   const subComponents = React.Children.map(
-    children as JSX.Element[],
+    children as React.JSX.Element[],
     (child) => {
       return child && child.type === Group ? child : null;
     },

@@ -124,7 +124,7 @@ const muiTheme = createTheme(muiOverrides);
 interface EditorProps {
   ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
-  togglerComponent?: JSX.Element;
+  togglerComponent?: React.JSX.Element;
   monomersLibraryUpdate?: string | JSON;
   monomersLibraryReplace?: string | JSON;
   onInit?: (editor: CoreEditor) => void;

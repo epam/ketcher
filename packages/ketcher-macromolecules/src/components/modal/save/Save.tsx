@@ -90,7 +90,7 @@ const StyledModal = styled(Modal)({
 export const Save = ({
   onClose,
   isModalOpen,
-}: RequiredModalProps): JSX.Element => {
+}: RequiredModalProps): React.JSX.Element => {
   const dispatch = useAppDispatch();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');

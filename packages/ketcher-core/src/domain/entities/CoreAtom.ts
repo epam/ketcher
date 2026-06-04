@@ -1,13 +1,13 @@
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Bond, BondType } from 'domain/entities/CoreBond';
-import { BaseRenderer } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { type Bond, BondType } from 'domain/entities/CoreBond';
+import type { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
-import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
-import { AtomCIP } from './types';
+import type { AtomCIP } from './types';
 
 export enum AtomRadical {
   None,

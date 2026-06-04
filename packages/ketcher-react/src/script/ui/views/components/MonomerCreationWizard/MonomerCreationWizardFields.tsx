@@ -2,12 +2,17 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Icon, IconButton } from 'components';
 import {
-  AtomLabel,
-  AttachmentPointName,
+  type AtomLabel,
+  type AttachmentPointName,
   ketcherProvider,
-  KetMonomerClass,
 } from 'ketcher-core';
-import { ChangeEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import clsx from 'clsx';
 import NaturalAnaloguePicker, {
   isNaturalAnalogueRequired,
@@ -15,13 +20,13 @@ import NaturalAnaloguePicker, {
 import { useSelector } from 'react-redux';
 import { editorMonomerCreationStateSelector } from '../../../state/editor/selectors';
 import AttributeField from './components/AttributeField/AttributeField';
-import {
+import type {
   StringWizardFormFieldId,
   WizardState,
 } from './MonomerCreationWizard.types';
 import { MAX_MODIFICATION_TYPES } from './MonomerCreationWizard.constants';
 import { useAppContext } from '../../../../../hooks';
-import Editor from '../../../../editor';
+import type Editor from '../../../../editor';
 import AttachmentPoint from './components/AttachmentPoint/AttachmentPoint';
 import ReadonlyAttachmentPoint from './components/ReadonlyAttachmentPoint/ReadonlyAttachmentPoint';
 import Accordion from '@mui/material/Accordion';
@@ -30,6 +35,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import accordionClasses from '../../../../../components/Accordion/Accordion.module.less';
 import ModificationTypeDropdown from './components/ModificationTypeDropdown/ModificationTypeDropdown';
 import { Autocomplete, TextField } from '@mui/material';
+import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.utils';
 
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
@@ -52,29 +58,6 @@ interface ModificationTypeItem {
   id: number;
   value: string;
 }
-
-const getAliasFieldsVisibility = (
-  type: KetMonomerClass | 'rnaPreset' | undefined,
-) => {
-  const displayAliases =
-    type &&
-    [
-      KetMonomerClass.AminoAcid,
-      KetMonomerClass.Base,
-      KetMonomerClass.Sugar,
-      KetMonomerClass.Phosphate,
-      KetMonomerClass.CHEM,
-    ].includes(type as KetMonomerClass);
-
-  return {
-    displayAliases,
-    // CHEM monomers support BILN aliases, while HELM remains unavailable for CHEM.
-    displayHelmAlias: displayAliases && type !== KetMonomerClass.CHEM,
-    // BILN aliases are defined only for amino-acid and CHEM monomers.
-    displayBilnAlias:
-      type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM,
-  };
-};
 
 const MonomerCreationWizardFields = (
   props: IMonomerCreationWizardFieldsProps,
@@ -157,9 +140,13 @@ const MonomerCreationWizardFields = (
     return null;
   }
 
-  const displayModificationTypes = type === KetMonomerClass.AminoAcid;
-  const { displayAliases, displayHelmAlias, displayBilnAlias } =
-    getAliasFieldsVisibility(type);
+  const {
+    displayNaturalAnalogue,
+    displayModificationTypes,
+    displayAliases,
+    displayHelmAlias,
+    displayBilnAlias,
+  } = getMonomerPropertyVisibility(type);
 
   return (
     <div>
@@ -201,7 +188,7 @@ const MonomerCreationWizardFields = (
           }
           disabled={!type}
         />
-        {props.showNaturalAnalogue !== false && (
+        {props.showNaturalAnalogue !== false && displayNaturalAnalogue && (
           <AttributeField
             title="Natural analogue"
             control={

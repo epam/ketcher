@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 import {
+  type GenerateImageOptions,
   KetcherLogger,
-  GenerateImageOptions,
   ketcherProvider,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
-import React, { PropsWithChildren } from 'react';
+import type { KeyboardEvent, MouseEvent, PropsWithChildren } from 'react';
 import { useAppContext } from '../../../../hooks';
 import { fileSaver } from './saveButton.utils';
-import { SaverType } from './saveButton.types';
+import type { SaverType } from './saveButton.types';
 
 type Props = {
   server?: any;
@@ -89,7 +89,7 @@ const SaveButton = (props: SaveButtonProps) => {
     }
   };
 
-  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
+  const save = (event: KeyboardEvent | MouseEvent) => {
     event.preventDefault();
     switch (mode) {
       case 'saveImage':

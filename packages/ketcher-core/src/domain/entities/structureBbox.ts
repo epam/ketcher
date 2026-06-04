@@ -1,4 +1,4 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 export interface StructureBbox {
   left: number;

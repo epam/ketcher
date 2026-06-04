@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
+import {
+  type AmbiguousMonomerType,
+  type PolymerBond,
+  ZoomTool,
+} from 'ketcher-core';
 import { preview } from './constants';
-import { PreviewStyle } from './AmbiguousMonomerPreview/types';
+import type { PreviewStyle } from './AmbiguousMonomerPreview/types';
 import assert from 'assert';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'src/constants';
 

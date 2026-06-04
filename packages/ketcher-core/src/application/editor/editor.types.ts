@@ -17,7 +17,7 @@
 import type { Action } from './actions/action';
 import type { MonomerCreationState, Render } from 'application/render';
 import type { Struct } from 'domain/entities/struct';
-import { selectionKeys } from './shared/constants';
+import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
 

@@ -1,7 +1,7 @@
 import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Vec2 } from 'domain/entities/vec2';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 

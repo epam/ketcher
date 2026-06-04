@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, Component, ReactNode } from 'react';
+import { type CSSProperties, type ReactNode, Component } from 'react';
 
 import ReactDOM from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';

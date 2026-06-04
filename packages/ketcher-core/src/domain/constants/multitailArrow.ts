@@ -1,4 +1,4 @@
-import {
+import type {
   MultitailArrowReferenceLinesNames,
   MultitailArrowReferencePositionsNames,
 } from 'domain/entities/multitailArrow';

@@ -28,7 +28,7 @@ import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 import { CustomButtons } from './CustomButtons';
 import { ketcherProvider } from 'ketcher-core';
-import { cloneElement, useCallback, useMemo } from 'react';
+import { cloneElement, type ReactElement, useCallback, useMemo } from 'react';
 import type { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
@@ -67,7 +67,7 @@ export interface PanelProps {
   onFullscreen: VoidFunction;
   onAbout: VoidFunction;
   onHelp: VoidFunction;
-  togglerComponent?: JSX.Element;
+  togglerComponent?: ReactElement<{ disabled?: boolean }>;
   isModeSwitcherDisabled: boolean;
   customButtons: Array<CustomButton>;
 }

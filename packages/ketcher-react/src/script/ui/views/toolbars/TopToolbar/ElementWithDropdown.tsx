@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
+import { type ReactElement, useState } from 'react';
 import { connect } from 'react-redux';
 import { ClickAwayListener, Collapse, IconButton } from '@mui/material';
 import styled from '@emotion/styled';
@@ -80,8 +80,8 @@ const DropDownArrow = styled(Icon)`
 `;
 
 interface ElementWithDropdownProps {
-  topElement?: JSX.Element;
-  dropDownElements: JSX.Element[];
+  topElement?: ReactElement<{ disabled?: boolean }>;
+  dropDownElements: Array<ReactElement<{ isHidden?: boolean }>>;
   onToolOpen: () => void;
 }
 
@@ -114,9 +114,9 @@ const MenuItemWithDropdown = ({
           {!isExpanded && <DropDownArrow name="dropdown" />}
         </DropDownButton>
       )}
-      <Collapse in={isExpanded} timeout="auto" onClick={collapse} unmountOnExit>
+      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
         <ClickAwayListener onClickAway={collapse}>
-          <DropDownContent data-testid="selection-toolbar">
+          <DropDownContent data-testid="selection-toolbar" onClick={collapse}>
             {dropDownElements}
           </DropDownContent>
         </ClickAwayListener>

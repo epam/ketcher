@@ -1,7 +1,7 @@
 import { Atom, Bond, Struct } from 'domain/entities';
 import { getSelectionFromStruct } from 'application/editor';
 import { parseAndAddMacromoleculesOnCanvas } from 'application/utils';
-import { ChemicalMimeType, StructService } from 'domain/services';
+import { ChemicalMimeType, type StructService } from 'domain/services';
 import * as editorSingleton from 'application/editor/editorSingleton';
 import { EditorHistory } from 'application/editor/internal';
 import { KetSerializer } from 'domain/serializers';

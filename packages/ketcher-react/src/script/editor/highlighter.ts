@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromHighlightCreate, fromHighlightClear, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  fromHighlightCreate,
+  fromHighlightClear,
+} from 'ketcher-core';
 
 import type { Editor } from './Editor';
 

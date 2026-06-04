@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState, FC } from 'react';
-import { Vec2, Render, SGroup, CoordinateTransformation } from 'ketcher-core';
+import { type FC, useEffect, useRef, useState } from 'react';
+import {
+  type Render,
+  type SGroup,
+  Vec2,
+  CoordinateTransformation,
+} from 'ketcher-core';
 import clsx from 'clsx';
 import classes from './InfoPanel.module.less';
 import { calculateMiddleCoordsForRect } from './helpers';

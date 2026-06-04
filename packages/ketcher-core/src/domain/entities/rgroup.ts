@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Pile } from './pile';
-import { Pool } from './pool';
+import type { Pool } from './pool';
 
 export interface RGroupAttributes {
   index?: number;

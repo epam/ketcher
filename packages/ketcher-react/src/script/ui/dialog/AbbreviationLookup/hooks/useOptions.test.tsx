@@ -1,6 +1,6 @@
 import { useOptions } from './useOptions';
 import { renderHook } from '@testing-library/react';
-import { Element } from 'ketcher-core';
+import type { Element } from 'ketcher-core';
 import { AbbreviationType } from '../AbbreviationLookup.types';
 
 jest.mock('react-redux', () => {

@@ -1,9 +1,9 @@
-import {
+import type {
   MonomerItemType,
   Entities,
   MonomerOrAmbiguousType,
 } from 'domain/types';
-import {
+import type {
   IKetMonomerGroupTemplate,
   IKetTemplateConnection,
 } from 'application/formatters/types/ket';

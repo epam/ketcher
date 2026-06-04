@@ -1,5 +1,5 @@
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
 import {
   getNextMonomerInChain,
@@ -7,15 +7,15 @@ import {
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,

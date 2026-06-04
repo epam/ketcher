@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomAttributes } from 'domain/entities/atom';
-import { Bond, BondAttributes } from 'domain/entities/bond';
-import { Vec2 } from 'domain/entities/vec2';
+import type { AtomAttributes } from 'domain/entities/atom';
+import { type BondAttributes, Bond } from 'domain/entities/bond';
+import type { Vec2 } from 'domain/entities/vec2';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { SGroup } from 'domain/entities/sgroup';
+import type { SGroup } from 'domain/entities/sgroup';
 import {
   AtomAdd,
   AtomAttr,
@@ -38,7 +38,7 @@ import { fromAtomMerge } from './atomMerge';
 import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
-import { ReSGroup, ReStruct } from '../../render';
+import type { ReSGroup, ReStruct } from '../../render';
 import utils from '../shared/utils';
 import { fromSgroupAttachmentPointRemove } from './sgroupAttachmentPoint';
 

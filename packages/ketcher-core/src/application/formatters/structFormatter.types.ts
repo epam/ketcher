@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
-import { Struct } from 'domain/entities/struct';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { StructServiceOptions } from 'domain/services';
-import { EditorSelection } from 'application/editor/editor.types';
+import type { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import type { Struct } from 'domain/entities/struct';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { StructServiceOptions } from 'domain/services';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export interface StructFormatter {
   getStringFromStructureAsync: (

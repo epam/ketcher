@@ -1,7 +1,7 @@
-import { EditorSelection } from './editor/editor.types';
+import type { EditorSelection } from './editor/editor.types';
 import { ketcherProvider } from './ketcherProvider';
-import { FormatterFactory, SupportedFormat } from './formatters';
-import { Struct } from 'domain/entities';
+import { type FormatterFactory, SupportedFormat } from './formatters';
+import type { Struct } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export function getStructure(

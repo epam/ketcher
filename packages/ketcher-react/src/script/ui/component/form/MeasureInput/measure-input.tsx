@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, HTMLAttributes } from 'react';
+import { type HTMLAttributes, useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';

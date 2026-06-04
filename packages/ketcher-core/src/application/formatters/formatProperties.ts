@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ChemicalMimeType } from 'domain/services';
-import { SupportedFormat } from './structFormatter.types';
+import type { SupportedFormat } from './structFormatter.types';
 import { SupportedFormatProperties } from './supportedFormatProperties';
 
 type FormatPropertiesMap = {

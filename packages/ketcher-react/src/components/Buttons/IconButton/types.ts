@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from '../../Icon/types';
-import { ReactNode } from 'react';
+import type { IconName } from '../../Icon/types';
+import type { ReactNode } from 'react';
 
 export interface IIconButtonBaseProps {
   onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;

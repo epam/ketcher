@@ -21,7 +21,7 @@ import {
   ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
-import { Validator, Schema } from 'jsonschema';
+import { type Schema, Validator } from 'jsonschema';
 
 type ExtendedSchema = Schema & {
   enumNames?: Array<string>;

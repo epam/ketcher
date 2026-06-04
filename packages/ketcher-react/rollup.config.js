@@ -14,28 +14,21 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-// @ts-expect-error Rollup/Vite loads this TS module directly, but package tsc rejects .ts specifiers.
 import { license } from '../../license.ts';
 import { string } from 'rollup-plugin-string';
-import type { RollupOptions } from 'rollup';
 
 const mode = {
   PRODUCTION: 'production',
   DEVELOPMENT: 'development',
-} as const;
+};
 
 const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
-type PackageJson = {
-  source: string;
-  version: string;
-};
+const packageJson = pkg;
 
-const packageJson = pkg as PackageJson;
-
-const getTagName = (): string => {
+const getTagName = () => {
   try {
     return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' });
   } catch (error) {
@@ -44,7 +37,7 @@ const getTagName = (): string => {
   }
 };
 
-export const valuesToReplace: Record<string, string> = {
+export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
@@ -57,7 +50,7 @@ export const valuesToReplace: Record<string, string> = {
   'process.env.HELP_LINK': JSON.stringify(getTagName()),
 };
 
-const config: RollupOptions = {
+const config = {
   input: packageJson.source,
   output: [
     {

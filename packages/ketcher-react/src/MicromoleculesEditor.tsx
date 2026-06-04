@@ -21,11 +21,11 @@ import 'url-search-params-polyfill';
 import 'whatwg-fetch';
 import './index.less';
 
-import init, { Config } from './script';
-import { RefObject, useEffect, useRef } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import init, { type Config } from './script';
+import { type RefObject, useEffect, useRef } from 'react';
+import { type Root, createRoot } from 'react-dom/client';
 
-import { Ketcher, StructService } from 'ketcher-core';
+import type { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
@@ -33,7 +33,7 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { KetcherBuilder } from './script/builders';
+import type { KetcherBuilder } from './script/builders';
 
 const mediaSizes = {
   smallWidth: 1040,

@@ -2,15 +2,19 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';
 import {
-  AtomLabel,
-  AttachmentPointClickData,
+  type AtomLabel,
+  type AttachmentPointClickData,
+  type BaseMonomer,
+  type ComponentStructureUpdateData,
+  type IKetMonomerTemplate,
+  type MonomerCreationInitialValues,
+  type MonomerCreationState,
+  type RnaPresetComponentKey,
+  type Struct,
   AttachmentPointName,
-  BaseMonomer,
-  ComponentStructureUpdateData,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
-  IKetMonomerTemplate,
   isValidBilnAlias,
   isValidHelmAlias,
   KetcherLogger,
@@ -20,8 +24,6 @@ import {
   MonomerCreationComponentStructureUpdateEvent,
   NO_NATURAL_ANALOGUE,
   provideEditorInstance,
-  RnaPresetComponentKey,
-  Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -38,7 +40,7 @@ import { onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
-import {
+import type {
   AssignedAttachmentPointsByMonomerType,
   RnaPresetWizardAction,
   RnaPresetWizardComponentStateFieldId,
@@ -70,7 +72,7 @@ import {
   getLeavingAtomForAttachmentPoint,
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
-import { Selection } from '../../../../editor/Editor';
+import type { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
@@ -92,6 +94,32 @@ const getInitialWizardState = (
 });
 
 const initialWizardState: WizardState = getInitialWizardState();
+
+/**
+ * Builds initial wizard state seeded with values from an existing monomer
+ * being edited. When `initialValues` is undefined returns the default empty
+ * wizard state.
+ */
+const getInitialWizardStateForEdit = (
+  initialValues?: MonomerCreationInitialValues,
+): WizardState => {
+  if (!initialValues) {
+    return initialWizardState;
+  }
+
+  return {
+    ...initialWizardState,
+    values: {
+      type: initialValues.type,
+      symbol: initialValues.symbol,
+      name: initialValues.name,
+      naturalAnalogue: initialValues.naturalAnalogue,
+      aliasHELM: initialValues.aliasHELM,
+      aliasBILN: initialValues.aliasBILN,
+    },
+  };
+};
+
 // BILN alias errors remain visible until the next submit attempt.
 const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
 
@@ -712,15 +740,27 @@ const validateModificationTypes = (
   return { notifications, errors };
 };
 
-const MonomerCreationWizard = () => {
+type MonomerCreationWizardInternalProps = {
+  monomerCreationState: NonNullable<MonomerCreationState>;
+};
+
+const MonomerCreationWizardInternal = ({
+  monomerCreationState,
+}: MonomerCreationWizardInternalProps) => {
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
   const dispatch = useDispatch();
 
+  // Initial wizard values are derived once on mount. The wizard is mounted
+  // only while `monomerCreationState` is set (see the wrapper below), so
+  // edit-mode initial values from `editInstanceInitialValues` are seeded via
+  // the lazy initializer instead of a useEffect that would race with user
+  // input.
   const [wizardState, wizardStateDispatch] = useReducer(
     wizardReducer,
-    initialWizardState,
+    monomerCreationState.editInstanceInitialValues,
+    getInitialWizardStateForEdit,
   );
   const [rnaPresetWizardState, rnaPresetWizardStateDispatch] = useReducer(
     rnaPresetWizardReducer,
@@ -1017,8 +1057,6 @@ const MonomerCreationWizard = () => {
     resetWizard();
   };
 
-  const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
-
   // Recompute atom ownership highlights only after component structures change
   // while ownership validation errors are active.
   useEffect(() => {
@@ -1107,10 +1145,6 @@ const MonomerCreationWizard = () => {
     rnaPresetWizardState.sugar.structure,
     handlePhosphatePositionChange,
   ]);
-
-  if (!monomerCreationState) {
-    return null;
-  }
 
   const { assignedAttachmentPoints } = monomerCreationState;
 
@@ -1798,11 +1832,10 @@ const MonomerCreationWizard = () => {
         });
       });
 
-      editor.finishNewMonomersCreation(
-        monomersData,
-        rnaPresetWizardState.preset.name,
+      editor.finishNewMonomersCreation(monomersData, {
+        rnaPresetName: rnaPresetWizardState.preset.name,
         phosphatePosition,
-      );
+      });
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();
@@ -2031,6 +2064,27 @@ const MonomerCreationWizard = () => {
           ketcherEditorRootElement,
         )}
     </div>
+  );
+};
+
+/**
+ * Outer wrapper that gates the wizard on the Redux `monomerCreationState`.
+ * The internal component is mounted only while the wizard is active, which
+ * lets it receive `monomerCreationState` (including `editInstanceInitialValues`
+ * used to prefill the form when editing an existing monomer) as a prop and
+ * seed its initial reducer state synchronously on mount.
+ */
+const MonomerCreationWizard = () => {
+  const monomerCreationState = useSelector(editorMonomerCreationStateSelector);
+
+  if (!monomerCreationState) {
+    return null;
+  }
+
+  return (
+    <MonomerCreationWizardInternal
+      monomerCreationState={monomerCreationState}
+    />
   );
 };
 

@@ -1,7 +1,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { ImageReferenceName } from 'domain/entities/image';
+import type { ImageReferenceName } from 'domain/entities/image';
 import { Vec2 } from 'domain/entities/vec2';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 
 const moveLeftPositions: Array<ImageReferenceName> = [

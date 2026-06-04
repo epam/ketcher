@@ -1492,6 +1492,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getBondLocator(page, {}).nth(6).click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

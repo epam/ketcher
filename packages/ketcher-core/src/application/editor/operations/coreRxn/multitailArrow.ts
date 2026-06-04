@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import type { Operation } from 'domain/entities/Operation';
+import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 
 export class MultitailArrowAddOperation implements Operation {
   public multitailArrow: MultitailArrow;

@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
+import type { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { type BaseMonomer, Vec2 } from 'domain/entities';
 
-import { CoreEditor } from 'application/editor/Editor';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/internal';
-import { BaseMonomerRenderer } from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
+import type { BaseMonomerRenderer } from 'application/render/renderers';
+import type { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import { RNABase } from 'domain/entities/RNABase';
+import type { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
 import { SnakeLayoutCellWidth } from 'domain/constants';
-import { IKetTemplateConnection } from 'application/formatters';
+import type { IKetTemplateConnection } from 'application/formatters';
 import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 
 class RnaPresetTool implements Tool {

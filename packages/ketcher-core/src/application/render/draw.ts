@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelPaper, Element } from 'raphael';
-import { HalfBond } from 'domain/entities/halfBond';
+import type { RaphaelPaper, Element } from 'raphael';
+import type { HalfBond } from 'domain/entities/halfBond';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 
@@ -23,7 +23,7 @@ import { getOptionsWithConvertedUnits } from './options';
 import Raphael from './raphael-ext';
 import svgPath from 'svgpath';
 import util from './util';
-import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
+import type { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { toFixed } from 'utilities';
 import { PathBuilder } from './pathBuilder';
 

@@ -1,4 +1,4 @@
-import { Point } from 'ketcher-core';
+import type { Point } from 'ketcher-core';
 
 const X_COORD_INDEX = 0;
 const Y_COORD_INDEX = 1;

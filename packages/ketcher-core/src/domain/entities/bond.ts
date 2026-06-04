@@ -16,14 +16,14 @@
 
 import { Atom } from './atom';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
-import { SGroup } from 'domain/entities/sgroup';
-import { BondCIP } from 'domain/entities/types';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;

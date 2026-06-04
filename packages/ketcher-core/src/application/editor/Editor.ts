@@ -1,37 +1,37 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
 import {
-  Editor,
+  type Editor,
+  type LibraryItemDragState,
   EditorType,
-  LibraryItemDragState,
 } from 'application/editor/editor.types';
 import {
+  type IEditorEvents,
   editorEvents,
   hotkeysConfiguration,
-  IEditorEvents,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
   HAS_CONTENT_LAYOUT_MODE,
-  LayoutMode,
 } from 'application/editor/modes/types';
-import { BaseMode } from 'application/editor/modes/internal';
+import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
-  BaseTool,
-  IRnaPreset,
+  type BaseTool,
+  type IRnaPreset,
+  type Tool,
+  type ToolConstructorInterface,
+  type ToolEventHandlerName,
   isBaseTool,
-  Tool,
-  ToolConstructorInterface,
-  ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
 import {
-  IKetMacromoleculesContent,
-  IKetMonomerGroupTemplate,
+  type IKetMacromoleculesContent,
+  type IKetMonomerGroupTemplate,
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
@@ -42,18 +42,18 @@ import type { RenderersManager } from 'application/render/renderers/RenderersMan
 import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
-  NodeSelection,
-  NodesSelection,
+  type NodeSelection,
+  type NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/ketcherProvider';
 import {
+  type MonomerToAtomBond,
+  type SubChainNode,
   ChainsCollection,
-  MonomerToAtomBond,
   Phosphate,
   SequenceType,
   Struct,
-  SubChainNode,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -65,16 +65,16 @@ import {
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
 import { getStructureBbox } from 'domain/entities/structureBbox';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import {
-  EditorLineLength,
+  type EditorLineLength,
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_LENGTH_ERROR_MESSAGE,
@@ -88,18 +88,19 @@ import {
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
+  isEditableInputTarget,
   KetcherLogger,
   keyNorm,
   SettingsManager,
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
-import { EditorHistory, HistoryOperationType } from './EditorHistory';
+import { type HistoryOperationType, EditorHistory } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { ToolName } from 'application/editor/tools/types';
+import type { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
@@ -121,8 +122,8 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
-import { D3SvgElementSelection } from 'application/render/types';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -730,10 +731,11 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
-    const isInput =
-      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
 
-    if (keySettings[shortcutKey]?.handler && !isInput) {
+    if (
+      keySettings[shortcutKey]?.handler &&
+      !isEditableInputTarget(event.target)
+    ) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
@@ -1161,7 +1163,7 @@ export class CoreEditor {
     } else if (this.drawingEntitiesManager.hasMonomers) {
       if (
         this.nextAutochainPosition &&
-        !(this.mode.modeName === 'snake-layout-mode')
+        this.mode.modeName !== 'snake-layout-mode'
       ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {

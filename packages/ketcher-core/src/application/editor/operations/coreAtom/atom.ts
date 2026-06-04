@@ -17,10 +17,10 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { Atom } from 'domain/entities/CoreAtom';
-import { Bond as MicromoleculesBond } from 'domain/entities/bond';
-import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import type { Operation } from 'domain/entities/Operation';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { Bond as MicromoleculesBond } from 'domain/entities/bond';
+import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { KetcherLogger } from 'utilities';
 
 interface BondWithIdInMicromolecules {

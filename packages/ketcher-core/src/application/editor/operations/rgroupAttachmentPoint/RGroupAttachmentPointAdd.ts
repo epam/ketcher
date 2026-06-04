@@ -1,8 +1,8 @@
-import { ReStruct, ReRGroupAttachmentPoint } from 'application/render';
+import { type ReStruct, ReRGroupAttachmentPoint } from 'application/render';
 import assert from 'assert';
 import {
+  type RGroupAttachmentPointType,
   RGroupAttachmentPoint,
-  RGroupAttachmentPointType,
 } from 'domain/entities';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Bond } from './bond';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 
 export class Loop {
   hbs: number[];

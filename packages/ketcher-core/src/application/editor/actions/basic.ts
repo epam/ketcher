@@ -17,8 +17,8 @@
 import { AlignDescriptors, CanvasLoad } from '../operations';
 
 import { Action } from './action';
-import { Struct } from 'domain/entities/struct';
-import { ReStruct } from 'application/render';
+import type { Struct } from 'domain/entities/struct';
+import type { ReStruct } from 'application/render';
 
 /** Get action applied {@link struct} to {@link restruct}. */
 export function fromNewCanvas(restruct: ReStruct, struct: Struct) {

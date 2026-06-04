@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, AtomListParams } from './atomList';
-import { Point, Vec2 } from './vec2';
+import { type AtomListParams, AtomList } from './atomList';
+import { type Point, Vec2 } from './vec2';
 
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
-import { AtomCIP } from './types';
+import type { AtomCIP } from './types';
 import { SGroup } from 'domain/entities/sgroup';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 

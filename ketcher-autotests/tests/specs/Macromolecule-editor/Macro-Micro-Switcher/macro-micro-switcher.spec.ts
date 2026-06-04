@@ -574,6 +574,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopLeftToolbar(page).saveFile();
     expect(SaveStructureDialog(page).window).toBeVisible();
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+    await fullScreenButton.click();
   });
 });
 
@@ -827,6 +829,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await Library(page).switchToRNATab();
     await takePageScreenshot(page);
+    await CommonTopRightToolbar(page).fullScreen();
   });
 
   test.skip(
@@ -1489,6 +1492,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getBondLocator(page, {}).nth(6).click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

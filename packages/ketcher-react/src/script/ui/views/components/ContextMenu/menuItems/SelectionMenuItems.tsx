@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item, Submenu, Separator } from 'react-contexify';
 import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
@@ -14,8 +14,8 @@ import {
   getBondNames,
   monomerWizardDisallowedBondNames,
 } from '../utils';
-import Editor from 'src/script/editor';
-import {
+import type Editor from 'src/script/editor';
+import type {
   MenuItemsProps,
   SelectionContextMenuProps,
 } from '../contextMenu.types';
@@ -147,7 +147,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
               disabled={isDisabledForMonomerWizard}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
-              <span>{formatTitle(tools[name].title)}</span>
+              <span>{formatTitle(tools[name].title ?? '')}</span>
             </Item>
           );
         })}

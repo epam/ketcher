@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 import classes from './SpecialSymbolsList.module.less';
 
 interface SpecialSymbolsListProps {

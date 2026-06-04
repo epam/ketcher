@@ -108,8 +108,6 @@ describe('hasPhosphatePositionAttachmentPointConflict', () => {
   );
 
   it('returns false when attachment point maps are missing', () => {
-    expect(
-      hasPhosphatePositionAttachmentPointConflict('3', undefined, undefined),
-    ).toBe(false);
+    expect(hasPhosphatePositionAttachmentPointConflict('3')).toBe(false);
   });
 });

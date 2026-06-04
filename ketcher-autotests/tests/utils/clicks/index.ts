@@ -53,26 +53,6 @@ export async function clickAfterItemsToMergeInitialization(
   });
 }
 
-export async function clickInTheMiddleOfTheScreen(
-  page: Page,
-  button: MouseButton = 'left',
-  options: { waitForMergeInitialization: boolean } = {
-    waitForMergeInitialization: false,
-  },
-) {
-  const { x, y } = await getCachedBodyCenter(page);
-
-  if (options.waitForMergeInitialization) {
-    await waitForRender(page, async () => {
-      await clickAfterItemsToMergeInitialization(page, x, y, button);
-    });
-  } else {
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y, { button });
-    });
-  }
-}
-
 export async function clickOnCanvas(
   page: Page,
   x: number,

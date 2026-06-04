@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, PropsWithChildren, RefObject, useRef } from 'react';
+import { type FC, type PropsWithChildren, type RefObject, useRef } from 'react';
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../ToolbarGroupItem';
 
 import { ArrowScroll } from '../ArrowScroll';

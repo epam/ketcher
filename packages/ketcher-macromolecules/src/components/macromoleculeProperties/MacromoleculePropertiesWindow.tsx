@@ -57,6 +57,7 @@ import { TextInputField } from 'components/shared/textInputField';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 const NO_DATA_VALUE = '--';
+const CONCENTRATION_VALUE_PATTERN = /^(\d+([.,]\d*)?|[.,]\d*)?$/;
 
 const hasSpecificProperty = (
   macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
@@ -396,6 +397,14 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 };
 
 const BasicProperty = (props: BasicPropertyProps) => {
+  const onChangeValue = (value: string) => {
+    if (!CONCENTRATION_VALUE_PATTERN.test(value)) {
+      return;
+    }
+
+    props.onChangeValue?.(value);
+  };
+
   return (
     <StyledBasicProperty data-testid={props.testId} disabled={props.disabled}>
       <>
@@ -411,7 +420,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             type="text"
             disabled={props.disabled}
             inputClassName={inputClassName}
-            onChange={(value) => props?.onChangeValue?.(value)}
+            onChange={onChangeValue}
           />
         ) : (
           <BasicPropertyValue data-testid={props.testId + '-value'}>

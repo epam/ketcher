@@ -36,7 +36,7 @@ const isNucleicNode = (node: SubChainNode) =>
 const isPureNucleicChain = (chain: Chain) =>
   chain.nodes.length > 0 && chain.nodes.every(isNucleicNode);
 
-const hasComplimentaryBase = (
+const hasComplementaryBase = (
   node: SubChainNode,
   chain: Chain,
   chainsCollection: ChainsCollection,
@@ -68,7 +68,7 @@ const isMeltingTemperatureCalculationAvailable = (
     (chain) =>
       isPureNucleicChain(chain) &&
       chain.nodes.every((node) =>
-        hasComplimentaryBase(node, chain, chainsCollection),
+        hasComplementaryBase(node, chain, chainsCollection),
       ),
   );
 

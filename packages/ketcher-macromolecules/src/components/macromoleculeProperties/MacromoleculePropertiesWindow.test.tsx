@@ -116,6 +116,10 @@ describe('MacromoleculePropertiesWindow', () => {
       target: { value: '0,' },
     });
     expect(screen.getByTestId('Unipositive Ions-input')).toHaveValue('0,');
+    fireEvent.change(screen.getByTestId('Unipositive Ions-input'), {
+      target: { value: 'abc' },
+    });
+    expect(screen.getByTestId('Unipositive Ions-input')).toHaveValue('0,');
     expect(
       within(screen.getByTestId('Unipositive Ions-selector')).getByRole(
         'combobox',

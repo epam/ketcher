@@ -7,7 +7,7 @@
     "build": "next build",
     "test:types": "tsc --noEmit",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "ketcher-core": "*",

@@ -1,6 +1,8 @@
 'use client';
 
-import { StandaloneStructServiceProvider as StandaloneStructServiceProviderType } from 'ketcher-standalone';
+import { useEffect, useState } from 'react';
+
+import type { StructServiceProvider } from 'ketcher-core';
 import { Editor } from 'ketcher-react';
 
 import 'ketcher-react/dist/index.css';
@@ -27,13 +29,37 @@ const safePostMessage = (
   window.parent.postMessage(message, parentOrigin);
 };
 
-const StandaloneStructServiceProvider =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  StandaloneStructServiceProviderType as unknown as new () => any;
-
-const structServiceProvider = new StandaloneStructServiceProvider();
-
 export function EditorComponent() {
+  const [structServiceProvider, setStructServiceProvider] =
+    useState<StructServiceProvider | null>(null);
+
+  useEffect(() => {
+    let isSubscribed = true;
+
+    void import('ketcher-standalone').then(
+      ({
+        StandaloneStructServiceProvider: StandaloneStructServiceProviderType,
+      }) => {
+        if (!isSubscribed) {
+          return;
+        }
+
+        const StandaloneStructServiceProvider =
+          StandaloneStructServiceProviderType as unknown as new () => any;
+
+        setStructServiceProvider(new StandaloneStructServiceProvider());
+      },
+    );
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, []);
+
+  if (!structServiceProvider) {
+    return null;
+  }
+
   return (
     <Editor
       staticResourcesUrl={process.env.PUBLIC_URL || ''}

@@ -59,7 +59,7 @@ export function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
 
   for (const sgId of selectedSgroups) {
     const sgroup = editor.render.ctab.sgroups.get(sgId);
-    if (sgroup) {
+    if (sgroup && !sgroup.item?.isSuperatomWithoutLabel) {
       const sgroupAtoms = SGroup.getAtoms(editor.struct(), sgroup.item);
       const sgroupBonds = SGroup.getBonds(editor.struct(), sgroup.item);
       newSelected.atoms.push(...sgroupAtoms);

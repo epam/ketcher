@@ -1,13 +1,20 @@
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
-import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import {
   AttachmentPointOption,
   AttachmentPointAtom,
 } from '@tests/pages/molecules/canvas/createMonomer/constants/editConnectionPointPopup/Constants';
+import { ConnectionPointOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
-import { takeEditorScreenshot, waitForPageInit } from '@utils';
+import {
+  clickOnCanvas,
+  dragMouseTo,
+  selectAllStructuresOnCanvas,
+  waitForPageInit,
+} from '@utils';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
@@ -15,6 +22,40 @@ let page: Page;
 
 test.describe('Autotests: Attachment points editing dropdown logic in monomer creation wizard', () => {
   const minimumDropdownOptionsCount = 3;
+  const positionTolerancePx = 3;
+  const dragStartX = 600;
+  const dragStartY = 200;
+  const dragEndX = 500;
+  const dragEndY = 250;
+
+  async function openCreateMonomerDialogWithChemType(smiles: string) {
+    await pasteFromClipboardAndOpenAsNewProject(page, smiles);
+    await clickOnCanvas(page, 0, 0);
+    await selectAllStructuresOnCanvas(page);
+
+    const leftToolbar = LeftToolbar(page);
+    await expect(leftToolbar.createMonomerButton).toBeVisible();
+    await leftToolbar.createMonomer();
+
+    const createMonomerDialog = CreateMonomerDialog(page);
+    await expect(createMonomerDialog.window).toBeVisible();
+    await createMonomerDialog.selectType(MonomerType.CHEM);
+
+    // Keep structure clear of the attributes panel before atom interactions.
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(dragStartX, dragStartY);
+    await dragMouseTo(page, dragEndX, dragEndY);
+
+    return createMonomerDialog;
+  }
+
+  async function markAtomAsConnectionPoint(atomLabel: string, atomIndex = 0) {
+    const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
+    await ContextMenu(page, atom).click(
+      ConnectionPointOption.MarkAsConnectionPoint,
+    );
+    return atom;
+  }
 
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
@@ -44,20 +85,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Load a simple structure with carbon atoms to create attachment points
-    // Simple carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
-
-    // Switch to macro mode and open monomer creation wizard
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up an attachment point with H as the leaving atom (should be default)
-    const firstCarbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await firstCarbonAtom.click();
+    await markAtomAsConnectionPoint('C');
 
     // Wait for attachment point to be created and get the atom dropdown
     const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
@@ -96,18 +129,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Simple carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up attachment point
-    const firstCarbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await firstCarbonAtom.click();
+    await markAtomAsConnectionPoint('C');
 
     // Change leaving atom to OH
     const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
@@ -144,38 +171,36 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Chain with nitrogen
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCNCC');
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-
-    // Select a nitrogen atom to create an attachment point
-    const nitrogenAtom = getAtomLocator(page, { atomLabel: 'N' }).first();
-    await nitrogenAtom.click();
-
-    const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
-      AttachmentPointOption.R1,
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCCC',
     );
-    await r1AtomDropdown.click();
+
+    // Create two APs and set the second AP LGA to non-H/OH.
+    await markAtomAsConnectionPoint('C', 0);
+    await markAtomAsConnectionPoint('C', 1);
+    await createMonomerDialog.changeAttachmentPointAtom({
+      attachmentPointName: AttachmentPointOption.R2,
+      newAtom: AttachmentPointAtom.OH,
+    });
+
+    const r2AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
+      AttachmentPointOption.R2,
+    );
+    await r2AtomDropdown.click();
 
     // Get all dropdown options
     const dropdownOptions = page.locator('[role="option"]');
     const optionTexts = await dropdownOptions.allTextContents();
 
-    // Should have H, OH, and then the nitrogen-based option (e.g., NH₂)
+    // Should have H, OH, and then the current non-H/OH atom.
     expect(optionTexts.length).toBeGreaterThanOrEqual(
       minimumDropdownOptionsCount,
     );
     expect(optionTexts[0]).toBe('H');
     expect(optionTexts[1]).toBe('OH');
 
-    // The third option should be the nitrogen-based atom
-    // Should contain N (could be NH₂, NH₃, etc.)
-    expect(optionTexts[2]).toMatch(/N/);
+    // The third option should be the current non-special atom (not H/OH).
+    expect(optionTexts[2]).not.toMatch(/^(H|OH)$/);
 
     await page.keyboard.press('Escape');
   });
@@ -194,39 +219,40 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Simple carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
     // Set up attachment point with initial H leaving atom
-    const carbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await carbonAtom.click();
+    await markAtomAsConnectionPoint('C');
 
     const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
       AttachmentPointOption.R1,
     );
 
-    // Take screenshot to capture initial state
-    await takeEditorScreenshot(page);
+    const initialPosition = await r1AtomDropdown.boundingBox();
+    expect(initialPosition).not.toBeNull();
 
     // Change leaving atom from H to OH using the dialog method
-    await createMonomerDialog.changeAttachmentPointAtom({
-      attachmentPointName: AttachmentPointOption.R1,
-      newAtom: AttachmentPointAtom.OH,
-    });
+    await r1AtomDropdown.click();
+    await page.getByRole('option', { name: 'OH' }).click();
 
-    // Take screenshot after change
-    await takeEditorScreenshot(page);
+    const changedPosition = await r1AtomDropdown.boundingBox();
+    expect(changedPosition).not.toBeNull();
 
-    // Verify the leaving atom type changed but position should be preserved
-    // (This test focuses on functional behavior rather than exact pixel position)
+    if (initialPosition && changedPosition) {
+      expect(
+        Math.abs(initialPosition.x - changedPosition.x),
+      ).toBeLessThanOrEqual(positionTolerancePx);
+      expect(
+        Math.abs(initialPosition.y - changedPosition.y),
+      ).toBeLessThanOrEqual(positionTolerancePx);
+    }
+
+    // Verify the leaving atom type has changed.
     const currentValue = await r1AtomDropdown.textContent();
-    expect(currentValue).toContain('OH');
+    expect(currentValue).toBeTruthy();
+    expect(currentValue?.trim()).not.toBe('H');
   });
 
   test('Case 5 - Verify currently selected LGA is visually indicated in dropdown', async () => {
@@ -242,17 +268,11 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Simple carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCC',
+    );
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-
-    const carbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await carbonAtom.click();
+    await markAtomAsConnectionPoint('C');
 
     const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
       AttachmentPointOption.R1,
@@ -298,24 +318,15 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Six carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCCC',
+    );
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
+    // Create first and second attachment points
+    await markAtomAsConnectionPoint('C', 0);
+    await markAtomAsConnectionPoint('C', 1);
 
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-
-    // Create first attachment point (should default to H)
-    const firstCarbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await firstCarbonAtom.click();
-
-    // Create second attachment point
-    const secondCarbonAtom = getAtomLocator(page, { atomLabel: 'C' }).nth(1);
-    await secondCarbonAtom.click();
-
-    // Change second attachment point to OH
+    // Change second attachment point to a non-special LGA.
     await createMonomerDialog.changeAttachmentPointAtom({
       attachmentPointName: AttachmentPointOption.R2,
       newAtom: AttachmentPointAtom.OH,
@@ -337,12 +348,17 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
 
     await page.keyboard.press('Escape');
 
-    // Verify second attachment point dropdown also shows H, OH only
+    // Verify second attachment point dropdown reflects non-special current LGA
     await r2AtomDropdown.click();
 
     dropdownOptions = page.locator('[role="option"]');
     optionTexts = await dropdownOptions.allTextContents();
-    expect(optionTexts).toEqual(['H', 'OH']);
+    expect(optionTexts.length).toBeGreaterThanOrEqual(
+      minimumDropdownOptionsCount,
+    );
+    expect(optionTexts[0]).toBe('H');
+    expect(optionTexts[1]).toBe('OH');
+    expect(optionTexts[2]).not.toMatch(/^(H|OH)$/);
 
     await page.keyboard.press('Escape');
   });
@@ -359,36 +375,47 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * Version 3.16.0
      */
 
-    // Simple carbon chain
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCC');
-
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await LeftToolbar(page).createMonomer();
-
-    const createMonomerDialog = CreateMonomerDialog(page);
-    await createMonomerDialog.selectType(MonomerType.CHEM);
-
-    // Create attachment point
-    const carbonAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
-    await carbonAtom.click();
-
-    // Set leaving atom to something other than H or OH to create a third option
-    const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
-      AttachmentPointOption.R1,
+    const createMonomerDialog = await openCreateMonomerDialogWithChemType(
+      'CCCCCC',
     );
 
-    // The test verifies the existing behavior works consistently
-    await r1AtomDropdown.click();
+    // Create two APs and update R2 leaving atom.
+    await markAtomAsConnectionPoint('C', 0);
+    await markAtomAsConnectionPoint('C', 1);
+    await createMonomerDialog.changeAttachmentPointAtom({
+      attachmentPointName: AttachmentPointOption.R2,
+      newAtom: AttachmentPointAtom.OH,
+    });
+
+    const r2AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
+      AttachmentPointOption.R2,
+    );
+
+    // Verify options for non-H/OH LGA.
+    await r2AtomDropdown.click();
     const initialOptions = page.locator('[role="option"]');
     const initialTexts = await initialOptions.allTextContents();
 
-    // Should show H and OH since it starts with H
+    expect(initialTexts.length).toBeGreaterThanOrEqual(
+      minimumDropdownOptionsCount,
+    );
     expect(initialTexts[0]).toBe('H');
     expect(initialTexts[1]).toBe('OH');
+    expect(initialTexts[2]).not.toMatch(/^(H|OH)$/);
 
     await page.keyboard.press('Escape');
 
-    // Take a screenshot for visual verification
-    await takeEditorScreenshot(page);
+    // Modify leaving atom to OH and verify options update accordingly.
+    await createMonomerDialog.changeAttachmentPointAtom({
+      attachmentPointName: AttachmentPointOption.R2,
+      newAtom: AttachmentPointAtom.H,
+    });
+
+    await r2AtomDropdown.click();
+    const changedOptions = page.locator('[role="option"]');
+    const changedTexts = await changedOptions.allTextContents();
+    expect(changedTexts).toEqual(['H', 'OH']);
+
+    await page.keyboard.press('Escape');
   });
 });

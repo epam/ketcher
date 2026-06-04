@@ -1,8 +1,32 @@
 // <reference types="react-scripts" />
+/// <reference types="@testing-library/jest-dom" />
 /* eslint-disable no-var, no-use-before-define */
 declare module '*.module.less' {
   const classes: { [key: string]: string };
   export default classes;
+}
+
+declare namespace JSX {
+  type Element = React.ReactElement<
+    unknown,
+    string | React.JSXElementConstructor<unknown>
+  >;
+}
+
+declare namespace jest {
+  interface Matchers<R, _T = unknown> {
+    toBeEnabled(): R;
+    toBeDisabled(): R;
+    toBeInTheDocument(): R;
+    toHaveFocus(): R;
+    toHaveAttribute(attr: string, value?: unknown): R;
+    toHaveClass(...classNames: string[]): R;
+    toHaveStyle(css: string | Record<string, unknown>): R;
+    toHaveTextContent(
+      text: string | RegExp,
+      options?: { normalizeWhitespace?: boolean },
+    ): R;
+  }
 }
 
 declare namespace NodeJS {

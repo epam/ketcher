@@ -93,11 +93,15 @@ const SubMenu = ({
     (child) => {
       return child.type === MenuItem ? child : null;
     },
-  );
+  ).filter(Boolean) as React.ReactElement<{
+    itemId?: string;
+    testId?: string;
+    title?: string;
+  }>[];
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item);
+    .filter((item): item is string => Boolean(item));
   const activeOptions = options.filter((itemKey) => isActive(itemKey));
   const activeOption = activeOptions[0];
 
@@ -156,7 +160,6 @@ const SubMenu = ({
               timeout={0}
               style={{ ...portalStyle }}
               unmountOnExit
-              onClick={hideCollapse}
             >
               <ClickAwayListener onClickAway={hideCollapse}>
                 <OptionsContainer
@@ -164,6 +167,7 @@ const SubMenu = ({
                   isAutoSize={autoSize}
                   islayoutModeButton={layoutModeButton}
                   data-testid="multi-tool-dropdown"
+                  onClick={hideCollapse}
                 >
                   {subComponents.map((component) =>
                     React.cloneElement(component, {

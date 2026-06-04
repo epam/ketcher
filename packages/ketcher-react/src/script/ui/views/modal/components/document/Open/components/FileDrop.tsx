@@ -28,7 +28,7 @@ type FileDropProps = {
   disabled?: boolean;
   disabledText?: string;
   testId?: string;
-} & DropzoneOptions;
+} & Partial<DropzoneOptions>;
 
 const FileDrop = ({
   buttonLabel,
@@ -37,8 +37,10 @@ const FileDrop = ({
   disabled,
   disabledText,
   testId,
+  multiple: _multiple,
   ...rest
 }: FileDropProps) => {
+  const dropzoneOptions = rest as Omit<DropzoneOptions, 'multiple'>;
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     disabled,
@@ -58,8 +60,9 @@ const FileDrop = ({
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }
     },
-    ...rest,
+    ...dropzoneOptions,
   });
+  const { refKey: _refKey, ...inputProps } = getInputProps();
 
   const getClassesString = useMemo((): string => {
     const classes = [
@@ -77,7 +80,7 @@ const FileDrop = ({
         className: getClassesString,
       })}
     >
-      <input {...getInputProps()} />
+      <input {...inputProps} />
       <div className={parentStyles.dropIconWrapper}>
         <Icon name={iconName} />
       </div>

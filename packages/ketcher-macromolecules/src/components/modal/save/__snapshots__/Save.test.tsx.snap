@@ -29,7 +29,7 @@ exports[`Save modal renders correctly 1`] = `
         tabindex="-1"
       >
         <div
-          aria-labelledby="«r0»"
+          aria-labelledby="_r_0_"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           data-testid="save-structure-dialog"
           role="dialog"
@@ -38,7 +38,7 @@ exports[`Save modal renders correctly 1`] = `
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-15hei83-MuiTypography-root-MuiDialogTitle-root"
-            id="«r0»"
+            id="_r_0_"
           >
             <div
               class="css-1uarmuk"
@@ -113,7 +113,7 @@ exports[`Save modal renders correctly 1`] = `
                     data-testid="file-format-list"
                   >
                     <div
-                      aria-controls="«r1»"
+                      aria-controls="_r_1_"
                       aria-expanded="false"
                       aria-haspopup="listbox"
                       class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"

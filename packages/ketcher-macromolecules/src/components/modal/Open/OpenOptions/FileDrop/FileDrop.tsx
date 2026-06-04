@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { useDropzone, type DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
@@ -25,7 +25,7 @@ export type FileDropProps = {
   iconName: IconName;
   disabled?: boolean;
   disabledText?: string;
-} & DropzoneOptions;
+} & Partial<DropzoneOptions>;
 
 const baseStyle = {
   width: '100%',
@@ -80,12 +80,15 @@ const DropzoneButton = styled.button`
 `;
 
 const FileDrop = ({
+  buttonLabel: _buttonLabel,
   textLabel,
   iconName,
   disabled,
   disabledText,
+  multiple: _multiple,
   ...rest
 }: FileDropProps) => {
+  const dropzoneOptions = rest as Omit<DropzoneOptions, 'multiple'>;
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
     noClick: true,
@@ -106,8 +109,9 @@ const FileDrop = ({
         windowContext.isKetcherFullscreenBeforeFilePicker = false;
       }
     },
-    ...rest,
+    ...dropzoneOptions,
   });
+  const { refKey: _refKey, ...inputProps } = getInputProps();
 
   const style = useMemo(
     () => ({
@@ -136,7 +140,7 @@ const FileDrop = ({
       disabled={disabled}
       type="button"
     >
-      <input {...getInputProps()} />
+      <input {...inputProps} />
       <StyledIcon name={iconName} disabled={disabled} />
       {disabled ? (
         <DisabledText>{disabledText}</DisabledText>

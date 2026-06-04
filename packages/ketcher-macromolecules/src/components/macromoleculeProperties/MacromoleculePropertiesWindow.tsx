@@ -397,7 +397,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 };
 
 const BasicProperty = (props: BasicPropertyProps) => {
-  const onChangeValue = (value: string) => {
+  const handleConcentrationChange = (value: string) => {
     if (!CONCENTRATION_VALUE_PATTERN.test(value)) {
       return;
     }
@@ -420,7 +420,7 @@ const BasicProperty = (props: BasicPropertyProps) => {
             type="text"
             disabled={props.disabled}
             inputClassName={inputClassName}
-            onChange={onChangeValue}
+            onChange={handleConcentrationChange}
           />
         ) : (
           <BasicPropertyValue data-testid={props.testId + '-value'}>

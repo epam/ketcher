@@ -24,7 +24,7 @@ import {
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 
-const convertConcentrationToNumber = (value: string) => {
+const parseConcentrationValue = (value: string) => {
   const concentration = Number(value.replace(',', '.'));
 
   return Number.isFinite(concentration) ? concentration : 0;
@@ -45,19 +45,21 @@ const hasComplementaryBase = (
     return false;
   }
 
-  const { complimentaryChain, complimentaryNode } =
-    chainsCollection.getComplimentaryChainIfNucleotide(
-      node,
-      chainsCollection.monomerToChain,
-      chainsCollection.monomerToNode,
-    );
+  const {
+    complimentaryChain: complementaryChain,
+    complimentaryNode: complementaryNode,
+  } = chainsCollection.getComplimentaryChainIfNucleotide(
+    node,
+    chainsCollection.monomerToChain,
+    chainsCollection.monomerToNode,
+  );
 
   return (
-    complimentaryChain !== undefined &&
-    complimentaryChain !== chain &&
-    complimentaryNode !== undefined &&
-    isPureNucleicChain(complimentaryChain) &&
-    isNucleicNode(complimentaryNode)
+    complementaryChain !== undefined &&
+    complementaryChain !== chain &&
+    complementaryNode !== undefined &&
+    isPureNucleicChain(complementaryChain) &&
+    isNucleicNode(complementaryNode)
   );
 };
 
@@ -139,10 +141,10 @@ export const useRecalculateMacromoleculeProperties = () => {
         },
         {
           upc:
-            convertConcentrationToNumber(unipositiveIonsValue) /
+            parseConcentrationValue(unipositiveIonsValue) /
             molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
           nac:
-            convertConcentrationToNumber(oligonucleotidesValue) /
+            parseConcentrationValue(oligonucleotidesValue) /
             molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
         },
       );

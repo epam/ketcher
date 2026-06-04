@@ -1,3 +1,4 @@
+import { SingleChainMacromoleculeProperties } from 'ketcher-core';
 import {
   fireEvent,
   render,
@@ -12,7 +13,9 @@ class ResizeObserver {
   disconnect = jest.fn();
 }
 
-const renderMacromoleculePropertiesWindow = (properties) =>
+const renderMacromoleculePropertiesWindow = (
+  properties: SingleChainMacromoleculeProperties,
+) =>
   render(
     withThemeAndStoreProvider(<MacromoleculePropertiesWindow />, {
       editor: {

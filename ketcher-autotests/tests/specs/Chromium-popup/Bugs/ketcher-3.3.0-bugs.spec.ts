@@ -658,7 +658,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * Test case: https://github.com/epam/ketcher/issues/6937
      * Bug: https://github.com/epam/ketcher/issues/6705
      * Description: Antisense complement is skipped when terminal monomer lacks an attachment point (R1/R2), not causing incorrect structure on canvas.
-     * Scenario :
+     * Scenario:
      * 1. Go to Macro - Flex mode (clean canvas)
      * 2. Load from HELM
      * 3. Generate the antisense sequence.

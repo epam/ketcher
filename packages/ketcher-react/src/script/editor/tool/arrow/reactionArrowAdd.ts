@@ -1,15 +1,15 @@
 import {
+  type RxnArrowMode,
+  type Action,
   Vec2,
   CoordinateTransformation,
-  RxnArrowMode,
-  Action,
   fromArrowAddition,
   fromArrowDeletion,
   fromArrowResizing,
 } from 'ketcher-core';
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 import assert from 'assert';
-import { ArrowAddTool } from './arrow.types';
+import type { ArrowAddTool } from './arrow.types';
 
 interface BaseDragContext {
   p0: Vec2;

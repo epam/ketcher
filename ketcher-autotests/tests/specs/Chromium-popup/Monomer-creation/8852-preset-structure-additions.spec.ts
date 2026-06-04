@@ -76,7 +76,7 @@ test.describe('Additions to the structure: ', () => {
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: 'TestB',
+      code: 'TestB',
       name: 'Test Base',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
@@ -84,14 +84,14 @@ test.describe('Additions to the structure: ', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: 'TestS',
+      code: 'TestS',
       name: 'Test Sugar',
     });
 
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: 'TestP',
+      code: 'TestP',
       name: 'Test Phosphate',
     });
 

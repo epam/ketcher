@@ -26,7 +26,7 @@ import {
   RxnPlus as MicromoleculeRxnPlus,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
-import { Serializer } from '../serializers.types';
+import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
 import { moleculeToKet } from './toKet/moleculeToKet';
 import { moleculeToStruct } from './fromKet/moleculeToStruct';
@@ -39,15 +39,15 @@ import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct';
 import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
-  IKetAmbiguousMonomerTemplate,
-  IKetConnection,
-  IKetConnectionEndPoint,
-  IKetConnectionMoleculeEndPoint,
-  IKetConnectionMonomerEndPoint,
-  IKetMacromoleculesContent,
-  IKetMacromoleculesContentRootProperty,
-  IKetMonomerNode,
-  IKetMonomerTemplate,
+  type IKetAmbiguousMonomerTemplate,
+  type IKetConnection,
+  type IKetConnectionEndPoint,
+  type IKetConnectionMoleculeEndPoint,
+  type IKetConnectionMonomerEndPoint,
+  type IKetMacromoleculesContent,
+  type IKetMacromoleculesContentRootProperty,
+  type IKetMonomerNode,
+  type IKetMonomerTemplate,
   KetConnectionType,
   KetNodeType,
   KetTemplateType,
@@ -56,7 +56,7 @@ import { Command } from 'domain/entities/Command';
 import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
-  MonomerFactoryFn,
+  type MonomerFactoryFn,
   createMonomersForVariantMonomer,
   monomerToDrawingEntity,
   templateToMonomerProps,
@@ -82,16 +82,16 @@ import {
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { isNumber } from 'lodash';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
   AttachmentPointName,
-  MonomerItemType,
 } from 'domain/types';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { imageToKet } from 'domain/serializers/ket/toKet/imageToKet';
 import { imageToStruct } from 'domain/serializers/ket/fromKet/imageToStruct';
 import {

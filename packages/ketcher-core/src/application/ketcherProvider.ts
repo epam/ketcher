@@ -1,4 +1,4 @@
-import { Ketcher } from './ketcher';
+import type { Ketcher } from './ketcher';
 
 class KetcherProvider {
   private readonly ketcherInstances = new Map<string, Ketcher>();

@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2';
+import { type Point, Vec2 } from './vec2';
 
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
-import { Struct, StructProperty } from './struct';
+import type { Struct, StructProperty } from './struct';
 
 export enum StereoFlag {
   Mixed = 'MIXED',

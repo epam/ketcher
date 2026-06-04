@@ -1,13 +1,13 @@
 import styles from './Notification.module.less';
-import { Icon, IconName } from 'components';
+import { type IconName, Icon } from 'components';
 import clsx from 'clsx';
-import {
+import type {
   RnaPresetWizardAction,
   WizardAction,
   WizardNotificationId,
   WizardNotificationType,
 } from '../../MonomerCreationWizard.types';
-import { Dispatch } from 'react';
+import type { Dispatch } from 'react';
 
 type Props = {
   id: WizardNotificationId;

@@ -2,12 +2,12 @@ import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   anglesToSector,
@@ -15,12 +15,12 @@ import {
   checkFor0and360,
   sectorsList,
 } from 'domain/helpers/attachmentPointCalculations';
-import {
+import type {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import {
   getMonomerSize,
@@ -391,7 +391,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    const [, , monomerClass] = monomerFactory(
+    const [, monomerClass] = monomerEntityFactory(
       this.monomer instanceof AmbiguousMonomer
         ? this.monomer.variantMonomerItem
         : this.monomer.monomerItem,

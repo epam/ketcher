@@ -1,15 +1,15 @@
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { LayoutMode } from 'application/editor/modes/types';
+import type { LayoutMode } from 'application/editor/modes/types';
 import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
+  type TwoStrandedNodesSelection,
   SequenceRenderer,
-  TwoStrandedNodesSelection,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import {
   AmbiguousMonomer,
@@ -36,28 +36,28 @@ import {
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import {
+  type RnaDnaNaturalAnaloguesEnum,
   peptideNaturalAnalogues,
   peptideAmbiguousSymbols,
   RNA_DNA_NON_MODIFIED_PART,
   rnaDnaNaturalAnalogues,
   rnaDnaAmbiguousSymbols,
-  RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
-import {
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {
+  type ITwoStrandedChainItem,
   ChainsCollection,
-  ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import {
+import type {
   IRnaPreset,
   LabeledNodesWithPositionInSequence,
 } from 'application/editor/tools/Tool';
@@ -67,7 +67,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
-import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import type { CoreEditor } from 'application/editor/Editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 
@@ -498,7 +499,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
 
       if (isRightSideOfSequenceItemClicked) {
-        SequenceRenderer.moveCaretForward();
+        SequenceRenderer.moveCaretForwardOrToRowEnd();
       }
 
       SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -1461,7 +1462,7 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretForward();
+          SequenceRenderer.moveCaretForwardOrToRowEnd();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
           this.unselectAllEntities();
         },
@@ -1472,9 +1473,29 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretBack();
+          SequenceRenderer.moveCaretBackOrFromRowEnd();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
 
+          this.unselectAllEntities();
+        },
+      },
+      'move-caret-to-row-start': {
+        shortcut: ['Home'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowStart();
+          this.unselectAllEntities();
+        },
+      },
+      'move-caret-to-row-end': {
+        shortcut: ['End'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowEnd();
           this.unselectAllEntities();
         },
       },

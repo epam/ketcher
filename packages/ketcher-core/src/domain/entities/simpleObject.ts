@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2';
+import { type Point, Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum SimpleObjectMode {

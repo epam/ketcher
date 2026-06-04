@@ -1,5 +1,5 @@
 import { Render, ReStruct } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import {
   AttachmentPoints,
   Atom,

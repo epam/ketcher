@@ -15,9 +15,22 @@
     "jsx-a11y/no-autofocus": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn"
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "separate-type-imports"
+      }
+    ]
   },
   "overrides": [
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": "off"
+      }
+    },
     {
       "files": [
         "**/__tests__/**/*.[jt]s?(x)",

@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond } from 'domain/entities/bond';
+import type { Bond } from 'domain/entities/bond';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import {
   AtomAttr,
   FragmentAddStereoAtom,

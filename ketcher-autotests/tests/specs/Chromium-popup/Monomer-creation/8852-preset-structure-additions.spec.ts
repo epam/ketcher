@@ -268,7 +268,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that previously unconnected structure becomes part of Base when connected to Base
@@ -326,8 +325,6 @@ test.describe('Additions to the structure: ', () => {
 
     // Should be able to save now
     await dialog.submit();
-
-    await dialog.discard();
   });
 
   test('Case 6 - Verify that previously unconnected structure becomes part of Sugar when connected to Sugar', async () => {
@@ -454,7 +451,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.rnaPresetAtomsOutsideComponents,
+      ErrorMessage.rnaPresetInvalidSugarConnectionBonds,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 

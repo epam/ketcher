@@ -310,6 +310,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     const changedPosition = await changedLeavingAtom.boundingBox();
     expect(changedPosition).not.toBeNull();
 
+    // Verify original H leaving group atom is replaced, not kept in parallel.
+    const originalLeavingAtom = getAtomLocator(page, {
+      atomLabel: 'H',
+    }).first();
+    await expect(originalLeavingAtom).toBeHidden();
+
     if (initialPosition && changedPosition) {
       const initialCenterX =
         initialPosition.x + initialPosition.width / centerDivider;
@@ -414,6 +420,11 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
       AttachmentPointOption.R2,
     );
 
+    const r2CurrentLgaText = (await r2AtomDropdown.textContent())
+      ?.replace(/\u200b/g, '')
+      .trim();
+    expect(r2CurrentLgaText).toBeTruthy();
+
     await r1AtomDropdown.click();
 
     let optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
@@ -430,7 +441,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     );
     expect(optionTexts[0]).toBe('H');
     expect(optionTexts[1]).toBe('OH');
-    expect(optionTexts[2]).not.toMatch(/^(H|OH)$/);
+    expect(optionTexts[2]).toBe(r2CurrentLgaText);
 
     await page.keyboard.press('Escape');
   });

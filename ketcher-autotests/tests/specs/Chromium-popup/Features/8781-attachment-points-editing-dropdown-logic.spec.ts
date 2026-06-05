@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
@@ -144,6 +145,9 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     // Click the dropdown to open options
     await r1AtomDropdown.click();
 
+    // Verify current LGA is H.
+    await expectAttachmentPointAtomOptionSelected(AttachmentPointAtom.H);
+
     // Verify only H and OH are present
     const optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
     expect(optionTexts).toEqual(['H', 'OH']);
@@ -188,6 +192,9 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
 
     // Now check the dropdown again
     await r1AtomDropdown.click();
+
+    // Verify current LGA is OH.
+    await expectAttachmentPointAtomOptionSelected(AttachmentPointAtom.OH);
 
     const optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
 

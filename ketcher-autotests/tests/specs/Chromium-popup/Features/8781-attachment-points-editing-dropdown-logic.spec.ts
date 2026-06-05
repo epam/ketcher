@@ -21,19 +21,9 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 let page: Page;
 
 test.describe('Autotests: Attachment points editing dropdown logic in monomer creation wizard', () => {
-  const attachmentPointAtomsOrder: AttachmentPointAtom[] = [
-    AttachmentPointAtom.H,
-    AttachmentPointAtom.OH,
-    AttachmentPointAtom.NH2,
-    AttachmentPointAtom.CH3,
-    AttachmentPointAtom.Cl,
-    AttachmentPointAtom.F,
-    AttachmentPointAtom.Br,
-    AttachmentPointAtom.I,
-  ];
-
   const minimumDropdownOptionsCount = 3;
   const positionTolerancePx = 3;
+  const centerDivider = 2;
   const dragStartX = 600;
   const dragStartY = 200;
   const dragEndX = 500;
@@ -77,10 +67,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
   }
 
   async function getVisibleAttachmentPointAtomOptionTexts() {
+    const allOptions = page.getByRole('option');
+    const count = await allOptions.count();
     const optionTexts: string[] = [];
 
-    for (const atom of attachmentPointAtomsOrder) {
-      const option = page.getByTestId(atom).first();
+    for (let i = 0; i < count; i++) {
+      const option = allOptions.nth(i);
       if (!(await option.isVisible())) {
         continue;
       }
@@ -296,12 +288,21 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     expect(changedPosition).not.toBeNull();
 
     if (initialPosition && changedPosition) {
-      expect(
-        Math.abs(initialPosition.x - changedPosition.x),
-      ).toBeLessThanOrEqual(positionTolerancePx);
-      expect(
-        Math.abs(initialPosition.y - changedPosition.y),
-      ).toBeLessThanOrEqual(positionTolerancePx);
+      const initialCenterX =
+        initialPosition.x + initialPosition.width / centerDivider;
+      const initialCenterY =
+        initialPosition.y + initialPosition.height / centerDivider;
+      const changedCenterX =
+        changedPosition.x + changedPosition.width / centerDivider;
+      const changedCenterY =
+        changedPosition.y + changedPosition.height / centerDivider;
+
+      expect(Math.abs(initialCenterX - changedCenterX)).toBeLessThanOrEqual(
+        positionTolerancePx,
+      );
+      expect(Math.abs(initialCenterY - changedCenterY)).toBeLessThanOrEqual(
+        positionTolerancePx,
+      );
     }
 
     // Verify the leaving atom type has changed.
@@ -411,10 +412,10 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
   test('Case 7 - Verify dropdown behavior after atom type changes', async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/10018
-     * Description: Dropdown options should update correctly when the underlying atom structure changes
+     * Description: Dropdown options should update correctly when current leaving atom selection changes
      * Scenario:
      * 1. Create attachment point with one atom type
-     * 2. Modify the atom in the structure (change its properties)
+     * 2. Change the leaving atom via dropdown to a different type
      * 3. Verify dropdown options update accordingly
      *
      * Version 3.16.0

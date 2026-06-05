@@ -815,19 +815,27 @@ export class Ketcher {
       try {
         const convertResult = await convertBatch(rawMonomersDataString);
         dataInKetFormat = convertResult.struct;
-      } catch {
+      } catch (batchError) {
         const records = this.splitSdfRecords(rawMonomersDataString);
         const convertedKetStrings: string[] = [];
+        let firstItemError: unknown;
 
         for (const record of records) {
           try {
             const itemResult = await convertBatch(record);
             convertedKetStrings.push(itemResult.struct);
           } catch (itemError) {
+            if (firstItemError === undefined) {
+              firstItemError = itemError;
+            }
             KetcherLogger.warn(
               `Monomer item could not be loaded because of an error: ${itemError}`,
             );
           }
+        }
+
+        if (convertedKetStrings.length === 0) {
+          throw firstItemError ?? batchError;
         }
 
         dataInKetFormat = this.mergeKetMonomerLibraries(convertedKetStrings);

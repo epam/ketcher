@@ -96,11 +96,9 @@ const config = {
       comments: 'none',
       include: includePattern,
     }),
-    asPlugin(
-      string({
-        include: '**/*.ket',
-      }),
-    ),
+    string({
+      include: '**/*.ket',
+    }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };

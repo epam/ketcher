@@ -88,6 +88,7 @@ import {
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
+  isEditableInputTarget,
   KetcherLogger,
   keyNorm,
   SettingsManager,
@@ -730,10 +731,11 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
-    const isInput =
-      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
 
-    if (keySettings[shortcutKey]?.handler && !isInput) {
+    if (
+      keySettings[shortcutKey]?.handler &&
+      !isEditableInputTarget(event.target)
+    ) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
@@ -1161,7 +1163,7 @@ export class CoreEditor {
     } else if (this.drawingEntitiesManager.hasMonomers) {
       if (
         this.nextAutochainPosition &&
-        !(this.mode.modeName === 'snake-layout-mode')
+        this.mode.modeName !== 'snake-layout-mode'
       ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {

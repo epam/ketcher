@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.16.0-rc.1",
+  "version": "3.17.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
-    "indigo-ketcher": "1.44.0-rc.3",
+    "indigo-ketcher": "1.45.0-rc.2",
     "ketcher-core": "*"
   },
   "devDependencies": {
@@ -70,10 +70,10 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-node-polyfills": "^0.2.1",
-    "rollup-plugin-typescript2": "^0.31.1",
+    "rollup-plugin-typescript2": "^0.37.0",
     "rollup-plugin-visualizer": "^5.5.2",
     "rollup-plugin-web-worker-loader": "^1.6.1",
-    "typescript": "^4.5.2"
+    "typescript": "^6.0.3"
   },
   "files": [
     "dist"

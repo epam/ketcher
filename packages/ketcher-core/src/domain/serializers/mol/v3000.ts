@@ -48,7 +48,7 @@ function parseAtomLineV3000(line: string): Atom {
     label = label.slice(0, -1); // remove ']'
     const atomListParams: Record<string, unknown> = {};
     atomListParams.notList = false;
-    const matchNotListInfo = label.match(/NOT ?\[/);
+    const matchNotListInfo = /NOT ?\[/.exec(label);
     if (matchNotListInfo) {
       atomListParams.notList = true;
       const [matchedSubstr] = matchNotListInfo;

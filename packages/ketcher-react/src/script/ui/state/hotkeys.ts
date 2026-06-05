@@ -25,6 +25,7 @@ import {
   ketcherProvider,
   SupportedFormat,
   getStructure,
+  isEditableInputTarget,
   MolSerializer,
   runAsyncAction,
   SettingsManager,
@@ -102,7 +103,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
   // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
   // Ideally x2 – create a common event interception layer for both micro and macro editors
-  return event.target.nodeName === 'INPUT';
+  return isEditableInputTarget(event.target);
 }
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {

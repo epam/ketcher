@@ -804,6 +804,90 @@ test.describe('Ketcher-3.10 Bugs', () => {
     expect(await Library(page).isMonomerExist(Sugar.sAargh)).toBeTruthy();
     expect(await Library(page).isMonomerExist(Base.Aargh)).toBeTruthy();
   });
+  test('21a.Monomer library load skips malformed items and loads valid ones (#8139)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/8139
+     * Description: When updating a monomer library with multiple items where one item
+     * has malformed data (e.g., bad COUNTS line), the entire library should not fail.
+     * Valid items should load, broken item should be skipped with a warning.
+     * Scenario:
+     * 1. Open Ketcher in Macromolecules Flex mode
+     * 2. Call updateMonomersLibrary with an SDF containing:
+     *    - _ValidBase1: valid monomer
+     *    - _BrokenBase: malformed MOL block (bad COUNTS line)
+     *    - _ValidBase2: valid monomer
+     * 3. Library update should resolve (not throw)
+     * 4. Valid monomers should appear in library
+     * 5. Broken item should be skipped with console warning
+     *
+     * Version 3.10.0+
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: false,
+    });
+
+    const validMol1 = `
+  Mrv2102 01012100002D
+
+  6  6  0  0  0  0            999 V2000
+    1.5213   -0.8771    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.2145   -1.6271    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0924   -0.8771    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -1.0924    0.6729    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    0.2145    1.4229    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.5213    0.6729    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0  0  0  0
+  2  3  1  0  0  0  0
+  3  4  1  0  0  0  0
+  4  5  1  0  0  0  0
+  5  6  1  0  0  0  0
+  6  1  1  0  0  0  0
+M  END
+>  <id>
+_ValidBase1
+
+$$$$`;
+
+    const malformedMol = `
+  Mrv2102 01012100002D
+
+  BADCOUNTS
+
+M  END
+>  <id>
+_BrokenBase
+
+$$$$`;
+
+    const validMol2 = `
+  Mrv2102 01012100002D
+
+  6  6  0  0  0  0            999 V2000
+    2.5213   -0.8771    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2145   -1.6271    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.0924   -0.8771    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+   -0.0924    0.6729    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    1.2145    1.4229    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+    2.5213    0.6729    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0  0  0  0
+  2  3  1  0  0  0  0
+  3  4  1  0  0  0  0
+  4  5  1  0  0  0  0
+  5  6  1  0  0  0  0
+  6  1  1  0  0  0  0
+M  END
+>  <id>
+_ValidBase2
+
+$$$$`;
+
+    const sdfWithMalformedItem = validMol1 + malformedMol + validMol2;
+
+    const error = await updateMonomersLibrary(page, sdfWithMalformedItem);
+    expect(error).toBeNull();
+    expect(await Library(page).isMonomerExist('_ValidBase1')).toBeTruthy();
+    expect(await Library(page).isMonomerExist('_ValidBase2')).toBeTruthy();
+  });
   test('22.System throws wrong error, when symbols without brackets cannot be interpreted', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/8414

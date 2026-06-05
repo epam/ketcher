@@ -30,6 +30,7 @@ import type {
 
 import { type Editor, getSelectionFromStruct } from './editor';
 import { provideEditorInstance } from './editor/editorSingleton';
+import { getEmptyMonomersLibraryJson } from './editor/helpers';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
@@ -754,6 +755,37 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
+  private splitSdfRecords(sdf: string): string[] {
+    return sdf
+      .split(/^\$\$\$\$\s*$/m)
+      .map((record) => record.trim())
+      .filter((record) => record.length > 0)
+      .map((record) => `${record}\n$$$$\n`);
+  }
+
+  private mergeKetMonomerLibraries(ketStrings: string[]): string {
+    const merged = getEmptyMonomersLibraryJson();
+    const seenRefs = new Set<string>();
+
+    ketStrings.forEach((ketString) => {
+      const parsed = JSON.parse(ketString);
+      const templates = parsed?.root?.templates ?? [];
+
+      templates.forEach((templateRef: { $ref: string }) => {
+        const ref = templateRef.$ref;
+        if (seenRefs.has(ref) || !parsed[ref]) {
+          return;
+        }
+        seenRefs.add(ref);
+        merged.root.templates.push(templateRef);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (merged as any)[ref] = parsed[ref];
+      });
+    });
+
+    return JSON.stringify(merged);
+  }
+
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -767,19 +799,39 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.structService.convert(
-        {
-          struct: rawMonomersDataString,
-          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
-          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
-        },
-        {
-          ...serverSettings,
-          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
-        },
-      );
+      const convertBatch = (struct: string) =>
+        this.structService.convert(
+          {
+            struct,
+            input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+            output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+          },
+          {
+            ...serverSettings,
+            outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+          },
+        );
 
-      dataInKetFormat = convertResult.struct;
+      try {
+        const convertResult = await convertBatch(rawMonomersDataString);
+        dataInKetFormat = convertResult.struct;
+      } catch {
+        const records = this.splitSdfRecords(rawMonomersDataString);
+        const convertedKetStrings: string[] = [];
+
+        for (const record of records) {
+          try {
+            const itemResult = await convertBatch(record);
+            convertedKetStrings.push(itemResult.struct);
+          } catch (itemError) {
+            KetcherLogger.warn(
+              `Monomer item could not be loaded because of an error: ${itemError}`,
+            );
+          }
+        }
+
+        dataInKetFormat = this.mergeKetMonomerLibraries(convertedKetStrings);
+      }
     }
 
     return dataInKetFormat;

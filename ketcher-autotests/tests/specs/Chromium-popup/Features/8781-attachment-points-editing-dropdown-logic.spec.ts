@@ -14,7 +14,6 @@ import {
   clickOnCanvas,
   dragMouseTo,
   selectAllStructuresOnCanvas,
-  waitForPageInit,
 } from '@utils';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
@@ -68,6 +67,8 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
   }
 
   async function getVisibleAttachmentPointAtomOptionTexts() {
+    await expect(page.getByTestId(AttachmentPointAtom.H).first()).toBeVisible();
+
     const allOptions = page.getByRole('option');
     const count = await allOptions.count();
     const optionTexts: string[] = [];
@@ -123,10 +124,8 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     await closePage();
   });
 
-  test.beforeEach(async () => {
-    // Start with a clean canvas for each test
-    await page.reload();
-    await waitForPageInit(page);
+  test.beforeEach(async ({ MoleculesCanvas: moleculesCanvas }) => {
+    await Promise.resolve(moleculesCanvas);
   });
 
   test('Case 1 - Verify dropdown shows only H and OH when current LGA is H', async () => {

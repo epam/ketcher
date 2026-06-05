@@ -87,6 +87,19 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     return optionTexts;
   }
 
+  function getAttachmentPointAtomLabel(atom: AttachmentPointAtom) {
+    switch (atom) {
+      case AttachmentPointAtom.OH:
+        return 'OH';
+      case AttachmentPointAtom.NH2:
+        return 'NH2';
+      case AttachmentPointAtom.CH3:
+        return 'CH3';
+      default:
+        return atom.replace(/-option$/, '');
+    }
+  }
+
   async function expectAttachmentPointAtomOptionSelected(
     atom: AttachmentPointAtom,
   ) {
@@ -316,7 +329,9 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     const currentValue = (await r1AtomDropdown.textContent())
       ?.replace(/\u200b/g, '')
       .trim();
-    expect(currentValue).toBe(AttachmentPointAtom.OH);
+    expect(currentValue).toBe(
+      getAttachmentPointAtomLabel(AttachmentPointAtom.OH),
+    );
   });
 
   test('Case 5 - Verify currently selected LGA is visually indicated in dropdown', async () => {

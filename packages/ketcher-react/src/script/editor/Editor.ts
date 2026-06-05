@@ -979,7 +979,6 @@ class Editor implements KetcherEditor {
   private originalHistoryStack: Action[] = [];
   private originalHistoryPointer = 0;
   private readonly selectedToOriginalAtomsIdMap = new Map<number, number>();
-  private autoAssignedAtomIds = new Set<number>();
 
   private changeEventSubscriber: any = null;
 
@@ -1286,7 +1285,6 @@ class Editor implements KetcherEditor {
     this.originalHistoryStack = this.historyStack;
     this.originalHistoryPointer = this.historyPtr;
     this.originalStruct = currentStruct;
-    this.autoAssignedAtomIds = new Set<number>();
 
     this.historyStack = [];
     this.historyPtr = 0;
@@ -1395,7 +1393,6 @@ class Editor implements KetcherEditor {
     }
 
     this.monomerCreationState = null;
-    this.autoAssignedAtomIds = new Set<number>();
 
     this.tool('select');
   }
@@ -2284,8 +2281,6 @@ class Editor implements KetcherEditor {
       });
     }
 
-    atomsIdsToMark.forEach((atomId) => this.autoAssignedAtomIds.add(atomId));
-
     this.addAtomsAndBondsToRnaComponent(
       componentToMark,
       atomsIdsToMark,
@@ -2359,89 +2354,6 @@ class Editor implements KetcherEditor {
     );
   }
 
-  /**
-   * When a new bond bridges an auto-assigned atom in one component to an atom
-   * in a different component, the auto-assigned bridging atom (and any
-   * auto-assigned atoms connected to it) should be un-assigned so that saving
-   * can catch the structural violation.
-   */
-  private unassignBridgingNonOriginalAtoms(bond: Bond) {
-    const beginAtomRnaComponent = this.getRnaComponentForAtom(bond.begin);
-    const endAtomRnaComponent = this.getRnaComponentForAtom(bond.end);
-
-    // Only relevant when both atoms are in different, non-null components
-    if (
-      !beginAtomRnaComponent ||
-      !endAtomRnaComponent ||
-      beginAtomRnaComponent === endAtomRnaComponent
-    ) {
-      return;
-    }
-
-    const struct = this.struct();
-    const atomIdsToUnassign: number[] = [];
-
-    for (const atomId of [bond.begin, bond.end]) {
-      if (!this.autoAssignedAtomIds.has(atomId)) {
-        continue;
-      }
-
-      const toTraverse = [atomId];
-      const visited = new Set<number>();
-
-      while (toTraverse.length > 0) {
-        const currentId = toTraverse.pop()!;
-
-        if (visited.has(currentId)) {
-          continue;
-        }
-
-        visited.add(currentId);
-        atomIdsToUnassign.push(currentId);
-
-        const atom = struct.atoms.get(currentId);
-
-        atom?.neighbors.forEach((halfBondId) => {
-          const halfBond = struct.halfBonds.get(halfBondId);
-
-          if (!halfBond) {
-            return;
-          }
-
-          const neighborId =
-            halfBond.begin === currentId ? halfBond.end : halfBond.begin;
-
-          if (
-            visited.has(neighborId) ||
-            !this.autoAssignedAtomIds.has(neighborId)
-          ) {
-            return;
-          }
-
-          toTraverse.push(neighborId);
-        });
-      }
-    }
-
-    if (atomIdsToUnassign.length === 0) {
-      return;
-    }
-
-    const atomIdsSet = new Set(atomIdsToUnassign);
-    const bondIdsToUnassign: number[] = [];
-
-    struct.bonds.forEach((b, bondId) => {
-      if (atomIdsSet.has(b.begin) || atomIdsSet.has(b.end)) {
-        bondIdsToUnassign.push(bondId);
-      }
-    });
-
-    this.removeAtomsAndBondsFromRnaComponents(
-      atomIdsToUnassign,
-      bondIdsToUnassign,
-    );
-  }
-
   private removeAtomsAndBondsFromRnaComponents(
     atomIds: number[],
     bondIds: number[],
@@ -2449,8 +2361,6 @@ class Editor implements KetcherEditor {
     if (!this.monomerCreationState?.rnaComponentAtoms) {
       return;
     }
-
-    atomIds.forEach((atomId) => this.autoAssignedAtomIds.delete(atomId));
 
     for (const [
       componentKey,
@@ -2768,11 +2678,6 @@ class Editor implements KetcherEditor {
             // When a new bond is added, auto-assign atoms to their connected component
             if (this.canAssignRnaComponent(bond)) {
               this.autoAssignAtomToRnaComponent(id);
-            } else {
-              // If the bond bridges two different components and one of the atoms
-              // was auto-assigned (not part of the original structure), un-assign it
-              // so that the save validation can catch the structural violation.
-              this.unassignBridgingNonOriginalAtoms(bond);
             }
           }
           break;

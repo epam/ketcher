@@ -82,12 +82,8 @@ const config = {
     json(),
     typescript({
       typescript: ts,
-      check: false,
       tsconfigOverride: {
         exclude: ['*.test.ts'],
-        compilerOptions: {
-          declaration: false,
-        },
       },
     }),
     replace({

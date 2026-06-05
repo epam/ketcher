@@ -124,8 +124,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     await closePage();
   });
 
-  test.beforeEach(async ({ MoleculesCanvas: moleculesCanvas }) => {
-    await Promise.resolve(moleculesCanvas);
+  test.afterEach(async () => {
+    const createMonomerDialog = CreateMonomerDialog(page);
+    if (await createMonomerDialog.window.isVisible()) {
+      await createMonomerDialog.discard();
+      await expect(createMonomerDialog.window).toBeHidden();
+    }
   });
 
   test('Case 1 - Verify dropdown shows only H and OH when current LGA is H', async () => {

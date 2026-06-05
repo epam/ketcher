@@ -21,6 +21,17 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 let page: Page;
 
 test.describe('Autotests: Attachment points editing dropdown logic in monomer creation wizard', () => {
+  const attachmentPointAtomsOrder: AttachmentPointAtom[] = [
+    AttachmentPointAtom.H,
+    AttachmentPointAtom.OH,
+    AttachmentPointAtom.NH2,
+    AttachmentPointAtom.CH3,
+    AttachmentPointAtom.Cl,
+    AttachmentPointAtom.F,
+    AttachmentPointAtom.Br,
+    AttachmentPointAtom.I,
+  ];
+
   const minimumDropdownOptionsCount = 3;
   const positionTolerancePx = 3;
   const dragStartX = 600;
@@ -55,6 +66,47 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
       ConnectionPointOption.MarkAsConnectionPoint,
     );
     return atom;
+  }
+
+  async function markAtomAsLeavingGroup(atomLabel: string, atomIndex = 0) {
+    const atom = getAtomLocator(page, { atomLabel }).nth(atomIndex);
+    await ContextMenu(page, atom).click(
+      ConnectionPointOption.MarkAsLeavingGroup,
+    );
+    return atom;
+  }
+
+  async function getVisibleAttachmentPointAtomOptionTexts() {
+    const optionTexts: string[] = [];
+
+    for (const atom of attachmentPointAtomsOrder) {
+      const option = page.getByTestId(atom).first();
+      if (!(await option.isVisible())) {
+        continue;
+      }
+
+      const text = (await option.textContent())?.replace(/\u200b/g, '').trim();
+      if (text) {
+        optionTexts.push(text);
+      }
+    }
+
+    return optionTexts;
+  }
+
+  async function expectAttachmentPointAtomOptionSelected(
+    atom: AttachmentPointAtom,
+  ) {
+    const option = page.getByTestId(atom).first();
+    await expect(option).toBeVisible();
+
+    const ariaSelected = await option.getAttribute('aria-selected');
+    const className = (await option.getAttribute('class')) ?? '';
+    expect(
+      ariaSelected === 'true' ||
+        className.includes('Mui-selected') ||
+        className.includes('selected'),
+    ).toBeTruthy();
   }
 
   test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -100,11 +152,8 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     // Click the dropdown to open options
     await r1AtomDropdown.click();
 
-    // Get all dropdown options
-    const dropdownOptions = page.locator('[role="option"]');
-
     // Verify only H and OH are present
-    const optionTexts = await dropdownOptions.allTextContents();
+    const optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
     expect(optionTexts).toEqual(['H', 'OH']);
 
     // Verify H appears first
@@ -140,15 +189,15 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
       AttachmentPointOption.R1,
     );
-    await r1AtomDropdown.click();
-    await page.getByRole('option', { name: 'OH' }).click();
+    await createMonomerDialog.changeAttachmentPointAtom({
+      attachmentPointName: AttachmentPointOption.R1,
+      newAtom: AttachmentPointAtom.OH,
+    });
 
     // Now check the dropdown again
     await r1AtomDropdown.click();
 
-    // Get all dropdown options
-    const dropdownOptions = page.locator('[role="option"]');
-    const optionTexts = await dropdownOptions.allTextContents();
+    const optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
 
     // Verify only H and OH are present in correct order
     expect(optionTexts).toEqual(['H', 'OH']);
@@ -172,25 +221,24 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
-      'CCCCCC',
+      'CBr(C)C',
     );
 
-    // Create two APs and set the second AP LGA to non-H/OH.
-    await markAtomAsConnectionPoint('C', 0);
-    await markAtomAsConnectionPoint('C', 1);
-    await createMonomerDialog.changeAttachmentPointAtom({
-      attachmentPointName: AttachmentPointOption.R2,
-      newAtom: AttachmentPointAtom.OH,
-    });
+    // Create attachment point where current LGA is non-H/OH.
+    await markAtomAsLeavingGroup('C');
 
-    const r2AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
-      AttachmentPointOption.R2,
+    const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
+      AttachmentPointOption.R1,
     );
-    await r2AtomDropdown.click();
 
-    // Get all dropdown options
-    const dropdownOptions = page.locator('[role="option"]');
-    const optionTexts = await dropdownOptions.allTextContents();
+    const currentLgaText = (await r1AtomDropdown.textContent())
+      ?.replace(/\u200b/g, '')
+      .trim();
+    expect(currentLgaText).toBeTruthy();
+
+    await r1AtomDropdown.click();
+
+    const optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
 
     // Should have H, OH, and then the current non-H/OH atom.
     expect(optionTexts.length).toBeGreaterThanOrEqual(
@@ -199,8 +247,9 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     expect(optionTexts[0]).toBe('H');
     expect(optionTexts[1]).toBe('OH');
 
-    // The third option should be the current non-special atom (not H/OH).
+    // The third option should be the current non-special atom.
     expect(optionTexts[2]).not.toMatch(/^(H|OH)$/);
+    expect(optionTexts[2]).toBe(currentLgaText);
 
     await page.keyboard.press('Escape');
   });
@@ -230,14 +279,20 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
       AttachmentPointOption.R1,
     );
 
-    const initialPosition = await r1AtomDropdown.boundingBox();
+    const initialLeavingAtom = getAtomLocator(page, { atomLabel: 'H' }).first();
+    await expect(initialLeavingAtom).toBeVisible();
+    const initialPosition = await initialLeavingAtom.boundingBox();
     expect(initialPosition).not.toBeNull();
 
     // Change leaving atom from H to OH using the dialog method
-    await r1AtomDropdown.click();
-    await page.getByRole('option', { name: 'OH' }).click();
+    await createMonomerDialog.changeAttachmentPointAtom({
+      attachmentPointName: AttachmentPointOption.R1,
+      newAtom: AttachmentPointAtom.OH,
+    });
 
-    const changedPosition = await r1AtomDropdown.boundingBox();
+    const changedLeavingAtom = getAtomLocator(page, { atomLabel: 'O' }).first();
+    await expect(changedLeavingAtom).toBeVisible();
+    const changedPosition = await changedLeavingAtom.boundingBox();
     expect(changedPosition).not.toBeNull();
 
     if (initialPosition && changedPosition) {
@@ -282,11 +337,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     await r1AtomDropdown.click();
 
     // Check which option is selected/highlighted
-    const selectedOption = page.locator(
-      '[role="option"][aria-selected="true"], [role="option"].Mui-selected, [role="option"].selected',
-    );
-    const selectedText = await selectedOption.textContent();
-    expect(selectedText).toBe('H');
+    await expectAttachmentPointAtomOptionSelected(AttachmentPointAtom.H);
 
     // Close and reopen, select OH
     await page.keyboard.press('Escape');
@@ -297,11 +348,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
 
     // Open dropdown again and verify OH is now indicated as selected
     await r1AtomDropdown.click();
-    const newSelectedOption = page.locator(
-      '[role="option"][aria-selected="true"], [role="option"].Mui-selected, [role="option"].selected',
-    );
-    const newSelectedText = await newSelectedOption.textContent();
-    expect(newSelectedText).toBe('OH');
+    await expectAttachmentPointAtomOptionSelected(AttachmentPointAtom.OH);
 
     await page.keyboard.press('Escape');
   });
@@ -326,10 +373,10 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     await markAtomAsConnectionPoint('C', 0);
     await markAtomAsConnectionPoint('C', 1);
 
-    // Change second attachment point to a non-special LGA.
+    // Change second attachment point to a non-H/OH LGA.
     await createMonomerDialog.changeAttachmentPointAtom({
       attachmentPointName: AttachmentPointOption.R2,
-      newAtom: AttachmentPointAtom.OH,
+      newAtom: AttachmentPointAtom.CH3,
     });
 
     // Verify first attachment point dropdown still shows H, OH only
@@ -342,8 +389,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
 
     await r1AtomDropdown.click();
 
-    let dropdownOptions = page.locator('[role="option"]');
-    let optionTexts = await dropdownOptions.allTextContents();
+    let optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
     expect(optionTexts).toEqual(['H', 'OH']);
 
     await page.keyboard.press('Escape');
@@ -351,8 +397,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     // Verify second attachment point dropdown reflects non-special current LGA
     await r2AtomDropdown.click();
 
-    dropdownOptions = page.locator('[role="option"]');
-    optionTexts = await dropdownOptions.allTextContents();
+    optionTexts = await getVisibleAttachmentPointAtomOptionTexts();
     expect(optionTexts.length).toBeGreaterThanOrEqual(
       minimumDropdownOptionsCount,
     );
@@ -376,25 +421,19 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
-      'CCCCCC',
+      'CBr(C)C',
     );
 
-    // Create two APs and update R2 leaving atom.
-    await markAtomAsConnectionPoint('C', 0);
-    await markAtomAsConnectionPoint('C', 1);
-    await createMonomerDialog.changeAttachmentPointAtom({
-      attachmentPointName: AttachmentPointOption.R2,
-      newAtom: AttachmentPointAtom.OH,
-    });
+    // Create attachment point with non-H/OH initial atom type.
+    await markAtomAsLeavingGroup('C');
 
-    const r2AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
-      AttachmentPointOption.R2,
+    const r1AtomDropdown = createMonomerDialog.getAttachmentPointAtomCombobox(
+      AttachmentPointOption.R1,
     );
 
     // Verify options for non-H/OH LGA.
-    await r2AtomDropdown.click();
-    const initialOptions = page.locator('[role="option"]');
-    const initialTexts = await initialOptions.allTextContents();
+    await r1AtomDropdown.click();
+    const initialTexts = await getVisibleAttachmentPointAtomOptionTexts();
 
     expect(initialTexts.length).toBeGreaterThanOrEqual(
       minimumDropdownOptionsCount,
@@ -407,13 +446,12 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
 
     // Modify leaving atom to OH and verify options update accordingly.
     await createMonomerDialog.changeAttachmentPointAtom({
-      attachmentPointName: AttachmentPointOption.R2,
-      newAtom: AttachmentPointAtom.H,
+      attachmentPointName: AttachmentPointOption.R1,
+      newAtom: AttachmentPointAtom.OH,
     });
 
-    await r2AtomDropdown.click();
-    const changedOptions = page.locator('[role="option"]');
-    const changedTexts = await changedOptions.allTextContents();
+    await r1AtomDropdown.click();
+    const changedTexts = await getVisibleAttachmentPointAtomOptionTexts();
     expect(changedTexts).toEqual(['H', 'OH']);
 
     await page.keyboard.press('Escape');

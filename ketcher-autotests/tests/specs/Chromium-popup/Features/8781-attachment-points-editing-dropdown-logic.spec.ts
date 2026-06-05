@@ -313,9 +313,10 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
     }
 
     // Verify the leaving atom type has changed.
-    const currentValue = await r1AtomDropdown.textContent();
-    expect(currentValue).toBeTruthy();
-    expect(currentValue?.trim()).not.toBe('H');
+    const currentValue = (await r1AtomDropdown.textContent())
+      ?.replace(/\u200b/g, '')
+      .trim();
+    expect(currentValue).toBe(AttachmentPointAtom.OH);
   });
 
   test('Case 5 - Verify currently selected LGA is visually indicated in dropdown', async () => {

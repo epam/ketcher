@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef, RefObject } from 'react';
+import { type RefObject, Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
 import {

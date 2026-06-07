@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { inRange } from 'lodash';
 import type { BondAtoms, FlipDirection } from './utils.types';

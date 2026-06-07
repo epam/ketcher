@@ -17,8 +17,8 @@
 import { Atom, StereoLabel } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
-import { SGroup } from 'domain/entities/sgroup';
-import { Struct } from 'domain/entities/struct';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { StereoFlag } from 'domain/entities/fragment';
 import { Vec2 } from 'domain/entities/vec2';
@@ -31,18 +31,18 @@ import {
 
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import {
-  RenderOptions,
-  RenderOptionStyles,
+  type RenderOptions,
+  type RenderOptionStyles,
   UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { AttachmentPointName, attachmentPointNames } from 'domain/types';
+import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
@@ -704,9 +704,11 @@ class ReAtom extends ReObject {
         assignedAttachmentPoints: allAssignedAttachmentPoints,
         visibleAssignedAttachmentPoints,
         problematicAttachmentPoints,
+        problematicAtoms,
         connectionAttachmentPoints,
       } = render.monomerCreationState;
-      // Use the restricted set when a component tab is active, otherwise show all.
+      // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
+      // otherwise all assigned attachment points are shown.
       const assignedAttachmentPoints =
         visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;
@@ -748,6 +750,19 @@ class ReAtom extends ReObject {
 
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
+          restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        if (problematicAtoms?.has(aid)) {
+          const path = this.makeHighlightePlate(
+            restruct,
+            {
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+            },
+            -4,
+          );
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 

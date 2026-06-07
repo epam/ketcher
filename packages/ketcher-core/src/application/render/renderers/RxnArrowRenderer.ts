@@ -1,12 +1,12 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { OpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/OpenAngleArrowRenderer';
-import { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
+import type { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
 import { FilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/FilledTriangleArrowRenderer';
 import { FilledBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/FilledBowArrowRenderer';
 import { DashedOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/DashedOpenAngleArrowRenderer';

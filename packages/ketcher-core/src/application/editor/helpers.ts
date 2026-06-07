@@ -1,5 +1,5 @@
 import { KetSerializer } from 'domain/serializers';
-import { IKetMacromoleculesContent } from 'application/formatters';
+import type { IKetMacromoleculesContent } from 'application/formatters';
 
 export const parseMonomersLibrary = (monomersDataRaw: string | JSON) => {
   const monomersLibraryParsedJson =

@@ -42,7 +42,7 @@ import { openInfoModalWithCustomMessage } from '../shared';
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const getSelectedSruCount = () => {
+  const getSelectedSruCount = (sgroupType) => {
     const editor = getState().editor;
     if (!editor?.structSelected) return 0;
     const selectedStruct = editor.structSelected();
@@ -52,7 +52,7 @@ export default function initEditor(dispatch, getState) {
         count += 1;
       }
     }
-    return count;
+    return sgroupType === 'COP' ? Math.max(2, count) : count;
   };
 
   const resetToSelect =
@@ -187,7 +187,7 @@ export default function initEditor(dispatch, getState) {
         .then(() =>
           openDialog(dispatch, 'sgroup', {
             ...fromSgroup(sgroup),
-            selectedSruCount: getSelectedSruCount(),
+            selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
         .then(toSgroup),

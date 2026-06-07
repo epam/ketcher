@@ -1,5 +1,5 @@
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { Atom as MicromoleculesAtom } from 'domain/entities/atom';
+import type { Atom as MicromoleculesAtom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { Pile } from 'domain/entities/pile';
@@ -8,33 +8,33 @@ import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
 import { SGroup } from 'domain/entities/sgroup';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
+  type ReStruct,
   ReAtom,
   ReBond,
   ReMultitailArrow,
   ReRxnArrow,
   ReRxnPlus,
   ReSGroup,
-  ReStruct,
-} from 'application/render';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+} from 'application/render/restruct';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
 } from 'domain/helpers/attachmentPointCalculations';
 import { invert, isNumber } from 'lodash';
-import { IKetAttachmentPoint } from 'application/formatters/types/ket';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { Atom } from 'domain/entities/CoreAtom';
-import { AtomLabel } from 'domain/constants';
+import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';

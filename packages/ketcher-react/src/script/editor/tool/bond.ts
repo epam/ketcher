@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Struct,
   Bond,
   Vec2,
   bondChangingAction,
@@ -23,14 +24,13 @@ import {
   FunctionalGroup,
   SGroup,
   fromOneBondDeletion,
-  Struct,
   vectorUtils,
   Atom,
   CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class BondTool implements Tool {
@@ -47,11 +47,31 @@ class BondTool implements Tool {
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;
     if (editor.selection()?.bonds) {
-      const action = fromBondsAttrs(
-        editor.render.ctab,
-        editor.selection().bonds,
-        bondProps,
-      );
+      const struct = editor.render.ctab;
+      const molecule = struct.molecule;
+      const functionalGroups = molecule.functionalGroups;
+      const selectedBonds = editor.selection().bonds;
+
+      if (functionalGroups.size) {
+        const fgIds = new Set<number>();
+        for (const bondId of selectedBonds) {
+          const fgId = FunctionalGroup.findFunctionalGroupByBond(
+            molecule,
+            functionalGroups,
+            bondId,
+          );
+          if (fgId !== null) {
+            fgIds.add(fgId);
+          }
+        }
+        if (fgIds.size) {
+          this.editor.event.removeFG.dispatch({ fgIds: [...fgIds] });
+          this.isNotActiveTool = true;
+          return;
+        }
+      }
+
+      const action = fromBondsAttrs(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;

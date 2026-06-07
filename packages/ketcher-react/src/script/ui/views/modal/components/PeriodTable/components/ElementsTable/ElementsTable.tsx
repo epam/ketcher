@@ -17,7 +17,7 @@
 import { Header, MainRow, OutinerRow } from './components';
 import { Component } from 'react';
 
-import { Elements, Element } from 'ketcher-core';
+import { type Element, Elements } from 'ketcher-core';
 import styles from './ElementsTable.module.less';
 
 const metalPrefix = [

@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import {
+  type LeftToolbarCallProps,
+  type LeftToolbarProps,
   LeftToolbar,
-  LeftToolbarCallProps,
-  LeftToolbarProps,
 } from './LeftToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 

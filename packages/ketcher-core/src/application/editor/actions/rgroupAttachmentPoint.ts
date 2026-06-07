@@ -1,7 +1,7 @@
 import assert from 'assert';
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import { AttachmentPoints } from 'domain/entities/atom';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import {
   RGroupAttachmentPointAdd,
   RGroupAttachmentPointRemove,

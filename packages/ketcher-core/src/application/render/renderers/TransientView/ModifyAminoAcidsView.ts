@@ -1,10 +1,10 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities';
 import {
+  type BaseSequenceItemRenderer,
   BaseMonomerRenderer,
-  BaseSequenceItemRenderer,
 } from 'application/render';
 
 export type ModifyAminoAcidsViewParams = {

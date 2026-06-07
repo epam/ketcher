@@ -449,7 +449,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

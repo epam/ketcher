@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { JSX } from 'react';
+import type { JSX } from 'react';
 import { Field } from '../../component/form/form/form';
 import Select from '../../component/form/Select';
 import { sgroupMap as schemes } from '../../data/schema/struct-schema';
 import { getSelectOptionsFromSchema } from '../../utils';
 import classes from './sgroup.module.less';
-import { BaseProps } from '../../views/modal/modal.types';
+import type { BaseProps } from '../../views/modal/modal.types';
 
 type PropMappingValue = {
   maxLength?: number;

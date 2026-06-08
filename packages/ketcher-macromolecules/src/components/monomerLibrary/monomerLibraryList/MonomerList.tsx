@@ -23,33 +23,15 @@ import {
   selectFilteredMonomers,
   selectMonomerGroups,
   selectMonomersInCategory,
-  selectMonomersInFavorites,
   selectAmbiguousMonomersInCategory,
-  selectAmbiguousMonomersInFavorites,
 } from 'state/library';
 import {
   MONOMER_LIBRARY_FAVORITES,
   MONOMER_LIBRARY_PEPTIDES,
   MonomerGroups,
 } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
-import {
-  selectFilteredPresets,
-  selectPresetsInFavorites,
-} from 'state/rna-builder';
-import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
-import { IRnaPreset } from '../RnaBuilder/types';
-
-export type Group = {
-  groupItems: Array<MonomerItemType>;
-  groupTitle?: string;
-};
-
-export type Favorites = {
-  monomers: MonomerItemType[];
-  presets: IRnaPreset[];
-};
+import { FavoritesMonomerList } from './FavoritesMonomerList';
 
 const MonomerList = ({
   onItemClick,
@@ -58,25 +40,8 @@ const MonomerList = ({
   editPreset,
 }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
-  const presets = useAppSelector(selectFilteredPresets);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
-
-  const items = !isFavoriteTab
-    ? selectMonomersInCategory(monomers, libraryName)
-    : ({
-        monomers: selectMonomersInFavorites(monomers),
-        presets: selectPresetsInFavorites(presets),
-      } as Favorites);
-
-  const monomerGroups = selectMonomerGroups(
-    isFavoriteTab
-      ? (items as Favorites).monomers
-      : (items as MonomerItemType[]),
-  );
-  const ambiguousMonomers = isFavoriteTab
-    ? selectAmbiguousMonomersInFavorites(monomers)
-    : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
   const [selectedMonomers, setSelectedMonomers] = useState('');
 
   useEffect(() => {
@@ -85,9 +50,26 @@ const MonomerList = ({
     }
   }, [activeTool]);
 
+  if (isFavoriteTab) {
+    return (
+      <FavoritesMonomerList
+        duplicatePreset={duplicatePreset}
+        editPreset={editPreset}
+        onItemClick={onItemClick}
+        selectedMonomerUniqueKey={selectedMonomers}
+      />
+    );
+  }
+
+  const items = selectMonomersInCategory(monomers, libraryName);
+  const monomerGroups = selectMonomerGroups(items);
+  const ambiguousMonomers = selectAmbiguousMonomersInCategory(
+    monomers,
+    MonomerGroups.PEPTIDES,
+  );
+
   return (
     <MonomerListContainer>
-      {isFavoriteTab && monomerGroups.length > 0 && <div>Monomers</div>}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
         return (
           <MonomerGroup
@@ -100,33 +82,22 @@ const MonomerList = ({
           />
         );
       })}
-      {isFavoriteTab && (items as Favorites).presets.length > 0 && (
-        <>
-          <div>Presets</div>
-          <RnaPresetGroup
-            duplicatePreset={duplicatePreset}
-            editPreset={editPreset}
-            presets={(items as Favorites).presets}
-          />
-        </>
-      )}
-      <>
-        {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
-          ambiguousMonomers.map((group) => {
-            return (
-              <MonomerGroup
-                key={group.groupTitle}
-                title={group.groupTitle}
-                items={group.groupItems}
-                libraryName={libraryName}
-                onItemClick={onItemClick}
-                selectedMonomerUniqueKey={selectedMonomers}
-              />
-            );
-          })}
-      </>
+      {libraryName === MONOMER_LIBRARY_PEPTIDES &&
+        ambiguousMonomers.map((group) => {
+          return (
+            <MonomerGroup
+              key={group.groupTitle}
+              title={group.groupTitle}
+              items={group.groupItems}
+              libraryName={libraryName}
+              onItemClick={onItemClick}
+              selectedMonomerUniqueKey={selectedMonomers}
+            />
+          );
+        })}
     </MonomerListContainer>
   );
 };
 
+export type { Group } from './types';
 export { MonomerList };

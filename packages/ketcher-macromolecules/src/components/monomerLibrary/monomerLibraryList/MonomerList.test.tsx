@@ -15,10 +15,12 @@
  ***************************************************************************/
 
 import { render, screen } from '@testing-library/react';
+import { KetMonomerClass } from 'ketcher-core';
 import { MONOMER_LIBRARY_FAVORITES, MONOMER_TYPES } from '../../../constants';
 
 import { MonomerList } from './MonomerList';
 import { preset } from 'src/testMockData/monomerPresets';
+import { getMonomerUniqueKey } from 'state/library';
 
 describe('Monomer List', () => {
   const duplicatePreset = jest.fn();
@@ -121,8 +123,65 @@ describe('Monomer List', () => {
       ),
     );
 
+    expect(screen.getByText('RNA')).toBeInTheDocument();
     expect(screen.getByText('Presets')).toBeInTheDocument();
     expect(screen.getByText('A')).toBeInTheDocument();
+  });
+
+  it('should group favorites by category when monomers share the same code', () => {
+    const alanine = {
+      props: {
+        BranchMonomer: 'false',
+        MonomerCaps: { R1: 'H' },
+        MonomerCode: '',
+        MonomerName: 'A',
+        MonomerNaturalAnalogCode: 'A',
+        MonomerType: 'PEPTIDE',
+        Name: 'Alanine',
+      },
+      struct: {},
+    };
+    const adenine = {
+      props: {
+        BranchMonomer: 'false',
+        MonomerCaps: {},
+        MonomerCode: '',
+        MonomerName: 'A',
+        MonomerNaturalAnalogCode: 'A',
+        MonomerType: 'RNA',
+        MonomerClass: KetMonomerClass.Base,
+        Name: 'Adenine',
+      },
+      struct: {},
+    };
+
+    render(
+      withThemeAndStoreProvider(
+        <MonomerList
+          libraryName={MONOMER_LIBRARY_FAVORITES}
+          onItemClick={onItemClick}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
+        {
+          ...initialState,
+          library: {
+            ...initialState.library,
+            monomers: [alanine, adenine],
+            favorites: {
+              [getMonomerUniqueKey(alanine)]: { ...alanine, favorite: true },
+              [getMonomerUniqueKey(adenine)]: { ...adenine, favorite: true },
+            },
+          },
+        },
+      ),
+    );
+
+    expect(screen.getByText('Peptides')).toBeInTheDocument();
+    expect(screen.getByText('RNA')).toBeInTheDocument();
+    expect(screen.getByText('Bases')).toBeInTheDocument();
+    expect(screen.getByTestId(getMonomerUniqueKey(alanine))).toBeInTheDocument();
+    expect(screen.getByTestId(getMonomerUniqueKey(adenine))).toBeInTheDocument();
   });
 
   it('should render correct without groups', () => {

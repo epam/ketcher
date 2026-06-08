@@ -24,3 +24,16 @@ export const MonomerListContainer = styled.div({
   gap: '8px',
   padding: '8px',
 });
+
+export const CategoryTitle = styled.div(({ theme }) => ({
+  fontSize: theme.ketcher.font.size.regular,
+  fontFamily: theme.ketcher.font.family.roboto,
+  fontWeight: 600,
+  color: theme.ketcher.color.text.primary,
+}));
+
+export const SubsectionTitle = styled.div(({ theme }) => ({
+  fontSize: theme.ketcher.font.size.medium,
+  fontFamily: theme.ketcher.font.family.roboto,
+  color: theme.ketcher.color.text.primary,
+}));

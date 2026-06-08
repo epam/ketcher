@@ -359,6 +359,17 @@ export const selectAmbiguousMonomersInFavorites = (
   return favoritesAmbiguousMonomers.filter((group) => group.groupItems.length);
 };
 
+export const selectFavoriteAmbiguousMonomersInCategory = (
+  items: MonomerOrAmbiguousType[],
+  libraryGroupName: MonomerGroups,
+) =>
+  selectAmbiguousMonomersInCategory(items, libraryGroupName)
+    .map((group) => ({
+      ...group,
+      groupItems: group.groupItems.filter((item) => item.favorite),
+    }))
+    .filter((group) => group.groupItems.length);
+
 export const selectFilteredMonomers = createSelector(
   (state: RootState) => state.library,
   (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {

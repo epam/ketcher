@@ -17,10 +17,12 @@
 import { LibraryNameType } from 'src/constants';
 import { MonomerItemType } from 'ketcher-core';
 
-export type Group = {
+export type MonomerListGroup = {
   groupItems: Array<MonomerItemType>;
   groupTitle?: string;
 };
+
+export type Group = MonomerListGroup;
 
 export interface IMonomerListProps {
   libraryName: LibraryNameType;

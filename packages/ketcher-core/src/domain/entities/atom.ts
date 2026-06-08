@@ -104,6 +104,11 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
   initiallySelected?: initiallySelectedType;
+  /**
+   * Endpoints of a super-attachment point atom.
+   * In `.ket` format, it equals to `ENDPTS` property for haptic bonds.
+   */
+  endpoints?: number[];
 }
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<

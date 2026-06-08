@@ -27,6 +27,7 @@ import isHidden from '../../../../action/isHidden';
 import { useSelector } from 'react-redux';
 import { optionsSelector } from '../../../../state/options/selectors';
 import clsx from 'clsx';
+import useSuperAttachmentPointCreate from '../hooks/useSuperAttachmentPointCreate';
 
 const bondNames = getBondNames(tools);
 
@@ -41,6 +42,8 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
+  const [handleSuperAttachmentPointCreate, superAttachmentPointCreateDisabled] =
+    useSuperAttachmentPointCreate();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -163,6 +166,15 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           Create a monomer
         </Item>
       )}
+
+      <Item
+        {...props}
+        data-testid="Create super-attachment point-option"
+        onClick={handleSuperAttachmentPointCreate}
+        disabled={superAttachmentPointCreateDisabled}
+      >
+        Create Super-attachment Point
+      </Item>
 
       <Item
         {...props}

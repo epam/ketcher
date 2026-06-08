@@ -3,7 +3,7 @@ import { ThemeProvider, createTheme } from '@mui/material';
 import { useCallback, useState } from 'react';
 import { ButtonsConfig, Editor } from 'ketcher-react';
 import { Ketcher } from 'ketcher-core';
-import { StandaloneStructServiceProvider } from 'ketcher-standalone';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone'; // eslint-disable-line
 
 import 'ketcher-react/dist/index.css';
 

@@ -1056,8 +1056,9 @@ export class SequenceMode extends BaseMode {
         if (
           !nodeAfterSelection ||
           nodeAfterSelection instanceof EmptySequenceNode ||
-          nodeAfterSelection !== nodeInSameChainAfterSelection ||
-          nodeBeforeSelection !== nodeInSameChainBeforeSelection
+          (!this.isEditMode &&
+            (nodeAfterSelection !== nodeInSameChainAfterSelection ||
+              nodeBeforeSelection !== nodeInSameChainBeforeSelection))
         ) {
           return;
         }
@@ -1111,8 +1112,9 @@ export class SequenceMode extends BaseMode {
         if (
           !nodeBeforeSelection ||
           nodeBeforeSelection instanceof EmptySequenceNode ||
-          nodeBeforeSelection !== nodeInSameChainBeforeSelection ||
-          nodeAfterSelection !== nodeInSameChainAfterSelection
+          (!this.isEditMode &&
+            (nodeBeforeSelection !== nodeInSameChainBeforeSelection ||
+              nodeAfterSelection !== nodeInSameChainAfterSelection))
         ) {
           return;
         }

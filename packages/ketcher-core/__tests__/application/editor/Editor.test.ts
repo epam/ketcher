@@ -1,11 +1,15 @@
+<<<<<<< 6013-System-reposition-monomers-on-the-canvas
 import { CoreEditor, ToolName } from 'application/editor';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+=======
+import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
+>>>>>>> master
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,
   createRenderersManager,
 } from '../../helpers/dom';
-import { SelectBase } from 'application/editor/tools/select';
+import type { SelectBase } from 'application/editor/tools/select';
 import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {
@@ -555,7 +559,7 @@ describe('CoreEditor', () => {
       );
     });
 
-    it('should reject monomer with IDT alias exceeding 12 characters', () => {
+    it('should reject monomer with IDT alias exceeding 10 characters without slashes', () => {
       const monomerWithLongIdtAlias = {
         root: {
           templates: [{ $ref: 'monomerTemplate-CHEM_LONG' }],
@@ -575,7 +579,7 @@ describe('CoreEditor', () => {
             MonomerNaturalAnalogCode: 'X',
           },
           idtAliases: {
-            base: '1234567890123', // 13 chars — exceeds max of 12
+            base: 'N1234567890', // 11 chars, no slashes — exceeds max of 10
           },
         },
       };
@@ -584,9 +588,47 @@ describe('CoreEditor', () => {
       editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('IDT alias length must not exceed 12'),
+        expect.stringContaining(
+          'The maximum number of characters of an IDT alias without slashes (/) is 10.',
+        ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should accept monomer with IDT alias of 10 inner characters wrapped in slashes', () => {
+      const monomerWithSlashedIdtAlias = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-CHEM_OK' }],
+        },
+        'monomerTemplate-CHEM_OK': {
+          type: 'monomerTemplate',
+          id: 'CHEM_OK',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem OK IDT',
+          name: 'CHEM_OK',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_OK',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_OK',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          idtAliases: {
+            base: '/1234567890/', // 12 chars total, 10 inner — within limit
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithSlashedIdtAlias));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(
+          'The maximum number of characters of an IDT alias without slashes',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
     it('should reject monomer group template without name', () => {
@@ -729,9 +771,14 @@ describe('CoreEditor', () => {
   describe('context menu handling', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
+    let rootElement: HTMLDivElement;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
+      rootElement = document.createElement('div');
+      rootElement.classList.add(EditorClassName);
+      document.body.appendChild(rootElement);
+      rootElement.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
         theme: polymerEditorTheme,
@@ -742,6 +789,38 @@ describe('CoreEditor', () => {
     afterEach(() => {
       editor.destroy();
       canvas.remove();
+      rootElement.remove();
+    });
+
+    it('should ignore right click on element outside ketcherRootElement', () => {
+      const outsideElement = document.createElement('div');
+      document.body.appendChild(outsideElement);
+
+      const preventDefaultSpy = jest.fn();
+      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        clientX: 0,
+        clientY: 0,
+        cancelable: true,
+      });
+      Object.defineProperty(event, 'preventDefault', {
+        value: preventDefaultSpy,
+        writable: true,
+      });
+      outsideElement.dispatchEvent(event);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(rightClickSelectedMonomersHandler).not.toHaveBeenCalled();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+      outsideElement.remove();
     });
 
     it('should select monomer on right click when it was not selected', () => {
@@ -767,7 +846,7 @@ describe('CoreEditor', () => {
       const monomerDomElement = document.createElement('div');
       (monomerDomElement as unknown as { __data__: unknown }).__data__ =
         monomer.renderer;
-      document.body.appendChild(monomerDomElement);
+      rootElement.appendChild(monomerDomElement);
 
       expect(monomer.selected).toBeFalsy();
       monomerDomElement.dispatchEvent(

@@ -1,16 +1,16 @@
 import {
+  type ReMultitailArrow,
   FunctionalGroup,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
-  ReMultitailArrow,
 } from 'ketcher-core';
-import Editor, { ClosestItemWithMap } from 'src/script/editor';
+import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
+  type ContextMenuProps,
+  type GetIsItemInSelectionArgs,
   CONTEXT_MENU_ID,
-  ContextMenuProps,
-  GetIsItemInSelectionArgs,
 } from './contextMenu.types';
-import { Selection } from '../../../../editor/Editor';
+import type { Selection } from '../../../../editor/Editor';
 import { onlyHasProperty } from './utils';
 
 export const getIsItemInSelection = ({

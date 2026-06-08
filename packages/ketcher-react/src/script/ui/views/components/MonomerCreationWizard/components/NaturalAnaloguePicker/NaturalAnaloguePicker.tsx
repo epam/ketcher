@@ -1,7 +1,7 @@
-import { useCallback, useMemo, FC } from 'react';
-import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
+import { type FC, useCallback, useMemo } from 'react';
+import MuiSelect, { type SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { MenuProps } from '@mui/material/Menu';
+import type { MenuProps } from '@mui/material/Menu';
 import clsx from 'clsx';
 import styles from './NaturalAnaloguePicker.module.less';
 import NaturalAnalogueChip from '../NaturalAnalogueChip/NaturalAnalogueChip';

@@ -17,21 +17,30 @@
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { RaphaelPaper } from 'raphael';
+import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions, ViewBox } from './render.types';
+import type { RenderOptions, ViewBox } from './render.types';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
 import { notifyRenderComplete } from './notifyRenderComplete';
-import { AttachmentPointName } from 'domain/types';
-import { KetMonomerClass } from 'application/formatters/types/ket';
-import { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+import type { AttachmentPointName } from 'domain/types';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
+import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
+
+export type MonomerCreationInitialValues = {
+  type: KetMonomerClass;
+  symbol: string;
+  name: string;
+  naturalAnalogue: string;
+  aliasHELM: string;
+  aliasBILN: string;
+};
 
 export type RnaComponentAtoms = Map<
   RnaPresetComponentKey,
@@ -41,13 +50,14 @@ export type RnaComponentAtoms = Map<
 export type MonomerCreationState = {
   // R-label mapping to [attachment atom id, leaving atom id]
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
-  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
-  // display to the active RNA component tab). When undefined, all assigned
-  // attachment points are displayed.
+  // Optional restriction: when set to a subset of assignedAttachmentPoints,
+  // only those are drawn on canvas. When undefined, all assigned attachment
+  // points are displayed.
   visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
   problematicAttachmentPoints: Set<AttachmentPointName>;
+  problematicAtoms?: Set<number>;
   clickedAttachmentPoint?: AttachmentPointName | null;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
@@ -56,6 +66,7 @@ export type MonomerCreationState = {
   isRnaPresetMode?: boolean;
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  editInstanceInitialValues?: MonomerCreationInitialValues;
 } | null;
 
 export class Render {

@@ -16,8 +16,8 @@
 
 import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
-import { ReStruct } from '../../render';
-import { SGroup, Vec2 } from 'domain/entities';
+import type { ReStruct } from '../../render';
+import { type SGroup, Vec2 } from 'domain/entities';
 
 class AlignDescriptors extends BaseOperation {
   readonly history: Record<number, Vec2 | null>;

@@ -15,24 +15,24 @@
  ***************************************************************************/
 
 import {
+  type ServiceMode,
+  type StructService,
+  type StructServiceProvider,
   DefaultStructServiceOptions,
   FormatterFactory,
   Ketcher,
-  ServiceMode,
-  StructService,
-  StructServiceProvider,
   ketcherProvider,
   KetcherLogger,
 } from 'ketcher-core';
 
-import { ButtonsConfig } from './ButtonsConfig';
-import { Editor } from '../../editor';
+import type { ButtonsConfig } from './ButtonsConfig';
+import type { Editor } from '../../editor';
 import createApi from '../../api';
 import { initApp } from '../../ui';
-import { Root } from 'react-dom/client';
+import type { Root } from 'react-dom/client';
 import { IndigoProvider } from 'src/script/providers';
 import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
-import { CustomButton } from './CustomButtons';
+import type { CustomButton } from './CustomButtons';
 
 class KetcherBuilder {
   private structService: StructService | null;

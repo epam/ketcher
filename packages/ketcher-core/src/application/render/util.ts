@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
+import type { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
 import { Atom } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
-import { Box2Abs } from 'domain/entities/box2Abs';
-import { HalfBond } from 'domain/entities/halfBond';
+import type { Bond } from 'domain/entities/bond';
+import type { Box2Abs } from 'domain/entities/box2Abs';
+import type { HalfBond } from 'domain/entities/halfBond';
 import { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
 import { LayerMap } from './restruct/generalEnumTypes';
-import ReStruct from './restruct/restruct';
-import Visel from './restruct/visel';
+import type ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import {
-  RelativeBox,
-  RenderOptions,
+  type RelativeBox,
+  type RenderOptions,
   UsageInMacromolecule,
 } from './render.types';
 

@@ -1,15 +1,15 @@
 import { BaseMonomer } from './BaseMonomer';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Vec2 } from 'domain/entities/vec2';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
 import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
-import { IVariantMonomer } from 'domain/entities/types';
-import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
+import type { IVariantMonomer } from 'domain/entities/types';
+import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { Chem } from 'domain/entities/Chem';

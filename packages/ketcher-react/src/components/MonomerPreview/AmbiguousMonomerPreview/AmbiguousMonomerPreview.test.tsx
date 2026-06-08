@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { AmbiguousMonomerPreview } from './AmbiguousMonomerPreview';
-import { AmbiguousMonomerPreviewState, PreviewType } from './types';
-import { AmbiguousMonomerType } from 'ketcher-core';
+import { type AmbiguousMonomerPreviewState, PreviewType } from './types';
+import type { AmbiguousMonomerType } from 'ketcher-core';
 
 describe('AmbiguousMonomerPreview', () => {
   it('should sort mixed monomers by percentage from highest to lowest', () => {

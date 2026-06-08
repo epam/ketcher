@@ -1,11 +1,11 @@
 /** @jest-environment jsdom */
 
 import {
+  type RotationViewParams,
   RotationView,
-  RotationViewParams,
 } from 'application/render/renderers/TransientView/RotationView';
 import { Coordinates } from 'application/editor';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { select } from 'd3';
 

@@ -1,11 +1,11 @@
 import {
-  SVGPathAttributes,
-  BondVectors,
+  type SVGPathAttributes,
+  type BondVectors,
   StereoBondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import { Vec2 } from 'domain/entities';
-import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
+import type { HalfEdge } from 'application/render/view-model/HalfEdge';
+import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 
 // Find a neighboring half-edge at the same atom where the neighbor bond is a
 // Single Up bond whose wide end (secondAtom) is this atom. This mirrors the

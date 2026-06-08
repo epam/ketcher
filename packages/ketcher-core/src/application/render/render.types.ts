@@ -1,5 +1,5 @@
-import { RxnArrowMode } from 'domain/entities/rxnArrow';
-import { Vec2 } from 'domain/entities/vec2';
+import type { RxnArrowMode } from 'domain/entities/rxnArrow';
+import type { Vec2 } from 'domain/entities/vec2';
 import type { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 
 export type RenderOptionStyles = Record<string, string | number>;

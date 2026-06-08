@@ -5,13 +5,14 @@ import {
   IKetMonomerGroupTemplate,
   monomerFactory,
   MonomerItemType,
+  MonomerOrAmbiguousType,
   setMonomerTemplatePrefix,
   KetMonomerClass,
   IRnaLabeledPreset,
   getRnaPresetPhosphatePosition,
-  isAmbiguousMonomerLibraryItem,
   setAmbiguousMonomerTemplatePrefix,
 } from 'ketcher-core';
+import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
@@ -25,11 +26,14 @@ interface RnaPresetsTemplatesType
 }
 
 export const getPresets = (
-  monomers: ReadonlyArray<MonomerItemType>,
+  monomers: ReadonlyArray<MonomerOrAmbiguousType>,
   rnaPresetsTemplates: ReadonlyArray<RnaPresetsTemplatesType>,
   isDefault?: boolean,
 ): IRnaPreset[] => {
-  const monomerLibraryItemByMonomerIDMap = new Map<string, MonomerItemType>(
+  const monomerLibraryItemByMonomerIDMap = new Map<
+    string,
+    MonomerOrAmbiguousType
+  >(
     monomers.map((monomer) => {
       const monomerID = isAmbiguousMonomerLibraryItem(monomer)
         ? setAmbiguousMonomerTemplatePrefix(monomer.id)

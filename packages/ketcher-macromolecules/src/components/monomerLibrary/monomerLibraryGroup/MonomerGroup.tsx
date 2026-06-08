@@ -20,10 +20,8 @@ import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
-import {
-  isAmbiguousMonomerLibraryItem,
-  MonomerOrAmbiguousType,
-} from 'ketcher-core';
+import { MonomerOrAmbiguousType } from 'ketcher-core';
+import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectEditor, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
@@ -99,9 +97,7 @@ const MonomerGroup = ({
     let top: string;
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      top = monomer
-        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
-        : '';
+      top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       previewType = PreviewType.AmbiguousMonomer;
       style = { left, top, transform: 'translate(-50%, 0)' };

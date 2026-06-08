@@ -29,8 +29,10 @@ export const transformRnaPresetToRnaLabeledPreset = (
     });
   }
   rnaLabeledPreset.connections = buildRnaPresetConnections(
-    rnaPreset,
-    getRnaPresetPhosphatePosition(rnaPreset),
+    rnaPreset as Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+    getRnaPresetPhosphatePosition(
+      rnaPreset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+    ),
   );
 
   return rnaLabeledPreset;

@@ -206,7 +206,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.editorLineLength = {
         ...state.editorLineLength,
         ...action.payload,
-      };
+      } as EditorLineLength;
     },
     setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
       state.unipositiveIonsValue = action.payload;

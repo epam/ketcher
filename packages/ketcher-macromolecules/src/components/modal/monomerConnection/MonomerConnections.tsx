@@ -247,8 +247,10 @@ function AttachmentPointSelectionPanel({
     if (!MonomerCaps) {
       return isAmbiguousMonomer ? null : 'H';
     }
-    const leavingGroup = MonomerCaps[attachmentPoint];
-    return hydrateLeavingGroup(leavingGroup);
+    const leavingGroup = MonomerCaps[attachmentPoint] as
+      | LeavingGroup
+      | undefined;
+    return leavingGroup ? hydrateLeavingGroup(leavingGroup) : null;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {

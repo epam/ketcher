@@ -16,7 +16,8 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { LibraryNameType } from 'src/constants';
-import { IRnaPreset, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
+import { IRnaPreset } from 'ketcher-core';
+import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
 
 import { RnaAccordionContainer } from './styles';
 import { useDispatch } from 'react-redux';

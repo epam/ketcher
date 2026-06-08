@@ -208,7 +208,12 @@ export const rnaBuilderSlice = createSlice({
           action.payload.rnaPreset,
           action.payload.isEditMode,
           action.payload.selectedPhosphatePosition ??
-            getRnaPresetPhosphatePosition(action.payload.rnaPreset),
+            getRnaPresetPhosphatePosition(
+              action.payload.rnaPreset as Pick<
+                IRnaPreset,
+                'sugar' | 'phosphate' | 'connections'
+              >,
+            ),
         );
 
       state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
@@ -431,7 +436,9 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(preset);
+  const phosphatePosition = getRnaPresetPhosphatePosition(
+    preset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+  );
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -597,7 +604,9 @@ export const selectFilteredPresets = createSelector(
         if (!item.phosphate) {
           return noPhosphate;
         }
-        const position = getRnaPresetPhosphatePosition(item);
+        const position = getRnaPresetPhosphatePosition(
+          item as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+        );
         return position === 'left' ? fivePrime : threePrime;
       });
   },

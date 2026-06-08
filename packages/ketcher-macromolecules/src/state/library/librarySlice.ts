@@ -31,10 +31,10 @@ import {
   AmbiguousMonomer,
   MonomerGroups,
   AmbiguousMonomerType,
-  isAmbiguousMonomerLibraryItem,
   IKetIdtAliases,
   IKetMonomerGroupTemplate,
 } from 'ketcher-core';
+import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
 import {
   LibraryNameType,
   FAVORITE_ITEMS_UNIQUE_KEYS,

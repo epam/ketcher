@@ -21,7 +21,7 @@ import { PolymerBond } from 'application/editor/tools/Bond';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { ClearTool } from 'application/editor/tools/Clear';
 import { HandTool } from 'application/editor/tools/Hand';
-import { ToolName } from 'application/editor/tools/types';
+import { ToolName } from './types';
 import { SelectLasso } from 'application/editor/tools/select/SelectLasso';
 import { SelectFragment } from 'application/editor/tools/select/SelectFragment';
 

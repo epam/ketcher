@@ -1,12 +1,8 @@
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
 import { IRnaPreset } from '../RnaBuilder/types';
-import { MonomerGroups } from '../../../constants';
-import {
-  CategoryTitle,
-  MonomerListContainer,
-  SubsectionTitle,
-} from './styles';
+import { LibraryNameType, MonomerGroups } from '../../../constants';
+import { CategoryTitle, MonomerListContainer, SubsectionTitle } from './styles';
 import { Group } from './types';
 import {
   FAVORITES_LIBRARY_NAME,
@@ -50,21 +46,24 @@ const MonomerGroupsList = ({
 }: {
   groups: Group[];
   groupName?: MonomerGroups;
-  libraryName: string;
+  libraryName: LibraryNameType;
   onItemClick?: (item) => void;
   selectedMonomerUniqueKey: string;
-}) =>
-  groups.map(({ groupItems, groupTitle }) => (
-    <MonomerGroup
-      key={`${groupName ?? ''}-${groupTitle}`}
-      title={shouldShowGroupTitle(groupTitle, groups, groupName)}
-      groupName={groupName}
-      items={groupItems}
-      libraryName={libraryName}
-      onItemClick={onItemClick}
-      selectedMonomerUniqueKey={selectedMonomerUniqueKey}
-    />
-  ));
+}) => (
+  <>
+    {groups.map(({ groupItems, groupTitle }) => (
+      <MonomerGroup
+        key={`${groupName ?? ''}-${groupTitle}`}
+        title={shouldShowGroupTitle(groupTitle, groups, groupName)}
+        groupName={groupName}
+        items={groupItems}
+        libraryName={libraryName}
+        onItemClick={onItemClick}
+        selectedMonomerUniqueKey={selectedMonomerUniqueKey}
+      />
+    ))}
+  </>
+);
 
 const AmbiguousMonomerGroupsList = ({
   ambiguousGroups,
@@ -73,20 +72,23 @@ const AmbiguousMonomerGroupsList = ({
   selectedMonomerUniqueKey,
 }: {
   ambiguousGroups: GroupedAmbiguousMonomerLibraryItemType[];
-  libraryName: string;
+  libraryName: LibraryNameType;
   onItemClick?: (item) => void;
   selectedMonomerUniqueKey: string;
-}) =>
-  ambiguousGroups.map(({ groupTitle, groupItems }) => (
-    <MonomerGroup
-      key={groupTitle}
-      title={groupTitle}
-      items={groupItems}
-      libraryName={libraryName}
-      onItemClick={onItemClick}
-      selectedMonomerUniqueKey={selectedMonomerUniqueKey}
-    />
-  ));
+}) => (
+  <>
+    {ambiguousGroups.map(({ groupTitle, groupItems }) => (
+      <MonomerGroup
+        key={groupTitle}
+        title={groupTitle}
+        items={groupItems}
+        libraryName={libraryName}
+        onItemClick={onItemClick}
+        selectedMonomerUniqueKey={selectedMonomerUniqueKey}
+      />
+    ))}
+  </>
+);
 
 const RnaSection = ({
   section,

@@ -180,8 +180,12 @@ describe('Monomer List', () => {
     expect(screen.getByText('Peptides')).toBeInTheDocument();
     expect(screen.getByText('RNA')).toBeInTheDocument();
     expect(screen.getByText('Bases')).toBeInTheDocument();
-    expect(screen.getByTestId(getMonomerUniqueKey(alanine))).toBeInTheDocument();
-    expect(screen.getByTestId(getMonomerUniqueKey(adenine))).toBeInTheDocument();
+    expect(
+      screen.getByTestId(getMonomerUniqueKey(alanine)),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId(getMonomerUniqueKey(adenine)),
+    ).toBeInTheDocument();
   });
 
   it('should render correct without groups', () => {

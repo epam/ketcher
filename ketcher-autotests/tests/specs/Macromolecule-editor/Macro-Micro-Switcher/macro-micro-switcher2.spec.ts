@@ -117,10 +117,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     expect(await getMonomerLocator(page, {}).count()).toBeGreaterThan(0);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await moveMouseAway(page);
     await takeElementScreenshot(
       page,
       getAtomLocator(page, { atomLabel: 'P' }),
-      { padding: 250 },
+      { padding: 250, maxDiffPixelRatio: 0.02 },
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);

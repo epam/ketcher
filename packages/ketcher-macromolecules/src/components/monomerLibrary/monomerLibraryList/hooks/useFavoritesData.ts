@@ -13,7 +13,10 @@ import {
   selectMonomersInFavorites,
   selectUnsplitNucleotides,
 } from 'state/library';
-import { selectFilteredPresets, selectPresetsInFavorites } from 'state/rna-builder';
+import {
+  selectFilteredPresets,
+  selectPresetsInFavorites,
+} from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import { Group } from '../types';
 import { IRnaPreset } from '../../RnaBuilder/types';
@@ -40,7 +43,9 @@ export type FavoritesRnaSection = {
 export type FavoritesData = {
   peptides: {
     groups: Group[];
-    ambiguousGroups: ReturnType<typeof selectFavoriteAmbiguousMonomersInCategory>;
+    ambiguousGroups: ReturnType<
+      typeof selectFavoriteAmbiguousMonomersInCategory
+    >;
     hasContent: boolean;
   };
   rna: {
@@ -121,8 +126,7 @@ export const useFavoritesData = (): FavoritesData => {
 
     const peptidesHasContent =
       peptideGroups.length > 0 || peptideAmbiguousGroups.length > 0;
-    const rnaHasContent =
-      favoritePresets.length > 0 || rnaSections.length > 0;
+    const rnaHasContent = favoritePresets.length > 0 || rnaSections.length > 0;
     const chemHasContent = chemGroups.length > 0;
 
     return {

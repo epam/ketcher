@@ -18,7 +18,7 @@ const mode = {
   DEVELOPMENT: 'development',
 };
 
-const extensions = ['.js', '.ts'];
+const extensions = ['.js', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 

@@ -55,6 +55,7 @@ export class Bond extends BaseMicromoleculeEntity {
       DOUBLE_OR_AROMATIC: 7,
       ANY: 8,
       DATIVE: 9,
+      HAPTIC: 91,
       HYDROGEN: 10,
     },
 
@@ -113,6 +114,8 @@ export class Bond extends BaseMicromoleculeEntity {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  endpoints?: number[];
+  attach?: 'ALL' | 'ANY';
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);

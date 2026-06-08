@@ -29,6 +29,7 @@ type ToolVariant =
   | 'bond-aromatic'
   | 'bond-crossed'
   | 'bond-dative'
+  | 'bond-haptic'
   | 'bond-double'
   | 'bond-doublearomatic'
   | 'bond-down'

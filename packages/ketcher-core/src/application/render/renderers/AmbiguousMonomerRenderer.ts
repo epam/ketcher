@@ -166,6 +166,17 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    return undefined;
+    switch (this.monomer.monomerClass) {
+      case KetMonomerClass.AminoAcid:
+        return { backgroundId: '#modified-background', requiresFill: true };
+      case KetMonomerClass.Base:
+        return { backgroundId: '#rna-base-modified-background' };
+      case KetMonomerClass.Sugar:
+        return { backgroundId: '#sugar-modified-background' };
+      case KetMonomerClass.Phosphate:
+        return { backgroundId: '#phosphate-modified-background' };
+      default:
+        return undefined;
+    }
   }
 }

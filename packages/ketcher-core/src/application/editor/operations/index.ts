@@ -34,6 +34,7 @@ export * from './rgroupAttachmentPoint';
 export * from './rxn';
 export * from './simpleObject';
 export * from './sgroup';
+export * from './superAttachmentPoint';
 export * from './Text';
 export * from './monomer';
 export * from './modes';

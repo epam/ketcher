@@ -32,6 +32,7 @@ import { RxnPlus } from './rxnPlus';
 import { SGroup } from './sgroup';
 import { SGroupForest } from './sgroupForest';
 import { SimpleObject } from './simpleObject';
+import { SuperAttachmentPoint } from './superAttachmentPoint';
 import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
@@ -302,6 +303,20 @@ export class Struct {
     const aids: Map<number, number> = aidMap ?? new Map();
     const bidMap = bidMapEntity ?? new Map();
 
+    // Drop SuperAttachmentPoint atoms whose endpoints don't all survive the
+    // merge — a SAP has no meaning without its constituent atoms. This must
+    // happen before the bond filter so any haptic bond pointing to a dropped
+    // SAP is also dropped by the standard begin/end membership check.
+    this.atoms.forEach((atom, aid) => {
+      if (
+        atoms.has(aid) &&
+        atom instanceof SuperAttachmentPoint &&
+        atom.endpoints.some((eid) => !atoms.has(eid))
+      ) {
+        atoms.delete(aid);
+      }
+    });
+
     bonds = bonds.filter((bid) => {
       const bond = this.bonds.get(bid)!;
       return atoms.has(bond.begin) && atoms.has(bond.end);
@@ -426,6 +441,15 @@ export class Struct {
       cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aids));
     });
 
+    // SuperAttachmentPoint atoms were cloned in the standard atom loop above
+    // (they live in the atom pool). Their `endpoints` arrays still hold old
+    // atom ids; remap them now that all atoms have been cloned.
+    cp.atoms.forEach((atom) => {
+      if (atom instanceof SuperAttachmentPoint) {
+        atom.remapEndpoints(aids);
+      }
+    });
+
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
@@ -510,6 +534,11 @@ export class Struct {
     });
 
     this.bonds.forEach((bond) => {
+      // Haptic bonds don't contribute to neighbor lists. Their SAP endpoint
+      // is a dummy atom carrying no chemistry; including it in ring/loop/
+      // valence traversal would skew implicit-H and stereo for the metal
+      // atom.
+      if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
       const a1 = this.atoms.get(bond.begin)!;
       const a2 = this.atoms.get(bond.end)!;
       a1.neighbors.push(bond.hb1!);
@@ -519,6 +548,9 @@ export class Struct {
 
   bondInitHalfBonds(bid, bond?: Bond) {
     bond = bond ?? this.bonds.get(bid)!;
+    // Haptic bonds skip halfBonds so the SAP dummy atom on the `end` side
+    // stays out of ring/loop/neighbor analysis — see `initNeighbors`.
+    // if (bond.type === Bond.PATTERN.TYPE.HAPTIC) return;
     bond.hb1 = 2 * bid;
     bond.hb2 = 2 * bid + 1; // eslint-disable-line no-mixed-operators
     this.halfBonds.set(bond.hb1, new HalfBond(bond.begin, bond.end, bid));
@@ -1069,6 +1101,10 @@ export class Struct {
     let hbIdNext, c, loop;
     this.halfBonds.forEach((hb, hbId) => {
       if (hb.loop !== -1) return;
+      // Haptic half-bonds are skipped by initNeighbors/atomAddNeighbor, so
+      // their `.next` pointer is never set. Walking into one would crash on
+      // an undefined lookup. They never form rings, so skip them outright.
+      if (this.bonds.get(hb.bid)?.type === Bond.PATTERN.TYPE.HAPTIC) return;
 
       for (
         hbIdNext = hbId, c = 0, loop = [];

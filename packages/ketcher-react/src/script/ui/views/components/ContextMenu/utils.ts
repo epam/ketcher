@@ -11,14 +11,18 @@ export const formatTitle = (title: string) => {
 };
 
 /**
- * Get bond names from default export of `src/script/ui/action/tools.js`
- *
- * @returns `['bond-single', 'bond-up', 'bond-down', 'bond-updown', 'bond-double',
- * 'bond-crossed', 'bond-triple', 'bond-aromatic', 'bond-any', 'bond-hydrogen',
- * 'bond-singledouble', 'bond-singlearomatic', 'bond-doublearomatic', 'bond-dative']`
+ * Get bond names from default export of `src/script/ui/action/tools.js`,
+ * excluding bond types that cannot be applied via "convert this bond to
+ * type X" UI flows (J3: haptic requires a SuperAttachmentPoint endpoint
+ * and so can't apply to an atom↔atom bond).
  */
+const BOND_TYPE_SUBMENU_EXCLUDED = ['bond-haptic'];
+
 export const getBondNames = (tools) => {
-  return Object.keys(tools).filter((key) => key.startsWith('bond-'));
+  return Object.keys(tools).filter(
+    (key) =>
+      key.startsWith('bond-') && !BOND_TYPE_SUBMENU_EXCLUDED.includes(key),
+  );
 };
 
 export const queryBondNames = [

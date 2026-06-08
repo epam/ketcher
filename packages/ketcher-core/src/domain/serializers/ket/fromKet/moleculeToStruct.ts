@@ -23,6 +23,7 @@ import { Bond } from 'domain/entities/bond';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 
 import { Elements } from 'domain/constants';
@@ -47,8 +48,7 @@ export function moleculeToStruct(ketItem: any): Struct {
       let atomId: number | null = null;
       if (atom.type === 'rg-label') {
         atomId = struct.atoms.add(rglabelToStruct(atom));
-      }
-      if (!atom.type || atom.type === 'atom-list') {
+      } else if (!atom.type || atom.type === 'atom-list') {
         atomId = struct.atoms.add(atomToStruct(atom));
       }
       if (atomId !== null) {
@@ -148,6 +148,17 @@ export function atomToStruct(source) {
   // implicit hydrogens
   ifDef(params, 'implicitHCount', source.implicitHCount);
 
+  // A `*` atom carrying an `endpoints[]` field is a SuperAttachmentPoint
+  // dummy atom — see moleculeToKet.atomToKet for the matching save shape.
+  if (Array.isArray(source.endpoints) && source.endpoints.length >= 2) {
+    const superAttachmentPoint = new SuperAttachmentPoint({
+      ...params,
+      endpoints: source.endpoints,
+    });
+    superAttachmentPoint.setInitiallySelected(source.selected);
+    return superAttachmentPoint;
+  }
+
   const newAtom = new Atom(params);
   newAtom.setInitiallySelected(source.selected);
   return newAtom;
@@ -213,6 +224,10 @@ function addRGroupAttachmentPointsToStruct(
  * @returns newly created Bond
  */
 export function bondToStruct(source, atomOffset = 0) {
+  // Haptic bonds (type 91) use the same `atoms: [begin, end]` shape as any
+  // other bond; either endpoint may be a SAP dummy atom (stored inline in
+  // `atoms[]` as a `*` atom with `endpoints[]`). The generic Bond loader
+  // below handles them.
   const params: any = {};
 
   ifDef(params, 'type', source.type);

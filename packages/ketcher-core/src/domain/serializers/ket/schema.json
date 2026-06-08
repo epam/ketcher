@@ -185,6 +185,15 @@
           "type": "integer",
           "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
+        "endpoints": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
         "mapping": {
           "type": "integer",
           "minimum": 0
@@ -268,7 +277,6 @@
     },
     "bond": {
       "type": "object",
-      "required": ["atoms"],
       "properties": {
         "atoms": {
           "type": "array",
@@ -294,11 +302,11 @@
       },
       "oneOf": [
         {
-          "required": ["type"],
+          "required": ["type", "atoms"],
           "properties": {
             "type": {
               "type": "integer",
-              "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+              "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 91]
             },
             "stereo": {
               "type": "integer",
@@ -315,7 +323,7 @@
           }
         },
         {
-          "required": ["customQuery"],
+          "required": ["customQuery", "atoms"],
           "properties": {
             "customQuery": {
               "type": "string"

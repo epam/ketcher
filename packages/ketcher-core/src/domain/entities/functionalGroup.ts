@@ -15,12 +15,13 @@
  ***************************************************************************/
 import type { ReSGroup } from 'application/render';
 import assert from 'assert';
-import { FunctionalGroupsProvider, SaltsAndSolventsProvider } from '../helpers';
+import { FunctionalGroupsProvider } from '../helpers/functionalGroupsProvider';
+import { SaltsAndSolventsProvider } from '../helpers/saltsAndSolventsProvider';
 import type { Atom } from './atom';
 import type { Bond } from './bond';
 import { Pool } from './pool';
 import { SGroup } from './sgroup';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import type { HalfBond } from './halfBond';
 
 const isSaltOrSolvent = (moleculeName: string): boolean => {

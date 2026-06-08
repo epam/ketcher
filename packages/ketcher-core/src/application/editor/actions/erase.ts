@@ -37,6 +37,9 @@ import { removeAttachmentPointFromSuperatom } from '../actions/bond';
 import { fromBondStereoUpdate } from './bondStereo';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
+import { fromSuperAttachmentPointDelete } from './superAttachmentPoint';
+import { SuperAttachmentPointEndpointsChange } from '../operations/superAttachmentPoint';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
@@ -142,6 +145,40 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms = Array.from(new Set(selection.atoms));
   selection.bonds = Array.from(new Set(selection.bonds));
+
+  // When a SuperAttachmentPoint endpoint atom is being deleted, prune it
+  // from the SAP's endpoint list. If the SAP drops below 2 endpoints,
+  // cascade-delete it (and its incident haptic bonds) via
+  // fromSuperAttachmentPointDelete.
+  const removedAtomSet = new Set(selection.atoms);
+  const superAttachmentPointsToHandle = new Map<number, number[]>();
+  struct.atoms.forEach((atom, superAttachmentPointAtomId) => {
+    if (
+      atom instanceof SuperAttachmentPoint &&
+      atom.endpoints.some((aid) => removedAtomSet.has(aid))
+    ) {
+      superAttachmentPointsToHandle.set(
+        superAttachmentPointAtomId,
+        atom.endpoints.filter((aid) => !removedAtomSet.has(aid)),
+      );
+    }
+  });
+  superAttachmentPointsToHandle.forEach(
+    (newEndpoints, superAttachmentPointAtomId) => {
+      if (newEndpoints.length < 2) {
+        action.mergeWith(
+          fromSuperAttachmentPointDelete(restruct, superAttachmentPointAtomId),
+        );
+      } else {
+        action.addOp(
+          new SuperAttachmentPointEndpointsChange(
+            superAttachmentPointAtomId,
+            newEndpoints,
+          ).perform(restruct),
+        );
+      }
+    },
+  );
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);

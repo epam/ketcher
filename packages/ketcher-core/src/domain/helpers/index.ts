@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+export * from './canCreateSuperAttachmentPointFromSelection';
 export * from './scale';
 export * from './stereoValidator';
 export * from './functionalGroupsProvider';

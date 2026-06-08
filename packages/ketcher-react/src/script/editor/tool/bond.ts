@@ -32,15 +32,23 @@ import {
 import Editor from '../Editor';
 import { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
+import HapticBondTool from './hapticBond';
 
 class BondTool implements Tool {
-  private readonly editor: Editor;
-  private readonly atomProps: { label: string };
+  private readonly editor!: Editor;
+  private readonly atomProps!: { label: string };
   private readonly bondProps: any;
   private dragCtx: any;
   isNotActiveTool: boolean | undefined;
 
   constructor(editor, bondProps) {
+    // Haptic bonds use entirely different mousedown/move/up semantics
+    // (SAP-endpoint validation, click-on-SAP → C+haptic). Route to the
+    // dedicated tool here so the UI config (tools.js) and toolsMap stay
+    // uniform: one `'bond'` tool name for every bond type.
+    if (bondProps?.type === Bond.PATTERN.TYPE.HAPTIC) {
+      return new HapticBondTool(editor) as unknown as BondTool;
+    }
     this.editor = editor;
     this.atomProps = { label: 'C' };
     this.bondProps = bondProps;

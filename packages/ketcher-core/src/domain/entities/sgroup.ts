@@ -17,14 +17,27 @@
 import type { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
-import { Struct } from './struct';
-import { SaltsAndSolventsProvider } from '../helpers';
+// Type-only — Struct is only referenced in method signatures. A value import
+// reintroduces the atom → sgroup → struct → superAttachmentPoint → atom
+// runtime cycle that trips TDZ on `Atom`. See atom.ts.
+import type { Struct } from './struct';
+// Import the provider directly from its source file, NOT via the
+// `../helpers` barrel. The barrel re-exports
+// `canCreateSuperAttachmentPointFromSelection`, which imports
+// SuperAttachmentPoint → Atom — going through the barrel reintroduces the
+// runtime cycle.
+import { SaltsAndSolventsProvider } from '../helpers/saltsAndSolventsProvider';
 import { Vec2 } from './vec2';
-import { ReStruct } from '../../application/render';
+// Type-only — ReStruct/ReSGroup are only referenced in method signatures
+// here. A value import pulls in the entire render package at module load,
+// which transitively loads SuperAttachmentPoint and trips the
+// atom → sgroup → application/render → reatom → superAttachmentPoint → atom
+// runtime cycle (TDZ on `Atom`).
+import type { ReStruct } from '../../application/render';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { Pool } from 'domain/entities/pool';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
-import { ReSGroup } from 'application/render';
+import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';

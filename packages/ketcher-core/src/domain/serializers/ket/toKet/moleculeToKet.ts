@@ -16,8 +16,10 @@
 
 import { AtomQueryProperties } from 'domain/entities/atom';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Bond } from 'domain/entities/bond';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
@@ -45,6 +47,11 @@ export interface MoleculesSelection {
 }
 
 export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
+  // Save adapter: SuperAttachmentPoint atoms live in struct.atoms. They
+  // serialize as ordinary `*` atoms with an extra `endpoints[]` field (see
+  // atomToKet). Haptic bonds serialize like any other bond, with
+  // `atoms: [metalAtomIdx, superAttachmentPointAtomIdx]`. No separate
+  // top-level array, no atom-id remap needed across sgroups/fragments/etc.
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
       // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
@@ -77,8 +84,17 @@ export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
 }
 
 function atomToKet(source, monomer?: BaseMonomer) {
-  const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
-    {};
+  const result: {
+    queryProperties?: AtomQueryProperties;
+    type?: 'atom-list';
+    endpoints?: number[];
+  } = {};
+  if (source instanceof SuperAttachmentPoint) {
+    // A SAP serializes as a regular `*` atom with an extra `endpoints[]`
+    // field listing the atom ids it groups. The loader keys on the presence
+    // of `endpoints` to reinstate the SuperAttachmentPoint subclass.
+    result.endpoints = [...source.endpoints];
+  }
 
   if (source.label !== 'L#') {
     ifDef(
@@ -159,12 +175,17 @@ function bondToKet(source) {
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
   } else {
+    // Haptic bonds (type 91) use the same `atoms: [begin, end]` shape as
+    // any other bond — either endpoint may be a SAP dummy atom. They skip
+    // the chemistry-specific attrs (stereo/topology/center/cip).
     ifDef(result, 'type', source.type);
     ifDef(result, 'atoms', [source.begin, source.end]);
-    ifDef(result, 'stereo', source.stereo, 0);
-    ifDef(result, 'topology', source.topology, 0);
-    ifDef(result, 'center', source.reactingCenterStatus, 0);
-    ifDef(result, 'cip', source.cip, '');
+    if (source.type !== Bond.PATTERN.TYPE.HAPTIC) {
+      ifDef(result, 'stereo', source.stereo, 0);
+      ifDef(result, 'topology', source.topology, 0);
+      ifDef(result, 'center', source.reactingCenterStatus, 0);
+      ifDef(result, 'cip', source.cip, '');
+    }
   }
   ifDef(result, 'selected', source.getInitiallySelected());
   return result;

@@ -8,6 +8,7 @@ import useBondEdit from '../hooks/useBondEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import useCreateMonomer from '../hooks/useCreateMonomer';
+import useCreateSuperAttachmentPoint from '../hooks/useCreateSuperAttachmentPoint';
 import useMarkAs from '../hooks/useMarkAs';
 import {
   formatTitle,
@@ -41,6 +42,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
+  const [handleCreateSAP, createSAPDisabled] = useCreateSuperAttachmentPoint();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -163,6 +165,15 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
           Create a monomer
         </Item>
       )}
+
+      <Item
+        {...props}
+        data-testid="Create Super-attachment Point-option"
+        onClick={handleCreateSAP}
+        disabled={createSAPDisabled()}
+      >
+        Create Super-attachment Point
+      </Item>
 
       <Item
         {...props}

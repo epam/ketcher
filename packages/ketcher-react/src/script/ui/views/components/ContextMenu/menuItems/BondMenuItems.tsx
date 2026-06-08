@@ -18,7 +18,7 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import { Bond, ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -87,60 +87,41 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       (bondData.type === 1 && bondData.stereo === 4));
 
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
+  // J1: for haptic bonds, hide all menu items above "Attach S-Group" —
+  // Edit/Bond-type/Query-bonds/Change-direction don't apply.
+  const isHapticBond = bondData?.type === Bond.PATTERN.TYPE.HAPTIC;
 
   return (
     <>
-      <Item
-        {...props}
-        data-testid={
-          props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected bonds...-option'
-            : 'Edit...-option'
-        }
-        onClick={handleEdit}
-        disabled={isDisabled}
-      >
-        <Icon name="editMenu" className={styles.icon} />
-        <span className={styles.contextMenuText}>
-          {props.propsFromTrigger?.extraItemsSelected
-            ? 'Edit selected bonds...'
-            : 'Edit...'}
-        </span>
-      </Item>
-      <Separator />
-      {bondNamesWithoutEmptyValue.map((name) => {
-        const iconName = getIconName(name);
-        const classNames = styles.sameGroup;
-
-        return (
-          <Item
-            className={classNames}
-            {...props}
-            data-testid={`${name}-option`}
-            id={name}
-            onClick={handleTypeChange}
-            key={name}
-            disabled={isDisabled}
-          >
-            {iconName && <Icon name={iconName} className={styles.icon} />}
-            <span>{formatTitle(tools[name].title)}</span>
-          </Item>
-        );
-      })}
-      <Separator />
-
-      <Submenu
-        {...props}
-        data-testid="Query bonds-option"
-        label="Query bonds"
-        className={styles.subMenu}
-        disabled={disabledForMonomerCreation}
-      >
-        {queryBondNames.map((name) => {
+      {!isHapticBond && (
+        <Item
+          {...props}
+          data-testid={
+            props.propsFromTrigger?.extraItemsSelected
+              ? 'Edit selected bonds...-option'
+              : 'Edit...-option'
+          }
+          onClick={handleEdit}
+          disabled={isDisabled}
+        >
+          <Icon name="editMenu" className={styles.icon} />
+          <span className={styles.contextMenuText}>
+            {props.propsFromTrigger?.extraItemsSelected
+              ? 'Edit selected bonds...'
+              : 'Edit...'}
+          </span>
+        </Item>
+      )}
+      {!isHapticBond && <Separator />}
+      {!isHapticBond &&
+        bondNamesWithoutEmptyValue.map((name) => {
           const iconName = getIconName(name);
+          const classNames = styles.sameGroup;
+
           return (
             <Item
-              className={styles.sameGroup}
+              className={classNames}
+              {...props}
               data-testid={`${name}-option`}
               id={name}
               onClick={handleTypeChange}
@@ -152,9 +133,36 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             </Item>
           );
         })}
-      </Submenu>
+      {!isHapticBond && <Separator />}
 
-      {shouldShowChangeDirection && (
+      {!isHapticBond && (
+        <Submenu
+          {...props}
+          data-testid="Query bonds-option"
+          label="Query bonds"
+          className={styles.subMenu}
+          disabled={disabledForMonomerCreation}
+        >
+          {queryBondNames.map((name) => {
+            const iconName = getIconName(name);
+            return (
+              <Item
+                className={styles.sameGroup}
+                data-testid={`${name}-option`}
+                id={name}
+                onClick={handleTypeChange}
+                key={name}
+                disabled={isDisabled}
+              >
+                {iconName && <Icon name={iconName} className={styles.icon} />}
+                <span>{formatTitle(tools[name].title)}</span>
+              </Item>
+            );
+          })}
+        </Submenu>
+      )}
+
+      {!isHapticBond && shouldShowChangeDirection && (
         <Item
           {...props}
           data-testid="Change direction-option"

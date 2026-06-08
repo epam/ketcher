@@ -16,6 +16,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
+  Bond,
   CoordinateTransformation,
   fromImageResize,
   fromItemsFuse,
@@ -513,6 +514,10 @@ class SelectTool implements Tool {
         changeAtomPromise,
       });
     } else if (ci.map === 'bonds') {
+      const targetBond = molecule.bonds.get(ci.id);
+      if (targetBond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+        return true;
+      }
       const bonds = getSelectedBonds(selection, molecule);
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({
@@ -697,6 +702,7 @@ function preventSaltAndSolventsMerge(
 function getMapsForClosestItem(selectFragment: boolean) {
   return [
     'sgroups',
+    'superAttachmentPoints',
     'functionalGroups',
     'sgroupData',
     'rgroups',

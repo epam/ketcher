@@ -23,6 +23,7 @@ import {
   ImageReferencePositionInfo,
   MULTITAIL_ARROW_KEY,
   FunctionalGroup,
+  SuperAttachmentPoint,
 } from 'ketcher-core';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -35,6 +36,7 @@ const findMaps = {
   enhancedFlags: findClosestEnhancedFlag,
   sgroupData: findClosestDataSGroupData,
   sgroups: findClosestSGroup,
+  superAttachmentPoints: findClosestSuperAttachmentPoint,
   functionalGroups: findClosestFG,
   rxnArrows: findClosestRxnArrow,
   rxnPluses: findClosestRxnPlus,
@@ -131,6 +133,8 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
   minDist = Math.min(minDist, maxMinDist);
 
   restruct.visibleAtoms.forEach((atom, aid) => {
+    if (atom.a instanceof SuperAttachmentPoint) return;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
@@ -161,6 +165,25 @@ function findClosestAtom(restruct: ReStruct, pos: Vec2, skip, minDist) {
     };
   }
 
+  return null;
+}
+
+function findClosestSuperAttachmentPoint(restruct: ReStruct, pos: Vec2) {
+  // SAPs live in struct.atoms as SuperAttachmentPoint dummy atoms; this
+  // closest-search is kept as a separate map so tools (hapticBond, eraser,
+  // context menu) can differentiate them from real atoms via `ci.map`.
+  let closestId: null | number = null;
+  let minDist = SELECTION_DISTANCE_COEFFICIENT;
+  restruct.molecule.atoms.forEach((atom, id) => {
+    if (!(atom instanceof SuperAttachmentPoint)) return;
+    atom.recomputeCenter(restruct.molecule);
+    const dist = Vec2.dist(pos, atom.pp);
+    if (dist < minDist) {
+      closestId = id;
+      minDist = dist;
+    }
+  });
+  if (closestId !== null) return { id: closestId, dist: minDist };
   return null;
 }
 

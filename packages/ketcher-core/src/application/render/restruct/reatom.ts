@@ -97,7 +97,7 @@ class ReAtom extends ReObject {
     this.component = -1;
   }
 
-  static isSelectable(): true {
+  static isSelectable(): boolean {
     return true;
   }
 

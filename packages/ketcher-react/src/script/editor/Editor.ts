@@ -142,6 +142,7 @@ const highlightTargets = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  'superAttachmentPoints',
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];
@@ -3219,6 +3220,9 @@ function setHover(ci: any, visible: any, render: any) {
   }
 
   if (ci.map === 'functionalGroups') ci.map = 'sgroups'; // TODO: Refactor object
+  // SAPs live in the atoms pool; hover plumbing goes through ReAtom (which
+  // branches on SuperAttachmentPoint to propagate hover to endpoint atoms).
+  if (ci.map === 'superAttachmentPoints') ci.map = 'atoms';
 
   item = (render.ctab[ci.map] as Map<any, any>).get(ci.id);
   if (!item) {

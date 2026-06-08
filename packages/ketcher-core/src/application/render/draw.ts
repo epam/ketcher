@@ -1436,6 +1436,26 @@ function bondHydrogen(
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
+function bondHaptic(
+  paper: RaphaelPaper,
+  halfBond1: HalfBond,
+  halfBond2: HalfBond,
+  options: RenderOptions,
+  isSnapping: boolean,
+  color = '#000',
+) {
+  const a = halfBond1.p;
+  const b = halfBond2.p;
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
 function bondDative(
   paper: RaphaelPaper,
   halfBond1: HalfBond,
@@ -1791,6 +1811,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

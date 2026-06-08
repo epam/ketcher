@@ -19,6 +19,7 @@ import { Bond } from 'domain/entities/bond';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
+import { SuperAttachmentPoint } from 'domain/entities/superAttachmentPoint';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
@@ -37,6 +38,7 @@ import ReRxnArrow from './rerxnarrow';
 import ReRxnPlus from './rerxnplus';
 import ReSGroup from './resgroup';
 import ReSimpleObject from './resimpleObject';
+import ReSuperAttachmentPoint from './reSuperAttachmentPoint';
 import ReText from './retext';
 import { Render } from '../raphaelRender';
 import Visel from './visel';
@@ -121,7 +123,12 @@ class ReStruct {
     // TODO: eachItem ?
 
     molecule.atoms.forEach((atom, aid) => {
-      this.atoms.set(aid, new ReAtom(atom));
+      this.atoms.set(
+        aid,
+        atom instanceof SuperAttachmentPoint
+          ? new ReSuperAttachmentPoint(atom)
+          : new ReAtom(atom),
+      );
     });
 
     molecule.bonds.forEach((bond, bid) => {

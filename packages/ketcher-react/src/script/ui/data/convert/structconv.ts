@@ -482,6 +482,10 @@ const bondCaptionMap: Record<string, { type: number; stereo: number }> = {
     type: Bond.PATTERN.TYPE.HYDROGEN,
     stereo: Bond.PATTERN.STEREO.NONE,
   },
+  haptic: {
+    type: Bond.PATTERN.TYPE.HAPTIC,
+    stereo: Bond.PATTERN.STEREO.NONE,
+  },
   dative: {
     type: Bond.PATTERN.TYPE.DATIVE,
     stereo: Bond.PATTERN.STEREO.NONE,

@@ -30,6 +30,7 @@ export * from './sgroup';
 export * from './sgroupForest';
 export * from './simpleObject';
 export * from './struct';
+export * from './superAttachmentPoint';
 export * from './text';
 export * from './pile';
 export * from './vec2';

@@ -902,6 +902,17 @@ function getBondPath(
         isSnapping,
       );
       break;
+
+    case Bond.PATTERN.TYPE.HAPTIC:
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      path = draw.bondHaptic(
+        render.paper,
+        newHalfBonds[0],
+        newHalfBonds[1],
+        render.options,
+        isSnapping,
+      );
+      break;
     case Bond.PATTERN.TYPE.HYDROGEN:
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(

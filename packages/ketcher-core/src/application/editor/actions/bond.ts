@@ -239,6 +239,16 @@ export function fromBondsMerge(
     const bond = struct.bonds.get(srcId);
     const bondCI = struct.bonds.get(dstId);
     if (!bond || !bondCI) return;
+
+    // Haptic bonds don't merge with other bonds — their endpoint is a SAP
+    // dummy atom whose position is derived, not a draggable terminal.
+    if (
+      bond.type === Bond.PATTERN.TYPE.HAPTIC ||
+      bondCI.type === Bond.PATTERN.TYPE.HAPTIC
+    ) {
+      return;
+    }
+
     const params = utils.mergeBondsParams(struct, bond, struct, bondCI);
     if (!params.merged) return;
     atomPairs.set(bond.begin, !params.cross ? bondCI.begin : bondCI.end);

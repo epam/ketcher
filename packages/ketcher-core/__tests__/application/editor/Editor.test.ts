@@ -14,6 +14,40 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
+type RescaleStructForModeTransitionContext = {
+  micromoleculesEditor: {
+    render: {
+      options: {
+        microModeScale: number;
+      };
+    };
+  };
+};
+
+type RescaleStructForModeTransitionStruct = {
+  scale: jest.Mock;
+  scaleMonomerMicromoleculeSgroups: jest.Mock;
+};
+
+type RescaleStructForModeTransitionMethod = (
+  this: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => number;
+
+const callRescaleStructForModeTransition = (
+  editor: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => {
+  const { rescaleStructForModeTransition } =
+    CoreEditor.prototype as unknown as {
+      rescaleStructForModeTransition: RescaleStructForModeTransitionMethod;
+    };
+
+  return rescaleStructForModeTransition.call(editor, struct, direction);
+};
+
 describe('CoreEditor', () => {
   describe('rescaleStructForModeTransition', () => {
     const originalSettings = { ...provideEditorSettings() };
@@ -39,9 +73,11 @@ describe('CoreEditor', () => {
 
       provideEditorSettings().macroModeScale = 40;
 
-      const scaleFactor = (
-        CoreEditor.prototype as any
-      ).rescaleStructForModeTransition.call(editor, struct, 'macroToMicro');
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
 
       expect(scaleFactor).toBe(1);
       expect(struct.scale).not.toHaveBeenCalled();
@@ -65,9 +101,11 @@ describe('CoreEditor', () => {
 
       provideEditorSettings().macroModeScale = 20;
 
-      const scaleFactor = (
-        CoreEditor.prototype as any
-      ).rescaleStructForModeTransition.call(editor, struct, 'macroToMicro');
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
 
       expect(scaleFactor).toBe(0.5);
       expect(struct.scale).toHaveBeenCalledWith(0.5);
@@ -91,9 +129,11 @@ describe('CoreEditor', () => {
 
       provideEditorSettings().macroModeScale = 20;
 
-      const scaleFactor = (
-        CoreEditor.prototype as any
-      ).rescaleStructForModeTransition.call(editor, struct, 'microToMacro');
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'microToMacro',
+      );
 
       expect(scaleFactor).toBe(2);
       expect(struct.scale).toHaveBeenCalledWith(2);

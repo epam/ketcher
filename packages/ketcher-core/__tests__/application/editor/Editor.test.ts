@@ -1,9 +1,5 @@
-<<<<<<< 6013-System-reposition-monomers-on-the-canvas
-import { CoreEditor, ToolName } from 'application/editor';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-=======
 import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
->>>>>>> master
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,

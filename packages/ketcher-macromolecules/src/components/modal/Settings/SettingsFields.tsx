@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Settings } from 'ketcher-core';
+import type { Settings, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
 import { FIELD_DEFINITIONS } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
 
 interface SettingsFieldsProps {
   fields: Array<keyof Settings>;
-  settings: Settings;
-  onChange: (partial: Partial<Settings>) => void;
+  settings: SettingsFormValue;
+  onChange: (partial: Partial<SettingsFormValue>) => void;
 }
 
 export const SettingsFields = ({

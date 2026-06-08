@@ -376,7 +376,6 @@ describe('Settings Integration Tests', () => {
 
       // Hook should gracefully handle missing service
       expect(result.current.settings).toBeNull();
-      expect(result.current.isAvailable).toBe(false);
       expect(result.current.availablePresets).toEqual([]);
     });
 

@@ -19,7 +19,11 @@ import {
   getDefaultOptions,
   validation,
 } from '../../data/schema/options-schema';
-import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
+import {
+  KETCHER_SAVED_OPTIONS_KEY,
+  normalizeSettingsForCore,
+  normalizeSettingsForForm,
+} from 'ketcher-core';
 
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
@@ -132,99 +136,6 @@ export function appUpdate(data) {
   };
 }
 
-/**
- * Transform settings from Redux format to SettingsService format
- * Fixes type mismatches and removes extra fields
- */
-function transformSettingsForCore(settings) {
-  const transformed = { ...settings };
-
-  // Remove fields that don't belong in SettingsService
-  delete transformed.init;
-
-  // Fix imageResolution: string -> number
-  // Form uses enum: ImageResolution.low = '72', ImageResolution.high = '600'
-  // Schema expects: type 'number'
-  if (typeof transformed.imageResolution === 'string') {
-    transformed.imageResolution = parseInt(transformed.imageResolution, 10);
-  }
-
-  // Fix stereoLabelStyle: normalize to schema-expected values
-  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
-  // Schema expects: ['IUPAC', 'classic', 'On-Atoms', 'off']
-  // Note: There's a legacy mismatch between enum and schema that we need to handle
-  if (transformed.stereoLabelStyle) {
-    const style = transformed.stereoLabelStyle.toLowerCase();
-    if (style === 'iupac') {
-      transformed.stereoLabelStyle = 'IUPAC';
-    } else if (style === 'classic') {
-      transformed.stereoLabelStyle = 'classic';
-    } else if (style === 'on' || style === 'on-atoms') {
-      // Handle both 'On' from enum and 'On-Atoms' from schema
-      transformed.stereoLabelStyle = 'On-Atoms';
-    } else if (style === 'off') {
-      transformed.stereoLabelStyle = 'off';
-    }
-  }
-
-  // Fix showHydrogenLabels: legacy 'all' value -> 'On'
-  // Form enum: ShowHydrogenLabels.On = 'all'
-  // Schema expects: 'On'
-  if (transformed.showHydrogenLabels === 'all') {
-    transformed.showHydrogenLabels = 'On';
-  }
-
-  return transformed;
-}
-
-/**
- * Transform settings from SettingsService format to Redux format
- * Reverse transformation for display in the Settings dialog
- */
-function transformSettingsFromCore(settings) {
-  const transformed = { ...settings };
-
-  // Convert font: Ensure it has the size prefix (legacy data might not have it)
-  if (transformed.font && !transformed.font.match(/^\d+px\s/)) {
-    // Font missing size prefix, add default 30px
-    transformed.font = `30px ${transformed.font}`;
-  }
-
-  // Convert imageResolution: number -> string (for form display)
-  if (typeof transformed.imageResolution === 'number') {
-    transformed.imageResolution = transformed.imageResolution.toString();
-  }
-
-  // Convert stereoLabelStyle: Reverse the transformation for form compatibility
-  // Schema values: ['IUPAC', 'classic', 'On-Atoms', 'off']
-  // Form enum (StereLabelStyleType): 'Iupac', 'Classic', 'On', 'Off'
-  if (transformed.stereoLabelStyle) {
-    const style = transformed.stereoLabelStyle;
-    if (style === 'IUPAC') {
-      transformed.stereoLabelStyle = 'Iupac';
-    } else if (style === 'classic') {
-      transformed.stereoLabelStyle = 'Classic';
-    } else if (style === 'On-Atoms') {
-      transformed.stereoLabelStyle = 'On';
-    } else if (style === 'off') {
-      transformed.stereoLabelStyle = 'Off';
-    }
-  }
-
-  // Convert showHydrogenLabels: 'On' -> 'all' if needed
-  // This might not be necessary since form uses 'On', but kept for safety
-  // Form enum: ShowHydrogenLabels.On = 'all'
-  // (Actually, the form should already handle 'On' correctly)
-
-  // Remove fields that Redux doesn't use
-  delete transformed.selectionTool;
-  delete transformed.editorLineLength;
-  delete transformed.disableCustomQuery;
-  delete transformed.monomerLibraryUpdates;
-
-  return transformed;
-}
-
 /* SETTINGS */
 export function saveSettings(newSettings) {
   return async (dispatch) => {
@@ -235,7 +146,7 @@ export function saveSettings(newSettings) {
     if (settingsService) {
       try {
         // Transform settings to match SettingsService schema
-        const transformedSettings = transformSettingsForCore(newSettings);
+        const transformedSettings = normalizeSettingsForCore(newSettings);
 
         // Direct update - both Core and Redux use flat format now
         await settingsService.updateSettings(transformedSettings);
@@ -270,7 +181,9 @@ export function saveSettings(newSettings) {
  */
 export function syncSettingsFromCore(coreSettings) {
   // Transform from SettingsService format to Redux format
-  const reduxSettings = transformSettingsFromCore(coreSettings);
+  const reduxSettings = normalizeSettingsForForm(coreSettings, {
+    removeCoreOnlyFields: true,
+  });
 
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',

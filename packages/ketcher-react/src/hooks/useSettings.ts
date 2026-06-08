@@ -17,9 +17,21 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useAppDispatch } from '../script/ui/state/hooks';
 import { syncSettingsFromCore } from '../script/ui/state/options';
-import type { Settings, DeepPartial, ISettingsService } from 'ketcher-core';
-import { ketcherProvider } from 'ketcher-core';
+import {
+  type Settings,
+  type DeepPartial,
+  type ISettingsService,
+  ketcherProvider,
+} from 'ketcher-core';
 import { useAppContext } from 'src/hooks/useAppContext';
+
+const findSettingsService = (
+  ketcherId: string,
+): ISettingsService | undefined => {
+  const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
+
+  return ketcherInstance?.settingsService;
+};
 
 /**
  * React hook to access settings from ketcher-core settings service
@@ -48,68 +60,34 @@ export function useSettings() {
 
   // Subscribe to settings changes from core
   useEffect(() => {
-    // Check for ketcher instance with retry mechanism
-    const checkAndSubscribe = () => {
-      const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
-      const settingsService: ISettingsService | undefined =
-        ketcherInstance?.settingsService;
+    const settingsService = findSettingsService(ketcherId);
 
-      if (!settingsService) {
-        return null;
-      }
+    if (!settingsService) {
+      return;
+    }
 
-      // Subscribe to settings changes
-      const unsubscribe = settingsService.subscribe((newSettings) => {
-        // 1. Update local state
-        setSettings(newSettings);
-
-        // 2. Sync to Redux for backward compatibility
-        dispatch(syncSettingsFromCore(newSettings));
-      });
-
-      // Initialize with current settings
-      const current = settingsService.getSettings();
-      setSettings(current);
-      dispatch(syncSettingsFromCore(current));
-
-      return unsubscribe;
+    const syncSettings = (newSettings: Settings) => {
+      setSettings(newSettings);
+      dispatch(syncSettingsFromCore(newSettings));
     };
 
-    // Try immediately
-    let unsubscribe = checkAndSubscribe();
+    const unsubscribe = settingsService.subscribe(syncSettings);
 
-    // If not available, poll every 100ms for up to 5 seconds
-    let attempts = 0;
-    const maxAttempts = 50; // 5 seconds
-    let intervalId: ReturnType<typeof setInterval> | null = !unsubscribe
-      ? setInterval(() => {
-          attempts++;
-          unsubscribe = checkAndSubscribe();
+    syncSettings(settingsService.getSettings());
 
-          if ((unsubscribe || attempts >= maxAttempts) && intervalId) {
-            clearInterval(intervalId);
-            intervalId = null;
-          }
-        }, 100)
-      : null;
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (unsubscribe) unsubscribe();
-    };
-  }, [dispatch]);
+    return unsubscribe;
+  }, [dispatch, ketcherId]);
 
   // Helper to get settings service
   const getSettingsService = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ketcherInstance = (window as any).ketcher;
-    const service: ISettingsService | undefined =
-      ketcherInstance?.settingsService;
-    if (!service) {
+    const settingsService = findSettingsService(ketcherId);
+
+    if (!settingsService) {
       throw new Error('Settings service not available');
     }
-    return service;
-  }, []);
+
+    return settingsService;
+  }, [ketcherId]);
 
   // Update settings (deep merge)
   const updateSettings = useCallback(
@@ -151,11 +129,8 @@ export function useSettings() {
   );
 
   // Get available preset names (safely)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ketcherInstance = (window as any).ketcher;
-  const availablePresets =
-    ketcherInstance?.settingsService?.getAvailablePresets() || [];
-  const isAvailable = !!ketcherInstance?.settingsService;
+  const settingsService = findSettingsService(ketcherId);
+  const availablePresets = settingsService?.getAvailablePresets() || [];
 
   return {
     // Flat settings
@@ -170,8 +145,5 @@ export function useSettings() {
 
     // Metadata
     availablePresets,
-
-    // Service availability
-    isAvailable,
   };
 }

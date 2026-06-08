@@ -35,3 +35,13 @@ export { SettingsMigration } from './SettingsMigration';
 
 // Schema and defaults
 export { getDefaultSettings, PRESETS, SCHEMA } from './schema';
+
+// Format adapters
+export {
+  normalizeSettingsForCore,
+  normalizeSettingsForForm,
+} from './settingsFormatters';
+export type {
+  SettingsFormValue,
+  NormalizeSettingsFromCoreOptions,
+} from './settingsFormatters';

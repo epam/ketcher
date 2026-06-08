@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { Settings } from 'ketcher-core';
+import type { SettingsFormValue } from 'ketcher-core';
 import { FIELD_GROUPS } from './fieldGroups';
 import { SettingsFields } from './SettingsFields';
 import { Icon } from 'ketcher-react';
@@ -26,8 +26,8 @@ import {
 } from './SettingsAccordion.styles';
 
 interface SettingsAccordionProps {
-  settings: Settings;
-  onChange: (partial: Partial<Settings>) => void;
+  settings: SettingsFormValue;
+  onChange: (partial: Partial<SettingsFormValue>) => void;
   expandedGroups: string[];
   onGroupToggle: (groupId: string) => void;
 }

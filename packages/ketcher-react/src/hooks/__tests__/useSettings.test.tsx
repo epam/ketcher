@@ -83,7 +83,6 @@ describe('useSettings', () => {
       });
 
       expect(result.current.settings).toBeNull();
-      expect(result.current.isAvailable).toBe(false);
     });
 
     it('should load settings from service on mount', () => {
@@ -95,7 +94,6 @@ describe('useSettings', () => {
       });
 
       expect(result.current.settings).toBeDefined();
-      expect(result.current.isAvailable).toBe(true);
       expect(mockService.getSettings).toHaveBeenCalled();
     });
 
@@ -249,29 +247,6 @@ describe('useSettings', () => {
       });
 
       expect(result.current.availablePresets).toEqual([]);
-    });
-  });
-
-  describe('isAvailable', () => {
-    it('should return true when service is available', () => {
-      const mockService = createMockSettingsService();
-      const store = createMockStore(mockService);
-
-      const { result } = renderHook(() => useSettings(), {
-        wrapper: createWrapper(store),
-      });
-
-      expect(result.current.isAvailable).toBe(true);
-    });
-
-    it('should return false when service is unavailable', () => {
-      const store = createMockStore(undefined);
-
-      const { result } = renderHook(() => useSettings(), {
-        wrapper: createWrapper(store),
-      });
-
-      expect(result.current.isAvailable).toBe(false);
     });
   });
 });

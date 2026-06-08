@@ -21,7 +21,7 @@ export interface Settings {
 
   // Stereochemistry
   readonly showStereoFlags: boolean;
-  readonly stereoLabelStyle: 'classic' | 'IUPAC' | 'On-Atoms';
+  readonly stereoLabelStyle: 'classic' | 'IUPAC' | 'On-Atoms' | 'off';
   readonly colorOfAbsoluteCenters: string;
   readonly colorOfAndCenters: string;
   readonly colorOfOrCenters: string;

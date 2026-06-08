@@ -96,6 +96,7 @@ import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
 import { Highlighter } from './highlighter';
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
+import { isStructureContinuous as isStructureContinuousUtil } from './utils/structureContinuity';
 import type { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
@@ -911,54 +912,7 @@ class Editor implements KetcherEditor {
   }
 
   static isStructureContinuous(struct: Struct, selection?: Selection): boolean {
-    let atomIds: number[];
-    let bondIds: number[];
-
-    if (selection) {
-      atomIds = selection.atoms ?? [];
-      bondIds = selection.bonds ?? [];
-    } else {
-      atomIds = Array.from(struct.atoms.keys());
-      bondIds = Array.from(struct.bonds.keys());
-    }
-
-    if (!atomIds || atomIds.length === 0 || !atomIds || atomIds.length === 0) {
-      return false;
-    }
-
-    const adjacencyList: Map<number, number[]> = new Map();
-    for (const atomId of atomIds) {
-      adjacencyList.set(atomId, []);
-    }
-    bondIds.forEach((bondId) => {
-      const bond = struct.bonds.get(bondId);
-      if (!bond) {
-        return;
-      }
-
-      const { begin, end } = bond;
-      if (adjacencyList.has(begin) && adjacencyList.has(end)) {
-        adjacencyList.get(begin)?.push(end);
-        adjacencyList.get(end)?.push(begin);
-      }
-    });
-
-    const visited = new Set<number>();
-    const queue = [atomIds[0]];
-
-    while (queue.length > 0) {
-      const nextAtomId = queue.shift();
-      if (nextAtomId !== undefined && !visited.has(nextAtomId)) {
-        visited.add(nextAtomId);
-        for (const neighbor of adjacencyList.get(nextAtomId) ?? []) {
-          if (!visited.has(neighbor)) {
-            queue.push(neighbor);
-          }
-        }
-      }
-    }
-
-    return visited.size === atomIds.length;
+    return isStructureContinuousUtil(struct, selection);
   }
 
   static isStructureImpure(struct: Struct) {

@@ -10,14 +10,6 @@ import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
 import type Restruct from 'application/render/restruct/restruct';
 
-type AssignLeavingGroupAtomOperationCtor = new (
-  monomerCreationState: MonomerCreationState,
-  atomId: number,
-  attachmentPointName?: AssignedAttachmentPoint['name'],
-  assignedAttachmentPoints?: AssignedAttachmentPoints,
-  attachmentPointId?: AttachmentPointId,
-) => BaseOperation;
-
 export class RemoveAttachmentPointOperation extends BaseOperation {
   private readonly atomPair: [number, number];
   private readonly attachmentPoint: AssignedAttachmentPoint;
@@ -66,20 +58,54 @@ export class RemoveAttachmentPointOperation extends BaseOperation {
   }
 
   invert() {
-    const leavingAtomId = this.atomPair[1];
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-    const { AssignLeavingGroupAtomOperation } = require('./' +
-      'AssignLeavingGroupAtomOperation') as {
-      AssignLeavingGroupAtomOperation: AssignLeavingGroupAtomOperationCtor;
-    };
-
-    return new AssignLeavingGroupAtomOperation(
+    return createRestoreAttachmentPointOperation(
       this.monomerCreationState,
-      leavingAtomId,
-      this.attachmentPoint.name,
-      this.assignedAttachmentPoints,
       this.attachmentPointId,
+      this.attachmentPoint,
+      this.assignedAttachmentPoints,
+      this.potentialLeavingAtoms,
     );
   }
+}
+
+function createRestoreAttachmentPointOperation(
+  monomerCreationState: MonomerCreationState,
+  attachmentPointId: AttachmentPointId,
+  attachmentPoint: AssignedAttachmentPoint,
+  assignedAttachmentPoints: AssignedAttachmentPoints,
+  potentialLeavingAtoms?: Set<number>,
+) {
+  class RestoreAttachmentPointOperation extends BaseOperation {
+    constructor() {
+      super(OperationType.MONOMER_CREATION_ASSIGN_LGA);
+    }
+
+    execute(restruct: Restruct) {
+      assert(monomerCreationState);
+
+      const { potentialAttachmentPoints } = monomerCreationState;
+
+      assignedAttachmentPoints.set(attachmentPointId, {
+        ...attachmentPoint,
+      });
+
+      if (potentialLeavingAtoms) {
+        potentialAttachmentPoints.delete(attachmentPoint.attachmentAtomId);
+      }
+
+      BaseOperation.invalidateAtom(restruct, attachmentPoint.attachmentAtomId);
+      BaseOperation.invalidateAtom(restruct, attachmentPoint.leavingAtomId);
+    }
+
+    invert() {
+      return new RemoveAttachmentPointOperation(
+        monomerCreationState,
+        attachmentPointId,
+        potentialLeavingAtoms,
+        assignedAttachmentPoints,
+      );
+    }
+  }
+
+  return new RestoreAttachmentPointOperation();
 }

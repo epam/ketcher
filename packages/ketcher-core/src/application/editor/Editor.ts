@@ -2097,12 +2097,15 @@ export class CoreEditor {
 
     // Rescale coords from macro to micro so the visual position is preserved
     // when microModeScale (ACS bond length) differs from macroModeScale.
-    this.rescaleStructForModeTransition(struct, 'macroToMicro');
+    const scaleFactor = this.rescaleStructForModeTransition(
+      struct,
+      'macroToMicro',
+    );
 
     history.destroy();
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
-    struct.applyMonomersTransformations();
+    struct.applyMonomersTransformations(scaleFactor);
     reStruct.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
@@ -2169,21 +2172,32 @@ export class CoreEditor {
   private rescaleStructForModeTransition(
     struct: Struct,
     direction: 'microToMacro' | 'macroToMicro',
-  ) {
+  ): number {
     const microModeScale =
       this.micromoleculesEditor?.render?.options?.microModeScale;
     const macroModeScale = provideEditorSettings().macroModeScale;
 
     if (microModeScale == null || microModeScale === macroModeScale) {
-      return;
+      return 1;
     }
 
-    const scaleFactor =
-      direction === 'microToMacro'
-        ? microModeScale / macroModeScale
-        : macroModeScale / microModeScale;
+    const sourceScale =
+      direction === 'microToMacro' ? microModeScale : macroModeScale;
+    const targetScale =
+      direction === 'microToMacro' ? macroModeScale : microModeScale;
+    // Both mode scales are angstrom-to-pixel factors, so model coords convert
+    // between modes by sourceScale / targetScale.
+    const scaleFactor = sourceScale / targetScale;
 
-    struct.scale(scaleFactor, { includeMonomerSgroups: true });
+    struct.scale(scaleFactor);
+
+    if (direction === 'microToMacro') {
+      // MonomerMicromolecule centers are skipped by Struct.scale() and need
+      // their own mode-transition rescale on the micro-to-macro path.
+      struct.scaleMonomerMicromoleculeSgroups(scaleFactor);
+    }
+
+    return scaleFactor;
   }
 
   public isCurrentModeWithAutozoom(): boolean {

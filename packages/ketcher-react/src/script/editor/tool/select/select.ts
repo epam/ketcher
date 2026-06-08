@@ -58,7 +58,7 @@ import type {
 import { CommonArrowTool } from '../arrow/commonArrow';
 import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
-import { ClosestItemWithMap } from '../../shared/closest.types';
+import type { ClosestItemWithMap } from '../../shared/closest.types';
 import {
   getFragSelection,
   getNewSelectedItems,

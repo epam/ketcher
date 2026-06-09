@@ -1555,8 +1555,9 @@ export class SequenceMode extends BaseMode {
           // If a whole chain was selected and deleted, the caret may have landed on
           // the start of the NEXT chain. Do not connect the new monomer to that chain;
           // instead insert it as a new standalone chain.
-          const nextChainOccupiedByDifferentChain =
+          const insertAsStandaloneChain =
             isWholeChainSelected && !previousTwoStrandedNodeInSameChain;
+          let senseNodeToConnect = insertAsStandaloneChain
           let senseNodeToConnect = nextChainOccupiedByDifferentChain
             ? null
             : currentTwoStrandedNode?.senseNode;

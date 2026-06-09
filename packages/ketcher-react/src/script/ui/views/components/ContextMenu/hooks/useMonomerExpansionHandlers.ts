@@ -3,7 +3,6 @@ import {
   Action,
   AmbiguousMonomer,
   MonomerMicromolecule,
-  setExpandSGroup,
   setExpandMonomerSGroup,
   ketcherProvider,
 } from 'ketcher-core';
@@ -16,6 +15,9 @@ import type {
 } from '../contextMenu.types';
 
 type Params = ItemEventParams<MacromoleculeContextMenuProps>;
+
+let lastRingContractedPositions: Map<number, { x: number; y: number }> | null =
+  null;
 
 export const canExpandMonomer = (functionalGroup: FunctionalGroup) => {
   return (
@@ -35,31 +37,70 @@ const useMonomerExpansionHandlers = () => {
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
-      const isMultiSelection = (selectedFunctionalGroups?.length ?? 0) > 1;
-      const useGenericPath = isMultiSelection && !toExpand;
+      const selectedSGroupIds =
+        selectedFunctionalGroups
+          ?.filter((fg) => canExpandMonomer(fg))
+          .map((fg) => fg.relatedSGroupId) ?? [];
+      const isMultiMonomerSelection = selectedSGroupIds.length > 1;
+      const forceSnapshotMultiCollapse =
+        !toExpand &&
+        selectedSGroupIds.length <= 1 &&
+        !!lastRingContractedPositions &&
+        lastRingContractedPositions.size > 1;
+      const targetSGroupIds = forceSnapshotMultiCollapse
+        ? Array.from(lastRingContractedPositions?.keys() ?? [])
+        : selectedSGroupIds;
+      const hasCompleteRestoreSnapshot =
+        !toExpand &&
+        targetSGroupIds.length > 1 &&
+        !!lastRingContractedPositions &&
+        targetSGroupIds.every((sgid) => lastRingContractedPositions?.has(sgid));
 
-      selectedFunctionalGroups?.forEach((fg) => {
-        if (!canExpandMonomer(fg)) {
+      if (toExpand && isMultiMonomerSelection) {
+        const snapshot = new Map<number, { x: number; y: number }>();
+        selectedFunctionalGroups?.forEach((fg) => {
+          const sgroup = molecule.molecule.sgroups.get(fg.relatedSGroupId);
+          if (sgroup?.pp) {
+            snapshot.set(fg.relatedSGroupId, {
+              x: sgroup.pp.x,
+              y: sgroup.pp.y,
+            });
+          }
+        });
+        lastRingContractedPositions = snapshot;
+      }
+
+      targetSGroupIds.forEach((sgid) => {
+        const sgroup = molecule.molecule.sgroups.get(sgid);
+        if (!(sgroup instanceof MonomerMicromolecule)) {
           return;
         }
 
-        if (useGenericPath) {
-          action.mergeWith(
-            setExpandSGroup(molecule, fg.relatedSGroupId, {
+        action.mergeWith(
+          setExpandMonomerSGroup(
+            molecule,
+            sgid,
+            {
               expanded: toExpand,
-            }),
-          );
-        } else {
-          action.mergeWith(
-            setExpandMonomerSGroup(molecule, fg.relatedSGroupId, {
-              expanded: toExpand,
-            }),
-          );
-        }
+            },
+            {
+              skipRelocation: hasCompleteRestoreSnapshot,
+              forceMonomerCollapseForCycle: hasCompleteRestoreSnapshot,
+              restoreContractedPositions:
+                hasCompleteRestoreSnapshot && lastRingContractedPositions?.size
+                  ? lastRingContractedPositions
+                  : undefined,
+            },
+          ),
+        );
       });
 
       editor.update(action);
       editor.rotateController.rerender();
+
+      if (!toExpand && hasCompleteRestoreSnapshot) {
+        lastRingContractedPositions = null;
+      }
     },
     [ketcherId],
   );

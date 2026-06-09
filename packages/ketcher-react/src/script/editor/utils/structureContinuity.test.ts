@@ -1,8 +1,5 @@
 import { Atom, Bond, Struct } from 'ketcher-core';
-import {
-  isAtomSelectionContinuous,
-  isStructureContinuous,
-} from './structureContinuity';
+import { isStructureContinuous } from './structureContinuity';
 
 // Builds a structure: 0—1—2 (a connected chain) plus an isolated atom 3.
 function buildStruct() {
@@ -17,42 +14,43 @@ function buildStruct() {
 }
 
 describe('structureContinuity', () => {
-  describe('isAtomSelectionContinuous', () => {
-    it('returns true for a connected set of atoms', () => {
-      const { struct, a0, a1, a2 } = buildStruct();
-      expect(isAtomSelectionContinuous(struct, [a0, a1, a2])).toBe(true);
-    });
-
-    it('returns false when the selected atoms are only connected through an unselected atom', () => {
-      const { struct, a0, a2 } = buildStruct();
-      expect(isAtomSelectionContinuous(struct, [a0, a2])).toBe(false);
-    });
-
-    it('returns false when an isolated atom is included', () => {
-      const { struct, a0, a1, a2, a3 } = buildStruct();
-      expect(isAtomSelectionContinuous(struct, [a0, a1, a2, a3])).toBe(false);
-    });
-
-    it('treats a single atom as continuous', () => {
-      const { struct, a0 } = buildStruct();
-      expect(isAtomSelectionContinuous(struct, [a0])).toBe(true);
-    });
-
-    it('treats an empty selection as continuous', () => {
-      const { struct } = buildStruct();
-      expect(isAtomSelectionContinuous(struct, [])).toBe(true);
-    });
-  });
-
   describe('isStructureContinuous', () => {
-    it('uses the bonds provided in the selection', () => {
+    it('returns true when the selected bonds connect all selected atoms', () => {
       const { struct, a0, a1, a2, b0, b1 } = buildStruct();
       expect(
         isStructureContinuous(struct, { atoms: [a0, a1, a2], bonds: [b0, b1] }),
       ).toBe(true);
+    });
+
+    it('returns false when the selected atoms are only connected through an unselected atom', () => {
+      const { struct, a0, a2, b0, b1 } = buildStruct();
       expect(
-        isStructureContinuous(struct, { atoms: [a0, a2], bonds: [] }),
+        isStructureContinuous(struct, { atoms: [a0, a2], bonds: [b0, b1] }),
       ).toBe(false);
+    });
+
+    it('returns false when an isolated atom is included', () => {
+      const { struct, a0, a1, a2, a3, b0, b1 } = buildStruct();
+      expect(
+        isStructureContinuous(struct, {
+          atoms: [a0, a1, a2, a3],
+          bonds: [b0, b1],
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for a multi-atom selection with no selected bonds', () => {
+      const { struct, a0, a1 } = buildStruct();
+      expect(
+        isStructureContinuous(struct, { atoms: [a0, a1], bonds: [] }),
+      ).toBe(false);
+    });
+
+    it('treats a single atom as continuous', () => {
+      const { struct, a0 } = buildStruct();
+      expect(isStructureContinuous(struct, { atoms: [a0], bonds: [] })).toBe(
+        true,
+      );
     });
 
     it('returns false for an empty atom set', () => {
@@ -60,6 +58,12 @@ describe('structureContinuity', () => {
       expect(isStructureContinuous(struct, { atoms: [], bonds: [] })).toBe(
         false,
       );
+    });
+
+    it('falls back to the whole structure when no selection is provided', () => {
+      const { struct } = buildStruct();
+      // The whole structure contains an isolated atom (3), so it is not continuous.
+      expect(isStructureContinuous(struct)).toBe(false);
     });
   });
 });

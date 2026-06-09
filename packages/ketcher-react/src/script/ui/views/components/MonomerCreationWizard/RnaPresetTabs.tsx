@@ -33,7 +33,7 @@ import {
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import type { Editor } from '../../../../editor';
-import { isAtomSelectionContinuous } from '../../../../editor/utils/structureContinuity';
+import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
   type RnaPresetComponentType,
@@ -94,11 +94,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();
   // Memoized so the connectivity check does not re-run on every wizard
-  // keystroke / tab switch. `isAtomSelectionContinuous` derives the bonds from
-  // the selected atoms (see its doc for why `structureSelection.bonds` is not
-  // used directly).
+  // keystroke / tab switch.
   const isSelectionContinuous = useMemo(
-    () => isAtomSelectionContinuous(struct, structureSelection?.atoms ?? []),
+    () => isStructureContinuous(struct, structureSelection),
     [struct, structureSelection],
   );
 

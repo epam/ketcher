@@ -57,14 +57,22 @@ const disallowedModificationTypesSet = new Set<string>(
  * Returns the modification types of a monomer that are not allowed in the
  * library (unknown / ambiguous / molecule markers). Returns an empty array when
  * the monomer has no modification types or all of them are allowed.
+ *
+ * `modificationTypes` originates from parsed, untrusted library JSON, so it may
+ * not actually be an array at runtime (e.g. a caller passing a bare string).
+ * The `Array.isArray` guard turns such malformed input into an empty result
+ * instead of a `TypeError`, which would otherwise escape the per-monomer loop
+ * in `Editor.updateMonomersLibrary` and abort the whole chunk.
  */
 export function getDisallowedModificationTypes(
   modificationTypes?: string[],
 ): string[] {
-  return (
-    modificationTypes?.filter((type) =>
-      disallowedModificationTypesSet.has(type),
-    ) ?? []
+  if (!Array.isArray(modificationTypes)) {
+    return [];
+  }
+
+  return modificationTypes.filter((type) =>
+    disallowedModificationTypesSet.has(type),
   );
 }
 

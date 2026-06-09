@@ -5,6 +5,7 @@ import {
   MonomerLibraryUpdateError,
   ToolName,
 } from 'application/editor';
+import { ketcherProvider } from 'application/ketcherProvider';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
@@ -1010,6 +1011,8 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
 
       expect(errorSpy).toHaveBeenCalledWith(
@@ -1018,6 +1021,11 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      // The reject branch must not leak the rejected template into the parsed
+      // JSON side-table either.
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
     });
 
     it('should reject monomer with a disallowed modificationType (Micromolecule)', () => {
@@ -1044,6 +1052,8 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
 
       expect(errorSpy).toHaveBeenCalledWith(
@@ -1052,6 +1062,11 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      // The reject branch must not leak the rejected template into the parsed
+      // JSON side-table either.
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
     });
 
     it('should skip a disallowed monomer but still load a valid one from the same chunk', () => {
@@ -1144,6 +1159,65 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
+    it('enforces the modificationType validation through the replace path (initializeMonomersLibraryFromKetcher)', async () => {
+      // There is no standalone `replaceMonomersLibrary` method: the replace
+      // entry point is the second argument of initializeMonomersLibraryFromKetcher,
+      // which clears the library and then delegates to updateMonomersLibrary
+      // (where the validation lives). This locks in that the replace path
+      // enforces the same modificationType validation as the update path.
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-XUB' }],
+        },
+        'monomerTemplate-XUB': {
+          type: 'monomerTemplate',
+          id: 'XUB',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'XUB',
+          name: 'XUB',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown base'],
+          props: {
+            MonomerName: 'XUB',
+            MonomerClass: 'CHEM',
+            Name: 'XUB',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      // The replace path passes the data through
+      // ketcher.ensureMonomersLibraryDataInKetFormat; stub it to return the
+      // already-KET-format data unchanged.
+      const getKetcherSpy = jest
+        .spyOn(ketcherProvider, 'getKetcher')
+        .mockReturnValue({
+          ensureMonomersLibraryDataInKetFormat: async (data: string | JSON) =>
+            data,
+        } as unknown as ReturnType<typeof ketcherProvider.getKetcher>);
+
+      try {
+        await editor.initializeMonomersLibraryFromKetcher(
+          undefined,
+          JSON.stringify(monomerWithDisallowedType),
+        );
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          expect.stringContaining(
+            'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
+          ),
+        );
+        expect(
+          editor.monomersLibrary.some(
+            (monomer) => monomer.props?.MonomerName === 'XUB',
+          ),
+        ).toBe(false);
+      } finally {
+        getKetcherSpy.mockRestore();
+      }
     });
   });
 

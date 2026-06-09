@@ -49,5 +49,17 @@ describe('monomers utilities', () => {
       expect(getDisallowedModificationTypes(undefined)).toEqual([]);
       expect(getDisallowedModificationTypes([])).toEqual([]);
     });
+
+    it('returns an empty array for malformed (non-array) modification types', () => {
+      // The value comes from parsed, untrusted library JSON, so it may not be an
+      // array at runtime (e.g. a bare string). The guard must return an empty
+      // result rather than throwing a TypeError.
+      expect(
+        getDisallowedModificationTypes('Unknown base' as unknown as string[]),
+      ).toEqual([]);
+      expect(
+        getDisallowedModificationTypes(null as unknown as string[]),
+      ).toEqual([]);
+    });
   });
 });

@@ -1607,30 +1607,35 @@ const MonomerCreationWizardInternal = ({
         return;
       }
 
-      const {
-        notifications: attachmentPointsNotifications,
-        problematicAttachmentPointAtomIds,
-      } = validateAttachmentPoints(
-        getEffectiveAttachmentPointEntries(
-          monomerAssignedAttachmentPoints,
-          attachmentPointNameOverrides,
-        ).map(({ displayName, atomPair }) => ({
-          name: displayName,
-          attachmentAtomId: atomPair[0],
-        })),
-      );
-      if (attachmentPointsNotifications.size > 0) {
-        needSaveMonomers = false;
-        problematicAttachmentPointAtomIds.forEach((attachmentAtomId) => {
-          problematicAttachmentPointAtomIdsForSubmit.add(attachmentAtomId);
-        });
-        rnaPresetWizardStateDispatch({
-          type: 'SetNotifications',
+      // Only validate attachment point names when the component has explicit
+      // user-assigned R-groups. RNA preset components without attachment points
+      // are valid — their connection points are auto-generated on submit.
+      if (monomerAssignedAttachmentPoints.size > 0) {
+        const {
           notifications: attachmentPointsNotifications,
-          rnaComponentKey,
-          editor,
-        });
-        return;
+          problematicAttachmentPointAtomIds,
+        } = validateAttachmentPoints(
+          getEffectiveAttachmentPointEntries(
+            monomerAssignedAttachmentPoints,
+            attachmentPointNameOverrides,
+          ).map(({ displayName, atomPair }) => ({
+            name: displayName,
+            attachmentAtomId: atomPair[0],
+          })),
+        );
+        if (attachmentPointsNotifications.size > 0) {
+          needSaveMonomers = false;
+          problematicAttachmentPointAtomIds.forEach((attachmentAtomId) => {
+            problematicAttachmentPointAtomIdsForSubmit.add(attachmentAtomId);
+          });
+          rnaPresetWizardStateDispatch({
+            type: 'SetNotifications',
+            notifications: attachmentPointsNotifications,
+            rnaComponentKey,
+            editor,
+          });
+          return;
+        }
       }
 
       const structure = editor.structSelected(wizardState.structure);

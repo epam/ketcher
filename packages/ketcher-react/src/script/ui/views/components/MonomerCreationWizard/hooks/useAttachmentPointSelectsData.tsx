@@ -7,6 +7,7 @@ import type { Editor } from '../../../../../editor';
 import type { Option } from '../../../../component/form/Select';
 
 export type AttachmentPointSelectData = {
+  attachmentAtomId: number;
   nameOptions: Array<Option>;
   leavingAtomOptions: Array<Option>;
   currentNameOption?: Option;
@@ -85,6 +86,7 @@ export const createReadonlyAttachmentPointSelectData = (
   } = buildLeavingAtomOptions(leavingAtomLabel);
 
   return {
+    attachmentAtomId: -1,
     nameOptions: [currentNameOption],
     leavingAtomOptions,
     currentNameOption,
@@ -95,6 +97,8 @@ export const createReadonlyAttachmentPointSelectData = (
 export const useAttachmentPointSelectsData = (
   editor: Editor,
   attachmentPointName: AttachmentPointName,
+  currentDisplayName: AttachmentPointName = attachmentPointName,
+  usedAttachmentPointNames?: AttachmentPointName[],
 ): AttachmentPointSelectData | null => {
   if (!editor.monomerCreationState) {
     return null;
@@ -118,7 +122,9 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
+  const namesForOptions =
+    usedAttachmentPointNames ?? Array.from(assignedAttachmentPoints.keys());
+  const usedNumbers = namesForOptions.map((name) =>
     getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
@@ -146,10 +152,14 @@ export const useAttachmentPointSelectsData = (
   );
 
   const currentNameOption = nameOptions.find(
-    (option) => option.value === attachmentPointName,
-  );
+    (option) => option.value === currentDisplayName,
+  ) ?? {
+    value: currentDisplayName,
+    label: currentDisplayName,
+  };
 
   return {
+    attachmentAtomId,
     nameOptions,
     leavingAtomOptions,
     currentNameOption,

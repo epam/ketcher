@@ -12,6 +12,7 @@ type Props = {
   className?: string;
   additionalControls?: ReactNode;
   highlight?: boolean;
+  invalid?: boolean;
   isPopup?: boolean;
   disabled?: boolean;
   /** Disable only the name select, leaving the leaving-atom select editable */
@@ -29,6 +30,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
       className,
       additionalControls,
       highlight,
+      invalid,
       isPopup,
       disabled,
       disabledName,
@@ -68,6 +70,7 @@ const AttachmentPointControls = forwardRef<HTMLDivElement, Props>(
           onChange={handleNameChange}
           disabled={disabled || disabledName}
           title={disabledName ? nameTooltip : undefined}
+          error={invalid}
           data-testid={
             isPopup
               ? `attachment-point-name-select`

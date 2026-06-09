@@ -40,12 +40,19 @@ import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.util
 interface IMonomerCreationWizardFieldsProps {
   wizardState: WizardState;
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
+  attachmentPointDisplayNames?: Map<number, AttachmentPointName>;
+  invalidAttachmentPointAtomIds?: Set<number>;
   readonlyAttachmentPoints?: Array<{
     name: AttachmentPointName;
     leavingAtomLabel: AtomLabel;
   }>;
   onChangeModificationTypes?: (modificationTypes: string[]) => void;
   onFieldChange: (fieldId: StringWizardFormFieldId, value: string) => void;
+  onAttachmentPointNameChange?: (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+    attachmentAtomId: number,
+  ) => void;
   onReadonlyLeavingAtomChange?: (
     apName: AttachmentPointName,
     newLeavingAtomLabel: AtomLabel,
@@ -68,9 +75,12 @@ const MonomerCreationWizardFields = (
   const {
     wizardState,
     assignedAttachmentPoints,
+    attachmentPointDisplayNames,
+    invalidAttachmentPointAtomIds,
     readonlyAttachmentPoints = [],
     onChangeModificationTypes,
     onFieldChange,
+    onAttachmentPointNameChange,
     onReadonlyLeavingAtomChange,
     attachmentPointsExtra,
   } = props;
@@ -119,8 +129,9 @@ const MonomerCreationWizardFields = (
   const handleAttachmentPointNameChange = (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
+    attachmentAtomId: number,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    onAttachmentPointNameChange?.(currentName, newName, attachmentAtomId);
   };
 
   const handleLeavingAtomChange = (
@@ -147,6 +158,11 @@ const MonomerCreationWizardFields = (
     displayHelmAlias,
     displayBilnAlias,
   } = getMonomerPropertyVisibility(type);
+  const attachmentPointNames = Array.from(
+    assignedAttachmentPoints.entries(),
+  ).map(([name, [attachmentAtomId]]) => {
+    return attachmentPointDisplayNames?.get(attachmentAtomId) ?? name;
+  });
 
   return (
     <div>
@@ -234,10 +250,15 @@ const MonomerCreationWizardFields = (
               ([name, atomPair]) => (
                 <AttachmentPoint
                   name={name}
+                  displayName={
+                    attachmentPointDisplayNames?.get(atomPair[0]) ?? name
+                  }
                   editor={editor}
                   onNameChange={handleAttachmentPointNameChange}
                   onLeavingAtomChange={handleLeavingAtomChange}
                   onRemove={handleAttachmentPointRemove}
+                  usedAttachmentPointNames={attachmentPointNames}
+                  invalid={invalidAttachmentPointAtomIds?.has(atomPair[0])}
                   key={`${name}-${atomPair[0]}-${atomPair[1]}`}
                 />
               ),

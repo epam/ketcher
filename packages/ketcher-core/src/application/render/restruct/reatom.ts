@@ -706,6 +706,7 @@ class ReAtom extends ReObject {
         problematicAttachmentPoints,
         problematicAtoms,
         connectionAttachmentPoints,
+        attachmentPointNameOverrides,
       } = render.monomerCreationState;
       // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
       // otherwise all assigned attachment points are shown.
@@ -797,11 +798,14 @@ class ReAtom extends ReObject {
           );
           const labelPos = shiftedPos.addScaled(direction, 8);
 
+          const displayLabel =
+            attachmentPointNameOverrides?.get(atomsPair[0]) ??
+            attachmentPointName;
           const isProblematic =
             problematicAttachmentPoints.has(attachmentPointName);
 
           const rLabelElement = render.paper
-            .text(labelPos.x, labelPos.y, attachmentPointName)
+            .text(labelPos.x, labelPos.y, displayLabel)
             .attr({
               font: options.font,
               'font-size': options.fontszsubInPx,

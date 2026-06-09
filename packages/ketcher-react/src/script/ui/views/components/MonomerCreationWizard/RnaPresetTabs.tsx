@@ -56,6 +56,13 @@ interface IRnaPresetTabsProps {
   wizardStateDispatch: (action: RnaPresetWizardAction) => void;
   phosphatePosition: '3' | '5' | undefined;
   onPhosphatePositionChange: (position: '3' | '5') => void;
+  attachmentPointDisplayNames?: Map<number, AttachmentPointName>;
+  invalidAttachmentPointAtomIds?: Set<number>;
+  onAttachmentPointNameChange?: (
+    currentName: AttachmentPointName,
+    newName: AttachmentPointName,
+    attachmentAtomId: number,
+  ) => void;
   /** User-overridden leaving atom labels for connection APs, keyed by
    * "<componentKey>:<apName>". Persists across tab switches. */
   connectionLeavingAtoms?: Map<string, AtomLabel>;
@@ -84,6 +91,9 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const currentTabState = wizardState[RNA_COMPONENT_KEYS[selectedTab - 1]];
   const {
     phosphatePosition,
+    attachmentPointDisplayNames,
+    invalidAttachmentPointAtomIds,
+    onAttachmentPointNameChange,
     onPhosphatePositionChange,
     onConnectionLeavingAtomChange,
     connectionLeavingAtoms,
@@ -216,13 +226,6 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     onPhosphatePositionChange(position);
   };
 
-  const handleAttachmentPointNameChange = (
-    currentName: AttachmentPointName,
-    newName: AttachmentPointName,
-  ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
-  };
-
   const handleLeavingAtomChange = (
     apName: AttachmentPointName,
     newLeavingAtomLabel: AtomLabel,
@@ -235,6 +238,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const currentTabStructure = currentTabState?.structure;
+  const presetAttachmentPointNames = Array.from(
+    presetAttachmentPoints.entries(),
+  ).map(
+    ([name, [attachmentAtomId]]) =>
+      attachmentPointDisplayNames?.get(attachmentAtomId) ?? name,
+  );
 
   useEffect(() => {
     if (!currentTabStructure) {
@@ -415,10 +424,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                     ([name, atomPair]) => (
                       <AttachmentPoint
                         name={name}
+                        displayName={
+                          attachmentPointDisplayNames?.get(atomPair[0]) ?? name
+                        }
                         editor={editor}
-                        onNameChange={handleAttachmentPointNameChange}
+                        onNameChange={
+                          onAttachmentPointNameChange ?? (() => null)
+                        }
                         onLeavingAtomChange={handleLeavingAtomChange}
                         onRemove={handleAttachmentPointRemove}
+                        usedAttachmentPointNames={presetAttachmentPointNames}
+                        invalid={invalidAttachmentPointAtomIds?.has(
+                          atomPair[0],
+                        )}
                         key={`${name}-${atomPair[0]}-${atomPair[1]}`}
                       />
                     ),
@@ -450,9 +468,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                   assignedAttachmentPoints={
                     componentAttachmentPoints[rnaComponentKey]
                   }
+                  attachmentPointDisplayNames={attachmentPointDisplayNames}
+                  invalidAttachmentPointAtomIds={invalidAttachmentPointAtomIds}
                   readonlyAttachmentPoints={
                     readonlyComponentAttachmentPoints[rnaComponentKey]
                   }
+                  onAttachmentPointNameChange={onAttachmentPointNameChange}
                   showNaturalAnalogue={rnaComponentKey === 'base'}
                   attachmentPointsExtra={
                     rnaComponentKey === 'phosphate' ? (

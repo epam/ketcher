@@ -67,6 +67,10 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
+  // Display-only overrides for AP labels during editing.
+  // Maps attachment atom id → temporary display name.
+  // Never affects assignedAttachmentPoints; resolved into the map only on save.
+  attachmentPointNameOverrides?: Map<number, AttachmentPointName>;
 } | null;
 
 export class Render {

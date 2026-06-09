@@ -18,6 +18,7 @@ type Props = {
   onNameChange: (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
+    attachmentAtomId: number,
   ) => void;
   onLeavingAtomChange: (
     apName: AttachmentPointName,
@@ -25,6 +26,7 @@ type Props = {
   ) => void;
   onClose: VoidFunction;
   editor: Editor;
+  attachmentPointDisplayNames?: Map<number, AttachmentPointName>;
 };
 
 const AttachmentPointEditPopup = ({
@@ -33,6 +35,7 @@ const AttachmentPointEditPopup = ({
   onLeavingAtomChange,
   onClose,
   editor,
+  attachmentPointDisplayNames,
 }: Props) => {
   const popupRef = useRef<HTMLDivElement>(null);
 
@@ -86,10 +89,23 @@ const AttachmentPointEditPopup = ({
   assert(editor.monomerCreationState);
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
+  const atomPair = assignedAttachmentPoints.get(attachmentPointName);
+  const displayName = atomPair
+    ? attachmentPointDisplayNames?.get(atomPair[0]) ?? attachmentPointName
+    : attachmentPointName;
+  const usedAttachmentPointNames = Array.from(
+    assignedAttachmentPoints.entries() as Iterable<
+      [AttachmentPointName, [number, number]]
+    >,
+  ).map(([name, [attachmentAtomId]]) => {
+    return attachmentPointDisplayNames?.get(attachmentAtomId) ?? name;
+  });
 
   const selectsData = useAttachmentPointSelectsData(
     editor,
     attachmentPointName,
+    displayName,
+    usedAttachmentPointNames,
   );
 
   if (!selectsData) {
@@ -97,8 +113,8 @@ const AttachmentPointEditPopup = ({
   }
 
   const handleNameChange = (newName: AttachmentPointName) => {
-    if (newName !== attachmentPointName) {
-      onNameChange(attachmentPointName, newName);
+    if (newName !== displayName) {
+      onNameChange(attachmentPointName, newName, selectsData.attachmentAtomId);
     }
     onClose();
   };

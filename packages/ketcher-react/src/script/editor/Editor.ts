@@ -1993,6 +1993,16 @@ class Editor implements KetcherEditor {
     this.render.update(true);
   }
 
+  setAttachmentPointNameOverrides(overrides: Map<number, AttachmentPointName>) {
+    if (!this.monomerCreationState) {
+      return;
+    }
+
+    this.monomerCreationState.attachmentPointNameOverrides = overrides;
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.render.update(true);
+  }
+
   setProblematicAtoms(problematicAtoms: Set<number>) {
     if (!this.monomerCreationState) {
       KetcherLogger.error(

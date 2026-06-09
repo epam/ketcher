@@ -9,24 +9,31 @@ import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   name: AttachmentPointName;
+  displayName?: AttachmentPointName;
   editor: Editor;
   onNameChange: (
     currentName: AttachmentPointName,
     newName: AttachmentPointName,
+    attachmentAtomId: number,
   ) => void;
   onLeavingAtomChange: (
     apName: AttachmentPointName,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
   onRemove: (name: AttachmentPointName) => void;
+  usedAttachmentPointNames?: AttachmentPointName[];
+  invalid?: boolean;
 };
 
 const AttachmentPoint = ({
   name,
+  displayName,
   editor,
   onNameChange,
   onLeavingAtomChange,
   onRemove,
+  usedAttachmentPointNames,
+  invalid,
 }: Props) => {
   const attachmentPointsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -90,15 +97,20 @@ const AttachmentPoint = ({
     };
   }, [name]);
 
-  const selectsData = useAttachmentPointSelectsData(editor, name);
+  const selectsData = useAttachmentPointSelectsData(
+    editor,
+    name,
+    displayName ?? name,
+    usedAttachmentPointNames,
+  );
 
   if (!selectsData) {
     return null;
   }
 
   const handleNameChange = (newName: AttachmentPointName) => {
-    if (newName !== name) {
-      onNameChange(name, newName);
+    if (newName !== (displayName ?? name)) {
+      onNameChange(name, newName, selectsData.attachmentAtomId);
     }
   };
 
@@ -117,6 +129,7 @@ const AttachmentPoint = ({
       onLeavingAtomChange={handleLeavingAtomChange}
       className={styles.selects}
       highlight={highlight}
+      invalid={invalid}
       additionalControls={
         <button
           className={styles.removeButton}

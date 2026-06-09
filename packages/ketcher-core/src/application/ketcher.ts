@@ -758,8 +758,8 @@ export class Ketcher {
   private splitSdfRecords(sdf: string): string[] {
     return sdf
       .split(/^\$\$\$\$\s*$/m)
-      .map((record) => record.trim())
-      .filter((record) => record.length > 0)
+      .map((record) => record.replace(/\s+$/, ''))
+      .filter((record) => record.trim().length > 0)
       .map((record) => `${record}\n$$$$\n`);
   }
 

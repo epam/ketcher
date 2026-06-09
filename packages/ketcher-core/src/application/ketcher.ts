@@ -28,7 +28,12 @@ import type {
   CalculateResult,
 } from 'domain/services';
 
-import { type Editor, getSelectionFromStruct } from './editor';
+import {
+  type Editor,
+  getSelectionFromStruct,
+  MonomerLibraryConvertError,
+} from './editor';
+
 import { provideEditorInstance } from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
@@ -754,6 +759,13 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
+  /**
+   * Converts raw monomer data to KET format before it is sent to the editor.
+   *
+   * @throws {Error} When conversion fails or the server rejects the payload.
+   *   The thrown message is prefixed with
+   *   "Monomer item could not be loaded because of an error: ".
+   */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -767,19 +779,28 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.structService.convert(
-        {
-          struct: rawMonomersDataString,
-          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
-          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
-        },
-        {
-          ...serverSettings,
-          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
-        },
-      );
+      try {
+        const convertResult = await this.structService.convert(
+          {
+            struct: rawMonomersDataString,
+            input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+            output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+          },
+          {
+            ...serverSettings,
+            outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+          },
+        );
 
-      dataInKetFormat = convertResult.struct;
+        dataInKetFormat = convertResult.struct;
+      } catch (error) {
+        const originalMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new MonomerLibraryConvertError(
+          `Monomer item could not be loaded because of an error: ${originalMessage}`,
+          error instanceof Error ? error : undefined,
+        );
+      }
     }
 
     return dataInKetFormat;

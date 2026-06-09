@@ -1,4 +1,4 @@
-import babel from '@rollup/plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
@@ -71,7 +71,7 @@ const baseConfig = {
       include: includePattern,
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.trimStart('.')),
+      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
       include: includePattern,
       comments: 'none',
     }),

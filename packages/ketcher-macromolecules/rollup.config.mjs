@@ -13,6 +13,7 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
+import tsconfigPaths from 'rollup-plugin-tsconfig-paths';
 import { string } from 'rollup-plugin-string';
 
 const require = createRequire(import.meta.url);
@@ -75,6 +76,7 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
+    asPlugin(tsconfigPaths()),
     replace({
       include: includePattern,
       preventAssignment: true,

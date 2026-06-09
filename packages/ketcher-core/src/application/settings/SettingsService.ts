@@ -6,7 +6,7 @@
 import { EventEmitter } from 'events';
 import type { ISettingsService } from './ISettingsService';
 import {
-  SettingsValidationError,
+  type SettingsValidationError,
   type Settings,
   type DeepPartial,
   type ValidationResult,
@@ -20,6 +20,7 @@ import { getDefaultSettings, PRESETS } from './schema';
 import { LocalStorageAdapter } from './LocalStorageAdapter';
 import { SchemaValidator } from './SchemaValidator';
 import { SettingsMigration } from './SettingsMigration';
+import { KetcherLogger } from 'utilities';
 
 /**
  * Default storage key for localStorage
@@ -133,7 +134,7 @@ export class SettingsService implements ISettingsService {
         // 4. Validate merged settings
         const validation = this.validator.validate(merged);
         if (!validation.valid) {
-          console.warn(
+          KetcherLogger.warn(
             'Invalid settings in storage, using defaults',
             validation.errors,
           );
@@ -150,7 +151,10 @@ export class SettingsService implements ISettingsService {
 
       this.initialized = true;
     } catch (error) {
-      console.error('[SettingsService] Failed to initialize settings:', error);
+      KetcherLogger.error(
+        '[SettingsService] Failed to initialize settings:',
+        error,
+      );
       // Keep settings from constructor (includes custom defaults if provided)
       this.initialized = true;
     }
@@ -211,7 +215,10 @@ export class SettingsService implements ISettingsService {
       try {
         await this.storage.save(this.storageKey, this.settings);
       } catch (error) {
-        console.error('[SettingsService] Failed to persist settings:', error);
+        KetcherLogger.error(
+          '[SettingsService] Failed to persist settings:',
+          error,
+        );
       }
     }
 

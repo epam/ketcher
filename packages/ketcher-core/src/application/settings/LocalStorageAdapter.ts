@@ -4,6 +4,7 @@
  */
 
 import type { ISettingsStorage, Settings } from './types';
+import { KetcherLogger } from 'utilities';
 
 export class LocalStorageAdapter implements ISettingsStorage {
   /**
@@ -12,7 +13,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
    */
   async load(key: string): Promise<Partial<Settings> | null> {
     if (!this.isAvailable()) {
-      console.warn('localStorage is not available');
+      KetcherLogger.warn('localStorage is not available');
       return null;
     }
 
@@ -23,7 +24,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
       }
       return JSON.parse(item);
     } catch (error) {
-      console.error(
+      KetcherLogger.error(
         `Failed to load settings from localStorage (key: ${key}):`,
         error,
       );
@@ -44,7 +45,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
       const json = JSON.stringify(settings);
       localStorage.setItem(key, json);
     } catch (error) {
-      console.error(
+      KetcherLogger.error(
         `Failed to save settings to localStorage (key: ${key}):`,
         error,
       );
@@ -63,7 +64,7 @@ export class LocalStorageAdapter implements ISettingsStorage {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      console.error(
+      KetcherLogger.error(
         `Failed to clear settings from localStorage (key: ${key}):`,
         error,
       );

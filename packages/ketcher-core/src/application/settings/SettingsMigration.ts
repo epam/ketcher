@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, dot-notation */
 
 import type { Settings, DeepPartial } from './types';
+import { KetcherLogger } from 'utilities';
 
 export class SettingsMigration {
   /**
@@ -106,7 +107,7 @@ export class SettingsMigration {
           return this.migrate(parsed);
         }
       } catch (error) {
-        console.warn(`Failed to load from legacy key ${key}:`, error);
+        KetcherLogger.warn(`Failed to load from legacy key ${key}:`, error);
       }
     }
 

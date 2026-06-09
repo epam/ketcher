@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { Settings, SettingsFormValue } from 'ketcher-core';
+import { KetcherLogger, Settings, SettingsFormValue } from 'ketcher-core';
 import { SettingsField } from './SettingsField';
 import { FIELD_DEFINITIONS } from './fieldGroups';
 import { FieldsContainer } from './Settings.styles';
@@ -35,7 +35,9 @@ export const SettingsFields = ({
       {fields.map((fieldName) => {
         const field = FIELD_DEFINITIONS[fieldName as string];
         if (!field) {
-          console.warn(`Field definition not found: ${String(fieldName)}`);
+          KetcherLogger.warn(
+            `Field definition not found: ${String(fieldName)}`,
+          );
           return null;
         }
 

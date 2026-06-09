@@ -30,7 +30,19 @@ import {
   SettingsService,
   MemoryStorageAdapter,
   getDefaultSettings,
+  ketcherProvider,
 } from 'ketcher-core';
+
+const TEST_KETCHER_ID = 'settings-integration-test';
+
+const attachSettingsService = (settingsService: any) => {
+  (window as any).ketcher = { settingsService };
+  ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
+  ketcherProvider.addKetcherInstance({
+    id: TEST_KETCHER_ID,
+    settingsService,
+  } as any);
+};
 
 // Simple thunk middleware
 const thunkMiddleware = (store: any) => (next: any) => (action: any) =>
@@ -88,10 +100,15 @@ const createWrapper = (store: any) =>
 describe('Settings Integration Tests', () => {
   beforeEach(() => {
     SettingsService.resetInstance();
+    ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
     // Clean up window.ketcher
     if ((window as any).ketcher) {
       delete (window as any).ketcher;
     }
+  });
+
+  afterEach(() => {
+    ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   });
 
   describe('Bidirectional Flow: Redux ↔ Core ↔ Hook', () => {
@@ -102,8 +119,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      // Set up window.ketcher for saveSettings to find the service
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -130,7 +146,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -169,7 +185,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -219,7 +235,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       // Spy on updateSettings to count calls
       const updateSpy = jest.spyOn(settingsService, 'updateSettings');
@@ -255,7 +271,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -290,7 +306,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       // Verify core has loaded the settings
       const coreSettings = settingsService.getSettings();
@@ -317,7 +333,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -353,7 +369,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -401,7 +417,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       // Mock updateSettings to fail
       const originalUpdate =
@@ -443,7 +459,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -473,7 +489,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 
@@ -526,7 +542,7 @@ describe('Settings Integration Tests', () => {
         autoSave: true,
       });
 
-      (window as any).ketcher = { settingsService };
+      attachSettingsService(settingsService);
 
       const store = createIntegrationStore(settingsService);
 

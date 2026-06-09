@@ -20,7 +20,23 @@ import { renderHook, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { useSettings } from '../useSettings';
-import { getDefaultSettings } from 'ketcher-core';
+import { getDefaultSettings, ketcherProvider } from 'ketcher-core';
+
+const TEST_KETCHER_ID = 'use-settings-test';
+
+const detachMockSettingsService = () => {
+  ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
+  delete (window as any).ketcher;
+};
+
+const attachMockSettingsService = (settingsService: any) => {
+  (window as any).ketcher = { settingsService };
+  ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
+  ketcherProvider.addKetcherInstance({
+    id: TEST_KETCHER_ID,
+    settingsService,
+  } as any);
+};
 
 // Simple mock store
 const createMockStore = (settingsService?: any) => {
@@ -32,9 +48,9 @@ const createMockStore = (settingsService?: any) => {
 
   // Mock window.ketcher with the settingsService
   if (settingsService) {
-    (window as any).ketcher = { settingsService };
+    attachMockSettingsService(settingsService);
   } else {
-    delete (window as any).ketcher;
+    detachMockSettingsService();
   }
 
   return createStore(rootReducer);
@@ -71,8 +87,7 @@ const createMockSettingsService = () => {
 
 describe('useSettings', () => {
   afterEach(() => {
-    // Clean up window.ketcher after each test
-    delete (window as any).ketcher;
+    detachMockSettingsService();
   });
 
   describe('initialization', () => {

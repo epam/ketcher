@@ -22,8 +22,8 @@ import {
   KetcherLogger,
   normalizeSettingsForCore,
   normalizeSettingsForForm,
+  SettingsFormValue,
 } from 'ketcher-core';
-import type { SettingsFormValue } from 'ketcher-core';
 import { RequiredModalProps } from '../modalContainer';
 import {
   Container,

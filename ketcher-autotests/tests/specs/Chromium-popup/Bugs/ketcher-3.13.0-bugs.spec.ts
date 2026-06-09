@@ -708,8 +708,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       'Minimal monomer structure is two atoms connected via a single bond.',
     );
 
-    await invalidPhosphatePositionMessage.ok();
-    await notMinimalViableStructureMessage.ok();
     await dialog.discard();
   });
 });

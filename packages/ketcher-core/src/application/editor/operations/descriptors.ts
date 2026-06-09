@@ -16,8 +16,10 @@
 
 import { AlignDescriptors } from './AlignDescriptors';
 import { RestoreDescriptorsPosition } from './RestoreDescriptorsPosition';
+import type { Writable } from 'utilities';
 
-AlignDescriptors.InverseConstructor = RestoreDescriptorsPosition;
+(AlignDescriptors as Writable<typeof AlignDescriptors>).InverseConstructor =
+  RestoreDescriptorsPosition;
 RestoreDescriptorsPosition.InverseConstructor = AlignDescriptors;
 
 export { AlignDescriptors, RestoreDescriptorsPosition };

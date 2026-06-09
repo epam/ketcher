@@ -21,7 +21,7 @@ import { type SGroup, Vec2 } from 'domain/entities';
 
 class AlignDescriptors extends BaseOperation {
   readonly history: Record<number, Vec2 | null>;
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     history: Record<number, Vec2 | null>,
   ) => BaseOperation;
 

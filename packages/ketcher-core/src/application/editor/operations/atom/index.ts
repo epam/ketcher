@@ -16,9 +16,10 @@
 
 import { AtomAdd } from './AtomAdd';
 import { AtomDelete } from './AtomDelete';
+import type { Writable } from 'utilities';
 
-AtomAdd.InverseConstructor = AtomDelete;
-AtomDelete.InverseConstructor = AtomAdd;
+(AtomAdd as Writable<typeof AtomAdd>).InverseConstructor = AtomDelete;
+(AtomDelete as Writable<typeof AtomDelete>).InverseConstructor = AtomAdd;
 
 export { AtomAdd, AtomDelete };
 export * from './AtomAttr';

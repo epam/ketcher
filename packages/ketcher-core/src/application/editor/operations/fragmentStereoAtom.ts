@@ -16,8 +16,13 @@
 
 import { FragmentAddStereoAtom } from './FragmentAddStereoAtom';
 import { FragmentDeleteStereoAtom } from './FragmentDeleteStereoAtom';
+import type { Writable } from 'utilities';
 
-FragmentAddStereoAtom.InverseConstructor = FragmentDeleteStereoAtom;
-FragmentDeleteStereoAtom.InverseConstructor = FragmentAddStereoAtom;
+(
+  FragmentAddStereoAtom as Writable<typeof FragmentAddStereoAtom>
+).InverseConstructor = FragmentDeleteStereoAtom;
+(
+  FragmentDeleteStereoAtom as Writable<typeof FragmentDeleteStereoAtom>
+).InverseConstructor = FragmentAddStereoAtom;
 
 export { FragmentAddStereoAtom, FragmentDeleteStereoAtom };

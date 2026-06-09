@@ -23,7 +23,7 @@ import { OperationType } from './OperationType';
 class FragmentAdd extends BaseOperation {
   frid: number | null;
   readonly properties?: Array<StructProperty>;
-  static InverseConstructor: new (fragmentId: number) => BaseOperation;
+  static readonly InverseConstructor: new (fragmentId: number) => BaseOperation;
 
   constructor(fragmentId?: number | null, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);

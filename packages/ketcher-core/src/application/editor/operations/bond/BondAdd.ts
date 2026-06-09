@@ -30,7 +30,7 @@ type Data = {
 
 class BondAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (bondId?: number) => BaseOperation;
+  static readonly InverseConstructor: new (bondId?: number) => BaseOperation;
 
   constructor(
     begin?: number,

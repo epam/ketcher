@@ -16,8 +16,11 @@
 
 import { UpdateIfThen } from './UpdateIfThen';
 import { RestoreIfThen } from './RestoreIfThen';
+import type { Writable } from 'utilities';
 
-UpdateIfThen.InverseConstructor = RestoreIfThen;
-RestoreIfThen.InverseConstructor = UpdateIfThen;
+(UpdateIfThen as Writable<typeof UpdateIfThen>).InverseConstructor =
+  RestoreIfThen;
+(RestoreIfThen as Writable<typeof RestoreIfThen>).InverseConstructor =
+  UpdateIfThen;
 
 export { UpdateIfThen, RestoreIfThen };

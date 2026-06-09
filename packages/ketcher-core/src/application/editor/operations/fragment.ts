@@ -17,8 +17,11 @@
 import { FragmentAdd } from './FragmentAdd';
 import { FragmentDelete } from './FragmentDelete';
 import { FragmentSetProperties } from './FragmentSetProperties';
+import type { Writable } from 'utilities';
 
-FragmentAdd.InverseConstructor = FragmentDelete;
-FragmentDelete.InverseConstructor = FragmentAdd;
+(FragmentAdd as Writable<typeof FragmentAdd>).InverseConstructor =
+  FragmentDelete;
+(FragmentDelete as Writable<typeof FragmentDelete>).InverseConstructor =
+  FragmentAdd;
 
 export { FragmentAdd, FragmentDelete, FragmentSetProperties };

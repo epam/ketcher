@@ -16,9 +16,10 @@
 
 import { BondAdd } from './BondAdd';
 import { BondDelete } from './BondDelete';
+import type { Writable } from 'utilities';
 
-BondAdd.InverseConstructor = BondDelete;
-BondDelete.InverseConstructor = BondAdd;
+(BondAdd as Writable<typeof BondAdd>).InverseConstructor = BondDelete;
+(BondDelete as Writable<typeof BondDelete>).InverseConstructor = BondAdd;
 
 export { BondAdd, BondDelete };
 export * from './BondAttr';

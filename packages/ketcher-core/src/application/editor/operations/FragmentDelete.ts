@@ -22,7 +22,7 @@ import { OperationType } from './OperationType';
 
 class FragmentDelete extends BaseOperation {
   readonly frid: number;
-  static InverseConstructor: new (
+  static readonly InverseConstructor: new (
     fragmentId?: number | null,
     properties?: Array<StructProperty>,
   ) => BaseOperation;

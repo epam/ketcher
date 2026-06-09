@@ -15,8 +15,18 @@
  ***************************************************************************/
 
 import { syncSettingsFromCore } from '../index';
+import { getDefaultOptions } from '../../../data/schema/options-schema';
+import { getDefaultSettings, normalizeSettingsForForm } from 'ketcher-core';
 
 describe('syncSettingsFromCore', () => {
+  it('should keep React initial defaults equal to normalized Core defaults', () => {
+    expect(getDefaultOptions()).toEqual(
+      normalizeSettingsForForm(getDefaultSettings(), {
+        removeCoreOnlyFields: true,
+      }),
+    );
+  });
+
   it('should create SYNC_SETTINGS_FROM_CORE action', () => {
     // Settings are now FLAT - no nested editor/render/server categories
     const coreSettings = {

@@ -1,11 +1,14 @@
 import { ReSimpleObject, ReStruct, Render } from 'application/render';
 import type { RenderOptions } from 'application/render/render.types';
+import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
 import {
   Atom,
   Bond,
+  Fragment,
   SGroup,
   SGroupAttachmentPoint,
   SimpleObjectMode,
+  StereoLabel,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -308,5 +311,53 @@ describe('expanded monomer rendering', () => {
 
     expect(centralStereoBond).not.toBeNull();
     expect(lineCommandsAmount).toBe(3);
+  });
+
+  it('renders ABS label for a stereocenter without an enhanced stereo flag in IUPAC style', () => {
+    mockSvgGeometry();
+
+    const struct = new Struct();
+    const sulfurAtomId = struct.atoms.add(
+      new Atom({ label: 'S', pp: new Vec2(0, 0), fragment: 0 }),
+    );
+    const centralCarbonAtomId = struct.atoms.add(
+      new Atom({
+        label: 'C',
+        pp: new Vec2(1, 0),
+        fragment: 0,
+        stereoLabel: StereoLabel.Abs,
+      }),
+    );
+    const fluorineAtomId = struct.atoms.add(
+      new Atom({ label: 'F', pp: new Vec2(2, 0), fragment: 0 }),
+    );
+    const methylAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 1), fragment: 0 }),
+    );
+
+    addBond(struct, sulfurAtomId, centralCarbonAtomId, {
+      stereo: Bond.PATTERN.STEREO.UP,
+    });
+    addBond(struct, centralCarbonAtomId, fluorineAtomId);
+    addBond(struct, centralCarbonAtomId, methylAtomId);
+    struct.frags.add(new Fragment([centralCarbonAtomId]));
+
+    struct.initNeighbors();
+    struct.setImplicitHydrogen();
+
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const render = new Render(container, {
+      ...option,
+      stereoLabelStyle: StereoLabelStyleType.IUPAC,
+    });
+    const restruct = new ReStruct(struct, render);
+    restruct.update(true);
+
+    const visibleText = Array.from(container.querySelectorAll('text')).map(
+      (element) => element.textContent,
+    );
+
+    expect(visibleText).toContain(StereoLabel.Abs);
   });
 });

@@ -22,7 +22,7 @@ import {
 } from 'ketcher-core';
 import { useEffect, useRef } from 'react';
 import { Container } from './styles';
-import { IStructRenderProps } from './types';
+import type { IStructRenderProps } from './types';
 
 const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   if (molV2000StringOrStruct instanceof Struct) {

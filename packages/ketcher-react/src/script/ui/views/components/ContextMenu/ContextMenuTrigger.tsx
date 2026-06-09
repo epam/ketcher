@@ -19,12 +19,12 @@ import {
   ketcherProvider,
   MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import {
-  ContextMenuProps,
+  type ContextMenuProps,
   ContextMenuTriggerType,
   CONTEXT_MENU_ID,
 } from './contextMenu.types';

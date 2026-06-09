@@ -1,9 +1,11 @@
 import {
   CoreEditor,
+  EditorClassName,
   MonomerLibraryConvertError,
   MonomerLibraryUpdateError,
   ToolName,
 } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,
@@ -18,6 +20,40 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
+type RescaleStructForModeTransitionContext = {
+  micromoleculesEditor: {
+    render: {
+      options: {
+        microModeScale: number;
+      };
+    };
+  };
+};
+
+type RescaleStructForModeTransitionStruct = {
+  scale: jest.Mock;
+  scaleMonomerMicromoleculeSgroups: jest.Mock;
+};
+
+type RescaleStructForModeTransitionMethod = (
+  this: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => number;
+
+const callRescaleStructForModeTransition = (
+  editor: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => {
+  const { rescaleStructForModeTransition } =
+    CoreEditor.prototype as unknown as {
+      rescaleStructForModeTransition: RescaleStructForModeTransitionMethod;
+    };
+
+  return rescaleStructForModeTransition.call(editor, struct, direction);
+};
+
 describe('CoreEditor', () => {
   it('should create MonomerLibraryConvertError with a cause', () => {
     const cause = new Error('convert failed');
@@ -30,6 +66,98 @@ describe('CoreEditor', () => {
     expect(error).toBeInstanceOf(MonomerLibraryConvertError);
     expect(error.name).toBe('MonomerLibraryConvertError');
     expect(error.cause).toBe(cause);
+  });
+
+  describe('rescaleStructForModeTransition', () => {
+    const originalSettings = { ...provideEditorSettings() };
+
+    afterEach(() => {
+      Object.assign(provideEditorSettings(), originalSettings);
+    });
+
+    it('should be a no-op when micro and macro scales are equal', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 40;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
+
+      expect(scaleFactor).toBe(1);
+      expect(struct.scale).not.toHaveBeenCalled();
+      expect(struct.scaleMonomerMicromoleculeSgroups).not.toHaveBeenCalled();
+    });
+
+    it('should convert macro coordinates into micro coordinates using source-to-target scales', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 20;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
+
+      expect(scaleFactor).toBe(0.5);
+      expect(struct.scale).toHaveBeenCalledWith(0.5);
+      expect(struct.scaleMonomerMicromoleculeSgroups).not.toHaveBeenCalled();
+    });
+
+    it('should convert micro coordinates into macro coordinates and rescale monomer sgroups', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 20;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'microToMacro',
+      );
+
+      expect(scaleFactor).toBe(2);
+      expect(struct.scale).toHaveBeenCalledWith(2);
+      expect(struct.scaleMonomerMicromoleculeSgroups).toHaveBeenCalledWith(2);
+    });
   });
 
   it('should track dom events and trigger handlers', () => {
@@ -899,9 +1027,14 @@ describe('CoreEditor', () => {
   describe('context menu handling', () => {
     let canvas: SVGSVGElement;
     let editor: CoreEditor;
+    let rootElement: HTMLDivElement;
 
     beforeEach(() => {
       canvas = createPolymerEditorCanvas();
+      rootElement = document.createElement('div');
+      rootElement.classList.add(EditorClassName);
+      document.body.appendChild(rootElement);
+      rootElement.appendChild(canvas);
       editor = new CoreEditor({
         canvas,
         theme: polymerEditorTheme,
@@ -912,6 +1045,38 @@ describe('CoreEditor', () => {
     afterEach(() => {
       editor.destroy();
       canvas.remove();
+      rootElement.remove();
+    });
+
+    it('should ignore right click on element outside ketcherRootElement', () => {
+      const outsideElement = document.createElement('div');
+      document.body.appendChild(outsideElement);
+
+      const preventDefaultSpy = jest.fn();
+      const rightClickSelectedMonomersHandler = jest.fn();
+      const rightClickCanvasHandler = jest.fn();
+      editor.events.rightClickSelectedMonomers.add(
+        rightClickSelectedMonomersHandler,
+      );
+      editor.events.rightClickCanvas.add(rightClickCanvasHandler);
+
+      const event = new MouseEvent('contextmenu', {
+        bubbles: true,
+        clientX: 0,
+        clientY: 0,
+        cancelable: true,
+      });
+      Object.defineProperty(event, 'preventDefault', {
+        value: preventDefaultSpy,
+        writable: true,
+      });
+      outsideElement.dispatchEvent(event);
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
+      expect(rightClickSelectedMonomersHandler).not.toHaveBeenCalled();
+      expect(rightClickCanvasHandler).not.toHaveBeenCalled();
+
+      outsideElement.remove();
     });
 
     it('should select monomer on right click when it was not selected', () => {
@@ -937,7 +1102,7 @@ describe('CoreEditor', () => {
       const monomerDomElement = document.createElement('div');
       (monomerDomElement as unknown as { __data__: unknown }).__data__ =
         monomer.renderer;
-      document.body.appendChild(monomerDomElement);
+      rootElement.appendChild(monomerDomElement);
 
       expect(monomer.selected).toBeFalsy();
       monomerDomElement.dispatchEvent(

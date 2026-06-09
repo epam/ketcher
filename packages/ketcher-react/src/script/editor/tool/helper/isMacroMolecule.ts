@@ -1,4 +1,4 @@
-import { Editor } from '../../Editor';
+import type { Editor } from '../../Editor';
 
 const isMacroMolecule = (editor: Editor, id: number): boolean => {
   const struct = editor.struct();

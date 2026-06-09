@@ -24,16 +24,16 @@ import {
 } from '../../state/templates';
 
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { StoreState } from '../../state/store.types';
+import type { Dispatch } from 'redux';
+import type { StoreState } from '../../state/store.types';
 import { storage } from '../../storage-ext';
-import Form, { Field, FormState } from '../../component/form/form/form';
+import Form, { type FormState, Field } from '../../component/form/form/form';
 import { attachSchema } from '../../data/schema/struct-schema';
 import styled from '@emotion/styled';
 import classes from './template-lib.module.less';
 import { css } from '@emotion/react';
 import { Button } from '@mui/material';
-import { Editor, ketcherProvider, Struct } from 'ketcher-core';
+import { type Editor, type Struct, ketcherProvider } from 'ketcher-core';
 
 interface AttachPoints {
   atomid: number;

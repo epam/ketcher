@@ -1,4 +1,4 @@
-import {
+import type {
   MacromoleculeContextMenuProps,
   MenuItemsProps,
 } from '../contextMenu.types';
@@ -7,13 +7,13 @@ import useMonomerExpansionHandlers, {
   canExpandMonomer,
 } from '../hooks/useMonomerExpansionHandlers';
 import {
-  Bond,
+  type Bond,
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
   MonomerMicromolecule,
 } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import { getEditInstanceInitialValues } from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const MacromoleculeMenuItems = (

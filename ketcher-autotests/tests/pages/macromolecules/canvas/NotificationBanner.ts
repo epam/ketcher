@@ -8,8 +8,11 @@ type NotificationBannerLocators = {
 
 export const NotificationBanner = (page: Page) => {
   const locators: NotificationBannerLocators = {
-    message: page.getByTestId('error-tooltip').first(),
-    closeButton: page.locator('#error-tooltip').getByRole('button').first(),
+    message: page.getByTestId('error-tooltip-0'),
+    closeButton: page
+      .locator('#error-tooltip-list')
+      .getByRole('button')
+      .first(),
   };
 
   return {

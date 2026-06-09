@@ -88,6 +88,7 @@ import {
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
+  isEditableInputTarget,
   KetcherLogger,
   keyNorm,
   SettingsManager,
@@ -849,10 +850,11 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
-    const isInput =
-      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
 
-    if (keySettings[shortcutKey]?.handler && !isInput) {
+    if (
+      keySettings[shortcutKey]?.handler &&
+      !isEditableInputTarget(event.target)
+    ) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
@@ -917,6 +919,16 @@ export class CoreEditor {
 
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
+      const target = event.target as Node | null;
+      // Guard: only handle events whose target is inside this editor's root element
+      if (
+        !this.ketcherRootElement ||
+        !target ||
+        !this.ketcherRootElement.contains(target)
+      ) {
+        return;
+      }
+
       event.preventDefault();
 
       if (this.libraryItemDragState) {
@@ -1280,7 +1292,7 @@ export class CoreEditor {
     } else if (this.drawingEntitiesManager.hasMonomers) {
       if (
         this.nextAutochainPosition &&
-        !(this.mode.modeName === 'snake-layout-mode')
+        this.mode.modeName !== 'snake-layout-mode'
       ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {
@@ -2224,10 +2236,17 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
 
+    // Rescale coords from macro to micro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    const scaleFactor = this.rescaleStructForModeTransition(
+      struct,
+      'macroToMicro',
+    );
+
     history.destroy();
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
-    struct.applyMonomersTransformations();
+    struct.applyMonomersTransformations(scaleFactor);
     reStruct.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
@@ -2260,6 +2279,11 @@ export class CoreEditor {
     this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
+
+    // Rescale coords from micro to macro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    this.rescaleStructForModeTransition(struct, 'microToMacro');
+
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
@@ -2284,6 +2308,37 @@ export class CoreEditor {
     ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
+  }
+
+  private rescaleStructForModeTransition(
+    struct: Struct,
+    direction: 'microToMacro' | 'macroToMicro',
+  ): number {
+    const microModeScale =
+      this.micromoleculesEditor?.render?.options?.microModeScale;
+    const macroModeScale = provideEditorSettings().macroModeScale;
+
+    if (microModeScale == null || microModeScale === macroModeScale) {
+      return 1;
+    }
+
+    const sourceScale =
+      direction === 'microToMacro' ? microModeScale : macroModeScale;
+    const targetScale =
+      direction === 'microToMacro' ? macroModeScale : microModeScale;
+    // Both mode scales are angstrom-to-pixel factors, so model coords convert
+    // between modes by sourceScale / targetScale.
+    const scaleFactor = sourceScale / targetScale;
+
+    struct.scale(scaleFactor);
+
+    if (direction === 'microToMacro') {
+      // MonomerMicromolecule centers are skipped by Struct.scale() and need
+      // their own mode-transition rescale on the micro-to-macro path.
+      struct.scaleMonomerMicromoleculeSgroups(scaleFactor);
+    }
+
+    return scaleFactor;
   }
 
   public isCurrentModeWithAutozoom(): boolean {

@@ -2,15 +2,19 @@ import styles from './MonomerCreationWizard.module.less';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import { Dialog, Icon } from 'components';
 import {
-  AtomLabel,
-  AttachmentPointClickData,
+  type AtomLabel,
+  type AttachmentPointClickData,
+  type BaseMonomer,
+  type ComponentStructureUpdateData,
+  type IKetMonomerTemplate,
+  type MonomerCreationInitialValues,
+  type MonomerCreationState,
+  type RnaPresetComponentKey,
+  type Struct,
   AttachmentPointName,
-  BaseMonomer,
-  ComponentStructureUpdateData,
   CREATE_MONOMER_TOOL_NAME,
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
-  IKetMonomerTemplate,
   isValidBilnAlias,
   isValidHelmAlias,
   KetcherLogger,
@@ -18,12 +22,8 @@ import {
   KetMonomerClass,
   MonomerCreationAttachmentPointClickEvent,
   MonomerCreationComponentStructureUpdateEvent,
-  MonomerCreationInitialValues,
-  MonomerCreationState,
   NO_NATURAL_ANALOGUE,
   provideEditorInstance,
-  RnaPresetComponentKey,
-  Struct,
 } from 'ketcher-core';
 import Select from '../../../component/form/Select';
 import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
@@ -40,7 +40,7 @@ import { onAction } from '../../../state/shared';
 import AttributeField from './components/AttributeField/AttributeField';
 import Notification from './components/Notification/Notification';
 import AttachmentPointEditPopup from '../AttachmentPointEditPopup/AttachmentPointEditPopup';
-import {
+import type {
   AssignedAttachmentPointsByMonomerType,
   RnaPresetWizardAction,
   RnaPresetWizardComponentStateFieldId,
@@ -72,7 +72,7 @@ import {
   getLeavingAtomForAttachmentPoint,
   hasPhosphatePositionAttachmentPointConflict,
 } from './RnaPresetAttachmentPointValidation';
-import { Selection } from '../../../../editor/Editor';
+import type { Selection } from '../../../../editor/Editor';
 import { isNumber } from 'lodash';
 import { showSnackbarNotification } from '../../../state/notifications';
 
@@ -1832,11 +1832,10 @@ const MonomerCreationWizardInternal = ({
         });
       });
 
-      editor.finishNewMonomersCreation(
-        monomersData,
-        rnaPresetWizardState.preset.name,
+      editor.finishNewMonomersCreation(monomersData, {
+        rnaPresetName: rnaPresetWizardState.preset.name,
         phosphatePosition,
-      );
+      });
 
       dispatch(onAction(selectRectangleAction));
       resetWizard();

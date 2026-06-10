@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
-import { KetMonomerClass } from 'domain/constants/monomers';
+import type { MonomerOrAmbiguousType, MonomerItemType } from 'domain/types';
+import type { KetMonomerClass } from 'domain/constants/monomers';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
-import { BaseMonomerRenderer } from './BaseMonomerRenderer';
+import type { BaseMonomerRenderer } from './BaseMonomerRenderer';
 import { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 import { monomerRendererFactory } from './monomerRendererFactory';
-import {
+import type {
   MonomerEntityClass,
   ConcreteMonomerEntityClass,
 } from 'domain/helpers/monomerEntityFactory';

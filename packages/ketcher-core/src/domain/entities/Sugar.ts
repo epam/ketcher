@@ -1,7 +1,7 @@
 import { BaseMonomer } from './BaseMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import {
   isPhosphateOrAmbiguousPhosphate,

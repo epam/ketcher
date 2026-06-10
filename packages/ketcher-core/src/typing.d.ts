@@ -1,6 +1,6 @@
-import { Ketcher } from 'ketcher-core';
-import { BaseRenderer } from 'application/render';
-import { LogSettings } from 'utilities';
+import type { Ketcher } from 'ketcher-core';
+import type { BaseRenderer } from 'application/render';
+import type { LogSettings } from 'utilities';
 
 declare global {
   export interface Window {

@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RefObject, useRef } from 'react';
+import { type RefObject, useRef } from 'react';
 import { CREATE_MONOMER_TOOL_NAME, IMAGE_KEY } from 'ketcher-core';
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../ToolbarGroupItem';
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
+import type { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
 import {
   arrowsOptions,
   bondCommon,

@@ -1,10 +1,10 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';

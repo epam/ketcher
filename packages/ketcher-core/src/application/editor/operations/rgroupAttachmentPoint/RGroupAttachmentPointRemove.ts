@@ -1,4 +1,4 @@
-import { ReStruct } from 'application/render';
+import type { ReStruct } from 'application/render';
 import assert from 'assert';
 import { OperationPriority, OperationType } from '../OperationType';
 import BaseOperation from '../BaseOperation';

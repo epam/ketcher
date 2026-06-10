@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch } from 'redux';
-import { Struct } from 'ketcher-core';
-import Editor from '../../editor/Editor';
+import type { Dispatch } from 'redux';
+import type { Struct } from 'ketcher-core';
+import type Editor from '../../editor/Editor';
 
 type ToolVariant =
   | 'any-atom'

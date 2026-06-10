@@ -1,9 +1,12 @@
-import { ketcherProvider, Pile, ReStruct } from 'ketcher-core';
+import { type ReStruct, ketcherProvider, Pile } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
-import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
+import type {
+  BondsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 

@@ -1,5 +1,5 @@
 import { ReSimpleObject, ReStruct, Render } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import {
   Atom,
   Bond,

@@ -1,6 +1,6 @@
 import { Subscription } from 'subscription';
-import { ToolEventHandlerName } from 'application/editor/tools/Tool';
-import { CoreEditor } from 'application/editor/Editor';
+import type { ToolEventHandlerName } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';

@@ -17,28 +17,33 @@ import { Subscription } from 'subscription';
 
 import { saveAs } from 'file-saver';
 import {
-  FormatterFactory,
+  type FormatterFactory,
   identifyStructFormat,
   SupportedFormat,
 } from './formatters';
-import {
+import type {
   GenerateImageOptions,
   StructService,
   CalculateData,
-  type CalculateResult,
+  CalculateResult,
 } from 'domain/services';
 
-import { Editor, getSelectionFromStruct } from './editor';
+import {
+  type Editor,
+  getSelectionFromStruct,
+  MonomerLibraryConvertError,
+} from './editor';
+
 import { provideEditorInstance } from './editor/editorSingleton';
 import { Indigo } from 'application/indigo';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { MolfileFormat } from 'domain/serializers/mol/mol.types';
+import type { MolfileFormat } from 'domain/serializers/mol/mol.types';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
-  LogSettings,
+  type LogSettings,
   LogLevel,
   runAsyncAction,
   SettingsManager,
@@ -52,14 +57,14 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
-import { EditorSelection, EditorType } from './editor/editor.types';
+import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
+  type ExportImageParams,
+  type SupportedImageFormats,
+  type SupportedModes,
+  type UpdateMonomersLibraryParams,
   BlobTypes,
-  ExportImageParams,
   ModeTypes,
-  SupportedImageFormats,
-  SupportedModes,
-  UpdateMonomersLibraryParams,
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
@@ -754,6 +759,13 @@ export class Ketcher {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 
+  /**
+   * Converts raw monomer data to KET format before it is sent to the editor.
+   *
+   * @throws {Error} When conversion fails or the server rejects the payload.
+   *   The thrown message is prefixed with
+   *   "Monomer item could not be loaded because of an error: ".
+   */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -767,19 +779,28 @@ export class Ketcher {
     if (format === SupportedFormat.ket) {
       dataInKetFormat = rawMonomersDataString;
     } else {
-      const convertResult = await this.structService.convert(
-        {
-          struct: rawMonomersDataString,
-          input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
-          output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
-        },
-        {
-          ...serverSettings,
-          outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
-        },
-      );
+      try {
+        const convertResult = await this.structService.convert(
+          {
+            struct: rawMonomersDataString,
+            input_format: MONOMER_LIBRARY_FORMAT_OPTIONS.inputFormat,
+            output_format: MONOMER_LIBRARY_FORMAT_OPTIONS.outputFormat,
+          },
+          {
+            ...serverSettings,
+            outputContentType: MONOMER_LIBRARY_FORMAT_OPTIONS.outputContentType,
+          },
+        );
 
-      dataInKetFormat = convertResult.struct;
+        dataInKetFormat = convertResult.struct;
+      } catch (error) {
+        const originalMessage =
+          error instanceof Error ? error.message : String(error);
+        throw new MonomerLibraryConvertError(
+          `Monomer item could not be loaded because of an error: ${originalMessage}`,
+          error instanceof Error ? error : undefined,
+        );
+      }
     }
 
     return dataInKetFormat;

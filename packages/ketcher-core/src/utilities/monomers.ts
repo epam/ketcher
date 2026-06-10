@@ -1,5 +1,5 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { IKetIdtAliases } from 'application/formatters/types/ket';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { IKetIdtAliases } from 'application/formatters/types/ket';
 
 export const HELM_ALIAS_FORMAT_ERROR_MESSAGE =
   'The HELM alias must consist only of uppercase and lowercase letters, numbers, underscores (_), asterisks (*), square brackets ([]), parentheses (()), dots (.), and hyphens (-), spaces prohibited.';
@@ -16,7 +16,7 @@ export const IDT_ALIAS_SLASH_ERROR_MESSAGE =
 
 export const IDT_ALIAS_LENGTH_MAX = 10;
 
-export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an IDT alias without slashes (/) is ${IDT_ALIAS_LENGTH_MAX}`;
+export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an IDT alias without slashes (/) is ${IDT_ALIAS_LENGTH_MAX}.`;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
@@ -37,8 +37,8 @@ export function isValidIdtAlias(alias: string): boolean {
 
 export function isValidIdtAliasLength(alias: string): boolean {
   if (!alias) return true;
-  const content = alias.replace(/^\/|\/$/g, '');
-  return content.length <= IDT_ALIAS_LENGTH_MAX;
+  const withoutSlashes = alias.replace(/^\//, '').replace(/\/$/, '');
+  return withoutSlashes.length <= IDT_ALIAS_LENGTH_MAX;
 }
 
 export function getTooLongIdtAliasEntries(

@@ -1,37 +1,37 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
 import {
-  Editor,
+  type Editor,
+  type LibraryItemDragState,
   EditorType,
-  LibraryItemDragState,
 } from 'application/editor/editor.types';
 import {
+  type IEditorEvents,
   editorEvents,
   hotkeysConfiguration,
-  IEditorEvents,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  type LayoutMode,
   DEFAULT_LAYOUT_MODE,
   HAS_CONTENT_LAYOUT_MODE,
-  LayoutMode,
 } from 'application/editor/modes/types';
-import { BaseMode } from 'application/editor/modes/internal';
+import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
 import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
-  BaseTool,
-  IRnaPreset,
+  type BaseTool,
+  type IRnaPreset,
+  type Tool,
+  type ToolConstructorInterface,
+  type ToolEventHandlerName,
   isBaseTool,
-  Tool,
-  ToolConstructorInterface,
-  ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
 import {
-  IKetMacromoleculesContent,
-  IKetMonomerGroupTemplate,
+  type IKetMacromoleculesContent,
+  type IKetMonomerGroupTemplate,
   KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
@@ -42,18 +42,18 @@ import type { RenderersManager } from 'application/render/renderers/RenderersMan
 import { getRenderedStructuresBbox } from 'application/render/renderers/utils';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
-  NodeSelection,
-  NodesSelection,
+  type NodeSelection,
+  type NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/ketcherProvider';
 import {
+  type MonomerToAtomBond,
+  type SubChainNode,
   ChainsCollection,
-  MonomerToAtomBond,
   Phosphate,
   SequenceType,
   Struct,
-  SubChainNode,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -65,16 +65,16 @@ import {
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
 import { getStructureBbox } from 'domain/entities/structureBbox';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import {
-  EditorLineLength,
+  type EditorLineLength,
   BILN_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   HELM_ALIAS_LENGTH_ERROR_MESSAGE,
@@ -88,18 +88,19 @@ import {
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
   initHotKeys,
+  isEditableInputTarget,
   KetcherLogger,
   keyNorm,
   SettingsManager,
 } from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
-import { EditorHistory, HistoryOperationType } from './EditorHistory';
+import { type HistoryOperationType, EditorHistory } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { ToolName } from 'application/editor/tools/types';
+import type { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
@@ -121,8 +122,8 @@ import { SnakeLayoutCellWidth } from 'domain/constants';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
-import { D3SvgElementSelection } from 'application/render/types';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -138,6 +139,56 @@ const turnOnScrollAnimation = (
 ) => {
   canvas.style('transition', `transform ${SCROLL_SMOOTHNESS_IM_MS}ms ease`);
 };
+
+export interface SkippedMonomerItem {
+  name: string;
+  reason: string;
+}
+
+/**
+ * Thrown by `CoreEditor.updateMonomersLibrary` when one or more incoming
+ * monomer definitions are invalid and could not be committed to the library.
+ *
+ * `partialSuccess` is `true` when at least one item from the payload was
+ * committed successfully alongside the failures, and `false` when every item
+ * was rejected.
+ *
+ * `skippedItems` holds a structured list of every rejected item — `name` is
+ * the monomer or template identifier, `reason` is a human-readable explanation
+ * of why it was skipped.
+ *
+ * @example
+ * try {
+ *   await ketcher.updateMonomersLibrary(data);
+ * } catch (err) {
+ *   if (err instanceof MonomerLibraryUpdateError) {
+ *     console.warn(`Partial success: ${err.partialSuccess}`);
+ *     err.skippedItems.forEach(({ name, reason }) =>
+ *       console.warn(`Skipped ${name}: ${reason}`)
+ *     );
+ *   }
+ * }
+ */
+export class MonomerLibraryUpdateError extends Error {
+  readonly partialSuccess: boolean;
+  readonly skippedItems: SkippedMonomerItem[];
+
+  constructor(skippedItems: SkippedMonomerItem[], partialSuccess: boolean) {
+    super(
+      skippedItems.map(({ name, reason }) => `${name}: ${reason}`).join('\n'),
+    );
+    this.name = 'MonomerLibraryUpdateError';
+    this.skippedItems = [...skippedItems];
+    this.partialSuccess = partialSuccess;
+  }
+}
+
+export class MonomerLibraryConvertError extends Error {
+  constructor(message: string, cause?: Error) {
+    super(message, { cause });
+    this.name = 'MonomerLibraryConvertError';
+  }
+}
 
 const debouncedTurnOffScrollAnimation = debounce(
   (canvas: D3SvgElementSelection<SVGGElement, void>) => {
@@ -338,21 +389,50 @@ export class CoreEditor {
   public async initializeMonomersLibraryFromKetcher(
     monomersLibraryUpdate?: string | JSON,
     monomersLibraryReplace?: string | JSON,
+    onError?: (err: unknown) => void,
   ): Promise<void> {
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
     if (!monomersLibraryUpdateData) {
       return;
     }
-    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
-    if (monomersLibraryReplace) {
-      this.clearMonomersLibrary();
-    }
-    const monomersLibraryUpdateInKetFormat =
-      await ketcher.ensureMonomersLibraryDataInKetFormat(
-        monomersLibraryUpdateData,
+
+    try {
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
+      if (monomersLibraryReplace) {
+        this.clearMonomersLibrary();
+      }
+      const monomersLibraryUpdateInKetFormat =
+        await ketcher.ensureMonomersLibraryDataInKetFormat(
+          monomersLibraryUpdateData,
+        );
+      this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+    } catch (err) {
+      KetcherLogger.error(
+        'Editor::initializeMonomersLibraryFromKetcher failed:',
+        err,
       );
-    this.updateMonomersLibrary(monomersLibraryUpdateInKetFormat);
+
+      let errorMessage: string;
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      } else {
+        errorMessage = 'Failed to load monomers library';
+      }
+
+      const errorTitle =
+        err instanceof MonomerLibraryConvertError
+          ? 'Monomer library conversion failed'
+          : 'Monomer library update failed';
+
+      this.events.openErrorModal.dispatch({
+        errorMessage,
+        errorTitle,
+      });
+      onError?.(err);
+    }
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {
@@ -384,11 +464,27 @@ export class CoreEditor {
     persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
   }
 
+  /**
+   * Upserts the provided monomer definitions into the in-memory library.
+   *
+   * @throws {MonomerLibraryUpdateError} When one or more items fail validation.
+   *   `skippedItems` lists every rejected monomer with a `name` and `reason`.
+   *   `partialSuccess` is `true` when at least one item was committed before
+   *   the error was raised. There is no rollback, so items committed before
+   *   the first failure remain in the library.
+   */
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
+    const skippedItems: SkippedMonomerItem[] = [];
+    const reportValidationError = (name: string, reason: string) => {
+      const message = `${name}: ${reason}`;
+      KetcherLogger.error('Editor::updateMonomersLibrary', message);
+      skippedItems.push({ name, reason });
+    };
+    let didCommitAnyItem = false;
 
     const areSameMonomers = (
       firstMonomer?: MonomerItemType,
@@ -437,8 +533,10 @@ export class CoreEditor {
         newMonomer.props?.aliasHELM &&
         !isValidHelmAlias(newMonomer.props.aliasHELM)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
       if (
@@ -454,8 +552,10 @@ export class CoreEditor {
         newMonomer.props?.aliasHELM &&
         !isValidHelmAliasLength(newMonomer.props.aliasHELM)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -488,19 +588,21 @@ export class CoreEditor {
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
-        const errorMessage = `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
-          newMonomer.props.MonomerName
-        }${
-          aliasDetails ? ` (${aliasDetails})` : ''
-        }. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Alias collision detected${
+            aliasDetails ? ` (${aliasDetails})` : ''
+          }. The monomer was not added to the library.`,
+        );
         return;
       }
 
       // Validate base IDT alias is present when idtAliases is defined
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
-        const errorMessage = `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for monomer ${newMonomer.props.MonomerName}. The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Base IDT alias is required when idtAliases is defined. The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -519,8 +621,10 @@ export class CoreEditor {
         );
 
         if (hasInvalidSlash) {
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          reportValidationError(
+            newMonomer.props.MonomerName,
+            `${IDT_ALIAS_SLASH_ERROR_MESSAGE} The monomer was not added to the library.`,
+          );
           return;
         }
 
@@ -563,6 +667,7 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex] = newMonomer;
           this._monomersLibrary[existingMonomerIndex].props.id =
             existingMonomerId;
+          didCommitAnyItem = true;
 
           // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
           this._monomersLibraryParsedJson![existingMonomerTemplateRef] =
@@ -576,6 +681,7 @@ export class CoreEditor {
         }
       } else {
         this._monomersLibrary.push(newMonomer);
+        didCommitAnyItem = true;
 
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(
@@ -596,9 +702,18 @@ export class CoreEditor {
         return;
       }
 
+      if (templateDefinition.class !== KetMonomerGroupTemplateClass.RNA) {
+        reportValidationError(
+          templateRef.$ref,
+          `Monomer group template class must be "${KetMonomerGroupTemplateClass.RNA}". The template was not added to the library.`,
+        );
+        return;
+      }
+
       if (!templateDefinition.name?.trim()) {
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Monomer group template name cannot be empty or whitespace for template ${templateRef.$ref}. The template was not added to the library.`,
+        reportValidationError(
+          templateRef.$ref,
+          `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
         );
         return;
       }
@@ -618,6 +733,7 @@ export class CoreEditor {
 
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
       this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      didCommitAnyItem = true;
       if (
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         !this._monomersLibraryParsedJson!.root.templates.find(
@@ -631,6 +747,10 @@ export class CoreEditor {
     });
 
     this.events.updateMonomersLibrary.dispatch();
+
+    if (skippedItems.length > 0) {
+      throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
+    }
   }
 
   public get monomersLibraryParsedJson() {
@@ -730,10 +850,11 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
-    const isInput =
-      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
 
-    if (keySettings[shortcutKey]?.handler && !isInput) {
+    if (
+      keySettings[shortcutKey]?.handler &&
+      !isEditableInputTarget(event.target)
+    ) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
@@ -798,6 +919,16 @@ export class CoreEditor {
 
   private setupContextMenuEvents() {
     this.contextMenuEventHandler = (event) => {
+      const target = event.target as Node | null;
+      // Guard: only handle events whose target is inside this editor's root element
+      if (
+        !this.ketcherRootElement ||
+        !target ||
+        !this.ketcherRootElement.contains(target)
+      ) {
+        return;
+      }
+
       event.preventDefault();
 
       if (this.libraryItemDragState) {
@@ -1161,7 +1292,7 @@ export class CoreEditor {
     } else if (this.drawingEntitiesManager.hasMonomers) {
       if (
         this.nextAutochainPosition &&
-        !(this.mode.modeName === 'snake-layout-mode')
+        this.mode.modeName !== 'snake-layout-mode'
       ) {
         newMonomerPosition = this.nextAutochainPosition;
       } else {
@@ -2105,10 +2236,17 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
 
+    // Rescale coords from macro to micro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    const scaleFactor = this.rescaleStructForModeTransition(
+      struct,
+      'macroToMicro',
+    );
+
     history.destroy();
     this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
-    struct.applyMonomersTransformations();
+    struct.applyMonomersTransformations(scaleFactor);
     reStruct.render.setMolecule(struct);
 
     this._type = EditorType.Micromolecules;
@@ -2141,6 +2279,11 @@ export class CoreEditor {
     this.clearSelection();
 
     const struct = this.micromoleculesEditor?.struct() ?? new Struct();
+
+    // Rescale coords from micro to macro so the visual position is preserved
+    // when microModeScale (ACS bond length) differs from macroModeScale.
+    this.rescaleStructForModeTransition(struct, 'microToMacro');
+
     const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
@@ -2165,6 +2308,37 @@ export class CoreEditor {
     ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
+  }
+
+  private rescaleStructForModeTransition(
+    struct: Struct,
+    direction: 'microToMacro' | 'macroToMicro',
+  ): number {
+    const microModeScale =
+      this.micromoleculesEditor?.render?.options?.microModeScale;
+    const macroModeScale = provideEditorSettings().macroModeScale;
+
+    if (microModeScale == null || microModeScale === macroModeScale) {
+      return 1;
+    }
+
+    const sourceScale =
+      direction === 'microToMacro' ? microModeScale : macroModeScale;
+    const targetScale =
+      direction === 'microToMacro' ? macroModeScale : microModeScale;
+    // Both mode scales are angstrom-to-pixel factors, so model coords convert
+    // between modes by sourceScale / targetScale.
+    const scaleFactor = sourceScale / targetScale;
+
+    struct.scale(scaleFactor);
+
+    if (direction === 'microToMacro') {
+      // MonomerMicromolecule centers are skipped by Struct.scale() and need
+      // their own mode-transition rescale on the micro-to-macro path.
+      struct.scaleMonomerMicromoleculeSgroups(scaleFactor);
+    }
+
+    return scaleFactor;
   }
 
   public isCurrentModeWithAutozoom(): boolean {

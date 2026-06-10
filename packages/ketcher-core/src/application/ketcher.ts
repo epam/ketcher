@@ -813,6 +813,38 @@ export class Ketcher {
     return JSON.stringify(merged);
   }
 
+  private isTransportError(error: unknown): boolean {
+    return error instanceof TypeError;
+  }
+
+  private async mapWithConcurrency<TItem, TResult>(
+    items: TItem[],
+    concurrency: number,
+    worker: (item: TItem) => Promise<TResult>,
+  ): Promise<PromiseSettledResult<TResult>[]> {
+    const results: PromiseSettledResult<TResult>[] = new Array(items.length);
+    let nextIndex = 0;
+
+    const runWorker = async () => {
+      while (nextIndex < items.length) {
+        const currentIndex = nextIndex++;
+        try {
+          results[currentIndex] = {
+            status: 'fulfilled',
+            value: await worker(items[currentIndex]),
+          };
+        } catch (reason) {
+          results[currentIndex] = { status: 'rejected', reason };
+        }
+      }
+    };
+
+    const workerCount = Math.max(1, Math.min(concurrency, items.length));
+    await Promise.all(Array.from({ length: workerCount }, runWorker));
+
+    return results;
+  }
+
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,

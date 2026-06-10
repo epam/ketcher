@@ -724,6 +724,26 @@ class Editor implements KetcherEditor {
     return Editor.suitableAttachmentPointStereoTypes.has(bond.stereo);
   }
 
+  private static isValidTerminalRGroupAtom(
+    atom: Atom | undefined,
+    struct: Struct,
+  ): boolean {
+    // Caller must ensure: atom !== null, atom.rglabel !== null, atom.neighbors.length === 1
+    if (!atom) {
+      return false;
+    }
+
+    const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
+      struct,
+      atom.neighbors[0],
+    );
+
+    return (
+      bondToTerminalRGroupAtom !== null &&
+      Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
+    );
+  }
+
   private static getBondByNeighborHalfBondId(
     struct: Struct,
     neighborHalfBondId?: number,
@@ -732,15 +752,12 @@ class Editor implements KetcherEditor {
       return null;
     }
 
-    const bondId = struct.bonds.find((_, bond) => {
-      return bond.hb1 === neighborHalfBondId || bond.hb2 === neighborHalfBondId;
-    });
-
-    if (bondId === null) {
+    const halfBond = struct.halfBonds.get(neighborHalfBondId);
+    if (!halfBond) {
       return null;
     }
 
-    return struct.bonds.get(bondId) ?? null;
+    return struct.bonds.get(halfBond.bid) ?? null;
   }
 
   public get isMonomerCreationWizardEnabled() {
@@ -778,15 +795,11 @@ class Editor implements KetcherEditor {
       const belongsToSGroup = sgs.size > 0;
       const isAttachmentPoint = attachmentPoints !== null;
       const isNonTerminalRGroupLabel = rglabel !== null && neighbors.length > 1;
-      const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
-        currentStruct,
-        neighbors[0],
-      );
+      const isTerminalRGroupCandidate =
+        rglabel !== null && neighbors.length === 1;
       const hasUnsupportedTerminalRGroupBond =
-        rglabel !== null &&
-        neighbors.length === 1 &&
-        (!bondToTerminalRGroupAtom ||
-          !Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom));
+        isTerminalRGroupCandidate &&
+        !Editor.isValidTerminalRGroupAtom(atom, currentStruct);
       const hasMultipleRGroupLabel =
         rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
       const belongsToRGroup = currentStruct.rgroups.some((rgroup) =>
@@ -812,24 +825,8 @@ class Editor implements KetcherEditor {
     const terminalRGroupAtoms = atomsToProcess.filter((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
-      if (!atom) {
-        return false;
-      }
-
-      const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
-        currentStruct,
-        atom.neighbors[0],
-      );
-
-      if (!bondToTerminalRGroupAtom) {
-        return false;
-      }
-
-      return (
-        atom.rglabel !== null &&
-        atom.neighbors.length === 1 &&
-        Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
-      );
+      // Bond suitability is already enforced in selectionInvalid for terminal R-group candidates.
+      return atom?.rglabel !== null && atom?.neighbors.length === 1;
     });
 
     const atomsToProcessSet = new Set(atomsToProcess);

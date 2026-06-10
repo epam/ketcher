@@ -10,6 +10,10 @@ type MockBond = {
   stereo: number;
 };
 
+type MockHalfBond = {
+  bid: number;
+};
+
 type MockAtom = {
   sgs: Set<number>;
   attachmentPoints: null;
@@ -27,7 +31,16 @@ const getIsMonomerCreationWizardEnabled = (editor: Editor): boolean => {
   ) as boolean;
 };
 
-const createMockEditorForRGroupBond = (bondStereo: number) => {
+const getTerminalRGroupAtoms = (editor: Editor) => {
+  return Reflect.get(editor, 'terminalRGroupAtoms');
+};
+
+const createMockEditorForRGroupBond = (
+  bondType: number = Bond.PATTERN.TYPE.SINGLE,
+  bondStereo: number = Bond.PATTERN.STEREO.NONE,
+  terminalRGroupNeighborHalfBondId: number = 10,
+  selectionAtoms: number[] | null = [0, 1],
+) => {
   const atomMap = new Map<number, MockAtom>([
     [
       0,
@@ -35,7 +48,7 @@ const createMockEditorForRGroupBond = (bondStereo: number) => {
         sgs: new Set(),
         attachmentPoints: null,
         rglabel: 1,
-        neighbors: [10],
+        neighbors: [terminalRGroupNeighborHalfBondId],
         label: 'R#',
         fragment: 0,
       },
@@ -61,10 +74,15 @@ const createMockEditorForRGroupBond = (bondStereo: number) => {
         end: 1,
         hb1: 10,
         hb2: 20,
-        type: Bond.PATTERN.TYPE.SINGLE,
+        type: bondType,
         stereo: bondStereo,
       },
     ],
+  ]);
+
+  const halfBondMap = new Map<number, MockHalfBond>([
+    [10, { bid: 0 }],
+    [20, { bid: 0 }],
   ]);
 
   const currentStruct = {
@@ -90,17 +108,25 @@ const createMockEditorForRGroupBond = (bondStereo: number) => {
       },
       get: (bondId: number) => bondMap.get(bondId),
     },
-    rgroups: [] as Array<{ frags: Set<number> }>,
+    halfBonds: {
+      get: (halfBondId: number) => halfBondMap.get(halfBondId),
+    },
+    rgroups: {
+      some: () => false,
+    },
   };
 
-  return {
-    terminalRGroupAtoms: [],
+  const editor = {
+    terminalRGroupAtoms: [] as number[],
     potentialLeavingAtomsForAutoAssignment: [],
     potentialLeavingAtomsForManualAssignment: [],
     isMonomerCreationWizardActive: false,
     struct: () => currentStruct,
-    selection: () => ({ atoms: [0, 1] }),
+    selection: () =>
+      selectionAtoms === null ? null : { atoms: [...selectionAtoms] },
   } as unknown as Editor;
+
+  return editor;
 };
 
 describe('Editor.isMonomerCreationWizardEnabled', () => {
@@ -113,18 +139,86 @@ describe('Editor.isMonomerCreationWizardEnabled', () => {
   });
 
   it('disables monomer creation for explicit R-group with non-compliant bond stereo', () => {
-    const editor = createMockEditorForRGroupBond(Bond.PATTERN.STEREO.EITHER);
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.EITHER,
+    );
 
     const isEnabled = getIsMonomerCreationWizardEnabled(editor);
 
     expect(isEnabled).toBe(false);
+    expect(getTerminalRGroupAtoms(editor).length).toBe(0);
+  });
+
+  it('disables monomer creation for explicit R-group with non-SINGLE bond type', () => {
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.DOUBLE,
+      Bond.PATTERN.STEREO.NONE,
+    );
+
+    const isEnabled = getIsMonomerCreationWizardEnabled(editor);
+
+    expect(isEnabled).toBe(false);
+    expect(getTerminalRGroupAtoms(editor).length).toBe(0);
   });
 
   it('keeps monomer creation enabled for explicit R-group with allowed bond stereo', () => {
-    const editor = createMockEditorForRGroupBond(Bond.PATTERN.STEREO.UP);
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.UP,
+    );
 
     const isEnabled = getIsMonomerCreationWizardEnabled(editor);
 
     expect(isEnabled).toBe(true);
+    const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
+    expect(terminalRGroupAtoms.length).toBe(1);
+    expect(terminalRGroupAtoms[0][0]).toBe(0);
+  });
+
+  it.each([Bond.PATTERN.STEREO.NONE, Bond.PATTERN.STEREO.DOWN])(
+    'keeps monomer creation enabled for explicit R-group with allowed bond stereo %s',
+    (allowedStereo) => {
+      const editor = createMockEditorForRGroupBond(
+        Bond.PATTERN.TYPE.SINGLE,
+        allowedStereo,
+      );
+
+      const isEnabled = getIsMonomerCreationWizardEnabled(editor);
+
+      expect(isEnabled).toBe(true);
+      const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
+      expect(terminalRGroupAtoms.length).toBe(1);
+      expect(terminalRGroupAtoms[0][0]).toBe(0);
+    },
+  );
+
+  it('disables monomer creation for terminal R-group atom without matching bond', () => {
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.NONE,
+      999,
+    );
+
+    const isEnabled = getIsMonomerCreationWizardEnabled(editor);
+
+    expect(isEnabled).toBe(false);
+    expect(getTerminalRGroupAtoms(editor).length).toBe(0);
+  });
+
+  it('uses whole-structure atoms when selection is null', () => {
+    const editor = createMockEditorForRGroupBond(
+      Bond.PATTERN.TYPE.SINGLE,
+      Bond.PATTERN.STEREO.NONE,
+      10,
+      null,
+    );
+
+    const isEnabled = getIsMonomerCreationWizardEnabled(editor);
+
+    expect(isEnabled).toBe(true);
+    const terminalRGroupAtoms = getTerminalRGroupAtoms(editor);
+    expect(terminalRGroupAtoms.length).toBe(1);
+    expect(terminalRGroupAtoms[0][0]).toBe(0);
   });
 });

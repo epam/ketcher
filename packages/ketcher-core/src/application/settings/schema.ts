@@ -129,7 +129,7 @@ export const PRESETS: Record<string, DeepPartial<Settings>> = {
 };
 
 /**
- * JSON Schema for validation with Ajv
+ * JSON Schema for settings validation
  * This is used by SchemaValidator
  */
 export const SCHEMA = {

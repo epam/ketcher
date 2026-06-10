@@ -28,8 +28,11 @@ import {
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
-import { MonomerItemType } from 'ketcher-core';
-import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
+import {
+  AmbiguousMonomerType,
+  MonomerItemType,
+  isAmbiguousMonomerLibraryItem,
+} from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
@@ -67,10 +70,11 @@ const MonomerItem = ({
   let colorCode = '';
 
   if (!isAmbiguousMonomerLibraryItem(item)) {
+    const monomerItem = item as MonomerItemType;
     colorCode =
-      item.props.MonomerType === MONOMER_TYPES.CHEM
-        ? item.props.MonomerType
-        : item.props.MonomerNaturalAnalogCode;
+      monomerItem.props.MonomerType === MONOMER_TYPES.CHEM
+        ? monomerItem.props.MonomerType
+        : monomerItem.props.MonomerNaturalAnalogCode;
   }
 
   const monomerKey: string = getMonomerUniqueKey(item);
@@ -202,9 +206,9 @@ const MonomerItem = ({
       {isAmbiguousMonomerLibraryItem(item) && (
         <NumberCircle
           selected={isSelected}
-          monomersAmount={item.monomers.length}
+          monomersAmount={(item as AmbiguousMonomerType).monomers.length}
         >
-          {item.monomers.length}
+          {(item as AmbiguousMonomerType).monomers.length}
         </NumberCircle>
       )}
     </Card>

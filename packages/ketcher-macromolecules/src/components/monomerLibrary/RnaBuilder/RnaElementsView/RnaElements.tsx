@@ -16,8 +16,7 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { LibraryNameType } from 'src/constants';
-import { IRnaPreset } from 'ketcher-core';
-import { isAmbiguousMonomerLibraryItem } from 'helpers/monomerGuards';
+import { IRnaPreset, MonomerItemType } from 'ketcher-core';
 
 import { RnaAccordionContainer } from './styles';
 import { useDispatch } from 'react-redux';
@@ -71,7 +70,7 @@ export const RnaElements = ({
   }, [dispatch]);
 
   const handleItemSelection = useCallback(
-    (monomer, groupName) => {
+    (monomer: MonomerItemType, groupName) => {
       if (isEditMode) {
         dispatch(setActiveMonomerKey(getMonomerUniqueKey(monomer)));
       }
@@ -84,9 +83,7 @@ export const RnaElements = ({
         return;
       }
 
-      const monomerClass = isAmbiguousMonomerLibraryItem(monomer)
-        ? monomer.monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
-        : monomer.props.MonomerClass.toLowerCase();
+      const monomerClass = monomer.props.MonomerClass.toLowerCase();
       const currentPreset = {
         ...newPreset,
         [monomerClass]: monomer,

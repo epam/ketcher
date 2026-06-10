@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import {
   changeImage,
   changeVersion,
@@ -241,8 +243,9 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
 
 function url(file: File | null): string | null {
   if (!file) return null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const URL = window.URL || (window as any).webkitURL;
+  const URL =
+    window.URL ||
+    (window as Window & { webkitURL?: typeof globalThis.URL }).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
@@ -269,8 +272,9 @@ const mapStateToProps = (state: RecognizeState) => ({
     state.options.recognize.version ?? state.options.app.imagoVersions[1],
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RecognizeState, undefined, AnyAction>,
+) => ({
   isFragment: (v: boolean) => dispatch(shouldFragment(v)),
   onImage: (file: RecognizeImageFile) => dispatch(changeImage(file)),
   onRecognize: (file: File | null, ver: string) =>

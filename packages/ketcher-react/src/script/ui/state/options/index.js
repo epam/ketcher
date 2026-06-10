@@ -21,6 +21,8 @@ import {
 } from '../../data/schema/options-schema';
 import {
   KETCHER_SAVED_OPTIONS_KEY,
+  KetcherLogger,
+  ketcherProvider,
   normalizeSettingsForCore,
   normalizeSettingsForForm,
 } from 'ketcher-core';
@@ -137,11 +139,12 @@ export function appUpdate(data) {
 }
 
 /* SETTINGS */
-export function saveSettings(newSettings) {
+export function saveSettings(newSettings, ketcherId) {
   return async (dispatch) => {
     // Try to update via ketcher-core settings service if available
     // Use window.ketcher since Redux state doesn't store the Ketcher instance
-    const settingsService = window.ketcher?.settingsService;
+    const settingsService =
+      ketcherProvider.getKetcher(ketcherId)?.settingsService;
 
     if (settingsService) {
       try {
@@ -153,7 +156,10 @@ export function saveSettings(newSettings) {
         // Core service handles localStorage and emits events
         // The event will trigger syncSettingsFromCore via useSettings hook
       } catch (error) {
-        console.error('Failed to update settings via core service:', error);
+        KetcherLogger.error(
+          'Failed to update settings via core service:',
+          error,
+        );
         // Fall back to direct localStorage write
         storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
       }

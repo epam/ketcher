@@ -39,7 +39,7 @@ import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 
-export default function initEditor(dispatch, getState) {
+export default function initEditor(dispatch, getState, ketcherId) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
   const getSelectedSruCount = (sgroupType) => {
@@ -238,7 +238,7 @@ export default function initEditor(dispatch, getState) {
         highlightFG(dispatch, { groupStruct: null, sGroup: null });
       }
     },
-    onApiSettings: (payload) => dispatch(saveSettings(payload)),
+    onApiSettings: (payload) => dispatch(saveSettings(payload, ketcherId)),
 
     onUpdateFloatingTools: memoizedDebounce(
       /**

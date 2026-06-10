@@ -36,7 +36,6 @@ import {
 const TEST_KETCHER_ID = 'settings-integration-test';
 
 const attachSettingsService = (settingsService: any) => {
-  (window as any).ketcher = { settingsService };
   ketcherProvider.removeKetcherInstance(TEST_KETCHER_ID);
   ketcherProvider.addKetcherInstance({
     id: TEST_KETCHER_ID,
@@ -130,7 +129,7 @@ describe('Settings Integration Tests', () => {
       };
 
       await act(async () => {
-        await store.dispatch(saveSettings(newSettings) as any);
+        await store.dispatch(saveSettings(newSettings, TEST_KETCHER_ID) as any);
       });
 
       // Verify Core received the update
@@ -201,7 +200,9 @@ describe('Settings Integration Tests', () => {
       };
 
       await act(async () => {
-        await store.dispatch(saveSettings(updateFromRedux) as any);
+        await store.dispatch(
+          saveSettings(updateFromRedux, TEST_KETCHER_ID) as any,
+        );
       });
 
       // Step 2: Verify Core received it
@@ -248,7 +249,9 @@ describe('Settings Integration Tests', () => {
 
       // Make one update
       await act(async () => {
-        await store.dispatch(saveSettings({ resetToSelect: false }) as any);
+        await store.dispatch(
+          saveSettings({ resetToSelect: false }, TEST_KETCHER_ID) as any,
+        );
       });
 
       // Wait for any potential loops
@@ -278,7 +281,10 @@ describe('Settings Integration Tests', () => {
       // Update settings with flat format
       await act(async () => {
         await store.dispatch(
-          saveSettings({ resetToSelect: false, rotationStep: 25 }) as any,
+          saveSettings(
+            { resetToSelect: false, rotationStep: 25 },
+            TEST_KETCHER_ID,
+          ) as any,
         );
       });
 

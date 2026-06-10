@@ -20,7 +20,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 
 let page: Page;
 
-test.describe('Autotests: Attachment points editing dropdown logic in monomer creation wizard', () => {
+test.describe('Attachment points editing dropdown logic in monomer creation wizard', () => {
   const minimumDropdownOptionsCount = 3;
   const positionTolerancePx = 3;
   const centerDivider = 2;
@@ -143,7 +143,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 4. Verify only H and OH options are present
      * 5. Verify they appear in correct order (H first, then OH)
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -187,7 +187,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 4. Click on the attachment point atom dropdown
      * 5. Verify only H and OH options are present in correct order
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -232,7 +232,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 3. Open the dropdown
      * 4. Verify the order is: H, OH, then the current atom type
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -280,7 +280,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 4. Verify the leaving atom position remains the same
      * 5. Verify the atom type has changed
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -353,7 +353,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 3. Verify the current selection is visually indicated (highlighted, checked, etc.)
      * 4. Change selection and verify the indication updates
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -395,7 +395,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 2. Verify each dropdown shows correct options based on its current LGA
      * 3. Verify changes to one dropdown don't affect others
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(
@@ -455,7 +455,7 @@ test.describe('Autotests: Attachment points editing dropdown logic in monomer cr
      * 2. Change the leaving atom via dropdown to a different type
      * 3. Verify dropdown options update accordingly
      *
-     * Version 3.16.0
+     * Version 3.12
      */
 
     const createMonomerDialog = await openCreateMonomerDialogWithChemType(

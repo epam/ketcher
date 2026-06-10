@@ -1048,6 +1048,23 @@ updateMonomersLibrary(
 - `monomersData` - Monomer data (KET or SDF format)
 - `params` (optional) - Update parameters
 
+**Malformed record handling (SDF input):**
+
+When SDF data is converted to KET, the library is first converted as a single
+batch. If that batch conversion fails because of a content/parse error (for
+example, one malformed record), Ketcher automatically falls back to converting
+each SDF record individually:
+
+- Records that convert successfully are merged into the resulting library.
+- Records that fail to convert are **skipped** and a warning is logged via
+  `KetcherLogger.warn` (visible in the console when logging is enabled).
+- The call **throws only if every record fails to convert** (an
+  `AggregateError` carrying both the original batch error and the per-record
+  errors).
+
+Transport-level failures (network errors, CORS, 5xx) are **not** retried per
+record — they are rethrown immediately so the root cause is not masked.
+
 **UpdateMonomersLibraryParams:**
 
 ```typescript

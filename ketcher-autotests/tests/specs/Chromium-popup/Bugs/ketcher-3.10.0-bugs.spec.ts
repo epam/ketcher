@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { test, expect } from '@fixtures';
-import { Page } from '@playwright/test';
+import { ConsoleMessage, Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -835,8 +835,30 @@ test.describe('Ketcher-3.10 Bugs', () => {
       enableFlexMode: false,
     });
 
-    const error = await updateMonomersLibrary(page, sdfWithMalformed);
+    await page.evaluate(() => {
+      window.ketcher.logging = { enabled: true, level: 1 };
+    });
+
+    const skipWarnings: string[] = [];
+    const onConsole = (message: ConsoleMessage) => {
+      if (
+        message.type() === 'warning' &&
+        message.text().includes('Monomer item could not be loaded')
+      ) {
+        skipWarnings.push(message.text());
+      }
+    };
+    page.on('console', onConsole);
+
+    let error: string | null;
+    try {
+      error = await updateMonomersLibrary(page, sdfWithMalformed);
+    } finally {
+      page.off('console', onConsole);
+    }
+
     expect(error).toBeNull();
+    expect(skipWarnings).toHaveLength(1);
     expect(await Library(page).isMonomerExist(Sugar.sAargh)).toBeTruthy();
     expect(await Library(page).isMonomerExist(Base.Aargh)).toBeTruthy();
     expect(await Library(page).isMonomerExist(Phosphate.pAargh)).toBeTruthy();

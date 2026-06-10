@@ -18,6 +18,8 @@ import { Subscription } from 'subscription';
 import { saveAs } from 'file-saver';
 import {
   type FormatterFactory,
+  type IKetMacromoleculesContent,
+  type IKetNodeRef,
   identifyStructFormat,
   SupportedFormat,
 } from './formatters';
@@ -83,6 +85,8 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputFormat: ChemicalMimeType.MonomerLibrary,
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
+
+const MONOMER_FALLBACK_CONCURRENCY = 6;
 
 export class Ketcher {
   _id: string;
@@ -758,7 +762,7 @@ export class Ketcher {
   private splitSdfRecords(sdf: string): string[] {
     return sdf
       .split(/^\$\$\$\$\s*$/m)
-      .map((record) => record.replace(/\s+$/, ''))
+      .map((record) => record.trimEnd())
       .filter((record) => record.trim().length > 0)
       .map((record) => `${record}\n$$$$\n`);
   }
@@ -768,18 +772,41 @@ export class Ketcher {
     const seenRefs = new Set<string>();
 
     ketStrings.forEach((ketString) => {
-      const parsed = JSON.parse(ketString);
+      let parsed: IKetMacromoleculesContent;
+      try {
+        parsed = JSON.parse(ketString);
+      } catch (parseError) {
+        KetcherLogger.warn(
+          `Monomer item could not be merged because of a parse error: ${parseError}`,
+        );
+        return;
+      }
+
       const templates = parsed?.root?.templates ?? [];
 
-      templates.forEach((templateRef: { $ref: string }) => {
+      templates.forEach((templateRef: IKetNodeRef) => {
         const ref = templateRef.$ref;
-        if (seenRefs.has(ref) || !parsed[ref]) {
+
+        if (
+          ref === '__proto__' ||
+          ref === 'constructor' ||
+          ref === 'prototype'
+        ) {
           return;
         }
+        if (!Object.prototype.hasOwnProperty.call(parsed, ref)) {
+          return;
+        }
+        if (seenRefs.has(ref)) {
+          KetcherLogger.warn(
+            `Duplicate monomer template "${ref}" encountered while merging; keeping the first occurrence.`,
+          );
+          return;
+        }
+
         seenRefs.add(ref);
         merged.root.templates.push(templateRef);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (merged as any)[ref] = parsed[ref];
+        merged[ref] = parsed[ref];
       });
     });
 
@@ -816,26 +843,43 @@ export class Ketcher {
         const convertResult = await convertBatch(rawMonomersDataString);
         dataInKetFormat = convertResult.struct;
       } catch (batchError) {
+        if (this.isTransportError(batchError)) {
+          throw batchError;
+        }
+
+        KetcherLogger.warn(
+          `Batch monomer conversion failed, retrying record by record: ${batchError}`,
+        );
+
         const records = this.splitSdfRecords(rawMonomersDataString);
+
+        const results = await this.mapWithConcurrency(
+          records,
+          MONOMER_FALLBACK_CONCURRENCY,
+          async (record) => (await convertBatch(record)).struct,
+        );
+
         const convertedKetStrings: string[] = [];
         let firstItemError: unknown;
 
-        for (const record of records) {
-          try {
-            const itemResult = await convertBatch(record);
-            convertedKetStrings.push(itemResult.struct);
-          } catch (itemError) {
+        results.forEach((result) => {
+          if (result.status === 'fulfilled') {
+            convertedKetStrings.push(result.value);
+          } else {
             if (firstItemError === undefined) {
-              firstItemError = itemError;
+              firstItemError = result.reason;
             }
             KetcherLogger.warn(
-              `Monomer item could not be loaded because of an error: ${itemError}`,
+              `Monomer item could not be loaded because of an error: ${result.reason}`,
             );
           }
-        }
+        });
 
         if (convertedKetStrings.length === 0) {
-          throw firstItemError ?? batchError;
+          throw new AggregateError(
+            [batchError, ...(firstItemError ? [firstItemError] : [])],
+            'Failed to convert monomers library: all records failed to convert.',
+          );
         }
 
         dataInKetFormat = this.mergeKetMonomerLibraries(convertedKetStrings);

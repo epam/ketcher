@@ -855,7 +855,7 @@ class ReAtom extends ReObject {
           labelGroup.forEach((element) => {
             element.node?.setAttribute(
               'data-attachment-point-alias',
-              attachmentPointName,
+              displayLabel,
             );
             element.node?.setAttribute(
               'data-testid',

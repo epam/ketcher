@@ -14,10 +14,39 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './useSettingsContext';
-export * from './useResizeObserver';
-export * from './useFormContext';
-export * from './useAppContext';
-export * from './useRequestAnimationFrame';
-export * from './useSubscribtionOnEvents';
-export * from './useSettings';
+import styled from '@emotion/styled';
+
+export const AccordionHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 14px;
+  color: #333333;
+  font-weight: 400;
+`;
+
+export const GroupLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  span {
+    height: 12px;
+  }
+`;
+
+export const ChangeIndicator = styled.span`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #167782;
+  margin-left: auto;
+  margin-right: 8px;
+`;

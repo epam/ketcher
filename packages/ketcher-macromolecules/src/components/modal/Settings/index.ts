@@ -14,10 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './useSettingsContext';
-export * from './useResizeObserver';
-export * from './useFormContext';
-export * from './useAppContext';
-export * from './useRequestAnimationFrame';
-export * from './useSubscribtionOnEvents';
-export * from './useSettings';
+export { Settings } from './Settings';

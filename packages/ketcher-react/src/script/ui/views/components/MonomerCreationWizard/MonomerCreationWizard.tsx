@@ -128,6 +128,17 @@ const getResolvedAttachmentPoints = (
   }, new Map<AttachmentPointName, [number, number]>());
 };
 
+const getAttachmentPointsToValidate = (
+  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
+  overrides: AttachmentPointNameOverrides,
+) =>
+  getEffectiveAttachmentPointEntries(assignedAttachmentPoints, overrides).map(
+    ({ displayName, atomPair }) => ({
+      name: displayName,
+      attachmentAtomId: atomPair[0],
+    }),
+  );
+
 /**
  * Builds initial wizard state seeded with values from an existing monomer
  * being edited. When `initialValues` is undefined returns the default empty
@@ -1284,13 +1295,10 @@ const MonomerCreationWizardInternal = ({
       notifications: attachmentPointsNotifications,
       problematicAttachmentPointAtomIds,
     } = validateAttachmentPoints(
-      getEffectiveAttachmentPointEntries(
+      getAttachmentPointsToValidate(
         monomerAssignedAttachmentPoints,
         attachmentPointNameOverrides,
-      ).map(({ displayName, atomPair }) => ({
-        name: displayName,
-        attachmentAtomId: atomPair[0],
-      })),
+      ),
     );
     if (attachmentPointsNotifications.size > 0) {
       wizardStateDispatch({
@@ -1615,13 +1623,10 @@ const MonomerCreationWizardInternal = ({
           notifications: attachmentPointsNotifications,
           problematicAttachmentPointAtomIds,
         } = validateAttachmentPoints(
-          getEffectiveAttachmentPointEntries(
+          getAttachmentPointsToValidate(
             monomerAssignedAttachmentPoints,
             attachmentPointNameOverrides,
-          ).map(({ displayName, atomPair }) => ({
-            name: displayName,
-            attachmentAtomId: atomPair[0],
-          })),
+          ),
         );
         if (attachmentPointsNotifications.size > 0) {
           needSaveMonomers = false;

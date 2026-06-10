@@ -296,6 +296,14 @@ describe('SettingsMigration', () => {
 
   describe('loadFromLegacyStorage', () => {
     let mockLocalStorage: { [key: string]: string };
+    let originalLocalStorageDescriptor: PropertyDescriptor | undefined;
+
+    beforeAll(() => {
+      originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(
+        global,
+        'localStorage',
+      );
+    });
 
     beforeEach(() => {
       mockLocalStorage = {};
@@ -313,6 +321,18 @@ describe('SettingsMigration', () => {
         writable: true,
         configurable: true,
       });
+    });
+
+    afterEach(() => {
+      if (originalLocalStorageDescriptor) {
+        Object.defineProperty(
+          global,
+          'localStorage',
+          originalLocalStorageDescriptor,
+        );
+      } else {
+        Reflect.deleteProperty(global, 'localStorage');
+      }
     });
 
     it('should load from ketcher-opts key and flatten if namespaced', () => {

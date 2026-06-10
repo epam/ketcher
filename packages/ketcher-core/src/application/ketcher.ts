@@ -30,7 +30,12 @@ import type {
   CalculateResult,
 } from 'domain/services';
 
-import { type Editor, getSelectionFromStruct } from './editor';
+import {
+  type Editor,
+  getSelectionFromStruct,
+  MonomerLibraryConvertError,
+} from './editor';
+
 import { provideEditorInstance } from './editor/editorSingleton';
 import { getEmptyMonomersLibraryJson } from './editor/helpers';
 import { Indigo } from 'application/indigo';
@@ -845,6 +850,21 @@ export class Ketcher {
     return results;
   }
 
+  /**
+   * Converts raw monomer data to KET format before it is sent to the editor.
+   *
+   * For SDF input, the library is first converted as a single batch. If that
+   * batch conversion fails because of a content/parse error, conversion falls
+   * back to converting each SDF record individually: records that convert
+   * successfully are merged, and records that fail are skipped (logged via
+   * {@link KetcherLogger.warn}).
+   *
+   * @throws {MonomerLibraryConvertError} When every record fails to convert.
+   *   The error wraps an {@link AggregateError} carrying both the original
+   *   batch error and the per-record errors.
+   * @throws {TypeError} Transport-level failures (network errors, CORS, 5xx)
+   *   are not retried per record and are rethrown immediately.
+   */
   public async ensureMonomersLibraryDataInKetFormat(
     rawMonomersData: string | JSON,
     params?: UpdateMonomersLibraryParams,
@@ -908,9 +928,13 @@ export class Ketcher {
         });
 
         if (convertedKetStrings.length === 0) {
-          throw new AggregateError(
+          const aggregateError = new AggregateError(
             [batchError, ...(firstItemError ? [firstItemError] : [])],
             'Failed to convert monomers library: all records failed to convert.',
+          );
+          throw new MonomerLibraryConvertError(
+            `Monomer item could not be loaded because of an error: ${aggregateError.message}`,
+            aggregateError,
           );
         }
 

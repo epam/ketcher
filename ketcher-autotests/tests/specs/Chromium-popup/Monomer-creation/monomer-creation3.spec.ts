@@ -136,10 +136,6 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
     loadString: '[#6]%91.[*:1]-%91',
   },
   {
-    testDescription: '17. Triple bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]#%91',
-  },
-  {
     testDescription: '18. Any bond connected to R-Group',
     loadString:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAD/338AAKANAf/ffwAAoCsBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgD//wAAAAAAAAAAAAA=',
@@ -153,10 +149,6 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
     loadString: '[#6]%91.[*:1]%91',
   },
   {
-    testDescription: '22. Double/Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]=,:%91',
-  },
-  {
     testDescription: '23. Dative bond connected to R-Group',
     loadString:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
@@ -168,11 +160,6 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
   {
     testDescription: '26. Single Down bond connected to R-Group',
     loadString: '[#6]%91.[*:1]%91',
-  },
-  {
-    testDescription: '27. Single Up/Down bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAEGAgAIAAAAAAAAAAAAAAA=',
   },
   {
     testDescription: '29. Molecule with eight R-Groups on terminal positions',
@@ -218,13 +205,26 @@ const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
     loadString: '[#6]%91.[*:1]=%91',
   },
   {
+    testDescription: '17. Triple bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]#%91',
+  },
+  {
     testDescription: '20. Single/Double connected to R-Group',
     loadString: '[#6]%91.[*:1]!:;-,=%91',
+  },
+  {
+    testDescription: '22. Double/Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]=,:%91',
   },
   {
     testDescription: '24. Hydrogen bond connected to R-Group',
     loadString:
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
+  },
+  {
+    testDescription: '27. Single Up/Down bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAA4I4AAGAjAQDgjgAAYEEBA4AEAAAABIAFAAAAAAQCAAcAMwQDAAAAQQACCAAAAAAAAAAeAAaAAAAAAAACCAAAAAAAAAAeACMIAQAAAAcOAAEAAAADAGAAyAAAAFIxAAAAAASABgAAAAACCAAAAAAAAAAAAAAABYAHAAAABAYEAAUAAAAFBgQABgAAAAEGAgAIAAAAAAAAAAAAAAA=',
   },
   {
     testDescription: '28. Double CIS/Trans bond connected to R-Group',

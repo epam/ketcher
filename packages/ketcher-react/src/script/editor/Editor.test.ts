@@ -38,7 +38,7 @@ const getTerminalRGroupAtoms = (editor: Editor) => {
 const createMockEditorForRGroupBond = (
   bondType: number = Bond.PATTERN.TYPE.SINGLE,
   bondStereo: number = Bond.PATTERN.STEREO.NONE,
-  terminalRGroupNeighborHalfBondId: number = 10,
+  terminalRGroupNeighborHalfBondId = 10,
   selectionAtoms: number[] | null = [0, 1],
 ) => {
   const atomMap = new Map<number, MockAtom>([

@@ -8,6 +8,14 @@ import type { Settings } from '../types';
 describe('LocalStorageAdapter', () => {
   let adapter: LocalStorageAdapter;
   let mockLocalStorage: { [key: string]: string };
+  let originalLocalStorageDescriptor: PropertyDescriptor | undefined;
+
+  beforeAll(() => {
+    originalLocalStorageDescriptor = Object.getOwnPropertyDescriptor(
+      global,
+      'localStorage',
+    );
+  });
 
   beforeEach(() => {
     adapter = new LocalStorageAdapter();
@@ -26,7 +34,20 @@ describe('LocalStorageAdapter', () => {
         }),
       },
       writable: true,
+      configurable: true,
     });
+  });
+
+  afterEach(() => {
+    if (originalLocalStorageDescriptor) {
+      Object.defineProperty(
+        global,
+        'localStorage',
+        originalLocalStorageDescriptor,
+      );
+    } else {
+      Reflect.deleteProperty(global, 'localStorage');
+    }
   });
 
   describe('isAvailable', () => {

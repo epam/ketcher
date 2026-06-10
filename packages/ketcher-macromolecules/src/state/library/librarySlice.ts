@@ -66,6 +66,8 @@ const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
   [MonomerGroups.BASES]: KetMonomerClass.Base,
 };
 
+// Maps amino acid one-letter natural analog codes to their three-letter codes
+// to support library search by either representation.
 const AMINO_ACID_THREE_LETTER_CODES: Record<string, string> = {
   a: 'ala',
   b: 'asx',
@@ -94,6 +96,16 @@ const AMINO_ACID_THREE_LETTER_CODES: Record<string, string> = {
   y: 'tyr',
   z: 'glx',
 };
+
+const AMBIGUOUS_MONOMER_DEFAULT_ALIAS = '';
+const AMBIGUOUS_MONOMER_DEFAULT_MODIFICATION_TYPES: string[] = [];
+
+const isAminoAcidMonomer = (
+  monomerClass: KetMonomerClass | undefined,
+  monomerType: string | undefined,
+) =>
+  monomerClass === KetMonomerClass.AminoAcid ||
+  monomerType === MONOMER_TYPES.PEPTIDE;
 
 const initialState: LibraryState = {
   monomers: [],
@@ -410,9 +422,11 @@ export const selectFilteredMonomers = createSelector(
       const monomerName = name.toLowerCase();
       const monomerNameFull = fullName.toLowerCase();
       const monomerNaturalAnalogCode = naturalAnalogCode?.toLowerCase();
-      const monomerThreeLetterCode = monomerNaturalAnalogCode
-        ? AMINO_ACID_THREE_LETTER_CODES[monomerNaturalAnalogCode]
-        : undefined;
+      const monomerThreeLetterCode =
+        monomerNaturalAnalogCode &&
+        monomerNaturalAnalogCode in AMINO_ACID_THREE_LETTER_CODES
+          ? AMINO_ACID_THREE_LETTER_CODES[monomerNaturalAnalogCode]
+          : undefined;
 
       const idtBase = idtAliases?.base?.toLowerCase();
 
@@ -538,7 +552,6 @@ export const selectFilteredMonomers = createSelector(
 
       return cond;
     };
-
     return monomers
       .filter((item: MonomerOrAmbiguousType) => {
         // Filter out hidden monomers - they are part of presets and should not be visible in the library
@@ -564,12 +577,12 @@ export const selectFilteredMonomers = createSelector(
             normalizedSearchFilter,
             label,
             id,
-            '',
-            '',
-            '',
-            [],
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_ALIAS,
+            AMBIGUOUS_MONOMER_DEFAULT_MODIFICATION_TYPES,
             label,
-            monomerClass === KetMonomerClass.AminoAcid,
+            isAminoAcidMonomer(monomerClass, undefined),
           );
 
           return (
@@ -598,8 +611,7 @@ export const selectFilteredMonomers = createSelector(
                 aliasAxoLabs,
                 modificationTypes,
                 MonomerNaturalAnalogCode,
-                MonomerClass === KetMonomerClass.AminoAcid ||
-                  MonomerType === MONOMER_TYPES.PEPTIDE,
+                isAminoAcidMonomer(MonomerClass, MonomerType),
               );
             })
           );
@@ -627,8 +639,7 @@ export const selectFilteredMonomers = createSelector(
             aliasAxoLabs,
             modificationTypes,
             MonomerNaturalAnalogCode,
-            MonomerClass === KetMonomerClass.AminoAcid ||
-              MonomerType === MONOMER_TYPES.PEPTIDE,
+            isAminoAcidMonomer(MonomerClass, MonomerType),
           );
         }
       })

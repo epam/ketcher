@@ -1555,9 +1555,8 @@ export class SequenceMode extends BaseMode {
           // If a whole chain was selected and deleted, the caret may have landed on
           // the start of the NEXT chain. Do not connect the new monomer to that chain;
           // instead insert it as a new standalone chain.
-          const insertAsStandaloneChain =
+          const nextChainOccupiedByDifferentChain =
             isWholeChainSelected && !previousTwoStrandedNodeInSameChain;
-          let senseNodeToConnect = insertAsStandaloneChain
           let senseNodeToConnect = nextChainOccupiedByDifferentChain
             ? null
             : currentTwoStrandedNode?.senseNode;
@@ -2839,8 +2838,8 @@ export class SequenceMode extends BaseMode {
       );
     } else if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
       // When there is no previous node (caret at position 0, replacing the first chain),
-      // place the new standalone monomer before the current first chain so it sorts
-      // above it in ChainsCollection.rearrange() (which orders by Y coordinate).
+      // place the new standalone monomer above-left of the current first chain so the
+      // sort key in ChainsCollection.rearrange() (Y-dominant) puts it earlier.
       return currentNode.firstMonomerInNode.position.sub(offsetFromPrevious);
     } else {
       return new Vec2(0, 0);

@@ -2119,7 +2119,7 @@ class Editor implements KetcherEditor {
 
     const rnaComponentToAssign = beginAtomRnaComponent ?? endAtomRnaComponent;
     const struct = this.struct();
-    const atomIdToStartFrom = beginAtomRnaComponent ? bond.begin : bond.end;
+    const atomIdToStartFrom = beginAtomRnaComponent ? bond.end : bond.begin;
     const visitedAtomIds = new Set<number>();
     const atomsToCheck = [atomIdToStartFrom];
     let hasConnectionToAnotherComponent = false;

@@ -201,7 +201,7 @@ test('Case 8: Update Library item with compound that contains NON-MOLv3000 file'
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
   expect(error).toContain(
-    "Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'core: Error loading monomer library: scanner: readIntFix(3): invalid number representation:",
+    "Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'core: Error loading monomer library: scanner: BufferScanner::read() error'",
   );
 });
 

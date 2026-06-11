@@ -940,6 +940,34 @@ export class Struct {
       }
       this.markFragment(comp, properties);
     });
+    this.mergeHapticBondFragments();
+  }
+
+  private mergeHapticBondFragments() {
+    this.bonds.forEach((bond) => {
+      if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
+        return;
+      }
+
+      const involvedAtomIds = [bond.begin, bond.end, ...bond.endpoints];
+      const fragmentIds = new Pile<number>();
+      involvedAtomIds.forEach((aid) => {
+        const atom = this.atoms.get(aid);
+        if (atom && atom.fragment >= 0) fragmentIds.add(atom.fragment);
+      });
+
+      if (fragmentIds.size <= 1) return;
+
+      const [targetFragmentId, ...fragmentsToMerge] = Array.from(fragmentIds);
+      const fragmentsToMergeSet = new Pile<number>(fragmentsToMerge);
+
+      this.atoms.forEach((atom) => {
+        if (fragmentsToMergeSet.has(atom.fragment)) {
+          atom.fragment = targetFragmentId;
+        }
+      });
+      fragmentsToMerge.forEach((fragmentId) => this.frags.delete(fragmentId));
+    });
   }
 
   scale(scale: number) {

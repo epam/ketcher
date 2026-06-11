@@ -123,6 +123,21 @@ export function fromPaste(
     );
   });
 
+  const remapEndpoints = (endpoints: number[]): number[] => {
+    const remapped: number[] = [];
+    endpoints.forEach((endpointAtomId) => {
+      const newId = aidMap.get(endpointAtomId);
+      if (newId !== undefined) remapped.push(newId);
+    });
+    return remapped;
+  };
+
+  pstruct.atoms.forEach((atom, aid) => {
+    if (!atom.endpoints?.length) return;
+    const pastedAtom = restruct.molecule.atoms.get(aidMap.get(aid));
+    if (pastedAtom) pastedAtom.endpoints = remapEndpoints(atom.endpoints);
+  });
+
   pstruct.frags.forEach((frag, frid) => {
     if (!frag) return;
     if (frag.properties) {
@@ -142,10 +157,13 @@ export function fromPaste(
   });
 
   pstruct.bonds.forEach((bond) => {
+    const bondToAdd = bond.endpoints?.length
+      ? { ...bond, endpoints: remapEndpoints(bond.endpoints) }
+      : bond;
     const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
-      bond,
+      bondToAdd,
       false,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);

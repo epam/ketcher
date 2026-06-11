@@ -352,6 +352,23 @@ export class Struct {
       }
     });
 
+    // A super attachment point atom stores its endpoint atom ids in
+    // `endpoints`. Now that the atom id map is complete, remap them so they
+    // point at the cloned atoms instead of the originals.
+    this.atoms.forEach((atom, aid) => {
+      if (!atoms.has(aid) || !atom.endpoints?.length) return;
+      const clonedAtomId = aids.get(aid);
+      const clonedAtom =
+        clonedAtomId === undefined ? undefined : cp.atoms.get(clonedAtomId);
+      if (!clonedAtom) return;
+      const remappedEndpoints: number[] = [];
+      atom.endpoints.forEach((endpointAtomId) => {
+        const newId = aids.get(endpointAtomId);
+        if (newId !== undefined) remappedEndpoints.push(newId);
+      });
+      clonedAtom.endpoints = remappedEndpoints;
+    });
+
     fidMap.forEach((newfid, oldfid) => {
       const fragment = this.frags.get(oldfid);
 

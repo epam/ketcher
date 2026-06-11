@@ -1278,6 +1278,7 @@ class Editor implements KetcherEditor {
       assignedAttachmentPoints,
       potentialAttachmentPoints,
       problematicAttachmentPoints: new Set(),
+      problematicAttachmentPointAtomIds: new Set(),
       hasDefaultAttachmentPoints,
       ...(editInstanceInitialValues ? { editInstanceInitialValues } : {}),
     };
@@ -1989,6 +1990,17 @@ class Editor implements KetcherEditor {
     assert(this.monomerCreationState);
 
     this.monomerCreationState.problematicAttachmentPoints = problematicPoints;
+    this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
+    this.render.update(true);
+  }
+
+  setProblematicAttachmentPointAtomIds(problematicAtomIds: Set<number>) {
+    if (!this.monomerCreationState) {
+      return;
+    }
+
+    this.monomerCreationState.problematicAttachmentPointAtomIds =
+      problematicAtomIds;
     this.monomerCreationState = { ...(this.monomerCreationState ?? {}) };
     this.render.update(true);
   }

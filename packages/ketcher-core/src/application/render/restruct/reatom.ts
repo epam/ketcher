@@ -707,6 +707,7 @@ class ReAtom extends ReObject {
         problematicAtoms,
         connectionAttachmentPoints,
         attachmentPointNameOverrides,
+        problematicAttachmentPointAtomIds,
       } = render.monomerCreationState;
       // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
       // otherwise all assigned attachment points are shown.
@@ -801,8 +802,12 @@ class ReAtom extends ReObject {
           const displayLabel =
             attachmentPointNameOverrides?.get(atomsPair[0]) ??
             attachmentPointName;
+          // An AP is problematic when its bond became unsuitable (tracked by
+          // AP name) or it failed wizard validation (tracked by attachment
+          // atom id). Both sources must be honored to red-highlight the label.
           const isProblematic =
-            problematicAttachmentPoints.has(attachmentPointName);
+            problematicAttachmentPoints.has(attachmentPointName) ||
+            (problematicAttachmentPointAtomIds?.has(atomsPair[0]) ?? false);
 
           const rLabelElement = render.paper
             .text(labelPos.x, labelPos.y, displayLabel)

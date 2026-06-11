@@ -96,12 +96,37 @@ const initialWizardState: WizardState = getInitialWizardState();
 
 type AttachmentPointNameOverrides = Map<number, AttachmentPointName>;
 
+/**
+ * Key-based equality for override maps: equal when they have the same atom ids
+ * mapped to the same display names. Used to skip no-op state/editor updates
+ * even when entries are simultaneously added and removed in the same tick.
+ */
+const areOverrideMapsEqual = (
+  a: AttachmentPointNameOverrides,
+  b: AttachmentPointNameOverrides,
+): boolean => {
+  if (a.size !== b.size) {
+    return false;
+  }
+  for (const [atomId, name] of a) {
+    if (b.get(atomId) !== name) {
+      return false;
+    }
+  }
+  return true;
+};
+
 type EffectiveAttachmentPoint = {
   internalName: AttachmentPointName;
   displayName: AttachmentPointName;
   atomPair: [number, number];
 };
 
+/**
+ * Maps each assigned AP to its effective entry, combining the stable internal
+ * R-label, the display name (override if present, else internal), and the
+ * [attachment atom id, leaving atom id] pair. Base for the two helpers below.
+ */
 const getEffectiveAttachmentPointEntries = (
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
   overrides: AttachmentPointNameOverrides,
@@ -115,6 +140,10 @@ const getEffectiveAttachmentPointEntries = (
   );
 };
 
+/**
+ * Builds the map persisted on save: keyed by display name (internal name +
+ * overrides applied), dropping the internal name. Used by the save pipeline.
+ */
 const getResolvedAttachmentPoints = (
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
   overrides: AttachmentPointNameOverrides,
@@ -128,6 +157,10 @@ const getResolvedAttachmentPoints = (
   }, new Map<AttachmentPointName, [number, number]>());
 };
 
+/**
+ * Builds the list fed to AP validation: each entry is the display name plus its
+ * attachment atom id, so validation can report problems back by atom id.
+ */
 const getAttachmentPointsToValidate = (
   assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>,
   overrides: AttachmentPointNameOverrides,
@@ -1081,6 +1114,7 @@ const MonomerCreationWizardInternal = ({
     setAttachmentPointNameOverrides(new Map());
     setInvalidAttachmentPointAtomIds(new Set());
     editor.setAttachmentPointNameOverrides(new Map());
+    editor.setProblematicAttachmentPointAtomIds(new Set());
   };
 
   const handlePhosphatePositionChange = useCallback(
@@ -1112,7 +1146,17 @@ const MonomerCreationWizardInternal = ({
     newName: AttachmentPointName,
     attachmentAtomId: number,
   ) => {
-    setInvalidAttachmentPointAtomIds(new Set());
+    // Clear only the renamed atom's invalid flag. A rename may not resolve the
+    // violation (e.g. R1/R1 → R1/R5 still breaks the side-AP order rule), so
+    // wholesale-clearing would give a false "fixed" signal until resubmit.
+    setInvalidAttachmentPointAtomIds((prev) => {
+      if (!prev.has(attachmentAtomId)) {
+        return prev;
+      }
+      const next = new Set(prev);
+      next.delete(attachmentAtomId);
+      return next;
+    });
     const nextOverrides = new Map(attachmentPointNameOverrides);
     if (currentName === newName) {
       nextOverrides.delete(attachmentAtomId);
@@ -1137,15 +1181,18 @@ const MonomerCreationWizardInternal = ({
       ),
     );
 
-    setAttachmentPointNameOverrides((prev) => {
-      const next = new Map(
-        Array.from(prev.entries()).filter(([attachmentAtomId]) =>
-          activeAttachmentAtomIds.has(attachmentAtomId),
-        ),
-      );
+    const prunedOverrides = new Map(
+      Array.from(attachmentPointNameOverrides.entries()).filter(
+        ([attachmentAtomId]) => activeAttachmentAtomIds.has(attachmentAtomId),
+      ),
+    );
+    if (!areOverrideMapsEqual(attachmentPointNameOverrides, prunedOverrides)) {
+      setAttachmentPointNameOverrides(prunedOverrides);
+      // Keep the editor's mirror in sync so its monomerCreationState does not
+      // retain overrides for atoms whose AP was removed.
+      editor.setAttachmentPointNameOverrides(prunedOverrides);
+    }
 
-      return next.size === prev.size ? prev : next;
-    });
     setInvalidAttachmentPointAtomIds((prev) => {
       const next = new Set(
         Array.from(prev).filter((attachmentAtomId) =>
@@ -1155,7 +1202,7 @@ const MonomerCreationWizardInternal = ({
 
       return next.size === prev.size ? prev : next;
     });
-  }, [assignedAttachmentPoints]);
+  }, [assignedAttachmentPoints, attachmentPointNameOverrides, editor]);
 
   const handleAttachmentPointEditPopupClose = () => {
     setAttachmentPointEditPopupData(null);
@@ -1306,7 +1353,9 @@ const MonomerCreationWizardInternal = ({
         notifications: attachmentPointsNotifications,
       });
       setInvalidAttachmentPointAtomIds(problematicAttachmentPointAtomIds);
-      editor.setProblematicAttachmentPoints(new Set());
+      editor.setProblematicAttachmentPointAtomIds(
+        problematicAttachmentPointAtomIds,
+      );
       return;
     }
 
@@ -1688,7 +1737,9 @@ const MonomerCreationWizardInternal = ({
       setInvalidAttachmentPointAtomIds(
         new Set(problematicAttachmentPointAtomIdsForSubmit),
       );
-      editor.setProblematicAttachmentPoints(new Set());
+      editor.setProblematicAttachmentPointAtomIds(
+        new Set(problematicAttachmentPointAtomIdsForSubmit),
+      );
     }
 
     return needSaveMonomers;
@@ -1707,7 +1758,20 @@ const MonomerCreationWizardInternal = ({
   const handleSubmit = () => {
     wizardStateDispatch({ type: 'ResetErrors' });
     rnaPresetWizardStateDispatch({ type: 'ResetErrors' });
+    // Clear AP validation notifications from any previous submit so that a rule
+    // no longer violated (e.g. duplicate AP names) does not linger alongside a
+    // newly failing rule (e.g. incorrect order) after the user fixes the first.
+    const attachmentPointNotificationIds: WizardNotificationId[] = [
+      'noAttachmentPoints',
+      'attachmentPointsNotUnique',
+      'incorrectAttachmentPointsOrder',
+    ];
+    attachmentPointNotificationIds.forEach((id) => {
+      wizardStateDispatch({ type: 'RemoveNotification', id });
+      rnaPresetWizardStateDispatch({ type: 'RemoveNotification', id });
+    });
     editor.setProblematicAttachmentPoints(new Set());
+    editor.setProblematicAttachmentPointAtomIds(new Set());
     editor.setProblematicAtoms(new Set());
     setHasActiveRnaPresetAtomValidationErrors(false);
     setInvalidAttachmentPointAtomIds(new Set());

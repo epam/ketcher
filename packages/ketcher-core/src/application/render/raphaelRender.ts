@@ -67,10 +67,15 @@ export type MonomerCreationState = {
   // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
   connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
   editInstanceInitialValues?: MonomerCreationInitialValues;
-  // Display-only overrides for AP labels during editing.
+  // Display-only overrides for AP labels shown on the canvas during editing.
   // Maps attachment atom id → temporary display name.
-  // Never affects assignedAttachmentPoints; resolved into the map only on save.
+  // Never mutates assignedAttachmentPoints; on save, a new resolved map is
+  // produced from assignedAttachmentPoints + these overrides and persisted.
   attachmentPointNameOverrides?: Map<number, AttachmentPointName>;
+  // Attachment atom ids whose AP failed wizard validation (uniqueness/order).
+  // Used to red-highlight AP labels on canvas, mirroring the side-panel invalid
+  // style. Keyed by atom id because validation tracks duplicates/order by atom.
+  problematicAttachmentPointAtomIds?: Set<number>;
 } | null;
 
 export class Render {

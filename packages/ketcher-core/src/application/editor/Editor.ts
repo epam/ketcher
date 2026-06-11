@@ -82,10 +82,12 @@ import {
   IDT_ALIAS_LENGTH_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
+  MONOMER_GROUP_TEMPLATE_NAME_FORMAT_ERROR_MESSAGE,
   isValidBilnAlias,
   isValidHelmAlias,
   isValidHelmAliasLength,
   isValidIdtAlias,
+  isValidMonomerGroupTemplateName,
   getTooLongIdtAliasEntries,
   initHotKeys,
   isEditableInputTarget,
@@ -718,15 +720,20 @@ export class CoreEditor {
         return;
       }
 
+      if (!isValidMonomerGroupTemplateName(templateDefinition.name)) {
+        reportValidationError(
+          templateRef.$ref,
+          `Invalid monomer group template name value. ${MONOMER_GROUP_TEMPLATE_NAME_FORMAT_ERROR_MESSAGE} The template was not added to the library.`,
+        );
+        return;
+      }
+
       if (
         templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
       ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+        reportValidationError(
+          templateRef.$ref,
+          `${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
         );
         return;
       }

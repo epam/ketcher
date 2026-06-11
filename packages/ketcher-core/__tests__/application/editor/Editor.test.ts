@@ -16,6 +16,7 @@ import { Vec2 } from 'domain/entities';
 import { peptideMonomerItem, polymerEditorTheme } from '../../mock-data';
 import {
   KetcherLogger,
+  MONOMER_GROUP_TEMPLATE_NAME_FORMAT_ERROR_MESSAGE,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
@@ -920,6 +921,54 @@ describe('CoreEditor', () => {
       );
     });
 
+    it('should reject monomer group template with invalid name characters', () => {
+      const presetWithInvalidName = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerGroupTemplate-#$%@ Space',
+            },
+          ],
+        },
+        'monomerGroupTemplate-#$%@ Space': {
+          type: 'monomerGroupTemplate',
+          id: '',
+          name: '#$%@ Space',
+          class: 'RNA',
+          templates: [],
+          connections: [],
+        },
+      };
+
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(presetWithInvalidName));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'monomerGroupTemplate-#$%@ Space',
+          reason: expect.stringContaining(
+            MONOMER_GROUP_TEMPLATE_NAME_FORMAT_ERROR_MESSAGE,
+          ),
+        },
+      ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining(
+          MONOMER_GROUP_TEMPLATE_NAME_FORMAT_ERROR_MESSAGE,
+        ),
+      );
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
     it('should reject monomer group template with name longer than the max length', () => {
       const longName = 'a'.repeat(MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH + 1);
       const presetWithLongName = {
@@ -942,9 +991,16 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(presetWithLongName));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(presetWithLongName));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
         ),

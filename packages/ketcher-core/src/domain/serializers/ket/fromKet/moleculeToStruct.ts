@@ -22,7 +22,11 @@ import { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
 import { ifDef } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
-import { atomToStruct, bondToStruct } from './atomBondToStruct';
+import {
+  atomToStruct,
+  bondToStruct,
+  hapticBondEndpointsToStruct,
+} from './atomBondToStruct';
 
 export function toRlabel(values) {
   let res = 0;
@@ -59,6 +63,8 @@ export function moleculeToStruct(ketItem: any): Struct {
   if (ketItem.bonds) {
     ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)));
   }
+
+  hapticBondEndpointsToStruct(struct);
 
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroupData) => {

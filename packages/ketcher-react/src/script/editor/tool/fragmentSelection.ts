@@ -229,7 +229,7 @@ export default class FragmentSelectionTool implements Tool {
       this.bondPreview = reBond.drawFragmentSelectionPreview(
         this.editor.render,
         startAtomId,
-        true, // isGray parameter
+        { disabled: true },
       );
       return;
     }
@@ -263,7 +263,6 @@ export default class FragmentSelectionTool implements Tool {
     this.bondPreview = reBond.drawFragmentSelectionPreview(
       this.editor.render,
       startAtomId,
-      false, // isGray parameter
     );
   }
 

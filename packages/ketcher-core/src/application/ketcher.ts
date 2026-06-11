@@ -91,7 +91,7 @@ const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   outputContentType: ChemicalMimeType.MonomerLibrary,
 } as const;
 
-const MONOMER_FALLBACK_CONCURRENCY = 6;
+const MONOMER_FALLBACK_CONCURRENCY = 1;
 
 export class Ketcher {
   _id: string;
@@ -928,12 +928,16 @@ export class Ketcher {
         });
 
         if (convertedKetStrings.length === 0) {
+          const originalMessage =
+            batchError instanceof Error
+              ? batchError.message
+              : String(batchError);
           const aggregateError = new AggregateError(
             [batchError, ...(firstItemError ? [firstItemError] : [])],
-            'Failed to convert monomers library: all records failed to convert.',
+            originalMessage,
           );
           throw new MonomerLibraryConvertError(
-            `Monomer item could not be loaded because of an error: ${aggregateError.message}`,
+            `Monomer item could not be loaded because of an error: ${originalMessage}`,
             aggregateError,
           );
         }

@@ -136,25 +136,12 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
     loadString: '[#6]%91.[*:1]-%91',
   },
   {
-    testDescription: '19. Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]:%91',
-  },
-  {
-    testDescription: '21. Single/Aromatic bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]%91',
-  },
-  {
-    testDescription: '23. Dative bond connected to R-Group',
-    loadString:
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
-  },
-  {
     testDescription: '25. Single Up bond connected to R-Group',
     loadString: '[#6]%91.[*:1]/%91',
   },
   {
     testDescription: '26. Single Down bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]%91',
+    loadString: '[#6]%91.[*:1]\\%91',
   },
   {
     testDescription: '29. Molecule with eight R-Groups on terminal positions',
@@ -209,8 +196,21 @@ const notEligableForMonomerCreation1: IMoleculesForMonomerCreation[] = [
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAD/338AAKANAf/ffwAAoCsBA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgD//wAAAAAAAAAAAAA=',
   },
   {
+    testDescription: '19. Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]:%91',
+  },
+  {
     testDescription: '20. Single/Double connected to R-Group',
     loadString: '[#6]%91.[*:1]!:;-,=%91',
+  },
+  {
+    testDescription: '21. Single/Aromatic bond connected to R-Group',
+    loadString: '[#6]%91.[*:1]%91',
+  },
+  {
+    testDescription: '23. Dative bond connected to R-Group',
+    loadString:
+      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAQCEAAAoIYAAGARAQCghgAAYC8BA4AEAAAABIAFAAAAAAIIAAAAAAAAAAAAAAAEgAYAAAAABAIABwAzBAMAAABBAAIIAAAAAAAAAB4ABoAAAAAAAAIIAAAAAAAAAB4AIwgBAAAABw4AAQAAAAMAYADIAAAAUjEAAAAABYAHAAAABAYEAAYAAAAFBgQABQAAAAAGAgAAEAAAAAAAAAAAAAA=',
   },
   {
     testDescription: '22. Double/Aromatic bond connected to R-Group',

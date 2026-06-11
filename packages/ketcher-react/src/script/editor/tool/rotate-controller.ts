@@ -1,12 +1,12 @@
 import {
-  Action,
+  type Action,
   CoordinateTransformation,
   Scale,
   Vec2,
   vectorUtils,
 } from 'ketcher-core';
 import { throttle } from 'lodash';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select/select';

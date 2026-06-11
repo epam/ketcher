@@ -40,20 +40,20 @@ function parseAtomLineV3000(line: string): Atom {
     aam: split[5].trim(),
   };
   let label = split[1].trim();
-  if (label.charAt(0) === '"' && label.charAt(label.length - 1) === '"') {
+  if (label.startsWith('"') && label.endsWith('"')) {
     label = label.slice(1, -1);
   } // strip qutation marks
-  if (label.charAt(label.length - 1) === ']') {
+  if (label.endsWith(']')) {
     // assume atom list
     label = label.slice(0, -1); // remove ']'
     const atomListParams: Record<string, unknown> = {};
     atomListParams.notList = false;
-    const matchNotListInfo = label.match(/NOT ?\[/);
+    const matchNotListInfo = /NOT ?\[/.exec(label);
     if (matchNotListInfo) {
       atomListParams.notList = true;
       const [matchedSubstr] = matchNotListInfo;
       label = label.slice(matchedSubstr.length); // remove 'NOT [' or 'NOT['
-    } else if (label.charAt(0) !== '[') {
+    } else if (!label.startsWith('[')) {
       throw new Error("Error: atom list expected, found '" + label + "'");
     } else {
       label = label.slice(1); // remove '['
@@ -155,7 +155,7 @@ function v3000parseSGroup(
   while (shift < ctabLines.length) {
     line = stripV30(ctabLines[shift++]).trim();
     if (line.trim() === 'END SGROUP') return shift;
-    while (line.charAt(line.length - 1) === '-') {
+    while (line.endsWith('-')) {
       line = (line.slice(0, -1) + stripV30(ctabLines[shift++])).trim();
     }
     const split = splitSGroupDef(line);
@@ -231,7 +231,7 @@ function parseCTabV3000(
   if (ctabLines[shift++].trim() !== 'M  V30 BEGIN CTAB') {
     throw Error('CTAB V3000 invalid');
   }
-  if (ctabLines[shift].slice(0, 13) !== 'M  V30 COUNTS') {
+  if (!ctabLines[shift].startsWith('M  V30 COUNTS')) {
     throw Error('CTAB V3000 invalid');
   }
   const vals = ctabLines[shift].slice(14).split(' ');
@@ -495,7 +495,7 @@ function spacebarsplit(line: string): string[] {
 
 // utils
 function stripQuotes(str: string): string {
-  if (str[0] === '"' && str[str.length - 1] === '"') {
+  if (str.startsWith('"') && str.endsWith('"')) {
     return str.slice(1, -1);
   }
   return str;
@@ -561,7 +561,7 @@ function parseBracedNumberList(line: string, shift?: number): number[] | null {
 
 function stripV30(line: string): string {
   /* reader */
-  if (line.slice(0, 7) !== 'M  V30 ') throw new Error('Prefix invalid');
+  if (!line.startsWith('M  V30 ')) throw new Error('Prefix invalid');
   return line.slice(7);
 }
 

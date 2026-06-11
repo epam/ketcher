@@ -33,7 +33,7 @@ import { fromBondStereoUpdate } from './bondStereo';
 
 import { Action } from './action';
 import { without } from 'lodash/fp';
-import ReStruct from 'application/render/restruct/restruct';
+import type ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 
 export function fromAtomAddition(restruct, pos, atom) {
@@ -46,7 +46,7 @@ export function fromAtomAddition(restruct, pos, atom) {
   const aid = (
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd
   ).data.aid;
-  action.addOp(new CalcImplicitH([aid]).perform(restruct));
+  action.addOp(new CalcImplicitH([aid as number]).perform(restruct));
 
   return action;
 }

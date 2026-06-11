@@ -16,14 +16,14 @@
 
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { RxnPlus } from 'domain/entities/rxnPlus';
-import { Struct } from 'domain/entities/struct';
+import type { Struct } from 'domain/entities/struct';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function rxnToStruct(ketItem: any, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
     const arrow = new RxnArrow(getNodeWithInvertedYCoord(ketItem.data));
     arrow.setInitiallySelected(ketItem.selected);
-    struct.rxnArrows.add(arrow);
+    struct.addRxnArrow(arrow);
   } else {
     const plus = new RxnPlus({
       pp: {

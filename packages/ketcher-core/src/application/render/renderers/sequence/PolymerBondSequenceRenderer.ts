@@ -1,8 +1,8 @@
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';

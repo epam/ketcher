@@ -128,7 +128,7 @@ test.describe('Erase Tool', () => {
     };
 
     await selectAllStructuresOnCanvas(page);
-    await await RotationTool(page).delete();
+    await RotationTool(page).delete();
 
     await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y, {
       from: 'pageTopLeft',

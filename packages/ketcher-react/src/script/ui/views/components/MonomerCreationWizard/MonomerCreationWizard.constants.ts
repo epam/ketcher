@@ -1,6 +1,10 @@
-import { HELM_ALIAS_FORMAT_ERROR_MESSAGE, KetMonomerClass } from 'ketcher-core';
-
 import {
+  BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  HELM_ALIAS_FORMAT_ERROR_MESSAGE,
+  KetMonomerClass,
+} from 'ketcher-core';
+
+import type {
   MonomerTypeSelectItem,
   WizardNotificationMessageMap,
   WizardNotificationTypeMap,
@@ -58,8 +62,25 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidHELMAlias: HELM_ALIAS_FORMAT_ERROR_MESSAGE,
   notUniqueHELMAlias:
     'The HELM alias must be unique amongst peptide or RNA monomers.',
+  invalidBILNAlias: BILN_ALIAS_FORMAT_ERROR_MESSAGE,
+  notUniqueBILNAlias:
+    'The BILN alias must be unique amongst peptide and CHEM monomers.',
   invalidRnaPresetStructure:
     'Structure of rna preset component contains issues. Please adjust the structure.',
+  rnaPresetAtomsOutsideComponents:
+    'Some atoms do not belong to any nucleotide component (sugar, base, or phosphate).',
+  rnaPresetAtomsInMultipleComponents:
+    'Some atoms belong to multiple nucleotide components.',
+  rnaPresetMissingComponents:
+    'Preset must contain at least two components, with sugar being one of them.',
+  rnaPresetInvalidSugarConnectionBonds:
+    'Sugar can only have one single bond with base and one single bond with phosphate.',
+  rnaPresetUnexpectedBasePhosphateBond:
+    "Phosphate and base mustn't have a bond.",
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints:
+    'The bond between sugar and base must be established between R3 of the sugar and R1 of the base.',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints:
+    'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
   notUniquePresetCode: 'The preset code must be unique amongst other presets.',
   invalidPresetCode:
     'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
@@ -89,7 +110,16 @@ export const NotificationTypes: WizardNotificationTypeMap = {
   impureStructure: 'error',
   invalidHELMAlias: 'error',
   notUniqueHELMAlias: 'error',
+  invalidBILNAlias: 'error',
+  notUniqueBILNAlias: 'error',
   invalidRnaPresetStructure: 'error',
+  rnaPresetAtomsOutsideComponents: 'error',
+  rnaPresetAtomsInMultipleComponents: 'error',
+  rnaPresetMissingComponents: 'error',
+  rnaPresetInvalidSugarConnectionBonds: 'error',
+  rnaPresetUnexpectedBasePhosphateBond: 'error',
+  rnaPresetInvalidSugarBaseConnectionAttachmentPoints: 'error',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints: 'error',
   notUniquePresetCode: 'error',
   invalidPresetCode: 'error',
   invalidName: 'error',

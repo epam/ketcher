@@ -1,19 +1,19 @@
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import {
+import type {
   Image,
   ImageReferenceName,
   ImageReferencePositionInfo,
 } from 'domain/entities/image';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
-import { RaphaelPaper, RaphaelSet } from 'raphael';
+import type { RaphaelPaper, RaphaelSet } from 'raphael';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import draw from 'application/render/draw';
 import { IMAGE_KEY } from 'domain/constants';
-import { Render } from 'application/render/raphaelRender';
+import type { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
@@ -25,6 +25,14 @@ interface ClosestReferencePosition {
 
 export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
+  private selectionHitTargetsSet: RaphaelSet;
+
+  private setSelectionPointsVisibility(visible: boolean) {
+    this.selectionPointsSet?.attr({
+      opacity: visible ? 1 : 0,
+      'pointer-events': visible ? 'all' : 'none',
+    });
+  }
 
   static isSelectable(): boolean {
     return true;
@@ -148,24 +156,56 @@ export class ReImage extends ReObject {
     renderOptions: RenderOptions,
   ) {
     this.selectionPointsSet = paper.set();
+    this.selectionHitTargetsSet = paper.set();
     const scale = this.getScale(renderOptions);
     const strokeWidth = scale * REFERENCE_POINT_LINE_WIDTH_MULTIPLIER;
-    const selectionReferencePositions = Object.entries(
-      this.getSelectionReferencePositions(renderOptions),
-    );
-    selectionReferencePositions.forEach(([key, { x, y }]) => {
-      const element = paper.circle(x, y, scale).attr({
-        fill: 'none',
-        'stroke-width': strokeWidth,
-      });
+    const imageId = reStruct.molecule.images.keyOf(this.image);
+    const visibleHandleReferencePositions =
+      this.getSelectionReferencePositions(renderOptions);
+
+    (
+      Object.keys(visibleHandleReferencePositions) as ImageReferenceName[]
+    ).forEach((key) => {
+      const visiblePosition = visibleHandleReferencePositions[key];
+      const element = paper
+        .circle(visiblePosition.x, visiblePosition.y, scale)
+        .attr({
+          fill: 'transparent',
+          stroke: '#000',
+          'stroke-width': strokeWidth,
+          opacity: 0,
+        });
+      const hitTarget = paper
+        .circle(visiblePosition.x, visiblePosition.y, scale)
+        .attr({
+          fill: '#000',
+          stroke: '#000',
+          'stroke-width': 0,
+          'fill-opacity': 0,
+          'stroke-opacity': 0,
+          opacity: 1,
+          'pointer-events': 'all',
+        });
       if (element.node?.setAttribute) {
-        element.node.setAttribute('data-testid', `imageResize-${key}`);
+        element.node.setAttribute('pointer-events', 'none');
+      }
+      if (hitTarget.node?.setAttribute) {
+        hitTarget.node.setAttribute('data-testid', `imageResize-${key}`);
+        hitTarget.node.setAttribute('data-image-id', imageId);
+        hitTarget.node.setAttribute('pointer-events', 'all');
       }
 
       this.selectionPointsSet.push(element);
+      this.selectionHitTargetsSet.push(hitTarget);
     });
+    this.setSelectionPointsVisibility(false);
     reStruct.addReObjectPath(
-      LayerMap.selectionPoints,
+      LayerMap.indices,
+      this.visel,
+      this.selectionHitTargetsSet,
+    );
+    reStruct.addReObjectPath(
+      LayerMap.indices,
       this.visel,
       this.selectionPointsSet,
     );
@@ -178,6 +218,7 @@ export class ReImage extends ReObject {
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
+    this.drawSelectionPoints(restruct, restruct.render.paper, renderOptions);
 
     const image = restruct.render.paper.image(
       this.image.bitmap,
@@ -234,11 +275,10 @@ export class ReImage extends ReObject {
   }
 
   makeSelectionPlate(
-    reStruct: ReStruct,
+    _reStruct: ReStruct,
     paper: RaphaelPaper,
     options: RenderOptions,
   ) {
-    this.drawSelectionPoints(reStruct, paper, options);
     return this.drawSelectionLine(paper, options);
   }
 
@@ -250,11 +290,11 @@ export class ReImage extends ReObject {
   }
 
   showPoints() {
-    this.selectionPointsSet?.show();
+    this.setSelectionPointsVisibility(true);
   }
 
   hidePoints() {
-    this.selectionPointsSet?.hide();
+    this.setSelectionPointsVisibility(false);
   }
 
   calculateDistanceToPoint(point: Vec2, renderOptions: RenderOptions): number {

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import FormContext, { FormContextValue } from './../contexts/formContext';
+import FormContext, { type FormContextValue } from './../contexts/formContext';
 import React from 'react';
 
 export function useFormContext(): FormContextValue {

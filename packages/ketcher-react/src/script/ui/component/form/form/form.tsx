@@ -16,13 +16,13 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import { Validator, ValidationError, Schema } from 'jsonschema';
+import { type ValidationError, type Schema, Validator } from 'jsonschema';
 import { ErrorPopover } from './errorPopover';
 import {
+  type FormContextValue,
+  type FormSchema,
+  type SchemaProperty,
   FormContext,
-  FormContextValue,
-  FormSchema,
-  SchemaProperty,
 } from '../../../../../contexts';
 import Input from '../Input/Input';
 import Select from '../Select';
@@ -139,6 +139,7 @@ class Form extends Component<FormProps> {
   schema: ReturnType<typeof propSchema>;
   private _cachedSchema: FormSchema;
   private _contextValue: FormContextValue;
+
   constructor(props: FormProps) {
     super(props);
     const { onUpdate, schema, init } = this.props;
@@ -152,7 +153,6 @@ class Form extends Component<FormProps> {
       onUpdate(initialState, valid, errs);
     }
     this.updateState = this.updateState.bind(this);
-
     this._cachedSchema = schema;
     this._contextValue = { schema, stateStore: this };
   }
@@ -165,7 +165,7 @@ class Form extends Component<FormProps> {
         (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, { customValid, serialize, deserialize });
-      this.schema.serialize(result); // hack: valid first state
+      this.schema.serialize(result);
       this.updateState(result);
     }
   }
@@ -182,25 +182,25 @@ class Form extends Component<FormProps> {
     const value = result[name];
     const extraValue = extraName ? result[extraName] : null;
 
-    const handleOnChange = (fieldName: string, fieldValue: unknown) => {
-      const newState = { ...this.props.result, [fieldName]: fieldValue };
-      this.updateState(newState);
-      if (onChange) onChange(fieldValue);
-    };
-
     return {
       dataError: errors?.[name],
       value,
       extraValue,
-      onChange: (val: unknown) => handleOnChange(name, val),
-      onExtraChange: (val: unknown) => handleOnChange(extraName ?? '', val),
+      onChange: (val: unknown) => {
+        const newState = { ...this.props.result, [name]: val };
+        this.updateState(newState);
+        if (onChange) onChange(val);
+      },
+      onExtraChange: (val: unknown) => {
+        const newState = { ...this.props.result, [extraName ?? '']: val };
+        this.updateState(newState);
+      },
     };
   }
 
   render() {
     const { schema, children } = this.props;
 
-    // Update the cached context value only if schema has changed
     if (this._cachedSchema !== schema) {
       this._cachedSchema = schema;
       this._contextValue = { schema, stateStore: this };
@@ -300,7 +300,7 @@ function Label({
   error: _error,
   children,
   ...props
-}: LabelProps) {
+}: Readonly<LabelProps>) {
   return (
     <label {...props}>
       {labelPos !== 'after' && renderLabelContent(title ?? '', tooltip ?? null)}
@@ -322,7 +322,7 @@ function usePopoverAnchor() {
   return { anchorEl, handleOpen, handleClose };
 }
 
-function Field(props: FieldProps) {
+function Field(props: Readonly<FieldProps>) {
   const {
     name,
     extraName,
@@ -377,7 +377,7 @@ function Field(props: FieldProps) {
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
       error={dataError}
-      title={rest.title || desc.title}
+      title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
       data-testid={props['data-testid']}
@@ -404,7 +404,7 @@ function Field(props: FieldProps) {
   );
 }
 
-function FieldWithModal(props: FieldWithModalProps) {
+function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { name, onChange, labelPos, className, onEdit, ...rest } = props;
   // Separate Label/wrapper-only props from Input-compatible props
   const {
@@ -434,7 +434,7 @@ function FieldWithModal(props: FieldWithModalProps) {
     <Label
       className={className}
       error={dataError}
-      title={title || desc.title}
+      title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}
     >
@@ -470,7 +470,7 @@ function FieldWithModal(props: FieldWithModalProps) {
   );
 }
 
-function CustomQueryField(props: CustomQueryFieldProps) {
+function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const {
     name,
     onChange,
@@ -620,7 +620,7 @@ function propSchema(
   }
 
   return {
-    key: schema.key || '',
+    key: schema.key ?? '',
     serialize: (inst: Record<string, unknown>) => {
       // Pass an explicit base URI so jsonschema's resolveUrl() always receives
       // a valid absolute URL as `from`.  Without this, it calls

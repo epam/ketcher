@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -208,7 +208,7 @@ test.describe('Superatom S-Group tool', () => {
     });
     await EditAbbreviationDialog(page).removeAbbreviation();
     await keyboardPressOnCanvas(page, 'o');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -234,7 +234,7 @@ test.describe('Superatom S-Group tool', () => {
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/superatom.mol');
     await expandAbbreviation(page, getAbbreviationLocator(page, { name: 'w' }));
     await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 

@@ -2,12 +2,12 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@fixtures';
 import { Page } from '@playwright/test';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { NucleotideNaturalAnalogCount } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
@@ -25,9 +25,6 @@ let page: Page;
 test.describe('Color of Nucleobases', () => {
   test.beforeAll(async ({ initFlexCanvas }) => {
     page = await initFlexCanvas();
-  });
-  test.afterEach(async () => {
-    await CommonTopLeftToolbar(page).clearCanvas();
   });
   test.afterAll(async ({ closePage }) => {
     await closePage();
@@ -133,6 +130,7 @@ test.describe('Color of Nucleobases', () => {
        */
       await Library(page).openRNASection(RNASection.Nucleotides);
       await Library(page).selectMonomer(nucleotide);
+      await moveMouseAway(page);
       await takeMonomerLibraryScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -167,6 +165,7 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       base: Base.C,
+      previousBase: Base.A,
       name: 'Cytosine and bases with analogue C',
       color: '#59D0FF',
     },
@@ -177,6 +176,7 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       base: Base.T,
+      previousBase: Base.G,
       name: 'Thymine and bases with analogue T',
       color: '#FF8D8D',
     },
@@ -187,12 +187,13 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       base: Base.cl6pur,
+      previousBase: Base.U,
       name: 'cl6pur and bases with analogue X',
       color: '#CAD3DD',
     },
   ];
 
-  for (const { base, name, color } of baseCases2) {
+  for (const { base, previousBase, name, color } of baseCases2) {
     test(`Case 4: Verify that ${name} change the shape on canvas and color to ${color} (see mockups)`, async () => {
       /*
        * Version 3.8
@@ -204,13 +205,22 @@ test.describe('Color of Nucleobases', () => {
        * 3. Add to canvas any base from section
        * 4. Check color and shape on canvas
        */
-      await Library(page).openRNASection(RNASection.Bases);
-      await Library(page).clickMonomerAutochain(base);
-      await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      await CommonTopLeftToolbar(page).clearCanvas();
+      try {
+        await Library(page).openRNASection(RNASection.Bases);
+        if (previousBase) {
+          await Library(page).clickMonomerAutochain(previousBase);
+          await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
+        }
+        await Library(page).clickMonomerAutochain(base);
+        await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      } finally {
+        await CommonTopLeftToolbar(page).clearCanvas();
+      }
     });
   }
 
@@ -222,6 +232,7 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       nucleotide: Nucleotide._5hMedC,
+      previousNucleotide: Nucleotide._2_damdA,
       name: 'All nucleotides with the natural analogue C',
       color: '#59D0FF',
     },
@@ -232,6 +243,7 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       nucleotide: Nucleotide.Super_T,
+      previousNucleotide: Nucleotide.Super_G,
       name: 'All nucleotides with the natural analogue T',
       color: '#FF8D8D',
     },
@@ -242,12 +254,18 @@ test.describe('Color of Nucleobases', () => {
     },
     {
       nucleotide: Nucleotide._5NitInd,
+      previousNucleotide: Nucleotide._5Br_dU,
       name: 'All nucleotides with the natural analogue X',
       color: '#CAD3DD',
     },
   ];
 
-  for (const { nucleotide, name, color } of nucleotideCases2) {
+  for (const {
+    nucleotide,
+    previousNucleotide,
+    name,
+    color,
+  } of nucleotideCases2) {
     test(`Case 5: Verify that ${name} change the shape on canvas and color to ${color} (see mockups)`, async () => {
       /*
        * Version 3.8
@@ -259,13 +277,22 @@ test.describe('Color of Nucleobases', () => {
        * 3. Add to canvas any nucleotide from section
        * 4. Check color and shape on canvas
        */
-      await Library(page).openRNASection(RNASection.Nucleotides);
-      await Library(page).clickMonomerAutochain(nucleotide);
-      await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-        hideMacromoleculeEditorScrollBars: true,
-      });
+      await CommonTopLeftToolbar(page).clearCanvas();
+      try {
+        await Library(page).openRNASection(RNASection.Nucleotides);
+        if (previousNucleotide) {
+          await Library(page).clickMonomerAutochain(previousNucleotide);
+          await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
+        }
+        await Library(page).clickMonomerAutochain(nucleotide);
+        await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      } finally {
+        await CommonTopLeftToolbar(page).clearCanvas();
+      }
     });
   }
 
@@ -280,13 +307,18 @@ test.describe('Color of Nucleobases', () => {
      * 3. Add to canvas any amino acid with the natural analogue X
      * 4. Check color and shape on canvas
      */
-    await Library(page).switchToPeptidesTab();
-    await Library(page).clickMonomerAutochain(Peptide._Am);
-    await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await CommonTopLeftToolbar(page).clearCanvas();
+    try {
+      await Library(page).switchToPeptidesTab();
+      await Library(page).clickMonomerAutochain(Peptide._Am);
+      await clickOnCanvas(page, 500, 400, { from: 'pageTopLeft' });
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    } finally {
+      await CommonTopLeftToolbar(page).clearCanvas();
+    }
   });
 
   test('Case 7: Check that change of the underline colour for the counter in the Calculate Properties window for bases and nucleotides (A, C, G, T, U, X)', async () => {

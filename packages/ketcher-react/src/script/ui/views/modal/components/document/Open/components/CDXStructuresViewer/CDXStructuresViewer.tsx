@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { Icon } from 'components';
-import { Struct } from 'ketcher-core';
+import type { Struct } from 'ketcher-core';
 import { LoadingCircles } from '../../../../../../components';
 import { serverSelector } from '../../../../../../../state/server/selectors';
 import StructRender from '../../../../../../../../../components/StructRender/StructRender';

@@ -1,18 +1,18 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
-import {
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { SequenceRenderer } from 'application/render';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
@@ -20,6 +20,8 @@ import { MONOMER_CONST } from 'domain/constants';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+const CARET_X_OFFSET_BEFORE_NODE = -17;
+const CARET_X_OFFSET_AFTER_NODE = 3;
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -71,7 +73,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
+      sequenceRendererStore.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -587,7 +589,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
   }
 
-  public showCaret() {
+  public showCaret(xOffset = CARET_X_OFFSET_BEFORE_NODE) {
     this.caretElement = this.spacerElement?.append('g');
 
     if (this.isSyncEditMode && this.isAntisenseNode) {
@@ -616,13 +618,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     ) {
       this.caretElement
         ?.append('line')
-        .attr('x1', -17)
+        .attr('x1', xOffset)
         .attr('y1', -1)
-        .attr('x2', -17)
+        .attr('x2', xOffset)
         .attr('y2', 21)
         .attr('stroke', '#333')
         .attr('class', 'blinking');
     }
+  }
+
+  public showCaretAfterNode() {
+    this.showCaret(CARET_X_OFFSET_AFTER_NODE);
   }
 
   public removeCaret() {
@@ -630,7 +636,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = undefined;
   }
 
-  public redrawCaret(editingNodeIndexOverall?: number) {
+  public redrawCaret(editingNodeIndexOverall?: number, afterRowEnd = false) {
     this.removeCaret();
 
     if (
@@ -638,7 +644,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isEditingSymbol(editingNodeIndexOverall)) ||
       this.isSingleEmptyNode
     ) {
-      this.showCaret();
+      if (afterRowEnd) {
+        this.showCaretAfterNode();
+      } else {
+        this.showCaret();
+      }
     }
   }
 

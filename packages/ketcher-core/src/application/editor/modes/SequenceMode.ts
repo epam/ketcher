@@ -1,15 +1,15 @@
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { LayoutMode } from 'application/editor/modes/types';
+import type { LayoutMode } from 'application/editor/modes/types';
 import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
+  type TwoStrandedNodesSelection,
   SequenceRenderer,
-  TwoStrandedNodesSelection,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import {
   AmbiguousMonomer,
@@ -36,28 +36,28 @@ import {
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import {
+  type RnaDnaNaturalAnaloguesEnum,
   peptideNaturalAnalogues,
   peptideAmbiguousSymbols,
   RNA_DNA_NON_MODIFIED_PART,
   rnaDnaNaturalAnalogues,
   rnaDnaAmbiguousSymbols,
-  RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
-import {
+import type {
   SubChainNode,
   SequenceNode,
 } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import {
+  type ITwoStrandedChainItem,
   ChainsCollection,
-  ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import {
+import type {
   IRnaPreset,
   LabeledNodesWithPositionInSequence,
 } from 'application/editor/tools/Tool';
@@ -67,7 +67,8 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
-import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import type { CoreEditor } from 'application/editor/Editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { registerMode } from './modesRegistry';
 
@@ -498,7 +499,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
 
       if (isRightSideOfSequenceItemClicked) {
-        SequenceRenderer.moveCaretForward();
+        SequenceRenderer.moveCaretForwardOrToRowEnd();
       }
 
       SequenceRenderer.resetLastUserDefinedCaretPosition();
@@ -545,6 +546,7 @@ export class SequenceMode extends BaseMode {
       const moveCaretOperation = new RestoreSequenceCaretPositionOperation(
         this.selectionStartCaretPosition,
         SequenceRenderer.caretPosition,
+        (position) => SequenceRenderer.setCaretPosition(position),
       );
       modelChanges.addOperation(moveCaretOperation);
       editor.renderersContainer.update(modelChanges);
@@ -778,6 +780,7 @@ export class SequenceMode extends BaseMode {
       isNumber(newCaretPosition)
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
+      (position) => SequenceRenderer.setCaretPosition(position),
     );
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
@@ -877,8 +880,6 @@ export class SequenceMode extends BaseMode {
         selectionEndTwoStrandedNode,
         strandType,
       );
-      let isPhosphateAdditionalyDeleted = false;
-
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
         selectionStartTwoStrandedNode,
       );
@@ -1035,21 +1036,20 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        if (
+        const sensePhosphateAdditionallyDeleted =
           nodeBeforeSelection === nodeInSameChainBeforeSelection &&
           nodeBeforeSelection instanceof Nucleotide &&
           selectionStartNode instanceof Nucleoside &&
           (!nodeAfterSelection ||
-            nodeAfterSelection instanceof EmptySequenceNode)
-        ) {
+            nodeAfterSelection instanceof EmptySequenceNode);
+
+        if (sensePhosphateAdditionallyDeleted) {
           // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeBeforeSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
-          isPhosphateAdditionalyDeleted = true;
         }
 
         if (
@@ -1077,7 +1077,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isPhosphateAdditionalyDeleted
+              sensePhosphateAdditionallyDeleted
                 ? nodeBeforeSelection.firstMonomerInNode
                 : nodeBeforeSelection.lastMonomerInNode,
               nodeAfterSelection.firstMonomerInNode,
@@ -1092,21 +1092,20 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        if (
+        const antisensePhosphateAdditionallyDeleted =
           nodeAfterSelection === nodeInSameChainAfterSelection &&
           nodeAfterSelection instanceof Nucleotide &&
           selectionEndNode instanceof Nucleoside &&
           (!nodeBeforeSelection ||
-            nodeBeforeSelection instanceof EmptySequenceNode)
-        ) {
+            nodeBeforeSelection instanceof EmptySequenceNode);
+
+        if (antisensePhosphateAdditionallyDeleted) {
           // delete phosphate from last nucleotide
           modelChanges.merge(
             editor.drawingEntitiesManager.deleteMonomer(
               nodeAfterSelection.lastMonomerInNode,
             ),
           );
-          // TODO get rid of this boolean
-          isPhosphateAdditionalyDeleted = true;
         }
 
         if (
@@ -1134,7 +1133,7 @@ export class SequenceMode extends BaseMode {
         } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
-              isPhosphateAdditionalyDeleted
+              antisensePhosphateAdditionallyDeleted
                 ? nodeAfterSelection.firstMonomerInNode
                 : nodeAfterSelection.lastMonomerInNode,
               nodeBeforeSelection.firstMonomerInNode,
@@ -1304,7 +1303,12 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Escape'],
         handler: () => {
           if (this.isEditInRNABuilderMode) return;
-          this.turnOffEditMode();
+          if (this.isEditMode) {
+            this.turnOffEditMode();
+          } else {
+            const editor = provideEditorInstance();
+            editor.events.selectSelectionTool.dispatch();
+          }
         },
       },
       'start-new-sequence': {
@@ -1458,7 +1462,7 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretForward();
+          SequenceRenderer.moveCaretForwardOrToRowEnd();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
           this.unselectAllEntities();
         },
@@ -1469,9 +1473,29 @@ export class SequenceMode extends BaseMode {
           if (this.isEditInRNABuilderMode) return;
           if (!this.isEditMode) return;
 
-          SequenceRenderer.moveCaretBack();
+          SequenceRenderer.moveCaretBackOrFromRowEnd();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
 
+          this.unselectAllEntities();
+        },
+      },
+      'move-caret-to-row-start': {
+        shortcut: ['Home'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowStart();
+          this.unselectAllEntities();
+        },
+      },
+      'move-caret-to-row-end': {
+        shortcut: ['End'],
+        handler: () => {
+          if (this.isEditInRNABuilderMode) return;
+          if (!this.isEditMode) return;
+
+          SequenceRenderer.moveCaretToRowEnd();
           this.unselectAllEntities();
         },
       },
@@ -1819,6 +1843,7 @@ export class SequenceMode extends BaseMode {
       new RestoreSequenceCaretPositionOperation(
         SequenceRenderer.caretPosition,
         nextCaretPosition,
+        (position) => SequenceRenderer.setCaretPosition(position),
       ),
     );
 
@@ -2026,7 +2051,6 @@ export class SequenceMode extends BaseMode {
         monomerItem.attachmentPoints,
       );
     // Side chains
-    // selectedNode.monomers.attachmentPoints
     const oldMonomerBonds: [string, PolymerBond | MonomerToAtomBond | null][] =
       sideChainConnections
         ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
@@ -2043,8 +2067,6 @@ export class SequenceMode extends BaseMode {
             ],
           ];
     // Backbone
-    // selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1
-    // selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2
     return oldMonomerBonds.every(([key, bond]) => {
       if (
         !bond ||
@@ -2389,7 +2411,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
     let monomerForSideConnections = newPresetNode.monomer;
 
     if (newPresetNode instanceof Nucleotide) {

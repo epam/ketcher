@@ -15,14 +15,14 @@
  ***************************************************************************/
 
 import {
-  FormatterFactoryOptions,
-  StructFormatter,
+  type FormatterFactoryOptions,
+  type StructFormatter,
   SupportedFormat,
 } from './structFormatter.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
+import type { MolSerializerOptions } from 'domain/serializers/mol/mol.types';
 import { MolSerializer } from 'domain/serializers/mol/molSerializer';
-import { StructService, StructServiceOptions } from 'domain/services';
+import type { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
 import { MolfileV2000Formatter } from './molfileV2000Formatter';

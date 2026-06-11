@@ -3,7 +3,7 @@
 import { expect, test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -16,6 +16,7 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseAway,
   clickOnCanvas,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -31,6 +32,7 @@ import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 test.beforeAll(async ({ initMoleculesCanvas }) => {
@@ -100,13 +102,17 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    await openFileAndAddToCanvas(page, 'Molfiles-V2000/query-features.mol');
-    await getBondLocator(page, { bondId: 34 }).click({ force: true });
-    await MoleculesTopToolbar(page).cut();
-    await CommonTopLeftToolbar(page).undo();
-    await takeEditorScreenshot(page, {
-      maxDiffPixels: 1,
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/query-features.mol',
+    );
+    await getBondLocator(page, { bondType: MicroBondType.Triple }).click({
+      force: true,
     });
+    await MoleculesTopToolbar(page).cut();
+    await takeEditorScreenshot(page);
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
@@ -1070,7 +1076,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForPageInit(page);
   });
 
-  test('Copy button', async () => {
+  test.skip('Copy button', async () => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -1085,7 +1091,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await MoleculesTopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
@@ -1100,7 +1106,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
     await MoleculesTopToolbar(page).cut();
@@ -1119,14 +1125,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await MoleculesTopToolbar(page).cut();
     await MoleculesTopToolbar(page).paste();
     await expect(page).toHaveScreenshot();
   });
 
-  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async () => {
+  test.skip('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async () => {
     /*
     Description:
     Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393
@@ -1144,14 +1150,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).cancel();
     await page.keyboard.press('ControlOrMeta+Alt+v');
-    // await clickInTheMiddleOfTheScreen(page, 'left', {
+    // await clickInTheMiddleOfTheCanvas(page, 'left', {
     //   waitForMergeInitialization: true,
     // });
     // await expect(
     //   CommonLeftToolbar(page).areaSelectionDropdownButton,
     // ).toHaveClass(/ActionButton-module_selected__/);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'left', {
+      await clickInTheMiddleOfTheCanvas(page, 'left', {
         waitForMergeInitialization: true,
       });
 

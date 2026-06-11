@@ -1,21 +1,24 @@
-import { FC } from 'react';
+import type { FC } from 'react';
 import { Item, Submenu, Separator } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import useMarkAs from '../hooks/useMarkAs';
-import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
+import type {
+  AtomContextMenuProps,
+  MenuItemsProps,
+} from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import ButtonGroup from '../../../../../../components/ToggleButtonGroup/ToggleButtonGroup';
 import {
+  type AtomAttributeName,
+  type AtomAllAttributeValue,
+  type AtomQueryPropertiesName,
+  type AtomQueryProperties,
+  type AtomAllAttributeName,
   atomGetAttr,
-  AtomAttributeName,
-  AtomAllAttributeValue,
-  AtomQueryPropertiesName,
-  AtomQueryProperties,
-  AtomAllAttributeName,
   Atom,
   ketcherProvider,
 } from 'ketcher-core';

@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromHighlightCreate, fromHighlightClear, Struct } from 'ketcher-core';
+import {
+  type Struct,
+  fromHighlightCreate,
+  fromHighlightClear,
+} from 'ketcher-core';
 
 import type { Editor } from './Editor';
 
@@ -83,12 +87,12 @@ export class Highlighter {
       this.editor.render.ctab,
       createdHighlights,
     );
-    this.editor.update(action);
+    this.editor.update(action, true);
   }
 
   clear() {
     const action = fromHighlightClear(this.editor.render.ctab);
-    this.editor.update(action);
+    this.editor.update(action, true);
   }
 
   /*

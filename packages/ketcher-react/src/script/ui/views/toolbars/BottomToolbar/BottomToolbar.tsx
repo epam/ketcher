@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import {
+  type ToolbarGroupItemCallProps,
+  type ToolbarGroupItemProps,
   ToolbarGroupItem,
-  ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps,
 } from '../ToolbarGroupItem';
 
 import { TemplatesList } from './TemplatesList';

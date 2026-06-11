@@ -1,5 +1,5 @@
 import { AttachmentPointName } from 'domain/types';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type PolymerBondLike = {

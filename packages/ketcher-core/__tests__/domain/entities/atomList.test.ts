@@ -1,4 +1,4 @@
-import { AtomList, AtomListParams } from 'domain/entities/atomList';
+import { type AtomListParams, AtomList } from 'domain/entities/atomList';
 
 const ids = [66, 44, 12, 88];
 const createParams = (overrides?: Partial<AtomListParams>): AtomListParams => {

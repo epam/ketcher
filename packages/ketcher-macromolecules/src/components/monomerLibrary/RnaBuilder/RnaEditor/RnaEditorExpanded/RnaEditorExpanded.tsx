@@ -419,43 +419,56 @@ export const RnaEditorExpanded = ({
     );
   };
 
-  const renderPhosphatePositionOption = (
-    position: RnaPhosphatePosition,
-    isDisabled: boolean,
-  ) => (
-    <Tooltip
-      key={position}
-      title={isDisabled ? phosphatePositionDisabledTooltip[position] : ''}
-    >
-      <span>
-        <button
-          type="button"
-          className={clsx(
-            styles.phosphatePositionOption,
-            isDisabled && styles.phosphatePositionOptionDisabled,
-          )}
-          disabled={isDisabled}
-          onClick={() => {
-            setPhosphatePosition(position);
-          }}
-        >
-          {renderPhosphateTriggerIcon(position, false, true)}
-        </button>
-      </span>
-    </Tooltip>
-  );
-
   const getPhosphatePositionTooltip = (position: RnaPhosphatePosition) =>
     position === 'left' ? 'Phosphate on the left' : 'Phosphate on the right';
 
-  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
-    if (!newPreset?.phosphate) {
-      return null;
+  const renderPhosphatePositionOption = (
+    position: RnaPhosphatePosition,
+    isDisabled: boolean,
+  ) => {
+    let tooltip: string;
+    if (isDisabled) {
+      tooltip = phosphatePositionDisabledTooltip[position];
+    } else if (selectedPhosphatePosition === position) {
+      tooltip = getPhosphatePositionTooltip(position);
+    } else {
+      tooltip = `Switch to ${position}`;
     }
 
-    const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
-    const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
+    return (
+      <Tooltip key={position} title={tooltip}>
+        <span>
+          <button
+            type="button"
+            className={clsx(
+              styles.phosphatePositionOption,
+              isDisabled && styles.phosphatePositionOptionDisabled,
+            )}
+            disabled={isDisabled}
+            onClick={() => {
+              setPhosphatePosition(position);
+            }}
+          >
+            {renderPhosphateTriggerIcon(position, false, true)}
+          </button>
+        </span>
+      </Tooltip>
+    );
+  };
+
+  const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
+    // In "Modify in RNA Builder" (sequence edit) mode the phosphate position is
+    // read-only: the picker is shown but disabled and always indicates 3'/right,
+    // since for the purposes of sequence mode a preset always keeps the
+    // phosphate on the right — req 5.1/5.2 of #9120.
+    const isPhosphatePositionReadOnly = isSequenceEditInRNABuilderMode;
+    const triggerDisabled =
+      isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
+    const triggerPosition = isPhosphatePositionReadOnly
+      ? 'right'
+      : position ?? selectedPhosphatePosition ?? 'right';
     const isPhosphateGroupActive =
+      !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;
     const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
 

@@ -29,6 +29,8 @@ import {
   ModeTypes,
   normalizeError,
   provideEditorInstance,
+  SequenceRenderer,
+  Vec2,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -129,6 +131,7 @@ const options: Array<Option> = [
   { id: 'idt', label: 'IDT' },
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -143,6 +146,29 @@ const peptideLettersFormatOptions: Array<Option> = [
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
+
+const positionStructureOnNextSequenceLine = (
+  drawingEntitiesManager: NonNullable<
+    ReturnType<KetSerializer['deserializeToDrawingEntities']>
+  >['drawingEntitiesManager'],
+) => {
+  // Always place the imported structure at the next chain/line position,
+  // independent of sequence edit mode (where getNewNodePosition() would
+  // return an insertion point inside the current chain instead).
+  const nextChainPosition = SequenceRenderer.getNextChainPosition();
+  const firstEntityPosition =
+    drawingEntitiesManager.allEntities[0]?.[1].position;
+
+  if (!firstEntityPosition) {
+    return;
+  }
+
+  const offset = Vec2.diff(nextChainPosition, new Vec2(firstEntityPosition));
+
+  drawingEntitiesManager.allEntities.forEach(([, drawingEntity]) => {
+    drawingEntitiesManager.moveDrawingEntityModelChange(drawingEntity, offset);
+  });
+};
 
 const addToCanvas = ({
   ketSerializer,
@@ -161,15 +187,21 @@ const addToCanvas = ({
     throw new Error('Error during parsing file');
   }
 
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
+  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
+  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
+
+  if (isSequenceMode && !isCanvasEmptyBeforeOpenStructure) {
+    positionStructureOnNextSequenceLine(deserialisedKet.drawingEntitiesManager);
+  } else {
+    deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  }
+
   const { command: modelChanges } =
     deserialisedKet.drawingEntitiesManager.mergeInto(
       editor.drawingEntitiesManager,
     );
   const editorHistory = EditorHistory.getInstance(editor);
-  const isSequenceMode = editor.mode.modeName === 'sequence-layout-mode';
-  const isSnakeMode = editor.mode.modeName === 'snake-layout-mode';
-  const isFlexMode = editor.mode.modeName === 'flex-layout-mode';
 
   if (isFlexMode) {
     if (editor.drawingEntitiesManager.hasAntisenseChains) {

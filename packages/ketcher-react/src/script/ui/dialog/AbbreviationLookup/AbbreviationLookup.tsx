@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 import {
-  ChangeEvent,
-  CSSProperties,
-  FocusEvent,
-  KeyboardEvent,
-  MutableRefObject,
-  SyntheticEvent,
+  type ChangeEvent,
+  type CSSProperties,
+  type FocusEvent,
+  type KeyboardEvent,
+  type MutableRefObject,
+  type SyntheticEvent,
   useLayoutEffect,
   useRef,
   useState,
@@ -29,7 +29,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import assert from 'assert';
 import { Icon } from 'components';
 import MuiAutocomplete, {
-  AutocompleteChangeReason,
+  type AutocompleteChangeReason,
 } from '@mui/material/Autocomplete';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import classes from './AbbreviationLookup.module.less';
@@ -44,7 +44,7 @@ import {
   highlightOptionLabel,
 } from './AbbreviationLookup.utils';
 import {
-  AbbreviationOption,
+  type AbbreviationOption,
   AbbreviationType,
 } from './AbbreviationLookup.types';
 import {

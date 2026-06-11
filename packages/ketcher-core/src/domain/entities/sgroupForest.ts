@@ -17,7 +17,7 @@
 import { Pile } from './pile';
 import { SGroup } from './sgroup';
 import assert from 'assert';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { KetcherLogger } from 'utilities';
 
 export class SGroupForest {

@@ -80,9 +80,9 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/main.js",
-      "require": "./dist/cjs/main.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/cjs/main.js"
     },
     "./dist/binaryWasm": {
       "import": "./dist/binaryWasm/main.js",

@@ -154,10 +154,13 @@ function rglabelToKet(source) {
   return result;
 }
 
-function bondTypeToKet(type) {
+/**
+ * In KET, the identifier of haptic bond is the same as dative bond,
+   but with `attach` and `endpts` (optional) properties
+ * @function(reversed): `bondTypeToStruct()` in `atomBondToStruct.ts`
+ */
+function bondTypeToKet(type: number) {
   if (type === Bond.PATTERN.TYPE.HAPTIC) {
-    // NOTE: In KET, the identifier of haptic bond is the same as dative bond,
-    //       but with `endpoints`(`endpts`) and `attach` properties.
     return Bond.PATTERN.TYPE.DATIVE;
   }
   return type;

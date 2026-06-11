@@ -95,6 +95,17 @@ export function atomToStruct(source) {
 }
 
 /**
+ * In KET, the identifier of haptic bond is the same as dative bond,
+   but with `attach` and `endpts` (optional) properties
+ * @function(reversed): `bondTypeToKet()` in `moleculeToKet.ts`
+ */
+function bondTypeToStruct(bond: BondAttributes) {
+  const isHaptic =
+    bond.type === Bond.PATTERN.TYPE.DATIVE && bond.attach === 'ALL';
+  return isHaptic ? Bond.PATTERN.TYPE.HAPTIC : bond.type;
+}
+
+/**
  *
  * @param source
  * @param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
@@ -112,7 +123,7 @@ export function atomToStruct(source) {
 export function bondToStruct(source, atomOffset = 0) {
   const params: Partial<BondAttributes> = {};
 
-  ifDef(params, 'type', source.type);
+  ifDef(params, 'type', bondTypeToStruct(source));
   ifDef(params, 'topology', source.topology);
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
@@ -121,6 +132,8 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'begin', source.atoms[0] + atomOffset);
   ifDef(params, 'end', source.atoms[1] + atomOffset);
   ifDef(params, 'initiallySelected', source.selected);
+  ifDef(params, 'endpoints', source.endpts);
+  ifDef(params, 'attach', source.attach);
 
   const newBond = new Bond(params as BondAttributes);
   newBond.setInitiallySelected(source.selected);

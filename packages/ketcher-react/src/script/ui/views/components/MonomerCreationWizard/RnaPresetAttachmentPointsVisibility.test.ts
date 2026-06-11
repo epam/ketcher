@@ -303,10 +303,9 @@ describe('RnaPresetAttachmentPointsVisibility', () => {
     // Atom 3 is the phosphate atom that connects to the sugar; atom 5 is an
     // external leaving group the user added to that same phosphate atom.
     wizardState.phosphate.structure = { atoms: [3, 5], bonds: [] };
-    const assignedAttachmentPoints = new Map<
-      AttachmentPointName,
-      [number, number]
-    >([[AttachmentPointName.R1, [3, 5]]]);
+    const assignedAttachmentPoints = createAssignedAttachmentPoints([
+      [0, AttachmentPointName.R1, [3, 5]],
+    ]);
 
     const visibleAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
       assignedAttachmentPoints,

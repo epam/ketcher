@@ -134,7 +134,7 @@ import {
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
-import { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
 import {
   StereoFlagAddOperation,
   StereoFlagDeleteOperation,

@@ -37,7 +37,7 @@ import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
-import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';

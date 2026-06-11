@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 
 export class StereoFlagAddOperation implements Operation {
   public stereoFlag: CoreStereoFlag;

@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseRenderer } from 'application/render';
+import type { BaseRenderer } from 'application/render';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
-import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import type { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 
 export class CoreStereoFlag extends DrawingEntity {
   public renderer?: StereoFlagRenderer = undefined;

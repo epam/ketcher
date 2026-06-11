@@ -25,8 +25,23 @@ import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class SequenceNodeRendererFactory {
+  private static getLinkerRendererClass(node: LinkerSequenceNode) {
+    const isPhosphateOnlyLinker = node.monomers.every(
+      (monomer) =>
+        monomer instanceof Phosphate ||
+        (monomer instanceof AmbiguousMonomer &&
+          monomer.monomerClass === KetMonomerClass.Phosphate),
+    );
+
+    return isPhosphateOnlyLinker
+      ? PhosphateSequenceItemRenderer
+      : ChemSequenceItemRenderer;
+  }
+
   static fromNode(
     node: SequenceNode,
     firstMonomerInChainPosition: Vec2,
@@ -55,7 +70,9 @@ export class SequenceNodeRendererFactory {
         RendererClass = BackBoneSequenceItemRenderer;
         break;
       case LinkerSequenceNode:
-        RendererClass = ChemSequenceItemRenderer;
+        RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
+          node as LinkerSequenceNode,
+        );
         break;
       case AmbiguousMonomerSequenceNode:
         RendererClass = AmbiguousSequenceItemRenderer;

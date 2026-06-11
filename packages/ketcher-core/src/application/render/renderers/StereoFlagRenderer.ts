@@ -15,10 +15,12 @@
  ***************************************************************************/
 
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
-import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { ketcherProvider } from 'application/ketcherProvider';
+import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
 import { Vec2 } from 'domain/entities';
 
@@ -54,6 +56,10 @@ export class StereoFlagRenderer extends BaseRenderer {
   }
 
   public show() {
+    if (!this.shouldDisplayStereoFlag()) {
+      return;
+    }
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
@@ -74,6 +80,15 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.appendHoverAreaElement();
     this.drawSelection();
+  }
+
+  private shouldDisplayStereoFlag(): boolean {
+    const editor = provideEditorInstance();
+    const settings = ketcherProvider
+      .getKetcher(editor.ketcherId)
+      .settingsService?.getSettings();
+
+    return (settings?.showStereoFlags ?? true) && !settings?.ignoreChiralFlag;
   }
 
   private getTextBBox() {

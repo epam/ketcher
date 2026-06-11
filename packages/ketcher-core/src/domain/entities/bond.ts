@@ -41,6 +41,8 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  endpoints?: number[];
+  attach?: 'ALL' | 'ANY';
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -137,6 +139,8 @@ export class Bond extends BaseMicromoleculeEntity {
       attributes.beginSuperatomAttachmentPointNumber;
     this.endSuperatomAttachmentPointNumber =
       attributes.endSuperatomAttachmentPointNumber;
+    this.endpoints = attributes.endpoints;
+    this.attach = attributes.attach;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;

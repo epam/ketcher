@@ -1461,10 +1461,11 @@ test.describe('Sequence edit mode', () => {
     });
   });
 
-  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async () => {
+  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" disabled when clipboard is empty', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6472
-     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled.
+     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled,
+     * and "Paste" disabled because clipboard is empty (https://github.com/epam/ketcher/issues/7392).
      * Scenario:
      * 1. Go to Macro - Sequence mode - RNA
      * 2. Start typing "ACGTU" in the sequence

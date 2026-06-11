@@ -450,7 +450,8 @@ class Editor implements KetcherEditor {
     });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
-    this.struct(struct.clone());
+    // Preserve atom coordinates when applying editor options (e.g. viewOnlyMode).
+    this.struct(struct.clone(), false);
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;

@@ -470,9 +470,18 @@ export const RnaEditorExpanded = ({
   };
 
   const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
-    const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
-    const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
+    // In "Modify in RNA Builder" (sequence edit) mode the phosphate position is
+    // read-only: the picker is shown but disabled and always indicates 3'/right,
+    // since for the purposes of sequence mode a preset always keeps the
+    // phosphate on the right — req 5.1/5.2 of #9120.
+    const isPhosphatePositionReadOnly = isSequenceEditInRNABuilderMode;
+    const triggerDisabled =
+      isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
+    const triggerPosition = isPhosphatePositionReadOnly
+      ? 'right'
+      : position ?? selectedPhosphatePosition ?? 'right';
     const isPhosphateGroupActive =
+      !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;
     const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
 

@@ -54,6 +54,7 @@ interface EditorState {
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
+  monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
   preview: EditorStatePreview;
@@ -75,6 +76,7 @@ const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
+  monomerLibraryLoadError: null,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
   preview: {
@@ -116,6 +118,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
     initFailure: (state) => {
       state.isReady = false;
     },
+    setMonomerLibraryLoadError: (
+      state,
+      action: PayloadAction<string | null>,
+    ) => {
+      state.monomerLibraryLoadError = action.payload;
+    },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
@@ -131,8 +139,11 @@ export const editorSlice: Slice<EditorState> = createSlice({
         monomersLibraryUpdate?: string | JSON;
         monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
+        onLibraryError?: (err: unknown) => void;
       }>,
     ) => {
+      state.monomerLibraryLoadError = null;
+
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
@@ -144,6 +155,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       editor.initializeMonomersLibraryFromKetcher(
         action.payload.monomersLibraryUpdate,
         action.payload.monomersLibraryReplace,
+        action.payload.onLibraryError,
       );
 
       // TODO: Figure out proper typing here and below
@@ -233,6 +245,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  setMonomerLibraryLoadError,
   initKetcherId,
   selectTool,
   setPosition,
@@ -271,6 +284,10 @@ export const selectKetcherId = (state: RootState): string => {
 
 export const selectEditor = (state: RootState): CoreEditor | undefined =>
   state.editor.editor;
+
+export const selectMonomerLibraryLoadError = (
+  state: RootState,
+): string | null => state.editor.monomerLibraryLoadError;
 
 export const selectIsSequenceEditInRNABuilderMode = (
   state: RootState,

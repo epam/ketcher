@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@fixtures';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { test, expect, Page } from '@fixtures';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -15,7 +16,6 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
-  resetSettingsValuesToDefault,
   setSettingsOption,
   setSettingsOptions,
   SettingsDialog,
@@ -23,9 +23,19 @@ import {
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
-test('Verify Ketcher settings panel', async ({ page }) => {
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+test('Verify Ketcher settings panel', async () => {
   /*
-  Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
+  Test case:EPMLSOPKET-10078 - General settings - Default settings verification' & EPMLSOPKET-12973
   */
   await waitForPageInit(page);
   await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
@@ -33,17 +43,7 @@ test('Verify Ketcher settings panel', async ({ page }) => {
 });
 
 test.describe('General Settings', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await resetSettingsValuesToDefault(page);
-  });
-
-  test('Undo/Redo Actions when switch "reset to Select tool" is"Off"', async ({
-    page,
-  }) => {
+  test('Undo/Redo Actions when switch "reset to Select tool" is"Off"', async () => {
     // Test case: EPMLSOPKET-18059
     const pointX = 350;
     const pointY = 350;
@@ -59,9 +59,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places px in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places px in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -83,9 +81,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places cm in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places cm in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -107,9 +103,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places pt in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places pt in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -131,9 +125,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places inch in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places inch in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -155,9 +147,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in px option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in px option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -179,9 +169,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in cm option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in cm option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -203,9 +191,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in pt option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in pt option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -227,9 +213,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in inch option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in inch option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -251,9 +235,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places px in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places px in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -276,9 +258,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places cm in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places cm in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -301,9 +281,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places pt in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places pt in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -326,9 +304,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places inch in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places inch in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -351,9 +327,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places px in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places px in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -375,9 +349,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places cm in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places cm in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -399,9 +371,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places pt in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places pt in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -423,9 +393,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places inch in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places inch in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place
@@ -447,9 +415,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in px option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in px option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -471,9 +437,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in cm option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in cm option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -495,9 +459,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in pt option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in pt option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -519,9 +481,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in inch option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in inch option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering the whole values
@@ -543,9 +503,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places px in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places px in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -568,9 +526,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places cm in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places cm in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -594,9 +550,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places pt in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places pt in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -619,9 +573,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places inch in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places inch in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: require a number input should allow entering values with one decimal place, 
@@ -644,9 +596,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -667,9 +617,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -690,9 +638,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -713,9 +659,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 1 decimal places in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 1 decimal places in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -736,9 +680,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -759,9 +701,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -782,9 +722,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -805,9 +743,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the whole value in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the whole value in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -828,9 +764,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -852,9 +786,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -876,9 +808,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -900,9 +830,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify value with up to 2 decimal places in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify value with up to 2 decimal places in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -924,9 +852,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify 1000 value in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 1000 value in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -947,9 +873,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the 1000 value in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the 1000 value in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -970,9 +894,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the 1000 value in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the 1000 value in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -993,9 +915,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the 1000 value in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the 1000 value in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1018,13 +938,7 @@ test.describe('General Settings', () => {
 });
 
 test.describe('Negative cases for General Settings', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Verify negative value with px option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with px option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1040,9 +954,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with cm option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with cm option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1058,9 +970,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with pt option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with pt option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1076,9 +986,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with inch option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with inch option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1094,7 +1002,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with px option in the setting Font size', async ({ page }) => {
+  test('Verify 0 with px option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
@@ -1110,7 +1018,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with cm option in the setting Font size', async ({ page }) => {
+  test('Verify 0 with cm option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
@@ -1126,7 +1034,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with pt option in the setting Font size', async ({ page }) => {
+  test('Verify 0 with pt option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
@@ -1142,9 +1050,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with inch option in the setting Font size', async ({
-    page,
-  }) => {
+  test('Verify 0 with inch option in the setting Font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
@@ -1160,9 +1066,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with px option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with px option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1181,9 +1085,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with cm option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with cm option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1202,9 +1104,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with pt option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with pt option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1223,9 +1123,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value with inch option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify negative value with inch option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
@@ -1244,9 +1142,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with px option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify 0 with px option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
@@ -1262,9 +1158,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with cm option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify 0 with cm option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
@@ -1280,9 +1174,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with pt option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify 0 with pt option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
@@ -1298,9 +1190,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 with inch option in the setting Sub font size', async ({
-    page,
-  }) => {
+  test('Verify 0 with inch option in the setting Sub font size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
@@ -1316,9 +1206,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify negative value in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1338,9 +1226,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify negative value in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1360,9 +1246,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify negative value in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1382,9 +1266,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify negative value in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify negative value in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1404,9 +1286,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 0 in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1426,9 +1306,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 0 in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1448,9 +1326,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 0 in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1470,9 +1346,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 0 in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 0 in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1492,9 +1366,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in px option the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in px option the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1518,9 +1390,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify 1000.1 value in cm option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify 1000.1 value in cm option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1544,9 +1414,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify the 1000.1 value in pt option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the 1000.1 value in pt option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
@@ -1570,9 +1438,7 @@ test.describe('Negative cases for General Settings', () => {
     expect(isDisabled).toBe(true);
   });
 
-  test('Verify the 1000.1 value in inch option in the setting Reaction component margin size', async ({
-    page,
-  }) => {
+  test('Verify the 1000.1 value in inch option in the setting Reaction component margin size', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size

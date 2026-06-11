@@ -36,12 +36,21 @@ import { without } from 'lodash/fp';
 import type ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 
-export function fromAtomAddition(restruct, pos, atom) {
+export function fromAtomAddition(
+  restruct,
+  pos,
+  atom,
+  fragmentId: number | null = null,
+) {
   atom = { ...(atom || {}) };
   const action = new Action();
-  atom.fragment = (
-    action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd
-  ).frid;
+  // When an explicit fragment id is provided, add the atom to that existing
+  // fragment instead of creating a new one (e.g. a super attachment point that
+  // must share the fragment of its endpoints).
+  atom.fragment =
+    fragmentId === null
+      ? (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
+      : fragmentId;
 
   const aid = (
     action.addOp(new AtomAdd(atom, pos).perform(restruct)) as AtomAdd

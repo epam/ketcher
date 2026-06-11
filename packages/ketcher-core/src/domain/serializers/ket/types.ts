@@ -60,6 +60,8 @@ export interface KetRgLabelNode {
 export interface KetBondNode {
   type?: number;
   atoms?: [number, number];
+  endpts?: number[];
+  attach?: 'ALL' | 'ANY';
   stereo?: number;
   topology?: number | null;
   center?: number | null;

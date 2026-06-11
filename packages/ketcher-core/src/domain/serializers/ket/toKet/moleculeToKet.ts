@@ -16,7 +16,7 @@
 
 import type { Atom } from 'domain/entities/atom';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { Bond } from 'domain/entities/bond';
+import { Bond } from 'domain/entities/bond';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
@@ -176,6 +176,15 @@ function rglabelToKet(source: Atom): KetRgLabelNode {
   return result;
 }
 
+function bondTypeToKet(type: number): number {
+  if (type === Bond.PATTERN.TYPE.HAPTIC) {
+    // NOTE: In KET, the identifier of haptic bond is the same as dative bond,
+    //       but with `endpoints`(`endpts`) and `attach` properties.
+    return Bond.PATTERN.TYPE.DATIVE;
+  }
+  return type;
+}
+
 function bondToKet(source: Bond): KetBondNode {
   const result: KetBondNode = {};
   if (source.customQuery) {
@@ -183,12 +192,14 @@ function bondToKet(source: Bond): KetBondNode {
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
   } else {
-    ifDef(result, 'type', source.type);
+    ifDef(result, 'type', bondTypeToKet(source.type));
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'stereo', source.stereo, 0);
     ifDef(result, 'topology', source.topology, 0);
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
+    ifDef(result, 'endpts', source.endpoints);
+    ifDef(result, 'attach', source.attach);
   }
   ifDef(result, 'selected', source.getInitiallySelected());
   return result;

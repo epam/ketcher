@@ -167,6 +167,28 @@ export function fromBondAddition(
     }
   }
 
+  if (bond.type === Bond.PATTERN.TYPE.HAPTIC) {
+    const beginAtom = struct.atoms.get(beginAtomId);
+    const endAtom = struct.atoms.get(endAtomId);
+
+    if (beginAtom?.endpoints.length) {
+      bond = {
+        ...bond,
+        endpoints: beginAtom.endpoints,
+      };
+    } else if (endAtom?.endpoints.length) {
+      bond = {
+        ...bond,
+        endpoints: endAtom.endpoints,
+      };
+    }
+
+    bond = {
+      ...bond,
+      attach: 'ALL',
+    };
+  }
+
   const newBondId = (
     action.addOp(
       new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct),

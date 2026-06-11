@@ -182,6 +182,7 @@ export class Atom extends BaseMicromoleculeEntity {
     stereoLabel: null,
     stereoParity: 0,
     implicitHCount: null,
+    endpoints: [],
   };
 
   label: string;
@@ -216,6 +217,7 @@ export class Atom extends BaseMicromoleculeEntity {
   stereoParity: number;
   hasImplicitH?: boolean;
   pseudo!: string;
+  endpoints: number[];
 
   /** @deprecated */
   get attpnt() {
@@ -313,6 +315,12 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       },
     });
+
+    // super-attachment point
+    this.endpoints = getValueOrDefault(
+      attributes.endpoints,
+      Atom.attrlist.endpoints,
+    );
   }
 
   get isRGroupAttachmentPointEditDisabled() {

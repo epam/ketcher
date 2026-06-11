@@ -29,10 +29,17 @@ const useSuperAttachmentPointCreate = () => {
         }, new Vec2())
         .scaled(1 / atomIds.length);
 
-      const action = fromAtomAddition(restruct, centerOfAtoms, {
-        label: '*',
-        endpoints: atomIds,
-      });
+      const endpointsFragment = struct.atoms.get(atomIds[0])?.fragment ?? null;
+
+      const action = fromAtomAddition(
+        restruct,
+        centerOfAtoms,
+        {
+          label: '*',
+          endpoints: atomIds,
+        },
+        endpointsFragment,
+      );
 
       editor.update(action);
       editor.selection(null);

@@ -324,6 +324,15 @@ export class Bond extends BaseMicromoleculeEntity {
       const newEnd = aidMap.get(cp.end);
       if (newBegin !== undefined) cp.begin = newBegin;
       if (newEnd !== undefined) cp.end = newEnd;
+
+      if (cp.endpoints?.length) {
+        const remapped: number[] = [];
+        cp.endpoints.forEach((endpointAtomId) => {
+          const newId = aidMap.get(endpointAtomId);
+          if (newId !== undefined) remapped.push(newId);
+        });
+        cp.endpoints = remapped;
+      }
     }
     return cp;
   }

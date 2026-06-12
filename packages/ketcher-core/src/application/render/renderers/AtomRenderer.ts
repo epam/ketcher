@@ -382,9 +382,12 @@ export class AtomRenderer extends BaseRenderer {
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
 
-    // For a hydrogen atom the implicit hydrogens are shown as a subscript count
-    // on the H itself (e.g. H2), matching micromolecule mode, instead of
-    // appending a second "H" letter which would render as "HH".
+    // For a hydrogen atom the implicit hydrogens are shown as a subscript
+    // count on the H itself (e.g. H2), matching micromolecule mode, instead of
+    // appending a second "H" letter which would render as "HH". Positioning is
+    // left to the standard logic below by treating the label as fully rendered
+    // here and clearing hydrogenAmount so the default (middle, x: 0) layout is
+    // used.
     if (isHydrogen) {
       textElement?.append('tspan').text(this.labelText);
 
@@ -395,37 +398,35 @@ export class AtomRenderer extends BaseRenderer {
           .attr('dy', 3);
       }
 
-      textElement?.attr('text-anchor', 'start').attr('x', 0);
-
-      return textElement;
-    }
-
-    if (!shouldHydrogenBeOnLeft) {
-      textElement
-        ?.append('tspan')
-        .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.labelText);
-    }
-
-    if (!this.atom.hasAlias && hydrogenAmount > 0) {
-      textElement
-        ?.append('tspan')
-        .attr(
-          'dy',
-          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
-        )
-        .text('H');
-
-      if (hydrogenAmount > 1) {
-        textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
+      hydrogenAmount = 0;
+    } else {
+      if (!shouldHydrogenBeOnLeft) {
+        textElement
+          ?.append('tspan')
+          .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
+          .text(this.labelText);
       }
-    }
 
-    if (shouldHydrogenBeOnLeft) {
-      textElement
-        ?.append('tspan')
-        .text(this.labelText)
-        .attr('dy', hydrogenAmount > 1 ? -3 : 0);
+      if (!this.atom.hasAlias && hydrogenAmount > 0) {
+        textElement
+          ?.append('tspan')
+          .attr(
+            'dy',
+            this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+          )
+          .text('H');
+
+        if (hydrogenAmount > 1) {
+          textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
+        }
+      }
+
+      if (shouldHydrogenBeOnLeft) {
+        textElement
+          ?.append('tspan')
+          .text(this.labelText)
+          .attr('dy', hydrogenAmount > 1 ? -3 : 0);
+      }
     }
 
     let hydrogenLabelAnchor = 'middle';

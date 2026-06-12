@@ -32,7 +32,7 @@ export const deriveRnaPresetAliasesFromDefaults = (
   preset: IRnaPresetWithAliases,
   defaultPresets: ReadonlyArray<IRnaPresetWithAliases>,
 ): Partial<Pick<IRnaPresetWithAliases, 'idtAliases' | 'aliasAxoLabs'>> => {
-  if (preset.idtAliases) {
+  if (preset.idtAliases && preset.aliasAxoLabs) {
     return {};
   }
 
@@ -46,12 +46,14 @@ export const deriveRnaPresetAliasesFromDefaults = (
   }
 
   return {
-    ...(matchingDefaultPreset.idtAliases && {
-      idtAliases: matchingDefaultPreset.idtAliases,
-    }),
-    ...(matchingDefaultPreset.aliasAxoLabs && {
-      aliasAxoLabs: matchingDefaultPreset.aliasAxoLabs,
-    }),
+    ...(!preset.idtAliases &&
+      matchingDefaultPreset.idtAliases && {
+        idtAliases: matchingDefaultPreset.idtAliases,
+      }),
+    ...(!preset.aliasAxoLabs &&
+      matchingDefaultPreset.aliasAxoLabs && {
+        aliasAxoLabs: matchingDefaultPreset.aliasAxoLabs,
+      }),
   };
 };
 

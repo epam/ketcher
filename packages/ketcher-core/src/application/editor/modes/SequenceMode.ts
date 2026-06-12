@@ -1851,7 +1851,12 @@ export class SequenceMode extends BaseMode {
   }
 
   private preserveSideChainConnections(selectedNode: SequenceNode) {
-    if (selectedNode.monomer.sideConnections.length === 0) {
+    const allMonomers = selectedNode.monomers;
+    const hasAnySideConnection = allMonomers.some(
+      (monomer) => monomer.sideConnections.length > 0,
+    );
+
+    if (!hasAnySideConnection) {
       return null;
     }
 
@@ -1861,8 +1866,8 @@ export class SequenceMode extends BaseMode {
       secondMonomerAttachmentPointName: AttachmentPointName;
     }> = [];
 
-    Object.entries(selectedNode.monomer.attachmentPointsToBonds).forEach(
-      ([key, bond]) => {
+    allMonomers.forEach((monomer) => {
+      Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
         if (
           !bond ||
           bond instanceof MonomerToAtomBond ||
@@ -1871,13 +1876,13 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        const secondMonomer = bond.getAnotherMonomer(selectedNode.monomer);
+        const secondMonomer = bond.getAnotherMonomer(monomer);
         if (!secondMonomer?.attachmentPointsToBonds) {
           return;
         }
 
         const secondMonomerBondData = Object.entries(
-          secondMonomer?.attachmentPointsToBonds,
+          secondMonomer.attachmentPointsToBonds,
         ).find(([, value]) => value === bond);
 
         if (!secondMonomerBondData) {
@@ -1892,8 +1897,8 @@ export class SequenceMode extends BaseMode {
           secondMonomerAttachmentPointName:
             secondMonomerAttachmentPointName as AttachmentPointName,
         });
-      },
-    );
+      });
+    });
 
     return sideConnectionsData;
   }
@@ -1957,7 +1962,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: Check for multiple side chain connections in Linkers
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         firstMonomerAttachmentPointName,

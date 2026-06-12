@@ -9,7 +9,7 @@ module.exports = {
       {
         tsconfig: {
           module: 'commonjs',
-          moduleResolution: 'node',
+          moduleResolution: 'node16',
         },
       },
     ],

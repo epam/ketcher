@@ -1,9 +1,13 @@
 'use client';
 
-import { StandaloneStructServiceProvider as StandaloneStructServiceProviderType } from 'ketcher-standalone';
-import { Editor } from 'ketcher-react';
+import { useEffect, useState } from 'react';
+import type { ComponentProps } from 'react';
+import type { Editor } from 'ketcher-react';
 
-import 'ketcher-react/dist/index.css';
+type EditorState = {
+  Editor: typeof Editor;
+  structServiceProvider: ComponentProps<typeof Editor>['structServiceProvider'];
+};
 
 const safePostMessage = (
   message: Record<string, unknown>,
@@ -27,13 +31,34 @@ const safePostMessage = (
   window.parent.postMessage(message, parentOrigin);
 };
 
-const StandaloneStructServiceProvider =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  StandaloneStructServiceProviderType as unknown as new () => any;
-
-const structServiceProvider = new StandaloneStructServiceProvider();
-
 export function EditorComponent() {
+  const [editorState, setEditorState] = useState<EditorState | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    Promise.all([import('ketcher-react'), import('ketcher-standalone')])
+      .then(([{ Editor }, { StandaloneStructServiceProvider }]) => {
+        if (!isMounted) return;
+
+        setEditorState({
+          Editor,
+          structServiceProvider: new StandaloneStructServiceProvider(),
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (!editorState) return null;
+
+  const { Editor, structServiceProvider } = editorState;
+
   return (
     <Editor
       staticResourcesUrl={process.env.PUBLIC_URL || ''}

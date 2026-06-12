@@ -527,6 +527,11 @@ export const selectFilteredPresets = createSelector(
           (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
           '';
         const modifications = item.idtAliases?.modifications;
+        const modificationAliases = modifications
+          ? Object.values(modifications).filter(
+              (mod): mod is string => typeof mod === 'string',
+            )
+          : [];
         let transformedIdtText = idtName;
 
         if (idtName && item.name?.includes('MOE')) {
@@ -547,10 +552,9 @@ export const selectFilteredPresets = createSelector(
           return (
             transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
             idtName?.startsWith(aliasRest) ||
-            (modifications &&
-              Object.values(modifications).some((mod) =>
-                mod?.toLowerCase().startsWith(aliasRest),
-              ))
+            modificationAliases.some((mod) =>
+              mod.toLowerCase().startsWith(aliasRest),
+            )
           );
         }
 
@@ -564,12 +568,11 @@ export const selectFilteredPresets = createSelector(
                 aliasLastSymbol) ||
             (idtName?.endsWith(aliasRest) &&
               idtName[idtName.length - 1] === aliasLastSymbol) ||
-            (modifications &&
-              Object.values(modifications).some(
-                (mod) =>
-                  mod?.toLowerCase().endsWith(aliasRest) &&
-                  mod[mod.length - 1] === aliasLastSymbol,
-              ))
+            modificationAliases.some(
+              (mod) =>
+                mod.toLowerCase().endsWith(aliasRest) &&
+                mod[mod.length - 1] === aliasLastSymbol,
+            )
           );
         }
 

@@ -18,7 +18,6 @@ import {
   buildRnaPresetConnections,
   Entities,
   getRnaPresetPhosphatePosition,
-  IRnaPreset,
   RnaPhosphatePosition,
 } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
@@ -127,12 +126,7 @@ export const RnaEditorExpanded = ({
     RnaPhosphatePosition | undefined
   >(
     activePreset?.connections?.length
-      ? getRnaPresetPhosphatePosition(
-          activePreset as Pick<
-            IRnaPreset,
-            'sugar' | 'phosphate' | 'connections'
-          >,
-        )
+      ? getRnaPresetPhosphatePosition(activePreset)
       : undefined,
   );
 
@@ -157,9 +151,7 @@ export const RnaEditorExpanded = ({
     }
 
     if (preset.connections?.length) {
-      const presetPhosphatePosition = getRnaPresetPhosphatePosition(
-        preset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
-      );
+      const presetPhosphatePosition = getRnaPresetPhosphatePosition(preset);
 
       if (
         (presetPhosphatePosition === 'left' && isLeftPositionAvailable) ||
@@ -229,12 +221,7 @@ export const RnaEditorExpanded = ({
     setNewPreset(activePreset);
     setSelectedPhosphatePosition(
       activePreset?.connections?.length
-        ? getRnaPresetPhosphatePosition(
-            activePreset as Pick<
-              IRnaPreset,
-              'sugar' | 'phosphate' | 'connections'
-            >,
-          )
+        ? getRnaPresetPhosphatePosition(activePreset)
         : undefined,
     );
   }, [activePreset]);
@@ -295,7 +282,7 @@ export const RnaEditorExpanded = ({
           presetFullName = selectPresetFullName({
             ...currentPreset,
             connections: buildRnaPresetConnections(
-              currentPreset as Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+              currentPreset,
               resolvedPhosphatePosition,
             ),
           });
@@ -548,7 +535,7 @@ export const RnaEditorExpanded = ({
     const presetToSave = {
       ...newPreset,
       connections: buildRnaPresetConnections(
-        newPreset as Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+        newPreset,
         resolvedPhosphatePosition,
       ),
     };
@@ -581,12 +568,7 @@ export const RnaEditorExpanded = ({
       setNewPreset(activePreset);
       setSelectedPhosphatePosition(
         activePreset?.connections?.length
-          ? getRnaPresetPhosphatePosition(
-              activePreset as Pick<
-                IRnaPreset,
-                'sugar' | 'phosphate' | 'connections'
-              >,
-            )
+          ? getRnaPresetPhosphatePosition(activePreset)
           : undefined,
       );
       resetRnaBuilder(dispatch);

@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,33 +15,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
 import {
-  CoreEditor,
-  EditorHistory,
-  SelectRectangle,
-} from 'application/editor/internal';
+  type HydrogenBond,
+  type PolymerBond,
+  BaseMonomer,
+  Vec2,
+} from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
 import {
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment, vectorUtils } from 'application/editor';
+import type { MonomersAlignment } from 'application/editor/tools/types';
+import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,
   MonomerSize,
   StandardBondLength,
 } from 'domain/constants';
-import { EraserTool } from 'application/editor/tools/Erase';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getStructureBbox } from 'domain/entities/structureBbox';
+import { RotationView } from 'application/render/renderers/TransientView/RotationView';
+import { Atom } from 'domain/entities/CoreAtom';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -76,18 +81,49 @@ function isGroupCenterSnapResult(
 }
 
 abstract class SelectBase implements BaseTool {
+  readonly name = 'select-tool';
   protected mousePositionAfterMove = new Vec2(0, 0, 0);
   protected mousePositionBeforeMove = new Vec2(0, 0, 0);
   protected selectionStartCanvasPosition = new Vec2(0, 0, 0);
   protected previousSelectedEntities: [number, DrawingEntity][] = [];
-  protected mode: 'moving' | 'selecting' | 'standby' = 'standby';
   private readonly canvasResizeObserver?: ResizeObserver;
-  private readonly history: EditorHistory;
   private firstMonomerPositionBeforeMove: Vec2 | undefined;
+  public mode:
+    | 'moving'
+    | 'selecting'
+    | 'standby'
+    | 'rotating'
+    | 'rotating-center' = 'standby';
+
+  protected rotationStartAngle = 0;
+  protected rotationCenter: Vec2 | null = null;
+  protected currentRotationAngle = 0;
+  protected static readonly ROTATION_SNAP_ANGLE = 15; // Default 15 degrees
+  protected static readonly ROTATION_ANGLE_EPSILON = 0.001; // Threshold for angle comparison
+  protected rotationStartPositions = new Map<number, Vec2>();
+  protected userRotationCenter: Vec2 | null = null;
+  private readonly rotationHandleUnsubscribe?: () => void;
+  private readonly rotationCenterUnsubscribe?: () => void;
+  private readonly selectEntitiesHandler = () => {
+    this.updateRotationView();
+  };
 
   constructor(protected readonly editor: CoreEditor) {
-    this.history = new EditorHistory(this.editor);
     this.destroy();
+    this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
+      (payload) => {
+        if (provideEditorInstance().isSequenceAnyEditMode) return;
+        if (this.mode === 'rotating') return;
+        this.startRotation(payload.event);
+      },
+    );
+    this.rotationCenterUnsubscribe = RotationView.subscribeRotationCenter(
+      (payload) => {
+        if (provideEditorInstance().isSequenceAnyEditMode) return;
+        this.startRotationCenterDrag(payload.event);
+      },
+    );
+    this.editor.events.selectEntities.add(this.selectEntitiesHandler);
   }
 
   // TODO: This type is only to resolve the TS error below. Ideally restructure the if-else order so it won't be called for sequence item at all
@@ -104,7 +140,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mousedown(event: MouseEvent) {
-    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
+    if (provideEditorInstance().isSequenceAnyEditMode) return;
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -138,6 +174,108 @@ abstract class SelectBase implements BaseTool {
       const modKey = isMacOs ? event.metaKey : event.ctrlKey;
       this.mousedownEntity(renderer, event.shiftKey, modKey);
     }
+  }
+
+  private getCanvasBbox(bbox: {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }) {
+    const topLeft = Coordinates.modelToCanvas(new Vec2(bbox.left, bbox.top));
+    const bottomRight = Coordinates.modelToCanvas(
+      new Vec2(bbox.left + bbox.width, bbox.top + bbox.height),
+    );
+
+    return {
+      left: topLeft.x,
+      top: topLeft.y,
+      width: bottomRight.x - topLeft.x,
+      height: bottomRight.y - topLeft.y,
+    };
+  }
+
+  private buildRotationViewParams(
+    center: Vec2,
+    bbox: {
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+    },
+    startAngle?: number,
+  ) {
+    return {
+      center: Coordinates.modelToCanvas(center),
+      boundingBox: this.getCanvasBbox(bbox),
+      cursor: this.editor.lastCursorPosition,
+      startAngle,
+    };
+  }
+
+  protected startRotation(event: MouseEvent | PointerEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.mode = 'rotating';
+    this.rotationCenter =
+      this.userRotationCenter ??
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+
+    if (!this.rotationCenter) {
+      this.mode = 'standby';
+      this.rotationStartPositions.clear();
+      return;
+    }
+
+    this.rotationStartPositions = new Map(
+      this.editor.drawingEntitiesManager.selectedEntitiesArr.map((entity) => [
+        entity.id,
+        new Vec2(entity.position),
+      ]),
+    );
+
+    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
+    const cursorPos = this.editor.lastCursorPositionOfCanvas;
+    this.rotationStartAngle = Math.atan2(
+      cursorPos.y - canvasCenter.y,
+      cursorPos.x - canvasCenter.x,
+    );
+    this.currentRotationAngle = 0;
+
+    const bbox =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+    if (bbox) {
+      const viewParams = this.buildRotationViewParams(
+        this.rotationCenter,
+        bbox,
+        this.rotationStartAngle,
+      );
+      this.editor.transientDrawingView.showRotation({
+        ...viewParams,
+        rotationAngle: 0,
+        isRotating: true,
+      });
+      this.editor.transientDrawingView.update();
+    }
+  }
+
+  protected startRotationCenterDrag(event: MouseEvent | PointerEvent) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (
+      this.editor.drawingEntitiesManager.externalConnectionsToSelection.length
+    ) {
+      return;
+    }
+
+    this.mode = 'rotating-center';
+    const cursorCanvas = Coordinates.viewToCanvas(
+      this.editor.lastCursorPosition,
+    );
+    this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
+    this.updateRotationView();
   }
 
   protected mousedownEntity(
@@ -296,7 +434,7 @@ abstract class SelectBase implements BaseTool {
       return { bondLengthSnapPosition: null };
     }
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     let angle: number;
     if (editor.mode.modeName === 'snake-layout-mode') {
       let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
@@ -340,8 +478,7 @@ abstract class SelectBase implements BaseTool {
     movementDelta: Vec2,
   ) {
     const results: GroupCenterSnapResult[] = [];
-    const selectedEntitiesBbox =
-      DrawingEntitiesManager.getStructureBbox(selectedEntities);
+    const selectedEntitiesBbox = getStructureBbox(selectedEntities);
     const selectedEntitiesCenter = new Vec2(
       selectedEntitiesBbox.left + selectedEntitiesBbox.width / 2,
       selectedEntitiesBbox.top + selectedEntitiesBbox.height / 2,
@@ -353,17 +490,14 @@ abstract class SelectBase implements BaseTool {
       for (let j = i + 1; j < connectedMonomers.length; j++) {
         const monomerA = connectedMonomers[i];
         const monomerB = connectedMonomers[j];
-        const pairBbox = DrawingEntitiesManager.getStructureBbox([
-          monomerA,
-          monomerB,
-        ]);
+        const pairBbox = getStructureBbox([monomerA, monomerB]);
         const pairCenter = new Vec2(
           pairBbox.left + pairBbox.width / 2,
           pairBbox.top + pairBbox.height / 2,
         );
 
         if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          SelectBase.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.x,
             pairCenter.x,
             HalfMonomerSize,
@@ -382,7 +516,7 @@ abstract class SelectBase implements BaseTool {
             showGroupCenterSnapping: true,
           });
         } else if (
-          SelectRectangle.needApplyGroupCenterSnapForOneAxis(
+          SelectBase.needApplyGroupCenterSnapForOneAxis(
             selectedEntitiesCenterWithMovementDelta.y,
             pairCenter.y,
             HalfMonomerSize,
@@ -818,12 +952,11 @@ abstract class SelectBase implements BaseTool {
       const connectedMonomers = externalConnectionsToSelection.map(
         ({ monomerConnectedToSelection }) => monomerConnectedToSelection,
       );
-      const groupCenterSnapResult =
-        SelectRectangle.calculateGroupCenterSnapPosition(
-          selectedMonomers,
-          connectedMonomers,
-          movementDelta,
-        );
+      const groupCenterSnapResult = SelectBase.calculateGroupCenterSnapPosition(
+        selectedMonomers,
+        connectedMonomers,
+        movementDelta,
+      );
       const firstGroupCenterSnapResult = groupCenterSnapResult[0];
 
       if (firstGroupCenterSnapResult) {
@@ -846,6 +979,20 @@ abstract class SelectBase implements BaseTool {
     if (this.mode === 'selecting') {
       this.updateSelectionViewParams();
       this.onSelectionMove(event.shiftKey);
+      return;
+    }
+
+    if (this.mode === 'rotating') {
+      this.handleRotationMove(event);
+      return;
+    }
+
+    if (this.mode === 'rotating-center') {
+      const cursorCanvas = Coordinates.viewToCanvas(
+        this.editor.lastCursorPosition,
+      );
+      this.userRotationCenter = Coordinates.canvasToModel(cursorCanvas);
+      this.updateRotationView();
       return;
     }
 
@@ -958,7 +1105,20 @@ abstract class SelectBase implements BaseTool {
 
   mouseup(event: MouseEvent) {
     const renderer = event.target?.__data__;
+    const history = EditorHistory.getInstance(this.editor);
+
     try {
+      if (this.mode === 'rotating') {
+        this.finishRotation();
+        return;
+      }
+
+      if (this.mode === 'rotating-center') {
+        this.mode = 'standby';
+        this.updateRotationView();
+        return;
+      }
+
       if (
         this.mode === 'moving' &&
         (renderer?.drawingEntity?.selected ||
@@ -986,7 +1146,7 @@ abstract class SelectBase implements BaseTool {
               new Vec2(0, 0),
               actualMovementDelta,
             );
-          this.history.update(modelChanges);
+          history.update(modelChanges);
         } else {
           const canvasDelta = Vec2.diff(
             this.mousePositionAfterMove,
@@ -1002,7 +1162,7 @@ abstract class SelectBase implements BaseTool {
               new Vec2(0, 0),
               fullMovementOffset,
             );
-          this.history.update(modelChanges);
+          history.update(modelChanges);
         }
       }
     } finally {
@@ -1066,12 +1226,135 @@ abstract class SelectBase implements BaseTool {
     this.editor.events.selectEntities.dispatch(
       this.previousSelectedEntities.map((entity) => entity[1]),
     );
+    this.updateRotationView();
+  }
+
+  protected updateRotationView() {
+    const selectedEntities =
+      this.editor.drawingEntitiesManager.selectedEntitiesArr;
+    const selectedMonomersAndAtoms = selectedEntities.filter(
+      (entity) => entity instanceof BaseMonomer || entity instanceof Atom,
+    );
+
+    if (
+      selectedMonomersAndAtoms.length < 2 ||
+      this.editor.mode.modeName === 'sequence-layout-mode' ||
+      (this.mode !== 'standby' && this.mode !== 'rotating-center')
+    ) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const bbox =
+      this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+    const center =
+      this.userRotationCenter ??
+      this.editor.drawingEntitiesManager.getSelectedEntitiesCenter();
+
+    if (!bbox || !center) {
+      this.editor.transientDrawingView.hideRotation();
+      this.editor.transientDrawingView.update();
+      return;
+    }
+
+    const viewParams = this.buildRotationViewParams(center, bbox);
+    this.editor.transientDrawingView.showRotation(viewParams);
+    this.editor.transientDrawingView.update();
+  }
+
+  protected handleRotationMove(event: MouseEvent) {
+    if (!this.rotationCenter) return;
+
+    const canvasCenter = Coordinates.modelToCanvas(this.rotationCenter);
+    const cursorPos = this.editor.lastCursorPositionOfCanvas;
+
+    const currentAngle = Math.atan2(
+      cursorPos.y - canvasCenter.y,
+      cursorPos.x - canvasCenter.x,
+    );
+
+    let angleDelta = currentAngle - this.rotationStartAngle;
+    let angleDeltaDegrees = (angleDelta * 180) / Math.PI;
+
+    // Snap to 15 degree increments (the default rotation angle from requirements)
+    if (!event.ctrlKey) {
+      const snapAngle = SelectBase.ROTATION_SNAP_ANGLE;
+      angleDeltaDegrees = Math.round(angleDeltaDegrees / snapAngle) * snapAngle;
+      angleDelta = (angleDeltaDegrees * Math.PI) / 180;
+    }
+
+    // Calculate the incremental rotation needed
+    const incrementalDegrees = angleDeltaDegrees - this.currentRotationAngle;
+    this.currentRotationAngle = angleDeltaDegrees;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.rotateSelectedDrawingEntities(
+        this.rotationCenter,
+        incrementalDegrees,
+        true,
+      );
+
+    requestAnimationFrame(() => {
+      this.editor.renderersContainer.update(modelChanges);
+      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+
+      const bbox =
+        this.editor.drawingEntitiesManager.getSelectedEntitiesBoundingBox();
+      if (bbox && this.rotationCenter) {
+        const viewParams = this.buildRotationViewParams(
+          this.rotationCenter,
+          bbox,
+          this.rotationStartAngle,
+        );
+        this.editor.transientDrawingView.showRotation({
+          ...viewParams,
+          rotationAngle: angleDelta,
+          isRotating: true,
+        });
+        this.editor.transientDrawingView.update();
+      }
+    });
+  }
+
+  protected finishRotation() {
+    const history = EditorHistory.getInstance(this.editor);
+
+    if (
+      !this.rotationCenter ||
+      Math.abs(this.currentRotationAngle) < SelectBase.ROTATION_ANGLE_EPSILON
+    ) {
+      this.mode = 'standby';
+      this.rotationCenter = null;
+      this.userRotationCenter = null;
+      this.currentRotationAngle = 0;
+      this.rotationStartPositions.clear();
+      this.updateRotationView();
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.createRotationHistoryCommand(
+        this.rotationStartPositions,
+      );
+
+    history.update(modelChanges);
+
+    this.mode = 'standby';
+    this.rotationCenter = null;
+    this.userRotationCenter = null;
+    this.currentRotationAngle = 0;
+    this.rotationStartPositions.clear();
+    this.updateRotationView();
   }
 
   destroy() {
     this.canvasResizeObserver?.disconnect();
+    this.rotationHandleUnsubscribe?.();
+    this.rotationCenterUnsubscribe?.();
+    this.editor.events.selectEntities.remove(this.selectEntitiesHandler);
 
-    if (!(this.editor.selectedTool instanceof EraserTool)) {
+    if (this.editor.selectedTool?.name !== 'eraser-tool') {
       const modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();

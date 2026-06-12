@@ -1,7 +1,10 @@
 import { CoreEditor, FlexMode } from 'application/editor';
 import { ClearTool } from 'application/editor/tools/Clear';
 import { polymerEditorTheme, peptideMonomerItem } from '../../../mock-data';
-import { createPolymerEditorCanvas } from '../../../helpers/dom';
+import {
+  createPolymerEditorCanvas,
+  createRenderersManager,
+} from '../../../helpers/dom';
 import { Vec2 } from 'domain/entities';
 
 jest.mock('d3', () => {
@@ -92,6 +95,7 @@ describe('Clear Tool', () => {
     editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      renderersContainer: createRenderersManager(polymerEditorTheme),
       mode: new FlexMode(),
     });
   });
@@ -106,8 +110,9 @@ describe('Clear Tool', () => {
     // Try to clear empty canvas - verify hasDrawingEntities is false
     expect(editor.drawingEntitiesManager.hasDrawingEntities).toBe(false);
 
-    // eslint-disable-next-line no-new
-    new ClearTool(editor);
+    const clearTool = new ClearTool(editor);
+
+    expect(clearTool).toBeInstanceOf(ClearTool);
 
     // transientDrawingView.clear should not be called because we return early
     expect(clearSpy).not.toHaveBeenCalled();

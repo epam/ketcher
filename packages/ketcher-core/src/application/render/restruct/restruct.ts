@@ -14,18 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  Box2Abs,
-  FunctionalGroup,
-  Pile,
-  Pool,
-  RGroupAttachmentPoint,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
+import type { Vec2 } from 'domain/entities/vec2';
 import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
@@ -40,8 +38,8 @@ import ReRxnPlus from './rerxnplus';
 import ReSGroup from './resgroup';
 import ReSimpleObject from './resimpleObject';
 import ReText from './retext';
-import { Render } from '../raphaelRender';
-import Visel from './visel';
+import type { Render } from '../raphaelRender';
+import type Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
@@ -704,15 +702,12 @@ class ReStruct {
     }
     this.clearVisel(reloop.visel);
 
-    const bondlist: Array<number> = [];
-
     reloop.loop.hbs.forEach((hbid) => {
       const hb = this.molecule.halfBonds.get(hbid);
       if (!hb) return;
       hb.loop = -1;
       this.markBond(hb.bid, 1);
       this.markAtom(hb.begin, 1);
-      bondlist.push(hb.bid);
     });
 
     this.reloops.delete(loopId);
@@ -909,11 +904,11 @@ class ReStruct {
           fill: '#7f7',
           stroke: '#7f7',
         });
-        if (item.togglePoints) item.togglePoints(true);
+        item.showPoints?.();
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide();
-      if (item.togglePoints) item.togglePoints(false);
+      item.hidePoints?.();
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
         fill: '#fff',

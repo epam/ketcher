@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { moveMouseToTheMiddleOfTheScreen, waitForRender } from '@utils';
+import { moveMouseToTheMiddleOfTheScreen } from '../clicks';
+import { waitForRender } from '../common/loaders/waitForRender';
 
 export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
   await moveMouseToTheMiddleOfTheScreen(page);

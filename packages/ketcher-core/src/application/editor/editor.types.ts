@@ -14,17 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions';
-import { MonomerCreationState, Render } from 'application/render';
-import { Struct } from 'domain/entities';
-import { selectionKeys } from './shared/constants';
-import { PipelineSubscription, Subscription } from 'subscription';
-import { IRnaPreset } from 'application/editor/tools';
+import type { Action } from './actions/action';
+import type { MonomerCreationState, Render } from 'application/render';
+import type { Struct } from 'domain/entities/struct';
+import type { selectionKeys } from './shared/constants';
+import type { PipelineSubscription, Subscription } from 'subscription';
+import type { IRnaPreset } from './tools/Tool';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
+} & {
+  enhancedFlags?: number[];
 };
-
 export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };

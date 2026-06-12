@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, KeyboardEvent } from 'react';
-import { Struct } from 'ketcher-core';
+import type { FC, KeyboardEvent } from 'react';
+import type { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
 import { Icon, StructRender } from 'components';
@@ -27,7 +27,7 @@ export interface Template {
     bondid: number;
     group: string;
     prerender?: string;
-    abbreviation: string;
+    abbreviation?: string;
     name: string;
   };
 }
@@ -58,9 +58,13 @@ function getTemplateTitle(template: Template, index: number): string {
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation;
+    return tmpl.props.abbreviation ?? '';
   }
-  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
+  return (
+    tmpl.props.abbreviation ??
+    tmpl.struct.name ??
+    `${tmpl.props.group} template ${i + 1}`
+  );
 }
 
 function createKeyDownHandler(callback: () => void) {
@@ -93,8 +97,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {templates.map((tmpl, i) => {
         return (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             className={
               tmpl.struct !== selected?.struct
                 ? classes.td
@@ -107,6 +112,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 : `${tmpl.struct.name}_${i}_selected`
             }
             onClick={() => onSelect(tmpl)}
+            onKeyDown={createKeyDownHandler(() => onSelect(tmpl))}
           >
             <StructRender
               testId={tmpl.struct.name}
@@ -128,9 +134,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
               {greekify(tmplName(tmpl, i))}
             </div>
             {tmpl.props.group === 'User Templates' && (
-              <span
-                role="button"
-                tabIndex={0}
+              <button
                 data-testid={'delete-template-button'}
                 className={`${classes.button} ${classes.deleteButton}`}
                 onClick={(e) => {
@@ -140,13 +144,11 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 onKeyDown={createKeyDownHandler(() => onDelete!(tmpl))}
               >
                 <Icon name="delete" />
-              </span>
+              </button>
             )}
             {!isFunctionalGroupTemplate(tmpl) &&
               !isSaltOrSolventTemplate(tmpl) && (
-                <span
-                  role="button"
-                  tabIndex={0}
+                <button
                   data-testid={'edit-template-button'}
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
@@ -156,9 +158,9 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                   onKeyDown={createKeyDownHandler(() => onAttach!(tmpl))}
                 >
                   <Icon name="edit" />
-                </span>
+                </button>
               )}
-          </button>
+          </div>
         );
       })}
     </div>

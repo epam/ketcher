@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -266,6 +267,7 @@
         "fullName": "D-Methionine",
         "alias": "dM",
         "aliasHELM": "dM",
+        "aliasBILN": "dM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

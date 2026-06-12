@@ -17,14 +17,15 @@
 import * as clipArea from '../component/cliparea/cliparea';
 
 import {
+  type Editor,
   KetSerializer,
   formatProperties,
   ChemicalMimeType,
   KetcherLogger,
   ketcherProvider,
   SupportedFormat,
-  Editor,
   getStructure,
+  isEditableInputTarget,
   MolSerializer,
   runAsyncAction,
   SettingsManager,
@@ -102,7 +103,7 @@ function shouldIgnoreKeyEvent(state, event): boolean {
   // TODO: It is done to intercept hotkeys when editing inputs in monomer creation wizard
   // It targets plain inputs only, ideally it has to be incorporated with ClipArea functionality
   // Ideally x2 – create a common event interception layer for both micro and macro editors
-  return event.target.nodeName === 'INPUT';
+  return isEditableInputTarget(event.target);
 }
 
 function shouldShowAbbreviationLookup(key: string, state): boolean {
@@ -225,8 +226,13 @@ function handleHotkeyGroup(
   if (clipArea.actions.indexOf(actName) === -1) {
     let newAction = getNextAction(actName);
     const hoveredItem = getHoveredItem(render.ctab);
+    const { atoms, bonds } = editor.selection() ?? {};
+    const hasSelection = Boolean(atoms?.length) || Boolean(bonds?.length);
 
-    if (shouldHandleItemDirectly(hoveredItem, newAction)) {
+    // For erase action, prioritize selected items over hovered item
+    if (actName === 'erase' && hasSelection) {
+      dispatch(onAction(newAction));
+    } else if (shouldHandleItemDirectly(hoveredItem, newAction)) {
       newAction = getCurrentAction(group[index]) || newAction;
       handleHotkeyOverItem({
         hoveredItem,
@@ -361,6 +367,13 @@ export function initClipboard(dispatch, getState) {
       const state = getState();
       return !state.modal;
     },
+    onLegacyCopy() {
+      const state = getState();
+      const editor = state.editor;
+      const data = legacyClipData(editor);
+      editor.selection(null);
+      return data;
+    },
     onLegacyCut() {
       const state = getState();
       const editor = state.editor;
@@ -405,15 +418,14 @@ export function initClipboard(dispatch, getState) {
       const result = await runAsyncAction(async () => {
         const structStr = await getStructStringFromClipboardData(data);
         if (structStr || !rxnTextPlain.test(data['text/plain'])) {
-          if (isSmarts) {
-            loadStruct(structStr, {
-              fragment: true,
-              isPaste: true,
-              'input-format': ChemicalMimeType.DaylightSmarts,
-            });
-          } else {
-            loadStruct(structStr, { fragment: true, isPaste: true });
-          }
+          const opts = isSmarts
+            ? {
+                fragment: true,
+                isPaste: true,
+                'input-format': ChemicalMimeType.DaylightSmarts,
+              }
+            : { fragment: true, isPaste: true };
+          await dispatch(load(structStr, opts));
         }
       }, ketcherInstance.eventBus);
       return result;

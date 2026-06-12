@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -654,6 +655,7 @@
         "fullName": "N-Methyl-Alanine",
         "alias": "meA",
         "aliasHELM": "meA",
+        "aliasBILN": "meA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

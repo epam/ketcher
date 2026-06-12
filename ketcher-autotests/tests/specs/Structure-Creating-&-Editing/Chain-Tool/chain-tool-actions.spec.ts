@@ -41,7 +41,7 @@ test.describe('Chain Tool verification', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(center.x + DELTA, center.y, page);
+    await dragMouseTo(page, center.x + DELTA, center.y);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({
       force: true,
@@ -82,7 +82,7 @@ test.describe('Chain Tool verification', () => {
     await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(center.x + DELTA, center.y, page);
+    await dragMouseTo(page, center.x + DELTA, center.y);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
     await getAtomLocator(page, { atomLabel: 'C', atomId: 0 }).click({

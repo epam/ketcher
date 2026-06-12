@@ -3,11 +3,11 @@ import { test, expect, Page } from '@fixtures';
 import {
   takeTopToolbarScreenshot,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   openFileAndAddToCanvas,
   waitForPageInit,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
   clickOnCanvas,
@@ -25,7 +25,7 @@ import {
   TemplateLibraryTab,
 } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureLibraryDialog';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
@@ -51,10 +51,10 @@ test.describe('Zoom changes', () => {
     const numberOfMouseWheelScroll = 2;
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
@@ -78,10 +78,10 @@ test.describe('Zoom changes', () => {
     const numberOfMouseWheelScroll = 2;
 
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await clickOnCanvas(page, 100, 100);
 
@@ -102,10 +102,10 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await expandAbbreviation(
@@ -127,10 +127,10 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomOut = CommonTopRightToolbar(page).zoomOutButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await expandAbbreviation(
@@ -151,11 +151,11 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
     await zoomSelector.click();
@@ -180,13 +180,13 @@ test.describe('Zoom changes', () => {
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomInButton = CommonTopRightToolbar(page).zoomInButton;
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.CO2Et,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomInByKeyboard(page);
+    await zoomInByKeyboard(page);
     await zoomSelector.click();
     await zoomInButton.click();
     await checkZoomLevel(page, '120%');
@@ -203,7 +203,7 @@ test.describe('Zoom changes', () => {
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).areaSelectionTool();
 
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
     await zoomSelector.click();
     await zoomOutButton.click();
     await checkZoomLevel(page, '80%');
@@ -293,7 +293,7 @@ test.describe('Zoom changes', () => {
     const fileContent = await readFileContent('Molfiles-V2000/long-chain.mol');
 
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await expect(page).toHaveScreenshot();
   });
 });

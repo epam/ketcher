@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -10,10 +10,13 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class LinkerSequenceNode {
-  constructor(public monomer: BaseMonomer) {}
+  constructor(
+    public monomer: BaseMonomer,
+    private firstMonomerInChain?: BaseMonomer,
+  ) {}
 
   public get SubChainConstructor() {
     return this.monomer.SubChainConstructor;
@@ -31,7 +34,10 @@ export class LinkerSequenceNode {
     const monomers = [this.firstMonomerInNode];
     const firstMonomer = this.firstMonomerInNode;
     let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
-    while (LinkerSequenceNode.isValidPartForLinker(nextMonomer)) {
+    while (
+      nextMonomer !== this.firstMonomerInChain &&
+      LinkerSequenceNode.isValidPartForLinker(nextMonomer)
+    ) {
       monomers.push(nextMonomer);
       nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);
     }

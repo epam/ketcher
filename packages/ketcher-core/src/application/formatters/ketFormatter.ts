@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructFormatter } from './structFormatter.types';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { EditorSelection } from 'application/editor';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { EditorSelection } from 'application/editor/editor.types';
 
 export class KetFormatter implements StructFormatter {
   readonly #ketSerializer: KetSerializer;
@@ -27,32 +27,25 @@ export class KetFormatter implements StructFormatter {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,
-  ): Promise<string>;
+  ): Promise<string> {
+    return this.#ketSerializer.serialize(
+      struct,
+      drawingEntitiesManager,
+      selection,
+    );
+  }
 
   async getStructureFromStructAsync(
     struct: Struct[],
     drawingEntitiesManager?: DrawingEntitiesManager,
     selection?: EditorSelection,
-  ): Promise<string[]>;
-
-  async getStructureFromStructAsync(
-    struct: Struct | Struct[],
-    drawingEntitiesManager?: DrawingEntitiesManager,
-    selection?: EditorSelection,
-  ): Promise<string | string[]> {
-    if (Array.isArray(struct)) {
-      return struct.map((item) =>
-        this.#ketSerializer.serialize(item, drawingEntitiesManager, selection),
-      );
-    }
-    return this.#ketSerializer.serialize(
-      struct,
-      drawingEntitiesManager,
-      selection,
+  ): Promise<string[]> {
+    return struct.map((item) =>
+      this.#ketSerializer.serialize(item, drawingEntitiesManager, selection),
     );
   }
 

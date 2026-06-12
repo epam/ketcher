@@ -22,7 +22,6 @@ import {
 } from '@tests/pages/constants/settingsDialog/Constants';
 import { InfoMessageDialog } from '@tests/pages/molecules/canvas/InfoMessageDialog';
 import { TopRightToolbar } from '../TopRightToolbar';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 
 type GeneralSectionLocators = {
@@ -331,7 +330,7 @@ export const SettingsDialog = (page: Page) => {
     async openSection(section: SettingsSection) {
       await getElement(section).click();
       // Wait for section to open
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
     },
 
     async setOptionValue(option: AllSettingsOptions, value = '') {

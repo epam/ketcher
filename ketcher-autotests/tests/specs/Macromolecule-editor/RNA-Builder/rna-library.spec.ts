@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -9,14 +9,12 @@ import {
   takePageScreenshot,
   takePresetsScreenshot,
   takeRNABuilderScreenshot,
-  waitForPageInit,
   waitForRender,
   moveMouseAway,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
   clickOnCanvas,
   Monomer,
-  clickOnMiddleOfCanvas,
   PresetType,
 } from '@utils';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
@@ -37,7 +35,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { Library } from '@tests/pages/macromolecules/Library';
@@ -47,7 +45,10 @@ import { LibraryPresetOption } from '@tests/pages/constants/contextMenu/Constant
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { DeletePresetDialog } from '@tests/pages/macromolecules/library/DeletePresetDialog';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
 async function drawThreeMonomers(page: Page) {
@@ -72,7 +73,7 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
   const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
   await drawThreeMonomers(page);
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+  await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   await sugar.hover();
   await page.mouse.down();
   await base.hover();
@@ -106,33 +107,27 @@ async function configureInitialState(page: Page) {
 test.describe('RNA Library', () => {
   let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext();
-    page = await context.newPage();
+  test.beforeAll(async ({ initFlexCanvas }) => {
+    page = await initFlexCanvas();
+  });
 
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  test.beforeEach(async ({ FlexCanvas: _ }) => {
     await configureInitialState(page);
   });
 
-  test.afterEach(async ({ context: _ }) => {
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
-
-  test.afterAll(async ({ browser }) => {
-    await Promise.all(browser.contexts().map((context) => context.close()));
+  test.afterAll(async ({ closePage }) => {
+    await closePage();
   });
 
   test(
     'Check that switch between Macro and Micro mode does not crash application',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
+    async ({ MoleculesCanvas: _ }) => {
       /* 
     Test case: #3498
     Description: Application does not crash. 
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3498
     */
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
       await configureInitialState(page);
@@ -405,7 +400,7 @@ test.describe('RNA Library', () => {
     await Library(page).selectMonomers([Sugar._3A6, Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).selectCustomPreset('3A6(baA)bP_baA_3A6_bP');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -495,7 +490,9 @@ test.describe('RNA Library', () => {
       Phosphate.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Base.baA);
@@ -527,7 +524,9 @@ test.describe('RNA Library', () => {
       Phosphate.Test_6_Ph,
     ]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(
       LibraryPresetOption.DuplicateAndEdit,
     );
@@ -535,8 +534,8 @@ test.describe('RNA Library', () => {
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await Library(page).rnaBuilder.collapse();
-    const customPresetCopy = page.getByTestId(
-      '25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph',
+    const customPresetCopy = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph_Copy,
     );
     await ContextMenu(page, customPresetCopy).click(LibraryPresetOption.Edit);
     await Library(page).rnaBuilder.selectPhosphateSlot();
@@ -557,7 +556,7 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await Library(page).rnaBuilder.expand();
-    const resetA = page.getByTestId(Preset.A.testId);
+    const resetA = Library(page).getMonomerLibraryCardLocator(Preset.A);
     await ContextMenu(page, resetA).click(LibraryPresetOption.DuplicateAndEdit);
     await Library(page).rnaBuilder.cancel();
     // To avoid unstable test execution
@@ -586,7 +585,9 @@ test.describe('RNA Library', () => {
         Phosphate.Test_6_Ph,
       ]);
       await Library(page).rnaBuilder.addToPresets();
-      const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+      const customPreset = Library(page).getMonomerLibraryCardLocator(
+        Preset._25R_A_Test_6_Ph,
+      );
       await ContextMenu(page, customPreset).click(
         LibraryPresetOption.DeletePreset,
       );
@@ -606,10 +607,11 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([Sugar._25R, Base.baA, Phosphate.bP]);
     await Library(page).rnaBuilder.addToPresets();
-    const customPreset = page.getByTestId('25R(baA)bP_baA_25R_bP');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_baA_bP,
+    );
     await ContextMenu(page, customPreset).click(LibraryPresetOption.Edit);
-    await page.getByPlaceholder('Name your structure').click();
-    await page.getByPlaceholder('Name your structure').fill('TestMonomers');
+    await Library(page).rnaBuilder.setCustomPresetName('TestMonomers');
     await Library(page).rnaBuilder.save();
     await takePresetsScreenshot(page);
   });
@@ -653,8 +655,7 @@ test.describe('RNA Library', () => {
     await Library(page).selectMonomer(Base.A);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphate.Test_6_Ph);
-    await page.getByPlaceholder('Name your structure').click();
-    await page.getByPlaceholder('Name your structure').fill('cTest');
+    await Library(page).rnaBuilder.setCustomPresetName('cTest');
     await Library(page).rnaBuilder.addToPresets();
     await takeRNABuilderScreenshot(page);
   });
@@ -689,7 +690,7 @@ test.describe('RNA Library', () => {
         .getByTestId(`rna-accordion-details-${monomer.groupName}`)
         .hover();
       await page.mouse.wheel(0, 0);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeMonomerLibraryScreenshot(page, { maxDiffPixelRatio: 0.03 });
     }
   });
@@ -852,9 +853,8 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
-    await bondLine.hover();
+    await getBondLocator(page, {}).nth(1).hover({ force: true });
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
@@ -897,10 +897,9 @@ test.describe('RNA Library', () => {
     Test case: Bond tool
     Description: Bond deleted.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await CommonLeftToolbar(page).erase();
-    await bondLine.click();
+    await getBondLocator(page, {}).nth(1).click({ force: true });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
@@ -915,7 +914,7 @@ test.describe('RNA Library', () => {
     const phosphate = getMonomerLocator(page, Phosphate.P).nth(0);
 
     await drawThreeMonomers(page);
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await sugar.hover();
     await page.mouse.down();
     await base.hover();
@@ -941,7 +940,6 @@ test.describe('RNA Library', () => {
     */
       const anyPointX = 300;
       const anyPointY = 500;
-      await page.getByTestId(`summary-${molecule.type}`).click();
       await Library(page).dragMonomerOnCanvas(molecule.description, {
         x: -10,
         y: -10,
@@ -950,8 +948,8 @@ test.describe('RNA Library', () => {
       await CommonLeftToolbar(page).areaSelectionTool(
         SelectionToolType.Rectangle,
       );
-      await clickInTheMiddleOfTheScreen(page);
-      await dragMouseTo(anyPointX, anyPointY, page);
+      await clickInTheMiddleOfTheCanvas(page);
+      await dragMouseTo(page, anyPointX, anyPointY);
       await takeEditorScreenshot(page);
     });
   }
@@ -972,7 +970,7 @@ test.describe('RNA Library', () => {
         SelectionToolType.Rectangle,
       );
       await getMonomerLocator(page, monomer).click();
-      await dragMouseTo(anyPointX, anyPointY, page);
+      await dragMouseTo(page, anyPointX, anyPointY);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
@@ -992,7 +990,7 @@ test.describe('RNA Library', () => {
         y: 0,
         fromCenter: true,
       });
-      await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+      await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
       await getMonomerLocator(page, Sugar._25R).click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);
@@ -1067,7 +1065,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async () => {
@@ -1113,12 +1111,12 @@ test.describe('RNA Library', () => {
 
       await page.keyboard.press('Escape');
       await Library(page).openRNASection(RNASection.Nucleotides);
-      await clickOnMiddleOfCanvas(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
       });
-      await dragMouseTo(200, 200, page);
+      await dragMouseTo(page, 200, 200);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1245,9 +1243,8 @@ test.describe('RNA Library', () => {
         y: 0,
         fromCenter: true,
       });
-      await page.keyboard.press('Escape');
-      await clickOnMiddleOfCanvas(page);
-      await dragMouseTo(200, 200, page);
+      await getMonomerLocator(page, monomer).hover({ force: true });
+      await dragMouseTo(page, 200, 200);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
@@ -1361,7 +1358,9 @@ test.describe('RNA Library', () => {
     await Library(page).rnaBuilder.addToPresets();
     await Library(page).rnaBuilder.collapse();
 
-    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
+    const customPreset = Library(page).getMonomerLibraryCardLocator(
+      Preset._25R_A_Test_6_Ph,
+    );
     await ContextMenu(page, customPreset).click(
       LibraryPresetOption.DeletePreset,
     );
@@ -1404,11 +1403,11 @@ test.describe('RNA Library', () => {
      *  Case 20:
      *    Select all entered text in RNA Builder and delete
      */
-    const rnaNameEditBox = page.getByPlaceholder('Name your structure');
+    const rnaNameEditBox = Library(page).rnaBuilder.nameYourStructureEditbox;
     const rnaName = 'Random Text';
 
-    await Library(page).rnaBuilder.expand();
-    await rnaNameEditBox.fill(rnaName);
+    // await Library(page).rnaBuilder.expand();
+    await Library(page).rnaBuilder.setCustomPresetName(rnaName);
     await takeRNABuilderScreenshot(page);
 
     for (const _ of rnaName) {
@@ -1467,10 +1466,14 @@ test.describe('RNA Library', () => {
 
     // Case 23
     await Library(page).selectMonomer(Chem.Test_6_Ch);
-    await takeElementScreenshot(page, page.getByTestId(Chem.Test_6_Ch.testId), {
-      maxDiffPixelRatio: 0.03,
-      hideMonomerPreview: true,
-    });
+    await takeElementScreenshot(
+      page,
+      Library(page).getMonomerLibraryCardLocator(Chem.Test_6_Ch),
+      {
+        maxDiffPixelRatio: 0.03,
+        hideMonomerPreview: true,
+      },
+    );
     await moveMouseAway(page);
 
     // Case 24

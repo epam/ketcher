@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  type Struct,
   expandSGroupWithMultipleAttachmentPoint,
   fromItemsFuse,
   fromPaste,
@@ -23,16 +24,15 @@ import {
   getItemsToFuse,
   notifyItemsToMergeInitializationComplete,
   SGroup,
-  Struct,
   Vec2,
   vectorUtils,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import { debounce } from 'lodash';
 
 let isMovePreviewCalculationInProgress = false;

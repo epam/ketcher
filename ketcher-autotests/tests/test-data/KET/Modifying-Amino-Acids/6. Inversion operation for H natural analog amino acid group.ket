@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -353,6 +354,7 @@
         "fullName": "D-Histidine",
         "alias": "dH",
         "aliasHELM": "dH",
+        "aliasBILN": "dH",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

@@ -23,7 +23,7 @@ export interface TooltipProps {
 const OFFSET_FROM_POSITION = 10;
 
 export const Tooltip = (props: TooltipProps) =>
-  props.message && (
+  props.message ? (
     <div
       className={`${styles.container}`}
       style={{
@@ -34,4 +34,4 @@ export const Tooltip = (props: TooltipProps) =>
     >
       {props.message}
     </div>
-  );
+  ) : null;

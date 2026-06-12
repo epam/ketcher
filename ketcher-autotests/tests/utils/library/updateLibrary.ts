@@ -4,7 +4,7 @@ export async function updateMonomersLibrary(
   page: Page,
   sdfString: string,
 ): Promise<string | null> {
-  return page.evaluate(async (cmd) => {
+  return await page.evaluate(async (cmd) => {
     try {
       await window.ketcher.updateMonomersLibrary(cmd);
       return null;

@@ -1,19 +1,20 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@fixtures';
+import { test, Page } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   openFileAndAddToCanvas,
-  waitForPageInit,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
   undoByKeyboard,
   redoByKeyboard,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   dragTo,
+  moveMouseAway,
 } from '@utils';
 import {
   copyAndPaste,
@@ -22,7 +23,7 @@ import {
 } from '@utils/canvas/selectSelection';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -58,12 +59,17 @@ import {
   BondTypeOption,
 } from '@tests/pages/constants/bondProperties/Constants';
 
-test.describe('Undo/Redo Actions', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
+let page: Page;
+test.beforeAll(async ({ initMoleculesCanvas }) => {
+  page = await initMoleculesCanvas();
+});
+test.afterAll(async ({ closePage }) => {
+  await closePage();
+});
+test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
 
-  test('Undo/Redo Erase template action', async ({ page }) => {
+test.describe('Undo/Redo Actions', () => {
+  test('Undo/Redo Erase template action', async () => {
     /*
     Test case: EPMLSOPKET-1732
     Description: Undo/Redo actions work correctly:
@@ -71,7 +77,7 @@ test.describe('Undo/Redo Actions', () => {
     after Redo it is deleted again.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).erase();
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -86,7 +92,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Atom template action', async ({ page }) => {
+  test('Undo/Redo Atom template action', async () => {
     /*
     Test case: EPMLSOPKET-1740
     Description: Undo/Redo actions work correctly:
@@ -96,7 +102,7 @@ test.describe('Undo/Redo Actions', () => {
     const atomToolbar = RightToolbar(page);
 
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Chlorine);
 
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
@@ -111,7 +117,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Atom Properties template action', async ({ page }) => {
+  test('Undo/Redo Atom Properties template action', async () => {
     /*
     Test case: EPMLSOPKET-1741
     Description: Undo/Redo actions work correctly:
@@ -119,7 +125,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the property mark is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -141,7 +147,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Bond Properties template action', async ({ page }) => {
+  test('Undo/Redo Bond Properties template action', async () => {
     /*
     Test case: EPMLSOPKET-1742
     Description: Undo/Redo actions work correctly:
@@ -149,7 +155,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the property mark is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool(
       SelectionToolType.Rectangle,
     );
@@ -169,7 +175,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Bond template action', async ({ page }) => {
+  test('Undo/Redo Single Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1743
     Description: Undo/Redo action should work correctly:
@@ -177,9 +183,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -192,7 +198,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double Bond template action', async ({ page }) => {
+  test('Undo/Redo Double Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1744
     Description: Undo/Redo action should work correctly:
@@ -200,8 +206,8 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Double);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Double);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -214,7 +220,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Triple Bond template action', async ({ page }) => {
+  test('Undo/Redo Triple Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1750
     Description: Undo/Redo action should work correctly:
@@ -222,8 +228,8 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Triple bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Triple);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Triple);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -236,7 +242,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Chain template action', async ({ page }) => {
+  test('Undo/Redo Chain template action', async () => {
     /*
     Test case: EPMLSOPKET-1751
     Description: Undo/Redo action should work correctly:
@@ -244,13 +250,13 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Chain is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).chain();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
 
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
@@ -260,7 +266,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Up stereobond template action', async ({ page }) => {
+  test('Undo/Redo Single Up stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -268,9 +274,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Up stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUp);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -283,7 +289,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Down stereobond template action', async ({ page }) => {
+  test('Undo/Redo Single Down stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -291,9 +297,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Down stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleDown);
     await getAtomLocator(page, { atomLabel: 'C' }).first().click({
       force: true,
     });
@@ -306,9 +312,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single Up/Down stereobond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single Up/Down stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -316,9 +320,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single Up/Down stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUpDown);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUpDown);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -331,9 +335,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double Cis/Trans stereobond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Double Cis/Trans stereobond template action', async () => {
     /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
@@ -341,9 +343,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double Cis/Trans stereobond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleCisTrans);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.DoubleCisTrans);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -356,7 +358,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Any Query Bond template action', async ({ page }) => {
+  test('Undo/Redo Any Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -364,9 +366,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Any Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Any);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Any);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -379,7 +381,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Aromatic Query Bond template action', async ({ page }) => {
+  test('Undo/Redo Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -387,9 +389,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Aromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -402,9 +404,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single/Double Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single/Double Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -412,9 +412,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single/Double Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleDouble);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleDouble);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -427,9 +427,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Single/Aromatic Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Single/Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -437,9 +435,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Single/Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -452,9 +450,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Double/Aromatic Query Bond template action', async ({
-    page,
-  }) => {
+  test('Undo/Redo Double/Aromatic Query Bond template action', async () => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -462,9 +458,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Double/Aromatic Query Bond is restored.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.DoubleAromatic);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.DoubleAromatic);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 6 }).click({
       force: true,
     });
@@ -477,7 +473,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Mapping tool template action', async ({ page }) => {
+  test('Undo/Redo Mapping tool template action', async () => {
     /*
     Test case: EPMLSOPKET-1754
     Description: Undo/Redo action should work correctly:
@@ -497,7 +493,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Data S-Group tool', async ({ page }) => {
+  test('Undo/Redo Data S-Group tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -522,7 +518,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Multiple Group tool', async ({ page }) => {
+  test('Undo/Redo Multiple Group tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -544,7 +540,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo SRU Polymer tool', async ({ page }) => {
+  test('Undo/Redo SRU Polymer tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -567,7 +563,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Superatom tool', async ({ page }) => {
+  test('Undo/Redo Superatom tool', async () => {
     /*
     Test case: EPMLSOPKET-1755
     Description: Undo/Redo action should work correctly:
@@ -589,7 +585,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo R-Group Label tool', async ({ page }) => {
+  test('Undo/Redo R-Group Label tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -597,7 +593,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the R-Group Label tool is restored;
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -610,7 +606,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo R-Group Fragment tool', async ({ page }) => {
+  test('Undo/Redo R-Group Fragment tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -618,7 +614,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the R-Group Fragment tool is restored;
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -631,7 +627,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Attachment Point tool', async ({ page }) => {
+  test('Undo/Redo Attachment Point tool', async () => {
     /*
     Test case: EPMLSOPKET-1756
     Description: Undo/Redo action should work correctly:
@@ -652,7 +648,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple Undo/Redo', async ({ page }) => {
+  test('Multiple Undo/Redo', async () => {
     /*
     Test case: EPMLSOPKET-1757
     Description: Undo/Redo action should work correctly
@@ -685,7 +681,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Copy/Paste', async ({ page }) => {
+  test('Undo/Redo Copy/Paste', async () => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -708,7 +704,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Cut/Paste', async ({ page }) => {
+  test('Undo/Redo Cut/Paste', async () => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -731,7 +727,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Hotkeys', async ({ page }) => {
+  test('Undo/Redo Hotkeys', async () => {
     /*
     Test case: EPMLSOPKET-1759
     Description: Undo/Redo hotkeys action should work correctly
@@ -752,7 +748,7 @@ test.describe('Undo/Redo Actions', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo Zoom In/Zoom Out', async ({ page }) => {
+  test('Undo/Redo Zoom In/Zoom Out', async () => {
     /*
     Test case: EPMLSOPKET-1760
     Description: Undo/Redo hotkeys action should work correctly
@@ -763,7 +759,7 @@ test.describe('Undo/Redo Actions', () => {
       getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       { primary: true, secondary: true },
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     for (let i = 0; i < 2; i++) {
       await undoByKeyboard(page);
     }
@@ -772,11 +768,11 @@ test.describe('Undo/Redo Actions', () => {
       await redoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
-  test('Undo/Redo S-Group , Structure, Chain', async ({ page }) => {
+  test('Undo/Redo S-Group , Structure, Chain', async () => {
     /*
     Test case: EPMLSOPKET-2960
     Description: Undo/Redo action should work correctly
@@ -811,14 +807,8 @@ test.describe('Undo/Redo Actions', () => {
     }
     await takeEditorScreenshot(page);
   });
-});
 
-test.describe('Undo/Redo Actions', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Undo/Redo paste template action', async ({ page }) => {
+  test('Undo/Redo paste template action', async () => {
     /*
     Test case: EPMLSOPKET-1731
     Description: Undo/Redo actions work correctly:
@@ -828,14 +818,14 @@ test.describe('Undo/Redo Actions', () => {
     becomes enabled and the Undo button becomes disabled.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).undo();
-    await expect(page).toHaveScreenshot();
+    await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).redo();
-    await expect(page).toHaveScreenshot();
+    await takeEditorScreenshot(page);
   });
 
-  test('When mouse hovering - hotkey CTRL+Z is working', async ({ page }) => {
+  test('When mouse hovering - hotkey CTRL+Z is working', async () => {
     /*
     Test case: EPMLSOPKET-11847
     Description:
@@ -844,18 +834,18 @@ test.describe('Undo/Redo Actions', () => {
     Hover mouse cursor over of 'Benzene' and press CTRL+Z (Undo)
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
-    await page.getByTestId('canvas').hover();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await undoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Undo deletes previously placed template', async ({ page }) => {
+  test('Undo deletes previously placed template', async () => {
     /*
     Test case: EPMLSOPKET-16939
     Description:
@@ -870,7 +860,7 @@ test.describe('Undo/Redo Actions', () => {
       ResetToSelectToolOption.Off,
     );
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

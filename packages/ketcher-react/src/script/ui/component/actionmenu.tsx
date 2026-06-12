@@ -14,15 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useRef } from 'react';
+import {
+  type ComponentProps,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+  useRef,
+} from 'react';
 
-import action, { Tools, UiAction, UiActionAction } from '../action';
+import action, {
+  type Tools,
+  type UiAction,
+  type UiActionAction,
+} from '../action';
 import clsx from 'clsx';
 import { hiddenAncestor } from '../state/toolbar';
 import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
-type IconName = React.ComponentProps<typeof Icon>['name'];
+type IconName = ComponentProps<typeof Icon>['name'];
 
 interface ItemStatus {
   selected?: boolean;
@@ -93,7 +103,7 @@ function isMenuItemWithMenu(item: MenuItem): item is MenuItemWithMenu {
     typeof item === 'object' &&
     item !== null &&
     'menu' in item &&
-    Array.isArray((item as MenuItemWithMenu).menu)
+    Array.isArray(item.menu)
   );
 }
 
@@ -104,7 +114,7 @@ function isMenuItemWithComponent(
     typeof item === 'object' &&
     item !== null &&
     'component' in item &&
-    typeof (item as MenuItemWithComponent).component === 'function'
+    typeof item.component === 'function'
   );
 }
 
@@ -156,14 +166,14 @@ function ActionButton({
   onAction,
   disableableButtons = [],
   indigoVerification,
-}: ActionButtonProps) {
+}: Readonly<ActionButtonProps>) {
   const shortcut = action.shortcut && shortcutStr(action.shortcut);
   const menuRef = useRef<HTMLButtonElement>(null);
   const disabled =
     status.disabled ||
     (indigoVerification && disableableButtons.includes(name));
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!status.selected || isMenuOpened(menuRef.current)) {
       onAction(action.action);
       event.stopPropagation();
@@ -175,6 +185,7 @@ function ActionButton({
       ref={menuRef}
       disabled={disabled}
       onClick={onClick}
+      role="menuitem"
       title={shortcut ? `${action.title} (${shortcut})` : action.title}
     >
       <Icon name={name} />
@@ -209,7 +220,7 @@ function renderActiveMenuItem(
   item: MenuItemWithMenu,
   props: SharedActionProps,
 ): JSX.Element | null {
-  const menu = item.menu || [];
+  const menu = item.menu ?? [];
   const { opened, status } = props;
   let activeMenuItem: string | null = null;
   if (isOpened(item, opened)) {
@@ -219,7 +230,7 @@ function renderActiveMenuItem(
         (item): item is string => typeof item === 'string',
       );
       activeMenuItem =
-        findActiveMenuItem(stringItems, status) || stringItems[0];
+        findActiveMenuItem(stringItems, status) ?? stringItems[0];
     } else {
       // Nested menu structure
       const menuWithMenuItems = menu.filter(isMenuItemWithMenu);
@@ -232,7 +243,7 @@ function renderActiveMenuItem(
       }, []);
 
       activeMenuItem =
-        findActiveMenuItem(subMenuItems, status) || subMenuItems[0];
+        findActiveMenuItem(subMenuItems, status) ?? subMenuItems[0];
     }
   }
 
@@ -256,7 +267,7 @@ function ActionMenu({
   className,
   role,
   ...props
-}: ActionMenuProps) {
+}: Readonly<ActionMenuProps>) {
   const visibleMenu = menu.reduce((items: MenuItem[], item: MenuItem) => {
     const itemKey = getItemKey(item);
     const status = props.status[itemKey];
@@ -268,9 +279,9 @@ function ActionMenu({
     return items;
   }, []);
 
-  const handleMenuItemClick = (event: React.MouseEvent) =>
+  const handleMenuItemClick = (event: MouseEvent) =>
     openHandle(event, props.onOpen);
-  const handleMenuItemKeyDown = (event: React.KeyboardEvent) => {
+  const handleMenuItemKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       openHandle(event, props.onOpen);
@@ -280,7 +291,7 @@ function ActionMenu({
   return (
     <menu
       className={className}
-      role={role || 'menu'}
+      role={role ?? 'menu'}
       style={toolMargin(name, menu, props.visibleTools)}
     >
       {visibleMenu.map((item) => {
@@ -294,8 +305,7 @@ function ActionMenu({
             })}
             onClick={handleMenuItemClick}
             onKeyDown={handleMenuItemKeyDown}
-            role="menuitem"
-            tabIndex={0}
+            role="none"
           >
             {showMenuOrButton(action, item, props.status[itemKey], props)}
             {isMenuItemWithMenu(item) &&
@@ -313,7 +323,7 @@ function toolMargin(
   menuName: string,
   menu: MenuItem[],
   visibleTools: VisibleToolsMap,
-): React.CSSProperties {
+): CSSProperties {
   if (!visibleTools[menuName]) return {};
   // now not found better way
   const iconHeight =
@@ -345,7 +355,7 @@ function toolMargin(
 }
 
 function openHandle(
-  event: React.MouseEvent | React.KeyboardEvent,
+  event: MouseEvent | KeyboardEvent,
   onOpen: (id: string | undefined, isSelected: boolean) => void,
 ): void {
   const currentTarget = event.currentTarget as HTMLElement;

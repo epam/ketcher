@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import {
   MonomerType,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardAndOpenAsNewProjectMacro,
@@ -15,30 +15,20 @@ import {
   getSymbolLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
-import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
-import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
-import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 type MonomerLocatorOptionsWithAlias = MonomerLocatorOptions & {
@@ -478,7 +468,9 @@ test.describe('Preview tooltips checks: ', () => {
   }
 
   for (const ambiguousMonomer of ambiguousMonomers) {
-    test(`${ambiguousMonomer.testDescription} in sequence view`, async () => {
+    test(`${ambiguousMonomer.testDescription} in sequence view`, async ({
+      SequenceCanvas: _,
+    }) => {
       /* 
         Test case1: https://github.com/epam/ketcher/issues/5604
         Description: Verify that the ambiguous monomer preview displays a list of full names of monomers making up the ambiguous
@@ -487,9 +479,6 @@ test.describe('Preview tooltips checks: ', () => {
             2. Hover mouse over monomer, wait for preview tooltip
             2. Take screenshot of the canvas to compare it with example
         */
-      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-        LayoutMode.Sequence,
-      );
       await pasteFromClipboardAndOpenAsNewProjectMacro(
         page,
         MacroFileType.HELM,

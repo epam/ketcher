@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { takeEditorScreenshot, waitForRender } from '@utils';
+import { takeEditorScreenshot } from '../helpers';
+import { waitForRender } from '../../common/loaders/waitForRender';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';

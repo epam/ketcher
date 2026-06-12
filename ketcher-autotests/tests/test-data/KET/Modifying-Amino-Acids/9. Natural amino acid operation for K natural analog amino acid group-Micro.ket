@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -465,6 +466,7 @@
         "fullName": "Lysine",
         "alias": "K",
         "aliasHELM": "K",
+        "aliasBILN": "K",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

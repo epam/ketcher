@@ -1,11 +1,11 @@
-import { Selection } from 'd3';
-import { Peptide } from 'domain/entities/Peptide';
+import type { Selection } from 'd3';
+import type { Peptide } from 'domain/entities/Peptide';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 
 const PEPTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;

@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -132,6 +133,7 @@
         "fullName": "beta-Alanine",
         "alias": "bAla",
         "aliasHELM": "bAla",
+        "aliasBILN": "bAla",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

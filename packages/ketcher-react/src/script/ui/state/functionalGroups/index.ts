@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AnyAction } from 'redux';
-import { appUpdate } from '../options';
+import type { AnyAction } from 'redux';
+import { appUpdate } from '../options/actions';
 import {
+  type SdfItem,
+  type Struct,
   FunctionalGroupsProvider,
-  SdfItem,
   SdfSerializer,
-  Struct,
 } from 'ketcher-core';
 import templatesRawData from '../../../../templates/fg.sdf';
 import { memoizedDebounce } from '../../utils';

@@ -23,11 +23,17 @@ export const Card = styled.div<{
   disabled?: boolean;
   isVariantMonomer?: boolean;
   item?: MonomerOrAmbiguousType;
+  isDragging?: boolean;
 }>`
   background: white;
   height: 48px;
   text-align: center;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  cursor: ${({ disabled, isDragging }) => {
+    if (disabled) {
+      return 'default';
+    }
+    return isDragging ? 'grabbing !important' : 'pointer';
+  }};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: space-between;
@@ -45,6 +51,15 @@ export const Card = styled.div<{
   border-style: solid;
   box-sizing: border-box;
   z-index: ${({ selected }) => (selected ? 2 : undefined)};
+
+  ${({ isDragging }) =>
+    isDragging &&
+    `
+    &, & * {
+      pointer-events: none !important;
+      cursor: grabbing !important;
+    }
+  `}
 
   .hidden & .star {
     visibility: hidden !important;
@@ -106,6 +121,10 @@ export const Card = styled.div<{
     opacity: 0;
     transition: 0.2s ease;
     flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
     &.visible {
       visibility: visible;
       opacity: 1;

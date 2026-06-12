@@ -70,6 +70,7 @@ export enum SupportedFormat {
   IDT = 'idt',
   AXOLABS = 'axo-labs',
   HELM = 'helm',
+  BILN = 'biln',
   RDF = 'rdf',
   MonomerLibrary = 'monomer-library',
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
+import type { ToolConstructorInterface } from './Tool';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { RnaPresetTool } from 'application/editor/tools/RnaPreset';
 import { SelectRectangle } from 'application/editor/tools/select/SelectRectangle';
@@ -40,3 +40,5 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
 
 export * from './Tool';
 export * from './Zoom';
+export * from './select';
+export * from './rnaPresetConnections';

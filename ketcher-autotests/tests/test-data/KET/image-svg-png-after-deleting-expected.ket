@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -6,7 +7,7 @@
                 "format": "image/svg+xml",
                 "boundingBox": {
                     "x": 4.700000000000001,
-                    "y": 2,
+                    "y": 2.0249999999999995,
                     "z": 0,
                     "width": 20,
                     "height": 20

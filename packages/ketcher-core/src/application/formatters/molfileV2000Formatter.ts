@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { StructFormatter } from './structFormatter.types';
+import type { MolSerializer } from 'domain/serializers/mol/molSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { StructFormatter } from './structFormatter.types';
 
 export class MolfileV2000Formatter implements StructFormatter {
   readonly #molSerializer: MolSerializer;
@@ -25,15 +25,13 @@ export class MolfileV2000Formatter implements StructFormatter {
     this.#molSerializer = molSerializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string>;
-  async getStructureFromStructAsync(struct: Struct[]): Promise<string[]>;
-  async getStructureFromStructAsync(
-    struct: Struct | Struct[],
-  ): Promise<string | string[]> {
-    if (Array.isArray(struct)) {
-      return struct.map((item) => this.#molSerializer.serialize(item));
-    }
-    return this.#molSerializer.serialize(struct);
+  async getStringFromStructureAsync(struct: Struct): Promise<string> {
+    const stringifiedMolfile = this.#molSerializer.serialize(struct);
+    return stringifiedMolfile;
+  }
+
+  async getStructureFromStructAsync(struct: Struct[]): Promise<string[]> {
+    return struct.map((item) => this.#molSerializer.serialize(item));
   }
 
   async getStructureFromStringAsync(

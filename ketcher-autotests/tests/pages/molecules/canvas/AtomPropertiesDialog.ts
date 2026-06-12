@@ -22,7 +22,6 @@ import {
   CustomQueryPropertiesSettings,
 } from '@tests/pages/constants/atomProperties/Constants';
 import { PeriodicTableElement } from '@tests/pages/constants/periodicTableDialog/Constants';
-import { delay } from '@utils/canvas';
 import { waitForRender } from '@utils/common';
 import { PeriodicTableDialog } from './PeriodicTableDialog';
 
@@ -228,7 +227,7 @@ export const AtomPropertiesDialog = (page: Page) => {
     },
 
     async apply() {
-      await delay(0.2);
+      await page.waitForTimeout(0.2 * 1000);
       await waitForRender(page, async () => {
         await locators.applyButton.click();
       });

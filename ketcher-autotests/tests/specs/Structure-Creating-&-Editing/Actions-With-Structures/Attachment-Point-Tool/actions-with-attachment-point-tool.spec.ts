@@ -62,8 +62,7 @@ test.describe('Attachment Point Tool', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await waitForRender(page, async () => {
-      await page.keyboard.press('Control++');
-      page.getByTestId('floating-tools');
+      await page.keyboard.press('ControlOrMeta++');
     });
     await takeEditorScreenshot(page);
   });

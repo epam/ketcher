@@ -1,17 +1,27 @@
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { CoreEditor } from 'application/editor';
-import { BaseRenderer } from 'application/render';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { BaseRenderer } from 'application/render';
 
 export class SelectFragment extends SelectBase {
   constructor(readonly editor: CoreEditor) {
     super(editor);
   }
 
-  protected createSelectionView() {}
+  // TODO: needs investigation — sibling classes SelectLasso and SelectRectangle
+  // have non-empty implementations. Determine if fragment selection intentionally
+  // has no visual selection indicator or if these were never implemented.
+  // See docs/empty-functions-audit.md — Needs Investigation List.
+  protected createSelectionView() {
+    // needs clarification
+  }
 
-  protected onSelectionMove() {}
+  protected onSelectionMove() {
+    // needs clarification
+  }
 
-  protected updateSelectionViewParams() {}
+  protected updateSelectionViewParams() {
+    // needs clarification
+  }
 
   protected mousedownEntity(
     renderer: BaseRenderer,

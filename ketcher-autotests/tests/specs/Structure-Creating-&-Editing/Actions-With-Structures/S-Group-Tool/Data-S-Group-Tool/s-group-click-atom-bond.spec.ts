@@ -3,11 +3,11 @@
 import { test, expect, Page } from '@fixtures';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   MolFileFormat,
   moveMouseAway,
 } from '@utils';
@@ -66,7 +66,7 @@ test.describe('S-Group Properties', () => {
      * Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -108,7 +108,7 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).selectType(
@@ -142,7 +142,7 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -166,7 +166,7 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -190,7 +190,7 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -746,7 +746,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomInByKeyboard(page, { repeat: 3 });
+    await zoomInByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -773,7 +773,7 @@ test.describe('S-Group Properties', () => {
       page,
       'KET/S-Groups/No Nucleotide Componets.ket',
     );
-    await ZoomOutByKeyboard(page, { repeat: 3 });
+    await zoomOutByKeyboard(page, { repeat: 3 });
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();
     await SGroupPropertiesDialog(page).setOptions({
@@ -796,7 +796,7 @@ test.describe('S-Group Properties', () => {
      *  Version 3.6
      */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getBondLocator(page, { bondId: 7 }).click({ force: true });
@@ -964,7 +964,7 @@ test.describe('S-Group Properties', () => {
       Description: A superatom named `Test` is created. Atom enclosed in brackets.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -981,7 +981,7 @@ test.describe('S-Group Properties', () => {
       Description: An atom is created with the name `Test` and the value 8
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();
@@ -995,7 +995,7 @@ test.describe('S-Group Properties', () => {
 
   test('A query component  is created', async () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     await LeftToolbar(page).sGroup();
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click();

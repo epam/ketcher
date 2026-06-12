@@ -22,7 +22,8 @@ import ButtonGenSet from './components/ButtonGenSet';
 type GenSetProps = {
   labels: GenItemSet[];
   selected: (label: string) => boolean;
-  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  onAtomSelect: (label: string) => void;
+  onAtomActivate: (label: string) => void;
   className?: string;
   group: string;
   disabledQueryElements: Array<string> | null;
@@ -34,6 +35,7 @@ function GenSet({
   labels,
   selected,
   onAtomSelect,
+  onAtomActivate,
   className,
   group,
   disabledQueryElements,
@@ -57,6 +59,7 @@ function GenSet({
                   key={button.label}
                   button={button}
                   onAtomSelect={onAtomSelect}
+                  onAtomActivate={onAtomActivate}
                   selected={selected}
                   disabled={Boolean(
                     disabledQueryElements?.includes(button.label),

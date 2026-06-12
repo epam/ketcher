@@ -19,7 +19,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { Open } from './Open';
 import { IndigoProvider } from 'ketcher-react';
-import { CoreEditor, Struct } from 'ketcher-core';
+import { Struct } from 'ketcher-core';
+import * as ketcherCore from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 jest.spyOn(React, 'useEffect').mockImplementation(() => {});
@@ -44,7 +45,7 @@ describe('Open component', () => {
       onClose: () => expect(mockProps.onClose).toHaveBeenCalled(),
     };
 
-    jest.spyOn(CoreEditor, 'provideEditorInstance').mockImplementation(() => {
+    jest.spyOn(ketcherCore, 'provideEditorInstance').mockImplementation(() => {
       return {
         drawingEntitiesManager: {
           monomers: new Map(),

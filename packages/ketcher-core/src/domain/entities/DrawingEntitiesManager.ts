@@ -1,30 +1,32 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
-  AmbiguousMonomerType,
+  type AmbiguousMonomerType,
+  type MonomerItemType,
+  type MonomerOrAmbiguousType,
   AttachmentPointName,
-  MonomerItemType,
-  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { getStructureBbox } from 'domain/entities/structureBbox';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
+  type KetFileMultitailArrowNode,
+  type LinkerSequenceNode,
+  type RNABase,
+  type RxnArrowMode,
+  type SubChainNode,
   BaseMonomer,
   Chem,
-  KetFileMultitailArrowNode,
-  LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
   Pool,
-  RNABase,
-  RxnArrowMode,
   SGroupForest,
   Struct,
-  SubChainNode,
   Sugar,
 } from 'domain/entities';
-import { BondCIP } from 'domain/entities/types';
+import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -48,8 +50,8 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
@@ -57,25 +59,21 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import {
+  type GrouppedChain,
   ChainsCollection,
-  GrouppedChain,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import {
-  MACROMOLECULES_BOND_TYPES,
-  provideEditorSettings,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'application/formatters';
-import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
+import type { IKetTemplateConnection } from 'application/formatters';
+import { type AtomProperties, Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
   AtomAddOperation,
@@ -91,23 +89,24 @@ import {
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import {
-  AtomLabel,
-  SnakeLayoutCellWidth,
+  type AtomLabel,
   HalfMonomerSize,
+  SnakeLayoutCellWidth,
 } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
+  KetMonomerClass,
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
-  ISnakeLayoutMonomersNode,
+  type ISnakeLayoutMonomersNode,
   isTwoStrandedSnakeLayoutNode,
 } from './snake-layout-model/types';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
@@ -125,13 +124,14 @@ import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
-import { KetFileNode } from 'domain/serializers';
+import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
-import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
@@ -149,6 +149,7 @@ type RnaPresetAdditionParams = {
   phosphate: MonomerItemType | undefined;
   phosphatePosition: Vec2 | undefined;
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
+  connections?: IKetTemplateConnection[];
 };
 
 interface MonomerConnectedToSelection {
@@ -156,6 +157,10 @@ interface MonomerConnectedToSelection {
   monomerConnectedToSelection: BaseMonomer;
   bond: PolymerBond;
 }
+
+type ArrowWithId = {
+  arrowId?: number;
+};
 
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
@@ -172,6 +177,28 @@ export class DrawingEntitiesManager {
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
   public antisenseMonomerToSenseChain: Map<BaseMonomer, Chain> = new Map();
+  private nextArrowId = 0;
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+
+    return arrow;
+  }
+
+  private resetArrowIdCounter(): void {
+    this.nextArrowId = 0;
+  }
+
+  private static normalizeInitiallySelected(
+    initiallySelected?: initiallySelectedType,
+  ): boolean | undefined {
+    return typeof initiallySelected === 'boolean'
+      ? initiallySelected
+      : undefined;
+  }
 
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
@@ -189,7 +216,7 @@ export class DrawingEntitiesManager {
   }
 
   public get bottomLeftMonomerPosition(): Vec2 {
-    const bbox = DrawingEntitiesManager.getStructureBbox(this.monomersArray);
+    const bbox = getStructureBbox(this.monomersArray);
 
     return new Vec2(bbox.left, bbox.bottom);
   }
@@ -313,11 +340,12 @@ export class DrawingEntitiesManager {
       mergedCommand.merge(command);
     });
     this.clearMicromoleculesHiddenEntities();
+    this.resetArrowIdCounter();
     return mergedCommand;
   }
 
   public addMonomerChangeModel(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -342,7 +370,7 @@ export class DrawingEntitiesManager {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       return new AmbiguousMonomer(monomerItem, position, generateId);
     } else {
-      const [Monomer] = monomerFactory(monomerItem);
+      const [Monomer] = monomerEntityFactory(monomerItem);
 
       return new Monomer(monomerItem, position, { generateId });
     }
@@ -354,14 +382,16 @@ export class DrawingEntitiesManager {
   ) {
     const initialMonomer = this.monomers.get(monomer.id);
     if (!initialMonomer) return monomer;
-    initialMonomer.monomerItem = monomerItemNew;
+    initialMonomer.monomerItem = Object.isFrozen(monomerItemNew)
+      ? { ...monomerItemNew }
+      : monomerItemNew;
     initialMonomer.recalculateAttachmentPoints();
     this.monomers.set(monomer.id, initialMonomer);
     return initialMonomer;
   }
 
   public addMonomer(
-    monomerItem: MonomerItemType,
+    monomerItem: MonomerOrAmbiguousType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -464,7 +494,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
     );
@@ -490,7 +520,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
     );
@@ -635,6 +665,213 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public rotateSelectedDrawingEntities(
+    center: Vec2,
+    angleInDegrees: number,
+    isPartialRotation = true,
+  ) {
+    const command = new Command();
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (drawingEntity.selected) {
+        const newPosition = drawingEntity.position.rotateAroundOrigin(
+          angleInDegrees,
+          center,
+        );
+        const positionDelta = newPosition.sub(drawingEntity.position);
+
+        if (isPartialRotation) {
+          command.merge(
+            this.createDrawingEntityMovingCommand(drawingEntity, positionDelta),
+          );
+        } else {
+          command.merge(
+            this.createDrawingEntityMovingCommand(
+              drawingEntity,
+              positionDelta,
+              positionDelta,
+            ),
+          );
+        }
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        command.addOperation(this.movePolymerBond(drawingEntity));
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            new Vec2(0, 0),
+            new Vec2(0, 0),
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            new Vec2(0, 0),
+            new Vec2(0, 0),
+          ),
+        );
+      }
+    });
+
+    return command;
+  }
+
+  public flipSelectedDrawingEntities(flipDirection: 'horizontal' | 'vertical') {
+    const command = new Command();
+    const center = this.getSelectedEntitiesCenter();
+    const zeroOffset = new Vec2(0, 0);
+
+    if (!center) {
+      return command;
+    }
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (drawingEntity.selected) {
+        let newPosition: Vec2;
+
+        if (flipDirection === 'horizontal') {
+          newPosition = new Vec2(
+            center.x - (drawingEntity.position.x - center.x),
+            drawingEntity.position.y,
+          );
+        } else {
+          newPosition = new Vec2(
+            drawingEntity.position.x,
+            center.y - (drawingEntity.position.y - center.y),
+          );
+        }
+
+        const positionDelta = newPosition.sub(drawingEntity.position);
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            positionDelta,
+            positionDelta,
+          ),
+        );
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    return command;
+  }
+
+  public getSelectedEntitiesBoundingBox() {
+    const selectedEntities = this.selectedEntitiesArr;
+    if (selectedEntities.length === 0) {
+      return null;
+    }
+    return getStructureBbox(selectedEntities);
+  }
+
+  public getSelectedEntitiesCenter(): Vec2 | null {
+    const bbox = this.getSelectedEntitiesBoundingBox();
+    if (!bbox) {
+      return null;
+    }
+    return new Vec2(bbox.left + bbox.width / 2, bbox.top + bbox.height / 2);
+  }
+
   public createDrawingEntityMovingCommand(
     drawingEntity: DrawingEntity,
     partOfMovementOffset: Vec2,
@@ -764,9 +1001,9 @@ export class DrawingEntitiesManager {
       );
 
       let isValueChanged;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -808,9 +1045,9 @@ export class DrawingEntitiesManager {
       );
 
       let isValueChanged;
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       if (
-        editor.mode instanceof SequenceMode &&
+        editor.mode.modeName === 'sequence-layout-mode' &&
         drawingEntity instanceof PolymerBond
       ) {
         isValueChanged = this.checkBondSelectionForSequenceMode(drawingEntity);
@@ -975,9 +1212,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public movePolymerBond(polymerBond: PolymerBond, position: Vec2) {
+  public movePolymerBond(polymerBond: PolymerBond, position?: Vec2) {
     const command = new Command();
-    polymerBond.moveBondEndAbsolute(position.x, position.y);
+
+    if (position) {
+      polymerBond.moveBondEndAbsolute(position.x, position.y);
+    } else {
+      polymerBond.moveToLinkedEntities();
+    }
 
     const operation = new PolymerBondMoveOperation(polymerBond);
 
@@ -1038,7 +1280,7 @@ export class DrawingEntitiesManager {
     bondType = MACROMOLECULES_BOND_TYPES.SINGLE,
   ) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     const firstMonomer = polymerBond.firstMonomer;
     this.polymerBonds.delete(polymerBond.id);
@@ -1057,7 +1299,7 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
-    if (editor.mode instanceof SnakeMode) {
+    if (editor.mode.modeName === 'snake-layout-mode') {
       command.merge(this.recalculateCanvasMatrix());
     }
 
@@ -1338,6 +1580,7 @@ export class DrawingEntitiesManager {
 
   public addRnaPresetFromNode = (
     node: Nucleotide | Nucleoside | LinkerSequenceNode,
+    connections?: IKetTemplateConnection[],
   ) => {
     // TODO: Consider combining it with the method below to avoid code duplication
     const command = new Command();
@@ -1379,8 +1622,27 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        const connectionTemplate = this.findGroupTemplateConnection(
+          connections || [],
+          previousMonomer.monomerItem,
+          monomer.monomerItem,
+        );
+        let attPointStart;
+        let attPointEnd;
+        if (connectionTemplate) {
+          const isEndpoint1 =
+            connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+          attPointStart = isEndpoint1
+            ? connectionTemplate.endpoint1.attachmentPointId
+            : connectionTemplate.endpoint2.attachmentPointId;
+          attPointEnd = isEndpoint1
+            ? connectionTemplate.endpoint2.attachmentPointId
+            : connectionTemplate.endpoint1.attachmentPointId;
+        } else {
+          attPointStart = previousMonomer.getValidSourcePoint(monomer);
+          attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        }
 
         assert(attPointStart);
         assert(attPointEnd);
@@ -1404,14 +1666,62 @@ export class DrawingEntitiesManager {
     return command;
   };
 
+  private findGroupTemplateConnection(
+    connections: IKetTemplateConnection[],
+    monomer1: MonomerItemType,
+    monomer2?: MonomerItemType,
+  ) {
+    return (
+      monomer2 &&
+      connections?.find((connection) => {
+        return (
+          (connection.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            connection.endpoint2.templateId ===
+              getMonomerTemplateRefFromMonomerItem(monomer2)) ||
+          (connection.endpoint2.templateId ===
+            getMonomerTemplateRefFromMonomerItem(monomer1) &&
+            connection.endpoint1.templateId ===
+              getMonomerTemplateRefFromMonomerItem(monomer2))
+        );
+      })
+    );
+  }
+
   public addRnaPreset({
     sugar,
-    sugarPosition,
+    sugarPosition: _sugarPosition,
     phosphate,
-    phosphatePosition,
+    phosphatePosition: _phosphatePosition,
     rnaBase,
-    rnaBasePosition,
+    rnaBasePosition: _rnaBasePosition,
+    connections,
   }: RnaPresetAdditionParams) {
+    const sugarPhosphateConnectionTemplate = this.findGroupTemplateConnection(
+      connections || [],
+      sugar,
+      phosphate,
+    );
+    const isFivePrimePhosphate =
+      sugarPhosphateConnectionTemplate?.endpoint1.templateId ===
+      getMonomerTemplateRefFromMonomerItem(sugar)
+        ? sugarPhosphateConnectionTemplate?.endpoint1.attachmentPointId ===
+          AttachmentPointName.R1
+        : sugarPhosphateConnectionTemplate?.endpoint2.attachmentPointId ===
+          AttachmentPointName.R1;
+
+    const sugarPosition =
+      isFivePrimePhosphate && _phosphatePosition
+        ? _phosphatePosition
+        : _sugarPosition;
+    const phosphatePosition = isFivePrimePhosphate
+      ? _sugarPosition
+      : _phosphatePosition;
+    const rnaBasePosition =
+      isFivePrimePhosphate && sugarPosition && _rnaBasePosition
+        ? new Vec2(sugarPosition.x, _rnaBasePosition.y)
+        : _rnaBasePosition;
+
     const command = new Command();
     const monomersToAdd: Array<[MonomerItemType, Vec2]> = [];
     if (rnaBase && rnaBasePosition) {
@@ -1434,9 +1744,28 @@ export class DrawingEntitiesManager {
       command.addOperation(monomerAddOperation);
       if (monomerIndex > 0) {
         const previousMonomer = monomers[monomerIndex - 1];
-        // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
-        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
-        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        const connectionTemplate = this.findGroupTemplateConnection(
+          connections || [],
+          previousMonomer.monomerItem,
+          monomer.monomerItem,
+        );
+        // requirements are: use connectionTemplate if exist. If no then Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
+        let attPointStart;
+        let attPointEnd;
+        if (connectionTemplate) {
+          const isEndpoint1 =
+            connectionTemplate.endpoint1.templateId ===
+            getMonomerTemplateRefFromMonomerItem(previousMonomer.monomerItem);
+          attPointStart = isEndpoint1
+            ? connectionTemplate.endpoint1.attachmentPointId
+            : connectionTemplate.endpoint2.attachmentPointId;
+          attPointEnd = isEndpoint1
+            ? connectionTemplate.endpoint2.attachmentPointId
+            : connectionTemplate.endpoint1.attachmentPointId;
+        } else {
+          attPointStart = previousMonomer.getValidSourcePoint(monomer);
+          attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+        }
 
         assert(attPointStart);
         assert(attPointEnd);
@@ -1576,13 +1905,15 @@ export class DrawingEntitiesManager {
 
     const monomerXToIndexInMatrix = {};
 
-    const longestRow = sortedGroupedMonomers.reduce(
-      (longestRow, currentRow) =>
-        currentRow[1].length > longestRow[1].length ? currentRow : longestRow,
-      sortedGroupedMonomers[0],
-    );
+    const allXPositions = new Set<number>();
+    sortedGroupedMonomers.forEach(([, groupedByX]) => {
+      groupedByX.forEach(([x]) => {
+        allXPositions.add(x);
+      });
+    });
 
-    longestRow[1].forEach(([x], index) => {
+    const sortedXPositions = [...allXPositions].sort((a, b) => a - b);
+    sortedXPositions.forEach((x, index) => {
       monomerXToIndexInMatrix[x] = index;
     });
 
@@ -1679,7 +2010,7 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const editor = CoreEditor.provideEditorInstance();
+      const editor = provideEditorInstance();
       const editorSettings = provideEditorSettings();
       const canvasWidth = editor.canvas.width.baseVal.value;
       const cellWidthInAngstroms =
@@ -1715,7 +2046,6 @@ export class DrawingEntitiesManager {
       );
       let hasAntisenseInRow = false;
       let hasRnaInRow = false;
-      let snakeLayoutNodesInRow: ISnakeLayoutMonomersNode[] = [];
       let previousSenseNode: ISnakeLayoutMonomersNode | undefined;
       let previousAntisenseNode: ISnakeLayoutMonomersNode | undefined;
       let newSenseNodePosition = lastPosition;
@@ -1751,11 +2081,10 @@ export class DrawingEntitiesManager {
 
           hasAntisenseInRow = false;
           hasRnaInRow = false;
-          snakeLayoutNodesInRow = [];
 
           row.snakeLayoutModelItems.forEach((twoStrandedSnakeLayoutNode) => {
             if (twoStrandedSnakeLayoutNode instanceof MoleculeSnakeLayoutNode) {
-              const moleculeBbox = DrawingEntitiesManager.getStructureBbox(
+              const moleculeBbox = getStructureBbox(
                 twoStrandedSnakeLayoutNode.molecule,
               );
               const offset = Vec2.diff(
@@ -1798,8 +2127,6 @@ export class DrawingEntitiesManager {
                     ),
                   );
                 }
-
-                snakeLayoutNodesInRow.push(senseNode);
               }
 
               if (antisenseNode) {
@@ -1834,7 +2161,6 @@ export class DrawingEntitiesManager {
                 }
 
                 hasAntisenseInRow = true;
-                snakeLayoutNodesInRow.push(antisenseNode);
               }
 
               previousSenseNode = senseNode || previousSenseNode;
@@ -1964,7 +2290,7 @@ export class DrawingEntitiesManager {
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const atomToNewAtom = new Map<Atom, Atom>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
 
     this.monomers.forEach((monomer) => {
@@ -2081,6 +2407,8 @@ export class DrawingEntitiesManager {
         rxnArrow.type,
         rxnArrow.startEndPosition,
         rxnArrow.height,
+        rxnArrow.initiallySelected,
+        rxnArrow.arrowId,
       );
 
       const addedRxnArrow = rxnArrowAddCommand.operations[0]
@@ -2093,6 +2421,7 @@ export class DrawingEntitiesManager {
     this.multitailArrows.forEach((multitailArrow) => {
       const arrowAddCommand = targetDrawingEntitiesManager.addMultitailArrow(
         multitailArrow.toKetNode(),
+        multitailArrow.arrowId,
       );
 
       const addedArrow = arrowAddCommand.operations[0]
@@ -2190,11 +2519,13 @@ export class DrawingEntitiesManager {
           entity.startEndPosition,
           entity.height,
           entity.initiallySelected,
+          undefined,
           entity,
         );
       } else if (entity instanceof MultitailArrow) {
         filteredDrawingEntitiesManager.addMultitailArrowArrowModelChange(
           entity.toKetNode(),
+          undefined,
           entity,
         );
       } else if (entity instanceof RxnPlus) {
@@ -2222,7 +2553,7 @@ export class DrawingEntitiesManager {
   }
 
   public getCurrentCenterPointOfCanvas() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const originalCenterPointOfCanvas = new Vec2(
       editor.canvasOffset.width / 2,
       editor.canvasOffset.height / 2,
@@ -2252,7 +2583,7 @@ export class DrawingEntitiesManager {
   }
 
   public rerenderMolecules() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     this.atoms.forEach((atom) => {
       editor.renderersContainer.deleteAtom(atom);
@@ -2293,7 +2624,7 @@ export class DrawingEntitiesManager {
   }
 
   public clearCanvas() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
     // TODO rewrite to work with base class (drawingEntity)
 
@@ -2333,7 +2664,7 @@ export class DrawingEntitiesManager {
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const command = new Command();
 
     if (needRedrawBonds) {
@@ -2363,9 +2694,9 @@ export class DrawingEntitiesManager {
   }
 
   public rerenderBondsOverlappedByMonomers() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
 
-    if (editor.mode instanceof SequenceMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       return;
     }
 
@@ -2395,7 +2726,7 @@ export class DrawingEntitiesManager {
 
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
     drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
@@ -2429,9 +2760,9 @@ export class DrawingEntitiesManager {
     drawingEntity.turnOnSelection();
     let drawingEntities: DrawingEntity[] = [drawingEntity];
 
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     if (
-      !(editor.mode instanceof SequenceMode) ||
+      editor.mode.modeName !== 'sequence-layout-mode' ||
       drawingEntity instanceof PolymerBond
     ) {
       return { command, drawingEntities };
@@ -2473,6 +2804,13 @@ export class DrawingEntitiesManager {
   }
 
   public validateIfApplicableForFasta() {
+    if (
+      this.monomers.size === 0 &&
+      this.micromoleculesHiddenEntities.atoms.size > 0
+    ) {
+      return false;
+    }
+
     const monomerTypes = new Set();
     let isValid = true;
 
@@ -2908,32 +3246,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  // TODO create separate class for BoundingBox
-  public static getStructureBbox(drawingEntities: DrawingEntity[]) {
-    let left = 0;
-    let right = 0;
-    let top = 0;
-    let bottom = 0;
-
-    drawingEntities.forEach((drawingEntity) => {
-      const monomerPosition = drawingEntity.position;
-
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
-    });
-
-    return {
-      left,
-      right,
-      top,
-      bottom,
-      width: right - left,
-      height: bottom - top,
-    };
-  }
-
   private static antisenseChainBasesMap(isDnaAntisense: boolean) {
     const antisenseMap = {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
@@ -3077,7 +3389,7 @@ export class DrawingEntitiesManager {
         });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
+          const chainBbox = getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,
@@ -3190,7 +3502,7 @@ export class DrawingEntitiesManager {
   }
 
   public createAntisenseChain(isDnaAntisense: boolean) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const command = new Command();
     const selectedMonomers = this.selectedEntities
       .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
@@ -3374,8 +3686,26 @@ export class DrawingEntitiesManager {
               return;
             }
 
+            const isModifiedPhosphate =
+              monomer instanceof Phosphate && monomer.isModification;
+            const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+            let antisenseMonomerItem: MonomerOrAmbiguousType =
+              monomer.monomerItem;
+
+            if (isModifiedPhosphate || isAmbiguousMonomer) {
+              const nonModifiedPhosphateItem = getRnaPartLibraryItem(
+                editor,
+                RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+              );
+
+              if (nonModifiedPhosphateItem) {
+                antisenseMonomerItem = nonModifiedPhosphateItem;
+              } else if (isAmbiguousMonomer) {
+                antisenseMonomerItem = monomer.variantMonomerItem;
+              }
+            }
             const monomerAddCommand = this.addMonomer(
-              monomer.monomerItem,
+              antisenseMonomerItem,
               monomer.position.add(new Vec2(0, 4.25)),
             );
             const addedMonomer = monomerAddCommand.operations[0]
@@ -3405,7 +3735,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.applySnakeLayout(true, true));
 
-    if (editor.mode instanceof SequenceMode) {
+    if (editor.mode.modeName === 'sequence-layout-mode') {
       command.addOperation(new ReinitializeModeOperation());
     }
 
@@ -3435,8 +3765,8 @@ export class DrawingEntitiesManager {
     polymerBond: PolymerBond,
     monomers?: BaseMonomer[],
   ) {
-    const editor = CoreEditor.provideEditorInstance();
-    if (!editor || editor.mode instanceof SequenceMode) {
+    const editor = provideEditorInstance();
+    if (!editor || editor.mode.modeName === 'sequence-layout-mode') {
       return false;
     }
 
@@ -3506,15 +3836,24 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
     _arrow?: RxnArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.rxnArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
-    const rxnArrow = new RxnArrow(type, position, height, initiallySelected);
+    const rxnArrow = new RxnArrow(
+      type,
+      position,
+      height,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
+    rxnArrow.arrowId = arrowId;
+    this.ensureArrowId(rxnArrow);
 
     this.rxnArrows.set(rxnArrow.id, rxnArrow);
 
@@ -3526,16 +3865,19 @@ export class DrawingEntitiesManager {
     position: [Vec2, Vec2],
     height?: number,
     initiallySelected?: initiallySelectedType,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new RxnArrowAddOperation(
-      this.addRxnArrowModelChange.bind(
-        this,
-        type,
-        position,
-        height,
-        initiallySelected,
-      ),
+      (arrow?: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          type,
+          position,
+          height,
+          initiallySelected,
+          arrowId,
+          arrow,
+        ),
       this.deleteRxnArrowModelChange.bind(this),
     );
 
@@ -3549,13 +3891,15 @@ export class DrawingEntitiesManager {
     const operation = new RxnArrowDeleteOperation(
       rxnArrow,
       this.deleteRxnArrowModelChange.bind(this),
-      this.addRxnArrowModelChange.bind(
-        this,
-        rxnArrow.type,
-        rxnArrow.startEndPosition,
-        rxnArrow.height,
-        rxnArrow.initiallySelected,
-      ),
+      (arrow: RxnArrow) =>
+        this.addRxnArrowModelChange(
+          rxnArrow.type,
+          rxnArrow.startEndPosition,
+          rxnArrow.height,
+          rxnArrow.initiallySelected,
+          rxnArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);
@@ -3569,15 +3913,19 @@ export class DrawingEntitiesManager {
 
   private addMultitailArrowArrowModelChange(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
     _arrow?: MultitailArrow,
   ) {
     if (_arrow) {
+      this.ensureArrowId(_arrow);
       this.multitailArrows.set(_arrow.id, _arrow);
 
       return _arrow;
     }
 
     const multitailArrow = MultitailArrow.fromKet(multitailArrowKetNode);
+    multitailArrow.arrowId = arrowId;
+    this.ensureArrowId(multitailArrow);
 
     this.multitailArrows.set(multitailArrow.id, multitailArrow);
 
@@ -3586,10 +3934,16 @@ export class DrawingEntitiesManager {
 
   public addMultitailArrow(
     multitailArrowKetNode: KetFileNode<KetFileMultitailArrowNode>,
+    arrowId?: number,
   ) {
     const command = new Command();
     const operation = new MultitailArrowAddOperation(
-      this.addMultitailArrowArrowModelChange.bind(this, multitailArrowKetNode),
+      (arrow?: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrowKetNode,
+          arrowId,
+          arrow,
+        ),
       this.deleteMultitailArrowModelChange.bind(this),
     );
 
@@ -3603,10 +3957,12 @@ export class DrawingEntitiesManager {
     const operation = new MultitailArrowDeleteOperation(
       multitailArrow,
       this.deleteMultitailArrowModelChange.bind(this),
-      this.addMultitailArrowArrowModelChange.bind(
-        this,
-        multitailArrow.toKetNode(),
-      ),
+      (arrow: MultitailArrow) =>
+        this.addMultitailArrowArrowModelChange(
+          multitailArrow.toKetNode(),
+          multitailArrow.arrowId,
+          arrow,
+        ),
     );
 
     command.addOperation(operation);
@@ -3629,7 +3985,10 @@ export class DrawingEntitiesManager {
       return _rxnPlus;
     }
 
-    const rxnPlus = new RxnPlus(position, initiallySelected);
+    const rxnPlus = new RxnPlus(
+      position,
+      DrawingEntitiesManager.normalizeInitiallySelected(initiallySelected),
+    );
 
     this.rxnPluses.set(rxnPlus.id, rxnPlus);
 
@@ -3739,5 +4098,96 @@ export class DrawingEntitiesManager {
     }
 
     return connectedMoleculeMonomers;
+  }
+
+  public createRotationHistoryCommand(
+    initialPositions: Map<number, Vec2>,
+  ): Command {
+    const command = new Command();
+    const zeroOffset = new Vec2(0, 0);
+
+    [
+      ...this.atoms.values(),
+      ...this.monomers.values(),
+      ...this.rxnArrows.values(),
+      ...this.multitailArrows.values(),
+      ...this.rxnPluses.values(),
+    ].forEach((drawingEntity) => {
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
+      if (!drawingEntity.selected) {
+        return;
+      }
+
+      const initialPosition = initialPositions.get(drawingEntity.id);
+      if (!initialPosition) {
+        return;
+      }
+
+      const delta = drawingEntity.position.sub(initialPosition);
+      if (delta.length() === 0) {
+        return;
+      }
+
+      command.merge(
+        this.createDrawingEntityMovingCommand(drawingEntity, zeroOffset, delta),
+      );
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            zeroOffset,
+            zeroOffset,
+          ),
+        );
+      }
+    });
+
+    return command;
   }
 }

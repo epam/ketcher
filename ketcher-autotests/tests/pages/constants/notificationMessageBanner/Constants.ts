@@ -8,6 +8,13 @@ export enum ErrorMessage {
   notMinimalViableStructure = 'notMinimalViableStructure',
   invalidHELMAlias = 'invalidHELMAlias',
   notUniqueHELMAlias = 'notUniqueHELMAlias',
+  invalidRnaPresetStructure = 'invalidRnaPresetStructure',
+  rnaPresetAtomsOutsideComponents = 'rnaPresetAtomsOutsideComponents',
+  incontinuousStructure = 'incontinuousStructure',
+  rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints = 'rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints',
+  invalidPhosphatePositionAttachmentPoints = 'invalidPhosphatePositionAttachmentPoints',
+  invalidPresetCode = 'invalidPresetCode',
+  rnaPresetInvalidSugarConnectionBonds = 'rnaPresetInvalidSugarConnectionBonds',
 }
 
 export enum InfoMessage {

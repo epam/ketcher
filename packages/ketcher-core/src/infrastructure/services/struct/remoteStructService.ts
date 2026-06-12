@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,41 +15,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CoreEditor } from 'application/editor';
 import {
-  AromatizeData,
-  AromatizeResult,
-  AutomapData,
-  AutomapResult,
-  CalculateCipData,
-  CalculateCipResult,
-  CalculateData,
-  CalculateMacromoleculePropertiesData,
-  CalculateMacromoleculePropertiesResult,
-  CalculateResult,
-  CheckData,
-  CheckResult,
+  type AromatizeData,
+  type AromatizeResult,
+  type AutomapData,
+  type AutomapResult,
+  type CalculateCipData,
+  type CalculateCipResult,
+  type CalculateData,
+  type CalculateMacromoleculePropertiesData,
+  type CalculateMacromoleculePropertiesResult,
+  type CalculateResult,
+  type CheckData,
+  type CheckResult,
+  type CleanData,
+  type CleanResult,
+  type ConvertCombinedData,
+  type ConvertResult,
+  type DearomatizeData,
+  type DearomatizeResult,
+  type ExplicitHydrogensData,
+  type ExplicitHydrogensResult,
+  type GenerateImageOptions,
+  type InfoResult,
+  type LayoutData,
+  type LayoutResult,
+  type OutputFormatType,
+  type RecognizeResult,
+  type StructService,
+  type StructServiceOptions,
   ChemicalMimeType,
-  CleanData,
-  CleanResult,
-  ConvertCombinedData,
-  ConvertResult,
-  DearomatizeData,
-  DearomatizeResult,
-  ExplicitHydrogensData,
-  ExplicitHydrogensResult,
-  GenerateImageOptions,
-  InfoResult,
-  LayoutData,
-  LayoutResult,
-  OutputFormatType,
-  RecognizeResult,
-  StructService,
-  StructServiceOptions,
 } from 'domain/services';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -60,10 +60,10 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             else setTimeout(iterate, timeGap);
           } catch (error) {
             KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
-            reject(error);
+            reject(normalizeError(error));
           }
         },
-        (err) => reject(err),
+        (err) => reject(normalizeError(err)),
       );
     }
     setTimeout(iterate, startTimeGap ?? 0);
@@ -87,7 +87,7 @@ function request(
     method,
     headers: {
       Accept: 'application/json',
-      ...(headers || {}),
+      ...(headers ?? {}),
     },
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
@@ -120,11 +120,11 @@ function indigoCall(
     options,
     responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
-    const body = { ...(data || {}) };
+    const body = { ...(data ?? {}) };
     body.options = {
-      ...(body.options || {}),
-      ...(defaultOptions || {}),
-      ...(options || {}),
+      ...(body.options ?? {}),
+      ...(defaultOptions ?? {}),
+      ...(options ?? {}),
     };
     return request(
       method,
@@ -239,7 +239,7 @@ export class RemoteStructService implements StructService {
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const monomerLibrary = JSON.stringify(
-      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      provideEditorInstance()?.monomersLibraryParsedJson,
     );
     const expandedOptions = {
       monomerLibrary,

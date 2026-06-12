@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 import { Page, test } from '@fixtures';
 import {
   takeEditorScreenshot,
-  waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -19,21 +19,14 @@ import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Cons
 
 let page: Page;
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
+test.beforeAll(async ({ initSnakeCanvas }) => {
+  page = await initSnakeCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
+test.beforeEach(async ({ SnakeCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test(
@@ -219,7 +212,7 @@ test('2. Check that in snake mode all modifid monomers are marked', async () => 
 test(
   '3. Switching from Flex to Snake and back to Flex does not change layout',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ FlexCanvas: _ }) => {
     /*
     IMPORTANT: Test case works wrong because of the bug: https://github.com/epam/ketcher/issues/6940
 
@@ -232,7 +225,6 @@ test(
         2. Switch to Snake mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -249,7 +241,7 @@ test(
 test(
   '4. Switching from Flex mode to Snake and to Micromolecules mode does not change layout',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ FlexCanvas: _ }) => {
     /*
     IMPORTANT: Test case works wrong because of the bug: https://github.com/epam/ketcher/issues/6943
 
@@ -264,7 +256,6 @@ test(
         2. Switch to Micromolecules mode
         3. Take screenshot to withness monomer
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -278,7 +269,9 @@ test(
   },
 );
 
-test('5. Switching from Micro mode to Snake and back to Micromolecules mode does not change layout', async () => {
+test('5. Switching from Micro mode to Snake and back to Micromolecules mode does not change layout', async ({
+  SnakeCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -292,7 +285,6 @@ test('5. Switching from Micro mode to Snake and back to Micromolecules mode does
         3. Take screenshot to withness monomer
     */
   // switching to Snake to change default Macro mode
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
@@ -333,7 +325,9 @@ test('6. Switching from Flex to Sequence and back to Flex mode does not change l
   });
 });
 
-test('7. Switching from Flex mode to Sequence and to Micromolecules mode does not change layout', async () => {
+test('7. Switching from Flex mode to Sequence and to Micromolecules mode does not change layout', async ({
+  FlexCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -346,7 +340,6 @@ test('7. Switching from Flex mode to Sequence and to Micromolecules mode does no
         2. Switch to Micromolecules mode
         3. Take screenshot to withness monomer
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -392,7 +385,9 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
   });
 });
 
-test('9. Switching from Flex to Snake, Sequence and back to Flex does not change layout', async () => {
+test('9. Switching from Flex to Snake, Sequence and back to Flex does not change layout', async ({
+  FlexCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -403,7 +398,6 @@ test('9. Switching from Flex to Snake, Sequence and back to Flex does not change
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -419,7 +413,9 @@ test('9. Switching from Flex to Snake, Sequence and back to Flex does not change
   });
 });
 
-test('10. Switching from Flex to Sequence, Snake and back to Flex does not change layout', async () => {
+test('10. Switching from Flex to Sequence, Snake and back to Flex does not change layout', async ({
+  FlexCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -430,7 +426,6 @@ test('10. Switching from Flex to Sequence, Snake and back to Flex does not chang
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -446,7 +441,9 @@ test('10. Switching from Flex to Sequence, Snake and back to Flex does not chang
   });
 });
 
-test('11. Switching from Micro to Snake, Sequence and to Flex does not change layout', async () => {
+test('11. Switching from Micro to Snake, Sequence and to Flex does not change layout', async ({
+  SnakeCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -458,7 +455,6 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
@@ -479,7 +475,7 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
 test(
   '12. Switching from Micro to Sequence, Snake and to Flex does not change layout',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
     IMPORTANT: Test case works wrong because of the bug: https://github.com/epam/ketcher/issues/6940
 
@@ -493,9 +489,6 @@ test(
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
@@ -512,7 +505,9 @@ test(
   },
 );
 
-test('13. Switching from Flex to Snake, Sequence and to Micro does not change layout', async () => {
+test('13. Switching from Flex to Snake, Sequence and to Micro does not change layout', async ({
+  FlexCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -523,7 +518,6 @@ test('13. Switching from Flex to Snake, Sequence and to Micro does not change la
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -573,7 +567,9 @@ test(
   },
 );
 
-test('15. Switching from Micro to Snake, Sequence and to Micro does not change layout', async () => {
+test('15. Switching from Micro to Snake, Sequence and to Micro does not change layout', async ({
+  SnakeCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -585,7 +581,6 @@ test('15. Switching from Micro to Snake, Sequence and to Micro does not change l
         3. Switch to Macro-Snake mode, Sequence mode and Micro mode
         4. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
@@ -640,7 +635,9 @@ test(
   },
 );
 
-test('17. Check that when the user exports the canvas in snake mode, the exported file contain coordinates/monomer positions shown on the screen (for KET, Mol, and SVG)', async () => {
+test('17. Check that when the user exports the canvas in snake mode, the exported file contain coordinates/monomer positions shown on the screen (for KET, Mol, and SVG)', async ({
+  FlexCanvas: _,
+}) => {
   /*
     Test task: https://github.com/epam/ketcher/issues/6935
     Description: Check that if the user enters the snake layout mode, but does not make any changes
@@ -651,7 +648,6 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
         2. Switch to Snake mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   await openFileAndAddToCanvasAsNewProjectMacro(
     page,
     'KET/Snake-mode/SnakeModeBypassExport.ket',

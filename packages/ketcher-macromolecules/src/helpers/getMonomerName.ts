@@ -6,7 +6,7 @@ const RNA_TEMPLATE_NAME_PART = 'uracil';
 const getAmbiguousMonomerName = (monomer: AmbiguousMonomer): string => {
   const { monomerClass, variantMonomerItem } = monomer;
   const label = variantMonomerItem.label;
-  const options = variantMonomerItem.options || [];
+  const options = variantMonomerItem.options ?? [];
 
   if (monomerClass === KetMonomerClass.Base) {
     const isDNA = options.some((option) =>

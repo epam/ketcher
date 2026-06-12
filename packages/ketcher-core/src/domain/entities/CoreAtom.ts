@@ -1,13 +1,13 @@
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Bond, BondType } from 'domain/entities/CoreBond';
-import { BaseRenderer } from 'application/render';
+import type { Vec2 } from 'domain/entities/vec2';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { type Bond, BondType } from 'domain/entities/CoreBond';
+import type { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
-import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
-import { AtomCIP } from './types';
+import type { AtomCIP } from './types';
 
 export enum AtomRadical {
   None,
@@ -23,6 +23,7 @@ export interface AtomProperties {
   radical?: AtomRadical;
   alias?: string | null;
   cip?: AtomCIP | null;
+  stereoLabel?: string | null;
 }
 
 export class Atom extends DrawingEntity {
@@ -122,6 +123,10 @@ export class Atom extends DrawingEntity {
   public get hasBadValence() {
     const { hydrogenAmount } = this.calculateValence();
     return hydrogenAmount < 0;
+  }
+
+  public get hasStereoLabel() {
+    return Boolean(this.properties.stereoLabel);
   }
 
   private get radicalAmount() {
@@ -318,10 +323,7 @@ export class Atom extends DrawingEntity {
         } else if (charge === 2) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount;
-        } else if (
-          label === AtomLabel.N ||
-          radicalAmount + connectionAmount + absCharge <= 3
-        ) {
+        } else if (radicalAmount + connectionAmount + absCharge <= 3) {
           valence = 3;
           hydrogenAmount = 3 - radicalAmount - connectionAmount - absCharge;
         } else {
@@ -468,9 +470,10 @@ export class Atom extends DrawingEntity {
         } else {
           hydrogenAmount = -1;
         }
+      } else if (connectionAmount + radicalAmount + absCharge === 0) {
+        valence = 1;
       } else {
-        if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
-        else hydrogenAmount = -1;
+        hydrogenAmount = -1;
       }
     }
 

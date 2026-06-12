@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { SequenceMode } from '../modes';
 
 class EraserTool implements BaseTool {
+  readonly name = 'eraser-tool';
   private readonly history: EditorHistory;
   constructor(private readonly editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(editor);
+    this.history = EditorHistory.getInstance(editor);
     if (
       this.editor.drawingEntitiesManager.selectedEntities.length &&
-      !(this.editor.mode instanceof SequenceMode)
+      this.editor.mode.modeName !== 'sequence-layout-mode'
     ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
@@ -91,7 +92,9 @@ class EraserTool implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  destroy() {}
+  destroy() {
+    // intentional no-op: this tool holds no resources that require cleanup
+  }
 }
 
 export { EraserTool };

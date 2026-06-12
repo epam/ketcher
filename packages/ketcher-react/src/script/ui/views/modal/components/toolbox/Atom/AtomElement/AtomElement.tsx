@@ -9,7 +9,7 @@ import ElementNumber from '../ElementNumber/ElementNumber';
 import { openDialog } from '../../../../../../state/modal';
 import { useDispatch } from 'react-redux';
 import classes from './../Atom.module.less';
-import { BaseProps } from '../../../../modal.types';
+import type { BaseProps } from '../../../../modal.types';
 import { capitalize } from 'lodash';
 const atomProps = atomSchema.properties;
 
@@ -25,7 +25,8 @@ const AtomElement = ({ formState }: BaseProps) => {
     onChange: ChangeFunction,
   ) => {
     openDialog(dispatch, modalName, { ...props, isNestedModal: true }).then(
-      (el) => {
+      (result) => {
+        const el = result as { values?: string[]; label: string };
         onChange(el.values?.join(',') || el.label);
       },
       () => null, // onCancel handler

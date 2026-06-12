@@ -15,17 +15,17 @@
  ***************************************************************************/
 
 import {
+  type SdfItem,
   KetcherLogger,
   KetSerializer,
-  SdfItem,
   SdfSerializer,
   SettingsManager,
 } from 'ketcher-core';
 
-import { appUpdate } from '../options';
+import { appUpdate } from '../options/actions';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
-import { AnyAction, Dispatch } from 'redux';
+import type { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
 let needReinitializeTemplateLibrary = false;

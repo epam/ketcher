@@ -19,12 +19,12 @@ import {
   ketcherProvider,
   MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
-import { FC, PropsWithChildren, useCallback } from 'react';
+import { type FC, type PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
-import Editor from 'src/script/editor';
+import type Editor from 'src/script/editor';
 import {
-  ContextMenuProps,
+  type ContextMenuProps,
   ContextMenuTriggerType,
   CONTEXT_MENU_ID,
 } from './contextMenu.types';
@@ -100,10 +100,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       // TODO: Consider a better approach to handle context menus for auxiliary UI elements
       const target = event.target as Element;
       if (editor.isMonomerCreationWizardActive) {
-        const rLabelElement = target.closest('[data-attachment-point-name]');
+        const rLabelElement = target.closest('[data-attachment-point-alias]');
         if (rLabelElement) {
           const attachmentPointName = rLabelElement.getAttribute(
-            'data-attachment-point-name',
+            'data-attachment-point-alias',
           );
           if (attachmentPointName) {
             show({
@@ -200,7 +200,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <div style={{ height: '100%' }} onContextMenu={handleDisplay}>
+    <div
+      style={{ height: '100%' }}
+      onContextMenu={handleDisplay}
+      role="application"
+    >
       {children}
     </div>
   );

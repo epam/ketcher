@@ -21,7 +21,8 @@ import styles from './GenGroup.module.less';
 
 type GenProps = {
   selected: (label: string) => boolean;
-  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  onAtomSelect: (label: string) => void;
+  onAtomActivate: (label: string) => void;
   group: GenGroupType;
   disabledQueryElements: Array<string> | null;
 };
@@ -41,6 +42,7 @@ const getLegendClassname = (title: string) => {
 const GenGroup = ({
   group,
   onAtomSelect,
+  onAtomActivate,
   selected,
   disabledQueryElements,
 }: GenProps) => {
@@ -62,6 +64,7 @@ const GenGroup = ({
               labels={group.itemSets}
               selected={selected}
               onAtomSelect={onAtomSelect}
+              onAtomActivate={onAtomActivate}
               className={styles.subGroup}
               group={group.title}
               disabledQueryElements={disabledQueryElements}

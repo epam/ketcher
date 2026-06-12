@@ -15,15 +15,15 @@
  ***************************************************************************/
 
 import {
+  type SimpleObjectMode,
   fromMultipleMove,
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
-  SimpleObjectMode,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class SimpleObjectTool implements Tool {
   private readonly mode: SimpleObjectMode;
@@ -69,7 +69,7 @@ class SimpleObjectTool implements Tool {
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
-            this.editor.selection() || {},
+            this.editor.selection() ?? {},
             diff,
           );
         } else {
@@ -118,7 +118,7 @@ class SimpleObjectTool implements Tool {
 
   mouseup(event) {
     if (!this.dragCtx) {
-      return true;
+      return;
     }
 
     if (this.dragCtx.action) {
@@ -139,7 +139,6 @@ class SimpleObjectTool implements Tool {
     }
 
     delete this.dragCtx;
-    return true;
   }
 }
 

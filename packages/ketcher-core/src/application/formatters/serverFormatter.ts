@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   ConvertCombinedData,
   ConvertData,
   ConvertResult,
@@ -23,11 +23,11 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
-import { StructFormatter, SupportedFormat } from './structFormatter.types';
+import { type StructFormatter, SupportedFormat } from './structFormatter.types';
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
@@ -60,28 +60,17 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  public async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
-  ): Promise<string>;
-
-  public async getStructureFromStructAsync(
-    struct: Struct[],
-    drawingEntitiesManager?: DrawingEntitiesManager,
-  ): Promise<string[]>;
-
-  public async getStructureFromStructAsync(
-    struct: Struct | Struct[],
-    drawingEntitiesManager?: DrawingEntitiesManager,
-  ): Promise<string | string[]> {
+  ): Promise<string> {
     const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = Array.isArray(struct)
-        ? struct.map((v) =>
-            this.#ketSerializer.serialize(v, drawingEntitiesManager),
-          )
-        : this.#ketSerializer.serialize(struct, drawingEntitiesManager);
+      const stringifiedStruct = this.#ketSerializer.serialize(
+        struct,
+        drawingEntitiesManager,
+      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
@@ -99,9 +88,20 @@ export class ServerFormatter implements StructFormatter {
         const details = e instanceof Error ? e.message : String(e);
         message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
+      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
       throw new Error(message);
     }
+  }
+
+  async getStructureFromStructAsync(
+    struct: Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string[]> {
+    return Promise.all(
+      struct.map((s) =>
+        this.getStringFromStructureAsync(s, drawingEntitiesManager),
+      ),
+    );
   }
 
   getCallingMethod(

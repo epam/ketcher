@@ -15,10 +15,10 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Highlight } from 'domain/entities';
-import { ReStruct } from '../../render';
+import { Highlight } from 'domain/entities/highlight';
+import type { ReStruct } from '../../render';
 
-import { BaseOperation } from './base';
+import { BaseOperation } from './BaseOperation';
 import { OperationType } from './OperationType';
 
 type Data = {

@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -371,6 +372,7 @@
         "fullName": "O-phospho-L-threonine",
         "alias": "ThrPO3",
         "aliasHELM": "Thr_PO3H2",
+        "aliasBILN": "Thr_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import {
+  type ReStruct,
+  type Struct,
   Vec2,
   fromItemsFuse,
   fromTemplateOnAtom,
@@ -24,88 +26,27 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
-  ReStruct,
-  Struct,
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
   vectorUtils,
-  Bond,
   BondAttr,
   AtomAttr,
   MonomerMicromolecule,
   CoordinateTransformation,
 } from 'ketcher-core';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
-import { Tool } from './Tool';
+import type { Tool } from './Tool';
 import TemplatePreview from './templatePreview';
+import {
+  getAngleFromEvent,
+  getBondFlipSign,
+  getSign,
+} from './template.helpers';
 
-export function getBondFlipSign(struct: Struct, bond: Bond): number {
-  const xy0 = new Vec2();
-  const frid = struct.atoms.get(bond.begin)?.fragment;
-  const frIds = struct.getFragmentIds(frid as number);
-  let count = 0;
-
-  let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop;
-
-  if (loop && loop < 0) {
-    loop = struct.halfBonds.get(bond?.hb2 as number)?.loop;
-  }
-
-  if (loop && loop >= 0) {
-    const loopHbs = struct.loops.get(loop)?.hbs;
-    loopHbs?.forEach((hb) => {
-      const halfBondBegin = struct.halfBonds.get(hb)?.begin;
-
-      if (halfBondBegin) {
-        const hbbAtom = struct.atoms.get(halfBondBegin);
-
-        if (hbbAtom) {
-          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle
-          count++;
-        }
-      }
-    });
-  } else {
-    frIds.forEach((id) => {
-      const atomById = struct.atoms.get(id);
-
-      if (atomById) {
-        xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
-        count++;
-      }
-    });
-  }
-
-  const v0 = xy0.scaled(1 / count);
-  return getSign(struct, bond, v0) || 1;
-}
-
-export function getAngleFromEvent(event, ci, restruct) {
-  const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
-  let angle;
-  if (degree && degree > 1) {
-    // common case
-    angle = null;
-  } else if (degree === 1) {
-    // on chain end
-    const atom = restruct.molecule.atoms.get(ci.id);
-    const neiId =
-      atom && restruct.molecule.halfBonds.get(atom.neighbors[0])?.end;
-    const nei: any =
-      (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
-
-    angle = event.ctrlKey
-      ? vectorUtils.calcAngle(nei?.pp, atom?.pp)
-      : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom?.pp), null);
-  } else {
-    // on single atom
-    angle = 0;
-  }
-  return angle;
-}
+export { getAngleFromEvent, getBondFlipSign, getSign };
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;
@@ -318,12 +259,12 @@ class TemplateTool implements Tool {
 
       this.templatePreview?.movePreview(event);
 
-      return true;
+      return;
     }
 
     if (this.isSaltOrSolvent) {
       delete this.dragCtx.item;
-      return true;
+      return;
     }
 
     const eventPosition = CoordinateTransformation.pageToModel(
@@ -363,7 +304,7 @@ class TemplateTool implements Tool {
         dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
         this.editor.hover(getHoverToFuse(dragCtx.mergeItems));
       }
-      return true;
+      return;
     }
     /* end */
 
@@ -388,7 +329,7 @@ class TemplateTool implements Tool {
     }
 
     if (!targetPos) {
-      return true;
+      return;
     }
 
     // calc angle
@@ -410,7 +351,7 @@ class TemplateTool implements Tool {
       (!dragCtx.hasOwnProperty('extra_bond') ||
         dragCtx.extra_bond === extraBond)
     ) {
-      return true;
+      return;
     }
 
     // undo previous action
@@ -426,7 +367,7 @@ class TemplateTool implements Tool {
       const isAddingFunctionalGroup = this.template?.molecule?.sgroups.size;
       if (isAddingFunctionalGroup) {
         // skip, b/c we dont want to do any additional actions (e.g. rotating for s-groups)
-        return true;
+        return;
       }
       [action] = fromTemplateOnCanvas(
         this.editor.render.ctab,
@@ -451,15 +392,13 @@ class TemplateTool implements Tool {
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
-
-    return true;
   }
 
   mouseup(event?) {
     const dragCtx = this.dragCtx;
 
     if (!dragCtx) {
-      return true;
+      return;
     }
 
     delete this.dragCtx;
@@ -490,7 +429,7 @@ class TemplateTool implements Tool {
         action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
         this.editor.update(action);
       });
-      return true;
+      return;
     }
     /* end */
 
@@ -519,7 +458,7 @@ class TemplateTool implements Tool {
           editor: this.editor,
           event,
         });
-        return true;
+        return;
       }
 
       functionalGroupRemoveAction = new Action();
@@ -549,7 +488,7 @@ class TemplateTool implements Tool {
           editor: this.editor,
           event,
         });
-        return true;
+        return;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
 
@@ -561,7 +500,7 @@ class TemplateTool implements Tool {
             editor: this.editor,
             event,
           });
-          return true;
+          return;
         }
 
         const angle = getAngleFromEvent(event, ci, restruct);
@@ -595,7 +534,7 @@ class TemplateTool implements Tool {
           }
         });
 
-        return true;
+        return;
       }
     }
     for (const id of restruct.molecule.bonds.keys()) {
@@ -610,7 +549,6 @@ class TemplateTool implements Tool {
       this.editor.update(completeAction);
     }
     this.editor.hover(this.editor.findItem(event, null), null, event);
-    return true;
   }
 
   cancel() {
@@ -665,23 +603,6 @@ function getTemplateMode(tmpl) {
   }
 
   return null;
-}
-
-export function getSign(molecule, bond, v) {
-  const begin = molecule.atoms.get(bond.begin).pp;
-  const end = molecule.atoms.get(bond.end).pp;
-
-  const sign = Vec2.cross(Vec2.diff(begin, end), Vec2.diff(v, end));
-
-  if (sign > 0) {
-    return 1;
-  }
-
-  if (sign < 0) {
-    return -1;
-  }
-
-  return 0;
 }
 
 function getTargetAtomId(struct: Struct, ci): number | void {

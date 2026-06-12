@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
@@ -6,6 +7,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
+import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
@@ -39,7 +41,7 @@ import {
 } from '@utils/canvas';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { expandMonomer } from '@utils/canvas/monomer/helpers';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import {
   FileType,
   verifyFileExport,
@@ -49,7 +51,7 @@ import {
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   dragMouseTo,
   keyboardTypeOnCanvas,
@@ -64,6 +66,7 @@ import {
 import {
   AttachmentPoint,
   createRNAAntisenseChain,
+  getAttachmentPointLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 
@@ -73,10 +76,9 @@ test.describe('Ketcher bugs in 3.8.0', () => {
   test.beforeAll(async ({ initMoleculesCanvas }) => {
     page = await initMoleculesCanvas();
   });
-  test.afterEach(async ({ initMoleculesCanvas }) => {
-    page = await initMoleculesCanvas();
-    await CommonTopLeftToolbar(page).clearCanvas();
-  });
+
+  test.afterEach(async ({ MoleculesCanvas: _ }) => {});
+
   test.afterAll(async ({ closePage }) => {
     await closePage();
   });
@@ -338,7 +340,10 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await selectAllStructuresOnCanvas(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
-    const attachmentPointR1 = page.getByTestId(AttachmentPoint.R1).first();
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
     await ContextMenu(page, attachmentPointR1).open();
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
@@ -366,7 +371,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(550, 250, page);
+    await dragMouseTo(page, 550, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -395,7 +400,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     const targetAtom = getAtomLocator(page, { atomLabel: 'C' }).first();
     await ContextMenu(page, targetAtom).open();
     await takeEditorScreenshot(page);
@@ -444,7 +449,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
     await LeftToolbar(page).createMonomer();
     await createMonomerDialog.selectType(MonomerType.Sugar);
-    await createMonomerDialog.setSymbol('qeg');
+    await createMonomerDialog.setCode('qeg');
     await createMonomerDialog.setName('gly');
     await createMonomerDialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -476,7 +481,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -499,11 +504,11 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await clickOnCanvas(page, 300, 300, { from: 'pageTopLeft' });
     await selectAllStructuresOnCanvas(page);
     await expect(LeftToolbar(page).createMonomerButton).toBeEnabled();
-    await page.keyboard.press('Control+M');
+    await page.keyboard.press('ControlOrMeta+M');
     // to make molecule visible
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
-    await dragMouseTo(450, 250, page);
+    await dragMouseTo(page, 450, 250);
     await takeEditorScreenshot(page);
     await CreateMonomerDialog(page).discard();
   });
@@ -544,6 +549,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await addTextBoxToCanvas(page);
     await TextEditorDialog(page).setText(pasteText);
     await takeEditorScreenshot(page);
+    await TextEditorDialog(page).cancel();
   });
 
   test('Case 20: Unnecessary leaving groups (R-groups) not appear upon "Removing Abbreviation" of expanded monomer when an attachment point is occupied', async ({
@@ -567,7 +573,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
       'RNA1{[SGNA](A)P.[SGNA](A)P}|RNA2{[SGNA](A)}|RNA3{[SGNA]}$$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await expandMonomer(
       page,
       getAbbreviationLocator(page, { name: 'SGNA' }).nth(0),
@@ -886,10 +892,12 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.IDT,
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
+    expect(errorMessage).toContain(
+      "Convert error! Sequence saver: Nucleotide '5Br-dU' has no 'three-prime end' IDT alias.",
+    );
+    await ErrorMessageDialog(page).close();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('Case 34: Export to IDT work for baseless preset', async ({

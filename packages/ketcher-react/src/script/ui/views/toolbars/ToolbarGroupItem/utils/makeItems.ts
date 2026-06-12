@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
+import type { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
 
 function makeItems(ids: ToolbarItemVariant[]): ToolbarItem[] {
   return ids.map((id) => ({ id }));

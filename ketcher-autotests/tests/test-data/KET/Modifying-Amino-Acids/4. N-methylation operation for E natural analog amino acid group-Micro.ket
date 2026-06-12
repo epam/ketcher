@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -296,12 +297,13 @@
         "fullName": "N-Methyl-Glutamic acid",
         "alias": "meE",
         "aliasHELM": "meE",
+        "aliasBILN": "meE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
                 "leavingGroup": {
                     "atoms": [
-                        2
+                        6
                     ]
                 },
                 "type": "left"

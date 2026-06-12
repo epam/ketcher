@@ -1,13 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
-import { MonomerType, moveMouseAway } from '..';
+import { moveMouseAway } from '../moveMouseAway';
+import { MonomerType } from '../types';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
-  MacroBondDataIds,
   MacroBondType,
-  MicroBondDataIds,
+  MacroBondTool,
+  MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { AttachmentPoint } from './monomer';
+import { AttachmentPoint, getAttachmentPointLocator } from './monomer';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
 
@@ -38,7 +39,7 @@ export async function bondTwoMonomers(
   secondMonomer: Locator,
   attachmentPoint1?: AttachmentPoint,
   attachmentPoint2?: AttachmentPoint,
-  bondType: MacroBondType = MacroBondType.Single,
+  bondType: MacroBondTool = MacroBondTool.Single,
 ) {
   await CommonLeftToolbar(page).bondTool(bondType);
   await firstMonomer.hover({ force: true });
@@ -296,65 +297,34 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomer: Locator,
   firstMonomerAttachmentPoint?: AttachmentPoint,
   secondMonomerAttachmentPoint?: AttachmentPoint,
-  bondType?: MacroBondType,
+  bondType?: MacroBondTool,
   // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseAttachmentPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
     await CommonLeftToolbar(page).bondTool(bondType);
   } else {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
   }
 
-  await firstMonomer.hover({ force: true });
+  await firstMonomer.getByTestId('shape').hover({ force: true });
 
   if (firstMonomerAttachmentPoint) {
-    const firstAttachmentPoint = firstMonomer.getByTestId(
+    const firstAttachmentPoint = getAttachmentPointLocator(
+      firstMonomer,
       firstMonomerAttachmentPoint,
     );
-
-    const firstAttachmentPointBoundingBox =
-      await firstAttachmentPoint.boundingBox();
-
-    if (firstAttachmentPointBoundingBox) {
-      await page.mouse.move(
-        // if we click on the center of R5 connection point - it replace R5 connection point with R1
-        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        firstAttachmentPointBoundingBox.x +
-          firstAttachmentPointBoundingBox.width / 4,
-        firstAttachmentPointBoundingBox.y +
-          firstAttachmentPointBoundingBox.height / 4,
-      );
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+    await firstAttachmentPoint.hover({ force: true });
   }
   await page.mouse.down();
 
-  await secondMonomer.hover({ force: true });
+  await secondMonomer.getByTestId('shape').hover({ force: true });
   if (secondMonomerAttachmentPoint) {
-    const secondAttachmentPoint = secondMonomer.getByTestId(
+    const secondAttachmentPoint = getAttachmentPointLocator(
+      secondMonomer,
       secondMonomerAttachmentPoint,
     );
-    const secondAttachmentPointBoundingBox =
-      await secondAttachmentPoint.boundingBox();
-
-    if (secondAttachmentPointBoundingBox) {
-      await page.mouse.move(
-        // if we click on the center of R5 connection point - it replace R5 connection point with R1
-        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        secondAttachmentPointBoundingBox.x +
-          secondAttachmentPointBoundingBox.width / 4,
-        secondAttachmentPointBoundingBox.y +
-          secondAttachmentPointBoundingBox.height / 4,
-      );
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+    await secondAttachmentPoint.hover({ force: true });
   }
   await page.mouse.up();
 
@@ -402,46 +372,21 @@ export async function bondMonomerPointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,
-  monomerAttachmentPoint?: string,
+  attachmentPoint?: AttachmentPoint,
   connectionPointShift?: { x: number; y: number },
+  bondType?: MacroBondTool,
 ) {
-  await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
-  await monomer.hover({ force: true });
+  if (bondType) {
+    await CommonLeftToolbar(page).bondTool(bondType);
+  } else {
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
+  }
 
-  if (monomerAttachmentPoint) {
-    const connectionPoint = page
-      .locator('g')
-      .filter({ hasText: new RegExp(`^${monomerAttachmentPoint}$`) })
-      .locator('circle');
+  await monomer.getByTestId('shape').hover({ force: true });
 
-    const connectionPointBoundingBox = await connectionPoint.boundingBox();
-    const monomerBoundingBox = await monomer.boundingBox();
-
-    if (connectionPointBoundingBox && monomerBoundingBox) {
-      const multiplier = 1 / 5;
-      const connectionPointCenterX =
-        connectionPointBoundingBox.x + connectionPointBoundingBox.width / 2;
-      const connectionPointCenterY =
-        connectionPointBoundingBox.y + connectionPointBoundingBox.height / 2;
-
-      const monomerCenterX =
-        monomerBoundingBox.x + monomerBoundingBox.width / 2;
-      const monomerCenterY =
-        monomerBoundingBox.y + monomerBoundingBox.height / 2;
-
-      const x =
-        connectionPointCenterX +
-        (monomerCenterX - connectionPointCenterX) * multiplier;
-      const y =
-        connectionPointCenterY +
-        (monomerCenterY - connectionPointCenterY) * multiplier;
-
-      await page.mouse.move(x, y);
-    } else {
-      console.log(
-        'Failed to locate connection point on the canvas - using Center instead.',
-      );
-    }
+  if (attachmentPoint) {
+    const connectionPoint = getAttachmentPointLocator(monomer, attachmentPoint);
+    await connectionPoint.hover({ force: true });
   }
   await page.mouse.down();
 
@@ -480,7 +425,7 @@ export function getBondLocator(
     fromSGroupId,
     toSGroupId,
   }: {
-    bondType?: MacroBondDataIds | MicroBondDataIds | number;
+    bondType?: MacroBondType | MicroBondType | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
     topology?: string | number;

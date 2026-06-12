@@ -16,15 +16,14 @@
 
 import { Atom } from './atom';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { Vec2 } from './vec2';
 import {
+  type initiallySelectedType,
   BaseMicromoleculeEntity,
-  initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
-import { SGroup } from 'domain/entities/sgroup';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { BondCIP } from 'domain/entities/types';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { BondCIP } from 'domain/entities/types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -376,7 +375,7 @@ export class Bond extends BaseMicromoleculeEntity {
           (sgroup.atoms.includes(bond.end) &&
             !sgroup.atoms.includes(bond.begin))) &&
         sgroup.isExpanded() &&
-        sgroup instanceof MonomerMicromolecule
+        sgroup.isMonomer
       );
     });
   }

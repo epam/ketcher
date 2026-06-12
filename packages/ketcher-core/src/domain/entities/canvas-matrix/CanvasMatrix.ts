@@ -1,7 +1,9 @@
-import { BaseMonomer, MonomerToAtomBond, SubChainNode } from 'domain/entities';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';

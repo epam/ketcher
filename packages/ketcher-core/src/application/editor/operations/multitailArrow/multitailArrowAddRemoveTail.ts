@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define,@typescript-eslint/no-non-null-assertion */
-import { BaseOperation } from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
-import { ReStruct } from 'application/render';
-import { FixedPrecisionCoordinates } from 'domain/entities';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { ReStruct } from 'application/render';
+import type { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export class MultitailArrowAddTail extends BaseOperation {
   constructor(

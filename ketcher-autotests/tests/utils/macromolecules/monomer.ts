@@ -1,15 +1,11 @@
 import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { dragMouseTo } from '../clicks';
+import { Monomer, MonomerType, SymbolType } from '../types';
+import { waitForRender } from '../common/loaders/waitForRender';
 import {
-  dragMouseTo,
-  Monomer,
-  MonomerType,
-  SymbolType,
-  waitForRender,
-} from '@utils';
-import {
-  MacroBondType,
-  MicroBondType,
+  MacroBondTool,
+  MicroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
@@ -26,7 +22,7 @@ export async function moveMonomer(
 ) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await monomer.click();
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function moveMonomerOnMicro(
@@ -40,13 +36,13 @@ export async function moveMonomerOnMicro(
   await waitForRender(page, async () => {
     await monomer.click();
   });
-  await dragMouseTo(x, y, page);
+  await dragMouseTo(page, x, y);
 }
 
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
-  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
+  bondType: MacroBondTool | MicroBondTool = MacroBondTool.Single,
 ) {
   await CommonLeftToolbar(page).bondTool(bondType);
 
@@ -89,6 +85,11 @@ export enum AttachmentPoint {
   R7 = 'R7',
   R8 = 'R8',
 }
+
+type AttachmentPointLocatorOptions = {
+  attachmentPointAlias?: AttachmentPoint;
+  parentMonomerId?: string | number;
+};
 
 /**
  * This function returns locator for monomer in the macromolecule editor.
@@ -206,6 +207,35 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   return locator;
 }
 
+export function getAttachmentPointLocator(
+  root: Page | Locator,
+  options: AttachmentPoint | AttachmentPointLocatorOptions = {},
+) {
+  const normalizedOptions =
+    typeof options === 'string' ? { attachmentPointAlias: options } : options;
+
+  const attributes: { [key: string]: string } = {
+    'data-testid': 'monomer-attachment-point',
+  };
+
+  if (normalizedOptions.attachmentPointAlias) {
+    attributes['data-attachment-point-alias'] =
+      normalizedOptions.attachmentPointAlias;
+  }
+
+  if (Object.hasOwn(normalizedOptions, 'parentMonomerId')) {
+    attributes['data-parent-monomer-id'] = String(
+      normalizedOptions.parentMonomerId,
+    );
+  }
+
+  return root.locator(
+    Object.entries(attributes)
+      .map(([key, value]) => `[${key}="${value}"]`)
+      .join(''),
+  );
+}
+
 export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
   await waitForRender(page, async () => {
     await ContextMenu(page, monomer).click(
@@ -273,6 +303,9 @@ export function getSymbolLocator(
   } = options;
   if (Object.hasOwn(options, 'symbolId')) {
     attributes['data-symbol-id'] = String(symbolId);
+  }
+  if (Object.hasOwn(options, 'symbolAlias')) {
+    attributes['data-symbol-alias'] = String(symbolAlias);
   }
   if (Object.hasOwn(options, 'chainId')) {
     attributes['data-chain-id'] = String(chainId);

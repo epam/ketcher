@@ -1,19 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { delay } from '@utils/canvas';
-import { waitForRender } from '@utils/common';
-import { emptyFunction } from '@utils/common/helpers';
+import { emptyFunction } from '../../helpers';
+import { waitForRender } from '../waitForRender';
 
 export const waitForSpinnerFinishedWork = async (
   page: Page,
-  callback: VoidFunction,
+  callback: () => Promise<void>,
   timeout = 250,
 ) => {
   const loadingSpinner = page.getByTestId('loading-spinner');
 
-  callback();
+  await callback();
   do {
-    await delay(0.2);
+    await page.waitForTimeout(200);
     await loadingSpinner.first().waitFor({ state: 'detached' });
   } while ((await loadingSpinner.count()) > 0);
   await waitForRender(page, emptyFunction, timeout);

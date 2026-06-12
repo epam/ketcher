@@ -4,12 +4,12 @@ import {
   waitForPageInit,
   waitForRender,
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   deleteByKeyboard,
 } from '@utils';
 import {
@@ -43,8 +43,8 @@ const setupEllipse = async (page: Page) => {
   await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
-  await clickInTheMiddleOfTheScreen(page);
-  await dragMouseTo(ellipseCoordinates.x, ellipseCoordinates.y, page);
+  await clickInTheMiddleOfTheCanvas(page);
+  await dragMouseTo(page, ellipseCoordinates.x, ellipseCoordinates.y);
   return ellipseCoordinates;
 };
 
@@ -55,7 +55,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
   await selectAllStructuresOnCanvas(page);
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await dragMouseTo(point1.x, point1.y, page);
+  await dragMouseTo(page, point1.x, point1.y);
 }
 
 async function saveToTemplates(page: Page) {
@@ -77,9 +77,9 @@ test.describe('Action on simples objects', () => {
   test('Simple Objects - Zoom In, Zoom Out', async ({ page }) => {
     // Test case: EPMLSOPKET-1978
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -88,7 +88,7 @@ test.describe('Action on simples objects', () => {
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await setupEllipse(page);
     await CommonTopRightToolbar(page).setZoomInputValue('200');
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).setZoomInputValue('100');
     await CommonTopRightToolbar(page).zoomSelector.click();
     await takeEditorScreenshot(page);
@@ -106,13 +106,13 @@ test.describe('Action on simples objects', () => {
     await setupEllipse(page);
     await page.mouse.move(point.x, point.y);
     await page.mouse.down();
-    await dragMouseTo(point1.x, point1.y, page);
+    await dragMouseTo(page, point1.x, point1.y);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Lasso);
     await clickOnCanvas(page, point2.x, point2.y, { from: 'pageTopLeft' });
     await waitForRender(page, async () => {
-      await dragMouseTo(point3.x, point3.y, page);
+      await dragMouseTo(page, point3.x, point3.y);
     });
     await takeEditorScreenshot(page);
   });
@@ -145,7 +145,7 @@ test.describe('Action on simples objects', () => {
     const anyPointX = 200;
     const anyPointY = 200;
     await openFileAndAddToCanvas(page, 'KET/simple-objects.ket');
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
     await copyAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
@@ -188,7 +188,7 @@ test.describe('Action on simples objects', () => {
   test('Simple Objects - Save to Templates', async ({ page }) => {
     // Test case: EPMLSOPKET-14027
     await selectAndMoveSimpleObjects(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);
     await CommonTopLeftToolbar(page).clearCanvas();

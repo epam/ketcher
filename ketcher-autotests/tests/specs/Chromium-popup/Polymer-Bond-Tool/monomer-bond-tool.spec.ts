@@ -4,11 +4,11 @@ import { test } from '@fixtures';
 import { Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { MacroBondOption } from '@tests/pages/constants/contextMenu/Constants';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
-import { delay, takeElementScreenshot } from '@utils/canvas';
+import { takeElementScreenshot } from '@utils/canvas';
 import { openFileAndAddToCanvasMacro } from '@utils/index';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
@@ -44,7 +44,7 @@ test.describe('Monomer bond tool', () => {
       'KET/Chromium-popup/two-nucleotides.ket',
     );
     await ContextMenu(page, bondLine).open();
-    await delay(0.2);
+    await page.waitForTimeout(0.2 * 1000);
     await takeElementScreenshot(
       page,
       ContextMenu(page, bondLine).contextMenuBody,
@@ -87,7 +87,7 @@ test.describe('Monomer bond tool', () => {
      * Version 3.10
      */
     await openFileAndAddToCanvasMacro(page, 'KET/chems-not-connected.ket');
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await bondTwoMonomers(
       page,
       getMonomerLocator(page, Chem.Test_6_Ch),

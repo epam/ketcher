@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -398,6 +399,7 @@
         "fullName": "N-Methyl-Valine",
         "alias": "meV",
         "aliasHELM": "meV",
+        "aliasBILN": "meV",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

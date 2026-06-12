@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
-import { KetFileNode } from '../../serializers.types';
+import { Pile } from 'domain/entities/pile';
+import { Pool } from 'domain/entities/pool';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { KetFileNode } from '../../serializers.types';
 
 export function prepareStructForKet(struct: Struct) {
   const ketNodes: KetFileNode[] = [];

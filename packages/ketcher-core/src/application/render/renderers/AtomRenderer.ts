@@ -1,27 +1,39 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
+import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor, editorEvents } from 'application/editor';
+import { editorEvents } from 'application/editor/editorEvents';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { Box2Abs, Vec2 } from 'domain/entities';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Vec2 } from 'domain/entities/vec2';
+import { StereoLabel } from 'domain/entities/atom';
 import util from '../util';
 import assert from 'assert';
 import {
   BAD_VALENCE_WARNING_COLOR,
   BAD_VALENCE_LINE_OFFSET,
+  SELECTION_COLOR,
+  SELECTION_HOVERED_COLOR,
 } from 'application/render/renderers/constants';
+
+// Extra clearance in canvas units that keeps labels away from the atom bbox.
+const LABEL_CLEARANCE_OFFSET = 5;
+const STEREO_CIP_GAP = 2;
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
   private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
   private cipLabelElement?: D3SvgElementSelection<SVGGElement, void>;
+  private stereoLabelElement?: D3SvgElementSelection<SVGGElement, void>;
   private badValenceElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   private cipLabelElementBBox?: SVGRect;
   private cipTextElementBBox?: SVGRect;
+  private stereoLabelElementBBox?: SVGRect;
+  private stereoTextElementBBox?: SVGRect;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -37,7 +49,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const { hydrogenAmount } = this.atom.calculateValence();
     const atomId = this.atom.atomIdInMicroMode ?? this.atom.id;
 
@@ -172,7 +184,7 @@ export class AtomRenderer extends BaseRenderer {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .attr('stroke-width', '1.2')
-        .attr('fill', '#CCFFDD')
+        .attr('fill', 'none')
         .attr('opacity', '0')
         .attr('class', 'dynamic-element')
     );
@@ -191,9 +203,15 @@ export class AtomRenderer extends BaseRenderer {
       if (hoverElement) {
         this.hoverElement = hoverElement;
       }
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_HOVERED_COLOR);
+      }
       this.showHover();
     } else {
       this.hideHover();
+      if (this.atom.selected) {
+        this.selectionElement?.attr('fill', SELECTION_COLOR);
+      }
     }
   }
 
@@ -206,7 +224,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get shouldHydrogenBeOnLeft() {
-    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
     if (atomHaldEdges?.length === 0) {
@@ -233,7 +251,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private get isAtomTerminal() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
@@ -243,7 +261,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public get isLabelVisible() {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
@@ -418,6 +436,10 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement = undefined;
     this.cipLabelElement?.remove();
     this.cipLabelElement = undefined;
+    this.stereoLabelElement?.remove();
+    this.stereoLabelElement = undefined;
+    this.stereoLabelElementBBox = undefined;
+    this.stereoTextElementBBox = undefined;
     this.badValenceElement?.remove();
     this.badValenceElement = undefined;
     this.updateSelectionContour();
@@ -430,7 +452,7 @@ export class AtomRenderer extends BaseRenderer {
       const selectionContourElement = this.appendSelectionContour();
 
       this.selectionElement = selectionContourElement
-        ?.attr('fill', '#57FF8F')
+        ?.attr('fill', SELECTION_COLOR)
         // selectionContourElement is union type here. For some reason for union selection types
         // ts shows error that first call of attr can return string.
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -438,7 +460,7 @@ export class AtomRenderer extends BaseRenderer {
         .attr('class', 'dynamic-element');
     }
 
-    this.cipLabelElement?.select('rect')?.attr('fill', '#57FF8F');
+    this.cipLabelElement?.select('rect')?.attr('fill', SELECTION_COLOR);
   }
 
   public removeSelection() {
@@ -595,6 +617,8 @@ export class AtomRenderer extends BaseRenderer {
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
     this.appendBadValenceWarning();
+    // Must come before appendCIPLabel: CIP positioning depends on the stereo bbox.
+    this.appendStereoLabel();
     this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
@@ -643,30 +667,47 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    const { width, height } = this.cipTextElementBBox;
-
-    const modifiedTextBBox = {
-      x: this.scaledPosition.x - width / 2,
-      y: this.scaledPosition.y - height / 2,
-      width,
-      height,
-    };
     const direction = this.bisectLargestSector();
+    let projectedDistance = this.getProjectedLabelDistance(
+      this.cipTextElementBBox.width,
+      this.cipTextElementBBox.height,
+      direction,
+    );
 
-    const baseDistance = 3;
-    const shiftDistance =
-      baseDistance +
-      util.shiftRayBox(
-        this.scaledPosition,
-        direction.negated(),
-        Box2Abs.fromRelBox(modifiedTextBBox),
+    if (this.stereoTextElementBBox) {
+      const stereoProjectedDistance = this.getProjectedLabelDistance(
+        this.stereoTextElementBBox.width,
+        this.stereoTextElementBBox.height,
+        direction,
       );
-    const shiftVector = direction.scaled(3 + shiftDistance);
+      const stereoProjectionRadius = this.getLabelProjectionRadius(
+        this.stereoTextElementBBox.width,
+        this.stereoTextElementBBox.height,
+        direction,
+      );
+      const cipProjectionRadius = this.getLabelProjectionRadius(
+        this.cipTextElementBBox.width,
+        this.cipTextElementBBox.height,
+        direction,
+      );
+
+      projectedDistance = Math.max(
+        projectedDistance,
+        stereoProjectedDistance +
+          stereoProjectionRadius +
+          cipProjectionRadius +
+          STEREO_CIP_GAP,
+      );
+    }
+
+    const shiftVector = direction.scaled(projectedDistance);
 
     const cipPosition = this.scaledPosition.add(
       new Vec2(
-        shiftVector.x - this.cipLabelElementBBox.width / 2,
-        shiftVector.y + this.cipLabelElementBBox.height / 2,
+        shiftVector.x -
+          (this.cipLabelElementBBox.x + this.cipLabelElementBBox.width / 2),
+        shiftVector.y -
+          (this.cipLabelElementBBox.y + this.cipLabelElementBBox.height / 2),
       ),
     );
 
@@ -678,12 +719,139 @@ export class AtomRenderer extends BaseRenderer {
 
   private bisectLargestSector(): Vec2 {
     const { neighborAngle, largestAngle } =
-      CoreEditor.provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
+      provideEditorInstance().viewModel.getLargestSectorFromAtomNeighbours(
         this.atom,
       );
 
     const bisectAngle = neighborAngle + largestAngle / 2;
     return new Vec2(Math.cos(bisectAngle), Math.sin(bisectAngle));
+  }
+
+  private getStereoLabelColor(): string {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return '#000';
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    switch (stereoLabelType) {
+      case StereoLabel.And:
+        return '#0000cd'; // Default AND Centers color
+      case StereoLabel.Or:
+        return '#228b22'; // Default OR Centers color
+      case StereoLabel.Abs:
+        return '#ff0000'; // Default Absolute Center color
+      default:
+        return '#000';
+    }
+  }
+
+  private shouldDisplayStereoLabel(): boolean {
+    const stereoLabel = this.atom.properties.stereoLabel;
+    if (!stereoLabel) {
+      return false;
+    }
+
+    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+    return (
+      stereoLabelType === StereoLabel.And || stereoLabelType === StereoLabel.Or
+    );
+  }
+
+  private appendStereoLabel() {
+    if (!this.shouldDisplayStereoLabel()) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const stereoLabel = this.atom.properties.stereoLabel!;
+
+    this.stereoLabelElement = this.canvas
+      ?.append('g')
+      ?.attr('id', `stereo-atom-${this.atom.id}`);
+
+    const stereoTextElement = this.stereoLabelElement
+      ?.append('text')
+      .text(stereoLabel)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('fill', this.getStereoLabelColor())
+      .attr('pointer-events', 'none');
+
+    this.stereoTextElementBBox = stereoTextElement?.node()?.getBBox();
+    if (!this.stereoTextElementBBox) {
+      return;
+    }
+
+    this.stereoLabelElementBBox = this.stereoLabelElement?.node()?.getBBox();
+
+    this.positionStereoLabel();
+  }
+
+  private positionStereoLabel() {
+    if (!this.stereoTextElementBBox || !this.stereoLabelElementBBox) {
+      return;
+    }
+
+    const direction = this.bisectLargestSector();
+
+    const projectedDistance = this.getProjectedLabelDistance(
+      this.stereoTextElementBBox.width,
+      this.stereoTextElementBBox.height,
+      direction,
+    );
+
+    const shiftVector = direction.scaled(projectedDistance);
+
+    const stereoPosition = this.scaledPosition.add(
+      new Vec2(
+        shiftVector.x -
+          (this.stereoLabelElementBBox.x +
+            this.stereoLabelElementBBox.width / 2),
+        shiftVector.y -
+          (this.stereoLabelElementBBox.y +
+            this.stereoLabelElementBBox.height / 2),
+      ),
+    );
+
+    this.stereoLabelElement?.attr(
+      'transform',
+      `translate(${stereoPosition.x}, ${stereoPosition.y})`,
+    );
+  }
+
+  private getProjectedLabelDistance(
+    width: number,
+    height: number,
+    direction: Vec2,
+  ): number {
+    const baseDistance = 3;
+    const labelBox = {
+      x: this.scaledPosition.x - width / 2,
+      y: this.scaledPosition.y - height / 2,
+      width,
+      height,
+    };
+
+    const backwardShift = util.shiftRayBox(
+      this.scaledPosition,
+      direction.negated(),
+      Box2Abs.fromRelBox(labelBox),
+    );
+
+    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+  }
+
+  private getLabelProjectionRadius(
+    width: number,
+    height: number,
+    direction: Vec2,
+  ): number {
+    return (
+      Math.abs(direction.x) * (width / 2) + Math.abs(direction.y) * (height / 2)
+    );
   }
 
   public move() {
@@ -693,15 +861,19 @@ export class AtomRenderer extends BaseRenderer {
     );
 
     this.positionCIPLabel();
+    this.positionStereoLabel();
   }
 
   public remove() {
     this.removeSelection();
     this.cipLabelElement?.remove();
+    this.stereoLabelElement?.remove();
     super.remove();
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
   protected removeHover(): void {
     this.hoverElement?.remove();

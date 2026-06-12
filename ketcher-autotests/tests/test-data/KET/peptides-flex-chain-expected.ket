@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -904,6 +905,7 @@
         "id": "meC___N-Methyl-Cysteine",
         "fullName": "N-Methyl-Cysteine",
         "alias": "meC",
+        "aliasBILN": "meC",
         "attachmentPoints": [
             {
                 "attachmentAtom": 4,
@@ -1116,6 +1118,7 @@
         "id": "dD___D-Aspartic acid",
         "fullName": "D-Aspartic acid",
         "alias": "dD",
+        "aliasBILN": "dD",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,
@@ -1575,6 +1578,7 @@
         "id": "dF___D-Phenylalanine",
         "fullName": "D-Phenylalanine",
         "alias": "dF",
+        "aliasBILN": "dF",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -1912,6 +1916,7 @@
         "id": "DHis1B___(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
         "fullName": "(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
         "alias": "DHis1B",
+        "aliasBILN": "D-His_1Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -2100,6 +2105,7 @@
         "id": "dI___D-Isoleucine",
         "fullName": "D-Isoleucine",
         "alias": "dI",
+        "aliasBILN": "dI",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,
@@ -2290,6 +2296,7 @@
         "id": "aIle___L-allo-Isoleucine",
         "fullName": "L-allo-Isoleucine",
         "alias": "aIle",
+        "aliasBILN": "aIle",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -3042,6 +3049,7 @@
         "id": "dQ___D-Glutamine",
         "fullName": "D-Glutamine",
         "alias": "dQ",
+        "aliasBILN": "dQ",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,
@@ -3244,6 +3252,7 @@
         "id": "meS___N-Methyl-Serine",
         "fullName": "N-Methyl-Serine",
         "alias": "meS",
+        "aliasBILN": "meS",
         "attachmentPoints": [
             {
                 "attachmentAtom": 2,
@@ -3514,6 +3523,7 @@
         "id": "DSerBn___O-Benzyl-D-serine",
         "fullName": "O-Benzyl-D-serine",
         "alias": "DSerBn",
+        "aliasBILN": "D-Ser_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -3705,6 +3715,7 @@
         "id": "Nva___norvaline",
         "fullName": "norvaline",
         "alias": "Nva",
+        "aliasBILN": "Nva",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -4936,6 +4947,7 @@
         "id": "SertBu___O-tert-Butyl-L-serine",
         "fullName": "O-tert-Butyl-L-serine",
         "alias": "SertBu",
+        "aliasBILN": "Ser_tBu",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -5184,6 +5196,7 @@
         "id": "meR___N-Methyl-Arginine",
         "fullName": "N-Methyl-Arginine",
         "alias": "meR",
+        "aliasBILN": "meR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,
@@ -5787,6 +5800,7 @@
         "id": "meL___N-Methyl-Leucine",
         "fullName": "N-Methyl-Leucine",
         "alias": "meL",
+        "aliasBILN": "meL",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -6255,6 +6269,7 @@
         "id": "meH___N-Methyl-Histidine",
         "fullName": "N-Methyl-Histidine",
         "alias": "meH",
+        "aliasBILN": "meH",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,
@@ -6468,6 +6483,7 @@
         "id": "dN___D-Asparagine",
         "fullName": "D-Asparagine",
         "alias": "dN",
+        "aliasBILN": "dN",
         "attachmentPoints": [
             {
                 "attachmentAtom": 3,

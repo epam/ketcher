@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect, useRef } from 'react';
-import TemplateTable, { Template } from './TemplateTable';
+import { type Dispatch, type FC, useState, useEffect, useRef } from 'react';
+import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
   changeGroup,
@@ -54,7 +54,6 @@ function TabPanel(props) {
   return (
     <div
       className={classes.tabPanel}
-      component="div"
       role="tabpanel"
       id={`scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}

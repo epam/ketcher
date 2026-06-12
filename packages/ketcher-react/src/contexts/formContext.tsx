@@ -16,6 +16,52 @@
 
 import React from 'react';
 
-const formContext = React.createContext(null);
+export interface SchemaProperty {
+  title?: string;
+  type?: string;
+  enum?: unknown[];
+  enumNames?: string[];
+  default?: unknown;
+  format?: string;
+  pattern?: string;
+  maxLength?: number;
+  invalidMessage?: string | ((data: unknown) => string);
+}
+
+export interface FormSchema {
+  key?: string;
+  title?: string;
+  default?: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  properties?: Record<string, SchemaProperty | Record<string, any>>;
+}
+
+export interface FieldState {
+  dataError: string | undefined;
+  value: unknown;
+  extraValue: unknown;
+  onChange: (val: unknown) => void;
+  onExtraChange: (val: unknown) => void;
+}
+
+export interface FormStateStore {
+  field(
+    name: string,
+    onChange?: (value: unknown) => void,
+    extraName?: string,
+  ): FieldState;
+  updateState(newState: Record<string, unknown>): void;
+  props: {
+    result: Record<string, unknown>;
+    errors?: Record<string, string>;
+  };
+}
+
+export interface FormContextValue {
+  schema: FormSchema;
+  stateStore: FormStateStore;
+}
+
+const formContext = React.createContext<FormContextValue | null>(null);
 
 export default formContext;

@@ -1,10 +1,12 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { RxnArrow } from 'domain/entities/CoreRxnArrow';
-import { RxnArrowMode, Vec2 } from 'domain/entities';
+import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
+import { RxnArrowMode } from 'domain/entities/rxnArrow';
+import { Vec2 } from 'domain/entities/vec2';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { OpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/OpenAngleArrowRenderer';
-import { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
+import type { SVGPathAttributes } from 'application/render/renderers/BondPathRenderer/constants';
 import { FilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/FilledTriangleArrowRenderer';
 import { FilledBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/FilledBowArrowRenderer';
 import { DashedOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/DashedOpenAngleArrowRenderer';
@@ -18,11 +20,11 @@ import { UnbalancedEquilibriumFilledHalfBowArrowRenderer } from 'application/ren
 import { UnbalancedEquilibriumOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumOpenHalfAngleArrowRenderer';
 import { UnbalancedEquilibriumFilledHalfTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumFilledHalfTriangleArrowRenderer';
 import { EllipticalArcFilledBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledBowArrowRenderer';
-import { provideEditorSettings } from 'application/editor';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { EllipticalArcFilledTriangleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcFilledTriangleArrowRenderer';
 import { EllipticalArcOpenAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenAngleArrowRenderer';
 import { EllipticalArcOpenHalfAngleArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/EllipticalArcOpenHalfAngleArrowRenderer';
-import { KetcherLogger, tfx } from 'utilities';
+import { KetcherLogger, toFixed } from 'utilities';
 import { UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer } from 'application/render/renderers/RxnArrowPathRenderer/UnbalancedEquilibriumLargeFilledHalfBowArrowRenderer';
 import svgPath from 'svgpath';
 
@@ -228,11 +230,15 @@ export class RxnArrowRenderer extends BaseRenderer {
     const [wOffset, hOffset] = [5, normalizedHeight ?? 8];
 
     const path =
-      `M${tfx(start.x - wOffset)},${tfx(start.y)}` +
-      `L${tfx(start.x - wOffset)},${tfx(start.y - hOffset)}` +
-      `L${tfx(endX + wOffset)},${tfx(start.y - hOffset)}` +
-      `L${tfx(endX + wOffset)},${tfx(start.y + (!height ? hOffset : 0))}` +
-      `L${tfx(start.x - wOffset)},${tfx(start.y + (!height ? hOffset : 0))}Z`;
+      `M${toFixed(start.x - wOffset)},${toFixed(start.y)}` +
+      `L${toFixed(start.x - wOffset)},${toFixed(start.y - hOffset)}` +
+      `L${toFixed(endX + wOffset)},${toFixed(start.y - hOffset)}` +
+      `L${toFixed(endX + wOffset)},${toFixed(
+        start.y + (!height ? hOffset : 0),
+      )}` +
+      `L${toFixed(start.x - wOffset)},${toFixed(
+        start.y + (!height ? hOffset : 0),
+      )}Z`;
 
     return svgPath(path).rotate(angle, start.x, start.y).toString();
   }
@@ -259,6 +265,10 @@ export class RxnArrowRenderer extends BaseRenderer {
         .attr('stroke-width', ARROW_STROKE_WIDTH)
         .attr('stroke-linecap', 'round')
         .attr('stroke-linejoin', 'round');
+
+      if (typeof this.arrow.arrowId === 'number') {
+        path?.attr('data-arrow-id', String(this.arrow.arrowId));
+      }
 
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
@@ -320,8 +330,8 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.selectionElement = this.canvas
       ?.insert('path', ':first-child')
       .attr('d', selectionPathDAttr)
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
   }
 
@@ -350,5 +360,7 @@ export class RxnArrowRenderer extends BaseRenderer {
     this.removeSelection();
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

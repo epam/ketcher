@@ -14,14 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  SGroup,
-  Struct,
-  SGroupAttachmentPoint,
-  AtomQueryProperties,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import type { AtomQueryProperties } from 'domain/entities/atom';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
@@ -179,13 +177,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
   ifDef(result, 'atoms', source.atoms);
 
   switch (source.type) {
-    case 'GEN':
-      break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
-      break;
-    }
-    case 'queryComponent': {
       break;
     }
     case 'SRU': {
@@ -233,6 +226,8 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(result, 'bonds', SGroup.getBonds(struct, source));
       break;
     }
+    case 'GEN':
+    case 'queryComponent':
     default:
       break;
   }

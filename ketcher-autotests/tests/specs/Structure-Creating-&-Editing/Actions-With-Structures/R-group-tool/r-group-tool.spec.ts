@@ -26,13 +26,13 @@ test.describe('R-Group', () => {
     */
     await page.waitForSelector('.Ketcher-root');
 
-    await page.keyboard.press('Control+r');
+    await page.keyboard.press('ControlOrMeta+r');
     await takeLeftToolbarScreenshot(page);
 
-    await page.keyboard.press('Control+r');
+    await page.keyboard.press('ControlOrMeta+r');
     await takeLeftToolbarScreenshot(page);
 
-    await page.keyboard.press('Control+r');
+    await page.keyboard.press('ControlOrMeta+r');
     await takeLeftToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });

@@ -8,7 +8,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
-import { waitForPageInit, waitForRender } from '@utils/common/loaders';
+import { waitForRender } from '@utils/common/loaders';
 import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -34,15 +34,15 @@ import { Nucleotide } from '@tests/pages/constants/monomers/Nucleotides';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import {
   resetZoomLevelToDefault,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
 } from '@utils/keyboard';
 import {
   FileType,
   verifyFileExport,
   verifySVGExport,
 } from '@utils/files/receiveFileComparisonData';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MonomerType } from '@utils/types';
@@ -56,30 +56,22 @@ import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVa
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-    LayoutMode.Sequence,
-  );
   await MacromoleculesTopToolbar(page).rna();
   await Library(page).switchToRNATab();
   await Library(page).openRNASection(RNASection.Nucleotides);
   await Library(page).openRNASection(RNASection.Presets);
 }
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
+test.beforeAll(async ({ initSequenceCanvas }) => {
+  page = await initSequenceCanvas();
+});
 
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeEach(async ({ SequenceCanvas: _ }) => {
   await configureInitialState(page);
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-});
-
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 test('1. Verify that the header of the library changed to remove the "Library" title and move the "Hide" option to the ear instead of to the right of the title', async () => {
@@ -196,7 +188,7 @@ test('5. Verify that RNA tab redesign include change in the appearance of librar
 test(
   '13. Check that when a base is picked in the RNA Builder, clicking on the Base slot in RNA Builder lead to that base in the Bases subsection of the library and the base card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -214,9 +206,6 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -235,7 +224,7 @@ test(
 test(
   '14. Check that when multiple bases are already picked in RNA Builder, clicking on the Base slot in RNA Builder lead to one section if all the bases belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -253,9 +242,6 @@ test(
      * 7. Click on the Base slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the bases belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -274,7 +260,7 @@ test(
 test(
   '15. Check that when a sugar is picked in the RNA Builder, clicking on the Sugar slot in RNA Builder lead to that sugar in the Sugar subsection of the library and the base card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -292,9 +278,6 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that base card appear selected in Bases subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -313,7 +296,7 @@ test(
 test(
   '16. Check that when multiple sugars are already picked in RNA Builder, clicking on the Sugar slot in RNA Builder lead to one section if all the sugars belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -331,9 +314,6 @@ test(
      * 7. Click on the Sugar slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the sugars belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -352,7 +332,7 @@ test(
 test(
   '17. Check that when a phopsphate is picked in the RNA Builder, clicking on the Phopsphate slot in RNA Builder lead to that base in the Phopsphates subsection of the library and the phopsphate card appear selected (as if it was clicked on)',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -370,9 +350,6 @@ test(
      * 7. Click on the Phopsphate slot in RNA Builder
      * 8. Take screenshot to validate that phopsphate card appear selected in Phopsphates subsection
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -391,7 +368,7 @@ test(
 test(
   '18. Check that when multiple phopsphates are already picked in RNA Builder, clicking on the Phopsphate slot in RNA Builder lead to one section if all the phopsphates belong to same section',
   { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
+  async ({ SequenceCanvas: _ }) => {
     /*
      * IMPORTANT: Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/6834
      *
@@ -409,9 +386,6 @@ test(
      * 7. Click on the Phopsphatee slot in RNA Builder
      * 8. Take screenshot to validate that one section if all the phopsphates belong to same section shown
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -437,7 +411,9 @@ const monomerToDrag = [
 ];
 
 for (const monomer of monomerToDrag) {
-  test(`19.1 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Flex mode)`, async () => {
+  test(`19.1 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -453,7 +429,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
@@ -468,7 +443,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`19.2 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Snake mode)`, async () => {
+  test(`19.2 Verify that user can drag  ${monomer.alias} monomer from the library and favorites and drop it onto the canvas (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -484,7 +461,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 }, true);
@@ -499,7 +475,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`20.1 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Flex mode)`, async () => {
+  test(`20.1 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -515,7 +493,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
     await page.mouse.down();
     await page.mouse.move(100, 100);
@@ -528,7 +505,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`20.2 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Snake mode)`, async () => {
+  test(`20.2 Verify ghost image of  ${monomer.alias} while it is hovered over canvas (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -544,7 +523,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
     await page.mouse.down();
     await page.mouse.move(100, 100);
@@ -581,7 +559,9 @@ for (const monomer of monomerToDrag) {
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -610,7 +590,9 @@ const monomerToDrag2 = [
 ];
 
 for (const monomer of monomerToDrag2) {
-  test(`21.2 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Snake mode)`, async () => {
+  test(`21.2 Check ${monomer.alias} monomer's ghost image initially 100% scale adjusts canvas scale while hovered over (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -628,11 +610,12 @@ for (const monomer of monomerToDrag2) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
     await Library(page).hoverMonomer(monomer);
 
-    const box = await page.getByTestId(monomer.testId).boundingBox();
+    const box = await Library(page)
+      .getMonomerLibraryCardLocator(monomer)
+      .boundingBox();
     if (!box) throw new Error('Monomer element not found');
 
     await page.mouse.down();
@@ -652,7 +635,9 @@ for (const monomer of monomerToDrag2) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`22.1 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Flex mode)`, async () => {
+  test(`22.1 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -670,19 +655,18 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -695,7 +679,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`22.2 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Snake mode)`, async () => {
+  test(`22.2 Verify that using Ctrl + -/= zooms in and out and ghost image of ${monomer.alias} scales in real time (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -713,19 +699,18 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
     await page.mouse.move(200, 200);
-    await ZoomInByKeyboard(page, { repeat: 20 });
+    await zoomInByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await resetZoomLevelToDefault(page);
-    await ZoomOutByKeyboard(page, { repeat: 20 });
+    await zoomOutByKeyboard(page, { repeat: 20 });
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -738,7 +723,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`23.1 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Flex mode)`, async () => {
+  test(`23.1 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -752,7 +739,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
@@ -767,7 +753,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`23.2 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Snake mode)`, async () => {
+  test(`23.2 Verify that dropped ${monomer.alias} appears exactly at the cursor location on the canvas (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -781,7 +769,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 250, y: 100 });
@@ -796,7 +783,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`24.1 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag (Flex mode)`, async () => {
+  test(`24.1 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -811,7 +800,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
@@ -846,7 +834,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`24.2 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag  (Snake mode)`, async () => {
+  test(`24.2 Verify that ghost image of ${monomer.alias} is rendered above the library element after click but before drag  (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -861,7 +851,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).hoverMonomer(monomer);
@@ -895,7 +884,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`25.1 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Flex mode)`, async () => {
+  test(`25.1 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -911,7 +902,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
@@ -926,7 +916,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`25.2 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Snake mode)`, async () => {
+  test(`25.2 Verify that drag and drop of ${monomer.alias} can be canceled using Escape key (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -942,7 +934,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).hoverMonomer(monomer);
 
@@ -957,7 +948,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`26.1 Verify that drag and drop of ${monomer.alias} can be canceled with right-click (Flex mode)`, async () => {
+  test(`26.1 Verify that drag and drop of ${monomer.alias} can be canceled with right-click (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -973,7 +966,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -987,7 +979,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`26.2 Verify that drag and drop of ${monomer.alias} can be canceled with right-click (Snake mode)`, async () => {
+  test(`26.2 Verify that drag and drop of ${monomer.alias} can be canceled with right-click (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1003,7 +997,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).hoverMonomer(monomer);
 
     await page.mouse.down();
@@ -1017,7 +1010,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`27.1 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Flex mode)`, async () => {
+  test(`27.1 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1035,9 +1030,8 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1056,7 +1050,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`27.2 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Snake mode)`, async () => {
+  test(`27.2 Verify that monomer ${monomer.alias} dropped on canvas has correct structure, alias, and attachment points (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1074,9 +1070,8 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     const monomerOnCanvas = getMonomerLocator(page, {});
     if (
       !Object.values(Preset).some((preset) => preset.alias === monomer.alias)
@@ -1095,7 +1090,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`28.1 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Flex mode)`, async () => {
+  test(`28.1 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1110,7 +1107,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
@@ -1147,7 +1143,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`28.2 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Snake mode)`, async () => {
+  test(`28.2 Verify that dropped ${monomer.alias} monomer can be connected using bond tool (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1162,7 +1160,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await Library(page).dragMonomerOnCanvas(monomer, { x: 200, y: 200 });
@@ -1201,7 +1198,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`29.1 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Flex mode)`, async () => {
+  test(`29.1 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1218,7 +1217,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1241,7 +1239,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`29.2 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Snake mode)`, async () => {
+  test(`29.2 Verify undo/redo works after drag and drop for ${monomer.alias} monomer (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1258,7 +1258,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
     const monomerOnCanvas = getMonomerLocator(page, {});
@@ -1281,7 +1280,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test.skip(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async () => {
+  test.skip(`30.1 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1302,7 +1303,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1339,7 +1339,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test.skip(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async () => {
+  test.skip(`30.2 Verify saving and loading (KET, MOL, etc.) the canvas with drag and drop ${monomer.alias} monomer (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1360,7 +1362,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1397,7 +1398,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`31.1 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Flex mode)`, async () => {
+  test(`31.1 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1418,7 +1421,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1448,7 +1450,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`31.2 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Snake mode)`, async () => {
+  test(`31.2 Check that we can erase and restore by Undo/Redo ${monomer.alias} monomer on canvas after drag and drop (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1469,7 +1473,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1499,7 +1502,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`32. Verify that dropped ${monomer.alias} monomer visible in Sequence mode and in Micromode`, async () => {
+  test(`32. Verify that dropped ${monomer.alias} monomer visible in Sequence mode and in Micromode`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1517,7 +1522,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
@@ -1532,7 +1536,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`33. Verify that dropped ${monomer.alias} can be calculated by using Calculate Properties button`, async () => {
+  test(`33. Verify that dropped ${monomer.alias} can be calculated by using Calculate Properties button`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1548,7 +1554,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -1559,7 +1564,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`34. Check that drag and drop of ${monomer.alias} not working in Sequence mode and when user try to use it we have no errors and app crash`, async () => {
+  test(`34. Check that drag and drop of ${monomer.alias} not working in Sequence mode and when user try to use it we have no errors and app crash`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1574,9 +1581,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -1602,7 +1606,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`35.1 Verify behavior when dragging of ${monomer.alias} outside the canvas area (Flex mode)`, async () => {
+  test(`35.1 Verify behavior when dragging of ${monomer.alias} outside the canvas area (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1617,7 +1623,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -1656,7 +1661,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`35.2 Verify behavior when dragging of ${monomer.alias} outside the canvas area (Snake mode)`, async () => {
+  test(`35.2 Verify behavior when dragging of ${monomer.alias} outside the canvas area (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1671,7 +1678,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -1710,7 +1716,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Flex mode)`, async () => {
+  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1731,7 +1739,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1760,7 +1767,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Snake mode)`, async () => {
+  test(`36.1 Check that we can Clear canvas and restore by Undo/Redo elements on canvas after drag and drop of ${monomer.alias} (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1781,7 +1790,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await Library(page).dragMonomerOnCanvas(monomer, { x: 100, y: 100 });
 
@@ -1810,7 +1818,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`37.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Flex mode)`, async () => {
+  test(`37.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1827,7 +1837,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await CommonTopRightToolbar(page).setZoomInputValue('10');
 
@@ -1845,7 +1854,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`37.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Snake mode)`, async () => {
+  test(`37.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed out (e.g. 10%) (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1861,7 +1872,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await CommonTopRightToolbar(page).setZoomInputValue('10');
 
@@ -1879,7 +1889,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`38.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Flex mode)`, async () => {
+  test(`38.1 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Flex mode)`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1896,7 +1908,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).addMonomerToFavorites(monomer);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 
@@ -1914,7 +1925,9 @@ for (const monomer of monomerToDrag) {
 }
 
 for (const monomer of monomerToDrag) {
-  test(`38.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Snake mode)`, async () => {
+  test(`38.2 Verify drag and drop of  ${monomer.alias} when canvas is fully zoomed in (e.g. 400%) (Snake mode)`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      *
      * Test task: https://github.com/epam/ketcher/issues/7419
@@ -1930,7 +1943,6 @@ for (const monomer of monomerToDrag) {
      *
      * Version 3.6
      */
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await Library(page).addMonomerToFavorites(monomer);
     await CommonTopRightToolbar(page).setZoomInputValue('400');
 

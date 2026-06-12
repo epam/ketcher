@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -997,6 +998,7 @@
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
         "aliasHELM": "1Nal",
+        "aliasBILN": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

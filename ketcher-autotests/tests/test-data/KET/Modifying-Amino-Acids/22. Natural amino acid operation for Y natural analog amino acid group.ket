@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -690,6 +691,7 @@
         "fullName": "Tyrosine",
         "alias": "Y",
         "aliasHELM": "Y",
+        "aliasBILN": "Y",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

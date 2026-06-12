@@ -97,7 +97,6 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */
 
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
@@ -138,7 +137,7 @@ test.describe('Undo Redo', () => {
     const coords = { x: 100, y: 100 };
     await page.mouse.move(coords.x, coords.y);
 
-    await dragMouseTo(coords.x + 500, coords.y + 500, page);
+    await dragMouseTo(page, coords.x + 500, coords.y + 500);
     await takeEditorScreenshot(page);
   });
 });

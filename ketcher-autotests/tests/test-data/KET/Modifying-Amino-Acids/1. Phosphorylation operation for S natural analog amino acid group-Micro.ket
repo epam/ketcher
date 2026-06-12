@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -384,6 +385,7 @@
         "fullName": "O-phospho-L-serine",
         "alias": "SerPO3",
         "aliasHELM": "Ser_PO3H2",
+        "aliasBILN": "Ser_PO3H2",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,

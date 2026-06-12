@@ -1,5 +1,5 @@
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
 import {
   getNextMonomerInChain,
@@ -7,26 +7,32 @@ import {
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { SugarRenderer } from 'application/render';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { KetMonomerClass } from 'application/formatters';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import {
+  KetMonomerClass,
+  RNA_DNA_NON_MODIFIED_PART,
+} from 'domain/constants/monomers';
 import { SnakeLayoutCellWidth } from 'domain/constants';
+import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleoside {
-  private monomersCache: BaseMonomer[] = [];
-  constructor(public sugar: Sugar, public rnaBase: RNABase | AmbiguousMonomer) {
+  private readonly monomersCache: BaseMonomer[] = [];
+  constructor(
+    public readonly sugar: Sugar | AmbiguousMonomer,
+    public readonly rnaBase: RNABase | AmbiguousMonomer,
+  ) {
     this.monomersCache = [sugar, rnaBase];
   }
 
-  static fromSugar(sugar: Sugar, needValidation = true) {
+  static fromSugar(sugar: Sugar | AmbiguousMonomer, needValidation = true) {
     if (needValidation) {
       assert(
         isValidNucleoside(sugar),
@@ -46,7 +52,7 @@ export class Nucleoside {
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
     isAntisense = false,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
@@ -66,7 +72,7 @@ export class Nucleoside {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, SnakeLayoutCellWidth + SugarRenderer.monomerSize.height),
+        new Vec2(0, SnakeLayoutCellWidth + getMonomerSize().height),
       ),
     );
     const modelChanges = new Command();

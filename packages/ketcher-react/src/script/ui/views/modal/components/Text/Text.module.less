@@ -37,7 +37,7 @@
     }
   }
 
-  :global(.DraftEditor-root) {
+  .editorInput {
     height: 182px;
     padding: 12px;
     word-wrap: break-word;
@@ -46,7 +46,29 @@
     border-radius: 4px;
     margin-top: 4px;
     overflow: auto;
+    outline: none;
 
     .scrollbar();
+  }
+
+  .textBold {
+    font-weight: bold;
+  }
+
+  .textItalic {
+    font-style: italic;
+  }
+
+  .textSubscript {
+    vertical-align: sub;
+    transform: scale(0.7);
+    transform-origin: left;
+  }
+
+  .textSuperscript {
+    vertical-align: super;
+    transform: scale(0.7);
+    transform-origin: left;
+    line-height: 0;
   }
 }

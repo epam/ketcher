@@ -1,3 +1,4 @@
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -14,10 +15,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Coordinates, CoreEditor } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import type { CoreEditor } from 'application/editor/Editor';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import { Vec2 } from 'domain/entities';
-import { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';
+import type { SelectionRectangleViewParams } from 'application/render/renderers/TransientView';
 
 class SelectRectangle extends SelectBase {
   selectionViewParams: SelectionRectangleViewParams = {
@@ -53,7 +55,7 @@ class SelectRectangle extends SelectBase {
   }
 
   protected onSelectionMove(isShiftPressed: boolean) {
-    const editor = CoreEditor.provideEditorInstance();
+    const editor = provideEditorInstance();
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
     requestAnimationFrame(() => {

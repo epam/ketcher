@@ -1,8 +1,10 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { Coordinates, provideEditorSettings } from 'application/editor';
-import { RxnPlus } from 'domain/entities/CoreRxnPlus';
-import { Vec2 } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { Vec2 } from 'domain/entities/vec2';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 
 export class RxnPlusRenderer extends BaseRenderer {
   private selectionElement:
@@ -118,8 +120,8 @@ export class RxnPlusRenderer extends BaseRenderer {
 
     this.selectionElement = this.canvas
       ?.insert('rect', ':first-child')
-      .attr('fill', '#57ff8f')
-      .attr('stroke', '#57ff8f')
+      .attr('fill', SELECTION_COLOR)
+      .attr('stroke', SELECTION_COLOR)
       .attr('class', 'dynamic-element');
 
     this.setSelectionContourAttributes(
@@ -153,5 +155,7 @@ export class RxnPlusRenderer extends BaseRenderer {
     this.removeSelection();
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

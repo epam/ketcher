@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { CoreEditor } from 'application/editor/Editor';
+import { EditorHistory } from 'application/editor/internal';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import {
@@ -25,7 +26,7 @@ import {
   UnresolvedMonomer,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
 import { Peptide } from 'domain/entities/Peptide';
@@ -38,10 +39,14 @@ import { AttachmentPointName } from 'domain/types';
 //  which probably due to a circular dependency
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
-import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
+import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import {
+  MACROMOLECULES_BOND_TYPES,
+  ToolName,
+} from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -58,7 +63,7 @@ class PolymerBond implements BaseTool {
     options: { toolName: ToolName },
   ) {
     this.editor = editor;
-    this.history = new EditorHistory(this.editor);
+    this.history = EditorHistory.getInstance(this.editor);
     this.bondType =
       options.toolName === ToolName.bondSingle
         ? MACROMOLECULES_BOND_TYPES.SINGLE
@@ -306,9 +311,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }
@@ -429,9 +442,17 @@ class PolymerBond implements BaseTool {
           (bond.firstMonomer === secondMonomer &&
             bond.secondMonomer === firstMonomer);
         if (alreadyHasBond) {
-          this.editor.events.error.dispatch(
-            "There can't be more than 1 bond between the first and the second monomer",
-          );
+          // Check bond type: if existing is single bond and we're adding hydrogen bond, show specific error
+          const existingBondIsSingleBond = !(bond instanceof HydrogenBond);
+          if (existingBondIsSingleBond && this.isHydrogenBond) {
+            this.editor.events.error.dispatch(
+              'Unable to establish a hydrogen bond between two monomers connected with a single bond',
+            );
+          } else {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+          }
           return;
         }
       }

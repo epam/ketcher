@@ -1,17 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  openPasteFromClipboard,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -79,7 +80,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       }).hover({
         force: true,
       });
-      await dragMouseTo(x - 350, y - 150, page);
+      await dragMouseTo(page, x - 350, y - 150);
       await openFileAndAddToCanvas(page, testCase.secondFile);
     });
   }
@@ -88,8 +89,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     /*
      * Test case: EPMLSOPKET-1836
      */
-    const smileString = 'C1=CC=CC=C1';
-    await openPasteFromClipboard(page, smileString);
+    await CommonTopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).fillTextArea('C1=CC=CC=C1');
     await takeElementScreenshot(
       page,
       OpenStructureDialog(page).previewTextArea,
@@ -170,7 +172,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       const pointXToMoveElement = x - shiftForHydrogen;
       const pointYToMoveElement = y - 0;
@@ -179,24 +181,24 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await getAtomLocator(page, { atomLabel: 'H' }).first().hover({
         force: true,
       });
-      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
+      await dragMouseTo(page, pointXToMoveElement, pointYToMoveElement);
     }
 
     async function addAndMovePlusSymbol() {
       await LeftToolbar(page).reactionPlusTool();
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool();
 
       await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(x - shiftForReactionPlus, y, page);
-      await clickInTheMiddleOfTheScreen(page);
+      await dragMouseTo(page, x - shiftForReactionPlus, y);
+      await clickInTheMiddleOfTheCanvas(page);
     }
 
     async function addAndMoveOxygen() {
       const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       const pointXToMoveElement = x - shiftForOxygen;
       const pointYToMoveElement = y - 0;
@@ -205,12 +207,12 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await getAtomLocator(page, { atomLabel: 'O' }).first().hover({
         force: true,
       });
-      await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
+      await dragMouseTo(page, pointXToMoveElement, pointYToMoveElement);
     }
 
     async function addArrowSymbol() {
-      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
-      await clickInTheMiddleOfTheScreen(page);
+      await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+      await clickInTheMiddleOfTheCanvas(page);
       await CommonLeftToolbar(page).areaSelectionTool();
     }
 

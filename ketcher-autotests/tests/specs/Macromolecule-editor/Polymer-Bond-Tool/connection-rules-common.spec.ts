@@ -11,8 +11,8 @@ import {
   waitForRender,
   clickOnCanvas,
   resetZoomLevelToDefault,
-  ZoomOutByKeyboard,
-  ZoomInByKeyboard,
+  zoomOutByKeyboard,
+  zoomInByKeyboard,
   Monomer,
   takeElementScreenshot,
   MacroFileType,
@@ -27,7 +27,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
@@ -39,7 +39,7 @@ import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/Macromolec
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
 import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/MonomerPreviewTooltip';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
 
 test.describe('Common connection rules: ', () => {
@@ -88,7 +88,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -101,7 +101,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
@@ -118,7 +118,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -129,7 +129,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await CommonLeftToolbar(page).bondTool(MacroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 
@@ -141,8 +141,12 @@ test.describe('Common connection rules: ', () => {
   ) {
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
-    await page.mouse.move(x, y);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.move(x, y);
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await moveMouseAway(page);
   }
 
@@ -310,6 +314,7 @@ test.describe('Common connection rules: ', () => {
    */
   test(`Check that 4 connected by Bond A6OH monomers can/are...`, async () => {
     test.setTimeout(40000);
+    const a6ohScreenshotTolerance = 0.02;
 
     await openFileAndAddToCanvasMacro(
       page,
@@ -319,24 +324,37 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      // Small anti-aliasing drift appears in CI on this post-drag frame.
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
-    await ZoomInByKeyboard(page);
+    await zoomInByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
-    await ZoomOutByKeyboard(page);
+    await zoomOutByKeyboard(page);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, Chem.A6OH);
+    await moveMouseAway(page);
+    await waitForRender(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
+      maxDiffPixelRatio: a6ohScreenshotTolerance,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure

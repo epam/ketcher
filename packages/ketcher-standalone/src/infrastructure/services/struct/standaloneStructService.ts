@@ -53,7 +53,6 @@ import {
   ConvertCombinedData,
   CleanResult,
   ConvertResult,
-  CoreEditor,
   DearomatizeData,
   DearomatizeResult,
   ExplicitHydrogensData,
@@ -69,6 +68,7 @@ import {
   pickStandardServerOptions,
   CalculateMacromoleculePropertiesData,
   CalculateMacromoleculePropertiesResult,
+  provideEditorInstance,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -162,6 +162,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.HELM;
       break;
     }
+    case ChemicalMimeType.BILN: {
+      format = SupportedFormat.BILN;
+      break;
+    }
     case ChemicalMimeType.RDF:
       format = SupportedFormat.RDF;
       break;
@@ -210,6 +214,23 @@ const messageTypeToEventMapping: {
   [Command.CalculateMacromoleculeProperties]:
     WorkerEvent.CalculateMacromoleculeProperties,
 };
+
+// Worker action that resolves with a `{ struct, format: Mol }` payload,
+// shared by every command whose result type is `WithStruct & WithFormat`
+// (Aromatize/Dearomatize/ExplicitHydrogens — all extend the same shape).
+function makeMolResultAction(
+  resolve: (value: { struct: string; format: ChemicalMimeType.Mol }) => void,
+  reject: (reason?: unknown) => void,
+) {
+  return ({ data }: OutputMessageWrapper) => {
+    const msg: OutputMessage<string> = data;
+    if (!msg.hasError) {
+      resolve({ struct: msg.payload, format: ChemicalMimeType.Mol });
+    } else {
+      reject(new Error(msg.error));
+    }
+  };
+}
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
@@ -265,9 +286,9 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
         if (!msg.hasError) {
-          resolve(msg.payload || '');
+          resolve(msg.payload ?? '');
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -295,7 +316,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -328,12 +349,12 @@ class IndigoService implements StructService {
             };
             resolve(result);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
       const monomerLibrary = JSON.stringify(
-        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+        provideEditorInstance()?.monomersLibraryParsedJson,
       );
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(options),
@@ -399,7 +420,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -454,7 +475,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -462,7 +483,7 @@ class IndigoService implements StructService {
         struct,
         format,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CleanCommandData> = {
@@ -483,19 +504,8 @@ class IndigoService implements StructService {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: AromatizeResult = {
-            struct: msg.payload,
-            format: ChemicalMimeType.Mol,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
-        }
-      };
+    return new Promise<AromatizeResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: AromatizeCommandData = {
         struct,
@@ -521,19 +531,8 @@ class IndigoService implements StructService {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: AromatizeResult = {
-            struct: msg.payload,
-            format: ChemicalMimeType.Mol,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
-        }
-      };
+    return new Promise<DearomatizeResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: DearomatizeCommandData = {
         struct,
@@ -569,7 +568,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -607,7 +606,7 @@ class IndigoService implements StructService {
           };
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -650,7 +649,7 @@ class IndigoService implements StructService {
           );
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -696,7 +695,7 @@ class IndigoService implements StructService {
           }, {} as CalculateResult);
           resolve(result);
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 
@@ -704,7 +703,7 @@ class IndigoService implements StructService {
         struct,
         properties,
         options: this.getStandardServerOptions(options),
-        selectedAtoms: selected || [],
+        selectedAtoms: selected ?? [],
       };
 
       const inputMessage: InputMessage<CalculateCommandData> = {
@@ -738,7 +737,7 @@ class IndigoService implements StructService {
           if (!msg.hasError) {
             resolve(msg.payload);
           } else {
-            reject(msg.error);
+            reject(new Error(msg.error));
           }
         }
       };
@@ -795,19 +794,8 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
     const mode = 'auto';
 
-    return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
-        const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: AromatizeResult = {
-            struct: msg.payload,
-            format: ChemicalMimeType.Mol,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
-        }
-      };
+    return new Promise<ExplicitHydrogensResult>((resolve, reject) => {
+      const action = makeMolResultAction(resolve, reject);
 
       const commandData: ExplicitHydrogensCommandData = {
         struct,
@@ -840,7 +828,7 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           resolve(JSON.parse(msg.payload));
         } else {
-          reject(msg.error);
+          reject(new Error(msg.error));
         }
       };
 

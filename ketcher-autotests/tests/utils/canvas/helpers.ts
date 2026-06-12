@@ -7,8 +7,9 @@ import {
   Locator,
 } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
-import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { emptyFunction } from '@utils/common/helpers';
+import { emptyFunction } from '../common/helpers';
+import { waitForRender } from '../common/loaders/waitForRender';
+import { waitForSpinnerFinishedWork } from '../common/loaders/waitForSpinnerFinishedWork/waitForSpinnerFinishedWork';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Monomer } from '@utils/types';
 import {
@@ -23,34 +24,6 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 
 const scrollBarHideCssPath = './tests/utils/hideScroll.css';
 
-export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page
-    .getByTestId('left-toolbar')
-    .filter({ has: page.locator(':visible') })
-    .boundingBox();
-
-  // we can get padding / margin values of left toolbar through x property
-  if (leftBarSize?.width) {
-    return leftBarSize.width + leftBarSize.x;
-  }
-
-  return Number.MIN_SAFE_INTEGER;
-}
-
-export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page
-    .getByTestId('top-toolbar')
-    .filter({ has: page.locator(':visible') })
-    .boundingBox();
-
-  // we can get padding / margin values of top toolbar through y property
-  if (topBarSize?.height) {
-    return topBarSize.height + topBarSize.y;
-  }
-
-  return Number.MIN_SAFE_INTEGER;
-}
-
 export async function takeElementScreenshot(
   page: Page,
   elementLocator: Locator,
@@ -61,6 +34,8 @@ export async function takeElementScreenshot(
     hideMonomerPreview?: boolean;
     delay?: number;
     padding?: number;
+    paddingWidth?: number;
+    paddingHeight?: number;
   },
 ) {
   if (options?.hideMonomerPreview) {
@@ -78,7 +53,7 @@ export async function takeElementScreenshot(
 
   await element.waitFor({ state: 'visible' });
 
-  if (!options?.padding) {
+  if (!options?.padding && !options?.paddingWidth && !options?.paddingHeight) {
     await expect(element).toHaveScreenshot(options);
     return;
   }
@@ -86,13 +61,14 @@ export async function takeElementScreenshot(
   const box = await element.boundingBox();
   if (!box) throw new Error('Cannot get bounding box of element');
 
-  const padding = options.padding;
+  const px = options.paddingWidth ?? options.padding ?? 0;
+  const py = options.paddingHeight ?? options.padding ?? 0;
 
   const clip = {
-    x: Math.max(box.x - padding, 0),
-    y: Math.max(box.y - padding, 0),
-    width: box.width + padding * 2,
-    height: box.height + padding * 2,
+    x: Math.max(box.x - px, 0),
+    y: Math.max(box.y - py, 0),
+    width: box.width + px * 2,
+    height: box.height + py * 2,
   };
 
   if (options?.delay) {
@@ -179,7 +155,7 @@ export async function takeEditorScreenshot(
     await page.keyboard.press(`ControlOrMeta+KeyB`);
     options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
-  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
+  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -220,13 +196,6 @@ export async function getEditorScreenshot(
   options?: LocatorScreenshotOptions,
 ) {
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
-}
-
-export async function delay(seconds = 1) {
-  const msInSecond = 1000;
-  return new Promise((resolve) =>
-    setTimeout(() => resolve(true), seconds * msInSecond),
-  );
 }
 
 export async function addBondedMonomersToCanvas(
@@ -348,5 +317,17 @@ export async function selectCanvasArea(
 ) {
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
-  await dragMouseTo(secondCorner.x, secondCorner.y, page);
+  await dragMouseTo(page, secondCorner.x, secondCorner.y);
+}
+
+export async function getVisibleCanvas(page: Page): Promise<Locator> {
+  const canvas = page
+    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
+    .first();
+  await canvas.waitFor({
+    state: 'visible',
+    timeout: 10000,
+  });
+
+  return canvas;
 }

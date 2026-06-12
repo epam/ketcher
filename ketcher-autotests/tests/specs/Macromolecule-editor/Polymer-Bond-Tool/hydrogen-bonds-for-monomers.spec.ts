@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@fixtures';
 import {
@@ -5,23 +6,23 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForPageInit,
-  resetZoomLevelToDefault,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  ZoomOutByKeyboard,
+  zoomOutByKeyboard,
+  undoByKeyboard,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas/selectSelection';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
-  bondTwoMonomersPointToPoint,
+  bondMonomerPointToMoleculeAtom,
+  bondTwoMonomers,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  MacroBondDataIds,
   MacroBondType,
+  MacroBondTool,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
@@ -29,29 +30,28 @@ import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { AttachmentPoint } from '@utils/macromolecules/monomer';
+import {
+  AttachmentPoint,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { AttachmentPointsDialog } from '@tests/pages/macromolecules/canvas/AttachmentPointsDialog';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 let page: Page;
 test.setTimeout(40000);
 test.describe.configure({ retries: 0 });
 
-test.beforeAll(async ({ browser }) => {
-  const context = await browser.newContext();
-  page = await context.newPage();
-  await waitForPageInit(page);
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+test.beforeAll(async ({ initFlexCanvas }) => {
+  page = await initFlexCanvas();
 });
 
-test.afterEach(async () => {
-  await CommonTopLeftToolbar(page).clearCanvas();
-  await resetZoomLevelToDefault(page);
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
-test.afterAll(async ({ browser }) => {
-  await Promise.all(browser.contexts().map((context) => context.close()));
+test.afterAll(async ({ closePage }) => {
+  await closePage();
 });
 
 interface IMonomer {
@@ -144,95 +144,58 @@ async function loadTwoMonomers(
 ) {
   await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
-  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
-
-  const leftMonomerLocator = canvasLocator
-    .getByText(leftMonomer.alias, { exact: true })
-    .locator('..')
-    .first();
+  const leftMonomerLocator = getMonomerLocator(page, {
+    monomerAlias: leftMonomer.alias,
+  }).first();
 
   await leftMonomerLocator.hover({ force: true });
-  await dragMouseTo(500, 370, page);
+  await dragMouseTo(page, 500, 370);
   await moveMouseAway(page);
 
   await openFileAndAddToCanvasMacro(page, rightMonomer.fileName);
 
   const rightMonomerLocator =
-    (await canvasLocator
-      .getByText(leftMonomer.alias, {
-        exact: true,
-      })
-      .count()) > 1
-      ? canvasLocator
-          .getByText(rightMonomer.alias, { exact: true })
-          .nth(1)
-          .locator('..')
-          .first()
-      : canvasLocator
-          .getByText(rightMonomer.alias, { exact: true })
-          .locator('..')
-          .first();
+    (await getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+    }).count()) > 1
+      ? getMonomerLocator(page, {
+          monomerAlias: rightMonomer.alias,
+        }).nth(1)
+      : getMonomerLocator(page, {
+          monomerAlias: rightMonomer.alias,
+        }).first();
 
   await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-  await dragMouseTo(600, 372, page);
+  await dragMouseTo(page, 600, 372);
   await moveMouseAway(page);
 }
 
-async function bondTwoMonomersByCenterToCenter(
+async function loadMonomersAndMolecule(
   page: Page,
   leftMonomer: IMonomer,
-  rightMonomer: IMonomer,
-  bondType?: MacroBondType,
+  rightMolecule: IMonomer,
 ) {
-  const canvasLocator = page.getByTestId(KETCHER_CANVAS).first();
+  await openFileAndAddToCanvasMacro(page, leftMonomer.fileName);
 
-  let leftMonomerLocator = canvasLocator
-    .getByText(leftMonomer.alias, { exact: true })
-    .locator('..')
-    .first();
+  const leftMonomerLocator = getMonomerLocator(page, {
+    monomerAlias: leftMonomer.alias,
+  }).first();
 
-  let monomerId = await leftMonomerLocator.getAttribute('data-monomerid');
-  if (monomerId === null) {
-    monomerId = await leftMonomerLocator
-      .locator('..')
-      .getAttribute('data-monomerid');
-  }
-  leftMonomerLocator = page.locator(
-    `[data-testid="monomer"][data-monomerid="${monomerId}"]`,
-  );
+  await leftMonomerLocator.hover({ force: true });
+  await dragMouseTo(page, 500, 370);
+  await moveMouseAway(page);
 
-  let rightMonomerLocator =
-    (await canvasLocator
-      .getByText(leftMonomer.alias, { exact: true })
-      .count()) > 1
-      ? canvasLocator
-          .getByText(rightMonomer.alias, { exact: true })
-          .nth(1)
-          .locator('..')
-          .first()
-      : canvasLocator
-          .getByText(rightMonomer.alias, { exact: true })
-          .locator('..')
-          .first();
+  await openFileAndAddToCanvasMacro(page, rightMolecule.fileName);
 
-  // atom has alias that depend on attached bond - it could be "BrH" if no bonds and "Br" if one bond attached,
-  // this is why we have to false exact for atoms
-  if (rightMonomer.monomerType === 'atom') {
-    const atomId = await rightMonomerLocator.getAttribute('data-atomid');
-    rightMonomerLocator = page.locator(
-      `[data-testid="atom"][data-atomid="${atomId}"]`,
-    );
-  }
+  const rightMonomerLocator = getAtomLocator(page, {
+    atomLabel: rightMolecule.alias,
+  }).first();
 
-  await bondTwoMonomersPointToPoint(
-    page,
-    leftMonomerLocator,
-    rightMonomerLocator,
-    undefined,
-    undefined,
-    bondType,
-  );
+  await rightMonomerLocator.hover({ force: true });
+  // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
+  await dragMouseTo(page, 600, 372);
+  await moveMouseAway(page);
 }
 
 Object.values(monomers).forEach((leftMonomer) => {
@@ -256,16 +219,22 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       }).first();
       await bondLine.hover({ force: true });
       await ContextMenu(page, bondLine).open();
@@ -370,15 +339,21 @@ Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       });
 
       expect(await bondLine.count()).toEqual(1);
@@ -406,18 +381,30 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -465,19 +452,21 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(25000);
 
-      const errorTooltip = page.getByTestId('error-tooltip').first();
-      const errorTooltipCloseButton = page
-        .locator('#error-tooltip')
-        .getByRole('button')
-        .first();
+      const errorTooltip = NotificationBanner(page);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Single,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Single,
       );
 
       await chooseAttachmentPointsInConnectionDialog(
@@ -488,26 +477,30 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       if (await errorTooltip.isVisible()) {
         // closing error message (if appear): You have connected monomers with attachment points of the same group
-        await errorTooltipCloseButton.click();
-        await errorTooltip.waitFor({ state: 'detached' });
+        await errorTooltip.close();
+        await errorTooltip.waitForBecomeHidden();
       }
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
-      // Error message is wrong because of a bug!
-      // it should be "Unable to establish a hydrogen bond between two monomers connected with a single bond"
-      await expect(errorTooltip).toHaveText(
-        "There can't be more than 1 bond between the first and the second monomer",
+      expect(await errorTooltip.getNotificationText()).toContain(
+        'Unable to establish a hydrogen bond between two monomers connected with a single bond',
       );
 
       if (await errorTooltip.isVisible()) {
-        await errorTooltipCloseButton.click();
-        await errorTooltip.waitFor({ state: 'detached' });
+        await errorTooltip.close();
+        await errorTooltip.waitForBecomeHidden();
       }
 
       test.fixme(
@@ -538,11 +531,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -632,7 +631,9 @@ const expandableMonomersWithHydrogenBonds: IMonomer[] = [
 expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
   test(`6.${index + 1} Expand and collapse ${monomer.monomerType}(${
     monomer.alias
-  }) having it hydrogen bonds on Molecules canvas`, async () => {
+  }) having it hydrogen bonds on Molecules canvas`, async ({
+    MoleculesCanvas: _,
+  }) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
      *  Description: 1. Verify that switching from macromolecules mode to small molecules mode hides hydrogen bonds if monomer got expanded
@@ -646,7 +647,6 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          5. Collapce target monomer back
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, monomer.fileName);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
@@ -684,11 +684,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -730,15 +736,21 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+        bondType: MacroBondType.Hydrogen,
       });
 
       expect(await bondLine.count()).toEqual(1);
@@ -772,11 +784,17 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondTwoMonomers(
         page,
-        leftMonomer,
-        rightMonomer,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        rightMonomer.alias === leftMonomer.alias
+          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
+          : getMonomerLocator(page, {
+              monomerAlias: rightMonomer.alias,
+            }).first(),
+        undefined,
+        undefined,
+        MacroBondTool.Hydrogen,
       );
 
       await selectAllStructuresOnCanvas(page);
@@ -821,7 +839,7 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
@@ -831,11 +849,11 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
-  [MacroBondType.Single]: 'Single Bond (1)',
-  [MacroBondType.Hydrogen]: 'Hydrogen Bond (2)',
+  [MacroBondTool.Single]: 'Single Bond (1)',
+  [MacroBondTool.Hydrogen]: 'Hydrogen Bond (2)',
 };
 
-Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
+Object.entries(MacroBondTool).forEach(([key, dataTestId]) => {
   /*
    *  Test task: https://github.com/epam/ketcher/issues/5984
    *  Description: Verify that hydrogen bond option located and can be selected from the bond menu in the sidebar
@@ -887,7 +905,7 @@ test(`12. Verify that hydrogen bonds cannot be established between small molecul
   await MacromoleculesTopToolbar(page).selectLayoutModeTool(
     LayoutMode.Sequence,
   );
-  await ZoomOutByKeyboard(page, { repeat: 2 });
+  await zoomOutByKeyboard(page, { repeat: 2 });
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
@@ -898,7 +916,7 @@ const molecules: { [monomerName: string]: IMonomer } = {
   Atom: {
     monomerType: 'atom',
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/13. Atom.ket',
-    alias: 'BrH',
+    alias: 'Br',
   },
 };
 
@@ -920,20 +938,34 @@ Object.values(monomers).forEach((leftMonomer) => {
     test(`13. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMolecule.monomerType}(${rightMolecule.alias})`, async () => {
       test.setTimeout(25000);
 
-      await loadTwoMonomers(page, leftMonomer, rightMolecule);
+      await loadMonomersAndMolecule(page, leftMonomer, rightMolecule);
 
-      await bondTwoMonomersByCenterToCenter(
+      await bondMonomerPointToMoleculeAtom(
         page,
-        leftMonomer,
-        rightMolecule,
-        MacroBondType.Hydrogen,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        getAtomLocator(page, {}).first(),
+        AttachmentPoint.R1,
       );
+      const singleBondLine = getBondLocator(page, {
+        bondType: MacroBondType.Single,
+      }).first();
+      expect(await singleBondLine.count()).toEqual(1);
 
-      const bondLine = getBondLocator(page, {
-        bondType: MacroBondDataIds.Hydrogen,
+      await undoByKeyboard(page);
+
+      await bondMonomerPointToMoleculeAtom(
+        page,
+        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
+        getAtomLocator(page, {}).first(),
+        AttachmentPoint.R1,
+        undefined,
+        MacroBondTool.Hydrogen,
+      );
+      const hydrogenBondLine = getBondLocator(page, {
+        bondType: MacroBondType.Hydrogen,
       }).first();
 
-      expect(await bondLine.count()).toEqual(0);
+      expect(await hydrogenBondLine.count()).toEqual(0);
     });
   });
 });

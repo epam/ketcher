@@ -41,6 +41,6 @@ describe('OpenOptions component', () => {
 
     fireEvent.click(button);
 
-    expect(mockProps.selectClipboard).toBeCalled();
+    expect(mockProps.selectClipboard).toHaveBeenCalled();
   });
 });

@@ -2,11 +2,11 @@ import { test, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -46,11 +46,11 @@ test.describe('Open Ketcher', () => {
     Open the 'User Templates' folder'
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -92,10 +92,10 @@ test.describe('Open Ketcher', () => {
     Observe some large structure
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addFunctionalGroup(
+    await StructureLibraryDialog(page).selectFunctionalGroup(
       FunctionalGroupsTabItems.Tf,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -122,11 +122,11 @@ test.describe('Open Ketcher', () => {
     Click to add the selected template on the canvas.
     */
     await BottomToolbar(page).structureLibrary();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Anthracene,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -184,7 +184,7 @@ test.describe('Open Ketcher', () => {
       AromaticsTemplate.Azulene,
     );
     await TemplateEditDialog(page).setMoleculeName(inputText);
-    await page.getByTestId('name-input').hover();
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
     await takeEditorScreenshot(page);
   });
 
@@ -232,7 +232,7 @@ test.describe('Open Ketcher', () => {
     await TemplateEditDialog(page).clickCanvas();
     await takeEditorScreenshot(page);
     await TemplateEditDialog(page).edit();
-    await StructureLibraryDialog(page).addTemplate(
+    await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
       AromaticsTemplate.Azulene,
     );
@@ -240,7 +240,7 @@ test.describe('Open Ketcher', () => {
     const point = { x: -50, y: 0 };
     await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnCanvas(page, point.x, point.y, { from: 'pageCenter' });
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 14 }).click({
       force: true,
     });

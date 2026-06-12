@@ -3,9 +3,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
 
+const useLayoutModeMock = jest.fn(() => 'sequence-layout-mode');
+
 jest.mock('hooks', () => ({
   ...jest.requireActual('hooks'),
-  useLayoutMode: () => 'sequence-layout-mode',
+  useLayoutMode: () => useLayoutModeMock(),
 }));
 
 describe('Test Rna Editor Expanded component', () => {
@@ -78,6 +80,11 @@ describe('Test Rna Editor Expanded component', () => {
 
     const rnaEditorExpanded = screen.getByTestId('rna-editor-expanded');
 
+    // In sequence edit mode the phosphate position picker is shown but disabled
+    // (req 5.2 of #9120).
+    expect(
+      screen.getByRole('button', { name: 'Select phosphate position' }),
+    ).toBeDisabled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 
@@ -125,7 +132,7 @@ describe('Test Rna Editor Expanded component', () => {
     fireEvent.click(editBtn);
     fireEvent.click(duplicateBtn);
 
-    expect(onDuplicateHandler).toBeCalled();
+    expect(onDuplicateHandler).toHaveBeenCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 });

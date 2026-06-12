@@ -1,17 +1,21 @@
-import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
+import {
+  type ReRGroupAttachmentPoint,
+  ReAtom,
+  ReBond,
+} from 'application/render';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import {
+  type Loop,
+  type RGroupAttachmentPoint,
   Box2Abs,
-  Loop,
   Pool,
-  RGroupAttachmentPoint,
   Struct,
   Vec2,
 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { MonomerItemType } from 'domain/types';
+import type { MonomerItemType } from 'domain/types';
 import { mockFn } from 'jest-mock-extended';
 import { KetMonomerClass } from 'application/formatters';
 
@@ -775,10 +779,10 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const peptide2 = new Peptide(peptideMonomerItem);
   peptide.moveAbsolute(new Vec2(x1, y1));
   peptide2.moveAbsolute(new Vec2(x2, y2));
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide);
-  // eslint-disable-next-line no-new
-  new PeptideRenderer(peptide2);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer1 = new PeptideRenderer(peptide);
+  // @ts-expect-error TS6133: Instantiated for side effects (renderer self-registers with monomer)
+  const _renderer2 = new PeptideRenderer(peptide2);
 
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);

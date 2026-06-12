@@ -1,5 +1,5 @@
 import { BaseRenderer } from 'application/render/renderers/internal';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 
 export class BaseSequenceRenderer extends BaseRenderer {
@@ -9,15 +9,25 @@ export class BaseSequenceRenderer extends BaseRenderer {
     return undefined;
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
-  drawSelection(): void {}
+  drawSelection(): void {
+    // intentional no-op: this renderer type does not render a selection view
+  }
 
-  moveSelection(): void {}
+  moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 
-  protected removeHover(): void {}
+  protected removeHover(): void {
+    // intentional no-op: this renderer type does not implement hover removal
+  }
 
-  show(_theme?): void {}
+  show(_theme?): void {
+    // intentional no-op: this renderer type does not implement show
+  }
 
   get center() {
     return new Vec2(0, 0, 0);

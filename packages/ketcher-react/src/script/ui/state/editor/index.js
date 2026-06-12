@@ -39,10 +39,10 @@ import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
 import { openInfoModalWithCustomMessage } from '../shared';
 
-export default function initEditor(dispatch, getState) {
+export default function initEditor(dispatch, getState, ketcherId) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const getSelectedSruCount = () => {
+  const getSelectedSruCount = (sgroupType) => {
     const editor = getState().editor;
     if (!editor?.structSelected) return 0;
     const selectedStruct = editor.structSelected();
@@ -52,7 +52,7 @@ export default function initEditor(dispatch, getState) {
         count += 1;
       }
     }
-    return count;
+    return sgroupType === 'COP' ? Math.max(2, count) : count;
   };
 
   const resetToSelect =
@@ -106,12 +106,6 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(dispatch, 'attachmentPoints', elem.ap).then((res) => ({
           ap: res,
         }));
-      } else if (elem.type === 'list' || elem.type === 'not-list') {
-        dlg = openDialog(
-          dispatch,
-          !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo },
-        );
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
         const params = {
@@ -131,6 +125,7 @@ export default function initEditor(dispatch, getState) {
           type: 'rlabel',
         }));
       } else {
+        // list/not-list and all other pseudo elements share this dialog flow
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
@@ -192,7 +187,7 @@ export default function initEditor(dispatch, getState) {
         .then(() =>
           openDialog(dispatch, 'sgroup', {
             ...fromSgroup(sgroup),
-            selectedSruCount: getSelectedSruCount(),
+            selectedSruCount: getSelectedSruCount(sgroup.type),
           }),
         )
         .then(toSgroup),
@@ -243,7 +238,7 @@ export default function initEditor(dispatch, getState) {
         highlightFG(dispatch, { groupStruct: null, sGroup: null });
       }
     },
-    onApiSettings: (payload) => dispatch(saveSettings(payload)),
+    onApiSettings: (payload) => dispatch(saveSettings(payload, ketcherId)),
 
     onUpdateFloatingTools: memoizedDebounce(
       /**

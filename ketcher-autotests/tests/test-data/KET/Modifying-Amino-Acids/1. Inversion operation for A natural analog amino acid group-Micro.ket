@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -639,6 +640,7 @@
         "fullName": "D-Alanine",
         "alias": "dA",
         "aliasHELM": "dA",
+        "aliasBILN": "dA",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

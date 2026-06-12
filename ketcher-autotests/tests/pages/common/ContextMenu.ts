@@ -5,7 +5,6 @@ import {
   ContextMenuOption,
 } from '../constants/contextMenu/Constants';
 import { moveMouseAway } from '@utils/moveMouseAway';
-import { delay } from '@utils/canvas';
 
 type ContextMenuLocators = {
   contextMenuBody: Locator;
@@ -42,7 +41,7 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       }
       try {
         // Wait for the context menu to close after clicking the last option
-        await delay(0.1);
+        await page.waitForTimeout(100);
         await locators.contextMenuBody.waitFor({
           state: 'hidden',
           timeout: 1000,
@@ -72,6 +71,42 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
           await option.hover();
         }
       }
+    },
+
+    async isOptionVisible(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 10000,
+      });
+      const option = getOption(optionId).first();
+      const isVisible = await option.isVisible();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 10000,
+      });
+      return isVisible;
+    },
+
+    async isOptionEnabled(optionId: ContextMenuOption): Promise<boolean> {
+      await this.open();
+      await locators.contextMenuBody.waitFor({
+        state: 'visible',
+        timeout: 10000,
+      });
+      const option = getOption(optionId).first();
+      const isEnabled = await option.isEnabled();
+      await page.keyboard.press('Escape');
+      await locators.contextMenuBody.waitFor({
+        state: 'hidden',
+        timeout: 10000,
+      });
+      return isEnabled;
+    },
+
+    getOptionLocator(optionId: ContextMenuOption): Locator {
+      return getOption(optionId).first();
     },
   };
 };

@@ -1,10 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { RGroupType } from '../constants/rGroupSelectionTool/Constants';
-import { ArrowType } from '../constants/arrowSelectionTool/Constants';
+import { ArrowTool } from '../constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '../constants/reactionMappingTool/Constants';
 import { ShapeType } from '../constants/shapeSelectionTool/Constants';
-import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   chainButton: Locator;
@@ -70,7 +69,7 @@ export const LeftToolbar = (page: Page) => {
       try {
         await this.reactionPlusTool();
         await locators.rGroupToolsButton.click({ force: true });
-        await delay(0.1);
+        await page.waitForTimeout(100);
         await locators.rGroupToolsButton.click({ force: true });
         await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {
@@ -101,7 +100,7 @@ export const LeftToolbar = (page: Page) => {
       try {
         await this.reactionPlusTool();
         await locators.arrowToolsButton.click();
-        await delay(0.1);
+        await page.waitForTimeout(100);
         await locators.arrowToolsButton.click();
         await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {
@@ -115,7 +114,7 @@ export const LeftToolbar = (page: Page) => {
       }
     },
 
-    async selectArrowTool(arrowType: ArrowType = ArrowType.ArrowOpenAngle) {
+    async selectArrowTool(arrowType: ArrowTool = ArrowTool.ArrowOpenAngle) {
       await this.expandArrowToolsDropdown();
       await page.getByTestId(arrowType).first().click();
     },

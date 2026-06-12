@@ -1,11 +1,11 @@
-import { Selection } from 'd3';
-import { Phosphate } from 'domain/entities/Phosphate';
+import type { Selection } from 'd3';
+import type { Phosphate } from 'domain/entities/Phosphate';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 const PHOSPHATE_HOVERED_ELEMENT_ID =

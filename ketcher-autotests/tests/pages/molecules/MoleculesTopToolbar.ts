@@ -1,7 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { delay } from '@utils/canvas';
-import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
+import {
+  waitForRender,
+  waitForSpinnerFinishedWork,
+} from '@utils/common/loaders';
 
 type MoleculesTopToolbarLocators = {
   copyButton: Locator;
@@ -51,24 +53,28 @@ export const MoleculesTopToolbar = (page: Page) => {
     },
 
     async paste() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.pasteButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.pasteButton.click(),
+        );
+      });
     },
 
     async cut() {
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await locators.cutButton.click(),
-      );
+      await waitForRender(page, async () => {
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await locators.cutButton.click(),
+        );
+      });
     },
 
     async expandCopyDropdown() {
       const copyToolbar = page.getByTestId('selection-toolbar');
 
       try {
-        await delay(0.1);
+        await page.waitForTimeout(0.1 * 1000);
         await locators.copyButton
           .locator('..')
           .getByTestId('copy-button-dropdown-triangle')

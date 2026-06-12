@@ -4,7 +4,7 @@ import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page, expect } from '@fixtures';
 import {
   takeEditorScreenshot,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
@@ -13,8 +13,8 @@ import {
   waitForRender,
   selectPartOfMolecules,
   clickOnCanvas,
-  ZoomInByKeyboard,
-  ZoomOutByKeyboard,
+  zoomInByKeyboard,
+  zoomOutByKeyboard,
   RxnFileFormat,
   MolFileFormat,
   dragTo,
@@ -99,7 +99,7 @@ test.describe('Atom Tool', () => {
     After pressing 'Add' button Si element added to canvas.
     */
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -111,14 +111,14 @@ test.describe('Atom Tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Sulfur);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -133,7 +133,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.In,
       PeriodicTableElement.Am,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -168,7 +168,7 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.V,
       PeriodicTableElement.Cs,
     ]);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await CommonLeftToolbar(page).areaSelectionTool();
     await takeEditorScreenshot(page);
   });
@@ -218,7 +218,7 @@ test.describe('Atom Tool', () => {
     await getAtomLocator(page, { atomLabel: 'C', atomId: 9 }).hover({
       force: true,
     });
-    await dragMouseTo(300, 300, page);
+    await dragMouseTo(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -232,7 +232,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
     );
     await CommonLeftToolbar(page).erase();
-    await page.getByText('AH').click();
+    await getAtomLocator(page, { atomLabel: 'AH' }).click();
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       maxDiffPixels: 1,
@@ -269,11 +269,11 @@ test.describe('Atom Tool', () => {
       page,
       'Molfiles-V2000/structure-list-notlist.mol',
     );
-    await ZoomOutByKeyboard(page, { repeat: 5 });
+    await zoomOutByKeyboard(page, { repeat: 5 });
 
     await takeEditorScreenshot(page);
 
-    await ZoomInByKeyboard(page, { repeat: 5 });
+    await zoomInByKeyboard(page, { repeat: 5 });
     await takeEditorScreenshot(page);
   });
 
@@ -458,12 +458,12 @@ test.describe('Atom Tool', () => {
     const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+    await dragMouseTo(page, coordinatesWithShift, y);
     await CommonLeftToolbar(page).erase();
     await getAtomLocator(page, { atomLabel: 'Br' }).first().click({
       force: true,
@@ -499,6 +499,23 @@ test.describe('Atom Tool', () => {
     await closePage();
   });
   test.beforeEach(async ({ MoleculesCanvas: _ }) => {});
+
+  test('Default colours of atom symbols', async () => {
+    /*
+    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
+    Description:
+    "H" and "C" are #000000, black.
+    "N" is #304FF7, blue.
+    "O" is #FF0D0D, red.
+    "S" is #C99A19, yellow.
+    "P" is #FF8000, brick red.
+    "F" is #78BC42, grass green.
+    "Cl" is #1FD01F, light green.
+    "Br" is #A62929, red-brown.
+    "I" is #940094, purple.
+    */
+    await takeRightToolbarScreenshot(page);
+  });
 
   test('Addition element buttons to right atom panel', async () => {
     /*
@@ -583,31 +600,17 @@ test.describe('Atom Tool', () => {
     for (const labelKey of atomShortcuts) {
       await CommonTopLeftToolbar(page).clearCanvas();
       await CommonLeftToolbar(page).areaSelectionTool();
-      await clickOnCanvas(page, 0, 0);
+      await clickInTheMiddleOfTheCanvas(page);
+      // Wait for AbbreviationLookup 1000ms timer from previous iteration to expire
+      // before pressing the next shortcut key, otherwise the lookup popup intercepts it
+      await page.waitForTimeout(1100);
       await waitForRender(page, async () => {
         await page.keyboard.press(labelKey);
       });
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheCanvas(page);
       const atom = getAtomLocator(page, { atomLabel: labelKey });
       expect(await atom.count()).toEqual(1);
     }
-  });
-
-  test('Default colours of atom symbols', async () => {
-    /*
-    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
-    Description:
-    "H" and "C" are #000000, black.
-    "N" is #304FF7, blue.
-    "O" is #FF0D0D, red.
-    "S" is #C99A19, yellow.
-    "P" is #FF8000, brick red.
-    "F" is #78BC42, grass green.
-    "Cl" is #1FD01F, light green.
-    "Br" is #A62929, red-brown.
-    "I" is #940094, purple.
-    */
-    await takeRightToolbarScreenshot(page);
   });
 
   /*
@@ -673,7 +676,7 @@ test.describe('Atom Tool', () => {
       await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).hover({
         force: true,
       });
-      await dragMouseTo(640, 270, page);
+      await dragMouseTo(page, 640, 270);
       await takeEditorScreenshot(page);
       await CommonTopLeftToolbar(page).undo();
     });

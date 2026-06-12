@@ -1,12 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`should be rendered correctly should be rendered without crashing 1`] = `
 <DocumentFragment>
   <div
     class="colorPickerWrapper"
     data-testid="color-picker-field"
+    role="none"
   >
     <button
+      aria-controls="color-picker-«r0»"
+      aria-expanded="false"
+      aria-haspopup="true"
       class="colorPickerInput"
       type="button"
     >

@@ -16,7 +16,7 @@
 
 import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index';
@@ -24,9 +24,9 @@ import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
 
-const getActionState = (state) => state.actionState || {};
+const getActionState = (state) => state.actionState ?? {};
 
-const selectCustomButtons = (state) => state?.options?.customButtons || [];
+const selectCustomButtons = (state) => state?.options?.customButtons ?? [];
 
 const disabledButtonsSelector = createSelector(
   [getActionState],
@@ -63,9 +63,12 @@ const mapStateToProps = (state: any) => {
     currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
+    isModeSwitcherDisabled: Boolean(
+      state.editor?.isMonomerCreationWizardActive,
+    ),
     customButtons: selectCustomButtons(state),
     shortcuts,
-    status: state.actionState || {},
+    status: state.actionState ?? {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
     disableableButtons,
@@ -100,7 +103,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onZoomOut: () => dispatchAction('zoom-out'),
     onZoom: (zoomValue: number) =>
       dispatch(onAction((editor) => editor.zoom(zoomValue / 100))),
-    onSettingsOpen: () => dispatchAction('settings'),
+    onSettingsOpen: () => {
+      dispatchAction('settings');
+    },
     onLayout: () => dispatchAction('layout'),
     onClean: () => dispatchAction('clean'),
     onAromatize: () => dispatchAction('arom'),

@@ -1,8 +1,9 @@
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { D3SvgElementSelection } from 'application/render/types';
+import type { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import util from '../util';
@@ -141,7 +142,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         .insert('g', `.monomer`)
         .data([this])
         .attr('data-testid', 'bond')
-        .attr('data-type', 'covalent')
+        .attr('data-bondtype', 'covalent')
         .attr('data-bondid', this.monomerToAtomBond.id)
         .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
         .attr('data-toatomid', this.monomerToAtomBond.atom.id)
@@ -190,7 +191,9 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       .attr('stroke-width', 10);
   }
 
-  protected appendHoverAreaElement(): void {}
+  protected appendHoverAreaElement(): void {
+    // intentional no-op: this renderer type does not require a hover area element
+  }
 
   public drawSelection() {
     if (!this.rootElement) {
@@ -216,7 +219,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#57ff8f')
+      .attr('stroke', SELECTION_COLOR)
       .attr('stroke-width', 10);
   }
 
@@ -239,5 +242,7 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     this.hoverElement = undefined;
   }
 
-  public moveSelection(): void {}
+  public moveSelection(): void {
+    // intentional no-op: this renderer type does not support selection movement
+  }
 }

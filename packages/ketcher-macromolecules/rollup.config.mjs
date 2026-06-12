@@ -77,16 +77,16 @@ const config = {
     nodeResolve({ extensions }),
     commonjs(),
     asPlugin(tsconfigPaths()),
-    replace({
-      include: includePattern,
-      preventAssignment: true,
-      values: valuesToReplace,
-    }),
     json(),
     typescript({
       tsconfigOverride: {
         exclude: ['*.test.ts'],
       },
+    }),
+    replace({
+      include: includePattern,
+      preventAssignment: true,
+      values: valuesToReplace,
     }),
     babelPlugin({
       extensions,

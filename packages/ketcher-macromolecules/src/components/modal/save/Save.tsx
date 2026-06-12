@@ -146,16 +146,22 @@ export const Save = ({
       setSvgData(svgData);
       return;
     }
-    if (
-      fileFormat === 'helm' &&
-      !isHelmCompatible(
-        Array.from(editor.drawingEntitiesManager.monomers.values()),
-        editor.monomersLibrary,
-      )
-    ) {
-      editor.events.error.dispatch(
-        'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
-      );
+    if (fileFormat === 'helm') {
+      if (editor.drawingEntitiesManager.molecules.length > 0) {
+        editor.events.error.dispatch(
+          'The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer',
+        );
+      }
+      if (
+        !isHelmCompatible(
+          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          editor.monomersLibrary,
+        )
+      ) {
+        editor.events.error.dispatch(
+          'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
+        );
+      }
     }
 
     try {

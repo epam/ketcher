@@ -295,9 +295,7 @@ export class ReMultitailArrow extends ReObject {
     points['head-move'] = headMovePoint;
     Object.entries(points).forEach(([key, point]) => {
       const isSpineMovePoint = key === 'spine-move';
-      const selectionPointRadius = isSpineMovePoint
-        ? ReMultitailArrow.SELECTION_POINT_RADIUS
-        : ReMultitailArrow.SELECTION_POINT_RADIUS;
+      const selectionPointRadius = ReMultitailArrow.SELECTION_POINT_RADIUS;
       const element = paper
         .circle(point.x, point.y, selectionPointRadius)
         .attr({

@@ -148,7 +148,7 @@ interface SaveDialogProps {
   onCheck: (checkOptions: unknown) => void;
   onTmplSave: (struct: Struct) => void;
   onResetForm: (prevState: FormState) => void;
-  onOk: (result?: Record<string, unknown> | unknown) => void;
+  onOk: (result?: unknown) => void;
   onCancel: () => void;
 }
 
@@ -1124,7 +1124,9 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
           <Field name="filename" />
           <Field
             name="format"
-            {...{ onChange: this.changeType }}
+            onChange={(type) => {
+              this.changeType(type as SupportedFormat | OutputFormatType);
+            }}
             options={getSelectOptionsFromSchema(
               this.saveSchema.properties.format,
             )}

@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { TransientView } from 'application/render/renderers/TransientView/TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { Vec2 } from 'domain/entities';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 export type RotationViewParams = {

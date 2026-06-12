@@ -22,7 +22,7 @@ import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { ReRxnArrow } from '../../../render';
 import { KetcherLogger } from 'utilities';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 

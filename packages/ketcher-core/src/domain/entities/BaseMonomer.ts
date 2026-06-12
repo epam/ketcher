@@ -1,22 +1,22 @@
-import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
+import { type DrawingEntityConfig, DrawingEntity } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import {
+  type AttachmentPointsToBonds,
+  type MonomerItemType,
+  type MonomerBond,
   AttachmentPointName,
-  AttachmentPointsToBonds,
-  MonomerItemType,
-  MonomerBond,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
-import { IKetAttachmentPoint } from 'application/formatters/types/ket';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import type { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import type { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import type { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';

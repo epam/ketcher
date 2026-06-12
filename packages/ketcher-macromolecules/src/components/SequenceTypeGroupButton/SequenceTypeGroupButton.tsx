@@ -25,6 +25,10 @@ import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { setSelectedTabIndex } from 'state/library';
 import { LIBRARY_TAB_INDEX, MONOMER_TYPES } from 'src/constants';
+import {
+  getPersistedSequenceType,
+  persistSequenceType,
+} from 'helpers/sequenceTypeStorage';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -87,8 +91,7 @@ export const SequenceTypeGroupButton = () => {
   };
 
   useEffect(() => {
-    editor?.events.selectMode.add(onToggleSequenceMode);
-    editor?.events.changeSequenceTypeEnterMode.add((mode: SequenceType) => {
+    const onChangeSequenceType = (mode: SequenceType) => {
       dispatch(
         setSelectedTabIndex(
           mode === MONOMER_TYPES.PEPTIDE
@@ -97,11 +100,17 @@ export const SequenceTypeGroupButton = () => {
         ),
       );
       setActiveSequenceType(mode);
-    });
-    editor?.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
+      persistSequenceType(mode);
+    };
+    editor?.events.selectMode.add(onToggleSequenceMode);
+    editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
+    editor?.events.changeSequenceTypeEnterMode.dispatch(
+      getPersistedSequenceType(),
+    );
 
     return () => {
       editor?.events.selectMode.remove(onToggleSequenceMode);
+      editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
   }, [editor]);
 

@@ -1,7 +1,7 @@
-import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { BaseMonomer } from './BaseMonomer';
+import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import type { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from './BaseBond';
-import { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
+import type { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
 
 export class HydrogenBond extends BaseBond {
   public secondMonomer?: BaseMonomer;

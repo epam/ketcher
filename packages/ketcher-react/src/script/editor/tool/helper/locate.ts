@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 import {
+  type Struct,
+  type ReStruct,
   FunctionalGroup,
   IMAGE_KEY,
-  Struct,
   Vec2,
-  ReStruct,
   MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 import assert from 'assert';

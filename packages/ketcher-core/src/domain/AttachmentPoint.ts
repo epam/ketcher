@@ -1,20 +1,23 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Vec2 } from 'domain/entities/vec2';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { D3SvgElementSelection } from 'application/render/types';
-import { line, Selection } from 'd3';
-import { BaseMonomer } from './entities/BaseMonomer';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { type Selection, line } from 'd3';
+import type { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
+  type Coordinates,
   canvasToMonomerCoordinates,
-  Coordinates,
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
-import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import {
+  type AttachmentPointConstructorParams,
+  AttachmentPointName,
+} from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { isNumber } from 'lodash';
 import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 

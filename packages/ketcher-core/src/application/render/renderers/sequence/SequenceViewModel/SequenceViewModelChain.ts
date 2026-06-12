@@ -1,4 +1,4 @@
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 export interface ISequenceViewModelRow {

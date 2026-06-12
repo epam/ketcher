@@ -25,11 +25,11 @@ import {
 } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
+  type Struct,
+  type StructService,
   FormatterFactory,
   KetcherLogger,
   ketcherProvider,
-  Struct,
-  StructService,
   SupportedFormat,
 } from 'ketcher-core';
 import { MIEW_OPTIONS } from '../../../../../data/schema/options-schema';
@@ -37,7 +37,7 @@ import classes from './Miew.module.less';
 import { connect } from 'react-redux';
 import { load } from '../../../../../state';
 import { pick } from 'lodash/fp';
-import { Miew as MiewAsType } from 'miew';
+import type { Miew as MiewAsType } from 'miew';
 import { createSelector } from 'reselect';
 import { useAppContext } from 'src/hooks';
 

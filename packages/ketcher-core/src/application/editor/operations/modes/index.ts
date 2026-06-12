@@ -18,7 +18,7 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
+import type { Operation } from 'domain/entities/Operation';
 
 export class ReinitializeModeOperation implements Operation {
   public priority = 2;

@@ -1,6 +1,6 @@
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import type { FlipDirection } from 'application/editor/shared/utils.types';
-import { KetMonomerClass } from 'domain/constants/monomers';
+import type { KetMonomerClass } from 'domain/constants/monomers';
 
 // KetMonomerClass lives in the domain layer; re-exported here for backward
 // compatibility so all existing application-layer imports continue to work.
@@ -160,7 +160,6 @@ export interface IKetMonomerTemplate {
   fullName?: string;
   alias: string;
   aliasHELM?: string;
-  aliasBILN?: string;
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
@@ -171,6 +170,7 @@ export interface IKetMonomerTemplate {
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
@@ -203,6 +203,7 @@ export interface IKetMonomerGroupTemplate {
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
 }
 
 export interface IKetNodeRef {

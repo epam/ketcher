@@ -16,9 +16,9 @@
 
 // todo: rename file in another PR
 import { StereoLabelStyleType } from '../../render/restruct/generalEnumTypes';
-import ReStruct from '../../render/restruct/restruct';
+import type ReStruct from '../../render/restruct/restruct';
 
-import { OperationType } from './OperationType';
+import type { OperationType } from './OperationType';
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationType = ValueOf<typeof OperationType>;

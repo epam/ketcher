@@ -1,16 +1,16 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import {
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type {
   AttachmentPointName,
   MonomerItemType,
   MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Atom } from 'domain/entities/CoreAtom';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { Atom } from 'domain/entities/CoreAtom';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import assert from 'assert';
 
-import { DrawingEntitiesManager } from './DrawingEntitiesManager';
+import type { DrawingEntitiesManager } from './DrawingEntitiesManager';
 
 export function replaceMonomer(
   drawingEntitiesManager: DrawingEntitiesManager,

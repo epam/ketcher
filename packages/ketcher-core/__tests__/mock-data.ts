@@ -1,17 +1,21 @@
-import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
+import {
+  type ReRGroupAttachmentPoint,
+  ReAtom,
+  ReBond,
+} from 'application/render';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import {
+  type Loop,
+  type RGroupAttachmentPoint,
   Box2Abs,
-  Loop,
   Pool,
-  RGroupAttachmentPoint,
   Struct,
   Vec2,
 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { MonomerItemType } from 'domain/types';
+import type { MonomerItemType } from 'domain/types';
 import { mockFn } from 'jest-mock-extended';
 import { KetMonomerClass } from 'application/formatters';
 

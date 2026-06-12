@@ -26,21 +26,21 @@ import { HalfBond } from './halfBond';
 import { Loop } from './loop';
 import { Pile } from './pile';
 import { Pool } from './pool';
-import { RGroup } from './rgroup';
-import { RxnArrow } from './rxnArrow';
-import { RxnPlus } from './rxnPlus';
+import type { RGroup } from './rgroup';
+import type { RxnArrow } from './rxnArrow';
+import type { RxnPlus } from './rxnPlus';
 import { SGroup } from './sgroup';
 import { SGroupForest } from './sgroupForest';
-import { SimpleObject } from './simpleObject';
-import { Text } from './text';
+import type { SimpleObject } from './simpleObject';
+import type { Text } from './text';
 import { Vec2 } from './vec2';
-import { Highlight } from './highlight';
-import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
+import type { Highlight } from './highlight';
+import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
-import { Image } from './image';
+import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
-import { MultitailArrow } from './multitailArrow';
+import type { MultitailArrow } from './multitailArrow';
 import {
   flipPointByCenter,
   rotateDelta,
@@ -941,9 +941,12 @@ export class Struct {
     });
 
     this.sgroups.forEach((item) => {
+      // MonomerMicromolecule centers carry their own transform flow and are
+      // scaled separately during mode transitions to avoid double-scaling.
       if (item instanceof MonomerMicromolecule) {
         return;
       }
+
       item.pp = item.pp?.scaled(scale) ?? null;
     });
 
@@ -960,6 +963,18 @@ export class Struct {
     this.multitailArrows.forEach((multitailArrow) =>
       multitailArrow.rescaleSize(scale),
     );
+  }
+
+  scaleMonomerMicromoleculeSgroups(scale: number) {
+    if (scale === 1) return;
+
+    this.sgroups.forEach((item) => {
+      if (!(item instanceof MonomerMicromolecule)) {
+        return;
+      }
+
+      item.pp = item.pp?.scaled(scale) ?? null;
+    });
   }
 
   rescale() {
@@ -1479,7 +1494,9 @@ export class Struct {
     this.texts.changeInitiallySelectedPropertiesForPool();
   }
 
-  public applyMonomersTransformations() {
+  public applyMonomersTransformations(scaleFactor = 1) {
+    this.scaleMonomerMicromoleculeSgroups(scaleFactor);
+
     const atomToBonds = new Map<number, number[]>();
 
     this.bonds.forEach((bond, bondId) => {
@@ -1687,6 +1704,11 @@ export class Struct {
     this.bondInitHalfBonds(bondId);
     const newBondObj = this.bonds.get(bondId);
     if (newBondObj?.hb1 && newBondObj?.hb2) {
+      // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
+      // by hb.ang — inserting with ang=0 (the HalfBond default) would place
+      // the half-bond in the wrong position in the neighbor list.
+      this.halfBondUpdate(newBondObj.hb1);
+      this.halfBondUpdate(newBondObj.hb2);
       this.atomAddNeighbor(newBondObj.hb1);
       this.atomAddNeighbor(newBondObj.hb2);
     }

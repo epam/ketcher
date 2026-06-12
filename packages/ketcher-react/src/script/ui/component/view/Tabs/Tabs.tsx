@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, ComponentType, MouseEvent, KeyboardEvent } from 'react';
+import {
+  type ComponentType,
+  type MouseEvent,
+  type KeyboardEvent,
+  Component,
+} from 'react';
 import classes from './Tabs.module.less';
 import clsx from 'clsx';
 

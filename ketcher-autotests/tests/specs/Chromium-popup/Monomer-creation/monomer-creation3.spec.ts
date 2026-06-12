@@ -1093,7 +1093,7 @@ test(`22. Check that if no APs were set for a monomer, and the user clicks on Su
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
-  await CreateMonomerDialog(page).setSymbol('TestMonomer');
+  await CreateMonomerDialog(page).setCode('TestMonomer');
   await CreateMonomerDialog(page).setName('TestMonomerName');
   await CreateMonomerDialog(page).submit();
   expect(
@@ -1188,7 +1188,7 @@ test(`24. Check that if the user clicks on Summit, the new monomer (CHEM) gets s
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.CHEM);
-  await CreateMonomerDialog(page).setSymbol(Chem.CHEM.alias);
+  await CreateMonomerDialog(page).setCode(Chem.CHEM.alias);
   await CreateMonomerDialog(page).setName('CHEM Test monomer');
   await CreateMonomerDialog(page).submit();
 
@@ -1229,7 +1229,7 @@ test(`25. Check that if the user clicks on Summit, the new monomer (Peptide) get
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.AminoAcid);
-  await CreateMonomerDialog(page).setSymbol(Peptide.Peptide.alias);
+  await CreateMonomerDialog(page).setCode(Peptide.Peptide.alias);
   await CreateMonomerDialog(page).setName('Peptide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     AminoAcidNaturalAnalogue.A,
@@ -1273,7 +1273,7 @@ test(`26. Check that if the user clicks on Summit, the new monomer (Base) gets s
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Base);
-  await CreateMonomerDialog(page).setSymbol(Base.Base.alias);
+  await CreateMonomerDialog(page).setCode(Base.Base.alias);
   await CreateMonomerDialog(page).setName('Base Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,
@@ -1317,9 +1317,12 @@ test(`27. Check that if the user clicks on Summit, the new monomer (Phosphate) g
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Phosphate);
-  await CreateMonomerDialog(page).setSymbol(Phosphate.Phosphate.alias);
+  await CreateMonomerDialog(page).setCode(Phosphate.Phosphate.alias);
   await CreateMonomerDialog(page).setName('Phosphate Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
+  await getAtomLocator(page, { atomLabel: 'C' })
+    .nth(1)
+    .waitFor({ state: 'visible' });
 
   await takeElementScreenshot(
     page,
@@ -1362,7 +1365,7 @@ test(`28. Check that if the user clicks on Summit, the new monomer (Sugar) gets 
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.Sugar);
-  await CreateMonomerDialog(page).setSymbol(Sugar.Sugar.alias);
+  await CreateMonomerDialog(page).setCode(Sugar.Sugar.alias);
   await CreateMonomerDialog(page).setName('Sugar Test monomer');
   await CreateMonomerDialog(page).submit({ ignoreWarning: true });
 
@@ -1402,7 +1405,7 @@ test(`29. Check that if the user clicks on Summit, the new monomer (Nucleotide) 
   await dragMouseTo(page, 425, 200);
 
   await CreateMonomerDialog(page).selectType(MonomerType.NucleotideMonomer);
-  await CreateMonomerDialog(page).setSymbol(Nucleotide.Nucleotide.alias);
+  await CreateMonomerDialog(page).setCode(Nucleotide.Nucleotide.alias);
   await CreateMonomerDialog(page).setName('Nucleotide Test monomer');
   await CreateMonomerDialog(page).selectNaturalAnalogue(
     NucleotideNaturalAnalogue.A,

@@ -1,10 +1,13 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import { MonomerCreationState, RnaComponentAtoms } from 'application/render';
+import type {
+  MonomerCreationState,
+  RnaComponentAtoms,
+} from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import {
-  ComponentStructureUpdateData,
+  type ComponentStructureUpdateData,
+  type RnaPresetComponentKey,
   MonomerCreationComponentStructureUpdateEvent,
-  RnaPresetComponentKey,
 } from 'application/editor/shared/customEvents';
 import assert from 'assert';
 

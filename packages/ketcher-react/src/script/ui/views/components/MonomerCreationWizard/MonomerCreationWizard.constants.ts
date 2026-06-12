@@ -4,7 +4,7 @@ import {
   KetMonomerClass,
 } from 'ketcher-core';
 
-import {
+import type {
   MonomerTypeSelectItem,
   WizardNotificationMessageMap,
   WizardNotificationTypeMap,
@@ -68,11 +68,11 @@ export const NotificationMessages: WizardNotificationMessageMap = {
   invalidRnaPresetStructure:
     'Structure of rna preset component contains issues. Please adjust the structure.',
   rnaPresetAtomsOutsideComponents:
-    'Every atom in the loaded structure must belong to a sugar, base, or a phosphate.',
+    'Some atoms do not belong to any nucleotide component (sugar, base, or phosphate).',
   rnaPresetAtomsInMultipleComponents:
-    'Every atom in the loaded structure must belong only to one of the components (sugar, base, or phosphate).',
+    'Some atoms belong to multiple nucleotide components.',
   rnaPresetMissingComponents:
-    'Every preset must contain at least two components, with sugar being a mandatory component.',
+    'Preset must contain at least two components, with sugar being one of them.',
   rnaPresetInvalidSugarConnectionBonds:
     'Sugar can only have one single bond with base and one single bond with phosphate.',
   rnaPresetUnexpectedBasePhosphateBond:

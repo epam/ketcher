@@ -15,23 +15,28 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMonomer, HydrogenBond, PolymerBond, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor/Editor';
+import {
+  type HydrogenBond,
+  type PolymerBond,
+  BaseMonomer,
+  Vec2,
+} from 'domain/entities';
+import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
-import { BaseTool } from 'application/editor/tools/Tool';
+import type { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
 import {
-  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  type DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { MonomersAlignment } from 'application/editor/tools/types';
+import type { MonomersAlignment } from 'application/editor/tools/types';
 import { vectorUtils } from 'application/editor/shared/vectorUtils';
 import {
   HalfMonomerSize,

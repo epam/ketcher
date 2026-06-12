@@ -31,13 +31,13 @@ import {
   BondAdd,
   FragmentAdd,
 } from '../operations';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Pile } from 'domain/entities/pile';
 import { SGroup } from 'domain/entities/sgroup';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
-import { Bond, BondAttributes } from 'domain/entities/bond';
-import { Struct } from 'domain/entities/struct';
+import { type BondAttributes, Bond } from 'domain/entities/bond';
+import type { Struct } from 'domain/entities/struct';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
@@ -48,7 +48,7 @@ import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';

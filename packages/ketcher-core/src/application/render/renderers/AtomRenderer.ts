@@ -231,7 +231,7 @@ export class AtomRenderer extends BaseRenderer {
     const viewModel = provideEditorInstance().viewModel;
     const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
 
-    if (atomHaldEdges?.length === 0) {
+    if (!atomHaldEdges?.length) {
       if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
         return false;
       } else {
@@ -365,6 +365,7 @@ export class AtomRenderer extends BaseRenderer {
 
     let { hydrogenAmount } = this.atom.calculateValence();
     const shouldHydrogenBeOnLeft = this.shouldHydrogenBeOnLeft;
+    const isHydrogen = this.labelText === AtomLabel.H;
 
     if (!this.shouldDisplayHydrogen) {
       hydrogenAmount = 0;
@@ -380,6 +381,24 @@ export class AtomRenderer extends BaseRenderer {
       )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
+
+    // For a hydrogen atom the implicit hydrogens are shown as a subscript count
+    // on the H itself (e.g. H2), matching micromolecule mode, instead of
+    // appending a second "H" letter which would render as "HH".
+    if (isHydrogen) {
+      textElement?.append('tspan').text(this.labelText);
+
+      if (!this.atom.hasAlias && hydrogenAmount > 0) {
+        textElement
+          ?.append('tspan')
+          .text(hydrogenAmount + 1)
+          .attr('dy', 3);
+      }
+
+      textElement?.attr('text-anchor', 'start').attr('x', 0);
+
+      return textElement;
+    }
 
     if (!shouldHydrogenBeOnLeft) {
       textElement

@@ -9,7 +9,7 @@ import typescript from 'rollup-plugin-typescript2';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
-import { license } from '../../license.ts';
+import { license } from '../../license-banner.mjs';
 import replace from '@rollup/plugin-replace';
 import OMT from '@surma/rollup-plugin-off-main-thread';
 

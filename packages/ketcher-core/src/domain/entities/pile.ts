@@ -44,14 +44,16 @@ export class Pile<TValue = any> extends Set<TValue> {
   union<U>(setB: ReadonlySet<U>): Pile<TValue | U> {
     const result = new Pile<TValue | U>();
     for (const item of this) result.add(item);
-    for (const item of setB as unknown as Iterable<U>) result.add(item);
+    for (const item of setB as Iterable<U>) result.add(item);
     return result;
   }
 
   intersection<U>(setB: ReadonlySet<U>): Pile<TValue & U> {
     const result = new Pile<TValue & U>();
     for (const item of this) {
-      if (setB.has(item as unknown as U)) result.add(item as TValue & U);
+      if ((setB as ReadonlySet<unknown>).has(item)) {
+        result.add(item as TValue & U);
+      }
     }
     return result;
   }

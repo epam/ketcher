@@ -66,9 +66,6 @@ const config = {
     json({ include: includePattern }),
     typescript({
       tsconfig: './tsconfig.json',
-      compilerOptions: {
-        noEmit: false,
-      },
       noForceEmit: false,
       rootDir: 'src',
       exclude: ['__tests__/**/*', 'dist/**/*'],

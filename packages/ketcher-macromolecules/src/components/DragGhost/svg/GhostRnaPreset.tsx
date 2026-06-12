@@ -39,10 +39,7 @@ export const GhostRnaPreset = ({ preset }: Props) => {
   const phosphateSize = phosphateRenderer?.monomerSize;
   const baseSize = baseRenderer?.monomerSize;
   const phosphatePosition =
-    preset.phosphatePosition ??
-    getRnaPresetPhosphatePosition(
-      preset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
-    );
+    preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
   const phosphateOnLeft = phosphatePosition === 'left';
 
   const sugarX =

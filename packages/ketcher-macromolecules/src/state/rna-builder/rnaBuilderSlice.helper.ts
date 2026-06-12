@@ -25,9 +25,10 @@ const getPresetComponentsKey = (preset: IRnaPresetWithAliases): string => {
 };
 
 // A newly created custom preset has no IDT alias of its own. When it is built
-// from the same monomers as one of the default library presets, reuse that
-// preset's IDT alias (and AxoLabs alias) so the preview tooltip shows it. This
-// mirrors the behavior of duplicating a preset, where the aliases are kept.
+// from the same monomers as one of the default library presets, copy that
+// default preset's IDT alias (and AxoLabs alias) so the preview tooltip shows
+// it. Only fields the preset is missing are filled in; existing aliases are
+// left untouched.
 export const deriveRnaPresetAliasesFromDefaults = (
   preset: IRnaPresetWithAliases,
   defaultPresets: ReadonlyArray<IRnaPresetWithAliases>,

@@ -244,6 +244,8 @@ export const rnaBuilderSlice = createSlice({
       const preset = action.payload;
       const newPreset = {
         ...preset,
+        // Cast strips Immer's WritableDraft<> wrapper; presetsDefault is
+        // already the local IRnaPreset (with alias fields) the helper expects.
         ...deriveRnaPresetAliasesFromDefaults(
           preset,
           state.presetsDefault as IRnaPreset[],

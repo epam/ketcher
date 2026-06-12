@@ -14,6 +14,7 @@
     "ketcher-macromolecules": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
+    "lodash": "4.18.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "next": "16.2.6"
@@ -25,6 +26,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.17.0",
     "eslint-config-next": "16.1.4",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "postcss": "8.5.10"
   }
 }

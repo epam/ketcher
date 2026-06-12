@@ -78,7 +78,6 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
-import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { RotationTool } from '@tests/pages/common/canvas/RotationTool';
 
 async function openPPTXFileAndValidateStructurePreview(

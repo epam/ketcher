@@ -13,7 +13,7 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import ttypescript from 'ttypescript';
+import ts from 'typescript';
 import { string } from 'rollup-plugin-string';
 
 const require = createRequire(import.meta.url);
@@ -79,17 +79,17 @@ const config = {
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
     commonjs(),
+    json(),
+    typescript({
+      typescript: ts,
+      tsconfigOverride: {
+        exclude: ['*.test.ts'],
+      },
+    }),
     replace({
       include: includePattern,
       preventAssignment: true,
       values: valuesToReplace,
-    }),
-    json(),
-    typescript({
-      typescript: ttypescript,
-      tsconfigOverride: {
-        exclude: ['*.test.ts'],
-      },
     }),
     babel({
       extensions,

@@ -13,12 +13,8 @@ import {
 } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
-import { NucleotidePresetTab } from '@tests/pages/molecules/canvas/createMonomer/constants/nucleiotidePresetSection/Constants';
 import { pasteFromClipboardAndOpenAsNewProject } from '@utils/files/readFile';
 import { shiftCanvas, takeEditorScreenshot } from '@utils/index';
-import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Base } from '@tests/pages/constants/monomers/Bases';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
 import { MonomerType } from '@utils/types';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -646,8 +642,9 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     ).toBeTruthy();
 
     // Export structure to verify types (this would need API call to fully verify)
-    await CommonTopLeftToolbar(page).save();
-    await page.keyboard.press('Escape'); // Close save dialog if opened
+    await CommonTopLeftToolbar(page).saveFile();
+    await page.keyboard.press('Escape');
+    // Close save dialog if opened
   });
 
   test('Case 10 - Verify auto-assigned code/name for hidden base', async () => {
@@ -1132,7 +1129,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
 
     // Switch to RNA builder mode
     await MacromoleculesTopToolbar(page).rna();
-    
+
     // Navigate to presets section
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Presets);
@@ -1147,10 +1144,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     ).toBeTruthy();
 
     // Add preset to canvas to test functionality
-    await Library(page).addMonomerToCanvas(MonomerType.Preset, {
-      alias: presetName,
-      testId: `IntegrationTest_IntegrationBase_IntegrationTestS_IntegrationTestP`,
-    });
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `IntegrationTest_IntegrationBase_IntegrationTestS_IntegrationTestP`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
 
     // Take screenshot to verify structure appears correctly
     await takeEditorScreenshot(page);
@@ -1207,18 +1208,22 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await MacromoleculesTopToolbar(page).rna();
     await Library(page).switchToRNATab();
     await Library(page).openRNASection(RNASection.Presets);
-    
-    await Library(page).addMonomerToCanvas(MonomerType.Preset, {
-      alias: presetName,
-      testId: `ExportImportTest_ExportBase_ExportSugar_ExportImportTestP`,
-    });
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `ExportImportTest_ExportBase_ExportSugar_ExportImportTestP`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
 
     // Export structure
-    await CommonTopLeftToolbar(page).save();
-    
+    await CommonTopLeftToolbar(page).saveFile();
+
     // The export/import verification would typically require file handling
     // which would be implemented with additional helper methods
-    
+
     // Verify structure still appears correctly after operations
     await takeEditorScreenshot(page);
   });
@@ -1241,7 +1246,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Base);
-    
+
     await dialog.codeEditbox.fill('RegressionBase');
     await dialog.nameEditbox.fill('Regression Test Base');
 
@@ -1251,12 +1256,13 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await LeftToolbar(page).createMonomer();
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Base);
-    
-    await dialog.codeEditbox.fill('RegressionBase'); // Same code
+
+    await dialog.codeEditbox.fill('RegressionBase');
+    // Same code
     await dialog.nameEditbox.fill('Duplicate Base');
 
     await dialog.submit();
-    
+
     // Should show uniqueness error
     const symbolExistsMessageBanner = NotificationMessageBanner(
       page,

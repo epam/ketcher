@@ -36,7 +36,10 @@ import {
   setCachedCustomRnaPreset,
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
-import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
+import {
+  deriveRnaPresetAliasesFromDefaults,
+  transformRnaPresetToRnaLabeledPreset,
+} from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
   selectAxoLabsAliasesByPresetName,
@@ -239,7 +242,13 @@ export const rnaBuilderSlice = createSlice({
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
-      const newPreset = { ...preset };
+      const newPreset = {
+        ...preset,
+        ...deriveRnaPresetAliasesFromDefaults(
+          preset,
+          state.presetsDefault as IRnaPreset[],
+        ),
+      };
 
       setCachedCustomRnaPreset(transformRnaPresetToRnaLabeledPreset(newPreset));
 

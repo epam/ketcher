@@ -76,11 +76,10 @@ const setSnakeSideConnectionEditorWithEmptyMiddle = (
     [new Connection(null, 90, true, polymerBond, 0, 0)],
     0,
     1,
-    null,
   );
   const lastCell = new Cell(
     { monomers: [secondMonomer] } as never,
-    [new Connection(secondMonomer, 90, true, polymerBond, 0, 0)],
+    [new Connection(null, 90, true, polymerBond, 0, 0)],
     0,
     2,
     secondMonomer,

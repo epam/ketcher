@@ -27,7 +27,7 @@ import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash/fp';
-import { omit } from 'lodash';
+import { isEqual, omit } from 'lodash';
 import { FloatingToolContainer } from '../../toolbars';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
@@ -72,6 +72,7 @@ function setupEditor(
   oldProps: Partial<StructEditorProps> = {},
 ) {
   const { struct, tool, toolOpts, options } = props;
+  const optionsChanged = !isEqual(options, oldProps.options);
 
   if (struct !== oldProps.struct) editor.struct(struct);
 
@@ -82,7 +83,7 @@ function setupEditor(
     }
   }
 
-  if (oldProps.options && options !== oldProps.options) {
+  if (oldProps.options && optionsChanged) {
     editor.options(options);
     editor.setServerSettings(props.serverSettings);
   } else if (props.serverSettings !== oldProps.serverSettings) {
@@ -103,7 +104,7 @@ function setupEditor(
     }
   });
 
-  if (struct !== oldProps.struct || options !== oldProps.options) {
+  if (struct !== oldProps.struct || optionsChanged) {
     editor.render.unobserveCanvasResize();
     editor.render.observeCanvasResize();
   }

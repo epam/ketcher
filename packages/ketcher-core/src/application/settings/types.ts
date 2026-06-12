@@ -71,6 +71,7 @@ export interface Settings {
   readonly 'aromatize-skip-superatoms': boolean;
   readonly 'dearomatize-on-load': boolean;
   readonly 'gross-formula-add-isotopes': boolean;
+  readonly 'valence-mode': 'biovia-2009' | 'biovia-2017' | 'default';
 
   // Debug/developer settings
   readonly showAtomIds: boolean;

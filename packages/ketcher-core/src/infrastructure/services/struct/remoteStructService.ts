@@ -156,6 +156,7 @@ export function pickStandardServerOptions(
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
     'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
     'aromatize-skip-superatoms': true,
+    'valence-mode': options?.['valence-mode'],
   };
 }
 

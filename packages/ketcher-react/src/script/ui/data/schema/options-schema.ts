@@ -335,6 +335,7 @@ const server: {
   'aromatize-skip-superatoms': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
+  'valence-mode': ExtendedSchema;
   ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
@@ -342,6 +343,12 @@ const server: {
     type: 'boolean',
     description: 'slider',
     default: false,
+  },
+  'valence-mode': {
+    title: 'Valence mode',
+    enum: ['biovia-2009', 'biovia-2017', 'default'],
+    enumNames: ['BIOVIA 2009', 'BIOVIA 2017', 'Default'],
+    default: 'biovia-2009',
   },
   'smart-layout': {
     title: 'Smart-layout',

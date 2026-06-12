@@ -69,6 +69,7 @@ export const DEFAULT_SETTINGS: Settings = {
   'aromatize-skip-superatoms': true,
   'dearomatize-on-load': false,
   'gross-formula-add-isotopes': true,
+  'valence-mode': 'biovia-2009',
 
   // Debug settings
   showAtomIds: false,
@@ -200,6 +201,7 @@ export const SCHEMA = {
     'aromatize-skip-superatoms': { type: 'boolean' },
     'dearomatize-on-load': { type: 'boolean' },
     'gross-formula-add-isotopes': { type: 'boolean' },
+    'valence-mode': { enum: ['biovia-2009', 'biovia-2017', 'default'] },
 
     // Debug settings
     showAtomIds: { type: 'boolean' },

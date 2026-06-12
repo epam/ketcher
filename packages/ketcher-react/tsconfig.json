@@ -13,5 +13,5 @@
     },
     "rootDir": "../.."
   },
-  "include": ["src", "rollup.config.ts", "rollup-plugin-shims.d.ts"]
+  "include": ["src", "rollup-plugin-shims.d.ts"]
 }

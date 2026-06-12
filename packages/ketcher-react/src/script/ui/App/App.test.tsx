@@ -44,6 +44,7 @@ jest.mock('../dialog/AbbreviationLookup', () => ({
 
 jest.mock('../../../hooks', () => ({
   useAppContext: () => ({ ketcherId: 'test-ketcher-id', prevKetcherId: '' }),
+  useSettings: jest.fn(),
   useSubscriptionOnEvents: jest.fn(),
 }));
 

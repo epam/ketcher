@@ -147,7 +147,7 @@ export class Chain {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
       return;
     }
-    this.lastSubChain.add(new LinkerSequenceNode(monomer));
+    this.lastSubChain.add(new LinkerSequenceNode(monomer, this.firstMonomer));
   }
 
   public addNode(node: SubChainNode) {

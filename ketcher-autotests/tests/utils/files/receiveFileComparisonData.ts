@@ -144,7 +144,9 @@ export async function verifyConsoleExport(
   await saveToFile(resolvedExpectedFilename, consoleContent);
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
-  const fileExpected = (await readFileContent(expectedFilename)).split('\n');
+  const fileExpected = (await readFileContent(resolvedExpectedFilename)).split(
+    '\n',
+  );
 
   const filteredConsoleContent = filterExportLines(
     consoleContent.split('\n'),

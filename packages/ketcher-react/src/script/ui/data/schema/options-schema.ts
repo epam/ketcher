@@ -332,6 +332,7 @@ const server: {
   'ignore-stereochemistry-errors': ExtendedSchema;
   'mass-skip-error-on-pseudoatoms': ExtendedSchema;
   'gross-formula-add-rsites': ExtendedSchema;
+  'aromatize-skip-superatoms': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
   ignoreChiralFlag: ExtendedSchema;
@@ -368,6 +369,12 @@ const server: {
   },
   'gross-formula-add-rsites': {
     title: 'Add Rsites at mass calculation',
+    type: 'boolean',
+    description: 'slider',
+    default: true,
+  },
+  'aromatize-skip-superatoms': {
+    title: 'Skip Superatoms at aromatization',
     type: 'boolean',
     description: 'slider',
     default: true,

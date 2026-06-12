@@ -1,4 +1,4 @@
-import { MonomerColorScheme } from './monomers';
+import type { MonomerColorScheme } from './monomers';
 
 export type EditorTheme = {
   color: {

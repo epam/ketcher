@@ -41,8 +41,8 @@ import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
-import { Loop } from '../view-model/Loop';
-import { DeepPartial } from 'types';
+import type { Loop } from '../view-model/Loop';
+import type { DeepPartial } from 'types';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer

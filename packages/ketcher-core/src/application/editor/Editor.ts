@@ -135,85 +135,29 @@ import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
-type IdtAliasPosition = 'base' | 'endpoint3' | 'endpoint5' | 'internal';
-
 type IdtAliasModifications = NonNullable<IKetIdtAliases['modifications']> & {
   ep3?: string;
   ep5?: string;
   i?: string;
 };
 
-const IDT_ALIAS_POSITIONS: IdtAliasPosition[] = [
-  'base',
-  'endpoint3',
-  'endpoint5',
-  'internal',
-];
-
-const IDT_ALIAS_POSITION_LABEL: Record<IdtAliasPosition, string> = {
-  base: 'base',
-  endpoint3: "3'",
-  endpoint5: "5'",
-  internal: 'internal',
-};
-
-const getIdtAliasesByPosition = (
-  idtAliases?: IKetIdtAliases,
-): Partial<Record<IdtAliasPosition, string>> => {
+const getIdtAliasValues = (idtAliases?: IKetIdtAliases): string[] => {
   const modifications = idtAliases?.modifications as
     | IdtAliasModifications
     | undefined;
 
-  return {
-    base: idtAliases?.base,
-    endpoint3: modifications?.endpoint3 ?? modifications?.ep3,
-    endpoint5: modifications?.endpoint5 ?? modifications?.ep5,
-    internal: modifications?.internal ?? modifications?.i,
-  };
+  return [
+    idtAliases?.base,
+    modifications?.endpoint3 ?? modifications?.ep3,
+    modifications?.endpoint5 ?? modifications?.ep5,
+    modifications?.internal ?? modifications?.i,
+  ].filter((value): value is string => Boolean(value));
 };
 
-const findIdtAliasCollision = (
-  newIdtAliases?: IKetIdtAliases,
-  existingIdtAliases?: IKetIdtAliases,
-) => {
-  const newAliases = getIdtAliasesByPosition(newIdtAliases);
-  const existingAliases = getIdtAliasesByPosition(existingIdtAliases);
-  const position = IDT_ALIAS_POSITIONS.find((position) => {
-    const newAlias = newAliases[position];
-
-    return Boolean(newAlias) && existingAliases[position] === newAlias;
-  });
-
-  return position
-    ? {
-        position,
-        value: newAliases[position],
-      }
-    : undefined;
-};
-
-const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) => {
-  const aliasesByPosition = getIdtAliasesByPosition(idtAliases);
-
-  return IDT_ALIAS_POSITIONS.map((position) => {
-    const alias = aliasesByPosition[position];
-
-    return alias
-      ? `IDT ${IDT_ALIAS_POSITION_LABEL[position]} alias "${alias}"`
-      : null;
-  })
-    .filter((value): value is string => Boolean(value))
+const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) =>
+  getIdtAliasValues(idtAliases)
+    .map((alias) => `IDT alias "${alias}"`)
     .join(', ');
-};
-
-const formatIdtAliasCollisionDetails = (
-  collision?: ReturnType<typeof findIdtAliasCollision>,
-) =>
-  collision
-    ? ` Conflicting IDT ${
-        IDT_ALIAS_POSITION_LABEL[collision.position]
-      } alias "${collision.value}".`
-    : '';
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -631,20 +575,24 @@ export class CoreEditor {
       ];
     };
 
-    const findIdtAliasCollisionInLibrary = (
+    const findIdtAliasCollision = (
       idtAliases?: IKetIdtAliases,
       ignoredMonomer?: MonomerItemType,
       ignoredTemplateRef?: string,
-    ) => {
+    ): string | undefined => {
+      const newValues = new Set(getIdtAliasValues(idtAliases));
+
+      if (newValues.size === 0) {
+        return undefined;
+      }
+
       for (const monomer of this._monomersLibrary) {
         if (ignoredMonomer && areSameMonomers(monomer, ignoredMonomer)) {
           continue;
         }
 
-        const collision = findIdtAliasCollision(
-          idtAliases,
-          monomer.props?.idtAliases,
-        );
+        const existingValues = getIdtAliasValues(monomer.props?.idtAliases);
+        const collision = existingValues.find((value) => newValues.has(value));
 
         if (collision) {
           return collision;
@@ -656,10 +604,10 @@ export class CoreEditor {
           continue;
         }
 
-        const collision = findIdtAliasCollision(
-          idtAliases,
+        const existingValues = getIdtAliasValues(
           template.definition.idtAliases,
         );
+        const collision = existingValues.find((value) => newValues.has(value));
 
         if (collision) {
           return collision;
@@ -688,8 +636,9 @@ export class CoreEditor {
         newMonomer.props?.aliasBILN &&
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -704,7 +653,7 @@ export class CoreEditor {
         return;
       }
 
-      let idtAliasCollision: ReturnType<typeof findIdtAliasCollision>;
+      let idtAliasCollision: string | undefined;
       let aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
@@ -721,18 +670,28 @@ export class CoreEditor {
       });
 
       if (!aliasCollisionExists) {
-        idtAliasCollision = findIdtAliasCollisionInLibrary(
+        idtAliasCollision = findIdtAliasCollision(
           newMonomer.props?.idtAliases,
           newMonomer,
         );
         aliasCollisionExists = Boolean(idtAliasCollision);
       }
 
-      const idtAliasCollisionDetails =
-        formatIdtAliasCollisionDetails(idtAliasCollision);
-
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
+        const idtAliasCollisionDetails = idtAliasCollision
+          ? ` Conflicting IDT alias "${idtAliasCollision}".`
+          : '';
+        if (idtAliasCollision) {
+          KetcherLogger.error(
+            `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
+              newMonomer.props.MonomerName
+            }${
+              aliasDetails ? ` (${aliasDetails})` : ''
+            }.${idtAliasCollisionDetails} The monomer was not added to the library.`,
+          );
+          return;
+        }
         reportValidationError(
           newMonomer.props.MonomerName,
           `Alias collision detected${
@@ -753,9 +712,9 @@ export class CoreEditor {
 
       // Validate that slashes in IDT aliases only appear at first/last position
       if (newMonomer.props?.idtAliases) {
-        const aliasesToValidate = Object.values(
-          getIdtAliasesByPosition(newMonomer.props.idtAliases),
-        ).filter(Boolean) as string[];
+        const aliasesToValidate = getIdtAliasValues(
+          newMonomer.props.idtAliases,
+        );
 
         const hasInvalidSlash = aliasesToValidate.some(
           (alias) => !isValidIdtAlias(alias),
@@ -777,8 +736,9 @@ export class CoreEditor {
           const offenders = tooLongEntries
             .map(({ alias: field, value }) => `${field}="${value}"`)
             .join(', ');
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          KetcherLogger.error(
+            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`,
+          );
           return;
         }
       }
@@ -883,9 +843,9 @@ export class CoreEditor {
       }
 
       if (templateDefinition.idtAliases) {
-        const aliasesToValidate = Object.values(
-          getIdtAliasesByPosition(templateDefinition.idtAliases),
-        ).filter(Boolean) as string[];
+        const aliasesToValidate = getIdtAliasValues(
+          templateDefinition.idtAliases,
+        );
 
         const hasInvalidSlash = aliasesToValidate.some(
           (alias) => !isValidIdtAlias(alias),
@@ -899,7 +859,7 @@ export class CoreEditor {
         }
       }
 
-      const idtAliasCollision = findIdtAliasCollisionInLibrary(
+      const idtAliasCollision = findIdtAliasCollision(
         templateDefinition.idtAliases,
         undefined,
         templateRef.$ref,
@@ -914,9 +874,7 @@ export class CoreEditor {
             templateDefinition.name
           }${
             aliasDetails ? ` (${aliasDetails})` : ''
-          }.${formatIdtAliasCollisionDetails(
-            idtAliasCollision,
-          )} The preset was not added to the library.`,
+          }. Conflicting IDT alias "${idtAliasCollision}". The preset was not added to the library.`,
         );
         return;
       }

@@ -30,6 +30,10 @@ export class MolfileV2000Formatter implements StructFormatter {
     return stringifiedMolfile;
   }
 
+  async getStructureFromStructAsync(struct: Struct[]): Promise<string[]> {
+    return struct.map((item) => this.#molSerializer.serialize(item));
+  }
+
   async getStructureFromStringAsync(
     stringifiedStruct: string,
   ): Promise<Struct> {

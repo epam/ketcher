@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import type {
+  ConvertCombinedData,
   ConvertData,
   ConvertResult,
   LayoutData,
@@ -32,7 +33,7 @@ import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
 
 type ConvertPromise = (
-  data: ConvertData,
+  data: ConvertCombinedData,
   options?: StructServiceOptions,
 ) => Promise<ConvertResult>;
 
@@ -90,6 +91,17 @@ export class ServerFormatter implements StructFormatter {
       KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
       throw new Error(message);
     }
+  }
+
+  async getStructureFromStructAsync(
+    struct: Struct[],
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string[]> {
+    return Promise.all(
+      struct.map((s) =>
+        this.getStringFromStructureAsync(s, drawingEntitiesManager),
+      ),
+    );
   }
 
   getCallingMethod(

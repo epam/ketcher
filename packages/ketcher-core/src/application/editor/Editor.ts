@@ -479,10 +479,19 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
     const skippedItems: SkippedMonomerItem[] = [];
-    const reportValidationError = (name: string, reason: string) => {
-      const message = `${name}: ${reason}`;
-      KetcherLogger.error('Editor::updateMonomersLibrary', message);
+    let shouldThrowMonomerLibraryUpdateError = false;
+    const reportValidationError = (
+      name: string,
+      reason: string,
+      shouldThrow = true,
+    ) => {
+      if (reason.startsWith('Editor::updateMonomersLibrary')) {
+        KetcherLogger.error(reason);
+      } else {
+        KetcherLogger.error('Editor::updateMonomersLibrary', reason);
+      }
       skippedItems.push({ name, reason });
+      shouldThrowMonomerLibraryUpdateError ||= shouldThrow;
     };
     let didCommitAnyItem = false;
 
@@ -500,6 +509,11 @@ export class CoreEditor {
         firstMonomer.props.hidden === secondMonomer.props.hidden
       );
     };
+    const getIdtModificationAliases = (monomer?: MonomerItemType) =>
+      Object.values(monomer?.props?.idtAliases?.modifications ?? {}).filter(
+        Boolean,
+      ) as string[];
+
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
         monomer.props?.aliasHELM
@@ -543,8 +557,11 @@ export class CoreEditor {
         newMonomer.props?.aliasBILN &&
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        reportValidationError(
+          newMonomer.props.MonomerName,
+          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+          false,
+        );
         return;
       }
 
@@ -564,6 +581,11 @@ export class CoreEditor {
           return false;
         }
 
+        const newMonomerModificationAliases =
+          getIdtModificationAliases(newMonomer);
+        const existingMonomerModificationAliases =
+          getIdtModificationAliases(monomer);
+
         return (
           (Boolean(newMonomer.props?.aliasHELM) &&
             monomer.props?.aliasHELM === newMonomer.props?.aliasHELM) ||
@@ -574,15 +596,9 @@ export class CoreEditor {
           (Boolean(newMonomer.props?.idtAliases?.base) &&
             monomer.props?.idtAliases?.base ===
               newMonomer.props?.idtAliases?.base) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
-            monomer.props?.idtAliases?.modifications?.endpoint3 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
-            monomer.props?.idtAliases?.modifications?.endpoint5 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
-            monomer.props?.idtAliases?.modifications?.internal ===
-              newMonomer.props?.idtAliases?.modifications?.internal)
+          newMonomerModificationAliases.some((alias) =>
+            existingMonomerModificationAliases.includes(alias),
+          )
         );
       });
 
@@ -636,8 +652,11 @@ export class CoreEditor {
           const offenders = tooLongEntries
             .map(({ alias: field, value }) => `${field}="${value}"`)
             .join(', ');
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          reportValidationError(
+            newMonomer.props.MonomerName,
+            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`,
+            false,
+          );
           return;
         }
       }
@@ -748,7 +767,10 @@ export class CoreEditor {
 
     this.events.updateMonomersLibrary.dispatch();
 
-    if (skippedItems.length > 0) {
+    if (
+      skippedItems.length > 0 &&
+      (didCommitAnyItem || shouldThrowMonomerLibraryUpdateError)
+    ) {
       throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
     }
   }

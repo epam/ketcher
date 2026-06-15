@@ -6,13 +6,13 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
 import svgr from 'vite-plugin-svgr';
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json';
-import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macromolecules/rollup.config';
+import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macromolecules/rollup.config.mjs';
 import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.json';
-import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config';
+import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config.mjs';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import { envVariables as exampleEnv } from './config/webpack.config';
-import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config';
+import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
 import commonjs from 'vite-plugin-commonjs';
 
 const dotEnv = loadEnv('development', '.', '');

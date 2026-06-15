@@ -25,7 +25,7 @@
   "types": "dist/index.d.ts",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
-  "sideEffects": "false",
+  "sideEffects": true,
   "engines": {
     "node": ">=24.14.1"
   },

@@ -16,7 +16,7 @@ test.describe('Open Ketcher', () => {
     Test case: #2496 - chem monomer library
     Description: Switch to Polymer Editor
     */
-    await expect(page.getByText('CHEM')).toBeVisible();
+    await expect(Library(page).chemTab).toBeVisible();
   });
 
   test('Open Chem tab in library', async ({ page }) => {

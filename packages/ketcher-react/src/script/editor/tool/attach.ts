@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { Elements, FunctionalGroup } from 'ketcher-core';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 
 class AttachTool implements Tool {
   private readonly attach: { atomid: number; bondid: number };
@@ -24,8 +24,8 @@ class AttachTool implements Tool {
 
   constructor(editor, attachPoints) {
     this.attach = {
-      atomid: attachPoints.atomid || 0,
-      bondid: attachPoints.bondid || 0,
+      atomid: attachPoints.atomid ?? 0,
+      bondid: attachPoints.bondid ?? 0,
     };
     this.editor = editor;
     this.editor.selection({

@@ -1,12 +1,12 @@
 import {
-  Action,
+  type Action,
   CoordinateTransformation,
   Scale,
   Vec2,
   vectorUtils,
 } from 'ketcher-core';
 import { throttle } from 'lodash';
-import Editor from '../Editor';
+import type Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select/select';
@@ -137,7 +137,7 @@ class RotateController {
 
   private isPartOfFragmentSelected() {
     const allAtoms = this.render.ctab.molecule.atoms;
-    const selectedAtomIds = this.editor.selection()?.atoms || [];
+    const selectedAtomIds = this.editor.selection()?.atoms ?? [];
     const selectedFragmentIdSet = new Set();
 
     selectedAtomIds.forEach((atomId) => {
@@ -264,6 +264,7 @@ class RotateController {
           fill: 'red',
           opacity: 0,
         });
+        circle.node.setAttribute('data-testid', 'rotation-center-handle');
         this.cross = this.paper.set();
         this.cross?.push(cross, circle);
         this.cross?.translate(this.center.x, this.center.y);
@@ -724,14 +725,14 @@ class RotateController {
         const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
           this.getProtractorBaseInfo(newRadius);
         this.drawRotateArc(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           rotateArcStart,
           textPos,
         );
         // NOTE: draw protractor behind arc
         this.drawProtractor(
-          this.rotateTool.dragCtx?.angle || 0,
+          this.rotateTool.dragCtx?.angle ?? 0,
           newRadius,
           degree0Line,
           degree0TextPos,

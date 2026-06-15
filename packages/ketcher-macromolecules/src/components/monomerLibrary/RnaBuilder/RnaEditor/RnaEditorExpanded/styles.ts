@@ -55,6 +55,47 @@ export const GroupsContainer = styled.div<{ compact?: boolean }>`
   margin-top: 16px;
 `;
 
+export const PhosphatePositionContainer = styled.div({
+  marginTop: '12px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '8px',
+});
+
+export const PhosphatePositionLabel = styled.span(({ theme }) => ({
+  fontSize: theme.ketcher.font.size.small,
+  color: theme.ketcher.color.text.light,
+}));
+
+export const PhosphatePositionButtons = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+});
+
+export const PhosphatePositionButton = styled.button<{ selected?: boolean }>(
+  ({ theme, selected }) => ({
+    minWidth: '40px',
+    padding: '4px 8px',
+    borderRadius: theme.ketcher.border.radius.regular,
+    border: selected
+      ? theme.ketcher.outline.selected.small
+      : theme.ketcher.outline.grey.small,
+    color: selected
+      ? theme.ketcher.color.button.text.primary
+      : theme.ketcher.color.text.primary,
+    backgroundColor: selected
+      ? theme.ketcher.color.button.primary.active
+      : theme.ketcher.color.background.primary,
+    cursor: 'pointer',
+    ':disabled': {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+  }),
+);
+
 export const ButtonsContainer = styled.div({
   marginTop: '16px',
   display: 'flex',

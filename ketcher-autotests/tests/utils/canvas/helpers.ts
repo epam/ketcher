@@ -155,7 +155,7 @@ export async function takeEditorScreenshot(
     await page.keyboard.press(`ControlOrMeta+KeyB`);
     options.stylePath = [...(options.stylePath || []), scrollBarHideCssPath];
   }
-  await takeElementScreenshot(page, page.getByTestId(KETCHER_CANVAS), options);
+  await takeElementScreenshot(page, await getVisibleCanvas(page), options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
@@ -318,4 +318,16 @@ export async function selectCanvasArea(
   await CommonLeftToolbar(page).areaSelectionTool(SelectionToolType.Rectangle);
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(page, secondCorner.x, secondCorner.y);
+}
+
+export async function getVisibleCanvas(page: Page): Promise<Locator> {
+  const canvas = page
+    .locator(`[data-testid="${KETCHER_CANVAS}"]:visible`)
+    .first();
+  await canvas.waitFor({
+    state: 'visible',
+    timeout: 10000,
+  });
+
+  return canvas;
 }

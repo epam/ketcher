@@ -1,5 +1,10 @@
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import type { FlipDirection } from 'application/editor/shared/utils.types';
+import type { KetMonomerClass } from 'domain/constants/monomers';
+
+// KetMonomerClass lives in the domain layer; re-exported here for backward
+// compatibility so all existing application-layer imports continue to work.
+export { KetMonomerClass } from 'domain/constants/monomers';
 
 export enum KetNodeType {
   MONOMER = 'monomer',
@@ -96,18 +101,6 @@ export type monomerClass =
   | 'DNA'
   | 'MODDNA';
 
-export enum KetMonomerClass {
-  AminoAcid = 'AminoAcid',
-  Sugar = 'Sugar',
-  Phosphate = 'Phosphate',
-  Base = 'Base',
-  Terminator = 'Terminator',
-  Linker = 'Linker',
-  Unknown = 'Unknown',
-  CHEM = 'CHEM',
-  RNA = 'RNA',
-  DNA = 'DNA',
-}
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
 export interface IKetAttachmentPoint {
@@ -177,6 +170,7 @@ export interface IKetMonomerTemplate {
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
   atoms: KetMonomerTemplateAtom[];
   bonds: [];
   modificationTypes?: string[];
@@ -209,6 +203,7 @@ export interface IKetMonomerGroupTemplate {
   connections?: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
   aliasAxoLabs?: string;
+  aliasBILN?: string;
 }
 
 export interface IKetNodeRef {

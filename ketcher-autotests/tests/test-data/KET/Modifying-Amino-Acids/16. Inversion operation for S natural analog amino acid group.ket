@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -339,6 +340,7 @@
         "fullName": "D-Serine",
         "alias": "dS",
         "aliasHELM": "dS",
+        "aliasBILN": "dS",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

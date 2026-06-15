@@ -7,7 +7,7 @@
 ### Methods
 
 - [getStructureFromStringAsync](StructFormatter.md#getstructurefromstringasync)
-- [getStructureFromStructAsync](StructFormatter.md#getstructurefromstructasync)
+- [getStringFromStructureAsync](StructFormatter.md#getstringfromstructureasync)
 
 ## Methods
 
@@ -31,9 +31,9 @@
 
 ___
 
-### getStructureFromStructAsync
+### getStringFromStructureAsync
 
-▸ **getStructureFromStructAsync**(`struct`): `Promise`<`string`\>
+▸ **getStringFromStructureAsync**(`struct`): `Promise`<`string`\>
 
 #### Parameters
 

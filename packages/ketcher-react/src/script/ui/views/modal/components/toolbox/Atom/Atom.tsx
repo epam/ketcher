@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 
 import Form, {
   Field,
   CustomQueryField,
 } from '../../../../../component/form/form/form';
-import { FC, useMemo, useState } from 'react';
+import { type FC, useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components';
 import {
-  AtomAllAttributeName,
+  type AtomAllAttributeName,
   SettingsManager,
   getAtomCustomQuery,
 } from 'ketcher-core';
@@ -145,7 +145,8 @@ const Atom: FC<Props> = (props: Props) => {
         pseudoAtomValid(value, atomType, isCustomQuery, disableQueryElements),
       atomList: (value: string) =>
         AtomListValid(value, atomType, isCustomQuery),
-      charge: (charge) => chargeValid(charge, isMultipleAtoms, isCustomQuery),
+      charge: (charge) =>
+        chargeValid(charge, isMultipleAtoms, isCustomQuery) ?? false,
       customQuery: (value: string) => customQueryValid(value, isCustomQuery),
     };
   }, [formState.result.atomType, isCustomQuery, isMultipleAtoms]);

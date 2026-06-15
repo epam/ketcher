@@ -6,10 +6,10 @@ import {
   waitForItemsToMergeInitialization,
   waitForRender,
 } from '@utils/common/loaders/waitForRender';
-import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
 import { ClickTarget } from '@tests/pages/constants/contextMenu/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { getVisibleCanvas } from '@utils/canvas';
 
 type BoundingBox = {
   width: number;
@@ -53,26 +53,6 @@ export async function clickAfterItemsToMergeInitialization(
   });
 }
 
-export async function clickInTheMiddleOfTheScreen(
-  page: Page,
-  button: MouseButton = 'left',
-  options: { waitForMergeInitialization: boolean } = {
-    waitForMergeInitialization: false,
-  },
-) {
-  const { x, y } = await getCachedBodyCenter(page);
-
-  if (options.waitForMergeInitialization) {
-    await waitForRender(page, async () => {
-      await clickAfterItemsToMergeInitialization(page, x, y, button);
-    });
-  } else {
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y, { button });
-    });
-  }
-}
-
 export async function clickOnCanvas(
   page: Page,
   x: number,
@@ -102,13 +82,9 @@ export async function clickOnCanvas(
   await waitForRender(
     page,
     async () => {
-      const getCanvas = (page: Page) =>
-        page
-          .getByTestId(KETCHER_CANVAS)
-          .filter({ has: page.locator(':visible') });
       const getRelativeAxisCenter = async (
         page: Page,
-        canvas: any,
+        canvas: Locator,
         fromCenter:
           | 'pageTopLeft'
           | 'pageCenter'
@@ -138,7 +114,7 @@ export async function clickOnCanvas(
 
       const relativeAxisCenter = await getRelativeAxisCenter(
         page,
-        getCanvas(page),
+        await getVisibleCanvas(page),
         options.from ?? 'canvasTopLeft',
       );
       await page.mouse.click(
@@ -156,13 +132,7 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
-  const canvas = page
-    .getByTestId(KETCHER_CANVAS)
-    .filter({ has: page.locator(':visible') });
-  await canvas.waitFor({
-    state: 'attached',
-    timeout: 10000,
-  });
+  const canvas = await getVisibleCanvas(page);
   const box = await canvas.boundingBox();
   if (!box) {
     throw new Error('Unable to get boundingBox for canvas');
@@ -173,9 +143,43 @@ export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
   };
 }
 
-export async function clickOnMiddleOfCanvas(page: Page) {
+export async function clickInTheMiddleOfTheCanvas(
+  page: Page,
+  button: MouseButton = 'left',
+  options: {
+    waitForMergeInitialization?: boolean;
+    waitForRenderTimeOut?: number;
+  } = {},
+) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await clickOnCanvas(page, x, y);
+
+  if (options.waitForMergeInitialization) {
+    const canvas = await getVisibleCanvas(page);
+    const box = await canvas.boundingBox();
+    if (!box) {
+      throw new Error('Unable to get boundingBox for canvas');
+    }
+
+    await waitForRender(
+      page,
+      async () => {
+        await clickAfterItemsToMergeInitialization(
+          page,
+          box.x + x,
+          box.y + y,
+          button,
+        );
+      },
+      options.waitForRenderTimeOut,
+    );
+
+    return;
+  }
+
+  await clickOnCanvas(page, x, y, {
+    button,
+    waitForRenderTimeOut: options.waitForRenderTimeOut,
+  });
 }
 
 export async function moveMouseToTheMiddleOfTheScreen(page: Page) {

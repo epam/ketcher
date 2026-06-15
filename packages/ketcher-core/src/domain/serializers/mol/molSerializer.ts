@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from './mol.types';
+import type { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
-import { Serializer } from '../serializers.types';
-import { Struct } from 'domain/entities';
+import type { Serializer } from '../serializers.types';
+import type { Struct } from 'domain/entities/struct';
 import { KetcherLogger } from 'utilities';
-import { KetSerializer } from 'domain/serializers';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
 
 export class MolSerializer implements Serializer<Struct> {
   static readonly DefaultOptions: MolSerializerOptions = {

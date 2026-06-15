@@ -1,34 +1,30 @@
-import {
-  Chem,
-  Peptide,
-  Phosphate,
-  Vec2,
-  Nucleotide,
-  Nucleoside,
-  EmptySequenceNode,
-  LinkerSequenceNode,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
-import {
-  PeptideSequenceItemRenderer,
-  ChemSequenceItemRenderer,
-  PhosphateSequenceItemRenderer,
-  NucleotideSequenceItemRenderer,
-  EmptySequenceItemRenderer,
-  BaseMonomerRenderer,
-  BaseSequenceItemRenderer,
-  NucleosideSequenceItemRenderer,
-  UnresolvedMonomerSequenceItemRenderer,
-  UnsplitNucleotideSequenceItemRenderer,
-} from 'application/render';
-import { SequenceNode } from 'domain/entities/monomer-chains/types';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import type { Vec2 } from 'domain/entities/vec2';
+import { PeptideSequenceItemRenderer } from './PeptideSequenceItemRenderer';
+import { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
+import { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
+import { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
+import { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
+import type { BaseMonomerRenderer } from '../BaseMonomerRenderer';
+import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
+import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
+import { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
+import { UnsplitNucleotideSequenceItemRenderer } from './UnsplitNucleotideSequenceItemRenderer';
+import type { SequenceNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SequenceNodeRendererFactory {
   static fromNode(

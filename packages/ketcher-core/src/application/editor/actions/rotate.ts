@@ -25,17 +25,15 @@ import {
   SGroupDataMove,
   TextMove,
 } from '../operations';
-import {
-  Bond,
-  Fragment,
-  MonomerMicromolecule,
-  Struct,
-  Vec2,
-} from 'domain/entities';
-import { ReStruct } from 'application/render';
+import { Bond } from 'domain/entities/bond';
+import { Fragment } from 'domain/entities/fragment';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
+import type { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
-import { EditorSelection } from '../editor.types';
+import type { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 import type { FlipDirection } from '../shared/utils.types';
 import { flipPointByCenter, rotateDelta } from '../shared/utils';
@@ -47,7 +45,7 @@ export function fromFlip(
   center: Vec2,
 ) {
   const action = new Action();
-  const structToFlip = selection || structSelection(reStruct.molecule);
+  const structToFlip = selection ?? structSelection(reStruct.molecule);
 
   action.mergeWith(
     fromStructureFlip(reStruct, structToFlip, flipDirection, center),
@@ -236,7 +234,7 @@ function fromStructureFlip(
     action.addOp(new AtomMove(atomId, difference));
   });
 
-  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms || []);
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms ?? []);
   sGroups.forEach((sGroup) => {
     if (!sGroup.pp) {
       return;

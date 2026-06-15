@@ -2,7 +2,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@fixtures';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { MicroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
@@ -10,7 +10,7 @@ import {
   takeEditorScreenshot,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  clickInTheMiddleOfTheScreen,
+  clickInTheMiddleOfTheCanvas,
   MolFileFormat,
 } from '@utils';
 
@@ -713,13 +713,13 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Values 'ABS' and "CH3" aren't overlapped on canvas.
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUp);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });
 
-    await CommonLeftToolbar(page).bondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 8 }).click({
       force: true,
     });
@@ -733,8 +733,8 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Stereo flag is presented as 'ABS' without 'Chiral'
     */
     await BottomToolbar(page).clickRing(RingButton.Benzene);
-    await clickInTheMiddleOfTheScreen(page);
-    await CommonLeftToolbar(page).bondTool(MicroBondType.SingleUp);
+    await clickInTheMiddleOfTheCanvas(page);
+    await CommonLeftToolbar(page).bondTool(MicroBondTool.SingleUp);
     await getAtomLocator(page, { atomLabel: 'C', atomId: 10 }).click({
       force: true,
     });

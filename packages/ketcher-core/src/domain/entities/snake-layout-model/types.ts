@@ -1,4 +1,5 @@
-import { BaseMonomer, Chain } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
 import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
 

@@ -43,3 +43,4 @@ ketcher-autotests/results.json
 .pnp.*
 .yarn/*
 output.txt
+.github/agents/*

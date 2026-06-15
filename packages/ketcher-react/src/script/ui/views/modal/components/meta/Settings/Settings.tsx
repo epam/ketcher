@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types';
+import type { BaseCallProps, BaseProps } from '../../../modal.types';
 import Form, { Field } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
@@ -37,7 +37,7 @@ import OpenButton from '../../../../../component/view/openbutton';
 import { SaveButton } from '../../../../../component/view/savebutton';
 import Select from '../../../../../component/form/Select';
 import Accordion from './Accordion';
-import { KetcherLogger, StructService } from 'ketcher-core';
+import { type StructService, KetcherLogger } from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
 import { connect } from 'react-redux';
@@ -54,6 +54,7 @@ import { onAction } from 'src/script/ui/state/shared';
 import clsx from 'clsx';
 
 interface SettingsProps extends BaseProps {
+  ketcherId: string;
   initState: any;
   appOpts: {
     version: string;
@@ -72,6 +73,9 @@ interface SettingsCallProps extends BaseCallProps {
   onReset: () => void;
   onACSStyle: (result) => void;
 }
+
+type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
+  Pick<BaseCallProps, 'onOk'>;
 
 const defaultSettings = getDefaultOptions();
 // Keep the portaled settings menu aligned to the trigger while preserving
@@ -632,7 +636,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
@@ -645,7 +649,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onOk: (res) => {
     const [result, initState] = res;
 
-    dispatch(saveSettings(result));
+    dispatch(saveSettings(result, ownProps.ketcherId));
     ownProps.onOk(result);
 
     const showNotification =

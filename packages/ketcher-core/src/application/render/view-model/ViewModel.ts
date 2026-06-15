@@ -1,8 +1,10 @@
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { Bond } from 'domain/entities/CoreBond';
+import type { Bond } from 'domain/entities/CoreBond';
 import { KetcherLogger } from 'utilities';
-import { Box2Abs, Pile, Vec2 } from 'domain/entities';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { Pile } from 'domain/entities/pile';
+import { Vec2 } from 'domain/entities/vec2';
+import type { Atom } from 'domain/entities/CoreAtom';
 import { Loop } from 'application/render/view-model/Loop';
 
 export class ViewModel {

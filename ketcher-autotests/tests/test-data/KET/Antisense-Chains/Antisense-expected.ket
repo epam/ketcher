@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -900,6 +901,13 @@
                 }
             }
         ],
+        "idtAliases": {
+            "base": "Phos",
+            "modifications": {
+                "endpoint3": "/3Phos/",
+                "endpoint5": "/5Phos/"
+            }
+        },
         "naturalAnalogShort": "P"
     },
     "monomer3": {
@@ -1627,6 +1635,7 @@
         "fullName": "3-(1-naphthyl)-alanine",
         "alias": "1Nal",
         "aliasHELM": "1Nal",
+        "aliasBILN": "1Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -1899,6 +1908,7 @@
         "fullName": "S-benzylcysteine",
         "alias": "Cys_Bn",
         "aliasHELM": "Cys_Bn",
+        "aliasBILN": "Cys_Bn",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -2104,6 +2114,7 @@
         "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "alias": "AspOMe",
         "aliasHELM": "Asp_OMe",
+        "aliasBILN": "Asp_OMe",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,

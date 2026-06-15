@@ -16,7 +16,7 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1" BoundingBox="247.643402 281.738403 634.356567 198.261581">
+    <page HeightPages="1" WidthPages="1" BoundingBox="247.643402 280.988403 634.356567 197.511597">
         <fragment id="4">
             <n id="5" Element="8" NumHydrogens="1" p="124.093697 -0.000000">
                 <t p="124.093697 -0.000000" LabelJustification="Left">
@@ -48,7 +48,7 @@
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <n id="11" p="98.647324 12.840657" Geometry="Tetrahedral" BondOrdering="5 9 12 5" EnhancedStereoType="Absolute"/>
+            <n id="11" p="98.647324 12.840643" Geometry="Tetrahedral" BondOrdering="5 9 12 5" EnhancedStereoType="Absolute"/>
             <n id="12" p="98.647324 39.450546" Geometry="Tetrahedral" BondOrdering="6 11 13 5" EnhancedStereoType="Absolute"/>
             <n id="13" p="73.049927 52.447800" Geometry="Tetrahedral" BondOrdering="7 12 14 5" EnhancedStereoType="Absolute"/>
             <n id="14" p="47.609169 39.456123" Geometry="Tetrahedral" BondOrdering="8 13 15 5" EnhancedStereoType="And" EnhancedStereoGroupNum="1"/>

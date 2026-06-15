@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import { TransientView } from 'application/render/renderers/TransientView/TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
-import { Coordinates } from 'application/editor';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { Vec2 } from 'domain/entities';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 export type RotationViewParams = {
   center: Vec2;
@@ -30,6 +30,11 @@ export type RotationViewParams = {
   rotationAngle?: number;
   isRotating?: boolean;
   cursor?: Vec2;
+  // Direction (in radians, measured the same way as Math.atan2) from the
+  // rotation center to the rotation handle at the moment rotation started.
+  // The protractor uses this as its 0°. Defaults to straight up in canvas
+  // coordinates (-π/2, since +Y is downward in screen space).
+  startAngle?: number;
 };
 
 type RotationHandleEvent = {
@@ -59,6 +64,8 @@ const STYLE = {
   DEGREE_TEXT_MARGIN: 10,
   DEGREE_LINE_LENGTH: 15,
   MIN_RADIUS_FOR_TEXT: 65,
+  CURRENT_ANGLE_X_OFFSET: 20,
+  CURRENT_ANGLE_Y_OFFSET: 10,
 };
 
 const LEFT_ARROW_PATH =
@@ -135,6 +142,7 @@ export class RotationView extends TransientView {
       rotationAngle = 0,
       isRotating = false,
       cursor,
+      startAngle: startAngleParam,
     } = params;
 
     if (!isRotating || !RotationView.wasRotating) {
@@ -180,7 +188,7 @@ export class RotationView extends TransientView {
           STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
         }`;
 
-    const link = transientLayer
+    transientLayer
       .append('path')
       .attr('d', linkPath)
       .attr('stroke', isRotating ? STYLE.ACTIVE_COLOR : STYLE.INITIAL_COLOR)
@@ -220,7 +228,7 @@ export class RotationView extends TransientView {
         );
       });
 
-    const crossPath = crossGroup
+    crossGroup
       .append('path')
       .attr(
         'd',
@@ -230,21 +238,6 @@ export class RotationView extends TransientView {
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
       .attr('style', 'pointer-events: none');
-
-    if (!isRotating) {
-      const hoverLinkPath = `M${center.x},${center.y}L${handleCenterX},${handleCenterY}`;
-      const defaultLinkPath = linkPath;
-
-      crossGroup
-        .on('mouseenter', () => {
-          crossPath.attr('stroke', STYLE.ACTIVE_COLOR);
-          link.attr('d', hoverLinkPath).attr('stroke', STYLE.ACTIVE_COLOR);
-        })
-        .on('mouseleave', () => {
-          crossPath.attr('stroke', STYLE.INITIAL_COLOR);
-          link.attr('d', defaultLinkPath).attr('stroke', STYLE.INITIAL_COLOR);
-        });
-    }
 
     // Draw handle circle
     const handleGroup = transientLayer
@@ -352,8 +345,11 @@ export class RotationView extends TransientView {
           .attr('stroke-dasharray', '4,4')
           .attr('style', 'pointer-events: none');
 
-        // Draw protractor degree ticks and labels (as in rotate-controller)
-        const startAngle = -Math.PI / 2;
+        // Draw protractor degree ticks and labels (as in rotate-controller).
+        // Use the click direction from the rotation tool so the 0° label,
+        // dashed handle line, and handle stay aligned even after the rotation
+        // center has been moved.
+        const startAngle = startAngleParam ?? -Math.PI / 2;
         const toRadians = (deg: number) => (deg * Math.PI) / 180;
         const predefinedDegrees = [
           0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60,
@@ -387,12 +383,14 @@ export class RotationView extends TransientView {
           const textRadius = radius + STYLE.DEGREE_TEXT_MARGIN + tickLength;
           const textX = center.x + textRadius * Math.cos(angle);
           const textY = center.y + textRadius * Math.sin(angle);
-          const textFill =
-            diff > 90
-              ? 'none'
-              : degree !== 0 && degree === currentDegrees
-              ? STYLE.ACTIVE_COLOR
-              : STYLE.INITIAL_COLOR;
+          let textFill: string;
+          if (diff > 90) {
+            textFill = 'none';
+          } else if (degree !== 0 && degree === currentDegrees) {
+            textFill = STYLE.ACTIVE_COLOR;
+          } else {
+            textFill = STYLE.INITIAL_COLOR;
+          }
 
           transientLayer
             .append('text')
@@ -421,8 +419,14 @@ export class RotationView extends TransientView {
         const angleInDegrees = Math.round((rotationAngle * 180) / Math.PI);
         const textAngle = startAngle;
         const textRadius = radius + 20;
-        const textX = center.x + textRadius * Math.cos(textAngle);
-        const textY = center.y + textRadius * Math.sin(textAngle);
+        const textX =
+          center.x +
+          textRadius * Math.cos(textAngle) +
+          STYLE.CURRENT_ANGLE_X_OFFSET;
+        const textY =
+          center.y +
+          textRadius * Math.sin(textAngle) +
+          STYLE.CURRENT_ANGLE_Y_OFFSET;
 
         transientLayer
           .append('text')

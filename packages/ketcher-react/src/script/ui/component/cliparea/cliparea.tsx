@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef, RefObject } from 'react';
+import { type RefObject, Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
 import {
@@ -29,6 +29,13 @@ const ieCb: DataTransfer | undefined =
   typeof window !== 'undefined'
     ? (window as Window & { clipboardData?: DataTransfer }).clipboardData
     : undefined;
+
+const isSafariBrowser = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+const isAsyncClipboardWriteAvailable = (): boolean =>
+  isClipboardAPIAvailable() && !isSafariBrowser();
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;
@@ -68,6 +75,7 @@ interface ClipAreaProps {
     data: ClipboardItem[] | ClipboardData,
     isSmarts?: boolean,
   ) => Promise<void>;
+  onLegacyCopy: () => ClipboardData | null | undefined;
   onLegacyCut: () => ClipboardData | null | undefined;
   onLegacyPaste: (data: ClipboardData, isSmarts?: boolean) => void;
   target?: HTMLElement;
@@ -117,7 +125,7 @@ class ClipArea extends Component<ClipAreaProps> {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           this.props.onCopy().then((data) => {
             if (!data) {
               return;
@@ -128,39 +136,47 @@ class ClipArea extends Component<ClipAreaProps> {
             });
           });
         } else {
-          if (needSkipCopyEvent) {
-            needSkipCopyEvent = false;
-            return;
+          if (isSafariBrowser()) {
+            const data = this.props.onLegacyCopy();
+            if (data && event.clipboardData) {
+              legacyCopy(event.clipboardData, data);
+            }
+            event.preventDefault();
+          } else {
+            if (needSkipCopyEvent) {
+              needSkipCopyEvent = false;
+              return;
+            }
+            needSkipCopyEvent = true;
+
+            this.props.onCopy().then((data) => {
+              // It is possible to have access to clipboard data through evt.clipboardData
+              // only in synchronous code. That's why we dispatch 'copy' event here after server call.
+              // It will not work with long operations which time > 5 sec, because browser will close access
+              // to clipboard data if user did not interact with application.
+              addEventListener(
+                'copy',
+                (evt: Event) => {
+                  const clipboardEvent = evt as ClipboardEvent;
+                  if (clipboardEvent.clipboardData && data) {
+                    legacyCopy(clipboardEvent.clipboardData, data);
+                  }
+                  evt.preventDefault();
+                },
+                { once: true },
+              );
+              document.execCommand('copy');
+            });
+
+            event.preventDefault();
           }
-          needSkipCopyEvent = true;
-
-          this.props.onCopy().then((data) => {
-            // It is possible to have access to clipboard data through evt.clipboardData
-            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-            // It will not work with long operations which time > 5 sec, because browser will close access
-            // to clipboard data if user did not interact with application.
-            addEventListener(
-              'copy',
-              (evt: Event) => {
-                const clipboardEvent = evt as ClipboardEvent;
-                if (clipboardEvent.clipboardData && data) {
-                  legacyCopy(clipboardEvent.clipboardData, data);
-                }
-                evt.preventDefault();
-              },
-              { once: true },
-            );
-            document.execCommand('copy');
-          });
-
-          event.preventDefault();
         }
       },
       cut: (event: ClipboardEvent) => {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        if (isAsyncClipboardWriteAvailable()) {
           (async () => {
             const data = await this.props.onCut();
             if (!data) return;
@@ -214,8 +230,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 this.props.onPaste(data, true);
               }
             } else {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (window as any).ketcher?.editor?.errorHandler?.(
+              window.ketcher?.editor?.errorHandler?.(
                 "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
               );
             }
@@ -297,11 +312,13 @@ async function copy(data: ClipboardData): Promise<void> {
     const clipboardItem = new ClipboardItem(clipboardItemData);
 
     // Chrome: clipboardItem.presentationStyle is undefined
+    // Safari-specific check for presentationStyle property
+    const itemWithPresentationStyle = clipboardItem as ClipboardItem & {
+      presentationStyle?: string;
+    };
     if (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (clipboardItem as any).presentationStyle &&
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (clipboardItem as any).presentationStyle === 'unspecified'
+      itemWithPresentationStyle.presentationStyle &&
+      itemWithPresentationStyle.presentationStyle === 'unspecified'
     ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Command } from 'domain/entities/Command';
-import { CoreEditor } from './Editor';
+import type { Command } from 'domain/entities/Command';
+import type { CoreEditor } from './Editor';
 import assert from 'assert';
-import { ketcherProvider } from 'application/utils';
+import { ketcherProvider } from 'application/ketcherProvider';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -29,7 +29,7 @@ export class EditorHistory {
 
   private static _instance: object | null = null;
 
-  private constructor(editor: CoreEditor) {
+  constructor(editor: CoreEditor) {
     this.editor = editor;
     this.historyPointer = 0;
   }

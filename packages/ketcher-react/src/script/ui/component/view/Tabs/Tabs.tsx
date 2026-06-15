@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, ComponentType, MouseEvent, KeyboardEvent } from 'react';
+import {
+  type ComponentType,
+  type MouseEvent,
+  type KeyboardEvent,
+  Component,
+} from 'react';
 import classes from './Tabs.module.less';
 import clsx from 'clsx';
 
@@ -42,7 +47,7 @@ class Tabs extends Component<TabsProps, TabsState> {
   constructor(props: TabsProps) {
     super(props);
     this.state = {
-      tabIndex: props.tabIndex || 0,
+      tabIndex: props.tabIndex ?? 0,
     };
     this.props.changeTab(this.state.tabIndex);
   }

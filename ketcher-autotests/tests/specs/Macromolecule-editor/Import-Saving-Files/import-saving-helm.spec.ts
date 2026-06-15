@@ -7,9 +7,10 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
 } from '@utils';
-import { closeOpenStructure, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -1133,7 +1134,7 @@ const incorrectHELMStrings: IHELMString[] = [
       "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
     HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
     expectedErrorMessage:
-      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'Ket Base Monomer: Unknown attachment point 'R4' in monomer 'A6OH(monomer0)''",
+      "Convert error! Given string could not be loaded as (query or plain) molecule or reaction, see the error messages: 'SEQUENCE loader: Unknown attachment point 'R4' in monomer 'A6OH(monomer0)''",
   },
   {
     helmDescription: '70. Missing monomer name',
@@ -1330,7 +1331,7 @@ test.describe('Import incorrect HELM sequence: ', () => {
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
       await ErrorMessageDialog(page).close();
-      await closeOpenStructure(page);
+      await OpenStructureDialog(page).closeWindow();
 
       // Test should be skipped if related bug exists
       test.fixme(

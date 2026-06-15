@@ -1,6 +1,6 @@
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseBond } from 'domain/entities/BaseBond';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';

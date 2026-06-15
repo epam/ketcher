@@ -1,7 +1,7 @@
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class EmptySequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;

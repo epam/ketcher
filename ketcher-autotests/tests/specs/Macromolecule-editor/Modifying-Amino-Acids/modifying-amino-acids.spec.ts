@@ -29,6 +29,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
 
@@ -864,12 +865,11 @@ test(`1. Check that amino acid modifications are not present in list if they are
     monomerType: MonomerType.Peptide,
   }).first();
 
-  await ContextMenu(page, randomPeptide).open();
-
-  const modifyAminoAcidsOption = page
-    .getByTestId(MonomerOption.ModifyAminoAcids)
-    .first();
-  await expect(modifyAminoAcidsOption).toHaveCount(0);
+  expect(
+    await ContextMenu(page, randomPeptide).isOptionVisible(
+      MonomerOption.ModifyAminoAcids,
+    ),
+  ).toBe(false);
 });
 
 test('2. Check that phosphorylation modifies only eligable monomers', async () => {
@@ -1483,7 +1483,7 @@ test(`18. Check if the original monomer had a side-chain connection, but the rep
     hideMonomerPreview: true,
   });
 
-  await page.getByTitle('Yes').click();
+  await ConfirmYourActionDialog(page).yes();
 
   await takeEditorScreenshot(page, {
     hideMacromoleculeEditorScrollBars: true,

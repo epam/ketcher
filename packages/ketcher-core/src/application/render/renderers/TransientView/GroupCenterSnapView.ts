@@ -1,7 +1,8 @@
 import { TransientView } from './TransientView';
-import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer, Vec2 } from 'domain/entities';
-import { Coordinates } from 'application/editor';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Vec2 } from 'domain/entities/vec2';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import { MonomerSize } from 'domain/constants';
 
 export type GroupCenterSnapViewParams = {

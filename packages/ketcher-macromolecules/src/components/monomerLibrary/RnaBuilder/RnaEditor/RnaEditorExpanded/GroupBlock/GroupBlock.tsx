@@ -18,13 +18,14 @@ import { IGroupBlockProps } from './types';
 import { useIsCompactView } from 'hooks';
 import { GroupBlockCompact } from './GroupBlockCompact';
 import { GroupBlockWide } from './GroupBlockWide';
+import { PropsWithChildren } from 'react';
 
-export const GroupBlock = (props: IGroupBlockProps) => {
+export const GroupBlock = (props: IGroupBlockProps & PropsWithChildren) => {
   const isCompactView = useIsCompactView();
 
   return isCompactView ? (
-    <GroupBlockCompact {...props} />
+    <GroupBlockCompact {...props}>{props.children}</GroupBlockCompact>
   ) : (
-    <GroupBlockWide {...props} />
+    <GroupBlockWide {...props}>{props.children}</GroupBlockWide>
   );
 };

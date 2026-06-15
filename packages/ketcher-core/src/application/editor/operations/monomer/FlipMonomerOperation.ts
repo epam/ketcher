@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import BaseOperation from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
-import { ReStruct } from 'application/render';
+import BaseOperation from 'application/editor/operations/BaseOperation';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { ReStruct } from 'application/render';
 import type { FlipDirection } from 'application/editor/shared/utils.types';
-import { MonomerMicromolecule } from 'domain/entities';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type FlipMonomerData = {
   id: number;

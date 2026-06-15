@@ -1,18 +1,19 @@
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import {
-  FixedPrecisionCoordinates,
-  KetFileMultitailArrowNode,
+  type KetFileMultitailArrowNode,
+  type MultitailArrowsReferencePositions,
   MultitailArrow as MicromoleculeMultitailArrow,
-  MultitailArrowsReferencePositions,
-  Pool,
-  Vec2,
-} from 'domain/entities';
-import { KetFileNode } from 'domain/serializers';
-import { BaseRenderer } from 'application/render';
-import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
+} from 'domain/entities/multitailArrow';
+import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
+import type { Pool } from 'domain/entities/pool';
+import { Vec2 } from 'domain/entities/vec2';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
+import type { BaseRenderer } from 'application/render';
+import type { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 
 export class MultitailArrow extends DrawingEntity {
   public renderer?: MultitailArrowRenderer = undefined;
+  public arrowId?: number;
 
   constructor(
     private spineTopX: FixedPrecisionCoordinates,

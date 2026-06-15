@@ -15,21 +15,22 @@
  ***************************************************************************/
 
 import {
-  AutomapMode,
-  CalculateMacromoleculePropertiesResult,
-  CalculateProps,
-  CalculateResult,
-  CheckResult,
-  CheckTypes,
+  type AutomapMode,
+  type CalculateMacromoleculePropertiesResult,
+  type CalculateProps,
+  type CalculateResult,
+  type CheckResult,
+  type CheckTypes,
+  type ConvertResult,
+  type InfoResult,
+  type OutputFormatType,
+  type StructService,
   ChemicalMimeType,
-  ConvertResult,
-  InfoResult,
-  OutputFormatType,
-  StructService,
 } from 'domain/services';
-import { StructOrString } from 'application/indigo.types';
-import { KetSerializer } from 'domain/serializers';
-import { SequenceType, Struct } from 'domain/entities';
+import type { StructOrString } from 'application/indigo.types';
+import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { SequenceType } from 'domain/entities/monomer-chains/types';
+import type { Struct } from 'domain/entities/struct';
 import { defaultBondThickness } from './editor';
 
 const defaultTypes: Array<CheckTypes> = [

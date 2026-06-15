@@ -80,9 +80,9 @@ export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {
 }
 
 export function getPresetUniqueKey(preset: IRnaPreset) {
-  return `${preset.name}_${preset.base?.label || '.'}_${
-    preset.sugar?.label || '.'
-  }_${preset.phosphate?.label || '.'}`;
+  return `${preset.name}_${preset.base?.label ?? '.'}_${
+    preset.sugar?.label ?? '.'
+  }_${preset.phosphate?.label ?? '.'}`;
 }
 
 export const librarySlice: Slice = createSlice({
@@ -155,7 +155,7 @@ export const librarySlice: Slice = createSlice({
 
       const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
-      ) || []) as string[];
+      ) ?? []) as string[];
 
       if (state.favorites[key]) {
         delete state.favorites[key];
@@ -371,6 +371,7 @@ export const selectFilteredMonomers = createSelector(
       name = '',
       fullName = '',
       helmAlias: string | undefined = '',
+      bilnAlias: string | undefined = '',
       axoLabsAlias: string | undefined = '',
       modificationTypes: string[] | undefined = [],
     ) => {
@@ -386,6 +387,7 @@ export const selectFilteredMonomers = createSelector(
         : '';
 
       const helmAliasLower = helmAlias?.toLowerCase() ?? '';
+      const bilnAliasLower = bilnAlias?.toLowerCase() ?? '';
       const axoLabsAliasLower = axoLabsAlias?.toLowerCase() ?? '';
       const modificationTypesLower =
         modificationTypes && modificationTypes.length > 0
@@ -473,6 +475,9 @@ export const selectFilteredMonomers = createSelector(
       const matchesHelmAlias = helmAliasLower
         ? helmAliasLower.includes(searchFilter)
         : false;
+      const matchesBilnAlias = bilnAliasLower
+        ? bilnAliasLower.includes(searchFilter)
+        : false;
       const matchesAxoLabsAlias = axoLabsAliasLower
         ? axoLabsAliasLower.includes(searchFilter)
         : false;
@@ -486,6 +491,7 @@ export const selectFilteredMonomers = createSelector(
         matchesIdtBase ||
         matchesIdtModifications ||
         matchesHelmAlias ||
+        matchesBilnAlias ||
         matchesAxoLabsAlias ||
         matchesModificationTypes;
 
@@ -522,6 +528,7 @@ export const selectFilteredMonomers = createSelector(
                 MonomerName,
                 idtAliases,
                 aliasHELM,
+                aliasBILN,
                 aliasAxoLabs,
                 modificationTypes,
               } = monomer.monomerItem.props;
@@ -532,6 +539,7 @@ export const selectFilteredMonomers = createSelector(
                 Name,
                 MonomerName,
                 aliasHELM,
+                aliasBILN,
                 aliasAxoLabs,
                 modificationTypes,
               );
@@ -543,6 +551,7 @@ export const selectFilteredMonomers = createSelector(
             MonomerName,
             idtAliases,
             aliasHELM,
+            aliasBILN,
             aliasAxoLabs,
             modificationTypes,
           } = (item as MonomerItemType).props;
@@ -553,6 +562,7 @@ export const selectFilteredMonomers = createSelector(
             Name,
             MonomerName,
             aliasHELM,
+            aliasBILN,
             aliasAxoLabs,
             modificationTypes,
           );

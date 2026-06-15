@@ -17,6 +17,7 @@ import {
   IKetIdtAliases,
   IKetTemplateConnection,
   MonomerItemType,
+  RnaPhosphatePosition,
 } from 'ketcher-core';
 
 export interface IExpandIconProps {
@@ -32,10 +33,11 @@ export interface IRnaPreset {
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
-  connections?: IKetTemplateConnection[];
+  phosphatePosition?: RnaPhosphatePosition;
   default?: boolean;
   favorite?: boolean;
   readonly idtAliases?: IKetIdtAliases;
   readonly aliasAxoLabs?: string;
   editedName?: boolean;
+  connections?: IKetTemplateConnection[];
 }

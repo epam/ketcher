@@ -1,8 +1,8 @@
-import { BaseOperation } from 'application/editor/operations/base';
-import { OperationType } from 'application/editor';
-import { MonomerCreationState, ReStruct } from 'application/render';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import { OperationType } from 'application/editor/operations/OperationType';
+import type { MonomerCreationState, ReStruct } from 'application/render';
 import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 
 export class ReassignLeavingAtomOperation extends BaseOperation {
   constructor(

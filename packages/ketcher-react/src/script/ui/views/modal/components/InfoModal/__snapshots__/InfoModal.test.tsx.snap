@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -195,7 +195,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],
@@ -207,7 +207,7 @@ Object {
 `;
 
 exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
-Object {
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -353,7 +353,7 @@ Object {
   "queryByText": [Function],
   "queryByTitle": [Function],
   "rerender": [Function],
-  "store": Object {
+  "store": {
     "@@observable": [Function],
     "dispatch": [Function],
     "getState": [Function],

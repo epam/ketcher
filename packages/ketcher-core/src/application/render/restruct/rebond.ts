@@ -14,29 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  FunctionalGroup,
-  HalfBond,
-  SGroup,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import type { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { HalfBond } from 'domain/entities/halfBond';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import { LayerMap, StereoColoringType } from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { RenderOptions, RenderOptionStyles } from '../render.types';
+import type { RenderOptions, RenderOptionStyles } from '../render.types';
 import { isNumber } from 'lodash';
-import { Visel } from 'application/render';
-import { Coordinates } from 'application/editor';
+import Visel from './visel';
+import { Coordinates } from 'application/editor/shared/coordinates';
+
+type FragmentSelectionPreviewOptions = {
+  disabled?: boolean;
+};
 
 class ReBond extends ReObject {
   b: Bond;
@@ -554,6 +556,7 @@ class ReBond extends ReObject {
   public drawFragmentSelectionPreview(
     render: Render,
     atomIdToDrawArrows: number,
+    options?: FragmentSelectionPreviewOptions,
   ) {
     this.hovering?.node?.remove();
 
@@ -608,6 +611,9 @@ class ReBond extends ReObject {
     );
     backgroundRect.rotate(this.b.angle, atom1Position.x, atom1Position.y);
 
+    // Use gray color for blocked directions, blue for available directions
+    const strokeColor = options?.disabled ? '#9ab5b8' : '#365CFF';
+
     const contour = render.paper
       .rect(
         atom1Position.x,
@@ -616,7 +622,7 @@ class ReBond extends ReObject {
         contourSize.y,
         contourBorderRadius,
       )
-      .attr({ fill: 'none', stroke: '#365CFF', 'stroke-width': 0.7 });
+      .attr({ fill: 'none', stroke: strokeColor, 'stroke-width': 0.7 });
 
     render.ctab.addReObjectPath(LayerMap.additionalInfo, newVisel, contour);
     // TODO find another way instead of this.visel.paths[0] to move by Z only bond skeleton without selection, hover etc
@@ -662,7 +668,7 @@ class ReBond extends ReObject {
             }`,
         )
         .attr({
-          stroke: '#365CFF',
+          stroke: strokeColor,
           'stroke-width': 2,
         });
 
@@ -689,23 +695,31 @@ function findIncomingStereoUpBond(
     const neibond = restruct.bonds.get(hb.bid);
 
     if (!neibond) return false;
+
     const singleUp =
       neibond.b.type === Bond.PATTERN.TYPE.SINGLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.UP;
 
     if (singleUp) {
+      if (Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b)) {
+        return false;
+      }
       return (
         neibond.b.end === hb.begin ||
         (neibond.boldStereo && includeBoldStereoBond)
       );
     }
 
-    return !!(
+    if (
       neibond.b.type === Bond.PATTERN.TYPE.DOUBLE &&
       neibond.b.stereo === Bond.PATTERN.STEREO.NONE &&
       includeBoldStereoBond &&
       neibond.boldStereo
-    );
+    ) {
+      return !Bond.isBondToHiddenLeavingGroup(restruct.molecule, neibond.b);
+    }
+
+    return false;
   });
 }
 
@@ -721,10 +735,16 @@ function findIncomingUpBonds(
     return pos < 0 ? -1 : atom.neighbors[pos];
   });
 
-  bond.neihbid1 = restruct.atoms.get(bond.b.begin)?.showLabel
-    ? -1
-    : halfbonds[0];
-  bond.neihbid2 = restruct.atoms.get(bond.b.end)?.showLabel ? -1 : halfbonds[1];
+  // Keep bold stereo rendering independent from endpoint label visibility:
+  // half-bond coordinates are already shifted away from visible labels.
+  bond.neihbid1 =
+    restruct.atoms.get(bond.b.begin)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[0];
+  bond.neihbid2 =
+    restruct.atoms.get(bond.b.end)?.showLabel && !bond.boldStereo
+      ? -1
+      : halfbonds[1];
 }
 
 function checkStereoBold(bid0, bond, restruct) {
@@ -945,8 +965,23 @@ function getBondSingleUpPath(
   // eslint-disable-line max-params
   const a = hb1.p;
   const b = hb2.p;
-  const n = hb1.norm;
   const options = render.options;
+  // Prefer the stored half-bond normal; fall back to a normal derived from
+  // the actual rendered endpoints when hb1.norm is degenerate.
+  // Root cause fixed in struct.ts: halfBondUpdate now runs before
+  // atomAddNeighbor so hb.norm is always populated. This fallback is kept
+  // as a safety net for any future re-init path that skips halfBondUpdate.
+  const DEGENERATE_LENGTH = 1e-4;
+  let n = hb1.norm;
+  if (!n || n.length() < DEGENERATE_LENGTH) {
+    const renderedDir = b.sub(a);
+    if (renderedDir.length() < DEGENERATE_LENGTH) {
+      // Both the stored normal and the rendered direction are degenerate —
+      // the bond has zero length; skip drawing to avoid a zero-width wedge.
+      return null;
+    }
+    n = renderedDir.normalized().rotateSC(1, 0);
+  }
   const bsp = 0.7 * options.stereoBond;
   let b2 = b.addScaled(n, bsp);
   let b3 = b.addScaled(n, -bsp);

@@ -1048,6 +1048,38 @@ updateMonomersLibrary(
 - `monomersData` - Monomer data (KET or SDF format)
 - `params` (optional) - Update parameters
 
+**Throws:**
+
+- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
+  validation. The library is partially updated on throw; valid items already
+  committed are kept, and there is no rollback.
+- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
+  `{ name: string; reason: string }` objects.
+- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
+  was committed before the error was raised.
+
+**Error handling example:**
+
+Import `MonomerLibraryUpdateError` from the package entry point used in your app.
+
+```javascript
+try {
+  await ketcher.updateMonomersLibrary(monomersKet, {
+    format: 'ket',
+    shouldPersist: true
+  });
+} catch (error) {
+  if (error instanceof MonomerLibraryUpdateError) {
+    console.warn('Partial success:', error.partialSuccess);
+    error.skippedItems.forEach(({ name, reason }) => {
+      console.warn(`Skipped ${name}: ${reason}`);
+    });
+  } else {
+    throw error;
+  }
+}
+```
+
 **UpdateMonomersLibraryParams:**
 
 ```typescript
@@ -1086,6 +1118,38 @@ replaceMonomersLibrary(
 **Replaces** entire monomer library (removes all existing monomers).
 
 **Parameters:** Same as `updateMonomersLibrary`
+
+**Throws:**
+
+- `MonomerLibraryUpdateError` - thrown when one or more monomers fail
+  validation. The replacement is partially applied on throw; items processed
+  before the failure remain in the library, and there is no rollback.
+- `MonomerLibraryUpdateError.skippedItems` - array of skipped entries with
+  `{ name: string; reason: string }` objects.
+- `MonomerLibraryUpdateError.partialSuccess` - `true` when at least one item
+  was committed before the error was raised.
+
+**Error handling example:**
+
+Import `MonomerLibraryUpdateError` from the package entry point used in your app.
+
+```javascript
+try {
+  await ketcher.replaceMonomersLibrary(monomersKet, {
+    format: 'ket',
+    shouldPersist: true
+  });
+} catch (error) {
+  if (error instanceof MonomerLibraryUpdateError) {
+    console.warn('Partial success:', error.partialSuccess);
+    error.skippedItems.forEach(({ name, reason }) => {
+      console.warn(`Skipped ${name}: ${reason}`);
+    });
+  } else {
+    throw error;
+  }
+}
+```
 
 **Example:**
 

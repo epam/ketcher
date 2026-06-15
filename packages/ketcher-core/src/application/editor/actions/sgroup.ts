@@ -31,27 +31,24 @@ import {
   BondAdd,
   FragmentAdd,
 } from '../operations';
-import {
-  BaseMonomer,
-  Pile,
-  SGroup,
-  SGroupAttachmentPoint,
-  Vec2,
-  BondAttributes,
-  Bond,
-  Struct,
-} from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Pile } from 'domain/entities/pile';
+import { SGroup } from 'domain/entities/sgroup';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { Vec2 } from 'domain/entities/vec2';
+import { type BondAttributes, Bond } from 'domain/entities/bond';
+import type { Struct } from 'domain/entities/struct';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
-import { SgContexts } from '..';
+import { SgContexts } from '../shared/constants';
 import { uniq } from 'lodash/fp';
 import { fromAtomsAttrs, mergeFragmentsIfNeeded } from './atom';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
-import Restruct from 'application/render/restruct/restruct';
+import type Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
@@ -312,53 +309,50 @@ export function setExpandMonomerSGroup(
   const atomsToMove = new Map<number, number[]>();
   const sGroupsToMove = new Map<number, number[]>();
 
-  const prepareSubStructure = (atomId: number, subStructureKey: number) => {
-    if (visitedAtoms.has(atomId)) {
-      return;
-    }
-    visitedAtoms.add(atomId);
+  attachmentAtomsFromOutside.forEach((startAtomId, index) => {
+    const queue: number[] = [startAtomId];
 
-    const atomSGroups = restruct.atoms.get(atomId)?.a.sgs;
-    const atomInSGroup = atomSGroups && atomSGroups.size > 0;
-    if (atomInSGroup) {
-      for (const anotherSGroupId of atomSGroups.values()) {
-        if (visitedSGroups.has(anotherSGroupId) || anotherSGroupId === sgid) {
-          continue;
+    while (queue.length > 0) {
+      const currentAtomId = queue.shift() as number;
+
+      if (visitedAtoms.has(currentAtomId)) {
+        continue;
+      }
+      visitedAtoms.add(currentAtomId);
+
+      const atomSGroups = restruct.atoms.get(currentAtomId)?.a.sgs;
+      const atomInSGroup = atomSGroups && atomSGroups.size > 0;
+      if (atomInSGroup) {
+        for (const anotherSGroupId of atomSGroups.values()) {
+          if (visitedSGroups.has(anotherSGroupId) || anotherSGroupId === sgid) {
+            continue;
+          }
+          visitedSGroups.add(anotherSGroupId);
+
+          const anotherSGroup = struct.sgroups.get(anotherSGroupId);
+          if (!anotherSGroup) {
+            continue;
+          }
+
+          const previousArray = sGroupsToMove.get(index) ?? [];
+          sGroupsToMove.set(index, previousArray.concat(anotherSGroupId));
         }
-        visitedSGroups.add(anotherSGroupId);
+      }
 
-        const anotherSGroup = struct.sgroups.get(anotherSGroupId);
-        if (!anotherSGroup) {
-          continue;
-        }
+      const atom = struct.atoms.get(currentAtomId);
+      if (atom) {
+        const previousArray = atomsToMove.get(index) ?? [];
+        atomsToMove.set(index, previousArray.concat(currentAtomId));
 
-        const previousArray = sGroupsToMove.get(subStructureKey) ?? [];
-        sGroupsToMove.set(
-          subStructureKey,
-          previousArray.concat(anotherSGroupId),
-        );
+        atom.neighbors.forEach((halfBondId) => {
+          const neighborAtomId = struct?.halfBonds?.get(halfBondId)?.end;
+          if (neighborAtomId === undefined || sGroupAtoms.has(neighborAtomId)) {
+            return;
+          }
+          queue.push(neighborAtomId);
+        });
       }
     }
-
-    const atom = struct.atoms.get(atomId);
-    if (atom) {
-      const previousArray = atomsToMove.get(subStructureKey) ?? [];
-      atomsToMove.set(subStructureKey, previousArray.concat(atomId));
-
-      atom.neighbors.forEach((halfBondId) => {
-        const neighborAtomId = struct?.halfBonds?.get(halfBondId)?.end;
-        if (neighborAtomId === undefined || sGroupAtoms.has(neighborAtomId)) {
-          return;
-        }
-
-        // TODO: Rewrite recursion to iteration approach as it leads to incorrect movement order for RNA bases
-        prepareSubStructure(neighborAtomId, subStructureKey);
-      });
-    }
-  };
-
-  attachmentAtomsFromOutside.forEach((atomId, index) => {
-    prepareSubStructure(atomId, index);
   });
 
   const sameLine = new Set<number>();
@@ -556,7 +550,8 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
   struct.sgroups.forEach((sgroup: SGroup) => {
     if (
       sgroup.isNotContractible(struct) &&
-      !(sgroup instanceof MonomerMicromolecule)
+      !(sgroup instanceof MonomerMicromolecule) &&
+      !SGroup.isSuperAtom(sgroup)
     ) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
@@ -646,7 +641,7 @@ export function fromSgroupDeletion(restruct: Restruct, id, needPerform = true) {
   // After SGroup is deleted, resolve leaving groups on plain structure
   if (sG instanceof MonomerMicromolecule) {
     const isExpanded = sG.isExpanded();
-    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps || {};
+    const monomerCaps = sG.monomer?.monomerItem?.props?.MonomerCaps ?? {};
     cachedAttachmentPoints?.forEach((attachmentPoint) => {
       const leaveAtomId = attachmentPoint.leaveAtomId;
       const attachmentAtomId = attachmentPoint.atomId;
@@ -733,9 +728,7 @@ export function fromSgroupAddition(
   // eslint-disable-line
   let action = new Action();
 
-  // TODO: shoud the id be generated when OpSGroupCreate is executed?
-  //      if yes, how to pass it to the following operations?
-  sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
+  sgid = isNumber(sgid) ? sgid : restruct.molecule.sgroups.newId();
 
   if (type === 'SUP') {
     action.addOp(

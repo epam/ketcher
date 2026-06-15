@@ -1,11 +1,9 @@
-import { BaseOperation } from 'application/editor/operations/base';
-import { MonomerCreationState, ReStruct } from 'application/render';
-import {
-  OperationType,
-  RemoveAttachmentPointOperation,
-} from 'application/editor';
+import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import type { MonomerCreationState, ReStruct } from 'application/render';
+import { OperationType } from 'application/editor/operations/OperationType';
+import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
 import assert from 'assert';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {

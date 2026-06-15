@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import {
+  type Struct,
+  type Editor,
   FormatterFactory,
   SGroup,
   identifyStructFormat,
-  Struct,
   SupportedFormat,
   notifyRequestCompleted,
-  Editor,
   KetcherLogger,
   SettingsManager,
   getSelectionFromStruct,
@@ -31,7 +31,6 @@ import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
 import { isNumber } from 'lodash';
-import assert from 'assert';
 
 export function onAction(action) {
   if (action?.dialog) {
@@ -100,7 +99,7 @@ export function removeStructAction(): {
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
-export function load(struct: Struct, options?) {
+export function load(struct: string | Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
     const editor = state.editor as Editor;
@@ -156,10 +155,9 @@ export function load(struct: Struct, options?) {
 
       if (
         method === 'toggleExplicitHydrogens' &&
-        editor.isMonomerCreationWizardActive
+        editor.isMonomerCreationWizardActive &&
+        editor.monomerCreationState
       ) {
-        assert(editor.monomerCreationState);
-
         // If toggle explicit hydrogen is called, we should not apply it for marked leaving group atoms in monomer creation wizard
         const { assignedAttachmentPoints } = editor.monomerCreationState;
 
@@ -196,10 +194,13 @@ export function load(struct: Struct, options?) {
           (bondId) => !newBondsToLeavingGroupAtoms.has(bondId),
         );
 
-        // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count
+        // Rewrite leaving atoms in new struct by their original versions to persist implicit hydrogen count.
+        // Atom ids may diverge after Indigo transformations, so skip stale ids defensively.
         leavingGroupAtoms.forEach((_, atomId) => {
           const originalAtom = currentStruct.atoms.get(atomId);
-          assert(originalAtom);
+          if (!originalAtom || !parsedStruct.atoms.has(atomId)) {
+            return;
+          }
           parsedStruct.atoms.set(atomId, originalAtom);
         });
       }

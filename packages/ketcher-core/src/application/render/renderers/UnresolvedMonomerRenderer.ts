@@ -1,6 +1,6 @@
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { UnresolvedMonomer } from 'domain/entities';
-import { Selection } from 'd3';
+import type { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
+import type { Selection } from 'd3';
 
 const UNRESOLVED_MONOMER_HOVERED_ELEMENT_ID = '#unresolved-monomer-hover';
 const UNRESOLVED_MONOMER_SYMBOL_ELEMENT_ID = '#unresolved-monomer';

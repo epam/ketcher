@@ -1,6 +1,6 @@
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
-import { CoreEditor } from 'application/editor';
-import { BaseRenderer } from 'application/render';
+import type { CoreEditor } from 'application/editor/Editor';
+import type { BaseRenderer } from 'application/render';
 
 export class SelectFragment extends SelectBase {
   constructor(readonly editor: CoreEditor) {

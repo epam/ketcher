@@ -1,4 +1,4 @@
-import {
+import type {
   ArrowMoveTool,
   CommonArrowDragContext,
   ReactionArrowClosestItem,
@@ -47,7 +47,7 @@ export class ReactionArrowMoveTool
     if (!closestItem.ref) {
       return fromMultipleMove(
         this.reStruct,
-        this.editor.selection() || {},
+        this.editor.selection() ?? {},
         offset,
       );
     } else {

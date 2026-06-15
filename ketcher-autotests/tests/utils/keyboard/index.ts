@@ -23,7 +23,7 @@ export async function resetZoomLevelToDefault(page: Page) {
   });
 }
 
-export async function ZoomOutByKeyboard(
+export async function zoomOutByKeyboard(
   page: Page,
   options: { repeat: number; timeout?: number } = { repeat: 1 },
 ) {
@@ -38,7 +38,7 @@ export async function ZoomOutByKeyboard(
   }
 }
 
-export async function ZoomInByKeyboard(
+export async function zoomInByKeyboard(
   page: Page,
   options: { repeat: number; timeout?: number } = { repeat: 1 },
 ) {

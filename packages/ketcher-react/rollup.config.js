@@ -26,6 +26,8 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
+const packageJson = pkg;
+
 const getTagName = () => {
   try {
     return execSync('git describe --tags --abbrev=0', { encoding: 'utf8' });
@@ -39,7 +41,7 @@ export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
-  'process.env.VERSION': JSON.stringify(pkg.version),
+  'process.env.VERSION': JSON.stringify(packageJson.version),
   'process.env.BUILD_DATE': JSON.stringify(
     new Date().toISOString().slice(0, 19),
   ),
@@ -49,7 +51,7 @@ export const valuesToReplace = {
 };
 
 const config = {
-  input: pkg.source,
+  input: packageJson.source,
   output: [
     {
       dir: 'dist/cjs',
@@ -98,7 +100,7 @@ const config = {
       targets: [{ src: 'src/style/*.svg', dest: 'dist' }],
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.trimStart('.')),
+      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
       comments: 'none',
       include: includePattern,
     }),

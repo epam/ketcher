@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
+import type {
   ConvertData,
   ConvertResult,
   LayoutData,
@@ -22,11 +22,11 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
-import { StructFormatter, SupportedFormat } from './structFormatter.types';
+import { type StructFormatter, SupportedFormat } from './structFormatter.types';
 
-import { KetSerializer } from 'domain/serializers';
-import { Struct } from 'domain/entities';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { KetSerializer } from 'domain/serializers/ket/ketSerializer';
+import type { Struct } from 'domain/entities/struct';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
@@ -59,7 +59,7 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  async getStructureFromStructAsync(
+  async getStringFromStructureAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
   ): Promise<string> {
@@ -87,7 +87,7 @@ export class ServerFormatter implements StructFormatter {
         const details = e instanceof Error ? e.message : String(e);
         message = `Convert error!\n${details}`;
       }
-      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
+      KetcherLogger.error('serverFormatter.ts::getStringFromStructureAsync', e);
       throw new Error(message);
     }
   }

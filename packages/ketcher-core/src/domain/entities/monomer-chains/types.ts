@@ -1,9 +1,9 @@
-import { Nucleoside } from 'domain/entities/Nucleoside';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { LinkerSequenceNode } from 'domain/entities';
-import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import type { Nucleoside } from 'domain/entities/Nucleoside';
+import type { Nucleotide } from 'domain/entities/Nucleotide';
+import type { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import type { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import type { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import type { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export type SubChainNode =
   | MonomerSequenceNode

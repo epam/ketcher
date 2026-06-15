@@ -30,8 +30,8 @@ import {
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class ChainTool implements Tool {
@@ -131,7 +131,7 @@ class ChainTool implements Tool {
 
     if (ci?.map === 'functionalGroups') {
       const functionalGroup = molecule.functionalGroups.get(ci.id);
-      if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
+      if (!SGroup.isSaltOrSolvent(functionalGroup?.name ?? '')) {
         const sGroupId = ci.id;
         const sGroup = molecule.sgroups.get(sGroupId);
         const attachmentAtomId = sGroup?.getAttachmentAtomId();

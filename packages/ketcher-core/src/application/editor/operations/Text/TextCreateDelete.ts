@@ -15,10 +15,11 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReStruct, ReText } from '../../../render';
-import { Text, Vec2 } from 'domain/entities';
+import { type ReStruct, ReText } from '../../../render';
+import { Text } from 'domain/entities/text';
+import { Vec2 } from 'domain/entities/vec2';
 
-import { BaseOperation } from '../base';
+import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 
 interface TextCreateData {

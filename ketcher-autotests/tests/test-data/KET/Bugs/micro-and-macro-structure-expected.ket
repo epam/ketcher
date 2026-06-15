@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -238,6 +239,7 @@
         "id": "A___Alanine",
         "fullName": "Alanine",
         "alias": "A",
+        "aliasBILN": "A",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

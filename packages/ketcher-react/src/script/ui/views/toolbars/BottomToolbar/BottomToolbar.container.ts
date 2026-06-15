@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 import {
+  type BottomToolbarCallProps,
+  type BottomToolbarProps,
   BottomToolbar,
-  BottomToolbarCallProps,
-  BottomToolbarProps,
 } from './BottomToolbar';
 
-import { ComponentType } from 'react';
-import { Dispatch } from 'redux';
+import type { ComponentType } from 'react';
+import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 
@@ -31,7 +31,7 @@ const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
   active: state.actionState?.activeTool,
-  status: state.actionState || {},
+  status: state.actionState ?? {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
   disableableButtons,

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerItemModifyOperation implements Operation {
   monomer: BaseMonomer;

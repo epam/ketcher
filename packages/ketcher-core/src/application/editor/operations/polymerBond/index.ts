@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Operation } from 'domain/entities/Operation';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities';
-import { LayoutMode } from 'application/editor';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { RenderersManager } from 'application/render/renderers/RenderersManager';
+import type { Operation } from 'domain/entities/Operation';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { HydrogenBond } from 'domain/entities/HydrogenBond';
+import type { LayoutMode } from 'application/editor/modes/types';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;

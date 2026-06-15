@@ -14,43 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  Box2Abs,
-  FunctionalGroup,
-  SGroup,
-  StereoFlag,
-  StereoLabel,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Atom, StereoLabel } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { SGroup } from 'domain/entities/sgroup';
+import type { Struct } from 'domain/entities/struct';
+import { Box2Abs } from 'domain/entities/box2Abs';
+import { StereoFlag } from 'domain/entities/fragment';
+import { Vec2 } from 'domain/entities/vec2';
 import { ElementColor, Elements } from 'domain/constants';
 import {
   LayerMap,
-  StereLabelStyleType,
+  StereoLabelStyleType,
   StereoColoringType,
 } from './generalEnumTypes';
 
 import ReObject from './reobject';
-import ReStruct from './restruct';
-import { Render } from '../raphaelRender';
+import type ReStruct from './restruct';
+import type { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 import {
-  RenderOptions,
-  RenderOptionStyles,
+  type RenderOptions,
+  type RenderOptionStyles,
   UsageInMacromolecule,
 } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { AttachmentPointName, attachmentPointNames } from 'domain/types';
+import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import { ShowHydrogenLabels } from './showHydrogenLabels';
 
 interface ElemAttr {
   text: string;
@@ -60,14 +58,6 @@ interface ElemAttr {
 
 const StereoLabelMinOpacity = 0.3;
 const MAX_LABEL_LENGTH = 8;
-
-export enum ShowHydrogenLabels {
-  Off = 'off',
-  Hetero = 'Hetero',
-  Terminal = 'Terminal',
-  TerminalAndHetero = 'Terminal and Hetero',
-  On = 'all',
-}
 
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
@@ -507,6 +497,8 @@ class ReAtom extends ReObject {
             'font-family': fontFamily,
           });
 
+        path.node?.setAttribute('data-testid', 's-group-label');
+        path.node?.setAttribute('data-label-text', sGroupName);
         path.node?.setAttribute('data-sgroup-id', sgroup.id);
         path.node?.setAttribute('data-sgroup-name', sGroupName);
         path.node?.setAttribute('data-sgroup-type', sgroup.type);
@@ -708,8 +700,17 @@ class ReAtom extends ReObject {
     }
 
     if (render.monomerCreationState) {
-      const { assignedAttachmentPoints, problematicAttachmentPoints } =
-        render.monomerCreationState;
+      const {
+        assignedAttachmentPoints: allAssignedAttachmentPoints,
+        visibleAssignedAttachmentPoints,
+        problematicAttachmentPoints,
+        problematicAtoms,
+        connectionAttachmentPoints,
+      } = render.monomerCreationState;
+      // When visibleAssignedAttachmentPoints is set, only that subset is drawn;
+      // otherwise all assigned attachment points are shown.
+      const assignedAttachmentPoints =
+        visibleAssignedAttachmentPoints ?? allAssignedAttachmentPoints;
       const restruct = render.ctab;
       const struct = restruct.molecule;
       const aid = struct.atoms.keyOf(this.a);
@@ -749,6 +750,19 @@ class ReAtom extends ReObject {
 
         if (style) {
           const path = this.makeHighlightePlate(restruct, style, -4);
+          restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+        }
+
+        if (problematicAtoms?.has(aid)) {
+          const path = this.makeHighlightePlate(
+            restruct,
+            {
+              fill: 'none',
+              stroke: '#F40724',
+              'stroke-width': '2px',
+            },
+            -4,
+          );
           restruct.addReObjectPath(LayerMap.atom, this.visel, path);
         }
 
@@ -836,10 +850,13 @@ class ReAtom extends ReObject {
 
           labelGroup.forEach((element) => {
             element.node?.setAttribute(
-              'data-attachment-point-name',
+              'data-attachment-point-alias',
               attachmentPointName,
             );
-            element.node?.setAttribute('data-testid', attachmentPointName);
+            element.node?.setAttribute(
+              'data-testid',
+              'monomer-attachment-point',
+            );
           });
 
           // Add hover handlers
@@ -918,6 +935,78 @@ class ReAtom extends ReObject {
             ps,
             false,
           );
+        }
+
+        // Render connection (readonly) attachment points — blue circle around
+        // the connection atom, same visual style as regular attachment atoms
+        // but without an R-label. Hover syncs with the panel row.
+        if (connectionAttachmentPoints) {
+          const isConnectionAtom = Array.from(
+            connectionAttachmentPoints.values(),
+          ).some(([connectionAtomId]) => connectionAtomId === aid);
+
+          if (isConnectionAtom) {
+            // Draw the same blue outline ring used for regular attachment atoms
+            const ringPath = this.makeHighlightePlate(
+              restruct,
+              {
+                fill: 'none',
+                stroke: '#4da3f8',
+                'stroke-width': '2px',
+              },
+              -4,
+            );
+            restruct.addReObjectPath(LayerMap.atom, this.visel, ringPath);
+
+            // Invisible hit-area circle for hover detection, centred on the
+            // atom's screen-space position (ps is already computed above)
+            const hitArea = render.paper.circle(ps.x, ps.y, 10).attr({
+              fill: '#4da3f8',
+              stroke: 'none',
+              opacity: 0,
+              cursor: 'pointer',
+            });
+
+            // Find the AP name(s) for this connection atom to drive panel sync
+            const connectionApNames = Array.from(
+              connectionAttachmentPoints.entries(),
+            )
+              .filter(([, [caid]]) => caid === aid)
+              .map(([apName]) => apName);
+
+            hitArea.hover(
+              () => {
+                hitArea.attr({ opacity: 0.15 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'highlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
+              },
+              () => {
+                hitArea.attr({ opacity: 0 });
+                connectionApNames.forEach((apName) => {
+                  window.dispatchEvent(
+                    new CustomEvent<AttachmentPointName>(
+                      'resetHighlightAttachmentPointControls',
+                      { detail: apName },
+                    ),
+                  );
+                });
+              },
+            );
+
+            restruct.addReObjectPath(
+              LayerMap.data,
+              this.visel,
+              hitArea,
+              ps,
+              false,
+            );
+          }
         }
       }
     }
@@ -1287,15 +1376,15 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    case StereLabelStyleType.Off:
+    case StereoLabelStyleType.Off:
       return false;
-    case StereLabelStyleType.On:
+    case StereoLabelStyleType.On:
       return true;
-    case StereLabelStyleType.Classic:
+    case StereoLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    case StereLabelStyleType.IUPAC:
+    case StereoLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
       );
@@ -1865,10 +1954,10 @@ function showWarning(
   warning.path = render.paper
     .path(
       'M{0},{1}L{2},{3}',
-      tfx(ps.x + leftMargin),
-      tfx(y),
-      tfx(ps.x + rightMargin),
-      tfx(y),
+      toFixed(ps.x + leftMargin),
+      toFixed(y),
+      toFixed(ps.x + rightMargin),
+      toFixed(y),
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });

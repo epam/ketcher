@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -281,6 +282,7 @@
         "fullName": "N-Methyl-Methionine",
         "alias": "meM",
         "aliasHELM": "meM",
+        "aliasBILN": "meM",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

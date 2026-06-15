@@ -1041,7 +1041,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     page: Page,
     leftPeptide: IMonomer,
     rightMolecule: IMolecule,
-    attachmentPoint: string,
+    attachmentPoint: AttachmentPoint,
     atomIndex: number,
   ) {
     const leftPeptideLocator = getMonomerLocator(page, {
@@ -1095,7 +1095,9 @@ test.describe('Connection rules for Base monomers: ', () => {
             page,
             leftMonomer,
             rightMolecule,
-            Object.keys(leftMonomer.attachmentPoints)[atomIndex],
+            Object.keys(leftMonomer.attachmentPoints)[
+              atomIndex
+            ] as AttachmentPoint,
             atomIndex,
           );
         }

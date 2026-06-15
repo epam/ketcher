@@ -35,6 +35,7 @@ import { ConfirmationMessageDialog } from '@tests/pages/molecules/canvas/Confirm
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerWizardOption } from '@tests/pages/constants/contextMenu/Constants';
+import { NotificationBanner } from '@tests/pages/molecules/canvas/NotificationBanner';
 
 let page: Page;
 let dialog: ReturnType<typeof CreateMonomerDialog>;
@@ -81,14 +82,14 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.Sugar.alias,
+      code: Sugar.Sugar.alias,
       name: 'Sugar Test monomer',
       HELMAlias: 'SugAlias',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.Base.alias,
+      code: Base.Base.alias,
       name: 'Base Test monomer',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
       HELMAlias: 'BaseAlias',
@@ -96,7 +97,7 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.Phosphate.alias,
+      code: Phosphate.Phosphate.alias,
       name: 'Phosphate Test monomer',
       HELMAlias: 'PhosAlias',
     });
@@ -261,20 +262,20 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: Sugar.R.alias,
+      code: Sugar.R.alias,
       name: 'Sugar Name',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: Base.A.alias,
+      code: Base.A.alias,
       name: 'Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: Phosphate.P.alias,
+      code: Phosphate.P.alias,
       name: 'Phosphate Name',
     });
 
@@ -317,20 +318,20 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Sugar Name',
     });
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Base Name',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
       bondIds: [4],
-      symbol: '<invalid name>',
+      code: '<invalid name>',
       name: 'Phosphate Name',
     });
 
@@ -347,21 +348,19 @@ test.describe('Hidden components in nucleotide preset wizard', () => {
 
     // Verify tab and field error states are shown for components
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveClass(
-      /inputError/,
-    );
+    await expect(presetSection.sugarTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Sugar)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveClass(/inputError/);
+    await expect(presetSection.baseTab.codeEditbox).toHaveClass(/inputError/);
     await expect(page.getByTestId(NucleotidePresetTab.Base)).toHaveClass(
       /errorTab/,
     );
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveClass(
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveClass(
       /inputError/,
     );
     await expect(page.getByTestId(NucleotidePresetTab.Phosphate)).toHaveClass(
@@ -408,9 +407,9 @@ test.describe('Wizard exit confirmation for nucleotide preset', () => {
     });
     await dialog.submit();
 
-    await expect(
-      page.getByText('The preset was successfully added to the library'),
-    ).toBeVisible();
+    expect(await NotificationBanner(page).getNotificationText()).toContain(
+      'The preset was successfully added to the library',
+    );
   });
 });
 
@@ -484,13 +483,13 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(presetSection.presetTab.nameEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue('');
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('');
 
     await dialog.discard();
   });
@@ -527,15 +526,13 @@ test.describe('Type change confirmation for Nucleotide (preset)', () => {
     await expect(dialog.typeCombobox).toContainText('Nucleotide (preset)');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('PresetS');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('PresetB');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
-      'PresetP',
-    );
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('PresetP');
 
     await dialog.discard();
   });
@@ -691,11 +688,14 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('<invalid name>');
     await dialog.submit();
 
-    await expect(
-      page.getByText(
-        'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
-      ),
-    ).toBeVisible();
+    expect(
+      await NotificationMessageBanner(
+        page,
+        ErrorMessage.invalidPresetCode,
+      ).getNotificationMessage(),
+    ).toEqual(
+      'The preset code must consist only of uppercase and lowercase letters, numbers, hyphens (-), underscores (_), and asterisks (*).',
+    );
 
     await takeElementScreenshot(page, dialog.nucleotidePresetSection.presetTab);
     await takeElementScreenshot(page, presetSection.presetTab.nameEditbox);
@@ -725,15 +725,13 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('Preset');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('PresetS');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('PresetS');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('PresetB');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('PresetB');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
-      'PresetP',
-    );
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue('PresetP');
 
     await dialog.discard();
   });
@@ -762,19 +760,19 @@ test.describe('Preset code formatting and default component code behavior', () =
     await presetSection.setName('Preset');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await presetSection.sugarTab.symbolEditbox.fill('MySugar');
+    await presetSection.sugarTab.codeEditbox.fill('MySugar');
 
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('Preset2');
 
     await presetSection.openTab(NucleotidePresetTab.Sugar);
-    await expect(presetSection.sugarTab.symbolEditbox).toHaveValue('MySugar');
+    await expect(presetSection.sugarTab.codeEditbox).toHaveValue('MySugar');
 
     await presetSection.openTab(NucleotidePresetTab.Base);
-    await expect(presetSection.baseTab.symbolEditbox).toHaveValue('Preset2B');
+    await expect(presetSection.baseTab.codeEditbox).toHaveValue('Preset2B');
 
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
-    await expect(presetSection.phosphateTab.symbolEditbox).toHaveValue(
+    await expect(presetSection.phosphateTab.codeEditbox).toHaveValue(
       'Preset2P',
     );
 

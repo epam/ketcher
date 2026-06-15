@@ -2,7 +2,7 @@ import { RxnArrowAdd, RxnArrowDelete } from 'application/editor/operations';
 import { Render } from 'application/render';
 import { ReStruct } from 'application/render/restruct';
 import { Struct, RxnArrowMode, Vec2 } from 'domain/entities';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 
 describe('RxnArrowAdd and RxnArrowDelete operations', () => {
   let restruct: ReStruct;

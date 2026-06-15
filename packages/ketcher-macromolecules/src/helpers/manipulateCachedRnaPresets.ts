@@ -14,7 +14,7 @@ const getPresetIndexInList = (name?: string): number => {
 // Save or update custom preset in LocalStorage
 export const setCachedCustomRnaPreset = (preset: IRnaLabeledPreset) => {
   const presetToSet = { ...preset };
-  const cachedPresets = getCachedCustomRnaPresets() || [];
+  const cachedPresets = getCachedCustomRnaPresets() ?? [];
 
   const presetIndexInCachedList = getPresetIndexInList(presetToSet.nameInList);
 

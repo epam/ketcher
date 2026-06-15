@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -263,6 +264,7 @@
         "id": "Phe4Me___p-Methylphenylalanine",
         "fullName": "p-Methylphenylalanine",
         "alias": "Phe4Me",
+        "aliasBILN": "Phe_4Me",
         "attachmentPoints": [
             {
                 "attachmentAtom": 7,
@@ -481,6 +483,7 @@
         "id": "meE___N-Methyl-Glutamic acid",
         "fullName": "N-Methyl-Glutamic acid",
         "alias": "meE",
+        "aliasBILN": "meE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 8,

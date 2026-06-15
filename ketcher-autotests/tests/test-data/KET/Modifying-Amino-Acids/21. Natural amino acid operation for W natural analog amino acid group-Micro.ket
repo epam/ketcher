@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -444,6 +445,7 @@
         "fullName": "Tryptophan",
         "alias": "W",
         "aliasHELM": "W",
+        "aliasBILN": "W",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

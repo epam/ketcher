@@ -17,6 +17,7 @@
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
+  RenderersManager,
   type LayoutMode,
   SettingsManager,
   type EditorLineLength,
@@ -53,11 +54,13 @@ interface EditorState {
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
+  monomerLibraryLoadError: string | null;
   editorLayoutMode: LayoutMode | undefined;
   editorLineLength: EditorLineLength;
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
+  isDragging: boolean;
   isMacromoleculesPropertiesWindowOpened: boolean;
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
@@ -73,6 +76,7 @@ const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
+  monomerLibraryLoadError: null,
   editorLayoutMode: undefined,
   editorLineLength: SettingsManager.editorLineLength,
   preview: {
@@ -82,6 +86,7 @@ const initialState: EditorState = {
   },
   position: undefined,
   isContextMenuActive: false,
+  isDragging: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
@@ -89,10 +94,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE || '',
-    indigoVersion: process.env.INDIGO_VERSION || '',
-    indigoMachine: process.env.INDIGO_MACHINE || '',
-    version: process.env.VERSION || '',
+    buildDate: process.env.BUILD_DATE ?? '',
+    indigoVersion: process.env.INDIGO_VERSION ?? '',
+    indigoMachine: process.env.INDIGO_MACHINE ?? '',
+    version: process.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };
@@ -113,6 +118,12 @@ export const editorSlice: Slice<EditorState> = createSlice({
     initFailure: (state) => {
       state.isReady = false;
     },
+    setMonomerLibraryLoadError: (
+      state,
+      action: PayloadAction<string | null>,
+    ) => {
+      state.monomerLibraryLoadError = action.payload;
+    },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
@@ -128,16 +139,23 @@ export const editorSlice: Slice<EditorState> = createSlice({
         monomersLibraryUpdate?: string | JSON;
         monomersLibraryReplace?: string | JSON;
         onInit?: (editor: CoreEditor) => void;
+        onLibraryError?: (err: unknown) => void;
       }>,
     ) => {
+      state.monomerLibraryLoadError = null;
+
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
+        renderersContainer: new RenderersManager({
+          theme: action.payload.theme,
+        }),
       });
 
       editor.initializeMonomersLibraryFromKetcher(
         action.payload.monomersLibraryUpdate,
         action.payload.monomersLibraryReplace,
+        action.payload.onLibraryError,
       );
 
       // TODO: Figure out proper typing here and below
@@ -161,6 +179,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     },
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
+    },
+    setIsDragging: (state, action: PayloadAction<boolean>) => {
+      state.isDragging = action.payload;
     },
     setMacromoleculesPropertiesWindowVisibility: (
       state,
@@ -224,6 +245,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  setMonomerLibraryLoadError,
   initKetcherId,
   selectTool,
   setPosition,
@@ -231,6 +253,7 @@ export const {
   destroyEditor,
   showPreview,
   setContextMenuActive,
+  setIsDragging,
   setMacromoleculesPropertiesWindowVisibility,
   toggleMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
@@ -262,6 +285,10 @@ export const selectKetcherId = (state: RootState): string => {
 export const selectEditor = (state: RootState): CoreEditor | undefined =>
   state.editor.editor;
 
+export const selectMonomerLibraryLoadError = (
+  state: RootState,
+): string | null => state.editor.monomerLibraryLoadError;
+
 export const selectIsSequenceEditInRNABuilderMode = (
   state: RootState,
 ): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
@@ -284,6 +311,9 @@ export const hasAntisenseChains = (state: RootState): CoreEditor =>
 
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
+
+export const selectIsDragging = (state: RootState): boolean =>
+  state.editor.isDragging;
 
 export const selectIsMacromoleculesPropertiesWindowOpened = (
   state: RootState,

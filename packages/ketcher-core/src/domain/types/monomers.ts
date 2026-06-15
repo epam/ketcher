@@ -1,25 +1,23 @@
-import {
-  BaseMonomer,
-  Chem,
-  Peptide,
-  Phosphate,
-  RNABase,
-  Struct,
-  Sugar,
-  PolymerBond,
-} from 'domain/entities';
-import {
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Chem } from 'domain/entities/Chem';
+import type { Peptide } from 'domain/entities/Peptide';
+import type { Phosphate } from 'domain/entities/Phosphate';
+import type { RNABase } from 'domain/entities/RNABase';
+import type { Struct } from 'domain/entities/struct';
+import type { Sugar } from 'domain/entities/Sugar';
+import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type {
   AmbiguousMonomerTransformation,
   IKetAttachmentPoint,
   IKetIdtAliases,
   KetAmbiguousMonomerTemplateOption,
   KetAmbiguousMonomerTemplateSubType,
-  KetMonomerClass,
   MonomerTransformation,
 } from 'application/formatters/types/ket';
-import { D3SvgElementSelection } from 'application/render/types';
-import { UsageInMacromolecule } from 'application/render';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { KetMonomerClass } from 'domain/constants/monomers';
+import type { D3SvgElementSelection } from 'application/render/types';
+import type { UsageInMacromolecule } from 'application/render';
+import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export type MonomerColorScheme = {
   regular: string;
@@ -55,6 +53,7 @@ export type MonomerItemType = MonomerItemBase & {
     MonomerFullName?: string;
     Name: string;
     aliasHELM?: string;
+    aliasBILN?: string;
     aliasAxoLabs?: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;

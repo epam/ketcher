@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -466,6 +467,7 @@
         "fullName": "Glycine",
         "alias": "G",
         "aliasHELM": "G",
+        "aliasBILN": "G",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

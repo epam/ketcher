@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ChemicalMimeType } from 'domain/services';
-import { SupportedFormat } from './structFormatter.types';
+import type { SupportedFormat } from './structFormatter.types';
 import { SupportedFormatProperties } from './supportedFormatProperties';
 
 type FormatPropertiesMap = {
@@ -148,6 +148,12 @@ const formatProperties: FormatPropertiesMap = {
     'HELM',
     ChemicalMimeType.HELM,
     ['.helm'],
+    true,
+  ),
+  biln: new SupportedFormatProperties(
+    'BILN',
+    ChemicalMimeType.BILN,
+    ['.biln'],
     true,
   ),
   sequence: new SupportedFormatProperties(

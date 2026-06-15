@@ -9,9 +9,9 @@ import {
   dragMouseTo,
   waitForPageInit,
   selectPartOfMolecules,
-  selectPartOfChain,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,7 +41,20 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       'Molfiles-V2000/chain-with-double-bond-in-the-middle.mol',
     );
-    await selectPartOfChain(page);
+    const coordinatesToStartSelection = 70;
+    const smallShift = 20;
+    const doubleBond = getBondLocator(page, { bondId: 18 });
+    const box = await doubleBond.boundingBox();
+    if (!box) throw new Error('Bond bounding box not found');
+    const centerX = box.x + box.width / 2; // eslint-disable-line no-magic-numbers
+    const centerY = box.y + box.height / 2; // eslint-disable-line no-magic-numbers
+    await page.mouse.move(
+      coordinatesToStartSelection,
+      coordinatesToStartSelection,
+    );
+    await page.mouse.down();
+    await page.mouse.move(centerX + 1, centerY + smallShift);
+    await page.mouse.up();
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
@@ -175,12 +188,11 @@ test.describe('Indigo Tools - Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Clean reaction with Layout tool', async ({ page }) => {
+  test('Clean reaction with Layout tool', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2878
     Description: After Layout action structures are undistorted. 
     Position of the reaction does not change.
-    We have a bug https://github.com/epam/Indigo/issues/2229
     */
     await openFileAndAddToCanvas(page, 'Rxn-V2000/distorted-reaction.rxn');
     await IndigoFunctionsToolbar(page).layout();

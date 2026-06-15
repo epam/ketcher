@@ -17,7 +17,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import FontFaceObserver from 'font-face-observer';
-import Select, { Option } from './Select';
+import Select, { type Option } from './Select';
 
 const commonFonts: string[] = [
   'Arial',
@@ -64,7 +64,7 @@ interface SystemFontsProps {
   onChange: (value: string) => void;
 }
 
-function SystemFonts({ value, onChange }: SystemFontsProps) {
+function SystemFonts({ value, onChange }: Readonly<SystemFontsProps>) {
   const [availableFonts, setAvailableFonts] = useState<Option[] | null>(null);
   const onChangeCallback = useCallback(
     (value: string) => {

@@ -38,6 +38,7 @@ export enum ChemicalMimeType {
   IDT = 'chemical/x-idt',
   AXOLABS = 'chemical/x-axo-labs',
   HELM = 'chemical/x-helm',
+  BILN = 'chemical/x-biln',
   RDF = 'chemical/x-rdf',
   MonomerLibrary = 'chemical/x-monomer-library',
 }

@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -443,6 +444,7 @@
         "fullName": "N-Methyl-Tryptophan",
         "alias": "meW",
         "aliasHELM": "meW",
+        "aliasBILN": "meW",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

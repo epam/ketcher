@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Bond, Vec2 } from 'domain/entities';
+import { Bond } from 'domain/entities/bond';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
-import { tfx } from 'utilities';
+import { toFixed } from 'utilities';
 
 class ReLoop extends ReObject {
   constructor(loop) {
@@ -133,7 +134,7 @@ class ReLoop extends ReObject {
         const offset = options.bondSpace / sin;
         const qi = pi.addScaled(dir, -offset);
         pathStr += k === 0 ? 'M' : 'L';
-        pathStr += tfx(qi.x) + ',' + tfx(qi.y);
+        pathStr += toFixed(qi.x) + ',' + toFixed(qi.y);
       }
       pathStr += 'Z';
       path = paper.path(pathStr).attr({

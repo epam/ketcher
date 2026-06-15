@@ -77,9 +77,9 @@ describe('should pick color correctly', () => {
     await openPalette();
     const colorInput = screen.getByTestId('color-picker-input');
     fireEvent.change(colorInput, { target: { value: '4d4d4d' } });
-    expect(onChange).not.toBeCalled();
+    expect(onChange).not.toHaveBeenCalled();
     await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
-    expect(onChange).toBeCalledWith('#4d4d4d');
+    expect(onChange).toHaveBeenCalledWith('#4d4d4d');
   });
 
   it('should display picked color correctly', () => {
@@ -101,7 +101,7 @@ describe('should pick color correctly', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
 
-    expect(onChange).not.toBeCalled();
+    expect(onChange).not.toHaveBeenCalled();
     expect(
       screen.getByTestId('test-color-color-picker-preview').style
         .backgroundColor,

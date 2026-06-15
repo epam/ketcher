@@ -14,16 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from './atom';
-import { Bond } from './bond';
+import type { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Pile } from './pile';
-import { Struct } from './struct';
+import type { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
-import { ReStruct } from '../../application/render';
-import { FunctionalGroup, Pool, SGroupAttachmentPoint } from 'domain/entities';
-import { ReSGroup } from 'application/render';
+import type { ReStruct } from '../../application/render';
+import type { FunctionalGroup } from 'domain/entities/functionalGroup';
+import type { Pool } from 'domain/entities/pool';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
@@ -521,14 +522,19 @@ export class SGroup {
 
     atoms.forEach((aid) => {
       const atom = getAtom(aid);
+      if (!atom) return;
+
       let position;
-      let structBoundingBox;
+      let structBoundingBox: Box2Abs | null = null;
       if ('getVBoxObj' in atom && render) {
         structBoundingBox = atom.getVBoxObj(render);
-      } else {
+      } else if (atom.pp) {
         position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
+
+      if (!structBoundingBox) return;
+
       contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
@@ -690,7 +696,7 @@ export class SGroup {
 
     let xAtom1 = -1;
     let xAtom2 = -1;
-    let crossBond = null;
+    let crossBond: Bond | null = null;
     if (xBonds.length === 2) {
       const bond1 = mol.bonds.get(xBonds[0]);
       xAtom1 = sgroup.parentAtomSet.has(bond1.begin) ? bond1.begin : bond1.end;
@@ -707,20 +713,20 @@ export class SGroup {
       const amap = {};
       sgroup.atoms.forEach((aid) => {
         const atom = mol.atoms.get(aid);
-        const aid2 = mol.atoms.add(new Atom(atom));
+        const aid2 = mol.atoms.add(atom.clone());
         newAtoms.push(aid2);
         sgroup.atomSet.add(aid2);
         amap[aid] = aid2;
       });
       inBonds.forEach((bid) => {
         const bond = mol.bonds.get(bid);
-        const newBond = new Bond(bond);
+        const newBond = bond.clone();
         newBond.begin = amap[newBond.begin];
         newBond.end = amap[newBond.end];
         mol.bonds.add(newBond);
       });
       if (crossBond !== null) {
-        const newCrossBond = new Bond(crossBond);
+        const newCrossBond = crossBond.clone();
         newCrossBond.begin = tailAtom;
         newCrossBond.end = amap[xAtom1];
         mol.bonds.add(newCrossBond);

@@ -31,8 +31,8 @@ import {
   CoordinateTransformation,
 } from 'ketcher-core';
 
-import Editor from '../Editor';
-import { Tool } from './Tool';
+import type Editor from '../Editor';
+import type { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 
@@ -229,7 +229,7 @@ class AtomTool implements Tool {
         rnd.ctab,
         this.#bondProps,
         atomId,
-        { ...(atomProps || {}) },
+        { ...(atomProps ?? {}) },
         undefined,
         newAtomPos,
       )[0];

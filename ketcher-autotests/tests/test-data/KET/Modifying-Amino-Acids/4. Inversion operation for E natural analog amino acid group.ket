@@ -1,4 +1,5 @@
 {
+    "ket_version": "2.0.0",
     "root": {
         "nodes": [
             {
@@ -296,6 +297,7 @@
         "fullName": "D-Glutamic acid",
         "alias": "dE",
         "aliasHELM": "dE",
+        "aliasBILN": "dE",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,

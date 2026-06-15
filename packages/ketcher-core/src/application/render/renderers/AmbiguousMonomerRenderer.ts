@@ -1,14 +1,14 @@
-import { Selection } from 'd3';
-import { BaseMonomerRenderer } from 'application/render/renderers';
+import type { Selection } from 'd3';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
-import { monomerFactory } from 'application/editor';
+import { monomerRendererFactory } from './monomerRendererFactory';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
-import { AttachmentPointName } from 'domain/types';
+import type { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
-import { UsageInMacromolecule } from 'application/render';
-import { D3SvgElementSelection } from 'application/render/types';
-import { KetMonomerClass } from 'application/formatters';
+import type { UsageInMacromolecule } from 'application/render';
+import type { D3SvgElementSelection } from 'application/render/types';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -38,7 +38,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       scale,
     );
 
-    const [, MonomerRenderer] = monomerFactory(
+    const [, MonomerRenderer] = monomerRendererFactory(
       this.monomer.monomers[0].monomerItem,
     );
 
@@ -115,6 +115,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .attr('font-size', '6px')
       .attr('font-weight', 300)
       .text(this.monomer.monomers.length);
+
+    this.raiseAttachmentPoints();
   }
 
   public show(theme) {
@@ -153,6 +155,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.bodyElement = this.appendBody(this.rootElement);
+    this.bodyElement?.attr('data-testid', 'shape');
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

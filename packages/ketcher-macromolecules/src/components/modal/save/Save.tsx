@@ -27,12 +27,12 @@ import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  CoreEditor,
   KetcherLogger,
   getSvgFromDrawnStructures,
   isClipboardAPIAvailable,
   legacyCopy,
   isHelmCompatible,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -60,6 +60,7 @@ const options: Array<Option> = [
   { id: 'axo-labs', label: 'AxoLabs' },
   { id: 'svg', label: 'SVG Document' },
   { id: 'helm', label: 'HELM' },
+  { id: 'biln', label: 'BILN' },
 ];
 
 const formatDetector = {
@@ -70,6 +71,7 @@ const formatDetector = {
   idt: ChemicalMimeType.IDT,
   'axo-labs': ChemicalMimeType.AXOLABS,
   helm: ChemicalMimeType.HELM,
+  biln: ChemicalMimeType.BILN,
 };
 
 const StyledModal = styled(Modal)({
@@ -97,7 +99,7 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = CoreEditor.provideEditorInstance();
+  const editor = provideEditorInstance();
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -124,21 +126,31 @@ export const Save = ({
       setSvgData(svgData);
       return;
     }
-    if (
-      fileFormat === 'helm' &&
-      !isHelmCompatible(
-        Array.from(editor.drawingEntitiesManager.monomers.values()),
-        editor.monomersLibrary,
-      )
-    ) {
-      editor.events.error.dispatch(
-        'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
-      );
+    if (fileFormat === 'helm') {
+      if (editor.drawingEntitiesManager.molecules.length > 0) {
+        editor.events.error.dispatch(
+          'The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer',
+        );
+      }
+      if (
+        !isHelmCompatible(
+          Array.from(editor.drawingEntitiesManager.monomers.values()),
+          editor.monomersLibrary,
+        )
+      ) {
+        editor.events.error.dispatch(
+          'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
+        );
+      }
     }
 
     try {
       setIsLoading(true);
-      if (fileFormat === 'fasta' || fileFormat === 'sequence') {
+      if (
+        fileFormat === 'fasta' ||
+        fileFormat === 'sequence' ||
+        fileFormat === 'idt'
+      ) {
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {

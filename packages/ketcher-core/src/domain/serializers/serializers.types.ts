@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct, Vec2 } from 'domain/entities';
+import type { Struct } from 'domain/entities/struct';
+import type { Vec2 } from 'domain/entities/vec2';
 
 export interface Serializer<T> {
   deserialize: (content: string) => T;

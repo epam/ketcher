@@ -7,10 +7,12 @@ import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import {
-  clickOnMiddleOfCanvas,
+  clickInTheMiddleOfTheCanvas,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheCanvas,
   MacroFileType,
+  shiftCanvas,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -31,18 +33,18 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ContextMenu } from '@tests/pages/common/ContextMenu';
 import { MonomerOnMicroOption } from '@tests/pages/constants/contextMenu/Constants';
 import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
+import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
+import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviation';
+import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { EditAbbreviationDialog } from '@tests/pages/molecules/canvas/EditAbbreviation';
 import { RNASection } from '@tests/pages/constants/library/Constants';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { KETCHER_CANVAS } from '@tests/pages/constants/canvas/Constants';
-import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
-import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 
 let page: Page;
 
@@ -189,7 +191,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 6: Move cursor back to center and click to clear selection
     await CommonLeftToolbar(page).areaSelectionTool();
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
 
     // Visual verification: take a focused screenshot around the double bond.
     await takeElementScreenshot(page, getBondLocator(page, { bondId: 1 }), {
@@ -265,6 +267,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 5: Submit monomer creation
     await dialog.submit();
 
+    await clickOnCanvas(page, 0, 0);
+
     // Step 6: Collapse new monomer via context menu
     const sugarAtom = getAtomLocator(page, { atomId: 4 });
     await ContextMenu(page, sugarAtom).click(
@@ -314,7 +318,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       // Step 2: Open Save Structure dialog
       await CommonTopLeftToolbar(page).saveFile();
 
-      // const saveDialog = page.getByTestId('save-structure-dialog');
       const dialog = SaveStructureDialog(page);
 
       // Step 3: switch formats repeatedly
@@ -424,7 +427,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await ContextMenu(page, abbrev).click(MonomerOnMicroOption.ExpandMonomer);
 
     // Step 4.2: Remove abbreviation
-    await clickOnMiddleOfCanvas(page);
+    await clickInTheMiddleOfTheCanvas(page);
     await LeftToolbar(page).sGroup();
     await EditAbbreviationDialog(page).removeAbbreviation();
 
@@ -541,6 +544,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 5: Submit wizard
     await dialog.submit();
 
+    await clickOnCanvas(page, 0, 0);
+
     // Visual verification: take a screenshot where bad valence (if present) is visible.
     await takeElementScreenshot(page, getAtomLocator(page, { atomId: 4 }), {
       paddingWidth: 180,
@@ -614,12 +619,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/9084
+     * Behaviour changed in task: https://github.com/epam/ketcher/issues/9129
      * Version: 3.13.0-rc.1
      * Description:
      * When creating a new Nucleotide in the monomer wizard and manually defining
-     * attachment points (AP), Ketcher loses the user-defined AP configuration.
-     * It should instead validate that Sugar.R2 and Phosphate.R1 are already defined
-     * and show an error (prevent invalid save).
+     * attachment points (AP). Ketcher saves it with R2(phosphate)-R1(sugar) connection.
      *
      * Scenario:
      * 1. Go to Molecules mode (clean canvas)
@@ -630,10 +634,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      *    - Sugar: R2 is already defined (user tries to define it again)
      *    - Phosphate: R1 is already defined (user tries to define it again)
      * 6. Try to submit
-     *
-     * Expected result:
-     * Wizard shows validation error and does NOT allow saving an invalid configuration
-     * (AP duplicates). No loss of user-defined AP configuration.
      */
 
     // Step 1–2: Load structure from file as a new project (Molecules mode)
@@ -643,7 +643,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     );
 
     // Step 3: Select the whole structure and open Create Monomer wizard
-    await CommonLeftToolbar(page).areaSelectionTool();
+    // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
+    // Pan left so all atoms are within the visible canvas area before the wizard opens.
+    await shiftCanvas(page, -300, 0);
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
@@ -656,13 +658,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await presetSection.setName('ap');
 
     // Step 5: Configure fragments (Base/Sugar/Phosphate)
-
-    // Small stabilize drags
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
 
     // --- Base ---
     await presetSection.setupBase({
@@ -682,20 +677,39 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [21, 22, 23, 24],
     });
 
+    // Select phosphate position (required field; without it the validation dispatches
+    // phosphatePositionNotSelected which replaces invalidRnaPresetStructure in the reducer)
+    await presetSection.setPhosphatePosition('3');
+
     // Step 6: Try to submit with invalid AP configuration (duplicates)
     await dialog.submit();
 
-    // Verify that an error notification banner appears for duplicate attachment points
-    const errorBanner = NotificationMessageBanner(
+    // When position is set, validator step 2a fires:
+    // hasPhosphatePositionAttachmentPointConflict → dispatches
+    // invalidPhosphatePositionAttachmentPoints to preset (replacing step 1's
+    // invalidRnaPresetStructure). Step 3 (phosphatePositionNotSelected) does not fire.
+    const invalidPhosphatePositionMessage = NotificationMessageBanner(
       page,
-      ErrorMessage.invalidRnaPresetStructure,
+      ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
     );
-    await expect(errorBanner.notificationMessageBanner).toBeVisible();
+    const notMinimalViableStructureMessage = NotificationMessageBanner(
+      page,
+      ErrorMessage.notMinimalViableStructure,
+    );
 
-    // Visual verification: screenshot of the error notification banner
-    await takeElementScreenshot(page, errorBanner.notificationMessageBanner);
+    expect(
+      await invalidPhosphatePositionMessage.getNotificationMessage(),
+    ).toEqual(
+      'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
+    );
+    expect(
+      await notMinimalViableStructureMessage.getNotificationMessage(),
+    ).toEqual(
+      'Minimal monomer structure is two atoms connected via a single bond.',
+    );
 
-    // Close dialog to avoid affecting other tests
+    await invalidPhosphatePositionMessage.ok();
+    await notMinimalViableStructureMessage.ok();
     await dialog.discard();
   });
 });

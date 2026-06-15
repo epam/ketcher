@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import type { EditorSelection } from 'application/editor';
+import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -26,21 +26,21 @@ import { HalfBond } from './halfBond';
 import { Loop } from './loop';
 import { Pile } from './pile';
 import { Pool } from './pool';
-import { RGroup } from './rgroup';
-import { RxnArrow } from './rxnArrow';
-import { RxnPlus } from './rxnPlus';
+import type { RGroup } from './rgroup';
+import type { RxnArrow } from './rxnArrow';
+import type { RxnPlus } from './rxnPlus';
 import { SGroup } from './sgroup';
 import { SGroupForest } from './sgroupForest';
-import { SimpleObject } from './simpleObject';
-import { Text } from './text';
+import type { SimpleObject } from './simpleObject';
+import type { Text } from './text';
 import { Vec2 } from './vec2';
-import { Highlight } from './highlight';
-import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
+import type { Highlight } from './highlight';
+import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
-import { Image } from './image';
+import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
-import { MultitailArrow } from './multitailArrow';
+import type { MultitailArrow } from './multitailArrow';
 import {
   flipPointByCenter,
   rotateDelta,
@@ -55,6 +55,10 @@ export type Neighbor = {
 export type StructProperty = {
   key: string;
   value: string;
+};
+
+type ArrowWithId = {
+  arrowId?: number;
 };
 
 function arrayAddIfMissing(array, item) {
@@ -86,6 +90,7 @@ export class Struct {
   highlights: Pool<Highlight>;
   images = new Pool<Image>();
   multitailArrows = new Pool<MultitailArrow>();
+  private nextArrowId = 0;
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -106,6 +111,41 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+  }
+
+  private syncNextArrowId(arrowId: number): void {
+    this.nextArrowId = Math.max(this.nextArrowId, arrowId + 1);
+  }
+
+  private ensureArrowId<T extends ArrowWithId>(arrow: T): T {
+    const arrowId = arrow.arrowId ?? this.nextArrowId;
+
+    arrow.arrowId = arrowId;
+    this.syncNextArrowId(arrowId);
+
+    return arrow;
+  }
+
+  addRxnArrow(item: RxnArrow): number {
+    this.ensureArrowId(item);
+
+    return this.rxnArrows.add(item);
+  }
+
+  setRxnArrow(id: number, item: RxnArrow): void {
+    this.ensureArrowId(item);
+    this.rxnArrows.set(id, item);
+  }
+
+  addMultitailArrow(item: MultitailArrow): number {
+    this.ensureArrowId(item);
+
+    return this.multitailArrows.add(item);
+  }
+
+  setMultitailArrow(id: number, item: MultitailArrow): void {
+    this.ensureArrowId(item);
+    this.multitailArrows.set(id, item);
   }
 
   hasRxnProps(): boolean {
@@ -377,7 +417,7 @@ export class Struct {
     });
 
     multitailArrows.forEach((id) => {
-      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
+      cp.addMultitailArrow(this.multitailArrows.get(id)!.clone());
     });
 
     rgroupAttachmentPoints.forEach((id) => {
@@ -389,7 +429,7 @@ export class Struct {
     if (!dropRxnSymbols) {
       cp.isReaction = this.isReaction;
       this.rxnArrows.forEach((item) => {
-        cp.rxnArrows.add(item.clone());
+        cp.addRxnArrow(item.clone());
       });
       this.rxnPluses.forEach((item) => {
         cp.rxnPluses.add(item.clone());
@@ -501,6 +541,10 @@ export class Struct {
       startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : this.atoms.get(halfBond.begin)!.pp;
+    } else if (sgroup1 && sgroup1 !== sgroup2 && sgroup1.isContracted()) {
+      startCoords =
+        sgroup1.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.begin)!.pp;
     } else {
       startCoords = this.atoms.get(halfBond.begin)!.pp;
     }
@@ -509,6 +553,10 @@ export class Struct {
       endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : this.atoms.get(halfBond.end)!.pp;
+    } else if (sgroup2 && sgroup2 !== sgroup1 && sgroup2.isContracted()) {
+      endCoords =
+        sgroup2.getContractedPosition(this).position ??
+        this.atoms.get(halfBond.end)!.pp;
     } else {
       endCoords = this.atoms.get(halfBond.end)!.pp;
     }
@@ -893,9 +941,12 @@ export class Struct {
     });
 
     this.sgroups.forEach((item) => {
+      // MonomerMicromolecule centers carry their own transform flow and are
+      // scaled separately during mode transitions to avoid double-scaling.
       if (item instanceof MonomerMicromolecule) {
         return;
       }
+
       item.pp = item.pp?.scaled(scale) ?? null;
     });
 
@@ -912,6 +963,18 @@ export class Struct {
     this.multitailArrows.forEach((multitailArrow) =>
       multitailArrow.rescaleSize(scale),
     );
+  }
+
+  scaleMonomerMicromoleculeSgroups(scale: number) {
+    if (scale === 1) return;
+
+    this.sgroups.forEach((item) => {
+      if (!(item instanceof MonomerMicromolecule)) {
+        return;
+      }
+
+      item.pp = item.pp?.scaled(scale) ?? null;
+    });
   }
 
   rescale() {
@@ -1431,7 +1494,9 @@ export class Struct {
     this.texts.changeInitiallySelectedPropertiesForPool();
   }
 
-  public applyMonomersTransformations() {
+  public applyMonomersTransformations(scaleFactor = 1) {
+    this.scaleMonomerMicromoleculeSgroups(scaleFactor);
+
     const atomToBonds = new Map<number, number[]>();
 
     this.bonds.forEach((bond, bondId) => {
@@ -1639,6 +1704,11 @@ export class Struct {
     this.bondInitHalfBonds(bondId);
     const newBondObj = this.bonds.get(bondId);
     if (newBondObj?.hb1 && newBondObj?.hb2) {
+      // Populate dir/norm/ang before atomAddNeighbor, which sorts neighbors
+      // by hb.ang — inserting with ang=0 (the HalfBond default) would place
+      // the half-bond in the wrong position in the neighbor list.
+      this.halfBondUpdate(newBondObj.hb1);
+      this.halfBondUpdate(newBondObj.hb2);
       this.atomAddNeighbor(newBondObj.hb1);
       this.atomAddNeighbor(newBondObj.hb2);
     }

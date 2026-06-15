@@ -130,6 +130,12 @@ class ReAtom extends ReObject {
   drawHover(render: Render, drawOutline = true) {
     const ret = this.makeHoverPlate(render, drawOutline);
 
+    const isSuperAttachmentPoint =
+      this.a.label === '*' && this.a.endpoints.length > 0;
+    if (isSuperAttachmentPoint) {
+      ret.attr({ cursor: 'default' });
+    }
+
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);
     this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
@@ -1661,12 +1667,16 @@ function buildLabel(
     ps.y = ps.y + 3;
   }
 
+  const isSuperAttachmentPoint =
+    text === '*' && atom.a.endpoints.length > 0;
+
   const path = paper.text(ps.x, ps.y, text).attr({
     font,
     'font-size': fontszInPx,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    ...(isSuperAttachmentPoint ? { cursor: 'default' } : {}),
   });
 
   const background =

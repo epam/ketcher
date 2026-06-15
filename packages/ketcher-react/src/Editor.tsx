@@ -120,6 +120,12 @@ export const Editor = (props: Props) => {
     ) {
       props.onInit?.(ketcher);
     }
+    return () => {
+      ketcher &&
+        moleculesEditor &&
+        (macromoleculesEditor || props.disableMacromoleculesEditor) &&
+        props.onDestroy?.(ketcher);
+    };
   }, [moleculesEditor, macromoleculesEditor]);
 
   const onInitMoleculesEditor = (ketcher: Ketcher) => {

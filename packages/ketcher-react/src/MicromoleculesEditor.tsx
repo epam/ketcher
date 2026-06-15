@@ -42,6 +42,7 @@ const mediaSizes = {
 
 export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
+  onDestroy?: (ketcher: Ketcher) => void;
   onSetKetcherId?: (ketcherId: string) => void;
 }
 
@@ -106,6 +107,7 @@ function MicromoleculesEditor(props: Readonly<EditorProps>) {
       initPromiseRef.current?.then(() => {
         cleanupRef.current?.();
         appRootRef.current?.unmount();
+        props.onSetKetcherId?.('');
       });
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function

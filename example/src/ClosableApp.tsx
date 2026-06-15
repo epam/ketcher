@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
-import { Ketcher, StructServiceProvider } from 'ketcher-core';
+import { Ketcher, KetcherLogger, StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
 
@@ -118,6 +118,10 @@ M  END
             if (molecule) {
               ketcher.setMolecule(molecule);
             }
+          }}
+          onDestroy={(ketcher: Ketcher) => {
+            KetcherLogger.log('Ketcher destroyed id->' + ketcher?.id + '}');
+            window.ketcher = undefined;
           }}
         />
       )}

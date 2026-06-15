@@ -133,7 +133,6 @@ export const editorSlice: Slice<EditorState> = createSlice({
     createEditor: (
       state,
       action: PayloadAction<{
-        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
@@ -145,6 +144,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.monomerLibraryLoadError = null;
 
       const editor = new CoreEditor({
+        ketcherId: state.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         renderersContainer: new RenderersManager({
@@ -168,6 +168,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.editorLayoutMode = state.editor?.mode.modeName;
       state.editor?.destroy();
       state.editor = undefined;
+      state.ketcherId = '';
     },
     showPreview: (
       state,

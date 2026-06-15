@@ -1120,6 +1120,20 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 
+    // recalculate super-attachment point position
+    const isSuperAttachmentPoint =
+      this.a.label === '*' && this.a.endpoints.length > 0;
+    if (isSuperAttachmentPoint) {
+      const positions =
+        this.a.endpoints.map(
+          (atomId) => struct.atoms.get(atomId)?.pp || Vec2.ZERO,
+        ) || [];
+
+      this.a.pp = positions
+        .reduce((acc, pos) => acc.add(pos))
+        .scaled(1 / positions.length);
+    }
+
     if (atom.cip) {
       const paper = render.paper;
       const options = render.options;

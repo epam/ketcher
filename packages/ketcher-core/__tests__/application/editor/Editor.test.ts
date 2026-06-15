@@ -255,9 +255,7 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
-    });
 
-    it('should accept monomer with idtAliases and base alias', () => {
       const monomerWithBase = {
         root: {
           templates: [
@@ -289,7 +287,7 @@ describe('CoreEditor', () => {
         },
       };
 
-      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialLibrarySizeAfter = editor.monomersLibrary.length;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBase));
 
       expect(errorSpy).not.toHaveBeenCalledWith(
@@ -297,7 +295,7 @@ describe('CoreEditor', () => {
           'Base IDT alias is required when idtAliases is defined',
         ),
       );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySizeAfter + 1);
     });
 
     it('should accept monomer without idtAliases', () => {
@@ -481,6 +479,10 @@ describe('CoreEditor', () => {
           reason: expect.stringContaining('Alias collision detected'),
         },
       ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Alias collision detected'),
+      );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
@@ -733,7 +735,7 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Alias collision detected'),
+        expect.stringContaining('duplicate IDT aliases detected'),
       );
     });
 

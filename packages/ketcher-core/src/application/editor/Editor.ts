@@ -485,11 +485,15 @@ export class CoreEditor {
       reason: string,
       shouldThrow = true,
     ) => {
+      const consoleMessage = `[Monomer Library] Failed to load monomer "${name}": ${reason}`;
+      globalThis.console.error(consoleMessage);
+
       if (reason.startsWith('Editor::updateMonomersLibrary')) {
         KetcherLogger.error(reason);
       } else {
         KetcherLogger.error('Editor::updateMonomersLibrary', reason);
       }
+
       skippedItems.push({ name, reason });
       shouldThrowMonomerLibraryUpdateError ||= shouldThrow;
     };
@@ -576,7 +580,7 @@ export class CoreEditor {
         return;
       }
 
-      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
+      const conflictingMonomer = this._monomersLibrary.find((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
@@ -602,13 +606,26 @@ export class CoreEditor {
         );
       });
 
-      if (aliasCollisionExists) {
+      if (conflictingMonomer) {
         const aliasDetails = formatAliasDetails(newMonomer);
+        const isHelmCollision =
+          Boolean(newMonomer.props?.aliasHELM) &&
+          conflictingMonomer.props?.aliasHELM === newMonomer.props?.aliasHELM;
+        const isBilnCollision =
+          newMonomerHasBilnAliasUniquenessScope &&
+          Boolean(newMonomer.props?.aliasBILN) &&
+          hasBilnAliasUniquenessScope(conflictingMonomer.props?.MonomerClass) &&
+          conflictingMonomer.props?.aliasBILN === newMonomer.props?.aliasBILN;
+
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Alias collision detected${
-            aliasDetails ? ` (${aliasDetails})` : ''
-          }. The monomer was not added to the library.`,
+          isHelmCollision || isBilnCollision
+            ? `Alias collision detected${
+                aliasDetails ? ` (${aliasDetails})` : ''
+              }. The monomer was not added to the library.`
+            : `duplicate IDT aliases detected${
+                aliasDetails ? ` (${aliasDetails})` : ''
+              }. IDT aliases for 5', 3', internal and base positions must be unique. The monomer was not added to the library.`,
         );
         return;
       }

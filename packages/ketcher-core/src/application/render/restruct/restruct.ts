@@ -832,6 +832,12 @@ class ReStruct {
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
           if (item instanceof ReAtom) {
+            const isSuperAttachmentPoint =
+              item.a.label === '*' && item.a.endpoints.length > 0;
+            if (isSuperAttachmentPoint) {
+              return;
+            }
+
             let sgroup;
             for (const sgId of item.a.sgs.values()) {
               sgroup = sgId;

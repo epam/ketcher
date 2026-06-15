@@ -532,6 +532,30 @@ export function setExpandMonomerSGroup(
     });
   });
 
+  // The monomer label is rendered at sGroup.pp, while the molecule occupies the
+  // bounding box of the monomer's own atoms. Keep the two centered on each
+  // other so neither the collapsed label nor the expanded molecule appears far
+  // away from the other.
+  if (sGroup instanceof MonomerMicromolecule && sGroup.pp) {
+    const sGroupBBoxCenter = sGroupBBox.centre();
+    if (attrs.expanded) {
+      // Expanding: shift the monomer's own atoms so the expanded molecule is
+      // centered on the label position instead of jumping away from it.
+      const moleculeMoveVector = sGroup.pp.sub(sGroupBBoxCenter);
+      if (moleculeMoveVector.length() > 0) {
+        sGroupAtoms.forEach((aid) => {
+          action.addOp(new AtomMove(aid, moleculeMoveVector));
+        });
+      }
+    } else {
+      // Collapsing: shift the label to the center of the expanded molecule.
+      const labelMoveVector = sGroupBBoxCenter.sub(sGroup.pp);
+      if (labelMoveVector.length() > 0) {
+        action.addOp(new SGroupDataMove(sgid, labelMoveVector));
+      }
+    }
+  }
+
   sGroupAtoms.forEach((aid) => {
     action.mergeWith(
       fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false),

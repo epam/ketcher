@@ -6,7 +6,8 @@ import {
   identifyStructFormat,
 } from './formatters';
 import type { Ketcher } from './ketcher';
-import { type StructService, ChemicalMimeType } from 'domain/services';
+import type { StructService } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';

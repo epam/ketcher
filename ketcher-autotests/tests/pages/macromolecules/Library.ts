@@ -193,6 +193,8 @@ export const Library = (page: Page) => {
       }
 
       const monomerCard = getElement(monomer.testId);
+      await monomerCard.waitFor({ state: 'visible' });
+      await monomerCard.scrollIntoViewIfNeeded();
       const monomerCardBbox = await monomerCard.boundingBox();
       await monomerCard.click({
         position: {
@@ -334,6 +336,8 @@ export const Library = (page: Page) => {
       await this.goToMonomerLibraryLocation(Preset.A);
 
       const presetCard = getElement(presetTestId);
+      await presetCard.waitFor({ state: 'visible' });
+      await presetCard.scrollIntoViewIfNeeded();
       const presetCardBbox = await presetCard.boundingBox();
 
       await presetCard.click({

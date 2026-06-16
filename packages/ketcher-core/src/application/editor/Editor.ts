@@ -87,6 +87,8 @@ import {
   isValidHelmAliasLength,
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
+  getDisallowedModificationTypes,
+  DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE,
   initHotKeys,
   isEditableInputTarget,
   KetcherLogger,
@@ -526,6 +528,19 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const disallowedModificationTypes = getDisallowedModificationTypes(
+        newMonomer.props?.modificationTypes,
+      );
+      if (disallowedModificationTypes.length > 0) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${
+          newMonomer.props.MonomerName
+        }" monomer has failed. ${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
+          ', ',
+        )}. The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
       const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );

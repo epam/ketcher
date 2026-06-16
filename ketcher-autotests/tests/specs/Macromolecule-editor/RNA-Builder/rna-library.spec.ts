@@ -1294,7 +1294,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     await takeMonomerLibraryScreenshot(page);
   });
 

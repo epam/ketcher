@@ -23,5 +23,6 @@ export interface IRNAPresetItemProps {
   readonly onContextMenu: React.MouseEventHandler;
   readonly onMouseLeave: React.MouseEventHandler;
   readonly onMouseMove: React.MouseEventHandler;
+  readonly onStarClick?: VoidFunction;
   readonly preset: IRnaPreset;
 }

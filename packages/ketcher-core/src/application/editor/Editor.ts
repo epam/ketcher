@@ -2313,6 +2313,12 @@ export class CoreEditor {
       );
     }
 
+    if (this.mode.modeName === 'flex-layout-mode') {
+      modelChanges.merge(
+        this.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
+    }
+
     if (this.mode.modeName === 'sequence-layout-mode') {
       this.mode.initialize(false, false, false);
     } else {

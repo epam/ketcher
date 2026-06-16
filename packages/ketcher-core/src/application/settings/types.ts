@@ -2,6 +2,10 @@
  * Settings type definitions for Ketcher
  */
 
+import type { DeepPartial } from 'types';
+
+export type { DeepPartial };
+
 /**
  * Complete settings structure in flat format
  */
@@ -106,13 +110,6 @@ export interface ValidationResult {
   valid: boolean;
   errors?: ValidationError[];
 }
-
-/**
- * Deep partial type helper
- */
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
 
 /**
  * Storage abstraction interface

@@ -32,10 +32,9 @@ import {
 import {
   type IKetMacromoleculesContent,
   type IKetMonomerGroupTemplate,
-  KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -52,11 +51,12 @@ import {
   type SubChainNode,
   ChainsCollection,
   Phosphate,
-  SequenceType,
   Struct,
   Sugar,
   Vec2,
 } from 'domain/entities';
+import { KetMonomerClass } from 'domain/constants/monomers';
+import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {

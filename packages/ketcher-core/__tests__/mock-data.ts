@@ -17,7 +17,7 @@ import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import type { MonomerItemType } from 'domain/types';
 import { mockFn } from 'jest-mock-extended';
-import { KetMonomerClass } from 'application/formatters';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 const mockAtoms = [
   {

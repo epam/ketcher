@@ -20,6 +20,7 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import type { AttachmentPointName } from 'domain/types';
+import type { EditorTheme } from 'domain/types/theme';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
@@ -40,14 +41,17 @@ import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
+import type { Loop } from '../view-model/Loop';
+import type { DeepPartial } from 'types';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
+type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
+
 export class RenderersManager {
-  // FIXME: Specify the types.
-  private readonly theme;
+  private readonly theme: ThemeType;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -62,7 +66,7 @@ export class RenderersManager {
 
   private needRecalculateMonomersEnumeration = false;
 
-  constructor({ theme }) {
+  constructor({ theme }: { theme: ThemeType }) {
     this.theme = theme;
   }
 
@@ -105,7 +109,7 @@ export class RenderersManager {
     monomer: BaseMonomer | AmbiguousMonomer,
     callback?: () => void,
   ) {
-    let monomerRenderer;
+    let monomerRenderer: BaseMonomerRenderer | AmbiguousMonomerRenderer;
 
     if (monomer instanceof AmbiguousMonomer) {
       monomerRenderer = new AmbiguousMonomerRenderer(monomer);
@@ -283,7 +287,6 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = false;
   }
 
-  // FIXME: Specify the types.
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
@@ -314,7 +317,10 @@ export class RenderersManager {
     secondMonomer?.renderer?.redrawHover();
   }
 
-  public hoverMonomer(monomer: BaseMonomer, needRedrawAttachmentPoints) {
+  public hoverMonomer(
+    monomer: BaseMonomer,
+    needRedrawAttachmentPoints: boolean,
+  ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
     if (needRedrawAttachmentPoints) {
       monomer.renderer?.redrawAttachmentPoints();
@@ -514,7 +520,7 @@ export class RenderersManager {
     });
   }
 
-  private calculateDashedPolygonPath(loop) {
+  private calculateDashedPolygonPath(loop: Loop) {
     const editorSettings = provideEditorSettings();
     let pathStr = '';
 
@@ -552,7 +558,7 @@ export class RenderersManager {
     return pathStr;
   }
 
-  private calculateLoopCenterAndRadius(loop) {
+  private calculateLoopCenterAndRadius(loop: Loop) {
     const editorSettings = provideEditorSettings();
 
     let center = new Vec2(0, 0);

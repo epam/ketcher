@@ -44,8 +44,8 @@ import {
   type RecognizeResult,
   type StructService,
   type StructServiceOptions,
-  ChemicalMimeType,
 } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { KetcherLogger, normalizeError } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 import { ketcherProvider } from 'application/ketcherProvider';

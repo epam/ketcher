@@ -38,6 +38,8 @@ import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';
 import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
+import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
@@ -463,6 +465,16 @@ export class RenderersManager {
 
   public deleteRxnPlus(rxnPlus: RxnPlus) {
     rxnPlus.renderer?.remove();
+  }
+
+  public addStereoFlag(stereoFlag: CoreStereoFlag) {
+    const stereoFlagRenderer = new StereoFlagRenderer(stereoFlag);
+
+    stereoFlagRenderer.show();
+  }
+
+  public deleteStereoFlag(stereoFlag: CoreStereoFlag) {
+    stereoFlag.renderer?.remove();
   }
 
   private renderAromaticCircles() {

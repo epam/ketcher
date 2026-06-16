@@ -2041,6 +2041,13 @@ export class CoreEditor {
       history.redo();
       this.clearTransientViews();
     }
+
+    // Undo/redo can leave the cached autochain position stale, so recompute it.
+    if (this.drawingEntitiesManager.hasMonomers) {
+      this.calculateAndStoreNextAutochainPosition(this.drawingEntitiesManager);
+    } else {
+      this.nextAutochainPosition = undefined;
+    }
   }
 
   public selectTool(name: ToolName, options?) {

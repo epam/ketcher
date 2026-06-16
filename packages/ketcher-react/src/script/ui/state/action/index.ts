@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import { type Struct, SettingsManager } from 'ketcher-core';
+import {
+  type Struct,
+  SettingsManager,
+  type SelectionToolAction,
+} from 'ketcher-core';
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
 
@@ -154,7 +158,7 @@ export default function (
         action: resolvedAction,
       });
       if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool;
+        SettingsManager.selectionTool = activeTool as SelectionToolAction;
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -168,7 +172,7 @@ export default function (
         action: action as UiActionAction,
       });
       if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool;
+        SettingsManager.selectionTool = activeTool as SelectionToolAction;
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,

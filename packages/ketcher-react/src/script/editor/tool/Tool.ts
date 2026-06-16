@@ -32,10 +32,9 @@ export interface Tool extends ToolEventHandler {
   ci?: HoverTarget;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ToolConstructorInterface = new (
   editor: Editor,
-  ...args: any[]
+  ...args: never[]
 ) => Tool;
 
 export type ToolEventHandlerName = keyof ToolEventHandler;

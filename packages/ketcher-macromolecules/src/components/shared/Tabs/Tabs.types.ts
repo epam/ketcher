@@ -1,10 +1,9 @@
-import { FC } from 'react';
+import { ComponentType } from 'react';
 
 export type TabPanelData = {
   caption: string;
   tooltip?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: FC<any>;
+  component: ComponentType<never>;
   testId: string;
   props?: Record<string, unknown>;
 };

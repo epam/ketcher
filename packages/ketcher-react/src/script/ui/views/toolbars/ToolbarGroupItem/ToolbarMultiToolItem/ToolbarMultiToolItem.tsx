@@ -81,7 +81,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   const [portalStyle] = usePortalStyle([ref, isOpen]);
 
   let selected = false;
-  let currentId = id;
+  let currentId: ToolbarItemVariant | undefined = id;
 
   const selectedTool = options.find(
     (toolbarItem) => status[toolbarItem.id]?.selected,
@@ -107,13 +107,12 @@ const ToolbarMultiToolItem = (props: Props) => {
     const savedSelectionToolId =
       savedSelectionTool &&
       `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
-        (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+    currentId = savedSelectionToolId
+      ? options.filter(
+          (option) =>
+            !status[option.id]?.hidden && option.id === savedSelectionToolId,
+        )[0]?.id
+      : undefined;
 
     if (!currentId) {
       currentId =

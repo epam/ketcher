@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -15,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MuiSelect, { type SelectChangeEvent } from '@mui/material/Select';
+import MuiSelect, {
+  type SelectChangeEvent,
+  type BaseSelectProps,
+} from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import type { ReactNode } from 'react';
@@ -79,12 +81,13 @@ const Select = ({
       value={currentValue?.value ?? ''}
       title={title}
       onChange={handleChange}
-      renderValue={(selected: string) =>
-        (currentValue?.children ??
+      renderValue={
+        ((selected: string) =>
+          currentValue?.children ??
           currentValue?.label ??
           placeholder ??
           selected ??
-          '') as any
+          '') as BaseSelectProps['renderValue']
       }
       displayEmpty
       multiple={multiple}

@@ -29,6 +29,8 @@ import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -422,6 +424,30 @@ export class RenderersManager {
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
     if (bond.renderer) {
       bond.renderer.remove();
+    }
+
+    const editor = provideEditorInstance();
+    const isSequenceMode = editor?.mode?.modeName === 'sequence-layout-mode';
+
+    if (isSequenceMode && SequenceRenderer.chainsCollection) {
+      const monomerNode = SequenceRenderer.chainsCollection.monomerToNode.get(
+        bond.monomer,
+      );
+
+      if (monomerNode) {
+        const bondRenderer = new MonomerToAtomBondSequenceRenderer(
+          bond,
+          monomerNode,
+        );
+
+        this.redrawDrawingEntity(bond.atom);
+        SequenceRenderer.showBondRenderer(bondRenderer);
+        bond.setRenderer(bondRenderer);
+        bond.monomer.renderer?.redrawAttachmentPoints();
+        bond.monomer.renderer?.redrawHover();
+
+        return;
+      }
     }
 
     const bondRenderer = new MonomerToAtomBondRenderer(bond);

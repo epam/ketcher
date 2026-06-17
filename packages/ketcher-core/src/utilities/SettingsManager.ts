@@ -32,6 +32,20 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+/**
+ * Persisted selection-tool state, written to and read from localStorage.
+ *
+ * `tool` is one of the keys registered in `toolsMap` (ketcher-react):
+ * `hand`, `select`, `fragmentSelection`, `eraser`, `atom`, `bond`, `chain`,
+ * `template`, `charge`, `sgroup`, `rgroupatom`, `rgroupfragment`, `apoint`,
+ * `attach`, `reactionarrow`, `reactionplus`, `reactionmap`, `reactionunmap`,
+ * `paste`, `rotate`, `enhancedStereo`, `simpleobject`, `text`, `image`,
+ * `createMonomer`.
+ *
+ * `opts` is persisted as raw JSON and read back without runtime validation.
+ * Consumers **must** narrow `opts` before use — do not assume any particular
+ * shape without checking (e.g. `if (typeof action.opts === 'object' && ...)`).
+ */
 export interface SelectionToolAction {
   tool: string;
   opts?: unknown;

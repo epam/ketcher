@@ -23,6 +23,11 @@ import {
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
 
+const isSelectionToolAction = (x: unknown): x is SelectionToolAction =>
+  typeof x === 'object' &&
+  x !== null &&
+  (x as { tool?: unknown }).tool === 'select';
+
 type ActionParams = {
   editor: Editor & {
     struct(): Struct;
@@ -157,8 +162,8 @@ export default function (
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool as SelectionToolAction;
+      if (isSelectionToolAction(activeTool)) {
+        SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,
@@ -171,8 +176,8 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
-        SettingsManager.selectionTool = activeTool as SelectionToolAction;
+      if (isSelectionToolAction(activeTool)) {
+        SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
         activeTool || state?.activeTool,

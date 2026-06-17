@@ -32,6 +32,9 @@ export interface Tool extends ToolEventHandler {
   ci?: HoverTarget;
 }
 
+// `never[]` rest params: constructor parameters are contravariant, so a
+// `never`-typed rest accepts any concrete tool constructor in `toolsMap`.
+// Do NOT change to `unknown[]` / `any[]` — it breaks the union.
 export type ToolConstructorInterface = new (
   editor: Editor,
   ...args: never[]

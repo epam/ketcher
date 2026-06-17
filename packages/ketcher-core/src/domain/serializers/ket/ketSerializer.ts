@@ -573,10 +573,20 @@ export class KetSerializer implements Serializer<Struct> {
         }
         case KetConnectionType.HYDROGEN: {
           const firstMonomer = drawingEntitiesManager.monomers.get(
-            Number(monomerIdsMap[connection.endpoint1.monomerId]),
+            Number(
+              monomerIdsMap[
+                connection.endpoint1.monomerId ??
+                  connection.endpoint1.moleculeId
+              ],
+            ),
           );
           const secondMonomer = drawingEntitiesManager.monomers.get(
-            Number(monomerIdsMap[connection.endpoint2.monomerId]),
+            Number(
+              monomerIdsMap[
+                connection.endpoint2.monomerId ??
+                  connection.endpoint2.moleculeId
+              ],
+            ),
           );
 
           if (!firstMonomer || !secondMonomer) {

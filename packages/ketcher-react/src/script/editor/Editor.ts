@@ -96,7 +96,6 @@ import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
 import { Highlighter } from './highlighter';
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
-import { isStructureContinuous as isStructureContinuousUtil } from './utils/structureContinuity';
 import type { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
@@ -909,10 +908,6 @@ class Editor implements KetcherEditor {
     );
 
     return suitableBonds.size >= 1;
-  }
-
-  static isStructureContinuous(struct: Struct, selection?: Selection): boolean {
-    return isStructureContinuousUtil(struct, selection);
   }
 
   static isStructureImpure(struct: Struct) {

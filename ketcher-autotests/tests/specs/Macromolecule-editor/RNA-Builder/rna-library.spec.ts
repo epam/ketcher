@@ -139,7 +139,7 @@ test.describe('RNA Library', () => {
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: Check the RNA components panel. 
     RNA panel consist of:
-    RNA Builder(collapsed), Presets(5)(expanded), Sugars(199)(collapsed), 
+    RNA Builder(collapsed), Presets(35)(expanded), Sugars(199)(collapsed), 
     Bases(160)(collapsed), Phosphates(32)(collapsed)
     */
     await takeMonomerLibraryScreenshot(page);

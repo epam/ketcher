@@ -48,6 +48,8 @@ export const Sugar = createMonomerGroup(MonomerType.Sugar, {
     alias: 'MOE',
     testId: "MOE___2'-O-Methoxyethyl ribose",
   },
+  mR: { alias: 'mR', testId: "mR___2'-O-Methyl-Ribose" },
+  lna: { alias: 'lna', testId: 'lna___LNA (2,4-BNA)' },
   nC62r: {
     alias: 'nC62r',
     testId: 'nC62r___2-O-(6-aminohexyl)ribose',

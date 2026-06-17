@@ -218,6 +218,81 @@ test('Case 4: Check that symbols without brackets that represent nucleotides can
   }
 });
 
+const newAxoLabsCodes = [
+  { axoLabsString: "5'-dTdTdT-3'", expectedMonomer: Preset.dR_T_P },
+  { axoLabsString: "5'-dAdAdA-3'", expectedMonomer: Preset.dR_A_P },
+  { axoLabsString: "5'-dCdCdC-3'", expectedMonomer: Preset.dR_C_P },
+  { axoLabsString: "5'-dGdGdG-3'", expectedMonomer: Preset.dR_G_P },
+  { axoLabsString: "5'-aaa-3'", expectedMonomer: Preset.mR_A_P },
+  { axoLabsString: "5'-ccc-3'", expectedMonomer: Preset.mR_C_P },
+  { axoLabsString: "5'-ggg-3'", expectedMonomer: Preset.mR_G_P },
+  { axoLabsString: "5'-uuu-3'", expectedMonomer: Preset.mR_U_P },
+  { axoLabsString: "5'-CmCmCm-3'", expectedMonomer: Preset.MOE_C_P },
+  { axoLabsString: "5'-CbCbCb-3'", expectedMonomer: Preset.lna_C_P },
+  { axoLabsString: "5'-TbTbTb-3'", expectedMonomer: Preset.lna_T_P },
+  { axoLabsString: "5'-AbAbAb-3'", expectedMonomer: Preset.lna_A_P },
+  { axoLabsString: "5'-GbGbGb-3'", expectedMonomer: Preset.lna_G_P },
+  {
+    axoLabsString: "5'-(5Mc)(5Mc)(5Mc)-3'",
+    expectedMonomer: Preset.mR_5meC_P,
+  },
+];
+
+test('Case 8: Check that missing AxoLabs codes are supported (issue #9333)', async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/9333
+   * Description: Check that previously unsupported AxoLabs codes (dT, dA, dC, dG,
+   *              a, c, g, u, Cm, Ab, Cb, Gb, Tb, (5Mc)) can be imported and exported
+   *
+   * Scenario:
+   *            1. Load axolabs string via Paste from Clipboard dialog
+   *            2. Validate that three nucleotide monomers are present on the canvas
+   *            3. Verify AxoLabs export round-trip
+   *            4. Validate repro string 5'-AfdTUsCbG-3' imports and exports correctly
+   *
+   * Version 3.10
+   */
+  test.slow();
+  for (const monomer of newAxoLabsCodes) {
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.AxoLabs,
+      monomer.axoLabsString,
+    );
+    const monomerOnCanvas = isPresetType(monomer.expectedMonomer)
+      ? getMonomerLocator(page, monomer.expectedMonomer.base ?? Base.NoBase)
+      : getMonomerLocator(page, monomer.expectedMonomer);
+
+    await expect(monomerOnCanvas.nth(0)).toBeVisible();
+    await expect(monomerOnCanvas.nth(1)).toBeVisible();
+    await expect(monomerOnCanvas.nth(2)).toBeVisible();
+
+    await verifyAxoLabsExport(page, monomer.axoLabsString);
+  }
+
+  await CommonTopLeftToolbar(page).clearCanvas();
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.AxoLabs,
+    "5'-AfdTUsCbG-3'",
+  );
+  await expect(
+    getMonomerLocator(page, Preset.fR_A_P.base ?? Base.A),
+  ).toHaveCount(1);
+  await expect(
+    getMonomerLocator(page, Preset.dR_T_P.base ?? Base.T),
+  ).toHaveCount(1);
+  await expect(getMonomerLocator(page, Preset.U.base ?? Base.U)).toHaveCount(1);
+  await expect(getMonomerLocator(page, Phosphate.sP)).toHaveCount(1);
+  await expect(
+    getMonomerLocator(page, Preset.lna_C_P.base ?? Base.C),
+  ).toHaveCount(1);
+  await expect(getMonomerLocator(page, Preset.G.base ?? Base.G)).toHaveCount(1);
+
+  await verifyAxoLabsExport(page, "5'-AfdTUsCbG-3'");
+});
+
 test('Case 5: Check that in case of import, where a symbol with brackets that is not defined in the Ketcher library exist, the monomer loaded as an unresolved AxoLab monomer', async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/8331

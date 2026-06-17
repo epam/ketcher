@@ -29,6 +29,8 @@ import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
@@ -420,14 +422,40 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
-    if (bond.renderer) {
-      bond.renderer.remove();
-    }
-
-    const bondRenderer = new MonomerToAtomBondRenderer(bond);
+    bond.renderer?.remove();
     this.redrawDrawingEntity(bond.atom);
 
-    bondRenderer.show();
+    const sequenceNode = this.getSequenceNodeForMonomerToAtomBond(bond);
+
+    if (sequenceNode) {
+      const renderer = new MonomerToAtomBondSequenceRenderer(
+        bond,
+        sequenceNode,
+      );
+
+      SequenceRenderer.showBondRenderer(renderer);
+      this.redrawMonomerToAtomBondRelatedState(bond);
+
+      return;
+    }
+
+    const renderer = new MonomerToAtomBondRenderer(bond);
+    renderer.show();
+
+    this.redrawMonomerToAtomBondRelatedState(bond);
+  }
+
+  private getSequenceNodeForMonomerToAtomBond(bond: MonomerToAtomBond) {
+    const editor = provideEditorInstance();
+
+    if (editor.mode.modeName !== 'sequence-layout-mode') {
+      return;
+    }
+
+    return SequenceRenderer.chainsCollection?.monomerToNode.get(bond.monomer);
+  }
+
+  private redrawMonomerToAtomBondRelatedState(bond: MonomerToAtomBond) {
     bond.monomer.renderer?.redrawAttachmentPoints();
     bond.monomer.renderer?.redrawHover();
   }

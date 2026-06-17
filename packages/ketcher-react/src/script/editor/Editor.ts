@@ -2825,7 +2825,7 @@ class Editor implements KetcherEditor {
     if (action === true) {
       this.render.update(true, null); // force
     } else {
-      if (!ignoreHistory && !action.isDummy()) {
+      if (!ignoreHistory && !action.isDummy(this.render.ctab)) {
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
         if (this.historyStack.length > HISTORY_SIZE) {
           this.historyStack.shift();

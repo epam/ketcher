@@ -56,8 +56,13 @@ const isSugarPhosphateConnection = (
   );
 };
 
+export type RnaPresetWithOptionalFields = Pick<
+  IRnaPreset,
+  'sugar' | 'phosphate' | 'connections'
+>;
+
 export const getRnaPresetPhosphatePosition = (
-  preset: Partial<Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>>,
+  preset: Partial<RnaPresetWithOptionalFields>,
 ): RnaPhosphatePosition | undefined => {
   if (!preset?.phosphate) {
     return undefined;

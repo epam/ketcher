@@ -4,7 +4,6 @@ import {
   IKetTemplateConnection,
   IKetMonomerGroupTemplate,
   monomerFactory,
-  AmbiguousMonomerType,
   MonomerItemType,
   MonomerOrAmbiguousType,
   setMonomerTemplatePrefix,
@@ -39,7 +38,7 @@ export const getPresets = (
       let monomerID: string;
 
       if (isAmbiguousMonomerLibraryItem(monomer)) {
-        const ambiguousMonomer = monomer as AmbiguousMonomerType;
+        const ambiguousMonomer = monomer;
         monomerID = setAmbiguousMonomerTemplatePrefix(ambiguousMonomer.id);
       } else {
         const monomerItem = monomer as MonomerItemType;

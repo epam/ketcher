@@ -19,9 +19,7 @@ import { LibraryNameType } from 'src/constants';
 import {
   IRnaPreset,
   isAmbiguousMonomerLibraryItem,
-  MonomerItemType,
   MonomerOrAmbiguousType,
-  AmbiguousMonomerType,
 } from 'ketcher-core';
 
 import { RnaAccordionContainer } from './styles';
@@ -76,7 +74,7 @@ export const RnaElements = ({
   }, [dispatch]);
 
   const handleItemSelection = useCallback(
-    (monomer: MonomerItemType, groupName) => {
+    (monomer: MonomerOrAmbiguousType, groupName) => {
       if (isEditMode) {
         dispatch(setActiveMonomerKey(getMonomerUniqueKey(monomer)));
       }
@@ -89,15 +87,12 @@ export const RnaElements = ({
         return;
       }
 
-      const monomerAsAmbiguous = monomer as MonomerOrAmbiguousType;
-      const monomerClass = isAmbiguousMonomerLibraryItem(monomerAsAmbiguous)
-        ? (
-            monomerAsAmbiguous as AmbiguousMonomerType
-          ).monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
-        : monomer.props.MonomerClass.toLowerCase();
+      const monomerClass = isAmbiguousMonomerLibraryItem(monomer)
+        ? monomer.monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
+        : monomer.props.MonomerClass?.toLowerCase();
       const currentPreset = {
         ...newPreset,
-        [monomerClass]: monomer,
+        [monomerClass as string]: monomer,
       };
       setNewPreset(currentPreset);
       dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));

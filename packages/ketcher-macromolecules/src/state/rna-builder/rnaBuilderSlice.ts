@@ -21,8 +21,9 @@ import {
   getRnaPresetPhosphatePosition,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
-  MonomerItemType,
+  MonomerOrAmbiguousType,
   RnaPhosphatePosition,
+  RnaPresetWithOptionalFields,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import {
@@ -41,6 +42,7 @@ import {
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
+import { castDraft } from 'immer';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -89,7 +91,7 @@ interface IRnaBuilderState {
   isSequenceFirstsOnlyNucleoelementsSelected: boolean | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
-    groupItem: MonomerItemType;
+    groupItem: MonomerOrAmbiguousType;
   } | null;
   groupItemValidations: {
     [MonomerGroups.BASES]: string[];
@@ -225,10 +227,13 @@ export const rnaBuilderSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: MonomerGroups;
-        groupItem: MonomerItemType;
+        groupItem: MonomerOrAmbiguousType;
       } | null>,
     ) => {
-      state.activePresetMonomerGroup = action.payload;
+      state.activePresetMonomerGroup = action.payload
+        ? // use castDraft to bypass the Immer draft type checking, allowing us to assign a possibly non-draft value to the state. This is necessary because the groupItem can be either a MonomerItemType or an AmbiguousMonomerType, and Immer's type checking can be too strict in this case.
+          castDraft(action.payload)
+        : null;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -437,7 +442,7 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
   const phosphatePosition = getRnaPresetPhosphatePosition(
-    preset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+    preset as RnaPresetWithOptionalFields,
   );
   let fullName = sugar;
 
@@ -608,7 +613,7 @@ export const selectFilteredPresets = createSelector(
           return noPhosphate;
         }
         const position = getRnaPresetPhosphatePosition(
-          item as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+          item as RnaPresetWithOptionalFields,
         );
         return position === 'left' ? fivePrime : threePrime;
       });

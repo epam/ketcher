@@ -25,14 +25,13 @@
   "types": "dist/index.d.ts",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
-  "sideEffects": true,
   "engines": {
     "node": ">=24.14.1"
   },
   "scripts": {
     "ajv": "node ./scripts/compile-ket-schema.cjs",
     "prebuild": "npm run ajv && shx rm -rf dist",
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
+    "build": "cross-env NODE_ENV=production rollup -c -m true && tsc-alias -p tsconfig.json",
     "prestart": "npm run ajv",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:circ test:unit",
@@ -94,6 +93,7 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "^29.4.11",
+    "tsc-alias": "^1.8.17",
     "typedoc": "^0.28.19",
     "typedoc-plugin-markdown": "^4.11.0",
     "typescript": "^6.0.3"

@@ -21,7 +21,6 @@ import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
-  AmbiguousMonomerType,
   MonomerItemType,
   MonomerOrAmbiguousType,
   isAmbiguousMonomerLibraryItem,
@@ -102,13 +101,8 @@ const MonomerGroup = ({
     let previewType: PreviewType;
     let top: string;
 
-    const ambiguousMonomer = isAmbiguousMonomerLibraryItem(monomer)
-      ? (monomer as AmbiguousMonomerType)
-      : undefined;
-
-    if (ambiguousMonomer) {
-      top =
-        calculateAmbiguousMonomerPreviewTop(ambiguousMonomer)(cardCoordinates);
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       previewType = PreviewType.AmbiguousMonomer;
       style = { left, top, transform: 'translate(-50%, 0)' };

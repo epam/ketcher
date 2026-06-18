@@ -54,7 +54,7 @@ describe('SelectBase mouseup', () => {
     );
     addArrowCommand.execute(editor.renderersContainer);
     const arrow = editor.drawingEntitiesManager.rxnArrows.values().next()
-      .value as unknown as DrawingEntity;
+      .value as DrawingEntity;
     const selectCommand =
       editor.drawingEntitiesManager.selectDrawingEntity(arrow);
     selectCommand.execute(editor.renderersContainer);

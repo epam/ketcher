@@ -4,6 +4,7 @@ import {
   getRnaPresetPhosphatePosition,
   IRnaLabeledPreset,
   IRnaPreset,
+  RnaPresetWithOptionalFields,
   setAmbiguousMonomerTemplatePrefix,
   setMonomerTemplatePrefix,
 } from 'ketcher-core';
@@ -28,11 +29,10 @@ export const transformRnaPresetToRnaLabeledPreset = (
         : setMonomerTemplatePrefix(templateId),
     });
   }
+
   rnaLabeledPreset.connections = buildRnaPresetConnections(
-    rnaPreset as Pick<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
-    getRnaPresetPhosphatePosition(
-      rnaPreset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
-    ),
+    rnaPreset as RnaPresetWithOptionalFields,
+    getRnaPresetPhosphatePosition(rnaPreset as RnaPresetWithOptionalFields),
   );
 
   return rnaLabeledPreset;

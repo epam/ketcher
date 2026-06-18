@@ -669,7 +669,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await clickInTheMiddleOfTheCanvas(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-
+    await CommonLeftToolbar(page).areaSelectionTool();
     const arrow = getArrowLocator(page, {}).first();
     await dragTo(page, arrow, { x: 350, y: 350 });
     await clickOnCanvas(page, 20, 20);

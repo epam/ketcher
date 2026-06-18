@@ -2774,16 +2774,22 @@ class Editor implements KetcherEditor {
     const tool = newTool ?? this._tool; // eslint-disable-line
 
     const hoverState = (tool as { ci?: HoverTarget }).ci;
+    let isSameHoverTarget = false;
+
     if (hoverState) {
       const previousId = this.getHoverId(hoverState);
       const nextId = this.getHoverId(ci);
-      if (!ci || hoverState.map !== ci.map || previousId !== nextId) {
+      isSameHoverTarget = Boolean(
+        ci && hoverState.map === ci.map && previousId === nextId,
+      );
+
+      if (!isSameHoverTarget) {
         setHover(hoverState, false, this.render);
         delete (tool as { ci?: HoverTarget }).ci;
       }
     }
 
-    if (ci && setHover(ci, true, this.render)) {
+    if (ci && !isSameHoverTarget && setHover(ci, true, this.render)) {
       tool.ci = ci;
     }
 
@@ -2819,7 +2825,7 @@ class Editor implements KetcherEditor {
     if (action === true) {
       this.render.update(true, null); // force
     } else {
-      if (!ignoreHistory && !action.isDummy()) {
+      if (!ignoreHistory && !action.isDummy(this.render.ctab)) {
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
         if (this.historyStack.length > HISTORY_SIZE) {
           this.historyStack.shift();

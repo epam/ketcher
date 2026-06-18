@@ -51,6 +51,7 @@ const MonomerItem = ({
   isSelected,
   disabled,
   onClick = EmptyFunction,
+  onStarClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -80,9 +81,10 @@ const MonomerItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
+      onStarClick();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item],
+    [dispatch, item, onStarClick],
   );
 
   const onAutochainIconClick = useCallback(

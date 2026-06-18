@@ -36,3 +36,4 @@ export * from './application/getStructure';
 export * from './domain/helpers/monomers';
 
 export * from './utilities';
+export * from './types';

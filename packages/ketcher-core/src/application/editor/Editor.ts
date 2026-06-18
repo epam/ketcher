@@ -32,10 +32,9 @@ import {
 import {
   type IKetMacromoleculesContent,
   type IKetMonomerGroupTemplate,
-  KetMonomerClass,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
-} from 'application/formatters';
+} from 'application/formatters/types/ket';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -52,11 +51,12 @@ import {
   type SubChainNode,
   ChainsCollection,
   Phosphate,
-  SequenceType,
   Struct,
   Sugar,
   Vec2,
 } from 'domain/entities';
+import { KetMonomerClass } from 'domain/constants/monomers';
+import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -87,6 +87,8 @@ import {
   isValidHelmAliasLength,
   isValidIdtAlias,
   getTooLongIdtAliasEntries,
+  getDisallowedModificationTypes,
+  DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE,
   initHotKeys,
   isEditableInputTarget,
   KetcherLogger,
@@ -526,6 +528,19 @@ export class CoreEditor {
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      const disallowedModificationTypes = getDisallowedModificationTypes(
+        newMonomer.props?.modificationTypes,
+      );
+      if (disallowedModificationTypes.length > 0) {
+        const errorMessage = `Editor::updateMonomersLibrary: Load of "${
+          newMonomer.props.MonomerName
+        }" monomer has failed. ${DISALLOWED_MODIFICATION_TYPE_ERROR_MESSAGE} Offending modification type(s): ${disallowedModificationTypes.join(
+          ', ',
+        )}. The monomer was not added to the library.`;
+        KetcherLogger.error(errorMessage);
+        return;
+      }
+
       const newMonomerHasBilnAliasUniquenessScope = hasBilnAliasUniquenessScope(
         newMonomer.props?.MonomerClass,
       );
@@ -2295,6 +2310,12 @@ export class CoreEditor {
     if (this.mode.modeName === 'snake-layout-mode') {
       modelChanges.merge(
         this.drawingEntitiesManager.applySnakeLayout(true, true, false),
+      );
+    }
+
+    if (this.mode.modeName === 'flex-layout-mode') {
+      modelChanges.merge(
+        this.drawingEntitiesManager.recalculateAntisenseChains(),
       );
     }
 

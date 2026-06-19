@@ -335,7 +335,7 @@ export class SGroup {
 
   /**
    * WHY? When group is contracted we need to understand the represent atom to calculate position.
-   * It is not always the attachmentPoint!! if no attachment point - use the first atom
+   * It is not always the attachmentPoint!! if no attachment point - use the geometric center of all atoms.
    */
   getContractedPosition(struct: Struct): {
     atomId: number;
@@ -343,24 +343,20 @@ export class SGroup {
   } {
     let atomId = this.attachmentPoints[0]?.atomId;
     let representAtom = struct.atoms.get(atomId);
-    // if there is no attachment points in sgroup - use first externally connected atom if exist or just first atom
+    // if there is no attachment points in sgroup - return geometric center of all atoms
     if (!representAtom) {
-      let externalConnectionAtom;
-      struct.bonds.forEach((bond) => {
-        const isBeginAtomInCurrentSgroup =
-          this.atoms.indexOf(bond.begin) !== -1;
-        const isEndAtomInCurrentSgroup = this.atoms.indexOf(bond.end) !== -1;
+      const positions = this.atoms
+        .map((id) => struct.atoms.get(id)?.pp)
+        .filter((pp): pp is Vec2 => pp != null);
 
-        if (isBeginAtomInCurrentSgroup && !isEndAtomInCurrentSgroup) {
-          externalConnectionAtom = bond.begin;
-        } else if (isEndAtomInCurrentSgroup && !isBeginAtomInCurrentSgroup) {
-          externalConnectionAtom = bond.end;
-        }
-      });
+      atomId = this.atoms[0];
+      if (positions.length > 0) {
+        const center = positions
+          .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
+          .scaled(1 / positions.length);
+        return { atomId, position: center };
+      }
 
-      atomId = isNumber(externalConnectionAtom)
-        ? externalConnectionAtom
-        : this.atoms[0];
       representAtom = struct.atoms.get(atomId);
     }
     assert(representAtom != null);

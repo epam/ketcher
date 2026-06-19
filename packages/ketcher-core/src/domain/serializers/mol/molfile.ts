@@ -18,6 +18,8 @@ import { StereoFlag } from 'domain/entities/fragment';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { Vec2 } from 'domain/entities/vec2';
 
 import { Elements } from 'domain/constants';
 import common from './common';
@@ -120,6 +122,7 @@ export class Molfile {
   getCTab(molecule: Struct, rgroups?: Map<any, any>) {
     /* saver */
     this.molecule = molecule.clone();
+    this.centerMonomerMicromoleculeAtoms();
     this.prepareSGroups(false, false);
     this.molfile = '';
     this.writeCTab2000(rgroups);
@@ -193,6 +196,7 @@ export class Molfile {
     }
 
     this.molecule = molecule.clone();
+    this.centerMonomerMicromoleculeAtoms();
 
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
@@ -539,6 +543,31 @@ export class Molfile {
     }
 
     this.writeCR('M  END');
+  }
+
+  private centerMonomerMicromoleculeAtoms() {
+    if (!this.molecule) return;
+    const mol = this.molecule;
+    mol.sgroups.forEach((sgroup) => {
+      if (!(sgroup instanceof MonomerMicromolecule) || !sgroup.pp) return;
+
+      const positions = sgroup.atoms
+        .map((id: number) => mol.atoms.get(id)?.pp)
+        .filter((pp): pp is Vec2 => pp != null);
+      if (!positions.length) return;
+
+      const center = positions
+        .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
+        .scaled(1 / positions.length);
+
+      const offset = sgroup.pp.sub(center);
+      if (offset.x === 0 && offset.y === 0) return;
+
+      sgroup.atoms.forEach((atomId: number) => {
+        const atom = mol.atoms.get(atomId);
+        if (atom) atom.pp = atom.pp.add(offset);
+      });
+    });
   }
 
   private writeAtom(atom, atomLabel: string) {

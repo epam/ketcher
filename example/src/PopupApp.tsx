@@ -6,7 +6,10 @@ import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import 'ketcher-react/dist/index.css';
 
 import { getStructServiceProvider } from './utils';
-import { getHiddenButtonsConfig, isMacromoleculesEditorDisabled } from './utils/editorUrlConfig';
+import {
+  getHiddenButtonsConfig,
+  isMacromoleculesEditorDisabled,
+} from './utils/editorUrlConfig';
 import { safePostMessage } from './utils/safePostMessage';
 
 const PopupApp = () => {

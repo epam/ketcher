@@ -3,7 +3,10 @@ import { StrictMode, useEffect, useState } from 'react';
 import { Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
-import { getHiddenButtonsConfig, isMacromoleculesEditorDisabled } from './utils/editorUrlConfig';
+import {
+  getHiddenButtonsConfig,
+  isMacromoleculesEditorDisabled,
+} from './utils/editorUrlConfig';
 import { safePostMessage } from './utils/safePostMessage';
 
 const DuoApp = () => {

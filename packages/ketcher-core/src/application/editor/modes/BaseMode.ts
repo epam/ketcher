@@ -123,7 +123,7 @@ export abstract class BaseMode {
     const drawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
 
-    if (!drawingEntitiesManager.monomers.size) {
+    if (!drawingEntitiesManager.hasDrawingEntities) {
       return;
     }
 

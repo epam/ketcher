@@ -45,10 +45,14 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import {
+  paperPathFromSVGElement,
+  SUPERATOM_CLASS_TEXT,
+} from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import paperjs from 'paper';
 
 interface ElemAttr {
   text: string;
@@ -109,13 +113,90 @@ class ReAtom extends ReObject {
   }
 
   drawHover(render: Render, drawOutline = true) {
-    const ret = this.makeHoverPlate(render, drawOutline);
-
     const isSuperAttachmentPoint =
       this.a.label === '*' && this.a.endpoints.length > 0;
+
     if (isSuperAttachmentPoint) {
-      ret.attr({ cursor: 'default' });
+      const hoversToCombine: any[] = [];
+      const endpointIds = new Set(this.a.endpoints);
+
+      const selfPlate = this.makeHoverPlate(render, false);
+
+      if (selfPlate) {
+        selfPlate.attr({ cursor: 'default' });
+        hoversToCombine.push(selfPlate);
+      }
+
+      this.a.endpoints.forEach((atomId) => {
+        const endpointAtom = render.ctab.atoms.get(atomId);
+        const atomPlate = endpointAtom?.makeHoverPlate(render, false);
+
+        if (atomPlate) {
+          hoversToCombine.push(atomPlate);
+        }
+      });
+
+      render.ctab.bonds.forEach((rebond) => {
+        if (endpointIds.has(rebond.b.begin) && endpointIds.has(rebond.b.end)) {
+          const bondPlate = rebond.makeHoverPlate(render, false);
+
+          if (bondPlate) {
+            hoversToCombine.push(bondPlate);
+          }
+        }
+      });
+
+      const elements: Element[] = [];
+
+      hoversToCombine.forEach((item) => {
+        if (item?.node) {
+          elements.push(item.node);
+          item.remove();
+        }
+      });
+
+      paperjs.setup(document.createElement('canvas'));
+
+      let combinedPath: any = null;
+
+      elements.forEach((el) => {
+        const paperPath = paperPathFromSVGElement(el);
+
+        if (!paperPath) {
+          return;
+        }
+
+        if (!paperPath.closed) {
+          paperPath.closePath();
+        }
+
+        if (!combinedPath) {
+          combinedPath = paperPath;
+        } else {
+          combinedPath = combinedPath.unite(paperPath);
+        }
+      });
+
+      if (!combinedPath) {
+        return;
+      }
+
+      const combinedPathD = combinedPath.pathData;
+      const hoverPath = render.paper
+        .path(combinedPathD)
+        .attr({ ...render.options.hoverStyle, cursor: 'default' });
+
+      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, hoverPath);
+      this.attachHighlightTriggerForAttachmentPointAtom(hoverPath, render);
+      this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
+        render,
+        drawOutline,
+      );
+
+      return hoverPath;
     }
+
+    const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     this.attachHighlightTriggerForAttachmentPointAtom(ret, render);

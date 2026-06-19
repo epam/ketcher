@@ -2042,13 +2042,8 @@ export class CoreEditor {
       this.clearTransientViews();
     }
 
-    // Undo/redo can leave the cached autochain position stale, so recompute it.
-    if (this.drawingEntitiesManager.hasMonomers) {
-      this.calculateAndStoreNextAutochainPosition(this.drawingEntitiesManager);
-    } else {
-      this.nextAutochainPosition = undefined;
-    }
-  }
+  // Undo/redo can leave the cached autochain position stale, so recompute it.
+  this.calculateAndStoreNextAutochainPosition(this.drawingEntitiesManager);
 
   public selectTool(name: ToolName, options?) {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];

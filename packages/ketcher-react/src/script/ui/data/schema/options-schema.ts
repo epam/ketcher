@@ -348,7 +348,7 @@ const server: {
     title: 'Valence mode',
     enum: ['biovia-2009', 'biovia-2017', 'default'],
     enumNames: ['BIOVIA 2009', 'BIOVIA 2017', 'Default'],
-    default: 'biovia-2009',
+    default: 'default',
   },
   'smart-layout': {
     title: 'Smart-layout',

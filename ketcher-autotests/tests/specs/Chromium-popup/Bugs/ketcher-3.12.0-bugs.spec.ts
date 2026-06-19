@@ -844,6 +844,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await expect(
       EditConnectionPointPopup(page).editConnectionPointPopupWindow,
     ).toBeVisible();
+    await CreateMonomerDialog(page).discard();
   });
 
   test("Case 25 — Underline colour for the base counter in the Calculate Properties window doesn't fit the requirement", async ({

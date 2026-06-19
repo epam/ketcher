@@ -120,14 +120,13 @@ export abstract class BaseMode {
     }
     const editor = provideEditorInstance();
 
-    // Nothing selected to copy — don't overwrite the clipboard with an empty
-    // KET, so a native text selection is copied as-is.
-    if (editor.drawingEntitiesManager.selectedEntities.length === 0) {
+    const drawingEntitiesManager =
+      editor.drawingEntitiesManager.filterSelection();
+
+    if (!drawingEntitiesManager.monomers.size) {
       return;
     }
 
-    const drawingEntitiesManager =
-      editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
       new Struct(),

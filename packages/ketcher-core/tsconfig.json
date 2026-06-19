@@ -32,7 +32,8 @@
       "utilities": ["./src/utilities"],
       "types": ["./src/types"]
     },
-    "jsx": "react"
+    "jsx": "react",
+    "rootDir": "."
   },
   "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["dist"]

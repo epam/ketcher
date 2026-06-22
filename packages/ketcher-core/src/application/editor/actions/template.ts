@@ -222,6 +222,26 @@ export function fromTemplateOnAtom(
   return [action, pasteItems];
 }
 
+type FromTemplateOnBondResult = [Action, { atoms: number[]; bonds: number[] }];
+
+export function fromTemplateOnBondAction(
+  restruct,
+  template,
+  bid,
+  events,
+  flip,
+  force: false,
+  isPreview?: boolean,
+): FromTemplateOnBondResult;
+export function fromTemplateOnBondAction(
+  restruct,
+  template,
+  bid,
+  events,
+  flip,
+  force: true,
+  isPreview?: boolean,
+): Promise<FromTemplateOnBondResult>;
 export function fromTemplateOnBondAction(
   restruct,
   template,

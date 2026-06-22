@@ -16,6 +16,8 @@
 
 import { type ComponentType, type FC, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
+import type { AnyAction } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 import Form, {
   type FormState,
   Field,
@@ -312,7 +314,7 @@ const mapStateToProps = (state: State): CheckDialogStateProps => ({
 });
 
 const mapDispatchToProps = (
-  dispatch: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+  dispatch: ThunkDispatch<State, undefined, AnyAction>,
   ownProps: CheckDialogOwnProps,
 ): CheckDialogDispatchProps => ({
   onCheck: (opts: CheckOption[]) =>

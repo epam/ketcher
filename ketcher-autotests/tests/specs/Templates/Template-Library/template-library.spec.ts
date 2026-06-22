@@ -113,6 +113,23 @@ test.describe('Templates - Template Library', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Edit templates - name with just spaces', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will contain just spaces
+    const inputText = '   ';
+    await BottomToolbar(page).structureLibrary();
+    await StructureLibraryDialog(page).editTemplate(
+      TemplateLibraryTab.BetaDSugars,
+      BetaDSugarsTemplate.BetaDAllopyranose,
+    );
+    await TemplateEditDialog(page).setMoleculeName(inputText);
+    await TemplateEditDialog(page).edit();
+    await StructureLibraryDialog(page).openTemplateLibrarySection(
+      TemplateLibraryTab.BetaDSugars,
+    );
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Templates - Template Library', () => {

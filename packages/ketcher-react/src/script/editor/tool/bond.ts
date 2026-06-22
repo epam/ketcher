@@ -392,9 +392,8 @@ class BondTool implements Tool {
 
   private rejectBondOperation(event, dragCtx, failure) {
     this.hapticBond.applyValidationFailure(dragCtx, failure);
-    delete dragCtx.action;
     this.restoreBondWhenHoveringOnCanvas(event);
-    this.editor.update(true);
+    if (dragCtx.action) this.editor.update(dragCtx.action, true);
   }
 
   private applyBondAction(event, dragCtx, rnd, molecule, bondParams) {

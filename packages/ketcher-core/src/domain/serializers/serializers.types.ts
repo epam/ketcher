@@ -29,6 +29,10 @@ export interface KetFileNode<T = unknown> {
   selected?: boolean;
 }
 
+export interface KetFileRoot {
+  nodes: KetFileNode[];
+}
+
 export interface KetFileRootContent {
-  root: { nodes: KetFileNode[] };
+  root: KetFileRoot;
 }

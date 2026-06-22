@@ -196,7 +196,7 @@ class TemplatePreview {
         shouldFlip,
         true,
         true,
-      ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
+      );
 
       promise.then(([action, pasteItems]) => {
         if (!this.isModeFunctionalGroup) {

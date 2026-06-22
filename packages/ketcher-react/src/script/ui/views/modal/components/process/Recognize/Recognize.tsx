@@ -241,11 +241,11 @@ function RecognizeDialog(prop: Readonly<RecognizeDialogProps>) {
   );
 }
 
+type WindowWithWebkitURL = Window & { webkitURL?: typeof globalThis.URL };
+
 function url(file: File | null): string | null {
   if (!file) return null;
-  const URL =
-    window.URL ||
-    (window as Window & { webkitURL?: typeof globalThis.URL }).webkitURL;
+  const URL = window.URL || (window as WindowWithWebkitURL).webkitURL;
   return URL ? URL.createObjectURL(file) : 'No preview';
 }
 

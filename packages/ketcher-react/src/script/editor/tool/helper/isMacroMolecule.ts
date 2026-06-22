@@ -8,7 +8,7 @@ const isMacroMolecule = (editor: Editor, id: number): boolean => {
 
 const isMergingToMacroMolecule = (
   editor: Editor,
-  dragCtx: Pick<NonNullable<DragContext>, 'mergeItems'> | null | undefined,
+  dragCtx: DragContext,
 ): boolean => {
   const funcGroups = dragCtx?.mergeItems?.atomToFunctionalGroup;
   if (!funcGroups?.size) {

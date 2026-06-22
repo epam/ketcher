@@ -361,56 +361,68 @@ Object.values(monomersWithNoFreeAttachmentPoint).forEach((leftMonomer) => {
   });
 });
 
-Object.values(monomers).forEach((leftMonomer) => {
-  Object.values(monomers).forEach((rightMonomer) => {
-    /*
-     *  Test task: https://github.com/epam/ketcher/issues/5984
-     *  Description: 1. Verify that only one hydrogen bond can be established between two monomers
-     *               2. Verify error message when trying to establish multiple hydrogen bonds between
-     *                  the same two monomers(error message: "Unable to establish multiple hydrogen bonds between two monomers
-     *  Case: For each %monomerType% from the library (leftMonomers)
-     *          For each %monomerType% from the library (rightMonomers) do
-     *              1. Clear canvas
-     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
-     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
-     *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center) one more time
-     *              5. Take screenshot to witness error message
-     */
-    test(`3. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) twice`, async () => {
-      test.setTimeout(25000);
+test.describe('', () => {
+  test.describe.configure({ mode: 'default' });
 
-      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+  Object.values(monomers).forEach((leftMonomer) => {
+    Object.values(monomers).forEach((rightMonomer) => {
+      /*
+       *  Test task: https://github.com/epam/ketcher/issues/5984
+       *  Description: 1. Verify that only one hydrogen bond can be established between two monomers
+       *               2. Verify error message when trying to establish multiple hydrogen bonds between
+       *                  the same two monomers(error message: "Unable to establish multiple hydrogen bonds between two monomers
+       *  Case: For each %monomerType% from the library (leftMonomers)
+       *          For each %monomerType% from the library (rightMonomers) do
+       *              1. Clear canvas
+       *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+       *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+       *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center) one more time
+       *              5. Take screenshot to witness error message
+       */
+      test(`3. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) twice`, async () => {
+        test.setTimeout(25000);
 
-      await bondTwoMonomers(
-        page,
-        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
-        rightMonomer.alias === leftMonomer.alias
-          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
-          : getMonomerLocator(page, {
-              monomerAlias: rightMonomer.alias,
-            }).first(),
-        undefined,
-        undefined,
-        MacroBondTool.Hydrogen,
-      );
+        await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
-      await bondTwoMonomers(
-        page,
-        getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
-        rightMonomer.alias === leftMonomer.alias
-          ? getMonomerLocator(page, { monomerAlias: rightMonomer.alias }).nth(1)
-          : getMonomerLocator(page, {
-              monomerAlias: rightMonomer.alias,
-            }).first(),
-        undefined,
-        undefined,
-        MacroBondTool.Hydrogen,
-      );
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, {
+            monomerAlias: leftMonomer.alias,
+          }).first(),
+          rightMonomer.alias === leftMonomer.alias
+            ? getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              }).first(),
+          undefined,
+          undefined,
+          MacroBondTool.Hydrogen,
+        );
 
-      await zoomWithMouseWheel(page, -600);
+        await bondTwoMonomers(
+          page,
+          getMonomerLocator(page, {
+            monomerAlias: leftMonomer.alias,
+          }).first(),
+          rightMonomer.alias === leftMonomer.alias
+            ? getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              }).nth(1)
+            : getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              }).first(),
+          undefined,
+          undefined,
+          MacroBondTool.Hydrogen,
+        );
 
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
+        await zoomWithMouseWheel(page, -600);
+
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+        });
       });
     });
   });

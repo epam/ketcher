@@ -334,33 +334,36 @@ export class SGroup {
   }
 
   /**
-   * WHY? When group is contracted we need to understand the represent atom to calculate position.
-   * It is not always the attachmentPoint!! if no attachment point - use the geometric center of all atoms.
+   * WHY? atomId drives which atom renders the sgroup label; position is the visual
+   * center used for movement, hit-testing and rendering. Keeping them separate lets
+   * the label always float at the geometric center of all atoms regardless of which
+   * atom happens to be the attachment point.
    */
   getContractedPosition(struct: Struct): {
     atomId: number;
     position: Vec2;
   } {
+    // atomId: prefer the first attachment point; fall back to the first atom.
     let atomId = this.attachmentPoints[0]?.atomId;
-    let representAtom = struct.atoms.get(atomId);
-    // if there is no attachment points in sgroup - return geometric center of all atoms
-    if (!representAtom) {
-      const positions = this.atoms
-        .map((id) => struct.atoms.get(id)?.pp)
-        .filter((pp): pp is Vec2 => pp != null);
-
+    if (!struct.atoms.has(atomId)) {
       atomId = this.atoms[0];
-      if (positions.length > 0) {
-        const center = positions
-          .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
-          .scaled(1 / positions.length);
-        return { atomId, position: center };
-      }
-
-      representAtom = struct.atoms.get(atomId);
     }
-    assert(representAtom != null);
-    return { atomId, position: representAtom.pp };
+
+    // position: always the geometric center of all atoms in the group.
+    const positions = this.atoms
+      .map((id) => struct.atoms.get(id)?.pp)
+      .filter((pp): pp is Vec2 => pp != null);
+
+    if (positions.length > 0) {
+      const center = positions
+        .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
+        .scaled(1 / positions.length);
+      return { atomId, position: center };
+    }
+
+    const atom = struct.atoms.get(atomId);
+    assert(atom != null);
+    return { atomId, position: atom.pp };
   }
 
   cloneAttachmentPoints(

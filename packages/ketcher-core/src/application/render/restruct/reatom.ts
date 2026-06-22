@@ -474,13 +474,14 @@ class ReAtom extends ReObject {
         functionalGroups,
       )
     ) {
-      const isPositionAtom =
-        sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
+      const { atomId: contractedAtomId, position: contractedPosition } =
+        sgroup?.getContractedPosition(restruct.molecule);
+      const isPositionAtom = contractedAtomId === aid;
       if (isPositionAtom) {
+        // contractedPosition is geometric center for regular SGroups;
+        // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
         const position = Scale.modelToCanvas(
-          sgroup instanceof MonomerMicromolecule
-            ? (sgroup.pp as Vec2)
-            : this.a.pp,
+          contractedPosition,
           render.options,
         );
         const fontFamily = options.font.substr(

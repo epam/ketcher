@@ -27,6 +27,8 @@ import {
   vectorUtils,
   Atom,
   CoordinateTransformation,
+  HAPTIC_BOND_ERROR_MESSAGE,
+  isHapticBondPairAllowed,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -71,11 +73,52 @@ class BondTool implements Tool {
         }
       }
 
+      if (this.isHapticBondType()) {
+        const hasInvalidHapticBond = selectedBonds.some((bondId) => {
+          const bond = molecule.bonds.get(bondId);
+
+          return (
+            !bond || !this.isValidHapticBond(molecule, bond.begin, bond.end)
+          );
+        });
+
+        if (hasInvalidHapticBond) {
+          this.showHapticBondError();
+          this.isNotActiveTool = true;
+          return;
+        }
+      }
+
       const action = fromBondsAttrs(struct, selectedBonds, bondProps);
       editor.update(action);
       editor.selection(null);
       this.isNotActiveTool = true;
     }
+  }
+
+  private isHapticBondType() {
+    return this.bondProps.type === Bond.PATTERN.TYPE.HAPTIC;
+  }
+
+  private getAtomForHapticValidation(molecule, atomOrProps) {
+    return typeof atomOrProps === 'number'
+      ? molecule.atoms.get(atomOrProps)
+      : atomOrProps;
+  }
+
+  private isValidHapticBond(molecule, beginAtomOrProps, endAtomOrProps) {
+    if (!this.isHapticBondType()) {
+      return true;
+    }
+
+    return isHapticBondPairAllowed(
+      this.getAtomForHapticValidation(molecule, beginAtomOrProps),
+      this.getAtomForHapticValidation(molecule, endAtomOrProps),
+    );
+  }
+
+  private showHapticBondError() {
+    this.editor.errorHandler?.(HAPTIC_BOND_ERROR_MESSAGE);
   }
 
   mousedown(event) {
@@ -377,8 +420,16 @@ class BondTool implements Tool {
 
   private applyBondAction(event, dragCtx, rnd, molecule, bondParams) {
     const { beginAtom, endAtom, beginPos, endPos, dist } = bondParams;
+    dragCtx.hapticValidationFailed = false;
     // don't rotate the bond if the distance between the start and end point is too small
     if (dist > 0.3) {
+      if (!this.isValidHapticBond(molecule, beginAtom, endAtom)) {
+        dragCtx.hapticValidationFailed = true;
+        delete dragCtx.action;
+        this.restoreBondWhenHoveringOnCanvas(event);
+        return;
+      }
+
       const [existingBondId, bond] = this.getExistingBond(
         molecule,
         beginAtom,
@@ -414,6 +465,10 @@ class BondTool implements Tool {
       if ('action' in dragCtx) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);
+      } else if (dragCtx.hasStartedDragging) {
+        if (dragCtx.hapticValidationFailed) {
+          this.showHapticBondError();
+        }
       } else if (!hasItem) {
         const editorOptions = this.editor.options();
         const QUARTER_OF_BOND_WIDTH = 20;
@@ -438,6 +493,20 @@ class BondTool implements Tool {
           Vec2.sum(xy, v),
         );
 
+        if (!this.isValidHapticBond(struct, { label: 'C' }, { label: 'C' })) {
+          this.showHapticBondError();
+          delete this.dragCtx;
+          this.editor.event.message.dispatch({
+            info: false,
+          });
+          this.editor.hover(
+            this.editor.findItem(event, ['atoms', 'bonds']),
+            null,
+            event,
+          );
+          return true;
+        }
+
         this.editor.update(bondAddition[0]);
       } else if (hasItem && dragCtx.item.map === 'atoms') {
         // click on atom
@@ -446,6 +515,22 @@ class BondTool implements Tool {
           dragCtx.item.id,
         );
         if (!isAtomSuperatomLeavingGroup) {
+          if (
+            !this.isValidHapticBond(struct, dragCtx.item.id, { label: 'C' })
+          ) {
+            this.showHapticBondError();
+            delete this.dragCtx;
+            this.editor.event.message.dispatch({
+              info: false,
+            });
+            this.editor.hover(
+              this.editor.findItem(event, ['atoms', 'bonds']),
+              null,
+              event,
+            );
+            return true;
+          }
+
           this.editor.update(
             fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
               label: 'C',
@@ -456,6 +541,23 @@ class BondTool implements Tool {
       } else if (dragCtx.item.map === 'bonds') {
         const bondProps = { ...(this.bondProps || {}) };
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
+
+        if (
+          this.isHapticBondType() &&
+          !this.isValidHapticBond(struct, bond.begin, bond.end)
+        ) {
+          this.showHapticBondError();
+          delete this.dragCtx;
+          this.editor.event.message.dispatch({
+            info: false,
+          });
+          this.editor.hover(
+            this.editor.findItem(event, ['atoms', 'bonds']),
+            null,
+            event,
+          );
+          return true;
+        }
 
         this.editor.update(
           bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),

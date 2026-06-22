@@ -26,6 +26,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -326,12 +327,7 @@ export class Bond extends BaseMicromoleculeEntity {
       if (newEnd !== undefined) cp.end = newEnd;
 
       if (cp.endpoints?.length) {
-        const remapped: number[] = [];
-        cp.endpoints.forEach((endpointAtomId) => {
-          const newId = aidMap.get(endpointAtomId);
-          if (newId !== undefined) remapped.push(newId);
-        });
-        cp.endpoints = remapped;
+        cp.endpoints = remapEndpointAtomIds(cp.endpoints, aidMap);
       }
     }
     return cp;

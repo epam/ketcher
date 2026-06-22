@@ -1,6 +1,8 @@
 import { Atom, type AtomAttributes } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
+import { Bond, type BondAttributes } from 'domain/entities/bond';
+import { Pile } from 'domain/entities/pile';
 import type { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 
 type HapticBondAtomLike = Pick<AtomAttributes, 'label' | 'endpoints'> &
   Partial<Pick<Atom, 'label' | 'endpoints'>>;
@@ -100,6 +102,18 @@ export function isSuperAttachmentPointWithHapticBond(
   });
 }
 
+export function isSuperAttachmentPointExcludedFromSelection(
+  atom?: HapticBondAtomLike | null,
+) {
+  return isSuperAttachmentPointAtom(atom);
+}
+
+export function isSuperAttachmentPointExcludedFromExport(
+  atom?: HapticBondAtomLike | null,
+) {
+  return isSuperAttachmentPointAtom(atom) && (atom?.endpoints?.length ?? 0) > 2;
+}
+
 export function isAllowedNonSapHapticBondMetal(
   atom?: HapticBondAtomLike | null,
 ) {
@@ -125,4 +139,131 @@ export function isHapticBondPairAllowed(
   const endAtomIsAllowedMetal = isAllowedNonSapHapticBondMetal(endAtom);
 
   return beginAtomIsAllowedMetal !== endAtomIsAllowedMetal;
+}
+
+export function remapEndpointAtomIds(
+  endpoints: number[],
+  idMap: Map<number, number>,
+): number[] {
+  const remapped: number[] = [];
+  endpoints.forEach((endpointAtomId) => {
+    const newId = idMap.get(endpointAtomId);
+    if (newId !== undefined) {
+      remapped.push(newId);
+    }
+  });
+  return remapped;
+}
+
+export function prepareHapticBondAttributes<T extends Partial<BondAttributes>>(
+  bond: T,
+  beginAtom?: Pick<Atom, 'endpoints'> | null,
+  endAtom?: Pick<Atom, 'endpoints'> | null,
+): T {
+  if (bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
+    return bond;
+  }
+
+  let preparedBond: T = {
+    ...bond,
+    attach: 'ALL',
+  };
+
+  if (beginAtom?.endpoints.length) {
+    preparedBond = {
+      ...preparedBond,
+      endpoints: beginAtom.endpoints,
+    };
+  } else if (endAtom?.endpoints.length) {
+    preparedBond = {
+      ...preparedBond,
+      endpoints: endAtom.endpoints,
+    };
+  }
+
+  return preparedBond;
+}
+
+export function findSuperAttachmentPointAtomInBondPair(
+  beginAtom?: Atom | null,
+  endAtom?: Atom | null,
+): Atom | null {
+  if (isSuperAttachmentPointAtom(beginAtom)) {
+    return beginAtom ?? null;
+  }
+
+  if (isSuperAttachmentPointAtom(endAtom)) {
+    return endAtom ?? null;
+  }
+
+  return null;
+}
+
+export function syncSuperAttachmentPointEndpointsFromHapticBonds(
+  struct: Struct,
+) {
+  struct.bonds.forEach((bond) => {
+    if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
+      return;
+    }
+
+    const beginAtom = struct.atoms.get(bond.begin);
+    const endAtom = struct.atoms.get(bond.end);
+    const superAttachmentPointAtom = findSuperAttachmentPointAtomInBondPair(
+      beginAtom,
+      endAtom,
+    );
+
+    if (superAttachmentPointAtom) {
+      superAttachmentPointAtom.endpoints = [...bond.endpoints];
+    }
+  });
+}
+
+export function recalculateSuperAttachmentPointPosition(
+  atom: Pick<Atom, 'label' | 'endpoints' | 'pp'>,
+  struct: Struct,
+) {
+  if (!isSuperAttachmentPointAtom(atom)) {
+    return;
+  }
+
+  const positions = atom.endpoints.map(
+    (atomId) => struct.atoms.get(atomId)?.pp || Vec2.ZERO,
+  );
+
+  atom.pp = positions
+    .reduce((acc, pos) => acc.add(pos))
+    .scaled(1 / positions.length);
+}
+
+export function mergeHapticBondFragments(struct: Struct) {
+  struct.bonds.forEach((bond) => {
+    if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
+      return;
+    }
+
+    const involvedAtomIds = [bond.begin, bond.end, ...bond.endpoints];
+    const fragmentIds = new Pile<number>();
+    involvedAtomIds.forEach((aid) => {
+      const atom = struct.atoms.get(aid);
+      if (atom && atom.fragment >= 0) {
+        fragmentIds.add(atom.fragment);
+      }
+    });
+
+    if (fragmentIds.size <= 1) {
+      return;
+    }
+
+    const [targetFragmentId, ...fragmentsToMerge] = Array.from(fragmentIds);
+    const fragmentsToMergeSet = new Pile<number>(fragmentsToMerge);
+
+    struct.atoms.forEach((atom) => {
+      if (fragmentsToMergeSet.has(atom.fragment)) {
+        atom.fragment = targetFragmentId;
+      }
+    });
+    fragmentsToMerge.forEach((fragmentId) => struct.frags.delete(fragmentId));
+  });
 }

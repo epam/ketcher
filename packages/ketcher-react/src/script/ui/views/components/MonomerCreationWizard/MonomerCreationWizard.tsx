@@ -62,6 +62,7 @@ import {
 import { validateMonomerLeavingGroups } from './MonomerLeavingGroupValidator';
 import { useAppContext } from '../../../../../hooks';
 import Editor from '../../../../editor';
+import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from '../../../../../constants';
 import { createPortal } from 'react-dom';
 import tools from '../../../action/tools';
@@ -674,8 +675,8 @@ const validateStructure = (structure: Struct, editor: Editor) => {
     return notifications;
   }
 
-  const isStructureContinuous = Editor.isStructureContinuous(structure);
-  if (!isStructureContinuous) {
+  const structureIsContinuous = isStructureContinuous(structure);
+  if (!structureIsContinuous) {
     notifications.set('incontinuousStructure', {
       type: 'error',
       message: NotificationMessages.incontinuousStructure,

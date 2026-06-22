@@ -34,7 +34,6 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
-  DeepPartial,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -67,6 +66,7 @@ import {
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
+import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
@@ -331,7 +331,30 @@ function Editor({
     };
   }, [dispatch]);
 
-  const handleCloseErrorTooltip = (text?: string) => {
+  const toastTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
+
+  useEffect(() => {
+    errorTooltips.forEach((text) => {
+      if (!toastTimers.current.has(text)) {
+        const timer = setTimeout(() => {
+          dispatch(closeErrorTooltip(text));
+          toastTimers.current.delete(text);
+        }, 6000);
+        toastTimers.current.set(text, timer);
+      }
+    });
+
+    toastTimers.current.forEach((timer, text) => {
+      if (!errorTooltips.includes(text)) {
+        clearTimeout(timer);
+        toastTimers.current.delete(text);
+      }
+    });
+  }, [errorTooltips, dispatch]);
+
+  const handleCloseErrorTooltip = (text: string) => {
     dispatch(closeErrorTooltip(text));
   };
 
@@ -443,8 +466,6 @@ function Editor({
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={errorTooltips.length > 0}
-        onClose={() => handleCloseErrorTooltip()}
-        autoHideDuration={6000}
       >
         <StyledToastContainer
           id="error-tooltip-list"

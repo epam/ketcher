@@ -73,6 +73,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'TestMon');
     expect(sgroup).toBeDefined();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const center = sgroupGeometricCenter(sgroup!, parsed);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -95,6 +96,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'CenMon');
     expect(sgroup).toBeDefined();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const center = sgroupGeometricCenter(sgroup!, parsed);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -111,6 +113,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     const sgroup = findSgroupByName(parsed, 'GeoMon');
     expect(sgroup).toBeDefined();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parsedPositions = sgroup!.atoms
       .map((id) => parsed.atoms.get(id)?.pp)
       .filter((pp): pp is Vec2 => pp != null);

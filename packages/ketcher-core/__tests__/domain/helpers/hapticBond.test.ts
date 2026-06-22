@@ -4,6 +4,7 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   isAllowedNonSapHapticBondMetal,
+  isAtomPartOfSuperAttachmentPoint,
   isHapticBondPairAllowed,
   isSuperAttachmentPointAtom,
   isSuperAttachmentPointWithHapticBond,
@@ -17,6 +18,29 @@ describe('hapticBond helpers', () => {
       isSuperAttachmentPointAtom({ label: '*', endpoints: [1, 2, 3] }),
     ).toBe(true);
     expect(isSuperAttachmentPointAtom({ label: '*', endpoints: [] })).toBe(
+      false,
+    );
+  });
+
+  it('detects when an atom is part of a super-attachment point', () => {
+    const struct = new Struct();
+    const endpointId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    );
+    const sapId = struct.atoms.add(
+      new Atom({
+        label: '*',
+        pp: new Vec2(0, 0),
+        endpoints: [endpointId],
+      }),
+    );
+    const unrelatedAtomId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(1, 1) }),
+    );
+
+    expect(isAtomPartOfSuperAttachmentPoint(struct, sapId)).toBe(true);
+    expect(isAtomPartOfSuperAttachmentPoint(struct, endpointId)).toBe(true);
+    expect(isAtomPartOfSuperAttachmentPoint(struct, unrelatedAtomId)).toBe(
       false,
     );
   });

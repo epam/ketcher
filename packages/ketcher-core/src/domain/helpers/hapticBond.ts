@@ -108,6 +108,23 @@ export function isSuperAttachmentPointExcludedFromSelection(
   return isSuperAttachmentPointAtom(atom);
 }
 
+export function isAtomPartOfSuperAttachmentPoint(
+  struct: Struct,
+  atomId: number,
+) {
+  const atom = struct.atoms.get(atomId);
+
+  if (isSuperAttachmentPointAtom(atom)) {
+    return true;
+  }
+
+  return struct.atoms.some(
+    (otherAtom) =>
+      isSuperAttachmentPointAtom(otherAtom) &&
+      otherAtom.endpoints.includes(atomId),
+  );
+}
+
 export function isSuperAttachmentPointExcludedFromExport(
   atom?: HapticBondAtomLike | null,
 ) {

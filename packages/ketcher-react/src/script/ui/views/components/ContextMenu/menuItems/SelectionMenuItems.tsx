@@ -42,8 +42,11 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const [handleAtomStereo, atomStereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const [handleCreateMonomer, createMonomerDisabled] = useCreateMonomer();
-  const [handleSuperAttachmentPointCreate, superAttachmentPointCreateDisabled] =
-    useSuperAttachmentPointCreate();
+  const {
+    handler: handleSuperAttachmentPointCreate,
+    isVisible: superAttachmentPointCreateIsVisible,
+    isDisabled: superAttachmentPointCreateDisabled,
+  } = useSuperAttachmentPointCreate();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -65,6 +68,8 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const options = useSelector(optionsSelector);
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
+  const showSuperAttachmentPointCreateMenu =
+    superAttachmentPointCreateIsVisible();
 
   return (
     <>
@@ -167,14 +172,16 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
         </Item>
       )}
 
-      <Item
-        {...props}
-        data-testid="Create super-attachment point-option"
-        onClick={handleSuperAttachmentPointCreate}
-        disabled={superAttachmentPointCreateDisabled}
-      >
-        Create Super-attachment Point
-      </Item>
+      {showSuperAttachmentPointCreateMenu && (
+        <Item
+          {...props}
+          data-testid="Create super-attachment point-option"
+          onClick={handleSuperAttachmentPointCreate}
+          disabled={superAttachmentPointCreateDisabled()}
+        >
+          Create Super-attachment Point
+        </Item>
+      )}
 
       <Item
         {...props}

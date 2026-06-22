@@ -6,6 +6,10 @@ import type {
   ItemEventParams,
 } from '../contextMenu.types';
 import { fromAtomAddition, ketcherProvider, Vec2 } from 'ketcher-core';
+import {
+  isSuperAttachmentPointCreationSelectionValid,
+  isSuperAttachmentPointCreationSelectionVisible,
+} from '../utils';
 
 type Params = ItemEventParams<AtomContextMenuProps>;
 
@@ -47,17 +51,25 @@ const useSuperAttachmentPointCreate = () => {
     [ketcherId],
   );
 
-  // @yulei TODO rewrite logic
-  const disabled = useCallback(({ props }: Params) => {
-    const atomIds = props?.atomIds;
-    if (Array.isArray(atomIds) && atomIds.length !== 0) {
-      return false;
-    }
+  const isVisible = useCallback(() => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
-    return true;
-  }, []);
+    return isSuperAttachmentPointCreationSelectionVisible(
+      editor.struct(),
+      editor.selection(),
+    );
+  }, [ketcherId]);
 
-  return [handler, disabled] as const;
+  const isDisabled = useCallback(() => {
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+
+    return !isSuperAttachmentPointCreationSelectionValid(
+      editor.struct(),
+      editor.selection(),
+    );
+  }, [ketcherId]);
+
+  return { handler, isVisible, isDisabled };
 };
 
 export default useSuperAttachmentPointCreate;

@@ -19,7 +19,7 @@ import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
 import { SupportedFormat } from 'application/formatters/structFormatter.types';
 import { KetSerializer } from 'domain/serializers/ket/ketSerializer';
-import { ChemicalMimeType } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
@@ -119,14 +119,8 @@ export abstract class BaseMode {
       return;
     }
     const editor = provideEditorInstance();
-
     const drawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();
-
-    if (!drawingEntitiesManager.hasDrawingEntities) {
-      return;
-    }
-
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
       new Struct(),

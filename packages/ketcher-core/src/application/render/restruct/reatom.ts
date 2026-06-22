@@ -32,7 +32,12 @@ import {
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale, isSuperAttachmentPointWithHapticBond } from 'domain/helpers';
+import {
+  Scale,
+  isSuperAttachmentPointAtom,
+  isSuperAttachmentPointWithHapticBond,
+  recalculateSuperAttachmentPointPosition,
+} from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
@@ -45,14 +50,15 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
-import {
-  paperPathFromSVGElement,
-  SUPERATOM_CLASS_TEXT,
-} from 'application/render/restruct/resgroup';
+import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
-import paperjs from 'paper';
+import {
+  drawSuperAttachmentPointHover,
+  getSuperAttachmentPointLabelAttrs,
+  type SuperAttachmentPointHoverHost,
+} from './superAttachmentPointRender';
 
 interface ElemAttr {
   text: string;
@@ -113,87 +119,12 @@ class ReAtom extends ReObject {
   }
 
   drawHover(render: Render, drawOutline = true) {
-    const isSuperAttachmentPoint =
-      this.a.label === '*' && this.a.endpoints.length > 0;
-
-    if (isSuperAttachmentPoint) {
-      const hoversToCombine: any[] = [];
-      const endpointIds = new Set(this.a.endpoints);
-
-      const selfPlate = this.makeHoverPlate(render, false);
-
-      if (selfPlate) {
-        selfPlate.attr({ cursor: 'default' });
-        hoversToCombine.push(selfPlate);
-      }
-
-      this.a.endpoints.forEach((atomId) => {
-        const endpointAtom = render.ctab.atoms.get(atomId);
-        const atomPlate = endpointAtom?.makeHoverPlate(render, false);
-
-        if (atomPlate) {
-          hoversToCombine.push(atomPlate);
-        }
-      });
-
-      render.ctab.bonds.forEach((rebond) => {
-        if (endpointIds.has(rebond.b.begin) && endpointIds.has(rebond.b.end)) {
-          const bondPlate = rebond.makeHoverPlate(render, false);
-
-          if (bondPlate) {
-            hoversToCombine.push(bondPlate);
-          }
-        }
-      });
-
-      const elements: Element[] = [];
-
-      hoversToCombine.forEach((item) => {
-        if (item?.node) {
-          elements.push(item.node);
-          item.remove();
-        }
-      });
-
-      paperjs.setup(document.createElement('canvas'));
-
-      let combinedPath: any = null;
-
-      elements.forEach((el) => {
-        const paperPath = paperPathFromSVGElement(el);
-
-        if (!paperPath) {
-          return;
-        }
-
-        if (!paperPath.closed) {
-          paperPath.closePath();
-        }
-
-        if (!combinedPath) {
-          combinedPath = paperPath;
-        } else {
-          combinedPath = combinedPath.unite(paperPath);
-        }
-      });
-
-      if (!combinedPath) {
-        return;
-      }
-
-      const combinedPathD = combinedPath.pathData;
-      const hoverPath = render.paper
-        .path(combinedPathD)
-        .attr({ ...render.options.hoverStyle, cursor: 'default' });
-
-      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, hoverPath);
-      this.attachHighlightTriggerForAttachmentPointAtom(hoverPath, render);
-      this.drawHoverForPotentialAttachmentPointAtomsInMonomerCreationWizard(
+    if (isSuperAttachmentPointAtom(this.a)) {
+      return drawSuperAttachmentPointHover(
+        this as unknown as SuperAttachmentPointHoverHost,
         render,
         drawOutline,
       );
-
-      return hoverPath;
     }
 
     const ret = this.makeHoverPlate(render, drawOutline);
@@ -1203,19 +1134,7 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 
-    // recalculate super-attachment point position
-    const isSuperAttachmentPoint =
-      this.a.label === '*' && this.a.endpoints.length > 0;
-    if (isSuperAttachmentPoint) {
-      const positions =
-        this.a.endpoints.map(
-          (atomId) => struct.atoms.get(atomId)?.pp || Vec2.ZERO,
-        ) || [];
-
-      this.a.pp = positions
-        .reduce((acc, pos) => acc.add(pos))
-        .scaled(1 / positions.length);
-    }
+    recalculateSuperAttachmentPointPosition(this.a, struct);
 
     if (atom.cip) {
       const paper = render.paper;
@@ -1700,16 +1619,13 @@ function buildLabel(
     ps.y = ps.y + 3;
   }
 
-  const isSuperAttachmentPoint =
-    label.text === '*' && atom.a.endpoints.length > 0;
-
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font,
     'font-size': fontszInPx,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-    ...(isSuperAttachmentPoint ? { cursor: 'default' } : {}),
+    ...getSuperAttachmentPointLabelAttrs(atom.a),
   });
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {

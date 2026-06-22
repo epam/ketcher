@@ -7,6 +7,8 @@ import {
   isHapticBondPairAllowed,
   isSuperAttachmentPointAtom,
   isSuperAttachmentPointWithHapticBond,
+  remapEndpointAtomIds,
+  prepareHapticBondAttributes,
 } from 'domain/helpers/hapticBond';
 
 describe('hapticBond helpers', () => {
@@ -83,5 +85,31 @@ describe('hapticBond helpers', () => {
         { label: 'N', endpoints: [] },
       ),
     ).toBe(false);
+  });
+
+  it('remaps endpoint atom ids through an id map', () => {
+    const idMap = new Map([
+      [1, 10],
+      [2, 20],
+      [3, 30],
+    ]);
+
+    expect(remapEndpointAtomIds([1, 2, 99], idMap)).toEqual([10, 20]);
+  });
+
+  it('prepares haptic bond attributes from a super-attachment point atom', () => {
+    const bond = prepareHapticBondAttributes(
+      { type: Bond.PATTERN.TYPE.HAPTIC, begin: 1, end: 2 },
+      { endpoints: [3, 4] },
+      { endpoints: [] },
+    );
+
+    expect(bond).toEqual({
+      type: Bond.PATTERN.TYPE.HAPTIC,
+      begin: 1,
+      end: 2,
+      attach: 'ALL',
+      endpoints: [3, 4],
+    });
   });
 });

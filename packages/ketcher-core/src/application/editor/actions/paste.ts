@@ -42,6 +42,7 @@ import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import type { Image } from 'domain/entities/image';
+import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
 
 type CreatedItems = {
   atoms: number[];
@@ -123,19 +124,12 @@ export function fromPaste(
     );
   });
 
-  const remapEndpoints = (endpoints: number[]): number[] => {
-    const remapped: number[] = [];
-    endpoints.forEach((endpointAtomId) => {
-      const newId = aidMap.get(endpointAtomId);
-      if (newId !== undefined) remapped.push(newId);
-    });
-    return remapped;
-  };
-
   pstruct.atoms.forEach((atom, aid) => {
     if (!atom.endpoints?.length) return;
     const pastedAtom = restruct.molecule.atoms.get(aidMap.get(aid));
-    if (pastedAtom) pastedAtom.endpoints = remapEndpoints(atom.endpoints);
+    if (pastedAtom) {
+      pastedAtom.endpoints = remapEndpointAtomIds(atom.endpoints, aidMap);
+    }
   });
 
   pstruct.frags.forEach((frag, frid) => {
@@ -158,7 +152,7 @@ export function fromPaste(
 
   pstruct.bonds.forEach((bond) => {
     const bondToAdd = bond.endpoints?.length
-      ? { ...bond, endpoints: remapEndpoints(bond.endpoints) }
+      ? { ...bond, endpoints: remapEndpointAtomIds(bond.endpoints, aidMap) }
       : bond;
     const operation = new BondAdd(
       aidMap.get(bond.begin),

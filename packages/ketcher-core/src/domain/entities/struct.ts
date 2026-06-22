@@ -37,6 +37,10 @@ import { Vec2 } from './vec2';
 import type { Highlight } from './highlight';
 import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import {
+  mergeHapticBondFragments,
+  remapEndpointAtomIds,
+} from 'domain/helpers/hapticBond';
 import { isNumber } from 'lodash';
 import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
@@ -361,11 +365,7 @@ export class Struct {
       const clonedAtom =
         clonedAtomId === undefined ? undefined : cp.atoms.get(clonedAtomId);
       if (!clonedAtom) return;
-      const remappedEndpoints: number[] = [];
-      atom.endpoints.forEach((endpointAtomId) => {
-        const newId = aids.get(endpointAtomId);
-        if (newId !== undefined) remappedEndpoints.push(newId);
-      });
+      const remappedEndpoints = remapEndpointAtomIds(atom.endpoints, aids);
       clonedAtom.endpoints = remappedEndpoints;
     });
 
@@ -940,34 +940,7 @@ export class Struct {
       }
       this.markFragment(comp, properties);
     });
-    this.mergeHapticBondFragments();
-  }
-
-  private mergeHapticBondFragments() {
-    this.bonds.forEach((bond) => {
-      if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
-        return;
-      }
-
-      const involvedAtomIds = [bond.begin, bond.end, ...bond.endpoints];
-      const fragmentIds = new Pile<number>();
-      involvedAtomIds.forEach((aid) => {
-        const atom = this.atoms.get(aid);
-        if (atom && atom.fragment >= 0) fragmentIds.add(atom.fragment);
-      });
-
-      if (fragmentIds.size <= 1) return;
-
-      const [targetFragmentId, ...fragmentsToMerge] = Array.from(fragmentIds);
-      const fragmentsToMergeSet = new Pile<number>(fragmentsToMerge);
-
-      this.atoms.forEach((atom) => {
-        if (fragmentsToMergeSet.has(atom.fragment)) {
-          atom.fragment = targetFragmentId;
-        }
-      });
-      fragmentsToMerge.forEach((fragmentId) => this.frags.delete(fragmentId));
-    });
+    mergeHapticBondFragments(this);
   }
 
   scale(scale: number) {

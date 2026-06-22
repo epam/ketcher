@@ -22,7 +22,6 @@ import {
 import { Bond, type BondAttributes } from 'domain/entities/bond';
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
-import type { Struct } from 'src/domain/entities';
 
 export function atomToStruct(source) {
   const params: Partial<AtomAttributes> = {};
@@ -139,27 +138,4 @@ function bondTypeToStruct(bond: BondAttributes) {
   const isHaptic =
     bond.type === Bond.PATTERN.TYPE.DATIVE && bond.attach === 'ALL';
   return isHaptic ? Bond.PATTERN.TYPE.HAPTIC : bond.type;
-}
-
-/**
- * A haptic bond stores its endpoint atoms in the bond's `endpts`.
- * Mirror them back onto the super attachment point (`*`) atom.
- */
-export function hapticBondEndpointsToStruct(struct: Struct) {
-  struct.bonds.forEach((bond) => {
-    if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
-      return;
-    }
-    const beginAtom = struct.atoms.get(bond.begin);
-    const endAtom = struct.atoms.get(bond.end);
-    const superAttachmentPointAtom =
-      beginAtom?.label === '*'
-        ? beginAtom
-        : endAtom?.label === '*'
-        ? endAtom
-        : null;
-    if (superAttachmentPointAtom) {
-      superAttachmentPointAtom.endpoints = [...bond.endpoints];
-    }
-  });
 }

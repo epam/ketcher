@@ -83,6 +83,7 @@ import {
   Visel,
   paperPathFromSVGElement,
   fromFragmentDeletion,
+  isSuperAttachmentPointExcludedFromExport,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -3029,10 +3030,7 @@ class Editor implements KetcherEditor {
 
     // remove super-attachment points
     res.atoms = res.atoms?.filter((aid) => {
-      const isSuperAttachmentPoint =
-        struct.atoms.get(aid)?.label === '*' &&
-        (struct.atoms.get(aid)?.endpoints?.length ?? 0) > 2;
-      return !isSuperAttachmentPoint;
+      return !isSuperAttachmentPointExcludedFromExport(struct.atoms.get(aid));
     });
 
     return res;

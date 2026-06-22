@@ -567,7 +567,6 @@ test.describe('Monomer saving - presets in the monomer creation wizard: ', () =>
       ErrorMessage.symbolExists,
     );
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
-    await symbolExistsMessageBanner.ok();
     await dialog.discard();
 
     // Now create preset with hidden monomer using same code - should succeed

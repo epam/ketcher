@@ -1,7 +1,12 @@
+import { Atom } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import { Struct } from 'domain/entities/struct';
+import { Vec2 } from 'domain/entities/vec2';
 import {
   isAllowedNonSapHapticBondMetal,
   isHapticBondPairAllowed,
   isSuperAttachmentPointAtom,
+  isSuperAttachmentPointWithHapticBond,
 } from 'domain/helpers/hapticBond';
 
 describe('hapticBond helpers', () => {
@@ -29,6 +34,34 @@ describe('hapticBond helpers', () => {
     expect(isAllowedNonSapHapticBondMetal({ label: 'Al', endpoints: [] })).toBe(
       false,
     );
+  });
+
+  it('detects when a SAP has an established haptic bond', () => {
+    const struct = new Struct();
+    const sapId = struct.atoms.add(
+      new Atom({ label: '*', pp: new Vec2(0, 0), endpoints: [2, 3, 4] }),
+    );
+    const metalId = struct.atoms.add(
+      new Atom({ label: 'Fe', pp: new Vec2(1, 0) }),
+    );
+    const endpointId = struct.atoms.add(
+      new Atom({ label: 'C', pp: new Vec2(0, 1) }),
+    );
+
+    expect(isSuperAttachmentPointWithHapticBond(struct, sapId)).toBe(false);
+
+    struct.bonds.add(
+      new Bond({
+        type: Bond.PATTERN.TYPE.HAPTIC,
+        begin: sapId,
+        end: metalId,
+        endpoints: [endpointId],
+        attach: 'ALL',
+      }),
+    );
+
+    expect(isSuperAttachmentPointWithHapticBond(struct, sapId)).toBe(true);
+    expect(isSuperAttachmentPointWithHapticBond(struct, metalId)).toBe(false);
   });
 
   it('allows only one listed metal in a non-SAP haptic bond pair', () => {

@@ -37,7 +37,7 @@ import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
 import type { Element, RaphaelSet } from 'raphael';
-import { Scale } from 'domain/helpers';
+import { Scale, isSuperAttachmentPointWithHapticBond } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { assert, toFixed } from 'utilities';
@@ -447,7 +447,9 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-      ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId) ||
+      isSuperAttachmentPointWithHapticBond(struct, atomId)
     );
   };
 
@@ -1572,6 +1574,15 @@ function isLabelVisible(
   options: RenderOptions,
   atom: ReAtom,
 ) {
+  const atomId = restruct.molecule.atoms.keyOf(atom.a);
+
+  if (
+    atomId !== null &&
+    isSuperAttachmentPointWithHapticBond(restruct.molecule, atomId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(

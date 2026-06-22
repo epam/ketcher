@@ -457,9 +457,8 @@ class BondTool implements Tool {
     failure: BondValidationFailure,
   ) {
     this.hapticBond.applyValidationFailure(dragCtx, failure);
-    delete dragCtx.action;
     this.restoreBondWhenHoveringOnCanvas(event);
-    this.editor.update(true);
+    if (dragCtx.action) this.editor.update(dragCtx.action, true);
   }
 
   private applyBondAction(

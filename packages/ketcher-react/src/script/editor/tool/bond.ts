@@ -396,7 +396,7 @@ class BondTool implements Tool {
 
     const fgId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
-      atomId,
+      atomInFg,
     );
     return fgId !== null ? [fgId] : [];
   }

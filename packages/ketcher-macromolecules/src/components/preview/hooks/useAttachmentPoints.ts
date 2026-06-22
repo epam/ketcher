@@ -13,7 +13,7 @@ type Props = {
 
 export type PreparedAttachmentPointData = {
   id: string;
-  label: LeavingGroup;
+  label: string;
   connected: boolean;
 };
 
@@ -21,6 +21,11 @@ type ReturnType = {
   preparedAttachmentPointsData: PreparedAttachmentPointData[];
   connectedAttachmentPoints: string[];
 };
+
+const BACKBONE_ATTACHMENT_POINTS = [
+  AttachmentPointName.R1,
+  AttachmentPointName.R2,
+];
 
 export const useAttachmentPoints = ({
   monomerCaps,
@@ -30,7 +35,25 @@ export const useAttachmentPoints = ({
     const preparedAttachmentPointsData: PreparedAttachmentPointData[] = [];
     const connectedAttachmentPoints: string[] = [];
 
-    if (!monomerCaps) {
+    const hasCaps = monomerCaps && Object.keys(monomerCaps).length > 0;
+
+    if (!hasCaps) {
+      if (!attachmentPointsToBonds) {
+        return { preparedAttachmentPointsData, connectedAttachmentPoints };
+      }
+
+      BACKBONE_ATTACHMENT_POINTS.filter(
+        (id) => id in attachmentPointsToBonds,
+      ).forEach((id) => {
+        const connected = Boolean(attachmentPointsToBonds[id]);
+
+        if (connected) {
+          connectedAttachmentPoints.push(id);
+        }
+
+        preparedAttachmentPointsData.push({ id, label: '', connected });
+      });
+
       return { preparedAttachmentPointsData, connectedAttachmentPoints };
     }
 

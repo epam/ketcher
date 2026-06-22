@@ -87,7 +87,6 @@ import {
   paperPathFromSVGElement,
   fromFragmentDeletion,
   assert,
-  isSuperAttachmentPointExcludedFromExport,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -3680,11 +3679,6 @@ class Editor implements KetcherEditor {
         }
       });
     }
-
-    // remove super-attachment points
-    res.atoms = res.atoms?.filter((aid) => {
-      return !isSuperAttachmentPointExcludedFromExport(struct.atoms.get(aid));
-    });
 
     return res;
   }

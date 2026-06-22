@@ -85,6 +85,11 @@ export function isSuperAttachmentPointAtom(atom?: HapticBondAtomLike | null) {
   return atom?.label === '*' && (atom.endpoints?.length ?? 0) > 0;
 }
 
+export function isSuperAttachmentPointById(struct: Struct, atomId: number) {
+  const atom = struct.atoms.get(atomId);
+  return isSuperAttachmentPointAtom(atom);
+}
+
 export function isSuperAttachmentPointWithHapticBond(
   struct: Struct,
   atomId: number,
@@ -123,12 +128,6 @@ export function isAtomPartOfSuperAttachmentPoint(
       isSuperAttachmentPointAtom(otherAtom) &&
       otherAtom.endpoints.includes(atomId),
   );
-}
-
-export function isSuperAttachmentPointExcludedFromExport(
-  atom?: HapticBondAtomLike | null,
-) {
-  return isSuperAttachmentPointAtom(atom) && (atom?.endpoints?.length ?? 0) > 2;
 }
 
 export function isAllowedNonSapHapticBondMetal(

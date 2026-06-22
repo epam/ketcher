@@ -32,7 +32,7 @@ import {
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale, isSuperAttachmentPointWithHapticBond } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
@@ -410,7 +410,9 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-      ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId) ||
+      isSuperAttachmentPointWithHapticBond(struct, atomId)
     );
   };
 
@@ -1495,6 +1497,15 @@ function shouldDisplayStereoLabel(
 }
 
 function isLabelVisible(restruct, options, atom: ReAtom) {
+  const atomId = restruct.molecule.atoms.keyOf(atom.a);
+
+  if (
+    atomId !== undefined &&
+    isSuperAttachmentPointWithHapticBond(restruct.molecule, atomId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(

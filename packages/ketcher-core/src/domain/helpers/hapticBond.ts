@@ -1,4 +1,6 @@
-import type { Atom, AtomAttributes } from 'domain/entities/atom';
+import { Atom, type AtomAttributes } from 'domain/entities/atom';
+import { Bond } from 'domain/entities/bond';
+import type { Struct } from 'domain/entities/struct';
 
 type HapticBondAtomLike = Pick<AtomAttributes, 'label' | 'endpoints'> &
   Partial<Pick<Atom, 'label' | 'endpoints'>>;
@@ -79,6 +81,23 @@ const HAPTIC_BOND_ALLOWED_METALS = new Set([
 
 export function isSuperAttachmentPointAtom(atom?: HapticBondAtomLike | null) {
   return atom?.label === '*' && (atom.endpoints?.length ?? 0) > 0;
+}
+
+export function isSuperAttachmentPointWithHapticBond(
+  struct: Struct,
+  atomId: number,
+) {
+  const atom = struct.atoms.get(atomId);
+
+  if (!isSuperAttachmentPointAtom(atom)) {
+    return false;
+  }
+
+  return Atom.getConnectedBondIds(struct, atomId).some((bondId) => {
+    const bond = struct.bonds.get(bondId);
+
+    return bond?.type === Bond.PATTERN.TYPE.HAPTIC;
+  });
 }
 
 export function isAllowedNonSapHapticBondMetal(

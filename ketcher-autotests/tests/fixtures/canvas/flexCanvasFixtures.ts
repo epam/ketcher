@@ -25,6 +25,7 @@ export const test = mergeTests(utils, pageObjects).extend<
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
+    await page.keyboard.press('Escape');
     const NOTIFICATION_BANNER_CLOSE_DELAY_MS = 100;
     const banner = NotificationBanner(page);
     while (await banner.isVisible()) {

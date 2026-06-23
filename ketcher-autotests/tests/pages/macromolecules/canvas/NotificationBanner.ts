@@ -11,7 +11,7 @@ export const NotificationBanner = (page: Page) => {
     message: page.getByTestId('error-tooltip-0'),
     closeButton: page
       .locator('#error-tooltip-list')
-      .getByRole('button')
+      .locator('button[data-testid^="error-tooltip-close"]')
       .first(),
   };
 
@@ -34,7 +34,7 @@ export const NotificationBanner = (page: Page) => {
       });
     },
     async close() {
-      await locators.closeButton.click();
+      await locators.closeButton.click({ force: true });
     },
 
     async getNotificationText() {

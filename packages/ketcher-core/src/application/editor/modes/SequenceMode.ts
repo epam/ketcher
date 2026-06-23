@@ -1541,32 +1541,34 @@ export class SequenceMode extends BaseMode {
             senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
+          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
+          const prevAntisense =
+            previousTwoStrandedNodeInSameChain?.antisenseNode;
+          const currSense = currentTwoStrandedNode?.senseNode;
+          const currAntisense = currentTwoStrandedNode?.antisenseNode;
+
+          const prevHasRealSenseAndAntisense =
+            !!prevSense &&
+            !(prevSense instanceof EmptySequenceNode) &&
+            !!prevAntisense;
+
+          const currHasAntisenseWithNonEmptyContent =
+            !!currAntisense &&
+            (!(currSense instanceof EmptySequenceNode) ||
+              !(currAntisense instanceof EmptySequenceNode));
+
+          const shouldEditAntisenseInSyncMode =
+            prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
+
+          const shouldEditAntisenseInAsyncMode =
+            !(prevAntisense instanceof EmptySequenceNode) ||
+            !(currAntisense instanceof EmptySequenceNode);
+
           if (
             this.needToEditAntisense &&
             (this.isSyncEditMode
-              ? (previousTwoStrandedNodeInSameChain?.senseNode &&
-                  !(
-                    previousTwoStrandedNodeInSameChain.senseNode instanceof
-                    EmptySequenceNode
-                  ) &&
-                  previousTwoStrandedNodeInSameChain.antisenseNode) ||
-                (currentTwoStrandedNode?.antisenseNode &&
-                  (!(
-                    currentTwoStrandedNode.senseNode instanceof
-                    EmptySequenceNode
-                  ) ||
-                    !(
-                      currentTwoStrandedNode.antisenseNode instanceof
-                      EmptySequenceNode
-                    )))
-              : !(
-                  previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
-                  EmptySequenceNode
-                ) ||
-                !(
-                  currentTwoStrandedNode?.antisenseNode instanceof
-                  EmptySequenceNode
-                ))
+              ? shouldEditAntisenseInSyncMode
+              : shouldEditAntisenseInAsyncMode)
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,

@@ -89,11 +89,6 @@ export const Nucleotide = createMonomerGroup(MonomerType.Nucleotide, {
     alias: 'NucleotideX',
     testId: 'NucleotideX___NucleotideX',
   },
-  // for library update test Case 29 (IDT alias length validation)
-  _NucleotideIDTTooLong: {
-    alias: '_NucleotideIDTTooLong',
-    testId: '_NucleotideIDTTooLong____NucleotideIDTTooLong',
-  },
 });
 
 export type NucleotidesType = typeof Nucleotide;

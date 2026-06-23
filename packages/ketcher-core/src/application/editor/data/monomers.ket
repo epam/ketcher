@@ -10635,8 +10635,8 @@
       {
         "label": "C",
         "location": [
-          9.119013567682224,
-          -11.001047348442038,
+          0.294,
+          -1.026,
           0
         ],
         "stereoLabel": "abs"
@@ -10644,8 +10644,8 @@
       {
         "label": "C",
         "location": [
-          9.928050901882619,
-          -10.413020213077596,
+          1.103,
+          -0.438,
           0
         ],
         "stereoLabel": "abs"
@@ -10653,8 +10653,8 @@
       {
         "label": "C",
         "location": [
-          9.619036641971714,
-          -9.461976325778984,
+          0.794,
+          0.513,
           0
         ],
         "stereoLabel": "abs"
@@ -10662,8 +10662,8 @@
       {
         "label": "C",
         "location": [
-          8.618990493392731,
-          -9.461976325778984,
+          -0.206,
+          0.513,
           0
         ],
         "stereoLabel": "abs"
@@ -10671,64 +10671,64 @@
       {
         "label": "O",
         "location": [
-          8.309976233481825,
-          -10.413020213077596,
+          -0.515,
+          -0.438,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          9.119013567682224,
-          -12.00109349702102,
+          0.294,
+          -2.026,
           0
         ]
       },
       {
         "label": "F",
         "location": [
-          10.879094789181233,
-          -10.722034472988502,
+          2.054,
+          -0.747,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          10.207063777336156,
-          -8.652938991578587,
+          1.382,
+          1.322,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          11.201109649023664,
-          -8.75794383717938,
+          2.376,
+          1.217,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          8.03096335802829,
-          -8.652938991578587,
+          -0.794,
+          1.322,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          7.03691748634078,
-          -8.75794383717938,
+          -1.788,
+          1.217,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          6.448890350976339,
-          -7.948906502978982,
+          -2.376,
+          2.026,
           0
         ]
       }
@@ -18288,7 +18288,9 @@
       }
     ],
     "naturalAnalogShort": "A",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Test-6-P___Test-6-AP-Peptide": {
     "type": "monomerTemplate",
@@ -20953,7 +20955,9 @@
       }
     ],
     "naturalAnalogShort": "C",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Cap___(2R,3S)-3-amino-2-hydroxy-5-cyclohexylpentanoic acid": {
     "type": "monomerTemplate",
@@ -21690,7 +21694,9 @@
       }
     ],
     "naturalAnalogShort": "R",
-    "modificationTypes": ["Citrullination"]
+    "modificationTypes": [
+      "Citrullination"
+    ]
   },
   "monomerTemplate-Cya___Cysteic acid": {
     "type": "monomerTemplate",
@@ -21893,16 +21899,16 @@
       {
         "label": "N",
         "location": [
-          11.559000000000001,
-          -8.899999999999999,
+          -0.866,
+          -1,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          12.425,
-          -8.400000000000002,
+          0,
+          -0.5,
           0
         ],
         "stereoLabel": "abs"
@@ -21910,64 +21916,64 @@
       {
         "label": "H",
         "location": [
-          10.693000000000001,
-          -8.400000000000002,
+          -1.732,
+          -0.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          13.291,
-          -8.899999999999999,
+          0.866,
+          -1,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          14.157,
-          -8.400000000000002,
+          1.732,
+          -0.5,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.291,
-          -9.899999999999999,
+          0.866,
+          -2,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          12.425,
-          -7.4,
+          0,
+          0.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          11.559000000000001,
-          -6.9,
+          -0.866,
+          1,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          11.559000000000001,
-          -5.9,
+          -0.866,
+          2,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          10.693000000000001,
-          -7.4,
+          -1.732,
+          0.5,
           0
         ]
       }
@@ -22075,7 +22081,9 @@
       }
     ],
     "naturalAnalogShort": "D",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-D*___Aspartic acid*": {
     "type": "monomerTemplate",
@@ -22083,16 +22091,16 @@
       {
         "label": "N",
         "location": [
-          11.559000000000001,
-          -8.899999999999999,
+          -0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          12.425,
-          -8.400000000000002,
+          0,
+          -0.75,
           0
         ],
         "stereoLabel": "abs"
@@ -22100,72 +22108,72 @@
       {
         "label": "H",
         "location": [
-          10.693000000000001,
-          -8.400000000000002,
+          -1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          13.291,
-          -8.899999999999999,
+          0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          14.157,
-          -8.400000000000002,
+          1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.291,
-          -9.899999999999999,
+          0.866,
+          -2.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          12.425,
-          -7.4,
+          0,
+          0.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          11.559000000000001,
-          -6.9,
+          -0.866,
+          0.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          11.559000000000001,
-          -5.9,
+          -0.866,
+          1.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          10.693000000000001,
-          -7.4,
+          -1.732,
+          0.25,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          12.425,
-          -5.4,
+          0,
+          2.25,
           0
         ]
       }
@@ -22278,7 +22286,9 @@
       }
     ],
     "naturalAnalogShort": "D",
-    "modificationTypes": ["R3 H leaving group"]
+    "modificationTypes": [
+      "R3 H leaving group"
+    ]
   },
   "monomerTemplate-Pyrro___Pyrrolidine": {
     "type": "monomerTemplate",
@@ -22589,112 +22599,112 @@
       {
         "label": "N",
         "location": [
-          8.592116004625034,
-          -9.02512131986928,
+          -0.433,
+          -2,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          9.458128542462083,
-          -8.525114664590808,
+          0.433,
+          -1.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          10.324140126624854,
-          -9.02512131986928,
+          1.299,
+          -2,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          11.190150757113349,
-          -8.525114664590808,
+          2.165,
+          -1.5,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          10.324140126624854,
-          -10.025135584100504,
+          1.299,
+          -3,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          7.726104420462262,
-          -8.525114664590808,
+          -1.299,
+          -1.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          9.458128542462083,
-          -7.525101830871001,
+          0.433,
+          -0.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          8.592116004625034,
-          -7.025095175592528,
+          -0.433,
+          0,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          8.592116004625034,
-          -6.025081388198444,
+          -0.433,
+          1,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          7.726104420462262,
-          -5.525074732919971,
+          -1.299,
+          1.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          7.726104420462262,
-          -4.525061422363025,
+          -1.299,
+          2.5,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          6.860092836299491,
-          -4.025054767084553,
+          -2.165,
+          3,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          8.592116004625034,
-          -4.025054767084553,
+          -0.433,
+          3,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          9.458128304036416,
-          -9.52511466459078,
+          0.433,
+          -2.5,
           0
         ]
       }
@@ -23256,16 +23266,16 @@
       {
         "label": "N",
         "location": [
-          14.784000000000002,
-          -9.650000000000002,
+          -0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -9.149999999999999,
+          0,
+          -0.75,
           0
         ],
         "stereoLabel": "abs"
@@ -23273,72 +23283,72 @@
       {
         "label": "H",
         "location": [
-          13.918000000000003,
-          -9.149999999999999,
+          -1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          16.516000000000002,
-          -9.650000000000002,
+          0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          17.382,
-          -9.149999999999999,
+          1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          16.516000000000002,
-          -10.650000000000002,
+          0.866,
+          -2.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -8.149999999999999,
+          0,
+          0.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -7.65,
+          -0.866,
+          0.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -6.65,
+          -0.866,
+          1.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          15.650000000000002,
-          -6.15,
+          0,
+          2.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.918000000000003,
-          -6.15,
+          -1.732,
+          2.25,
           0
         ]
       }
@@ -23453,7 +23463,9 @@
       }
     ],
     "naturalAnalogShort": "E",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-E*___Glutamic acid*": {
     "type": "monomerTemplate",
@@ -23466,16 +23478,16 @@
       {
         "label": "N",
         "location": [
-          14.784000000000002,
-          -9.650000000000002,
+          -0.866,
+          -1.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -9.149999999999999,
+          0,
+          -1.25,
           0
         ],
         "stereoLabel": "abs"
@@ -23483,80 +23495,80 @@
       {
         "label": "H",
         "location": [
-          13.918000000000003,
-          -9.149999999999999,
+          -1.732,
+          -1.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          16.516000000000002,
-          -9.650000000000002,
+          0.866,
+          -1.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          17.382,
-          -9.149999999999999,
+          1.732,
+          -1.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          16.516000000000002,
-          -10.650000000000002,
+          0.866,
+          -2.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -8.149999999999999,
+          0,
+          -0.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -7.65,
+          -0.866,
+          0.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -6.65,
+          -0.866,
+          1.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          15.650000000000002,
-          -6.15,
+          0,
+          1.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.918000000000003,
-          -6.15,
+          -1.732,
+          1.75,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          15.650000000000002,
-          -5.15,
+          0,
+          2.75,
           0
         ]
       }
@@ -23671,7 +23683,9 @@
       }
     ],
     "naturalAnalogShort": "E",
-    "modificationTypes": ["R3 H leaving group"]
+    "modificationTypes": [
+      "R3 H leaving group"
+    ]
   },
   "monomerTemplate-Edc___S-ethylthiocysteine": {
     "type": "monomerTemplate",
@@ -24099,7 +24113,9 @@
       }
     ],
     "naturalAnalogShort": "F",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-G___Glycine": {
     "type": "monomerTemplate",
@@ -24218,7 +24234,9 @@
       }
     ],
     "naturalAnalogShort": "G",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-gGlu___gamma-glutamic acid": {
     "type": "monomerTemplate",
@@ -25007,7 +25025,9 @@
       }
     ],
     "naturalAnalogShort": "H",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Har___homoarginine": {
     "type": "monomerTemplate",
@@ -26233,7 +26253,9 @@
       }
     ],
     "naturalAnalogShort": "K",
-    "modificationTypes": ["Hydroxylation"]
+    "modificationTypes": [
+      "Hydroxylation"
+    ]
   },
   "monomerTemplate-Hyp___trans-4-hydroxy-L-proline": {
     "type": "monomerTemplate",
@@ -26423,7 +26445,9 @@
       }
     ],
     "naturalAnalogShort": "P",
-    "modificationTypes": ["Hydroxylation"]
+    "modificationTypes": [
+      "Hydroxylation"
+    ]
   },
   "monomerTemplate-I___Isoleucine": {
     "type": "monomerTemplate",
@@ -26606,7 +26630,9 @@
       }
     ],
     "naturalAnalogShort": "I",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Iva___isovaline": {
     "type": "monomerTemplate",
@@ -26992,7 +27018,9 @@
       }
     ],
     "naturalAnalogShort": "K",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-L___Leucine": {
     "type": "monomerTemplate",
@@ -27173,7 +27201,9 @@
       }
     ],
     "naturalAnalogShort": "L",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-L-OAla___lactic acid": {
     "type": "monomerTemplate",
@@ -27465,7 +27495,9 @@
       }
     ],
     "naturalAnalogShort": "M",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Mba___(2S)-2-mercaptobutyric acid": {
     "type": "monomerTemplate",
@@ -28157,7 +28189,9 @@
       }
     ],
     "naturalAnalogShort": "N",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-2Nal___3-(2-naphthyl)-alanine": {
     "type": "monomerTemplate",
@@ -29417,7 +29451,9 @@
       }
     ],
     "naturalAnalogShort": "P",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Pen___Penicillamine": {
     "type": "monomerTemplate",
@@ -30437,7 +30473,9 @@
       }
     ],
     "naturalAnalogShort": "Q",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-R___Arginine": {
     "type": "monomerTemplate",
@@ -30687,7 +30725,9 @@
       }
     ],
     "naturalAnalogShort": "R",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-S___Serine": {
     "type": "monomerTemplate",
@@ -30862,7 +30902,9 @@
       }
     ],
     "naturalAnalogShort": "S",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-meG___Sarcosine": {
     "type": "monomerTemplate",
@@ -30996,7 +31038,9 @@
       }
     ],
     "naturalAnalogShort": "G",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-Ar5c___Cycloleucine": {
     "type": "monomerTemplate",
@@ -31600,7 +31644,9 @@
       }
     ],
     "naturalAnalogShort": "T",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Thi___3-(2-thienyl)-alanine": {
     "type": "monomerTemplate",
@@ -32875,7 +32921,9 @@
       }
     ],
     "naturalAnalogShort": "V",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-W___Tryptophan": {
     "type": "monomerTemplate",
@@ -33184,7 +33232,9 @@
       }
     ],
     "naturalAnalogShort": "W",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Wil___Willardiine": {
     "type": "monomerTemplate",
@@ -33718,7 +33768,9 @@
       }
     ],
     "naturalAnalogShort": "Y",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Ac-___N-Terminal acetyl": {
     "type": "monomerTemplate",
@@ -33982,7 +34034,9 @@
       }
     ],
     "naturalAnalogShort": "A",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dC___D-Cysteine": {
     "type": "monomerTemplate",
@@ -34157,7 +34211,9 @@
       }
     ],
     "naturalAnalogShort": "C",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dD___D-Aspartic acid": {
     "type": "monomerTemplate",
@@ -34165,16 +34221,16 @@
       {
         "label": "N",
         "location": [
-          14.808987298340655,
-          -10.575014667043124,
+          -0.866,
+          -1,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.675,
-          -10.075007333521565,
+          0,
+          -0.5,
           0
         ],
         "stereoLabel": "abs"
@@ -34182,64 +34238,64 @@
       {
         "label": "H",
         "location": [
-          13.942974596681312,
-          -10.075007333521565,
+          -1.732,
+          -0.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          16.541012701659344,
-          -10.575014667043124,
+          0.866,
+          -1,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          17.40702540331869,
-          -10.075007333521565,
+          1.732,
+          -0.5,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          16.541012701659344,
-          -11.575029334086247,
+          0.866,
+          -2,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.675,
-          -9.07499266647844,
+          0,
+          0.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.808987298340655,
-          -8.574985332956878,
+          -0.866,
+          1,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          14.808987298340655,
-          -7.574970665913756,
+          -0.866,
+          2,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.942974596681312,
-          -9.07499266647844,
+          -1.732,
+          0.5,
           0
         ]
       }
@@ -34347,7 +34403,9 @@
       }
     ],
     "naturalAnalogShort": "D",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dE___D-Glutamic acid": {
     "type": "monomerTemplate",
@@ -34355,16 +34413,16 @@
       {
         "label": "N",
         "location": [
-          14.784000000000002,
-          -9.650000000000002,
+          -0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -9.149999999999999,
+          0,
+          -0.75,
           0
         ],
         "stereoLabel": "abs"
@@ -34372,72 +34430,72 @@
       {
         "label": "H",
         "location": [
-          13.918000000000003,
-          -9.149999999999999,
+          -1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          16.516000000000002,
-          -9.650000000000002,
+          0.866,
+          -1.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          17.382,
-          -9.149999999999999,
+          1.732,
+          -0.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          16.516000000000002,
-          -10.650000000000002,
+          0.866,
+          -2.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          15.650000000000002,
-          -8.149999999999999,
+          0,
+          0.25,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -7.65,
+          -0.866,
+          0.75,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          14.784000000000002,
-          -6.65,
+          -0.866,
+          1.75,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          15.650000000000002,
-          -6.15,
+          0,
+          2.25,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          13.918000000000003,
-          -6.15,
+          -1.732,
+          2.25,
           0
         ]
       }
@@ -34552,7 +34610,9 @@
       }
     ],
     "naturalAnalogShort": "E",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dF___D-Phenylalanine": {
     "type": "monomerTemplate",
@@ -34785,7 +34845,9 @@
       }
     ],
     "naturalAnalogShort": "F",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dH___D-Histidine": {
     "type": "monomerTemplate",
@@ -35027,7 +35089,9 @@
       }
     ],
     "naturalAnalogShort": "H",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dK___D-Lysine": {
     "type": "monomerTemplate",
@@ -35247,7 +35311,9 @@
       }
     ],
     "naturalAnalogShort": "K",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dL___D-Leucine": {
     "type": "monomerTemplate",
@@ -35428,7 +35494,9 @@
       }
     ],
     "naturalAnalogShort": "L",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dM___D-Methionine": {
     "type": "monomerTemplate",
@@ -35609,7 +35677,9 @@
       }
     ],
     "naturalAnalogShort": "M",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dN___D-Asparagine": {
     "type": "monomerTemplate",
@@ -35814,7 +35884,9 @@
       }
     ],
     "naturalAnalogShort": "N",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dP___D-Proline": {
     "type": "monomerTemplate",
@@ -35987,7 +36059,9 @@
       }
     ],
     "naturalAnalogShort": "P",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dQ___D-Glutamine": {
     "type": "monomerTemplate",
@@ -36207,7 +36281,9 @@
       }
     ],
     "naturalAnalogShort": "Q",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dR___D-Arginine": {
     "type": "monomerTemplate",
@@ -36457,7 +36533,9 @@
       }
     ],
     "naturalAnalogShort": "R",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dS___D-Serine": {
     "type": "monomerTemplate",
@@ -36632,7 +36710,9 @@
       }
     ],
     "naturalAnalogShort": "S",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dV___D-Valine": {
     "type": "monomerTemplate",
@@ -36798,7 +36878,9 @@
       }
     ],
     "naturalAnalogShort": "V",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dI___D-Isoleucine": {
     "type": "monomerTemplate",
@@ -36981,7 +37063,9 @@
       }
     ],
     "naturalAnalogShort": "I",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dT___D-Threonine": {
     "type": "monomerTemplate",
@@ -37173,7 +37257,9 @@
       }
     ],
     "naturalAnalogShort": "T",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dW___D-Tryptophan": {
     "type": "monomerTemplate",
@@ -37482,7 +37568,9 @@
       }
     ],
     "naturalAnalogShort": "W",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dY___D-Tyrosine": {
     "type": "monomerTemplate",
@@ -37754,7 +37842,9 @@
       }
     ],
     "naturalAnalogShort": "Y",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-fmoc-___N-Terminal fluorenylmethoxycarbonyl": {
     "type": "monomerTemplate",
@@ -38215,7 +38305,9 @@
       }
     ],
     "naturalAnalogShort": "A",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meC___N-Methyl-Cysteine": {
     "type": "monomerTemplate",
@@ -38405,7 +38497,9 @@
       }
     ],
     "naturalAnalogShort": "C",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meD___N-Methyl-Aspartic acid": {
     "type": "monomerTemplate",
@@ -38610,7 +38704,9 @@
       }
     ],
     "naturalAnalogShort": "D",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meE___N-Methyl-Glutamic acid": {
     "type": "monomerTemplate",
@@ -38830,7 +38926,9 @@
       }
     ],
     "naturalAnalogShort": "E",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meF___N-Methyl-Phenylalanine": {
     "type": "monomerTemplate",
@@ -39078,7 +39176,9 @@
       }
     ],
     "naturalAnalogShort": "F",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meH___N-Methyl-Histidine": {
     "type": "monomerTemplate",
@@ -39311,7 +39411,9 @@
       }
     ],
     "naturalAnalogShort": "H",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meI___N-Methyl-Isoleucine": {
     "type": "monomerTemplate",
@@ -39509,7 +39611,9 @@
       }
     ],
     "naturalAnalogShort": "I",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meK___N-Methyl-Lysine": {
     "type": "monomerTemplate",
@@ -39744,7 +39848,9 @@
       }
     ],
     "naturalAnalogShort": "K",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meL___N-Methyl-Leucine": {
     "type": "monomerTemplate",
@@ -39940,7 +40046,9 @@
       }
     ],
     "naturalAnalogShort": "L",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meM___N-Methyl-Methionine": {
     "type": "monomerTemplate",
@@ -40136,7 +40244,9 @@
       }
     ],
     "naturalAnalogShort": "M",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meN___N-Methyl-Asparagine": {
     "type": "monomerTemplate",
@@ -40332,7 +40442,9 @@
       }
     ],
     "naturalAnalogShort": "N",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meQ___N-Methyl-Glutamine": {
     "type": "monomerTemplate",
@@ -40543,7 +40655,9 @@
       }
     ],
     "naturalAnalogShort": "Q",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meR___N-Methyl-Arginine": {
     "type": "monomerTemplate",
@@ -40784,7 +40898,9 @@
       }
     ],
     "naturalAnalogShort": "R",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meS___N-Methyl-Serine": {
     "type": "monomerTemplate",
@@ -40950,7 +41066,9 @@
       }
     ],
     "naturalAnalogShort": "S",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meT___N-Methyl-Threonine": {
     "type": "monomerTemplate",
@@ -41133,7 +41251,9 @@
       }
     ],
     "naturalAnalogShort": "T",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meV___N-Methyl-Valine": {
     "type": "monomerTemplate",
@@ -41314,7 +41434,9 @@
       }
     ],
     "naturalAnalogShort": "V",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meW___N-Methyl-Tryptophan": {
     "type": "monomerTemplate",
@@ -41614,7 +41736,9 @@
       }
     ],
     "naturalAnalogShort": "W",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meY___N-Methyl-Tyrosine": {
     "type": "monomerTemplate",
@@ -41877,7 +42001,9 @@
       }
     ],
     "naturalAnalogShort": "Y",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-pnA___PNA Adenine": {
     "type": "monomerTemplate",
@@ -43496,7 +43622,9 @@
       }
     ],
     "naturalAnalogShort": "U",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
     "type": "monomerTemplate",
@@ -87651,7 +87779,9 @@
       }
     ],
     "naturalAnalogShort": "O",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-dU___D-selenocysteine": {
     "type": "monomerTemplate",
@@ -87824,7 +87954,9 @@
       }
     ],
     "naturalAnalogShort": "U",
-    "modificationTypes": ["Inversion"]
+    "modificationTypes": [
+      "Inversion"
+    ]
   },
   "monomerTemplate-O___Pyrrolysine": {
     "type": "monomerTemplate",
@@ -88149,7 +88281,9 @@
       }
     ],
     "naturalAnalogShort": "O",
-    "modificationTypes": ["Natural amino acid"]
+    "modificationTypes": [
+      "Natural amino acid"
+    ]
   },
   "monomerTemplate--NMe___C-Terminal methylamino": {
     "type": "monomerTemplate",
@@ -101634,48 +101768,48 @@
       {
         "label": "O",
         "location": [
-          11.039240516803435,
-          -14.437500000000004,
+          0.866,
+          -1.5,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          10.173215113018996,
-          -13.937500000000004,
+          0,
+          -1,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          10.173215113018998,
-          -12.937500000000004,
+          0,
+          0,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          9.307189709234557,
-          -14.437500000000004,
+          -0.866,
+          -1.5,
           0
         ]
       },
       {
         "label": "S",
         "location": [
-          9.307189709234558,
-          -12.437500000000004,
+          -0.866,
+          0.5,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          9.307189709234558,
-          -11.437500000000004,
+          -0.866,
+          1.5,
           0
         ]
       }
@@ -103500,7 +103634,9 @@
       }
     ],
     "naturalAnalogShort": "K",
-    "modificationTypes": ["Side chain acetylation"]
+    "modificationTypes": [
+      "Side chain acetylation"
+    ]
   },
   "monomerTemplate-OMe-___N-Terminal methoxy": {
     "type": "monomerTemplate",
@@ -108748,7 +108884,9 @@
       }
     ],
     "naturalAnalogShort": "S",
-    "modificationTypes": ["Phosphorylation"]
+    "modificationTypes": [
+      "Phosphorylation"
+    ]
   },
   "monomerTemplate-ThrPO3___O-phospho-L-threonine": {
     "type": "monomerTemplate",
@@ -108976,7 +109114,9 @@
       }
     ],
     "naturalAnalogShort": "T",
-    "modificationTypes": ["Phosphorylation"]
+    "modificationTypes": [
+      "Phosphorylation"
+    ]
   },
   "monomerTemplate-Thz___L-thioproline": {
     "type": "monomerTemplate",
@@ -125550,7 +125690,9 @@
       }
     ],
     "naturalAnalogShort": "Y",
-    "modificationTypes": ["Phosphorylation"]
+    "modificationTypes": [
+      "Phosphorylation"
+    ]
   },
   "monomerTemplate-xiHyp___4-hydroxy-L-proline": {
     "type": "monomerTemplate",
@@ -130740,7 +130882,9 @@
       }
     ],
     "naturalAnalogShort": "P",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meU___N-Methyl-Selenocysteine": {
     "type": "monomerTemplate",
@@ -130928,7 +131072,9 @@
       }
     ],
     "naturalAnalogShort": "U",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-meO___N-Methyl-Pyrrolysine": {
     "type": "monomerTemplate",
@@ -131266,7 +131412,9 @@
       }
     ],
     "naturalAnalogShort": "O",
-    "modificationTypes": ["N-methylation"]
+    "modificationTypes": [
+      "N-methylation"
+    ]
   },
   "monomerTemplate-oC3o___1,3 Propanediol": {
     "type": "monomerTemplate",
@@ -231222,8 +231370,8 @@
       {
         "label": "C",
         "location": [
-          27.560999999999996,
-          -12.692,
+          -1.739,
+          0.344,
           0
         ],
         "stereoLabel": "abs"
@@ -231231,16 +231379,16 @@
       {
         "label": "O",
         "location": [
-          28.474999999999998,
-          -12.285,
+          -0.825,
+          0.751,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          29.144000000000002,
-          -13.028,
+          -0.156,
+          0.008,
           0
         ],
         "stereoLabel": "abs"
@@ -231248,16 +231396,16 @@
       {
         "label": "C",
         "location": [
-          28.644,
-          -13.894,
+          -0.656,
+          -0.858,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          27.665,
-          -13.686,
+          -1.635,
+          -0.65,
           0
         ],
         "stereoLabel": "abs"
@@ -231265,144 +231413,144 @@
       {
         "label": "C",
         "location": [
-          26.694999999999997,
-          -12.192,
+          -2.605,
+          0.844,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.694999999999997,
-          -11.192,
+          -2.605,
+          1.844,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.921999999999997,
-          -14.356,
+          -2.378,
+          -1.32,
           0
         ]
       },
       {
         "label": "P",
         "location": [
-          25.970999999999997,
-          -14.047,
+          -3.329,
+          -1.011,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.229,
-          -14.716000000000001,
+          -4.071,
+          -1.68,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.763999999999996,
-          -13.068,
+          -3.536,
+          -0.032,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.179,
-          -15.025,
+          -3.121,
+          -1.989,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          30.13800000000001,
-          -12.924,
+          0.838,
+          0.112,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.726000000000003,
-          -12.115,
+          1.426,
+          0.921,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          31.678,
-          -12.424,
+          2.378,
+          0.612,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.678,
-          -13.424000000000001,
+          2.378,
+          -0.388,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.726000000000003,
-          -13.733,
+          1.426,
+          -0.697,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          30.51900000000001,
-          -14.711,
+          1.219,
+          -1.675,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.262000000000004,
-          -15.38,
+          1.962,
+          -2.344,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          32.212999999999994,
-          -15.071000000000002,
+          2.913,
+          -2.035,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          32.42,
-          -14.093,
+          3.12,
+          -1.057,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          33.370999999999995,
-          -13.784,
+          4.071,
+          -0.748,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          25.82897459621556,
-          -10.692,
+          -3.471,
+          2.344,
           0
         ]
       }
@@ -231621,8 +231769,8 @@
       {
         "label": "C",
         "location": [
-          26.978877533738718,
-          -14.945053283821677,
+          -1.622,
+          0.166,
           0
         ],
         "stereoLabel": "abs"
@@ -231630,16 +231778,16 @@
       {
         "label": "O",
         "location": [
-          27.892874810053698,
-          -14.538054496666101,
+          -0.708,
+          0.573,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          28.561872816459303,
-          -15.281052282554535,
+          -0.039,
+          -0.169,
           0
         ],
         "stereoLabel": "abs"
@@ -231647,16 +231795,16 @@
       {
         "label": "C",
         "location": [
-          28.061874306440163,
-          -16.147049701907676,
+          -0.539,
+          -1.035,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          27.0828772238227,
-          -15.939050321739716,
+          -1.518,
+          -0.827,
           0
         ],
         "stereoLabel": "abs"
@@ -231664,128 +231812,128 @@
       {
         "label": "C",
         "location": [
-          26.11288011438558,
-          -14.445054773802541,
+          -2.488,
+          0.666,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.11288011438558,
-          -13.445057753764273,
+          -2.488,
+          1.666,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.339879437934265,
-          -16.609048325165354,
+          -2.261,
+          -1.497,
           0
         ]
       },
       {
         "label": "P",
         "location": [
-          25.388882271877872,
-          -16.300049245973533,
+          -3.212,
+          -1.188,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          24.64688448300948,
-          -16.969047252379134,
+          -3.954,
+          -1.857,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.181882888729948,
-          -15.321052163356065,
+          -3.419,
+          -0.209,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.596881652045834,
-          -17.278046331570955,
+          -3.004,
+          -2.166,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          29.55586985437735,
-          -15.177052592470554,
+          0.955,
+          -0.065,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          25.246857291323703,
-          -12.94505924374514,
+          -3.355,
+          2.166,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.055888188423268,
-          -16.043084347038082,
+          1.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.055880854901705,
-          -16.043084347038082,
+          2.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.555855187334227,
-          -15.177052592470554,
+          2.954,
+          -0.065,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          31.05583685328831,
-          -14.311020837903024,
+          2.454,
+          0.801,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.05584418680987,
-          -14.311020837903026,
+          1.454,
+          0.801,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          29.555833186446858,
-          -13.445001785274288,
+          0.954,
+          1.667,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          32.555855187152716,
-          -15.177033539213049,
+          3.954,
+          -0.065,
           0
         ]
       }
@@ -231983,8 +232131,8 @@
       {
         "label": "C",
         "location": [
-          26.878754280870062,
-          -15.554437944542503,
+          -1.739,
+          0.833,
           0
         ],
         "stereoLabel": "abs"
@@ -231992,16 +232140,16 @@
       {
         "label": "O",
         "location": [
-          27.792751557185042,
-          -15.147439157386927,
+          -0.825,
+          1.24,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          28.461749563590647,
-          -15.890436943275361,
+          -0.156,
+          0.497,
           0
         ],
         "stereoLabel": "abs"
@@ -232009,16 +232157,16 @@
       {
         "label": "C",
         "location": [
-          27.961751053571508,
-          -16.7564343626285,
+          -0.656,
+          -0.369,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          26.982753970954043,
-          -16.54843498246054,
+          -1.635,
+          -0.161,
           0
         ],
         "stereoLabel": "abs"
@@ -232026,152 +232174,152 @@
       {
         "label": "C",
         "location": [
-          26.012756861516923,
-          -15.054439434523367,
+          -2.605,
+          1.333,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.012756861516923,
-          -14.054442414485099,
+          -2.605,
+          2.333,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.23975618506561,
-          -17.21843298588618,
+          -2.378,
+          -0.831,
           0
         ]
       },
       {
         "label": "P",
         "location": [
-          25.288759019009216,
-          -16.909433906694357,
+          -3.329,
+          -0.522,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          24.546761230140824,
-          -17.57843191309996,
+          -4.071,
+          -1.191,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.081759635861292,
-          -15.93043682407689,
+          -3.536,
+          0.457,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.49675839917718,
-          -17.887430992291783,
+          -3.121,
+          -1.5,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          29.455746601508693,
-          -15.78643725319138,
+          0.838,
+          0.601,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.043744849291187,
-          -14.977439663980423,
+          1.426,
+          1.41,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          30.995742012367618,
-          -15.286438743172244,
+          2.378,
+          1.101,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.995742012367618,
-          -16.286435763210516,
+          2.378,
+          0.101,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.043744849291187,
-          -16.59543484240234,
+          1.426,
+          -0.208,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          29.836745466143274,
-          -17.573431927999767,
+          1.219,
+          -1.186,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.5797432520317,
-          -18.24242993440537,
+          1.962,
+          -1.855,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          31.530740418088087,
-          -17.933430855213544,
+          2.913,
+          -1.546,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.737739801236017,
-          -16.955433769616114,
+          3.12,
+          -0.568,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          32.6887369672924,
-          -16.646434690424293,
+          4.071,
+          -0.259,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          25.146734038455048,
-          -13.554443904465966,
+          -3.471,
+          2.833,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          30.371832272460036,
-          -19.22057768631893,
+          1.754,
+          -2.833,
           0
         ]
       }
@@ -232397,8 +232545,8 @@
       {
         "label": "C",
         "location": [
-          26.99525121494087,
-          -15.645998928592315,
+          -1.622,
+          0.166,
           0
         ],
         "stereoLabel": "abs"
@@ -232406,16 +232554,16 @@
       {
         "label": "O",
         "location": [
-          27.909250914934862,
-          -15.23899906218361,
+          -0.708,
+          0.573,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          28.578250695346224,
-          -15.981998818305643,
+          -0.039,
+          -0.169,
           0
         ],
         "stereoLabel": "abs"
@@ -232423,16 +232571,16 @@
       {
         "label": "C",
         "location": [
-          28.078250859463292,
-          -16.847998534054874,
+          -0.539,
+          -1.035,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          27.09925118080452,
-          -16.639998602327573,
+          -1.518,
+          -0.827,
           0
         ],
         "stereoLabel": "abs"
@@ -232440,136 +232588,136 @@
       {
         "label": "C",
         "location": [
-          26.12925149919164,
-          -15.145999092709385,
+          -2.488,
+          0.666,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.12925149919164,
-          -14.145999420943529,
+          -2.488,
+          1.666,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.356251424682487,
-          -17.309998382410697,
+          -2.261,
+          -1.497,
           0
         ]
       },
       {
         "label": "P",
         "location": [
-          25.405251736833158,
-          -17.000998483835055,
+          -3.212,
+          -1.188,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          24.663251980382896,
-          -17.66999826424641,
+          -3.954,
+          -1.857,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.198251804777623,
-          -16.021998805176274,
+          -3.419,
+          -0.209,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.61325166856046,
-          -17.97899816282206,
+          -3.004,
+          -2.166,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          29.572250369081495,
-          -15.877998852441992,
+          0.955,
+          -0.065,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          25.263226379666307,
-          -13.6459995850606,
+          -3.355,
+          2.166,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.072270029043775,
-          -16.74403290349666,
+          1.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.072265347238254,
-          -16.74403290349666,
+          2.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.57224100547046,
-          -15.877998852441992,
+          2.954,
+          -0.065,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          31.07222134550818,
-          -15.011964801387323,
+          2.454,
+          0.801,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.072226027313697,
-          -15.011964801387325,
+          1.454,
+          0.801,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          29.57221370105377,
-          -14.14594345230513,
+          0.954,
+          1.667,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          32.572243657024444,
-          -15.877979799133962,
+          3.954,
+          -0.065,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.572276347601267,
-          -17.6100519561254,
+          2.955,
+          -1.798,
           0
         ]
       }
@@ -232774,8 +232922,8 @@
       {
         "label": "C",
         "location": [
-          27.09537370487006,
-          -15.646000096843348,
+          -1.622,
+          0.166,
           0
         ],
         "stereoLabel": "abs"
@@ -232783,16 +232931,16 @@
       {
         "label": "O",
         "location": [
-          28.009373404864053,
-          -15.239000230434643,
+          -0.708,
+          0.573,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          28.678373185275415,
-          -15.981999986556676,
+          -0.039,
+          -0.169,
           0
         ],
         "stereoLabel": "abs"
@@ -232800,8 +232948,8 @@
       {
         "label": "C",
         "location": [
-          28.178373349392484,
-          -16.847999702305906,
+          -0.539,
+          -1.035,
           0
         ],
         "stereoLabel": "abs"
@@ -232809,8 +232957,8 @@
       {
         "label": "C",
         "location": [
-          27.19937367073371,
-          -16.639999770578605,
+          -1.518,
+          -0.827,
           0
         ],
         "stereoLabel": "abs"
@@ -232818,8 +232966,8 @@
       {
         "label": "C",
         "location": [
-          26.22937398912083,
-          -15.146000260960419,
+          -2.488,
+          0.666,
           0
         ],
         "stereoLabel": "abs"
@@ -232827,136 +232975,136 @@
       {
         "label": "C",
         "location": [
-          26.22937398912083,
-          -14.146000589194562,
+          -2.488,
+          1.666,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          26.456373914611678,
-          -17.30999955066173,
+          -2.261,
+          -1.497,
           0
         ]
       },
       {
         "label": "P",
         "location": [
-          25.50537422676235,
-          -17.000999652086087,
+          -3.212,
+          -1.188,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          24.763374470312087,
-          -17.66999943249744,
+          -3.954,
+          -1.857,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.298374294706814,
-          -16.021999973427306,
+          -3.419,
+          -0.209,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          25.71337415848965,
-          -17.97899933107309,
+          -3.004,
+          -2.166,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          29.672372859010686,
-          -15.878000020693026,
+          0.955,
+          -0.065,
           0
         ]
       },
       {
         "label": "H",
         "location": [
-          25.363348869595498,
-          -13.646000753311634,
+          -3.355,
+          2.166,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.172392518972966,
-          -16.74403407174769,
+          1.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.172387837167445,
-          -16.74403407174769,
+          2.455,
+          -0.932,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          31.67236349539965,
-          -15.878000020693026,
+          2.954,
+          -0.065,
           0
         ]
       },
       {
         "label": "N",
         "location": [
-          31.17234383543737,
-          -15.011965969638357,
+          2.454,
+          0.801,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          30.172348517242888,
-          -15.011965969638359,
+          1.454,
+          0.801,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          29.67233619098296,
-          -14.145944620556163,
+          0.954,
+          1.667,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          32.672366146953635,
-          -15.877980967384996,
+          3.954,
+          -0.065,
           0
         ]
       },
       {
         "label": "O",
         "location": [
-          28.58514565004865,
-          -17.761529283337023,
+          -0.133,
+          -1.949,
           0
         ]
       },
       {
         "label": "C",
         "location": [
-          29.579671624658236,
-          -17.8660189279285,
+          0.862,
+          -2.054,
           0
         ]
       }

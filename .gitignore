@@ -12,7 +12,6 @@ node_modules
 .env
 /ketcher-autotests/.env
 /ketcher-autotests/test-results/
-/test-results/
 /ketcher-autotests/playwright-report/
 /ketcher-autotests/playwright/.cache/
 /ketcher-autotests/**/*win32.png

@@ -401,7 +401,8 @@ test.describe('', () => {
           MacroBondTool.Hydrogen,
         );
 
-        await zoomWithMouseWheel(page, -600);
+        const banner = NotificationBanner(page);
+        const notificationAppeared = banner.waitForBecomeVisible();
 
         await bondTwoMonomers(
           page,
@@ -419,6 +420,9 @@ test.describe('', () => {
           undefined,
           MacroBondTool.Hydrogen,
         );
+
+        await notificationAppeared;
+        await zoomWithMouseWheel(page, -600);
 
         await takeEditorScreenshot(page, {
           hideMonomerPreview: true,
@@ -493,6 +497,8 @@ Object.values(monomers).forEach((leftMonomer) => {
         await errorTooltip.waitForBecomeHidden();
       }
 
+      const notificationAppeared = errorTooltip.waitForBecomeVisible();
+
       await bondTwoMonomers(
         page,
         getMonomerLocator(page, { monomerAlias: leftMonomer.alias }).first(),
@@ -506,7 +512,8 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondTool.Hydrogen,
       );
 
-      expect(await errorTooltip.getNotificationText()).toContain(
+      await notificationAppeared;
+      expect(await errorTooltip.message.textContent()).toContain(
         'Unable to establish a hydrogen bond between two monomers connected with a single bond',
       );
 

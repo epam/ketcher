@@ -26,11 +26,9 @@ export const test = mergeTests(utils, pageObjects).extend<
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
     await page.keyboard.press('Escape');
-    const NOTIFICATION_BANNER_CLOSE_DELAY_MS = 100;
     const banner = NotificationBanner(page);
     while (await banner.isVisible()) {
-      await banner.close();
-      await page.waitForTimeout(NOTIFICATION_BANNER_CLOSE_DELAY_MS);
+      await banner.waitForBecomeHidden();
     }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);

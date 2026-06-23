@@ -4,6 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import resolve from '@rollup/plugin-node-resolve';
+const resolvePlugin = resolve.default ?? resolve;
 import strip from '@rollup/plugin-strip';
 import typescript from 'rollup-plugin-typescript2';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
@@ -62,7 +63,7 @@ const baseConfig = {
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     nodePolyfills(),
-    resolve({ extensions }),
+    resolvePlugin({ extensions }),
     commonjs(),
     typescript(),
     babel({

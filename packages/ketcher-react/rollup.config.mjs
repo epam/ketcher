@@ -19,6 +19,7 @@ import { string } from 'rollup-plugin-string';
 
 const svgrPlugin = svgr.default ?? svgr;
 const babelPlugin = babel.default ?? babel;
+const nodeResolvePlugin = nodeResolve.default ?? nodeResolve;
 
 const mode = {
   PRODUCTION: 'production',
@@ -87,7 +88,7 @@ const config = {
     }),
     svgrPlugin({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolvePlugin({ extensions }),
     commonjs(),
     replace({
       include: includePattern,

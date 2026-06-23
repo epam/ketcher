@@ -20,6 +20,7 @@ const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
 const svgrPlugin = svgr.default ?? svgr;
 const babelPlugin = babel.default ?? babel;
+const nodeResolvePlugin = nodeResolve.default ?? nodeResolve;
 
 const asPlugin = (plugin) => plugin;
 
@@ -74,7 +75,7 @@ const config = {
     }),
     asPlugin(svgrPlugin({ include: includePattern })),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolvePlugin({ extensions }),
     commonjs(),
     asPlugin(tsconfigPaths()),
     json(),

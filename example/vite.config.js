@@ -212,6 +212,35 @@ export default defineConfig({
   server: {
     open: true,
   },
+  optimizeDeps: {
+    // Vite 8 pre-bundler (rolldown) creates shared chunks between deps which causes
+    // cross-chunk free-variable references for init_xxx() functions (rolldown bug).
+    // Group all @emotion/* and @mui/* into one shared chunk so their init functions
+    // are co-located in the same file scope.
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (
+            id.includes('/node_modules/@emotion/') ||
+            id.includes('/node_modules/@mui/')
+          ) {
+            return 'vendor-emotion-mui';
+          }
+        },
+      },
+    },
+    include: [
+      '@emotion/react',
+      '@emotion/react/jsx-runtime',
+      '@emotion/react/jsx-dev-runtime',
+      '@emotion/styled',
+      '@emotion/cache',
+      '@emotion/serialize',
+      '@emotion/sheet',
+      '@emotion/utils',
+      '@emotion/weak-memoize',
+    ],
+  },
   css: {
     devSourcemap: true,
     preprocessorOptions: {

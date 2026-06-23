@@ -401,6 +401,8 @@ test.describe('', () => {
           MacroBondTool.Hydrogen,
         );
 
+        await zoomWithMouseWheel(page, -600);
+
         await bondTwoMonomers(
           page,
           getMonomerLocator(page, {
@@ -417,8 +419,6 @@ test.describe('', () => {
           undefined,
           MacroBondTool.Hydrogen,
         );
-
-        await zoomWithMouseWheel(page, -600);
 
         await takeEditorScreenshot(page, {
           hideMonomerPreview: true,

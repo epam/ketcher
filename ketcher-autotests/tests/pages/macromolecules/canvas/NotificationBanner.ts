@@ -34,7 +34,12 @@ export const NotificationBanner = (page: Page) => {
       });
     },
     async close() {
-      await locators.closeButton.click({ force: true });
+      try {
+        await locators.closeButton.click({ force: true, timeout: 5000 });
+      } catch {
+        // Toast auto-dismissed via its per-toast timer before the click landed
+        await locators.message.waitFor({ state: 'hidden' });
+      }
     },
 
     async getNotificationText() {

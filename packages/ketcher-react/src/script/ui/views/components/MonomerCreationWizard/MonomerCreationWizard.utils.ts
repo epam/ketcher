@@ -1,5 +1,5 @@
 import {
-  type AttachmentPointName,
+  AttachmentPointName,
   type BaseMonomer,
   getMonomerTemplateRefFromMonomerItem,
   type MonomerCreationInitialValues,
@@ -68,14 +68,61 @@ type MonomersLibraryParsedJson = {
   [templateRef: string]: unknown;
 };
 
+type RnaComponentTemplateRef = { $ref?: string; class?: string };
+
+type MonomerTemplate = {
+  class?: string;
+};
+
 type RnaPresetTemplate = {
   type?: string;
   class?: string;
-  templates?: Array<{ $ref?: string }>;
+  templates?: RnaComponentTemplateRef[];
   connections?: Array<{
     endpoint1?: { templateId?: string; attachmentPointId?: string };
     endpoint2?: { templateId?: string; attachmentPointId?: string };
   }>;
+};
+
+const getTemplateClass = (
+  templateRef: RnaComponentTemplateRef,
+  monomersLibraryParsedJson: MonomersLibraryParsedJson,
+) => {
+  const template = monomersLibraryParsedJson[templateRef.$ref ?? ''] as
+    | MonomerTemplate
+    | undefined;
+
+  return templateRef.class ?? template?.class;
+};
+
+const addDefaultRnaPresetAttachmentPoints = (
+  componentTypes: Set<string | undefined>,
+  editedMonomerType: KetMonomerClass,
+  necessaryAttachmentPoints: Set<AttachmentPointName>,
+) => {
+  if (
+    editedMonomerType === KetMonomerClass.Base &&
+    componentTypes.has(KetMonomerClass.Sugar)
+  ) {
+    necessaryAttachmentPoints.add(AttachmentPointName.R1);
+  }
+
+  if (editedMonomerType === KetMonomerClass.Sugar) {
+    if (componentTypes.has(KetMonomerClass.Phosphate)) {
+      necessaryAttachmentPoints.add(AttachmentPointName.R1);
+    }
+
+    if (componentTypes.has(KetMonomerClass.Base)) {
+      necessaryAttachmentPoints.add(AttachmentPointName.R3);
+    }
+  }
+
+  if (
+    editedMonomerType === KetMonomerClass.Phosphate &&
+    componentTypes.has(KetMonomerClass.Sugar)
+  ) {
+    necessaryAttachmentPoints.add(AttachmentPointName.R2);
+  }
 };
 
 export const getEditAllInstancesInitialValues = (
@@ -113,7 +160,25 @@ export const getEditAllInstancesInitialValues = (
           return;
         }
 
-        template.connections?.forEach((connection) => {
+        if (!template.connections?.length) {
+          const componentTypes = new Set(
+            template.templates?.map((presetMonomerRef) =>
+              isEditedMonomerTemplate(presetMonomerRef.$ref)
+                ? initialValues.type
+                : getTemplateClass(presetMonomerRef, monomersLibraryParsedJson),
+            ),
+          );
+
+          addDefaultRnaPresetAttachmentPoints(
+            componentTypes,
+            initialValues.type,
+            necessaryAttachmentPoints,
+          );
+
+          return;
+        }
+
+        template.connections.forEach((connection) => {
           [connection.endpoint1, connection.endpoint2].forEach((endpoint) => {
             const attachmentPointId = endpoint?.attachmentPointId;
             if (

@@ -97,6 +97,25 @@ const getInitialWizardState = (
 
 const initialWizardState: WizardState = getInitialWizardState();
 
+const getAttachmentPointsText = (attachmentPoints: AttachmentPointName[]) =>
+  attachmentPoints.join(', ');
+
+const getEditAllPresetWarningMessage = (
+  initialValues: MonomerCreationInitialValues,
+) =>
+  `The edited version of the monomer must be the same monomer type and must have attachment point ${getAttachmentPointsText(
+    initialValues.presetRequirements?.attachmentPoints ?? [],
+  )}, because the monomer participates in a preset.`;
+
+const getEditAllPresetErrorMessage = (
+  initialValues: MonomerCreationInitialValues,
+) =>
+  `The changes made to the monomer prevent it from participating in a preset. The monomer must be a ${
+    initialValues.presetRequirements?.type
+  } and contain ${getAttachmentPointsText(
+    initialValues.presetRequirements?.attachmentPoints ?? [],
+  )} attachment points.`;
+
 /**
  * Builds initial wizard state seeded with values from an existing monomer
  * being edited. When `initialValues` is undefined returns the default empty
@@ -119,27 +138,21 @@ const getInitialWizardStateForEdit = (
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
     },
+    ...(initialValues.editMode === 'all' && initialValues.presetRequirements
+      ? {
+          notifications: new Map([
+            [
+              'editAllPresetWarning',
+              {
+                type: 'warning',
+                message: getEditAllPresetWarningMessage(initialValues),
+              },
+            ],
+          ]),
+        }
+      : {}),
   };
 };
-
-const getAttachmentPointsText = (attachmentPoints: AttachmentPointName[]) =>
-  attachmentPoints.join(', ');
-
-const getEditAllPresetWarningMessage = (
-  initialValues: MonomerCreationInitialValues,
-) =>
-  `The edited version of the monomer must be the same monomer type and must have attachment point ${getAttachmentPointsText(
-    initialValues.presetRequirements?.attachmentPoints ?? [],
-  )}, because the monomer participates in a preset.`;
-
-const getEditAllPresetErrorMessage = (
-  initialValues: MonomerCreationInitialValues,
-) =>
-  `The changes made to the monomer prevent it from participating in a preset. The monomer must be a ${
-    initialValues.presetRequirements?.type
-  } and contain ${getAttachmentPointsText(
-    initialValues.presetRequirements?.attachmentPoints ?? [],
-  )} attachment points.`;
 
 // BILN alias errors remain visible until the next submit attempt.
 const fieldsValidatedOnSubmit = new Set<WizardFormFieldId>(['aliasBILN']);
@@ -863,30 +876,6 @@ const MonomerCreationWizardInternal = ({
     hasActiveRnaPresetAtomValidationErrors,
     setHasActiveRnaPresetAtomValidationErrors,
   ] = useState(false);
-
-  useEffect(() => {
-    const initialValues = monomerCreationState.editInstanceInitialValues;
-
-    if (
-      initialValues?.editMode !== 'all' ||
-      !initialValues.presetRequirements
-    ) {
-      return;
-    }
-
-    wizardStateDispatch({
-      type: 'SetNotifications',
-      notifications: new Map([
-        [
-          'editAllPresetWarning',
-          {
-            type: 'warning',
-            message: getEditAllPresetWarningMessage(initialValues),
-          },
-        ],
-      ]),
-    });
-  }, [monomerCreationState.editInstanceInitialValues]);
 
   const handleConnectionLeavingAtomChange = useCallback(
     (

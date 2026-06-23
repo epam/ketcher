@@ -157,4 +157,89 @@ describe('getEditAllInstancesInitialValues', () => {
       attachmentPoints: ['R1', 'R3'],
     });
   });
+
+  it.each([
+    [KetMonomerClass.Base, 'Base', ['R1']],
+    [KetMonomerClass.Sugar, 'Sugar', ['R1', 'R3']],
+    [KetMonomerClass.Phosphate, 'Phosphate', ['R2']],
+  ] as const)(
+    'collects default required attachment points for a %s in an RNA preset without explicit connections',
+    (monomerClass, id, attachmentPoints) => {
+      const values = getEditAllInstancesInitialValues(
+        createMonomer({
+          id,
+          MonomerClass: monomerClass,
+          MonomerCode: id,
+          MonomerName: id,
+          MonomerNaturalAnalogCode: id,
+          Name: id,
+        }),
+        {
+          root: {
+            templates: [{ $ref: 'monomerGroupTemplate-A' }],
+          },
+          'monomerGroupTemplate-A': {
+            type: 'monomerGroupTemplate',
+            class: KetMonomerClass.RNA,
+            templates: [
+              { $ref: 'monomerTemplate-Base' },
+              { $ref: 'monomerTemplate-Sugar' },
+              { $ref: 'monomerTemplate-Phosphate' },
+            ],
+          },
+          'monomerTemplate-Base': {
+            class: KetMonomerClass.Base,
+          },
+          'monomerTemplate-Sugar': {
+            class: KetMonomerClass.Sugar,
+          },
+          'monomerTemplate-Phosphate': {
+            class: KetMonomerClass.Phosphate,
+          },
+        },
+      );
+
+      expect(values.presetRequirements).toEqual({
+        type: monomerClass,
+        attachmentPoints,
+      });
+    },
+  );
+
+  it('does not require sugar attachment points for default preset connections to absent components', () => {
+    const values = getEditAllInstancesInitialValues(
+      createMonomer({
+        id: 'Sugar',
+        MonomerClass: KetMonomerClass.Sugar,
+        MonomerCode: 'Sugar',
+        MonomerName: 'Sugar',
+        MonomerNaturalAnalogCode: 'Sugar',
+        Name: 'Sugar',
+      }),
+      {
+        root: {
+          templates: [{ $ref: 'monomerGroupTemplate-A' }],
+        },
+        'monomerGroupTemplate-A': {
+          type: 'monomerGroupTemplate',
+          class: KetMonomerClass.RNA,
+          templates: [
+            { $ref: 'monomerTemplate-Base' },
+            { $ref: 'monomerTemplate-Sugar' },
+          ],
+        },
+        'monomerTemplate-Base': {
+          class: KetMonomerClass.Base,
+        },
+        'monomerTemplate-Sugar': {
+          class: KetMonomerClass.Sugar,
+        },
+      },
+    );
+
+    expect(values.presetRequirements).toEqual({
+      type: KetMonomerClass.Sugar,
+      attachmentPoints: ['R3'],
+    });
+  });
 });

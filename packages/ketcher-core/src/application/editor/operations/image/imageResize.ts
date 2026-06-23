@@ -78,4 +78,16 @@ export class ImageResize extends BaseOperation {
       this.referencePositionName,
     );
   }
+
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) return false;
+    const item = restruct.molecule.images.get(this.id);
+    if (!item) return false;
+    const currentPosition =
+      item.getReferencePositions()[this.referencePositionName];
+    return (
+      this.position.x === currentPosition.x &&
+      this.position.y === currentPosition.y
+    );
+  }
 }

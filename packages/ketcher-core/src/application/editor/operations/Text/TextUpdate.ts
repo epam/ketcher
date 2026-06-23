@@ -50,4 +50,11 @@ export class TextUpdate extends BaseOperation {
     inverted.data.previousContent = this.data.content;
     return inverted;
   }
+
+  isDummy(restruct?: ReStruct) {
+    if (!restruct) return false;
+    const text = restruct.molecule.texts.get(this.data.id);
+    if (!text) return false;
+    return text.content === this.data.content;
+  }
 }

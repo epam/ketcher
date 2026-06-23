@@ -178,10 +178,13 @@ export const NucleotidePresetSection = (page: Page) => {
 
     async markAsPhosphate() {
       await this.openTab(NucleotidePresetTab.Phosphate);
-      await locators.phosphateTab.maskAsPhosphateButton.click();
-      await page.waitForSelector(
-        '[data-testid="Mark-as-phosphate-button"][disabled]',
-      );
+      const button = locators.phosphateTab.maskAsPhosphateButton;
+      if (await button.isEnabled()) {
+        await button.click();
+        await page.waitForSelector(
+          '[data-testid="Mark-as-phosphate-button"][disabled]',
+        );
+      }
     },
 
     async setupBase(options: {

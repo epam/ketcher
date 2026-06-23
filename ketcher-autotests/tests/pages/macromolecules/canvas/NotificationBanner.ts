@@ -22,9 +22,10 @@ export const NotificationBanner = (page: Page) => {
       return await locators.message.isVisible();
     },
 
-    async waitForBecomeVisible() {
+    async waitForBecomeVisible(timeout?: number) {
       return await locators.message.waitFor({
         state: 'visible',
+        ...(timeout !== undefined ? { timeout } : {}),
       });
     },
 

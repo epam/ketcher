@@ -678,8 +678,17 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [0, 1, 2, 3, 4, 5, 6, 7, 25],
     });
 
-    // The remaining connected fragment is assigned as phosphate automatically;
-    // attempting to mark it manually leaves the button disabled.
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    // --- Phosphate ---
+    await presetSection.setupPhosphate({
+      atomIds: [8, 19, 20, 21, 22],
+      bondIds: [21, 22, 23, 24],
+    });
 
     // Select phosphate position (required field; without it the validation dispatches
     // phosphatePositionNotSelected which replaces invalidRnaPresetStructure in the reducer)

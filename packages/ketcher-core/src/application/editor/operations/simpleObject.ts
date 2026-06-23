@@ -157,6 +157,11 @@ export class SimpleObjectMove extends Base {
     move.data = this.data;
     return move;
   }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
+  }
 }
 
 interface SimpleObjectResizeData {
@@ -272,6 +277,11 @@ export class SimpleObjectResize extends Base {
       this.data.noinvalidate,
       this.data.toCircle,
     );
+  }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
   }
 }
 

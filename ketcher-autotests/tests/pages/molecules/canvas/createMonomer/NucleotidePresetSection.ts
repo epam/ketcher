@@ -108,7 +108,16 @@ export const NucleotidePresetSection = (page: Page) => {
 
     async openTab(tab: NucleotidePresetTab) {
       if (!(await this.isTabOpened(tab))) {
-        await page.getByTestId(tab).click();
+        const tabButton = page.getByTestId(tab);
+        await tabButton.click();
+        await tabButton.evaluate(
+          () =>
+            new Promise<void>((resolve) => {
+              requestAnimationFrame(() =>
+                requestAnimationFrame(() => resolve()),
+              );
+            }),
+        );
       }
     },
 

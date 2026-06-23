@@ -46,7 +46,7 @@ const Notification = ({ id, type, message, onDismiss }: Props) => {
         <button
           className={styles.notificationButton}
           onClick={handleButtonClick}
-          data-testid={`notification-message-ok-button`}
+          data-testid="notification-message-ok-button"
         >
           OK
         </button>

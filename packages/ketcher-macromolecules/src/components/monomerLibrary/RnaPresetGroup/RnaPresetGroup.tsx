@@ -47,7 +47,10 @@ import {
   PresetPreviewState,
   PreviewType,
 } from 'state';
-import { calculateNucleoElementPreviewTop } from 'ketcher-react';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
 import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
@@ -155,7 +158,9 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const style = {
       left: `${cardCoordinates.left + cardCoordinates.width}px`,
-      top: calculateNucleoElementPreviewTop(cardCoordinates),
+      top: isAmbiguousMonomerLibraryItem(preset.base)
+        ? calculateAmbiguousMonomerPreviewTop(preset.base)(cardCoordinates)
+        : calculateNucleoElementPreviewTop(cardCoordinates),
       transform: 'translate(-100%, 0)',
     };
     const previewData: PresetPreviewState | AmbiguousMonomerPreviewState =

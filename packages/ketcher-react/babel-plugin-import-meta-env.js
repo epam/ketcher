@@ -8,7 +8,7 @@ module.exports = function ({ types: t }) {
     visitor: {
       MemberExpression(path) {
         if (
-          path.node.object.type === 'MetaProperty' &&
+          t.isMetaProperty(path.node.object) &&
           path.node.object.meta.name === 'import' &&
           path.node.object.property.name === 'meta' &&
           !path.node.computed &&

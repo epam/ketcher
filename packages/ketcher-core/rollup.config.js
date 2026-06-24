@@ -48,7 +48,7 @@ const config = {
     commonjs({ transformMixedEsModules: true }),
     replace(
       {
-        'process.env.NODE_ENV': JSON.stringify(
+        'import.meta.env.NODE_ENV': JSON.stringify(
           isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
         ),
         preventAssignment: true,

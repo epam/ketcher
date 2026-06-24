@@ -94,10 +94,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE ?? '',
-    indigoVersion: process.env.INDIGO_VERSION ?? '',
-    indigoMachine: process.env.INDIGO_MACHINE ?? '',
-    version: process.env.VERSION ?? '',
+    buildDate: import.meta.env.BUILD_DATE ?? '',
+    indigoVersion: import.meta.env.INDIGO_VERSION ?? '',
+    indigoMachine: import.meta.env.INDIGO_MACHINE ?? '',
+    version: import.meta.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };

@@ -86,10 +86,14 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     return monomerClass;
   }
 
-  private static getAttachmentPoints(monomers: BaseMonomer[]) {
-    const monomersAttachmentPoints = monomers.map(
-      (monomer) => monomer.listOfAttachmentPoints,
-    );
+  private static getAttachmentPoints(monomers: BaseMonomer[] | undefined) {
+    if (!monomers?.length) {
+      return [];
+    }
+
+    const monomersAttachmentPoints = monomers.map((monomer) => {
+      return monomer.listOfAttachmentPoints;
+    });
     const possibleAttachmentPoints = monomersAttachmentPoints.flat();
     const attachmentPoints = possibleAttachmentPoints.filter(
       (attachmentPointName) => {

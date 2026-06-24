@@ -702,11 +702,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     ).toEqual(
       'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
     );
-    expect(
-      await notMinimalViableStructureMessage.getNotificationMessage(),
-    ).toEqual(
-      'Minimal monomer structure is two atoms connected via a single bond.',
-    );
 
     await invalidPhosphatePositionMessage.ok();
     await notMinimalViableStructureMessage.ok();

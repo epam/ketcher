@@ -1063,7 +1063,7 @@ abstract class SelectBase implements BaseTool {
         this.resizingArrow,
         this.resizingEndIndex,
         current,
-        !event.ctrlKey,
+        { isSnappingEnabled: !event.ctrlKey },
       );
       this.editor.renderersContainer.update(modelChanges);
       return;
@@ -1203,11 +1203,14 @@ abstract class SelectBase implements BaseTool {
           Vec2.dist(currentPosition, this.resizingPreviousPosition) > epsilon
         ) {
           const modelChanges =
-            this.editor.drawingEntitiesManager.createRxnArrowResizeHistoryCommand(
+            this.editor.drawingEntitiesManager.resizeRxnArrow(
               this.resizingArrow,
               this.resizingEndIndex,
-              this.resizingPreviousPosition,
               currentPosition,
+              {
+                isSnappingEnabled: false,
+                previousPosition: this.resizingPreviousPosition,
+              },
             );
           history.update(modelChanges);
         }

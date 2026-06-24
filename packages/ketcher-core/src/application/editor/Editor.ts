@@ -19,7 +19,7 @@ import {
 } from 'application/editor/modes/types';
 import type { BaseMode } from 'application/editor/modes/internal';
 import { getModeConstructor } from 'application/editor/modes/modesRegistry';
-import { toolsMap } from 'application/editor/tools';
+import { isToolName, toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   type BaseTool,
@@ -1811,12 +1811,13 @@ export class CoreEditor {
     }
   }
 
-  public onSelectTool(
-    tool: ToolName | string,
-    options?: { toolName?: ToolName },
-  ) {
-    const actualTool = (options?.toolName ?? tool) as ToolName;
-    this.selectTool(actualTool, options);
+  public onSelectTool(menuItemId: string, options?: { toolName?: ToolName }) {
+    const requestedTool = options?.toolName ?? menuItemId;
+    if (!isToolName(requestedTool)) {
+      KetcherLogger.warn(`Unknown tool requested: "${requestedTool}"`);
+      return;
+    }
+    this.selectTool(requestedTool, options);
   }
 
   private onCreateBond(payload: {

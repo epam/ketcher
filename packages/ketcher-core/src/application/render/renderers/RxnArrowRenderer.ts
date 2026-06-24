@@ -38,6 +38,8 @@ export class RxnArrowRenderer extends BaseRenderer {
 
   private endHandleGroups: D3SvgElementSelection<SVGGElement, void>[] = [];
 
+  private arrowPathElements: D3SvgElementSelection<SVGPathElement, void>[] = [];
+
   constructor(public arrow: RxnArrow) {
     super(arrow);
     this.arrow.setRenderer(this);
@@ -247,6 +249,8 @@ export class RxnArrowRenderer extends BaseRenderer {
   }
 
   public show() {
+    this.arrowPathElements = [];
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
@@ -276,6 +280,10 @@ export class RxnArrowRenderer extends BaseRenderer {
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
       });
+
+      if (path) {
+        this.arrowPathElements.push(path);
+      }
     });
 
     this.appendHoverAreaElement();
@@ -340,6 +348,30 @@ export class RxnArrowRenderer extends BaseRenderer {
 
   private getEndHandleRadius() {
     return provideEditorSettings().macroModeScale / 8;
+  }
+
+  private updateEndHandles() {
+    if (!this.rootElement) {
+      return;
+    }
+
+    const shouldShowHandles = Boolean(this.arrow.selected || this.hoverElement);
+    if (!shouldShowHandles) {
+      this.removeEndHandles();
+      return;
+    }
+
+    const positions = this.getEndHandleLocalPositions();
+
+    if (this.endHandleGroups.length === 2) {
+      this.endHandleGroups.forEach((group, endIndex) => {
+        const position = positions[endIndex];
+        group.selectAll('circle').attr('cx', position.x).attr('cy', position.y);
+      });
+      return;
+    }
+
+    this.drawEndHandles();
   }
 
   public drawEndHandles() {
@@ -419,8 +451,38 @@ export class RxnArrowRenderer extends BaseRenderer {
       return;
     }
 
-    this.remove();
-    this.show();
+    const paths = this.generateArrowPath();
+    if (paths.length !== this.arrowPathElements.length) {
+      this.remove();
+      this.show();
+      return;
+    }
+
+    this.rootElement.attr(
+      'transform',
+      `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+    );
+
+    paths.forEach(({ d, attrs }, index) => {
+      const pathElement = this.arrowPathElements[index];
+      pathElement.attr('d', d);
+      Object.entries(attrs).forEach(([key, value]) => {
+        pathElement.attr(key, value);
+      });
+    });
+
+    const contourD = this.getSelectionContour();
+    this.hoverAreaElement?.attr('d', contourD);
+    this.hoverElement?.attr('d', contourD);
+
+    if (this.selectionElement) {
+      this.selectionElement.attr(
+        'd',
+        this.getSelectionContour(this.scaledPosition.startPosition),
+      );
+    }
+
+    this.updateEndHandles();
   }
 
   protected removeHover(): void {
@@ -433,6 +495,7 @@ export class RxnArrowRenderer extends BaseRenderer {
 
   public remove() {
     super.remove();
+    this.arrowPathElements = [];
     this.removeHover();
     this.removeSelection();
     this.removeEndHandles();

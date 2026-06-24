@@ -1,4 +1,4 @@
-import { CoreEditor, ToolName } from 'application/editor';
+import { CoreEditor, EditorHistory, ToolName } from 'application/editor';
 import { ReactionArrow } from 'application/editor/tools/ReactionArrow';
 import { RxnArrowResizeOperation } from 'application/editor/operations/coreRxn/rxnArrow';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
@@ -71,7 +71,7 @@ describe('DrawingEntitiesManager.resizeRxnArrow', () => {
       arrow,
       1,
       almostHorizontalEnd,
-      true,
+      { isSnappingEnabled: true },
     );
     resizeCommand.execute(editor.renderersContainer);
 
@@ -92,7 +92,7 @@ describe('DrawingEntitiesManager.resizeRxnArrow', () => {
       arrow,
       1,
       unsnappedEnd,
-      false,
+      { isSnappingEnabled: false },
     );
     resizeCommand.execute(editor.renderersContainer);
 
@@ -141,6 +141,23 @@ describe('ReactionArrow creation tool', () => {
       ReactionArrow.DEFAULT_LENGTH,
     );
     expect(arrow.endPosition.y).toBeCloseTo(arrow.startPosition.y);
+  });
+
+  it('does not leave a phantom arrow on sub-threshold cursor jitter', () => {
+    editor.lastCursorPositionOfCanvas = new Vec2(100, 100);
+    const tool = createTool();
+    const history = EditorHistory.getInstance(editor);
+
+    tool.mousedown();
+    editor.lastCursorPositionOfCanvas = new Vec2(100.001, 100.001);
+    tool.mousemove({ ctrlKey: false } as MouseEvent);
+    tool.mouseup();
+
+    expect(getArrows()).toHaveLength(1);
+    expect(history.historyPointer).toBeGreaterThan(0);
+
+    history.undo();
+    expect(getArrows()).toHaveLength(0);
   });
 
   it('creates an arrow following the drag length and direction', () => {

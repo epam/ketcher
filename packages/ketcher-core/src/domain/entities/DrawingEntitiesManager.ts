@@ -3990,47 +3990,38 @@ export class DrawingEntitiesManager {
     return anchor.add(snappedArrowVector);
   }
 
+  /**
+   * Command that moves one end of a reaction arrow.
+   * @param endIndex 0 for start, 1 for end.
+   * @param options.isSnappingEnabled snap the end to common angles (default true).
+   * @param options.previousPosition explicit previous position for undo; when omitted,
+   *   read from the live arrow (use only before mutating the model).
+   */
   public resizeRxnArrow(
     arrow: RxnArrow,
     endIndex: 0 | 1,
     newPosition: Vec2,
-    isSnappingEnabled = true,
+    options?: { isSnappingEnabled?: boolean; previousPosition?: Vec2 },
   ) {
+    const { isSnappingEnabled = true, previousPosition } = options ?? {};
     const snappedPosition = this.getSnappedArrowEndPosition(
       arrow,
       endIndex,
       newPosition,
       isSnappingEnabled,
     );
-    const previousPosition = new Vec2(arrow.startEndPosition[endIndex]);
+    const resolvedPrevious = previousPosition
+      ? new Vec2(previousPosition)
+      : new Vec2(arrow.startEndPosition[endIndex]);
     const command = new Command();
-    const operation = new RxnArrowResizeOperation(
-      arrow,
-      endIndex,
-      snappedPosition,
-      previousPosition,
+    command.addOperation(
+      new RxnArrowResizeOperation(
+        arrow,
+        endIndex,
+        snappedPosition,
+        resolvedPrevious,
+      ),
     );
-
-    command.addOperation(operation);
-
-    return command;
-  }
-
-  public createRxnArrowResizeHistoryCommand(
-    arrow: RxnArrow,
-    endIndex: 0 | 1,
-    previousPosition: Vec2,
-    newPosition: Vec2,
-  ) {
-    const command = new Command();
-    const operation = new RxnArrowResizeOperation(
-      arrow,
-      endIndex,
-      new Vec2(newPosition),
-      new Vec2(previousPosition),
-    );
-
-    command.addOperation(operation);
 
     return command;
   }

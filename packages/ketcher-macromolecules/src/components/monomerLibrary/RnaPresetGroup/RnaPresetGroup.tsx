@@ -17,6 +17,7 @@
 import { useAppSelector } from 'hooks';
 import {
   getRnaPresetPhosphatePosition,
+  isAmbiguousMonomerLibraryItem,
   MonomerItemType,
   RnaPresetWithOptionalFields,
 } from 'ketcher-core';
@@ -40,8 +41,16 @@ import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
-import { PresetPosition, PresetPreviewState, PreviewType } from 'state';
-import { calculateNucleoElementPreviewTop } from 'ketcher-react';
+import {
+  AmbiguousMonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewType,
+} from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
 import { needSkipPreviewForElement } from 'components/preview/helpers';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
@@ -149,19 +158,29 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const style = {
       left: `${cardCoordinates.left + cardCoordinates.width}px`,
-      top: calculateNucleoElementPreviewTop(cardCoordinates),
+      top: isAmbiguousMonomerLibraryItem(preset.base)
+        ? calculateAmbiguousMonomerPreviewTop(preset.base)(cardCoordinates)
+        : calculateNucleoElementPreviewTop(cardCoordinates),
       transform: 'translate(-100%, 0)',
     };
-    const previewData: PresetPreviewState = {
-      type: PreviewType.Preset,
-      monomers,
-      name: preset.name,
-      idtAliases: preset.idtAliases,
-      aliasAxoLabs: preset.aliasAxoLabs,
-      phosphatePosition: resolvePhosphatePosition(preset),
-      position: PresetPosition.Library,
-      style,
-    };
+    const previewData: PresetPreviewState | AmbiguousMonomerPreviewState =
+      isAmbiguousMonomerLibraryItem(preset.base)
+        ? {
+            type: PreviewType.AmbiguousMonomer,
+            monomer: preset.base,
+            presetMonomers: monomers,
+            style,
+          }
+        : {
+            type: PreviewType.Preset,
+            monomers,
+            name: preset.name,
+            idtAliases: preset.idtAliases,
+            aliasAxoLabs: preset.aliasAxoLabs,
+            phosphatePosition: resolvePhosphatePosition(preset),
+            position: PresetPosition.Library,
+            style,
+          };
     debouncedShowPreview(previewData);
   };
   // endregion # Preview

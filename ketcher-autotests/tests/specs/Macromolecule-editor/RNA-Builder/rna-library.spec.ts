@@ -1548,8 +1548,6 @@ test.describe('RNA Library', () => {
         '6. Verify case insensitivity of the search (/5SUPER-DT)',
       SearchString: '/5SUPER-DT',
       ResultedMonomer: Nucleotide.Super_T,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
     {
       testDescription:
@@ -1562,24 +1560,30 @@ test.describe('RNA Library', () => {
         '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
       SearchString: '/3',
       ResultedMonomer: Nucleotide._2_damdA,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
     {
       testDescription:
         '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
       SearchString: '/5',
       ResultedMonomer: Nucleotide._2_damdA,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
     },
     {
       testDescription:
         '10. Verify search returns multiple monomers that have internal modification (/i))',
       SearchString: '/i',
       ResultedMonomer: Nucleotide._2_damdA,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+    {
+      testDescription:
+        '11. Verify search by IDT alias with position indicator (/i5HydMe-dC)',
+      SearchString: '/i5HydMe-dC',
+      ResultedMonomer: Nucleotide._5hMedC,
+    },
+    {
+      testDescription:
+        '12. Verify no results when position indicator is missing (/5HydMe-dC)',
+      SearchString: '/5HydMe-dC',
+      ResultedMonomer: Nucleotide.NoNucleotide,
     },
   ];
 

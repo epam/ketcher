@@ -438,13 +438,38 @@ export const selectFilteredMonomers = createSelector(
         const searchAfterSlash = parts[1];
 
         if (searchFilter.startsWith('/') && searchFilter.length > 1) {
-          const aliasRest = searchFilter.slice(1);
-          return (
-            idtBase?.startsWith(aliasRest) ||
-            idtModifications
-              ?.split(' ')
-              .some((mod) => mod.startsWith(aliasRest))
-          );
+          const positionIndicatorToModification: Record<
+            string,
+            'endpoint5' | 'endpoint3' | 'internal'
+          > = {
+            '5': 'endpoint5',
+            '3': 'endpoint3',
+            i: 'internal',
+          };
+          const modificationKey =
+            positionIndicatorToModification[searchFilter[1]];
+
+          if (!modificationKey) {
+            const aliasRest = searchFilter.slice(1);
+            return (
+              idtBase?.startsWith(aliasRest) ||
+              idtModifications
+                ?.split(' ')
+                .some((mod) => mod.startsWith(aliasRest))
+            );
+          }
+
+          const modificationAlias =
+            idtAliases?.modifications?.[modificationKey]?.toLowerCase();
+          const aliasWithoutIndicator = searchFilter.slice(2);
+          const matchesBase = aliasWithoutIndicator
+            ? Boolean(idtBase?.startsWith(aliasWithoutIndicator))
+            : Boolean(modificationAlias);
+          const matchesModification = modificationAlias
+            ? modificationAlias.includes(searchFilter)
+            : false;
+
+          return matchesBase || matchesModification;
         }
 
         if (searchFilter.endsWith('/') && searchFilter.length > 1) {

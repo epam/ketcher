@@ -80,4 +80,4 @@ const MyComponent = () => {
 ```
 
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
-The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
+The last checked version - [0.12.0](https://www.npmjs.com/package/miew-react).

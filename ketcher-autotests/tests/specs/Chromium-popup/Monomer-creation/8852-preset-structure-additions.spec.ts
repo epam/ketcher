@@ -630,12 +630,12 @@ test.describe('Additions to the structure: ', () => {
 
     await presetSection.setupSugar({
       atomIds: [2, 3],
-      bondIds: [1],
+      bondIds: [2],
     });
 
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
-      bondIds: [2],
+      bondIds: [4],
     });
 
     // Try to save with leftover unassigned benzene ring - should fail

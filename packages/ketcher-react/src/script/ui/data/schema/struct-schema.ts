@@ -517,7 +517,7 @@ export const attachSchema: StructSchema = {
       minLength: 1,
       maxLength: 128,
       invalidMessage:
-        'Template must have a unique name and no more than 128 symbols in length',
+        'Template must have a unique non-empty name and no more than 128 symbols in length',
     },
   },
 };

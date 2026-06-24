@@ -60,7 +60,9 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
       />
       <Modal
         isOpen={
-          !!uniqueNameError || !!invalidPresetError || !!invalidPresetNameError
+          Boolean(uniqueNameError) ||
+          Boolean(invalidPresetError) ||
+          Boolean(invalidPresetNameError)
         }
         title="Error Message"
         onClose={closeErrorModal}

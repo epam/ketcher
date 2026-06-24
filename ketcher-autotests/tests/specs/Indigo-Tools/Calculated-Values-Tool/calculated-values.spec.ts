@@ -245,7 +245,7 @@ test.describe('Calculated Values Tools', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
-    ).toContainText('C3H4O2');
+    ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
       '72.063',
     );

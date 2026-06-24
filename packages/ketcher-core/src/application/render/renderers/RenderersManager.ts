@@ -554,6 +554,10 @@ export class RenderersManager {
     arrow.renderer?.remove();
   }
 
+  public moveRxnArrow(arrow: RxnArrow) {
+    arrow.renderer?.move();
+  }
+
   public addMultitailArrow(arrow: MultitailArrow) {
     const arrowRenderer = new MultitailArrowRenderer(arrow);
 

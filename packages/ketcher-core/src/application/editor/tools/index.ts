@@ -40,6 +40,10 @@ export const toolsMap: Record<ToolName, ToolConstructorInterface> = {
   [ToolName.reactionArrow]: ReactionArrow,
 };
 
+export function isToolName(value: string): value is ToolName {
+  return value in toolsMap;
+}
+
 export * from './Tool';
 export * from './Zoom';
 export * from './select';

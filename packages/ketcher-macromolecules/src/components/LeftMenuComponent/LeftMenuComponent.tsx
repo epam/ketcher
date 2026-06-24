@@ -118,14 +118,11 @@ export function LeftMenuComponent() {
           subMenuId={REACTION_ARROW_SUBMENU_ID}
           needOpenByMenuItemClick={false}
         >
-          {REACTION_ARROW_MENU_ITEMS.map(({ itemId }) => (
+          {REACTION_ARROW_MENU_ITEMS.map(({ itemId, title }) => (
             <Menu.Item
               key={itemId}
               itemId={itemId as IconName}
-              title={itemId
-                .replace('reaction-arrow-', '')
-                .replace(/-/g, ' ')
-                .replace(/\b\w/g, (char) => char.toUpperCase())}
+              title={title}
               testId={itemId}
               disabled={isSequenceMode}
             />

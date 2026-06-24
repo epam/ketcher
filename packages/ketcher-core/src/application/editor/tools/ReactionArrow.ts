@@ -11,6 +11,7 @@ import assert from 'assert';
 class ReactionArrow implements BaseTool {
   static readonly MIN_LENGTH = 0.5;
   static readonly DEFAULT_LENGTH = 1;
+  static readonly DRAG_THRESHOLD = 0.01;
 
   private readonly history: EditorHistory;
   private readonly mode: RxnArrowMode;
@@ -42,8 +43,12 @@ class ReactionArrow implements BaseTool {
     );
     const diff = Vec2.diff(current, this.p0);
 
-    if (diff.length() > 0.01) {
+    if (diff.length() > ReactionArrow.DRAG_THRESHOLD) {
       this.isDragging = true;
+    }
+
+    if (!this.isDragging) {
+      return;
     }
 
     if (!this.arrow) {
@@ -61,7 +66,7 @@ class ReactionArrow implements BaseTool {
       this.arrow,
       1,
       current,
-      !event.ctrlKey,
+      { isSnappingEnabled: !event.ctrlKey },
     );
     this.editor.renderersContainer.update(resizeCommand);
   }

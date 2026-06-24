@@ -75,13 +75,11 @@ export class RxnArrowResizeOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     this.rxnArrow.resize(this.endIndex, this.newPosition);
-    renderersManager.deleteRxnArrow(this.rxnArrow);
-    renderersManager.addRxnArrow(this.rxnArrow);
+    renderersManager.moveRxnArrow(this.rxnArrow);
   }
 
   public invert(renderersManager: RenderersManager) {
     this.rxnArrow.resize(this.endIndex, this.previousPosition);
-    renderersManager.deleteRxnArrow(this.rxnArrow);
-    renderersManager.addRxnArrow(this.rxnArrow);
+    renderersManager.moveRxnArrow(this.rxnArrow);
   }
 }

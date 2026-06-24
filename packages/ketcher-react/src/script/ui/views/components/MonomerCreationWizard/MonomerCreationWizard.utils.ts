@@ -129,7 +129,7 @@ export const getEditAllInstancesInitialValues = (
   monomer: BaseMonomer,
   monomersLibraryParsedJson?: MonomersLibraryParsedJson | null,
 ): MonomerCreationInitialValues => {
-  const initialValues = getInitialValues(monomer, false);
+  const initialValues = getInitialValues(monomer, true);
   const monomerTemplateRef = getMonomerTemplateRefFromMonomerItem(
     monomer.monomerItem,
   );

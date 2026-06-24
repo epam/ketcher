@@ -1260,10 +1260,7 @@ const MonomerCreationWizardInternal = ({
     const structure = editor.structSelected(wizardState.structure);
     const { values: valuesToSave } = wizardState;
     const { errors: inputsErrors, notifications: inputsNotifications } =
-      validateInputs(
-        valuesToSave,
-        monomerCreationState.editInstanceInitialValues?.editMode === 'all',
-      );
+      validateInputs(valuesToSave);
     if (Object.keys(inputsErrors).length > 0) {
       wizardStateDispatch({ type: 'SetErrors', errors: inputsErrors });
       wizardStateDispatch({

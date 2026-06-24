@@ -33,6 +33,7 @@ import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
 import { KetcherLogger } from 'utilities';
+import { isNumber } from 'lodash';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
@@ -95,17 +96,17 @@ function extraBondAction(
     ).perform(restruct);
 
     action.addOp(operation);
-    const newAid = operation.data.aid;
-    if (typeof newAid !== 'number') {
+    const newAtomId = operation.data.aid;
+    if (!isNumber(newAtomId)) {
       KetcherLogger.error(
         'template.ts::extraBondAction: atom id was not assigned after AtomAdd',
       );
       return { action, aid1: aid };
     }
 
-    action.addOp(new BondAdd(aid, newAid, { type: 1 }).perform(restruct));
+    action.addOp(new BondAdd(aid, newAtomId, { type: 1 }).perform(restruct));
 
-    additionalAtom = newAid;
+    additionalAtom = newAtomId;
   }
 
   return { action, aid1: additionalAtom };

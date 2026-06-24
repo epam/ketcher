@@ -97,25 +97,6 @@ const getInitialWizardState = (
 
 const initialWizardState: WizardState = getInitialWizardState();
 
-const getAttachmentPointsText = (attachmentPoints: AttachmentPointName[]) =>
-  attachmentPoints.join(', ');
-
-const getEditAllPresetWarningMessage = (
-  initialValues: MonomerCreationInitialValues,
-) =>
-  `The edited version of the monomer must be the same monomer type and must have attachment point ${getAttachmentPointsText(
-    initialValues.presetRequirements?.attachmentPoints ?? [],
-  )}, because the monomer participates in a preset.`;
-
-const getEditAllPresetErrorMessage = (
-  initialValues: MonomerCreationInitialValues,
-) =>
-  `The changes made to the monomer prevent it from participating in a preset. The monomer must be a ${
-    initialValues.presetRequirements?.type
-  } and contain ${getAttachmentPointsText(
-    initialValues.presetRequirements?.attachmentPoints ?? [],
-  )} attachment points.`;
-
 /**
  * Builds initial wizard state seeded with values from an existing monomer
  * being edited. When `initialValues` is undefined returns the default empty
@@ -138,19 +119,6 @@ const getInitialWizardStateForEdit = (
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
     },
-    ...(initialValues.editMode === 'all' && initialValues.presetRequirements
-      ? {
-          notifications: new Map([
-            [
-              'editAllPresetWarning',
-              {
-                type: 'warning',
-                message: getEditAllPresetWarningMessage(initialValues),
-              },
-            ],
-          ]),
-        }
-      : {}),
   };
 };
 
@@ -1268,36 +1236,6 @@ const MonomerCreationWizardInternal = ({
         notifications: inputsNotifications,
       });
       return;
-    }
-
-    const editAllInitialValues = monomerCreationState.editInstanceInitialValues;
-    const presetRequirements = editAllInitialValues?.presetRequirements;
-    if (editAllInitialValues?.editMode === 'all' && presetRequirements) {
-      const hasRequiredType = valuesToSave.type === presetRequirements.type;
-      const hasRequiredAttachmentPoints =
-        presetRequirements.attachmentPoints.every((attachmentPoint) =>
-          monomerAssignedAttachmentPoints.has(attachmentPoint),
-        );
-
-      if (!hasRequiredType || !hasRequiredAttachmentPoints) {
-        wizardStateDispatch({
-          type: 'RemoveNotification',
-          id: 'editAllPresetWarning',
-        });
-        wizardStateDispatch({
-          type: 'SetNotifications',
-          notifications: new Map([
-            [
-              'editAllPresetError',
-              {
-                type: 'error',
-                message: getEditAllPresetErrorMessage(editAllInitialValues),
-              },
-            ],
-          ]),
-        });
-        return;
-      }
     }
 
     const {

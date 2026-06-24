@@ -678,12 +678,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [0, 1, 2, 3, 4, 5, 6, 7, 25],
     });
 
-    await CommonLeftToolbar(page).handTool();
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
-
     // --- Phosphate ---
     await presetSection.setupPhosphate({
       atomIds: [8, 19, 21, 22],

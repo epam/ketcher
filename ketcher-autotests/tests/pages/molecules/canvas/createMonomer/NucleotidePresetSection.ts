@@ -171,6 +171,9 @@ export const NucleotidePresetSection = (page: Page) => {
     async markAsSugar() {
       await this.openTab(NucleotidePresetTab.Sugar);
       await locators.sugarTab.maskAsSugarButton.click();
+      await page.waitForSelector(
+        '[data-testid="Mark-as-sugar-button"][disabled]',
+      );
     },
 
     async markAsPhosphate() {

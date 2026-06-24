@@ -17,8 +17,9 @@
 import { useAppSelector } from 'hooks';
 import {
   getRnaPresetPhosphatePosition,
-  MonomerItemType,
   isAmbiguousMonomerLibraryItem,
+  MonomerItemType,
+  RnaPresetWithOptionalFields,
 } from 'ketcher-core';
 import { debounce } from 'lodash';
 import React, { ReactElement, useCallback } from 'react';
@@ -60,7 +61,8 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   const dispatch = useDispatch();
   const resolvePhosphatePosition = (preset: IRnaPreset) =>
-    preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
+    preset.phosphatePosition ??
+    getRnaPresetPhosphatePosition(preset as RnaPresetWithOptionalFields);
 
   const validatePreset = (preset: IRnaPreset) => {
     let isBaseValid = true;

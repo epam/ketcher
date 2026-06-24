@@ -11,4 +11,5 @@ export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export { AmbiguousMonomerRenderer } from './AmbiguousMonomerRenderer';
 export { RenderersManager } from './RenderersManager';
 export { getRenderedStructuresBbox } from './utils';
+export { StereoFlagRenderer } from './StereoFlagRenderer';
 export * from './sequence';

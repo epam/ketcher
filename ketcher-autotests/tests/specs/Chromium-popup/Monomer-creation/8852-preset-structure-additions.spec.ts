@@ -97,7 +97,7 @@ test.describe('Additions to the structure: ', () => {
 
     // Add a new bond connected to the Base (atom 0)
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    const baseAtom = getAtomLocator(page, { atomId: 0 });
+    const baseAtom = getAtomLocator(page, { atomId: 1 });
     await baseAtom.click({ force: true });
 
     // Verify the addition is recognized in Base component
@@ -108,7 +108,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 2 - Verify that additions connected to Sugar become part of Sugar component', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that additions connected to Sugar become part of Sugar component
@@ -152,6 +151,8 @@ test.describe('Additions to the structure: ', () => {
     await sugarAtom.click({ force: true });
 
     // Verify the addition is recognized in Sugar component
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await page.waitForTimeout(200);
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeElementScreenshot(page, dialog.window);
 
@@ -159,7 +160,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 3 - Verify that additions connected to Phosphate become part of Phosphate component', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that additions connected to Phosphate become part of Phosphate component
@@ -199,10 +199,12 @@ test.describe('Additions to the structure: ', () => {
 
     // Extend the phosphate chain by adding an oxygen
     await CommonLeftToolbar(page).bondTool(MicroBondTool.Single);
-    const phosphateAtom = getAtomLocator(page, { atomId: 5 });
+    const phosphateAtom = getAtomLocator(page, { atomId: 4 });
     await phosphateAtom.click({ force: true });
 
     // Verify the addition is recognized in Phosphate component
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await page.waitForTimeout(200);
     await presetSection.openTab(NucleotidePresetTab.Phosphate);
     await takeElementScreenshot(page, dialog.window);
 
@@ -210,7 +212,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 4 - Verify that unconnected additions do not belong to any component and block preset saving', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that unconnected additions do not belong to any component and block preset saving
@@ -268,7 +269,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 5 - Verify that previously unconnected structure becomes part of Base when connected to Base', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that previously unconnected structure becomes part of Base when connected to Base
@@ -326,12 +326,9 @@ test.describe('Additions to the structure: ', () => {
 
     // Should be able to save now
     await dialog.submit();
-
-    await dialog.discard();
   });
 
   test('Case 6 - Verify that previously unconnected structure becomes part of Sugar when connected to Sugar', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that previously unconnected structure becomes part of Sugar when connected to Sugar
@@ -383,6 +380,8 @@ test.describe('Additions to the structure: ', () => {
     await page.mouse.up();
 
     // Verify the connected structure is now part of Sugar
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await page.waitForTimeout(200);
     await presetSection.openTab(NucleotidePresetTab.Sugar);
     await takeElementScreenshot(page, dialog.window);
 
@@ -390,7 +389,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 7 - Verify behavior when structure connected to one component is subsequently extended to another component', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify behavior when structure connected to one component is subsequently extended to another component
@@ -454,7 +452,7 @@ test.describe('Additions to the structure: ', () => {
     // Verify error appears
     const errorBanner = NotificationMessageBanner(
       page,
-      ErrorMessage.rnaPresetAtomsOutsideComponents,
+      ErrorMessage.rnaPresetInvalidSugarConnectionBonds,
     );
     expect(await errorBanner.isVisible()).toBeTruthy();
 
@@ -463,7 +461,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 8 - Verify behavior when part of a component structure is disconnected and reconnected to another component', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify behavior when part of a component structure is disconnected and reconnected to another component
@@ -530,7 +527,6 @@ test.describe('Additions to the structure: ', () => {
   });
 
   test('Case 9 - Verify that adding and removing simple extensions to a component does not break component continuity', async () => {
-    // Test result is incorrect due to bug: https://github.com/epam/ketcher/issues/10034
     /*
      * Test task: https://github.com/epam/ketcher/issues/10008
      * Description: Verify that adding and removing simple extensions to a component does not break component continuity
@@ -574,6 +570,8 @@ test.describe('Additions to the structure: ', () => {
     await baseAtom.click();
 
     // Verify addition
+    await presetSection.openTab(NucleotidePresetTab.Preset);
+    await page.waitForTimeout(200);
     await presetSection.openTab(NucleotidePresetTab.Base);
     await takeElementScreenshot(page, dialog.window);
 
@@ -632,12 +630,12 @@ test.describe('Additions to the structure: ', () => {
 
     await presetSection.setupSugar({
       atomIds: [2, 3],
-      bondIds: [1],
+      bondIds: [2],
     });
 
     await presetSection.setupPhosphate({
       atomIds: [4, 5],
-      bondIds: [2],
+      bondIds: [4],
     });
 
     // Try to save with leftover unassigned benzene ring - should fail

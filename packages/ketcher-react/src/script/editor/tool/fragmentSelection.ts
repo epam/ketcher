@@ -13,7 +13,7 @@ import type { ClosestItemWithMap } from '../shared/closest.types';
 
 import type Editor from '../Editor';
 import type { Tool } from './Tool';
-import { selMerge } from './select';
+import { getFragSelection, selMerge } from './select';
 import { handleMovingPosibilityCursor } from '../utils';
 import { getItemCursor } from '../utils/getItemCursor';
 
@@ -22,11 +22,15 @@ const CYCLE_TOOLTIP =
 const COMPONENT_TOOLTIP =
   'The structure fragment in this direction is already marked as a nucleotide component.';
 const TOOLTIP_DELAY = 200;
+const FORBIDDEN_CURSOR = `url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZGJkYmRiIiBzdHJva2Utd2lkdGg9IjIiLz48bGluZSB4MT0iNSIgeTE9IjUiIHgyPSIxOSIgeTI9IjE5IiBzdHJva2U9IiNkYmRiZGIiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==') 12 12, not-allowed`;
 
 type FragmentPreview = {
   atoms: number[];
   bonds: number[];
 };
+
+const getFragmentPreviewId = (bondId: number, startAtomId: number) =>
+  `${bondId}:${startAtomId}`;
 
 export default class FragmentSelectionTool implements Tool {
   private readonly editor: Editor;
@@ -96,12 +100,7 @@ export default class FragmentSelectionTool implements Tool {
 
     if (ci.map === 'frags') {
       const ctab = this.editor.render.ctab;
-      const frag = ctab.frags.get(ci.id);
-
-      sel = {
-        atoms: frag.fragGetAtoms(ctab, ci.id),
-        bonds: frag.fragGetBonds(ctab, ci.id),
-      };
+      sel = getFragSelection(ctab, ci.id) ?? sel;
     }
     const selection = this.editor.selection();
     this.editor.selection(selMerge(sel, selection, true));
@@ -207,11 +206,7 @@ export default class FragmentSelectionTool implements Tool {
         ? reBond.b.begin
         : reBond.b.end;
     const componentData = this.getComponentData(struct);
-
-    if (componentData.componentAtoms.has(startAtomId)) {
-      this.setDisabledState(COMPONENT_TOOLTIP);
-      return;
-    }
+    const isStartAtomComponent = componentData.componentAtoms.has(startAtomId);
 
     if (this.isBondInCycle(struct, bondItem.id)) {
       this.setDisabledState(CYCLE_TOOLTIP);
@@ -222,6 +217,21 @@ export default class FragmentSelectionTool implements Tool {
 
     componentData.connectingBonds.forEach((bondId) => blockedBonds.add(bondId));
     blockedBonds.add(bondItem.id);
+
+    if (isStartAtomComponent) {
+      // Direction leads to marked component - apply common disabled state
+      // handling and then show gray arrows for the blocked direction.
+      this.setDisabledState(COMPONENT_TOOLTIP);
+
+      // Draw gray arrows to indicate blocked direction
+      this.bondPreview = reBond.drawFragmentSelectionPreview(
+        this.editor.render,
+        startAtomId,
+        { disabled: true },
+      );
+      return;
+    }
+
     this.disabledMessage = undefined;
     this.setCursor(false);
     this.clearTooltip();
@@ -243,6 +253,7 @@ export default class FragmentSelectionTool implements Tool {
     this.editor.hover(
       {
         map: 'merge',
+        id: getFragmentPreviewId(bondItem.id, startAtomId),
         items: { atoms: preview.atoms, bonds: preview.bonds },
       },
       this,
@@ -305,7 +316,7 @@ export default class FragmentSelectionTool implements Tool {
   private setCursor(isForbidden: boolean) {
     const canvas = this.editor.render.paper?.canvas;
     if (!canvas) return;
-    canvas.style.cursor = isForbidden ? 'not-allowed' : '';
+    canvas.style.cursor = isForbidden ? FORBIDDEN_CURSOR : '';
   }
 
   private isBondInCycle(struct: Struct, bondId: number): boolean {

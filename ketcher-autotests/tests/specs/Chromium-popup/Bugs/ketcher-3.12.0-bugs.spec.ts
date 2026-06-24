@@ -29,6 +29,9 @@ import {
   dragMouseTo,
   clickInTheMiddleOfTheCanvas,
   takeTopToolbarScreenshot,
+  dragTo,
+  setMolecule,
+  readFileContent,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -40,6 +43,7 @@ import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocato
 import {
   AttachmentPoint,
   createRNAAntisenseChain,
+  getAttachmentPointLocator,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { Chem } from '@tests/pages/constants/monomers/Chem';
@@ -54,9 +58,15 @@ import { Preset } from '@tests/pages/constants/monomers/Presets';
 import { Sugar } from '@tests/pages/constants/monomers/Sugars';
 import { Base } from '@tests/pages/constants/monomers/Bases';
 import { collapseMonomers } from '@utils/canvas/monomer/helpers';
-import { MonomerOption } from '@tests/pages/constants/contextMenu/Constants';
+import {
+  ConnectionPointOption,
+  MonomerOption,
+} from '@tests/pages/constants/contextMenu/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/AbbreviationPreviewTooltip';
+import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
 
 let page: Page;
 
@@ -633,5 +643,243 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     });
     await AbbreviationPreviewTooltip(page).waitForBecomeVisible();
     await takeElementScreenshot(page, AbbreviationPreviewTooltip(page).window);
+  });
+
+  test("Case 19 — Undo/redo operations doesn't work for atoms, arrows and pluses after changing their positions in Macro mode", async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/8954
+     * Description: Undo/redo operations doesn't work for atoms, arrows and pluses after changing their positions in Macro mode
+     *
+     * Scenario:
+     * 1. Open Molecules canvas
+     * 2. In the left toolbar select arrow tool and choose Open Angle Arrow('ArrowType.ArrowOpenAngle')
+     * 3. Place arrow in the middle of screen
+     * 4. Turn Macromolecules mode
+     * 5. Move arrow to new position
+     * 6. Press 'undo' button in Top Left Toolbar
+     * 7. Press 'redo' button in Top Left Toolbar
+     *
+     * Version 3.12.0
+     */
+
+    await LeftToolbar(page).selectArrowTool(ArrowTool.ArrowOpenAngle);
+    await clickInTheMiddleOfTheCanvas(page);
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonLeftToolbar(page).areaSelectionTool();
+    const arrow = getArrowLocator(page, {}).first();
+    await dragTo(page, arrow, { x: 350, y: 350 });
+    await clickOnCanvas(page, 20, 20);
+
+    await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+
+    await CommonTopLeftToolbar(page).redo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 20 — Selection ignored in Ketcher API calls', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/8898
+     * Description: Selection ignored in Ketcher API calls
+     *
+     * Scenario:
+     * 1. Open Ketcher
+     * 2. Call Ketcher setMolecule api and pass ket file with selected atoms and bonds to it
+     * 3. Verify that molecule is drawn on canvas, and atoms and bonds are selected
+     *
+     * Version 3.12.0
+     */
+
+    const ketMolecule = await readFileContent('KET/Bugs/Example 8898.ket');
+
+    await setMolecule(page, ketMolecule);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 21 — No bad valence indication on Macromolecules canvas', async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/8837
+     * Description: No bad valence indication on Macromolecules canvas
+     *
+     * Scenario:
+     * 1. Go to Ketcher Molecules mode (clear canvas)
+     * 2. Paste following SMILES on the canvas: [Pt](C)(C)(C)(C)C
+     * 3. Switch mode to Macromolecules mode
+     * 4. Verify that bad valence indication is highlighted with red
+     *
+     * Version 3.12.0
+     */
+
+    await setMolecule(page, '[Pt](C)(C)(C)(C)C');
+    await takeEditorScreenshot(page);
+
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 22 — The hover on a selected atom differs in micro mode and in macro mode', async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/8800
+     * Description: The hover on a selected atom differs in micro mode and in macro mode
+     *
+     * Scenario:
+     * 1. Go to Macro mode - Flex
+     * 2. Load from file: "Carbon label doesn't apper in case of 180 degree angle on macro mode.ket"
+     * 3. Click and hover mouse over any atom
+     * 4. Verify that selected atom has the same color in Molecules and Macromolecules mode when hovered over
+     *
+     * Version 3.12.0
+     */
+
+    const ketMolecule = await readFileContent(
+      "KET/Bugs/Carbon label doesn't apper in case of 180 degree angle on macro mode.ket",
+    );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.KetFormat,
+      ketMolecule,
+    );
+
+    const atomInMacroMode = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 0,
+    });
+    await atomInMacroMode.click({ force: true });
+    const greenElementMacro = page.locator(
+      `[data-testid="ketcher-canvas"] [fill="#57FF8F"]:visible`,
+    );
+
+    await expect(greenElementMacro.first()).toBeVisible();
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    const atomInMicroMode = getAtomLocator(page, {
+      atomLabel: 'C',
+      atomId: 0,
+    });
+    await atomInMicroMode.hover();
+    await atomInMicroMode.click({ force: true });
+
+    const greenElementMicro = page.locator(
+      `[data-testid="ketcher-canvas"] [fill="#57ff8f"]:visible`,
+    );
+
+    await expect(greenElementMicro.first()).toBeVisible();
+  });
+
+  test("Case 23 — If no selection made, system doesn't define attachment points for monomer", async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/8437
+     * Description: If no selection made, system doesn't define attachment points for monomer
+     *
+     * Scenario:
+     * 1. Open Molecules mode (clean canvas)
+     * 2. Load from SMILES: C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|
+     * 3. Press Create a monomer button (or Ctrl+M) having no selection on the canvas made
+     * 4. Verify that system opens monomer creation wizard with molecule with three attachment points defined based on existed leaving groups (R1, R2 and R3)
+     *
+     * Version 3.12.0
+     */
+
+    const smilesMolecule =
+      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|';
+    await setMolecule(page, smilesMolecule);
+
+    await LeftToolbar(page).createMonomer();
+
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 300);
+    await dragMouseTo(page, 500, 300);
+
+    await takeEditorScreenshot(page);
+  });
+
+  test("Case 24 — System shouldn't allow to upload monomers with no base IDT alias defined", async ({
+    MoleculesCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/7823
+     * Description: System shouldn't allow to upload monomers with no base IDT alias defined
+     *
+     * Scenario:
+     * 1. Select Molecules mode
+     * 2. Load below structure from clipboard: [*:1]C%91.[*:2]%91 |$_R1;;_R2$|
+     * 3. Select whole structure
+     * 4. Press Create monomer button
+     * 5. Right click on R1 atom
+     * 6. Click on Edit connection point context menu option
+     * 7. Verify that system opens opens Edit connection point dialog
+     *
+     * Version 3.12.0
+     */
+    await setMolecule(page, '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|');
+    await selectAllStructuresOnCanvas(page);
+
+    await LeftToolbar(page).createMonomer();
+
+    const attachmentPointR1 = getAttachmentPointLocator(
+      page,
+      AttachmentPoint.R1,
+    ).first();
+    await ContextMenu(page, attachmentPointR1).click(
+      ConnectionPointOption.EditConnectionPoint,
+    );
+
+    await expect(
+      EditConnectionPointPopup(page).editConnectionPointPopupWindow,
+    ).toBeVisible();
+    await CreateMonomerDialog(page).discard();
+  });
+
+  test("Case 25 — Underline colour for the base counter in the Calculate Properties window doesn't fit the requirement", async ({
+    FlexCanvas: _,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/9056
+     * Bug: https://github.com/epam/ketcher/issues/7797
+     * Description: Underline colour for the base counter in the Calculate Properties window doesn't fit the requirement
+     *
+     * Scenario:
+     * 1. Switch to Macromolecules mode - Flex canvas (clear canvas)
+     * 2. Load from HELM: RNA1{r([cl6pur])}|PEPTIDE1{[am]}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0
+     * 3. Click Calculate properties button
+     * 4. Check underline colour for the X base counter in RNA/DNA and in Peptides
+     * 5. Verify that the grey color is represented by #CAD3DD hex code or the X base counter in RNA/DNA tab and in Peptides tab
+     *
+     * Version 3.12.0
+     */
+
+    const helmMolecule =
+      'RNA1{r([cl6pur])}|PEPTIDE1{[am]}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0';
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      helmMolecule,
+    );
+
+    await MacromoleculesTopToolbar(page).calculateProperties();
+
+    const rnaBase = page.locator('[href="#rna-base"]');
+    await expect(rnaBase).toHaveAttribute('fill', '#CAD3DD');
+
+    const peptide = page.locator('[href="#peptide"]');
+    await expect(peptide).toHaveAttribute('fill', '#CAD3DD');
   });
 });

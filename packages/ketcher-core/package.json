@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "3.17.0-rc.1",
+  "version": "3.17.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -48,10 +48,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
+    "ajv": "^8.10.0",
     "assert": "^2.0.0",
     "d3": "^7.8.5",
     "dpdm": "^4.2.0",
     "file-saver": "^2.0.5",
+    "jsonschema": "^1.5.0",
     "lodash": "^4.18.1",
     "paper": "^0.12.18",
     "raphael": "^2.3.0",
@@ -59,7 +61,7 @@
     "svgpath": "^2.3.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "^7.29.6",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
@@ -79,7 +81,7 @@
     "eslint": "^8.44.0",
     "eslint-plugin-jest": "^25.3.0",
     "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0",
+    "jest-environment-jsdom": "^30.4.1",
     "jest-mock-extended": "^2.0.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",

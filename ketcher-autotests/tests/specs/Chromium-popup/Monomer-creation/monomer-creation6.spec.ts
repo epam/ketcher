@@ -324,7 +324,7 @@ test(`6. Check warning messages on Base monomer if R1 attachment point with a le
 
   await expect(WarningMessageDialog(page).window).toBeVisible();
   expect(await WarningMessageDialog(page).getWarningMessage()).toContain(
-    'Base monomers typically have a hydroxyl as the leaving group for R1. Do you wish to proceed with the current attachment points?',
+    'Base monomers typically have a hydrogen as the leaving group for R1. Do you wish to proceed with the current attachment points?',
   );
 
   await WarningMessageDialog(page).cancel();

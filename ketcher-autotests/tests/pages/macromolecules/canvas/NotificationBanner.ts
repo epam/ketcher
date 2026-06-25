@@ -11,7 +11,7 @@ export const NotificationBanner = (page: Page) => {
     message: page.getByTestId('error-tooltip-0'),
     closeButton: page
       .locator('#error-tooltip-list')
-      .getByRole('button')
+      .locator('button[data-testid^="error-tooltip-close"]')
       .first(),
   };
 
@@ -22,9 +22,10 @@ export const NotificationBanner = (page: Page) => {
       return await locators.message.isVisible();
     },
 
-    async waitForBecomeVisible() {
+    async waitForBecomeVisible(timeout?: number) {
       return await locators.message.waitFor({
         state: 'visible',
+        ...(timeout !== undefined ? { timeout } : {}),
       });
     },
 
@@ -34,7 +35,12 @@ export const NotificationBanner = (page: Page) => {
       });
     },
     async close() {
-      await locators.closeButton.click();
+      try {
+        await locators.closeButton.click({ force: true, timeout: 5000 });
+      } catch {
+        // Toast auto-dismissed via its per-toast timer before the click landed
+        await locators.message.waitFor({ state: 'hidden' });
+      }
     },
 
     async getNotificationText() {

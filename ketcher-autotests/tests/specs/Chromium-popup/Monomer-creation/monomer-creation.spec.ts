@@ -3779,48 +3779,52 @@ const monomersToCreate53 = [
   },
 ];
 
-for (const monomerToCreate of monomersToCreate53) {
-  test(`53. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode`, async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/7657
-     * Description: Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode
-     *
-     * Case:
-     *      1. Open Molecules canvas
-     *      2. Load molecule on canvas
-     *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
-     *      4. Create monomer with given attributes
-     *      5. Select and delete atom outside monomer
-     *      6. Switch to Macro mode
-     *      7. Verify export to HELM
-     *
-     * Version 3.7
-     */
-    await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
-    await deselectAtomAndBonds(page, ['0']);
+test.describe('', () => {
+  test.describe.configure({ mode: 'default' });
 
-    await createMonomer(page, {
-      ...monomerToCreate,
-    });
-    await getAtomLocator(page, { atomId: 0 }).click();
-    await CommonLeftToolbar(page).erase();
+  for (const monomerToCreate of monomersToCreate53) {
+    test(`53. Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7657
+       * Description: Check that created ${monomerToCreate.description} monomer can be saved/opened to/from HELM in Macro mode
+       *
+       * Case:
+       *      1. Open Molecules canvas
+       *      2. Load molecule on canvas
+       *      3. Select whole molecule and deselect atoms/bonds that not needed for monomer
+       *      4. Create monomer with given attributes
+       *      5. Select and delete atom outside monomer
+       *      6. Switch to Macro mode
+       *      7. Verify export to HELM
+       *
+       * Version 3.7
+       */
+      await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+      await deselectAtomAndBonds(page, ['0']);
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    if (monomerToCreate.helm) {
-      await verifyHELMExport(page, monomerToCreate.helm);
-
-      await pasteFromClipboardAndOpenAsNewProjectMacro(
-        page,
-        MacroFileType.HELM,
-        monomerToCreate.helm,
-      );
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-        hideMonomerPreview: true,
+      await createMonomer(page, {
+        ...monomerToCreate,
       });
-    }
-  });
-}
+      await getAtomLocator(page, { atomId: 0 }).click();
+      await CommonLeftToolbar(page).erase();
+
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      if (monomerToCreate.helm) {
+        await verifyHELMExport(page, monomerToCreate.helm);
+
+        await pasteFromClipboardAndOpenAsNewProjectMacro(
+          page,
+          MacroFileType.HELM,
+          monomerToCreate.helm,
+        );
+        await takeEditorScreenshot(page, {
+          hideMacromoleculeEditorScrollBars: true,
+          hideMonomerPreview: true,
+        });
+      }
+    });
+  }
+});
 
 const monomersToCreate54 = [
   {

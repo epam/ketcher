@@ -8,14 +8,18 @@ import del from 'rollup-plugin-delete';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import pkg from './package.json';
+import { readFileSync } from 'node:fs';
 import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import { license } from '../../license.ts';
+import { license } from '../../license-banner.mjs';
 import { string } from 'rollup-plugin-string';
+
+const svgrPlugin = svgr.default ?? svgr;
+const babelPlugin = babel.default ?? babel;
+const nodeResolvePlugin = nodeResolve.default ?? nodeResolve;
 
 const mode = {
   PRODUCTION: 'production',
@@ -26,7 +30,9 @@ const extensions = ['.js', '.jsx', '.ts', '.tsx'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
-const packageJson = pkg;
+const pkg = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
+);
 
 const getTagName = () => {
   try {
@@ -41,17 +47,19 @@ export const valuesToReplace = {
   'import.meta.env.NODE_ENV': JSON.stringify(
     isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
-  'import.meta.env.VERSION': JSON.stringify(packageJson.version),
+  'import.meta.env.VERSION': JSON.stringify(pkg.version),
   'import.meta.env.BUILD_DATE': JSON.stringify(
     new Date().toISOString().slice(0, 19),
   ),
   // TODO: add logic to init BUILD_NUMBER
   'import.meta.env.BUILD_NUMBER': JSON.stringify(undefined),
   'import.meta.env.HELP_LINK': JSON.stringify(getTagName()),
+  'import.meta.env.INDIGO_VERSION': JSON.stringify(process.env.INDIGO_VERSION || ''),
+  'import.meta.env.INDIGO_MACHINE': JSON.stringify(process.env.INDIGO_MACHINE || ''),
 };
 
 const config = {
-  input: packageJson.source,
+  input: pkg.source,
   output: [
     {
       dir: 'dist/cjs',
@@ -78,9 +86,9 @@ const config = {
       sourceMap: true,
       include: [includePattern, '../ketcher-macromolecules/dist/index.css'],
     }),
-    svgr({ include: includePattern }),
+    svgrPlugin({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolvePlugin({ extensions }),
     commonjs(),
     replace({
       include: includePattern,
@@ -91,7 +99,7 @@ const config = {
     typescript({
       tsconfig: './tsconfig.build.json',
     }),
-    babel({
+    babelPlugin({
       extensions,
       babelHelpers: 'runtime',
       include: includePattern,

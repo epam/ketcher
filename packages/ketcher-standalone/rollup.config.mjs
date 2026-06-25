@@ -1,15 +1,16 @@
-import babel from '@rollup/plugin-babel';
+import { babel } from '@rollup/plugin-babel';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import resolve from '@rollup/plugin-node-resolve';
+const resolvePlugin = resolve.default ?? resolve;
 import strip from '@rollup/plugin-strip';
 import typescript from 'rollup-plugin-typescript2';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
-import { license } from '../../license.ts';
+import { license } from '../../license-banner.mjs';
 import replace from '@rollup/plugin-replace';
 import OMT from '@surma/rollup-plugin-off-main-thread';
 
@@ -62,7 +63,7 @@ const baseConfig = {
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     nodePolyfills(),
-    resolve({ extensions }),
+    resolvePlugin({ extensions }),
     commonjs(),
     typescript(),
     babel({
@@ -71,7 +72,7 @@ const baseConfig = {
       include: includePattern,
     }),
     cleanup({
-      extensions: extensions.map((ext) => ext.trimStart('.')),
+      extensions: extensions.map((ext) => ext.replace(/^\./, '')),
       include: includePattern,
       comments: 'none',
     }),

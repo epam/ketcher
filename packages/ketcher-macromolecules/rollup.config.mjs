@@ -13,11 +13,16 @@ import replace from '@rollup/plugin-replace';
 import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
-import ts from 'typescript';
+import tsconfigPaths from 'rollup-plugin-tsconfig-paths';
 import { string } from 'rollup-plugin-string';
 
 const require = createRequire(import.meta.url);
 const pkg = require('./package.json');
+const svgrPlugin = svgr.default ?? svgr;
+const babelPlugin = babel.default ?? babel;
+const nodeResolvePlugin = nodeResolve.default ?? nodeResolve;
+
+const asPlugin = (plugin) => plugin;
 
 const mode = {
   PRODUCTION: 'production',
@@ -77,13 +82,13 @@ const config = {
       sourceMap: true,
       include: includePattern,
     }),
-    svgr({ include: includePattern }),
+    asPlugin(svgrPlugin({ include: includePattern })),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolvePlugin({ extensions }),
     commonjs(),
+    asPlugin(tsconfigPaths()),
     json(),
     typescript({
-      typescript: ts,
       tsconfigOverride: {
         exclude: ['*.test.ts'],
       },
@@ -93,7 +98,7 @@ const config = {
       preventAssignment: true,
       values: valuesToReplace,
     }),
-    babel({
+    babelPlugin({
       extensions,
       babelHelpers: 'runtime',
       include: includePattern,

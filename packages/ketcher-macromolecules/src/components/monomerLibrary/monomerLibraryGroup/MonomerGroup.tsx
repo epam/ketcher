@@ -21,8 +21,9 @@ import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
-  isAmbiguousMonomerLibraryItem,
+  MonomerItemType,
   MonomerOrAmbiguousType,
+  isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectEditor, showPreview } from 'state/common';
@@ -47,25 +48,27 @@ const MonomerGroup = ({
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
-    let monomerDisabled = false;
     if (isAmbiguousMonomerLibraryItem(monomer)) {
       return false;
     }
 
+    const monomerItem = monomer as MonomerItemType;
+
     if (disabled) {
-      monomerDisabled = disabled;
-    } else {
-      const monomerValidations =
-        activeGroupItemValidations[`${monomer.props?.MonomerClass}s`];
-      if (monomerValidations?.length > 0 && monomer.props?.MonomerCaps) {
-        for (const monomerValidation of monomerValidations) {
-          if (!(monomerValidation in monomer.props.MonomerCaps)) {
-            monomerDisabled = true;
-          }
+      return disabled;
+    }
+
+    const monomerValidations =
+      activeGroupItemValidations[`${monomerItem.props?.MonomerClass}s`];
+    if (monomerValidations?.length > 0 && monomerItem.props?.MonomerCaps) {
+      for (const monomerValidation of monomerValidations) {
+        if (!(monomerValidation in monomerItem.props.MonomerCaps)) {
+          return true;
         }
       }
     }
-    return monomerDisabled;
+
+    return false;
   };
 
   const dispatchShowPreview = useCallback(
@@ -99,14 +102,12 @@ const MonomerGroup = ({
     let top: string;
 
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      top = monomer
-        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
-        : '';
+      top = calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates);
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       previewType = PreviewType.AmbiguousMonomer;
       style = { left, top, transform: 'translate(-50%, 0)' };
     } else {
-      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+      top = calculateMonomerPreviewTop(cardCoordinates);
       style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
       previewType = PreviewType.Monomer;
     }

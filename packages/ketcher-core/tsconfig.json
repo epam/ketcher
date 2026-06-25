@@ -3,7 +3,7 @@
     "outDir": "dist",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
@@ -22,6 +22,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["node", "jest"],
     "paths": {
       "src": ["./src"],
       "src/*": ["./src/*"],
@@ -31,13 +32,9 @@
       "utilities": ["./src/utilities"],
       "types": ["./src/types"]
     },
-    "plugins": [
-      {
-        "transform": "@zerollup/ts-transform-paths",
-        "exclude": ["*"]
-      }
-    ],
-    "jsx": "react"
+    "jsx": "react",
+    "rootDir": "."
   },
-  "include": ["src/**/*", "__tests__/**/*"]
+  "include": ["src/**/*", "__tests__/**/*"],
+  "exclude": ["dist"]
 }

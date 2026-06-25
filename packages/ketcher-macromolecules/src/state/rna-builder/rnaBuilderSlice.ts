@@ -21,8 +21,9 @@ import {
   getRnaPresetPhosphatePosition,
   LabeledNodesWithPositionInSequence,
   MONOMER_CONST,
-  MonomerItemType,
+  MonomerOrAmbiguousType,
   RnaPhosphatePosition,
+  RnaPresetWithOptionalFields,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import {
@@ -41,6 +42,7 @@ import {
   selectAxoLabsAliasesByPresetName,
   selectSearchFilter,
 } from 'state/library';
+import { castDraft } from 'immer';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -89,7 +91,7 @@ interface IRnaBuilderState {
   isSequenceFirstsOnlyNucleoelementsSelected: boolean | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
-    groupItem: MonomerItemType;
+    groupItem: MonomerOrAmbiguousType;
   } | null;
   groupItemValidations: {
     [MonomerGroups.BASES]: string[];
@@ -208,7 +210,12 @@ export const rnaBuilderSlice = createSlice({
           action.payload.rnaPreset,
           action.payload.isEditMode,
           action.payload.selectedPhosphatePosition ??
-            getRnaPresetPhosphatePosition(action.payload.rnaPreset),
+            getRnaPresetPhosphatePosition(
+              action.payload.rnaPreset as Pick<
+                IRnaPreset,
+                'sugar' | 'phosphate' | 'connections'
+              >,
+            ),
         );
 
       state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
@@ -220,10 +227,13 @@ export const rnaBuilderSlice = createSlice({
       state,
       action: PayloadAction<{
         groupName: MonomerGroups;
-        groupItem: MonomerItemType;
+        groupItem: MonomerOrAmbiguousType;
       } | null>,
     ) => {
-      state.activePresetMonomerGroup = action.payload;
+      state.activePresetMonomerGroup = action.payload
+        ? // use castDraft to bypass the Immer draft type checking, allowing us to assign a possibly non-draft value to the state. This is necessary because the groupItem can be either a MonomerItemType or an AmbiguousMonomerType, and Immer's type checking can be too strict in this case.
+          castDraft(action.payload)
+        : null;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -431,7 +441,9 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   const base = preset.base?.label ?? preset.base?.props.MonomerName ?? '';
   const phosphate =
     preset.phosphate?.label ?? preset.phosphate?.props.MonomerName ?? '';
-  const phosphatePosition = getRnaPresetPhosphatePosition(preset);
+  const phosphatePosition = getRnaPresetPhosphatePosition(
+    preset as RnaPresetWithOptionalFields,
+  );
   let fullName = sugar;
 
   if (sugar && phosphate) {
@@ -520,6 +532,11 @@ export const selectFilteredPresets = createSelector(
           (name ? axoLabsAliasesByPresetName.get(name) : undefined) ??
           '';
         const modifications = item.idtAliases?.modifications;
+        const modificationAliases = modifications
+          ? Object.values(modifications).filter(
+              (mod): mod is string => typeof mod === 'string',
+            )
+          : [];
         let transformedIdtText = idtName;
 
         if (idtName && item.name?.includes('MOE')) {
@@ -540,10 +557,9 @@ export const selectFilteredPresets = createSelector(
           return (
             transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
             idtName?.startsWith(aliasRest) ||
-            (modifications &&
-              Object.values(modifications).some((mod) =>
-                mod?.toLowerCase().startsWith(aliasRest),
-              ))
+            modificationAliases.some((mod) =>
+              mod.toLowerCase().startsWith(aliasRest),
+            )
           );
         }
 
@@ -557,12 +573,11 @@ export const selectFilteredPresets = createSelector(
                 aliasLastSymbol) ||
             (idtName?.endsWith(aliasRest) &&
               idtName[idtName.length - 1] === aliasLastSymbol) ||
-            (modifications &&
-              Object.values(modifications).some(
-                (mod) =>
-                  mod?.toLowerCase().endsWith(aliasRest) &&
-                  mod[mod.length - 1] === aliasLastSymbol,
-              ))
+            modificationAliases.some(
+              (mod) =>
+                mod.toLowerCase().endsWith(aliasRest) &&
+                mod[mod.length - 1] === aliasLastSymbol,
+            )
           );
         }
 
@@ -597,7 +612,9 @@ export const selectFilteredPresets = createSelector(
         if (!item.phosphate) {
           return noPhosphate;
         }
-        const position = getRnaPresetPhosphatePosition(item);
+        const position = getRnaPresetPhosphatePosition(
+          item as RnaPresetWithOptionalFields,
+        );
         return position === 'left' ? fivePrime : threePrime;
       });
   },

@@ -43,73 +43,102 @@ class ReLoop extends ReObject {
     return false;
   }
 
-  // eslint-disable-next-line max-statements
   show(restruct: ReStruct, _rlid: number, options: RenderOptions): void {
     const { render, molecule } = restruct;
     const paper = render.paper;
     const { loop } = this;
-    const { hbs } = loop;
+    const halfBondIds = loop.hbs;
 
     this.centre = new Vec2();
-    for (const hbid of hbs) {
-      const hb = molecule.halfBonds.get(hbid);
-      if (hb === undefined) return;
-      const bond = restruct.bonds.get(hb.bid);
-      if (bond === undefined) return;
-      const beginAtom = restruct.atoms.get(hb.begin);
-      if (beginAtom === undefined) return;
-      const apos = Scale.modelToCanvas(beginAtom.a.pp, options);
-      if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) loop.aromatic = false;
-      // eslint-disable-next-line no-underscore-dangle
-      this.centre.add_(apos);
+    for (const halfBondId of halfBondIds) {
+      const halfBond = molecule.halfBonds.get(halfBondId);
+      if (!halfBond) {
+        return;
+      }
+      const bond = restruct.bonds.get(halfBond.bid);
+      if (!bond) {
+        return;
+      }
+      const beginAtom = restruct.atoms.get(halfBond.begin);
+      if (!beginAtom) {
+        return;
+      }
+      const beginPosition = Scale.modelToCanvas(beginAtom.a.pp, options);
+      if (bond.b.type !== Bond.PATTERN.TYPE.AROMATIC) {
+        loop.aromatic = false;
+      }
+      this.centre = this.centre.add(beginPosition);
     }
 
     loop.convex = true;
-    for (let k = 0; k < hbs.length; ++k) {
-      const hba = molecule.halfBonds.get(hbs[k]);
-      const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length]);
-      if (hba === undefined || hbb === undefined) return;
-      const angle = Math.atan2(
-        Vec2.cross(hba.dir, hbb.dir),
-        Vec2.dot(hba.dir, hbb.dir),
+    for (let index = 0; index < halfBondIds.length; ++index) {
+      const currentHalfBond = molecule.halfBonds.get(halfBondIds[index]);
+      const nextHalfBond = molecule.halfBonds.get(
+        halfBondIds[(index + 1) % halfBondIds.length],
       );
-      if (angle > 0) loop.convex = false;
+      if (!currentHalfBond || !nextHalfBond) {
+        return;
+      }
+      const angle = Math.atan2(
+        Vec2.cross(currentHalfBond.dir, nextHalfBond.dir),
+        Vec2.dot(currentHalfBond.dir, nextHalfBond.dir),
+      );
+      if (angle > 0) {
+        loop.convex = false;
+      }
     }
 
-    this.centre = this.centre.scaled(1.0 / hbs.length);
+    this.centre = this.centre.scaled(1.0 / halfBondIds.length);
     this.radius = -1;
-    for (const hbid of hbs) {
-      const hb = molecule.halfBonds.get(hbid);
-      if (hb === undefined) return;
-      const beginAtom = restruct.atoms.get(hb.begin);
-      const endAtom = restruct.atoms.get(hb.end);
-      if (beginAtom === undefined || endAtom === undefined) return;
-      const apos = Scale.modelToCanvas(beginAtom.a.pp, options);
-      const bpos = Scale.modelToCanvas(endAtom.a.pp, options);
-      const n = Vec2.diff(bpos, apos).rotateSC(1, 0).normalized();
-      const dist = Vec2.dot(Vec2.diff(apos, this.centre), n);
-      this.radius = this.radius < 0 ? dist : Math.min(this.radius, dist);
+    for (const halfBondId of halfBondIds) {
+      const halfBond = molecule.halfBonds.get(halfBondId);
+      if (!halfBond) {
+        return;
+      }
+      const beginAtom = restruct.atoms.get(halfBond.begin);
+      const endAtom = restruct.atoms.get(halfBond.end);
+      if (!beginAtom || !endAtom) {
+        return;
+      }
+      const beginPosition = Scale.modelToCanvas(beginAtom.a.pp, options);
+      const endPosition = Scale.modelToCanvas(endAtom.a.pp, options);
+      const normal = Vec2.diff(endPosition, beginPosition)
+        .rotateSC(1, 0)
+        .normalized();
+      const distance = Vec2.dot(Vec2.diff(beginPosition, this.centre), normal);
+      this.radius =
+        this.radius < 0 ? distance : Math.min(this.radius, distance);
     }
     this.radius *= 0.7;
-    if (!loop.aromatic) return;
+    if (!loop.aromatic) {
+      return;
+    }
 
     // Skip rendering the aromatic circle when the loop sits entirely inside one contracted sgroup
     const atomIds = new Set<number>();
-    for (const hbid of hbs) {
-      const hb = molecule.halfBonds.get(hbid);
-      if (hb === undefined) return;
-      atomIds.add(hb.begin);
-      atomIds.add(hb.end);
+    for (const halfBondId of halfBondIds) {
+      const halfBond = molecule.halfBonds.get(halfBondId);
+      if (!halfBond) {
+        return;
+      }
+      atomIds.add(halfBond.begin);
+      atomIds.add(halfBond.end);
     }
 
     const firstAtomId = atomIds.values().next().value;
-    if (firstAtomId === undefined) return;
+    // An atom id can legitimately be 0 (falsy but meaningful), so this stays an
+    // explicit undefined check rather than a truthiness check.
+    if (firstAtomId === undefined) {
+      return;
+    }
     const sgroup = molecule.getGroupFromAtomId(firstAtomId);
     if (sgroup?.isContracted()) {
       const allInSameSgroup = [...atomIds].every(
         (atomId) => molecule.getGroupFromAtomId(atomId) === sgroup,
       );
-      if (allInSameSgroup) return;
+      if (allInSameSgroup) {
+        return;
+      }
     }
 
     let path = null;
@@ -119,30 +148,38 @@ class ReLoop extends ReObject {
         'stroke-width': options.lineattr['stroke-width'],
       });
     } else {
-      let pathStr = '';
-      for (let k = 0; k < hbs.length; ++k) {
-        const hba = molecule.halfBonds.get(hbs[k]);
-        const hbb = molecule.halfBonds.get(hbs[(k + 1) % hbs.length]);
-        if (hba === undefined || hbb === undefined) return;
+      let pathString = '';
+      for (let index = 0; index < halfBondIds.length; ++index) {
+        const currentHalfBond = molecule.halfBonds.get(halfBondIds[index]);
+        const nextHalfBond = molecule.halfBonds.get(
+          halfBondIds[(index + 1) % halfBondIds.length],
+        );
+        if (!currentHalfBond || !nextHalfBond) {
+          return;
+        }
         const angle = Math.atan2(
-          Vec2.cross(hba.dir, hbb.dir),
-          Vec2.dot(hba.dir, hbb.dir),
+          Vec2.cross(currentHalfBond.dir, nextHalfBond.dir),
+          Vec2.dot(currentHalfBond.dir, nextHalfBond.dir),
         );
         const halfAngle = (Math.PI - angle) / 2;
-        const dir = hbb.dir.rotate(halfAngle);
-        const hbbBeginAtom = restruct.atoms.get(hbb.begin);
-        if (hbbBeginAtom === undefined) return;
-        const pi = Scale.modelToCanvas(hbbBeginAtom.a.pp, options);
+        const direction = nextHalfBond.dir.rotate(halfAngle);
+        const nextBeginAtom = restruct.atoms.get(nextHalfBond.begin);
+        if (!nextBeginAtom) {
+          return;
+        }
+        const atomPosition = Scale.modelToCanvas(nextBeginAtom.a.pp, options);
         let sin = Math.sin(halfAngle);
         const minSin = 0.1;
-        if (Math.abs(sin) < minSin) sin = (sin * minSin) / Math.abs(sin);
+        if (Math.abs(sin) < minSin) {
+          sin = (sin * minSin) / Math.abs(sin);
+        }
         const offset = options.bondSpace / sin;
-        const qi = pi.addScaled(dir, -offset);
-        pathStr += k === 0 ? 'M' : 'L';
-        pathStr += toFixed(qi.x) + ',' + toFixed(qi.y);
+        const innerPosition = atomPosition.addScaled(direction, -offset);
+        pathString += index === 0 ? 'M' : 'L';
+        pathString += toFixed(innerPosition.x) + ',' + toFixed(innerPosition.y);
       }
-      pathStr += 'Z';
-      path = paper.path(pathStr).attr({
+      pathString += 'Z';
+      path = paper.path(pathString).attr({
         stroke: '#000',
         'stroke-width': options.lineattr['stroke-width'],
         'stroke-dasharray': '- ',
@@ -153,9 +190,9 @@ class ReLoop extends ReObject {
 
   isValid(struct: Struct, rlid: number): boolean {
     const { halfBonds } = struct;
-    return this.loop.hbs.every((hbid) => {
-      const hb = halfBonds.get(hbid);
-      return hb !== undefined && hb.loop === rlid;
+    return this.loop.hbs.every((halfBondId) => {
+      const halfBond = halfBonds.get(halfBondId);
+      return halfBond !== undefined && halfBond.loop === rlid;
     });
   }
 }

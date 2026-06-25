@@ -649,7 +649,7 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // Step 4: Select type Nucleotide Preset
     await LeftToolbar(page).createMonomer();
-    await shiftCanvas(page, -205, 0);
+    await shiftCanvas(page, -55, 0);
 
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);

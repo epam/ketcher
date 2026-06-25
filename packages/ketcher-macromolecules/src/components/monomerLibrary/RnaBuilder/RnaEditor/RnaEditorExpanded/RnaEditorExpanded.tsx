@@ -522,7 +522,8 @@ export const RnaEditorExpanded = ({
   };
 
   const onSave = () => {
-    if (!newPreset?.name) {
+    const presetName = newPreset?.name;
+    if (!presetName) {
       return;
     }
 
@@ -541,13 +542,13 @@ export const RnaEditorExpanded = ({
     };
 
     const presetWithSameName = presets.find(
-      (preset) => preset.name === presetToSave.name,
+      (preset) => preset.name === presetName,
     );
     if (
       presetWithSameName &&
       activePreset.nameInList !== presetWithSameName.name
     ) {
-      dispatch(setUniqueNameError(presetToSave.name!));
+      dispatch(setUniqueNameError(presetName));
       return;
     }
     dispatch(savePreset(presetToSave));
@@ -556,7 +557,7 @@ export const RnaEditorExpanded = ({
       editor?.events.selectPreset.dispatch(presetToSave);
     }
     setTimeout(() => {
-      scrollToSelectedPreset(presetToSave.name);
+      scrollToSelectedPreset(presetName);
     }, 0);
     resetRnaBuilder(dispatch);
   };

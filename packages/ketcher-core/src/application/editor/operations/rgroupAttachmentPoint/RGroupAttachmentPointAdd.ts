@@ -21,7 +21,6 @@ const INITIAL_DATA: Data = {
 
 class RGroupAttachmentPointAdd extends BaseOperation {
   readonly data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(data: Data = INITIAL_DATA) {
     super(

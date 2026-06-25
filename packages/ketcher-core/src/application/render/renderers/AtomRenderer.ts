@@ -287,6 +287,13 @@ export class AtomRenderer extends BaseRenderer {
       !hasExplicitValence &&
       !hasExplicitIsotope
     ) {
+      // Show carbon label when bonds are collinear (180 degree angle),
+      if (atomNeighborsHalfEdges?.length === 2) {
+        const [hb1, hb2] = atomNeighborsHalfEdges;
+        if (Math.abs(Vec2.cross(hb1.direction, hb2.direction)) < 0.2) {
+          return true;
+        }
+      }
       return false;
     }
 

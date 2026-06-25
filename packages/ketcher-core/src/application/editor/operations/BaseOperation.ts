@@ -19,6 +19,7 @@ import { StereoLabelStyleType } from '../../render/restruct/generalEnumTypes';
 import type ReStruct from '../../render/restruct/restruct';
 
 import type { OperationType } from './OperationType';
+import { KetcherLogger } from 'utilities';
 
 type ValueOf<TObject extends object> = Readonly<TObject[keyof TObject]>;
 type OperationType = ValueOf<typeof OperationType>;
@@ -30,6 +31,8 @@ class BaseOperation {
   priority: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- operation payload shape varies by operation type
   data: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-use-before-define -- inverse constructor args vary by operation
+  static InverseConstructor: new (...args: any[]) => BaseOperation;
 
   constructor(type: OperationType, priority = 0) {
     this.type = type;
@@ -51,7 +54,15 @@ class BaseOperation {
   }
 
   invert(): BaseOperation {
-    throw new Error('Operation.invert() is not implemented');
+    const InverseConstructor = (this.constructor as typeof BaseOperation)
+      .InverseConstructor;
+    if (!InverseConstructor) {
+      KetcherLogger.error('Operation.invert() is not implemented');
+      return this;
+    }
+    const inverted = new InverseConstructor();
+    inverted.data = this.data;
+    return inverted;
   }
 
   isDummy(_restruct: ReStruct): boolean {

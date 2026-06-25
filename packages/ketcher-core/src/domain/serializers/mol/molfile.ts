@@ -19,13 +19,14 @@ import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Vec2 } from 'domain/entities/vec2';
 
 import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
-import { KetcherLogger, geometricCenter } from 'utilities';
+import { KetcherLogger } from 'utilities';
+import { geometricCenter } from 'domain/entities/geometry';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 type NumberTuple = [number, number];

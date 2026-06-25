@@ -2,7 +2,7 @@ import { Atom, SGroup, Struct, Vec2 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { geometricCenter } from 'utilities';
+import { geometricCenter } from 'domain/entities/geometry';
 
 const PRECISION = 4;
 

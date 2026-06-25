@@ -28,7 +28,7 @@ import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
-import { geometricCenter } from 'utilities';
+import { geometricCenter } from 'domain/entities/geometry';
 
 export enum SUPERATOM_CLASS {
   SUGAR = 'SUGAR',
@@ -360,7 +360,7 @@ export class SGroup {
     }
 
     const atom = struct.atoms.get(atomId);
-    assert(atom !== null);
+    assert(atom);
     return { atomId, position: atom.pp };
   }
 

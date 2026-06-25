@@ -402,45 +402,41 @@ test.describe('Mark as... related cases: ', () => {
     await dialog.discard();
   });
 
-  test.fail(
-    'Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection',
-    async () => {
-      // Works wrong because of https://github.com/epam/ketcher/issues/9121
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/10006
-       * Description: Verify that dedicated Attributes panel buttons are disabled
-       * when selection is non-continuous
-       *
-       * Scenario:
-       * 1. Open Monomer Creation Wizard with 'Nucleotide (preset)' type
-       * 2. Select non-continuous fragments on canvas
-       * 3. Check Attributes panel controls/buttons for component assignment
-       * 4. Expected result: Dedicated buttons are disabled for non-continuous selection
-       *
-       * Version 3.12
-       */
-      await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
-      await LeftToolbar(page).createMonomer();
-      await shiftCanvas(page, -150, 50);
-      await dialog.selectType(MonomerType.NucleotidePreset);
+  test('Case 10 - Verify dedicated Attributes panel button is disabled for non-continuous selection', async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/10006
+     * Description: Verify that dedicated Attributes panel buttons are disabled
+     * when selection is non-continuous
+     *
+     * Scenario:
+     * 1. Open Monomer Creation Wizard with 'Nucleotide (preset)' type
+     * 2. Select non-continuous fragments on canvas
+     * 3. Check Attributes panel controls/buttons for component assignment
+     * 4. Expected result: Dedicated buttons are disabled for non-continuous selection
+     *
+     * Version 3.12
+     */
+    await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
+    await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -150, 50);
+    await dialog.selectType(MonomerType.NucleotidePreset);
 
-      // Select non-continuous atoms
-      await selectAtomAndBonds(page, { atomIds: [0, 3], bondIds: [] });
+    // Select non-continuous atoms
+    await selectAtomAndBonds(page, { atomIds: [0, 3], bondIds: [] });
 
-      // Look for dedicated Attributes panel buttons
-      const setAsBaseButton =
-        dialog.nucleotidePresetSection.baseTab.maskAsBaseButton;
+    // Look for dedicated Attributes panel buttons
+    const setAsBaseButton =
+      dialog.nucleotidePresetSection.baseTab.maskAsBaseButton;
 
-      // If the button exists, verify it's disabled
-      await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Base);
-      expect(await setAsBaseButton.isEnabled()).toBeFalsy();
+    // If the button exists, verify it's disabled
+    await dialog.nucleotidePresetSection.openTab(NucleotidePresetTab.Base);
+    expect(await setAsBaseButton.isEnabled()).toBeFalsy();
 
-      // Take screenshot of current state
-      await takeElementScreenshot(page, dialog.window);
+    // Take screenshot of current state
+    await takeElementScreenshot(page, dialog.window);
 
-      await dialog.discard();
-    },
-  );
+    await dialog.discard();
+  });
 
   test('Case 11 - Verify multiple components can be defined sequentially using "Mark as a..." on different selections', async () => {
     /*

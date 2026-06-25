@@ -13,7 +13,6 @@ const INITIAL_DATA = {
 
 class RGroupAttachmentPointRemove extends BaseOperation {
   readonly data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(attachmentPointId = INITIAL_DATA.attachmentPointId) {
     super(
@@ -41,12 +40,6 @@ class RGroupAttachmentPointRemove extends BaseOperation {
     restruct.rgroupAttachmentPoints.delete(attachmentPointId);
 
     struct.rgroupAttachmentPoints.delete(attachmentPointId);
-  }
-
-  invert() {
-    const inverted = new RGroupAttachmentPointRemove.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

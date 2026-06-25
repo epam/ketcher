@@ -1,7 +1,7 @@
 import type { BaseRenderer, Ketcher } from 'ketcher-core';
 
 declare global {
-  var global: typeof globalThis;
+  let global: typeof globalThis;
 
   export interface Window {
     ketcher?: Ketcher;

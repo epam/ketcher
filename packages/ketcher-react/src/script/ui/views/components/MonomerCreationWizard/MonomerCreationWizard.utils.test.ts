@@ -95,11 +95,11 @@ describe('getEditAllInstancesInitialValues', () => {
 
     expect(values).toEqual({
       type: KetMonomerClass.AminoAcid,
-      symbol: 'C',
-      name: 'Cysteine',
+      symbol: 'C_Copy',
+      name: 'Cysteine_Copy',
       naturalAnalogue: 'C',
-      aliasHELM: 'C',
-      aliasBILN: 'C',
+      aliasHELM: 'C_Copy',
+      aliasBILN: 'C_Copy',
       editMode: 'all',
       originalType: KetMonomerClass.AminoAcid,
       originalSymbol: 'C',

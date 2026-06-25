@@ -19,7 +19,13 @@ import {
   getDefaultOptions,
   validation,
 } from '../../data/schema/options-schema';
-import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
+import {
+  KETCHER_SAVED_OPTIONS_KEY,
+  KetcherLogger,
+  ketcherProvider,
+  normalizeSettingsForCore,
+  normalizeSettingsForForm,
+} from 'ketcher-core';
 
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
@@ -125,15 +131,73 @@ function getSerilizedServerOptions(options) {
   return newOptions;
 }
 
+export function appUpdate(data) {
+  return (dispatch) => {
+    dispatch({ type: 'APP_OPTIONS', data });
+    dispatch({ type: 'UPDATE' });
+  };
+}
+
 /* SETTINGS */
-export function saveSettings(newSettings) {
-  storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
-  reinitializeTemplateLibrary();
-  initOptionsState.getSettings();
+export function saveSettings(newSettings, ketcherId) {
+  return async (dispatch) => {
+    // Try to update via ketcher-core settings service if available
+    // Use window.ketcher since Redux state doesn't store the Ketcher instance
+    const settingsService =
+      ketcherProvider.getKetcher(ketcherId)?.settingsService;
+
+    if (settingsService) {
+      try {
+        // Transform settings to match SettingsService schema
+        const transformedSettings = normalizeSettingsForCore(newSettings);
+
+        // Direct update - both Core and Redux use flat format now
+        await settingsService.updateSettings(transformedSettings);
+        // Core service handles localStorage and emits events
+        // The event will trigger syncSettingsFromCore via useSettings hook
+      } catch (error) {
+        KetcherLogger.error(
+          'Failed to update settings via core service:',
+          error,
+        );
+        // Fall back to direct localStorage write
+        storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
+      }
+    } else {
+      // No core service available, use legacy localStorage
+      storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
+    }
+
+    // Reinitialize template library and update init state
+    reinitializeTemplateLibrary();
+    initOptionsState.getSettings();
+
+    // Dispatch Redux action for backward compatibility
+    dispatch({
+      type: 'SAVE_SETTINGS',
+      data: newSettings,
+    });
+  };
+}
+
+/**
+ * Sync settings from ketcher-core SettingsService to Redux
+ * Used for backward compatibility - Redux becomes a passive consumer
+ * @param {Settings} coreSettings - Settings from ketcher-core in flat format
+ */
+export function syncSettingsFromCore(coreSettings) {
+  // Transform from SettingsService format to Redux format
+  const normalizedSettings = normalizeSettingsForForm(coreSettings, {
+    removeCoreOnlyFields: true,
+  });
+  const reduxSettings = pick(
+    Object.keys(getDefaultOptions()),
+    normalizedSettings,
+  );
 
   return {
-    type: 'SAVE_SETTINGS',
-    data: newSettings,
+    type: 'SYNC_SETTINGS_FROM_CORE',
+    data: reduxSettings,
   };
 }
 
@@ -199,6 +263,10 @@ function optionsReducer(state = {}, action) {
     return { ...state, app: { ...state.app, ...data } };
 
   if (type === 'SAVE_SETTINGS') {
+    return { ...state, settings: { ...state.settings, ...data } };
+  }
+
+  if (type === 'SYNC_SETTINGS_FROM_CORE') {
     return { ...state, settings: { ...state.settings, ...data } };
   }
 

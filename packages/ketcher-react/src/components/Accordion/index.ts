@@ -14,3 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 export { Accordion } from './Accordion';
+export type { IAccordionProps } from './types';

@@ -28,4 +28,8 @@ export class ImageMove extends BaseOperation {
   invert(): BaseOperation {
     return new ImageMove(this.id, this.offset.negated());
   }
+
+  isDummy() {
+    return this.offset.x === 0 && this.offset.y === 0;
+  }
 }

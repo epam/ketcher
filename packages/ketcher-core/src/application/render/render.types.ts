@@ -1,6 +1,9 @@
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import type { Vec2 } from 'domain/entities/vec2';
 import type { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
+import type { UsageInMacromolecule } from './render.constants';
+
+export { UsageInMacromolecule } from './render.constants';
 
 export type RenderOptionStyles = Record<string, string | number>;
 
@@ -9,12 +12,6 @@ export enum MeasurementUnits {
   Cm = 'cm',
   Pt = 'pt',
   Inch = 'inch',
-}
-
-export enum UsageInMacromolecule {
-  MonomerConnectionsModal,
-  MonomerPreview,
-  BondPreview,
 }
 
 export type RenderOptions = {

@@ -24,11 +24,8 @@ import assert from 'assert';
 import { LayerMap } from './restruct/generalEnumTypes';
 import type ReStruct from './restruct/restruct';
 import type Visel from './restruct/visel';
-import {
-  type RelativeBox,
-  type RenderOptions,
-  UsageInMacromolecule,
-} from './render.types';
+import type { RelativeBox, RenderOptions } from './render.types';
+import { UsageInMacromolecule } from './render.constants';
 import { toFixed } from 'utilities';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {

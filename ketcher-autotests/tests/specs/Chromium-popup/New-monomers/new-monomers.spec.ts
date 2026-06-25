@@ -478,7 +478,6 @@ test(`13. Verify that creating a duplicate of a new item is not allowed for CHEM
   await createMonomerDialog.setCode(Chem.SCY5.alias);
   await createMonomerDialog.submit();
   expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
-  await symbolExistsMessageBanner.ok();
 
   await createMonomerDialog.discard();
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -515,7 +514,6 @@ test(`14. Verify that creating a duplicate of a new item is not allowed for newl
     await createMonomerDialog.setCode(phosphate.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
-    await symbolExistsMessageBanner.ok();
   }
 
   await createMonomerDialog.discard();
@@ -552,7 +550,6 @@ test(`15. Verify that creating a duplicate of a new item is not allowed for newl
     await createMonomerDialog.setCode(nucleotide.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
-    await symbolExistsMessageBanner.ok();
   }
 
   await createMonomerDialog.discard();
@@ -589,7 +586,6 @@ test(`16. Verify that creating a duplicate of a new item is not allowed for newl
     await createMonomerDialog.setCode(chem.alias);
     await createMonomerDialog.submit();
     expect(await symbolExistsMessageBanner.isVisible()).toBeTruthy();
-    await symbolExistsMessageBanner.ok();
   }
 
   await createMonomerDialog.discard();

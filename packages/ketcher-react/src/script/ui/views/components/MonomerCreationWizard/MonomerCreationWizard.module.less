@@ -41,6 +41,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 0;
 }
 
 .wizardTitle {
@@ -54,6 +55,10 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+  pointer-events: auto;
 }
 
 .rightColumn {
@@ -301,4 +306,3 @@
     margin-bottom: 5px;
   }
 }
-

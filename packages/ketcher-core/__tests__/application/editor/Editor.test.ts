@@ -1,4 +1,12 @@
-import { CoreEditor, EditorClassName, ToolName } from 'application/editor';
+import {
+  CoreEditor,
+  EditorClassName,
+  MonomerLibraryConvertError,
+  MonomerLibraryUpdateError,
+  ToolName,
+} from 'application/editor';
+import { ketcherProvider } from 'application/ketcherProvider';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import {
   createPolymerEditorCanvas,
@@ -13,7 +21,146 @@ import {
   MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE,
 } from 'utilities';
 
+type RescaleStructForModeTransitionContext = {
+  micromoleculesEditor: {
+    render: {
+      options: {
+        microModeScale: number;
+      };
+    };
+  };
+};
+
+type RescaleStructForModeTransitionStruct = {
+  scale: jest.Mock;
+  scaleMonomerMicromoleculeSgroups: jest.Mock;
+};
+
+type RescaleStructForModeTransitionMethod = (
+  this: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => number;
+
+const callRescaleStructForModeTransition = (
+  editor: RescaleStructForModeTransitionContext,
+  struct: RescaleStructForModeTransitionStruct,
+  direction: 'microToMacro' | 'macroToMicro',
+) => {
+  const { rescaleStructForModeTransition } =
+    CoreEditor.prototype as unknown as {
+      rescaleStructForModeTransition: RescaleStructForModeTransitionMethod;
+    };
+
+  return rescaleStructForModeTransition.call(editor, struct, direction);
+};
+
 describe('CoreEditor', () => {
+  it('should create MonomerLibraryConvertError with a cause', () => {
+    const cause = new Error('convert failed');
+    const error = new MonomerLibraryConvertError(
+      'Monomer item could not be loaded because of an error: convert failed',
+      cause,
+    );
+
+    expect(error).toBeInstanceOf(Error);
+    expect(error).toBeInstanceOf(MonomerLibraryConvertError);
+    expect(error.name).toBe('MonomerLibraryConvertError');
+    expect(error.cause).toBe(cause);
+  });
+
+  describe('rescaleStructForModeTransition', () => {
+    const originalSettings = { ...provideEditorSettings() };
+
+    afterEach(() => {
+      Object.assign(provideEditorSettings(), originalSettings);
+    });
+
+    it('should be a no-op when micro and macro scales are equal', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 40;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
+
+      expect(scaleFactor).toBe(1);
+      expect(struct.scale).not.toHaveBeenCalled();
+      expect(struct.scaleMonomerMicromoleculeSgroups).not.toHaveBeenCalled();
+    });
+
+    it('should convert macro coordinates into micro coordinates using source-to-target scales', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 20;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'macroToMicro',
+      );
+
+      expect(scaleFactor).toBe(0.5);
+      expect(struct.scale).toHaveBeenCalledWith(0.5);
+      expect(struct.scaleMonomerMicromoleculeSgroups).not.toHaveBeenCalled();
+    });
+
+    it('should convert micro coordinates into macro coordinates and rescale monomer sgroups', () => {
+      const struct = {
+        scale: jest.fn(),
+        scaleMonomerMicromoleculeSgroups: jest.fn(),
+      };
+      const editor = {
+        micromoleculesEditor: {
+          render: {
+            options: {
+              microModeScale: 40,
+            },
+          },
+        },
+      };
+
+      provideEditorSettings().macroModeScale = 20;
+
+      const scaleFactor = callRescaleStructForModeTransition(
+        editor,
+        struct,
+        'microToMacro',
+      );
+
+      expect(scaleFactor).toBe(2);
+      expect(struct.scale).toHaveBeenCalledWith(2);
+      expect(struct.scaleMonomerMicromoleculeSgroups).toHaveBeenCalledWith(2);
+    });
+  });
+
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
@@ -84,9 +231,26 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithoutBase));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'CHEM1',
+          reason: expect.stringContaining(
+            'Base IDT alias is required when idtAliases is defined',
+          ),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Base IDT alias is required when idtAliases is defined',
         ),
@@ -228,10 +392,97 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithAliasCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
       );
+    });
+
+    it('should reject duplicate HELM aliases within a single update payload', () => {
+      const payloadWithDuplicateAliases = {
+        root: {
+          templates: [
+            { $ref: 'monomerTemplate-PHOS1' },
+            { $ref: 'monomerTemplate-PHOS2' },
+            { $ref: 'monomerTemplate-PHOS3' },
+          ],
+        },
+        'monomerTemplate-PHOS1': {
+          type: 'monomerTemplate',
+          id: 'PHOS1',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 1',
+          name: 'PHOS1',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS1',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS1',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+        'monomerTemplate-PHOS2': {
+          type: 'monomerTemplate',
+          id: 'PHOS2',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 2',
+          name: 'PHOS2',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS2',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS2',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+        'monomerTemplate-PHOS3': {
+          type: 'monomerTemplate',
+          id: 'PHOS3',
+          class: 'Phosphate',
+          classHELM: 'Phosphate',
+          fullName: 'Test Phosphate 3',
+          name: 'PHOS3',
+          naturalAnalogShort: 'P',
+          props: {
+            MonomerName: 'PHOS3',
+            MonomerClass: 'Phosphate',
+            Name: 'PHOS3',
+            MonomerNaturalAnalogCode: 'P',
+          },
+          aliasHELM: 'SharedPhosphateAlias',
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(
+          JSON.stringify(payloadWithDuplicateAliases),
+        );
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(true);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'PHOS2',
+          reason: expect.stringContaining('Alias collision detected'),
+        },
+        {
+          name: 'PHOS3',
+          reason: expect.stringContaining('Alias collision detected'),
+        },
+      ]);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
     it('should skip monomer with invalid HELM alias and still load valid aliases with brackets and dots', () => {
@@ -281,12 +532,25 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomersWithMixedAliases));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(true);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'SUGAR3',
+          reason: expect.stringContaining('Invalid HELM alias value'),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Load of "SUGAR3" monomer has failed, monomer definition contains invalid HELM alias value.',
-        ),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Invalid HELM alias value'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -392,15 +656,18 @@ describe('CoreEditor', () => {
       };
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBilnAlias));
-      editor.updateMonomersLibrary(
-        JSON.stringify(monomerWithBilnAliasCollision),
-      );
+
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomerWithBilnAliasCollision),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected'),
-      );
-      expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('BILN alias "BilnAlias1"'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining(
+          'Alias collision detected (BILN alias "BilnAlias1")',
+        ),
       );
     });
 
@@ -462,8 +729,11 @@ describe('CoreEditor', () => {
 
       editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtAlias));
 
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision));
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithIdtCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining('Alias collision detected'),
       );
     });
@@ -502,6 +772,69 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+    });
+
+    it('should throw MonomerLibraryUpdateError on BILN alias collision across peptide and CHEM monomers', () => {
+      const peptideWithBilnAlias = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-PEPTIDE_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-PEPTIDE_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'PEPTIDE_BILN_1',
+          class: 'AminoAcid',
+          classHELM: 'PEPTIDE',
+          fullName: 'Test Peptide BILN 1',
+          name: 'PEPTIDE_BILN_1',
+          naturalAnalogShort: 'A',
+          props: {
+            MonomerName: 'PEPTIDE_BILN_1',
+            MonomerClass: 'AminoAcid',
+            Name: 'PEPTIDE_BILN_1',
+            MonomerNaturalAnalogCode: 'A',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+      const chemWithBilnCollision = {
+        root: {
+          templates: [
+            {
+              $ref: 'monomerTemplate-CHEM_BILN_1',
+            },
+          ],
+        },
+        'monomerTemplate-CHEM_BILN_1': {
+          type: 'monomerTemplate',
+          id: 'CHEM_BILN_1',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'Test Chem BILN 1',
+          name: 'CHEM_BILN_1',
+          naturalAnalogShort: 'X',
+          props: {
+            MonomerName: 'CHEM_BILN_1',
+            MonomerClass: 'CHEM',
+            Name: 'CHEM_BILN_1',
+            MonomerNaturalAnalogCode: 'X',
+          },
+          aliasBILN: 'BilnAlias1',
+        },
+      };
+
+      editor.updateMonomersLibrary(JSON.stringify(peptideWithBilnAlias));
+
+      expect(() =>
+        editor.updateMonomersLibrary(JSON.stringify(chemWithBilnCollision)),
+      ).toThrow(MonomerLibraryUpdateError);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('BILN alias "BilnAlias1"'),
+      );
     });
 
     it('should accept monomer with IDT alias of 10 inner characters wrapped in slashes', () => {
@@ -561,11 +894,26 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(unnamedPreset));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
+
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
+      expect(thrownError?.skippedItems).toEqual([
+        {
+          name: 'monomerGroupTemplate-',
+          reason: expect.stringContaining('cannot be empty or whitespace'),
+        },
+      ]);
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
-          'Monomer group template name cannot be empty or whitespace for template monomerGroupTemplate-',
+          'Monomer group template name cannot be empty or whitespace',
         ),
       );
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
@@ -634,6 +982,242 @@ describe('CoreEditor', () => {
       expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
         initialTemplatesCount + 1,
       );
+    });
+
+    // In the KET format, modificationTypes is defined at the template level.
+    // During parsing (via templateToMonomerProps) it gets moved to
+    // props.modificationTypes, which the validation checks (#8133).
+    it('should reject monomer with a disallowed modificationType (Unknown base)', () => {
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-XUB' }],
+        },
+        'monomerTemplate-XUB': {
+          type: 'monomerTemplate',
+          id: 'XUB',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'XUB',
+          name: 'XUB',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown base'],
+          props: {
+            MonomerName: 'XUB',
+            MonomerClass: 'CHEM',
+            Name: 'XUB',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      // The reject branch must not leak the rejected template into the parsed
+      // JSON side-table either.
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should reject monomer with a disallowed modificationType (Micromolecule)', () => {
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-MCM88' }],
+        },
+        'monomerTemplate-MCM88': {
+          type: 'monomerTemplate',
+          id: 'MCM88',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'MCM88',
+          name: 'MCM88',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Micromolecule'],
+          props: {
+            MonomerName: 'MCM88',
+            MonomerClass: 'CHEM',
+            Name: 'MCM88',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialTemplatesCount =
+        editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithDisallowedType));
+
+      expect(errorSpy).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Offending modification type(s): Micromolecule',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
+      // The reject branch must not leak the rejected template into the parsed
+      // JSON side-table either.
+      expect(editor.monomersLibraryParsedJson?.root.templates.length).toBe(
+        initialTemplatesCount,
+      );
+    });
+
+    it('should skip a disallowed monomer but still load a valid one from the same chunk', () => {
+      const mixedMonomers = {
+        root: {
+          templates: [
+            { $ref: 'monomerTemplate-BAD' },
+            { $ref: 'monomerTemplate-GOOD' },
+          ],
+        },
+        'monomerTemplate-BAD': {
+          type: 'monomerTemplate',
+          id: 'BAD',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'BAD',
+          name: 'BAD',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown monomer'],
+          props: {
+            MonomerName: 'BAD',
+            MonomerClass: 'CHEM',
+            Name: 'BAD',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+        'monomerTemplate-GOOD': {
+          type: 'monomerTemplate',
+          id: 'GOOD',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'GOOD',
+          name: 'GOOD',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Natural amino acid'],
+          props: {
+            MonomerName: 'GOOD',
+            MonomerClass: 'CHEM',
+            Name: 'GOOD',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(mixedMonomers));
+
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(
+        editor.monomersLibrary.some(
+          (monomer) => monomer.props?.MonomerName === 'GOOD',
+        ),
+      ).toBe(true);
+      expect(
+        editor.monomersLibrary.some(
+          (monomer) => monomer.props?.MonomerName === 'BAD',
+        ),
+      ).toBe(false);
+    });
+
+    it('should accept a monomer with an allowed modificationType', () => {
+      const monomerWithAllowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-OK' }],
+        },
+        'monomerTemplate-OK': {
+          type: 'monomerTemplate',
+          id: 'OK',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'OK',
+          name: 'OK',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Natural amino acid'],
+          props: {
+            MonomerName: 'OK',
+            MonomerClass: 'CHEM',
+            Name: 'OK',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      const initialLibrarySize = editor.monomersLibrary.length;
+      editor.updateMonomersLibrary(JSON.stringify(monomerWithAllowedType));
+
+      expect(errorSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining(
+          'modification type cannot be added to the library',
+        ),
+      );
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+    });
+
+    it('enforces the modificationType validation through the replace path (initializeMonomersLibraryFromKetcher)', async () => {
+      // There is no standalone `replaceMonomersLibrary` method: the replace
+      // entry point is the second argument of initializeMonomersLibraryFromKetcher,
+      // which clears the library and then delegates to updateMonomersLibrary
+      // (where the validation lives). This locks in that the replace path
+      // enforces the same modificationType validation as the update path.
+      const monomerWithDisallowedType = {
+        root: {
+          templates: [{ $ref: 'monomerTemplate-XUB' }],
+        },
+        'monomerTemplate-XUB': {
+          type: 'monomerTemplate',
+          id: 'XUB',
+          class: 'CHEM',
+          classHELM: 'CHEM',
+          fullName: 'XUB',
+          name: 'XUB',
+          naturalAnalogShort: 'X',
+          modificationTypes: ['Unknown base'],
+          props: {
+            MonomerName: 'XUB',
+            MonomerClass: 'CHEM',
+            Name: 'XUB',
+            MonomerNaturalAnalogCode: 'X',
+          },
+        },
+      };
+
+      // The replace path passes the data through
+      // ketcher.ensureMonomersLibraryDataInKetFormat; stub it to return the
+      // already-KET-format data unchanged.
+      const getKetcherSpy = jest
+        .spyOn(ketcherProvider, 'getKetcher')
+        .mockReturnValue({
+          ensureMonomersLibraryDataInKetFormat: async (data: string | JSON) =>
+            data,
+        } as unknown as ReturnType<typeof ketcherProvider.getKetcher>);
+
+      try {
+        await editor.initializeMonomersLibraryFromKetcher(
+          undefined,
+          JSON.stringify(monomerWithDisallowedType),
+        );
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          expect.stringContaining(
+            'Monomers with an unknown, ambiguous, or molecule modification type cannot be added to the library.',
+          ),
+        );
+        expect(
+          editor.monomersLibrary.some(
+            (monomer) => monomer.props?.MonomerName === 'XUB',
+          ),
+        ).toBe(false);
+      } finally {
+        getKetcherSpy.mockRestore();
+      }
     });
   });
 

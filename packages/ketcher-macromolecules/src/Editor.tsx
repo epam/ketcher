@@ -34,6 +34,7 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  DeepPartial,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -56,6 +57,7 @@ import {
   initKetcherId,
   setContextMenuActive,
   setEditorLineLength,
+  setMonomerLibraryLoadError,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -65,7 +67,6 @@ import {
 } from 'hooks';
 import { closeErrorTooltip, selectErrorTooltips } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
-import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
@@ -214,6 +215,15 @@ function Editor({
         monomersLibraryUpdate,
         monomersLibraryReplace,
         onInit,
+        onLibraryError: (err) => {
+          dispatch(
+            setMonomerLibraryLoadError(
+              err instanceof Error
+                ? err.message
+                : 'Failed to load monomers library',
+            ),
+          );
+        },
       }),
     );
 

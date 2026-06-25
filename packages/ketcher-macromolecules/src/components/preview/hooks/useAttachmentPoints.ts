@@ -22,11 +22,6 @@ type ReturnType = {
   connectedAttachmentPoints: string[];
 };
 
-const BACKBONE_ATTACHMENT_POINTS = [
-  AttachmentPointName.R1,
-  AttachmentPointName.R2,
-];
-
 export const useAttachmentPoints = ({
   monomerCaps,
   attachmentPointsToBonds,
@@ -42,10 +37,10 @@ export const useAttachmentPoints = ({
         return { preparedAttachmentPointsData, connectedAttachmentPoints };
       }
 
-      BACKBONE_ATTACHMENT_POINTS.filter(
-        (id) => id in attachmentPointsToBonds,
-      ).forEach((id) => {
-        const connected = Boolean(attachmentPointsToBonds[id]);
+      Object.keys(attachmentPointsToBonds).forEach((id) => {
+        const connected = Boolean(
+          attachmentPointsToBonds[id as AttachmentPointName],
+        );
 
         if (connected) {
           connectedAttachmentPoints.push(id);

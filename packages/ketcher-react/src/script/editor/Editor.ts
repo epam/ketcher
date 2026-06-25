@@ -1870,7 +1870,7 @@ class Editor implements KetcherEditor {
         { expanded: true },
         this.render.ctab.molecule.sgroups.newId(),
         sGroupAttachmentPoints,
-        monomer.position,
+        editAllInitialValues?.position ?? monomer.position,
         true,
         monomer.monomerItem.props.MonomerName,
         null,

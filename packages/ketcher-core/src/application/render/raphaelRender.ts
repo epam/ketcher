@@ -45,6 +45,7 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  position?: Vec2;
   editMode?: 'instance' | 'all';
   originalType?: KetMonomerClass;
   originalSymbol?: string;

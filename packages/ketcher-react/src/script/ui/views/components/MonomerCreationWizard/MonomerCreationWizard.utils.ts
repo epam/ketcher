@@ -5,6 +5,7 @@ import {
   type MonomerCreationInitialValues,
   KetMonomerClass,
   KetTemplateType,
+  Vec2,
 } from 'ketcher-core';
 
 const COPY_SUFFIX = '_Copy';
@@ -33,6 +34,9 @@ const getInitialValues = (
   const getValue = shouldAppendCopySuffix
     ? getCopiedValue
     : (value?: string) => value ?? '';
+  const position = monomer.position
+    ? { position: new Vec2(monomer.position) }
+    : {};
 
   return {
     type,
@@ -43,6 +47,7 @@ const getInitialValues = (
     aliasBILN: getValue(props.aliasBILN),
     originalType: type,
     originalSymbol: symbol,
+    ...position,
   };
 };
 

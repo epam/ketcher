@@ -188,8 +188,8 @@ class ReSGroup extends ReObject {
     let height = 0;
     const sGroup = this.item;
     if (sGroup) {
-      const { atomId } = sGroup.getContractedPosition(render.ctab.molecule);
       if (sGroup?.isContracted()) {
+        const { atomId } = sGroup.getContractedPosition(render.ctab.molecule);
         const reSGroupAtom = render.ctab.atoms.get(atomId);
         const sGroupTextBoundingBox =
           reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox;

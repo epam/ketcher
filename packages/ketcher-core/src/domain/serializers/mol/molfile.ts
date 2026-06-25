@@ -25,7 +25,7 @@ import { Elements } from 'domain/constants';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, geometricCenter } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 type NumberTuple = [number, number];
@@ -546,22 +546,26 @@ export class Molfile {
   }
 
   private centerMonomerMicromoleculeAtoms() {
-    if (!this.molecule) return;
+    if (!this.molecule) {
+      return;
+    }
     const mol = this.molecule;
     mol.sgroups.forEach((sgroup) => {
-      if (!(sgroup instanceof MonomerMicromolecule) || !sgroup.pp) return;
+      if (!(sgroup instanceof MonomerMicromolecule) || !sgroup.pp) {
+        return;
+      }
 
       const positions = sgroup.atoms
         .map((id: number) => mol.atoms.get(id)?.pp)
         .filter((pp): pp is Vec2 => pp != null);
-      if (!positions.length) return;
+      if (!positions.length) {
+        return;
+      }
 
-      const center = positions
-        .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
-        .scaled(1 / positions.length);
-
-      const offset = sgroup.pp.sub(center);
-      if (offset.x === 0 && offset.y === 0) return;
+      const offset = sgroup.pp.sub(geometricCenter(positions));
+      if (offset.x === 0 && offset.y === 0) {
+        return;
+      }
 
       sgroup.atoms.forEach((atomId: number) => {
         const atom = mol.atoms.get(atomId);

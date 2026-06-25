@@ -2,6 +2,7 @@ import { Atom, SGroup, Struct, Vec2 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { geometricCenter } from 'utilities';
 
 const PRECISION = 4;
 
@@ -42,15 +43,6 @@ function findSgroupByName(struct: Struct, name: string): SGroup | undefined {
   return found;
 }
 
-function sgroupGeometricCenter(sgroup: SGroup, struct: Struct): Vec2 {
-  const positions = sgroup.atoms
-    .map((id) => struct.atoms.get(id)?.pp)
-    .filter((pp): pp is Vec2 => pp != null);
-  return positions
-    .reduce((sum, pp) => sum.add(pp), new Vec2(0, 0))
-    .scaled(1 / positions.length);
-}
-
 function roundTrip(struct: Struct): Struct {
   const v2000 = new Molfile().saveMolecule(struct, true);
   return new Molfile().parseCTFile({ molfileLines: v2000.split('\n') });
@@ -74,7 +66,10 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     expect(sgroup).toBeDefined();
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const center = sgroupGeometricCenter(sgroup!, parsed);
+    const positions = sgroup!.atoms
+      .map((id) => parsed.atoms.get(id)?.pp)
+      .filter((pp): pp is Vec2 => pp != null);
+    const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
   });
@@ -97,7 +92,10 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     expect(sgroup).toBeDefined();
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const center = sgroupGeometricCenter(sgroup!, parsed);
+    const positions = sgroup!.atoms
+      .map((id) => parsed.atoms.get(id)?.pp)
+      .filter((pp): pp is Vec2 => pp != null);
+    const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
   });

@@ -14,8 +14,8 @@ const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#000';
 const FONT_FAMILY = 'Arial';
-const LABEL_FONT_SIZE_FACTOR = 1.9;
-const LABEL_FONT_SIZE_DIVISOR = 6;
+const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
+const FONT_SIZE_SCALE_BASE = 6;
 
 interface BracketParams {
   center: Vec2;
@@ -180,10 +180,7 @@ export class SGroupRenderer extends BaseRenderer {
     const brackets = this.getBracketParameters(bracketBox);
     const rightBracketIndex = brackets.reduce(
       (rightIndex, bracket, index) =>
-        rightIndex < 0 ||
-        brackets[rightIndex].angleDirection.x < bracket.angleDirection.x ||
-        (brackets[rightIndex].angleDirection.x === bracket.angleDirection.x &&
-          brackets[rightIndex].angleDirection.y > bracket.angleDirection.y)
+        this.isMoreRightwardBracket(bracket, brackets[rightIndex])
           ? index
           : rightIndex,
       -1,
@@ -198,6 +195,18 @@ export class SGroupRenderer extends BaseRenderer {
     if (upperIndexText) {
       this.appendIndex(upperIndexText, rightBracket, false, indexAttribute);
     }
+  }
+
+  private isMoreRightwardBracket(
+    bracket: BracketParams,
+    rightBracket?: BracketParams,
+  ): boolean {
+    return (
+      !rightBracket ||
+      rightBracket.angleDirection.x < bracket.angleDirection.x ||
+      (rightBracket.angleDirection.x === bracket.angleDirection.x &&
+        rightBracket.angleDirection.y > bracket.angleDirection.y)
+    );
   }
 
   private getBracketParameters(bracketBox: Box2Abs): BracketParams[] {
@@ -332,8 +341,8 @@ export class SGroupRenderer extends BaseRenderer {
       .attr(
         'font-size',
         Math.ceil(
-          LABEL_FONT_SIZE_FACTOR *
-            (this.editorSettings.macroModeScale / LABEL_FONT_SIZE_DIVISOR),
+          FONT_SIZE_SCALE_MULTIPLIER *
+            (this.editorSettings.macroModeScale / FONT_SIZE_SCALE_BASE),
         ),
       )
       .attr('font-family', FONT_FAMILY)

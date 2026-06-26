@@ -34,8 +34,10 @@ export class SGroupDrawingEntity extends DrawingEntity {
       return monomer.position;
     }
 
+    const atomWeight = 1 / atoms.length;
+
     return atoms.reduce(
-      (center, position) => center.addScaled(position, 1 / atoms.length),
+      (center, position) => center.addScaled(position, atomWeight),
       new Vec2(),
     );
   }

@@ -528,22 +528,9 @@ export class Ketcher {
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
-
-      const format = identifyStructFormat(structStr);
-      const shouldLoadAsMacromolecule = format === SupportedFormat.idt;
-
-      if (shouldLoadAsMacromolecule && !window.isPolymerEditorTurnedOn) {
-        this.switchToMacromoleculesMode();
-      }
-
-      if (window.isPolymerEditorTurnedOn || shouldLoadAsMacromolecule) {
+      if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(
-          structStr,
-          this.structService,
-          false,
-          format,
-        );
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
 
         if (options?.needZoom !== false) {
           macromoleculesEditor?.zoomToStructuresIfNeeded();

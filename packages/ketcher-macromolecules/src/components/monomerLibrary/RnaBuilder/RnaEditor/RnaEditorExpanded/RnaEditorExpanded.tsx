@@ -52,6 +52,7 @@ import {
   setIsEditMode,
   selectPresetFullName,
   setUniqueNameError,
+  setInvalidPresetNameError,
   setSequenceSelection,
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
@@ -79,7 +80,10 @@ import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
-import { getPhosphatePositionAvailability } from 'helpers/rnaValidations';
+import {
+  getPhosphatePositionAvailability,
+  isValidPresetName,
+} from 'helpers/rnaValidations';
 import { Icon } from 'ketcher-react';
 import styles from './RnaEditorExpanded.module.less';
 
@@ -524,6 +528,10 @@ export const RnaEditorExpanded = ({
   const onSave = () => {
     const presetName = newPreset?.name;
     if (!presetName) {
+      return;
+    }
+    if (newPreset.editedName && !isValidPresetName(presetName)) {
+      dispatch(setInvalidPresetNameError(presetName));
       return;
     }
 

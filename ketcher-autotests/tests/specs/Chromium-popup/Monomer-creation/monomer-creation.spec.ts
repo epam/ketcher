@@ -455,6 +455,37 @@ test.fail(
   },
 );
 
+test(`5.1. Open and Save buttons are disabled in the monomer creation wizard`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/10196
+   * Description: The "Open..." and "Save as..." icons should be disabled in the
+   *              Creation Wizard mode. Otherwise loading a structure over the
+   *              wizard would cause errors.
+   *
+   * Case:
+   *      1. Open Molecules canvas
+   *      2. Load molecule on canvas
+   *      3. Select whole molecule and deselect an atom not needed for monomer
+   *      4. Press "Create monomer" button
+   *      5. Validate that the Open and Save buttons are disabled
+   */
+  const commonTopLeftToolbar = CommonTopLeftToolbar(page);
+  const leftToolbar = LeftToolbar(page);
+
+  await pasteFromClipboardAndOpenAsNewProject(page, 'CCC');
+  await deselectAtomAndBonds(page, ['0']);
+
+  await leftToolbar.createMonomer();
+  try {
+    await expect(commonTopLeftToolbar.openButton).toBeDisabled();
+    await expect(commonTopLeftToolbar.saveButton).toBeDisabled();
+  } finally {
+    await CreateMonomerDialog(page)
+      .discard()
+      .catch(() => {});
+  }
+});
+
 const eightAttachmentPointsMolecules: IMoleculesForMonomerCreation[] = [
   {
     testDescription:

@@ -58,17 +58,17 @@ import useSaltsAndSolvents from './useSaltsAndSolvets';
 import { Icon } from 'components';
 import clsx from 'clsx';
 
-// Memoized wrapper to prevent re-renders of collapsed template tables
+// Memoized wrapper to avoid re-rendering unchanged table content.
+// Keep callback props in the comparator to prevent stale closures.
 const MemoizedTemplateTable = memo(TemplateTable, (prevProps, nextProps) => {
-  // Only re-render if critical data changed; ignore function ref changes for onDelete/onAttach
-  // which are dispatched actions and can be treated as identity-stable conceptually
   return (
     prevProps.templates === nextProps.templates &&
     prevProps.selected === nextProps.selected &&
     prevProps.renderOptions === nextProps.renderOptions &&
-    prevProps.titleRows === nextProps.titleRows
-    // Note: onSelect, onDelete, onAttach are memoized callbacks, but if they change
-    // it's OK to skip re-render since templates list is what drives the visual output
+    prevProps.titleRows === nextProps.titleRows &&
+    prevProps.onSelect === nextProps.onSelect &&
+    prevProps.onDelete === nextProps.onDelete &&
+    prevProps.onAttach === nextProps.onAttach
   );
 });
 
@@ -268,13 +268,13 @@ const TemplateDialog: FC<Props> = (props) => {
     return sdfSerializer.serialize(serializerMapper[tab]);
   }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
 
-  // Memoize select callback to keep reference stable across renders
+  // Recreate selection handler only when upstream callbacks change.
   const select = useCallback(
     (tmpl: Template): void => {
       onChangeGroup(tmpl.props.group);
-      props.onSelect(tmpl);
+      onSelect(tmpl);
     },
-    [onChangeGroup, props],
+    [onChangeGroup, onSelect],
   );
 
   // Memoize group names to avoid Object.keys call on every render
@@ -282,6 +282,8 @@ const TemplateDialog: FC<Props> = (props) => {
     () => Object.keys(filteredTemplateLib),
     [filteredTemplateLib],
   );
+
+  const EMPTY_TEMPLATES: Template[] = [];
 
   return (
     <Dialog
@@ -375,7 +377,7 @@ const TemplateDialog: FC<Props> = (props) => {
                         templates={
                           shouldGroupBeRended
                             ? filteredTemplateLib[groupName]
-                            : []
+                            : EMPTY_TEMPLATES
                         }
                         onSelect={select}
                         selected={props.selected}

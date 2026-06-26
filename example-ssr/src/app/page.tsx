@@ -1,3 +1,5 @@
+import 'ketcher-react/dist/index.css';
+
 import { EditorComponent } from './editor';
 
 export default function Home() {

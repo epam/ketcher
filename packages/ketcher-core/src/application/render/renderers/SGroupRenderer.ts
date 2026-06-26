@@ -13,6 +13,7 @@ const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#000';
+const DATA_SGROUP_BACKGROUND = '#fff';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
 const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
@@ -179,17 +180,16 @@ export class SGroupRenderer extends BaseRenderer {
     { lowerIndexText, upperIndexText, indexAttribute }: DrawBracketsOptions,
   ): void {
     const brackets = this.getBracketParameters(bracketBox);
-    const rightBracketIndex = brackets.reduce(
-      (rightIndex, bracket, index) =>
-        this.isMoreRightwardBracket(bracket, brackets[rightIndex])
-          ? index
-          : rightIndex,
-      -1,
+    const rightBracket = brackets.reduce(
+      (currentRightBracket, bracket) =>
+        this.isMoreRightwardBracket(bracket, currentRightBracket)
+          ? bracket
+          : currentRightBracket,
+      brackets[0],
     );
 
     brackets.forEach((bracket) => this.appendBracket(bracket));
 
-    const rightBracket = brackets[rightBracketIndex];
     if (lowerIndexText) {
       this.appendIndex(lowerIndexText, rightBracket, true, indexAttribute);
     }
@@ -314,7 +314,7 @@ export class SGroupRenderer extends BaseRenderer {
 
     const valueBackgroundColor = this.sgroup.selected
       ? SELECTION_COLOR
-      : '#fff';
+      : DATA_SGROUP_BACKGROUND;
 
     valueGroup
       .insert('rect', 'text')

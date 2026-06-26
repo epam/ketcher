@@ -54,6 +54,26 @@ function createStructWithSGroup(type = SGroup.TYPES.MUL) {
 }
 
 describe('Drawing Entities Manager', () => {
+  const originalGetBBox = SVGElement.prototype.getBBox;
+
+  beforeEach(() => {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+    });
+  });
+
+  afterEach(() => {
+    if (originalGetBBox) {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: originalGetBBox,
+      });
+    } else {
+      Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+    }
+  });
+
   it('should create monomer', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const command = drawingEntitiesManager.addMonomer(
@@ -263,11 +283,6 @@ describe('Drawing Entities Manager', () => {
       [...editor.drawingEntitiesManager.sgroups.values()][0].sgroup.type,
     ).toBe(SGroup.TYPES.MUL);
 
-    Object.defineProperty(SVGElement.prototype, 'getBBox', {
-      configurable: true,
-      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
-    });
-
     editor.renderersContainer.update(modelChanges);
 
     expect(editor.renderersContainer.sgroups.size).toEqual(1);
@@ -287,11 +302,6 @@ describe('Drawing Entities Manager', () => {
         struct,
         editor.drawingEntitiesManager,
       );
-
-    Object.defineProperty(SVGElement.prototype, 'getBBox', {
-      configurable: true,
-      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
-    });
 
     editor.renderersContainer.update(modelChanges);
 

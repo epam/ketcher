@@ -30,6 +30,7 @@ import {
 import {
   AttachmentPointName,
   getRnaPresetPhosphatePosition,
+  IRnaPreset,
   KetConnectionType,
   MonomerItemType,
 } from 'ketcher-core';
@@ -126,7 +127,11 @@ describe('getPreset function', () => {
       true,
     )[0];
 
-    expect(getRnaPresetPhosphatePosition(leftPreset)).toBe('left');
+    expect(
+      getRnaPresetPhosphatePosition(
+        leftPreset as Pick<IRnaPreset, 'sugar' | 'phosphate' | 'connections'>,
+      ),
+    ).toBe('left');
     expect(leftPreset.phosphatePosition).toBe('left');
   });
 });

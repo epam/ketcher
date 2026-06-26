@@ -45,6 +45,7 @@ import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 import { onAction } from 'src/script/ui/state/shared';
 
 interface SettingsProps extends BaseProps {
+  ketcherId: string;
   initState: any;
   appOpts: {
     version: string;
@@ -63,6 +64,9 @@ interface SettingsCallProps extends BaseCallProps {
   onReset: () => void;
   onACSStyle: (result) => void;
 }
+
+type SettingsOwnProps = Pick<SettingsProps, 'ketcherId'> &
+  Pick<BaseCallProps, 'onOk'>;
 
 const defaultSettings = getDefaultOptions();
 
@@ -317,6 +321,12 @@ const SettingsDialog = (props: Props) => {
           name="gross-formula-add-isotopes"
           data-testid="gross-formula-add-isotopes"
         />
+        <Field
+          name="valence-mode"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.['valence-mode'])}
+          data-testid="valence-mode"
+        />
       </fieldset>
     ),
   };
@@ -426,7 +436,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (dispatch, ownProps: SettingsOwnProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
@@ -439,7 +449,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onOk: (res) => {
     const [result, initState] = res;
 
-    dispatch(saveSettings(result));
+    dispatch(saveSettings(result, ownProps.ketcherId));
     ownProps.onOk(result);
 
     const showNotification =

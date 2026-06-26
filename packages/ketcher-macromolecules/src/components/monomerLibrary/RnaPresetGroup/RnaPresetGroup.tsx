@@ -17,8 +17,9 @@
 import { useAppSelector } from 'hooks';
 import {
   getRnaPresetPhosphatePosition,
-  MonomerItemType,
   isAmbiguousMonomerLibraryItem,
+  MonomerItemType,
+  RnaPresetWithOptionalFields,
 } from 'ketcher-core';
 import { debounce } from 'lodash';
 import React, { ReactElement, useCallback } from 'react';
@@ -60,7 +61,8 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   const dispatch = useDispatch();
   const resolvePhosphatePosition = (preset: IRnaPreset) =>
-    preset.phosphatePosition ?? getRnaPresetPhosphatePosition(preset);
+    preset.phosphatePosition ??
+    getRnaPresetPhosphatePosition(preset as RnaPresetWithOptionalFields);
 
   const validatePreset = (preset: IRnaPreset) => {
     let isBaseValid = true;
@@ -129,16 +131,16 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatchShowPreview],
   );
 
-  const handleItemMouseLeave = (): void => {
+  const closeLibraryPreview = useCallback((): void => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, [debouncedShowPreview, dispatch]);
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
     e: React.MouseEvent,
   ): void => {
-    handleItemMouseLeave();
+    closeLibraryPreview();
 
     if (needSkipPreviewForElement(e.target as HTMLElement)) {
       return;
@@ -210,7 +212,8 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
               onMouseMove={(e) => handleItemMouseMove(preset, e)}
-              onMouseLeave={handleItemMouseLeave}
+              onMouseLeave={closeLibraryPreview}
+              onStarClick={closeLibraryPreview}
             />
           );
         })}

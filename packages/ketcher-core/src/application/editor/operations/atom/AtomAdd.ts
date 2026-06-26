@@ -34,7 +34,6 @@ type Data = {
 
 class AtomAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(atom?: Partial<AtomAttributes>, pos?: Point) {
     super(OperationType.ATOM_ADD);
@@ -82,12 +81,6 @@ class AtomAdd extends BaseOperation {
         );
       }
     }
-  }
-
-  invert() {
-    const inverted = new AtomAdd.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

@@ -68,8 +68,8 @@ export class BondAttr extends BaseOperation {
   isDummy(restruct: ReStruct) {
     if (this.data) {
       const { attribute, bid, value } = this.data;
-      const bond = restruct.molecule.bonds.get(bid)!;
-      return bond[attribute] === value;
+      const bond = restruct.molecule.bonds.get(bid);
+      return bond ? bond[attribute] === value : false;
     }
     return false;
   }

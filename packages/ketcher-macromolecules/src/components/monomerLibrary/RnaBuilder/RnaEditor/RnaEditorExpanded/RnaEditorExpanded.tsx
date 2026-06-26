@@ -52,6 +52,7 @@ import {
   setIsEditMode,
   selectPresetFullName,
   setUniqueNameError,
+  setInvalidPresetNameError,
   setSequenceSelection,
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
@@ -79,7 +80,10 @@ import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
-import { getPhosphatePositionAvailability } from 'helpers/rnaValidations';
+import {
+  getPhosphatePositionAvailability,
+  isValidPresetName,
+} from 'helpers/rnaValidations';
 import { Icon } from 'ketcher-react';
 import styles from './RnaEditorExpanded.module.less';
 
@@ -457,9 +461,18 @@ export const RnaEditorExpanded = ({
   };
 
   const renderPhosphatePositionSelector = (position?: RnaPhosphatePosition) => {
-    const triggerDisabled = !is5PrimeAvailable && !is3PrimeAvailable;
-    const triggerPosition = position ?? selectedPhosphatePosition ?? 'right';
+    // In "Modify in RNA Builder" (sequence edit) mode the phosphate position is
+    // read-only: the picker is shown but disabled and always indicates 3'/right,
+    // since for the purposes of sequence mode a preset always keeps the
+    // phosphate on the right — req 5.1/5.2 of #9120.
+    const isPhosphatePositionReadOnly = isSequenceEditInRNABuilderMode;
+    const triggerDisabled =
+      isPhosphatePositionReadOnly || (!is5PrimeAvailable && !is3PrimeAvailable);
+    const triggerPosition = isPhosphatePositionReadOnly
+      ? 'right'
+      : position ?? selectedPhosphatePosition ?? 'right';
     const isPhosphateGroupActive =
+      !isPhosphatePositionReadOnly &&
       activeMonomerGroup === MonomerGroups.PHOSPHATES;
     const showPhosphatePositionTooltip = !isEditMode || !isPhosphateGroupActive;
 
@@ -513,7 +526,12 @@ export const RnaEditorExpanded = ({
   };
 
   const onSave = () => {
-    if (!newPreset?.name) {
+    const presetName = newPreset?.name;
+    if (!presetName) {
+      return;
+    }
+    if (newPreset.editedName && !isValidPresetName(newPreset.name)) {
+      dispatch(setInvalidPresetNameError(newPreset.name));
       return;
     }
 
@@ -532,13 +550,13 @@ export const RnaEditorExpanded = ({
     };
 
     const presetWithSameName = presets.find(
-      (preset) => preset.name === presetToSave.name,
+      (preset) => preset.name === presetName,
     );
     if (
       presetWithSameName &&
       activePreset.nameInList !== presetWithSameName.name
     ) {
-      dispatch(setUniqueNameError(presetToSave.name!));
+      dispatch(setUniqueNameError(presetName));
       return;
     }
     dispatch(savePreset(presetToSave));
@@ -547,7 +565,7 @@ export const RnaEditorExpanded = ({
       editor?.events.selectPreset.dispatch(presetToSave);
     }
     setTimeout(() => {
-      scrollToSelectedPreset(presetToSave.name);
+      scrollToSelectedPreset(presetName);
     }, 0);
     resetRnaBuilder(dispatch);
   };

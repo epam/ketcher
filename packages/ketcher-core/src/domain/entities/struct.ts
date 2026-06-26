@@ -941,9 +941,12 @@ export class Struct {
     });
 
     this.sgroups.forEach((item) => {
+      // MonomerMicromolecule centers carry their own transform flow and are
+      // scaled separately during mode transitions to avoid double-scaling.
       if (item instanceof MonomerMicromolecule) {
         return;
       }
+
       item.pp = item.pp?.scaled(scale) ?? null;
     });
 
@@ -960,6 +963,24 @@ export class Struct {
     this.multitailArrows.forEach((multitailArrow) =>
       multitailArrow.rescaleSize(scale),
     );
+    this.frags.forEach((fragment) => {
+      if (fragment?.enhancedStereoFlag && fragment?.stereoFlagPosition) {
+        fragment.stereoFlagPosition =
+          fragment.stereoFlagPosition?.scaled(scale);
+      }
+    });
+  }
+
+  scaleMonomerMicromoleculeSgroups(scale: number) {
+    if (scale === 1) return;
+
+    this.sgroups.forEach((item) => {
+      if (!(item instanceof MonomerMicromolecule)) {
+        return;
+      }
+
+      item.pp = item.pp?.scaled(scale) ?? null;
+    });
   }
 
   rescale() {
@@ -1479,7 +1500,9 @@ export class Struct {
     this.texts.changeInitiallySelectedPropertiesForPool();
   }
 
-  public applyMonomersTransformations() {
+  public applyMonomersTransformations(scaleFactor = 1) {
+    this.scaleMonomerMicromoleculeSgroups(scaleFactor);
+
     const atomToBonds = new Map<number, number[]>();
 
     this.bonds.forEach((bond, bondId) => {

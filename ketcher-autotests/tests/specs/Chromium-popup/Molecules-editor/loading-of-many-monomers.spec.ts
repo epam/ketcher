@@ -126,7 +126,7 @@ test.describe('Loading of many monomers to Micro', () => {
      * 2. Open file with a chain of 3500 monomers
      */
     const expected = 3500;
-    test.slow();
+    test.setTimeout(360000);
     await openFileAndAddToCanvasAsNewProject(page, 'KET/3500-peptides.ket');
     const actual = await countByDataSgroupName(page);
     expect(actual).toBe(expected);

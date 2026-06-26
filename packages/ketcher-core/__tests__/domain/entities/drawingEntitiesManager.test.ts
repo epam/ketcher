@@ -272,6 +272,7 @@ describe('Drawing Entities Manager', () => {
 
     expect(editor.renderersContainer.sgroups.size).toEqual(1);
     expect(document.querySelector('[data-testid="s-group"]')).toBeTruthy();
+    expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
   });
 
   it('should render macro data S-group field values', () => {

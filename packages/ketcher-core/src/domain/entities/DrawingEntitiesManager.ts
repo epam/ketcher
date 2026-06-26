@@ -2483,8 +2483,11 @@ export class DrawingEntitiesManager {
         monomer,
         sgroup.sgroupIdInMicroMode,
       );
-      const addedSGroup = sgroupAddCommand.operations[0]
-        .sgroupDrawingEntity as SGroupDrawingEntity;
+      const addedSGroup = sgroupAddCommand.operations[0]?.sgroupDrawingEntity;
+
+      if (!addedSGroup) {
+        return;
+      }
 
       command.merge(sgroupAddCommand);
       mergedDrawingEntities.sgroups.set(addedSGroup.id, addedSGroup);
@@ -3261,12 +3264,15 @@ export class DrawingEntitiesManager {
     sgroup: SGroup,
     monomer: BaseMonomer,
     sgroupIdInMicroMode: number,
-    _sgroupDrawingEntity?: SGroupDrawingEntity,
+    existingSGroupDrawingEntity?: SGroupDrawingEntity,
   ) {
-    if (_sgroupDrawingEntity) {
-      this.sgroups.set(_sgroupDrawingEntity.id, _sgroupDrawingEntity);
+    if (existingSGroupDrawingEntity) {
+      this.sgroups.set(
+        existingSGroupDrawingEntity.id,
+        existingSGroupDrawingEntity,
+      );
 
-      return _sgroupDrawingEntity;
+      return existingSGroupDrawingEntity;
     }
 
     const sgroupDrawingEntity = new SGroupDrawingEntity(

@@ -14,6 +14,8 @@ const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#000';
 const FONT_FAMILY = 'Arial';
+const LABEL_FONT_SIZE_FACTOR = 1.9;
+const LABEL_FONT_SIZE_DIVISOR = 6;
 
 interface BracketParams {
   center: Vec2;
@@ -300,6 +302,10 @@ export class SGroupRenderer extends BaseRenderer {
       return;
     }
 
+    const valueBackgroundColor = this.sgroup.selected
+      ? SELECTION_COLOR
+      : '#fff';
+
     valueGroup
       .insert('rect', 'text')
       .attr('x', bbox.x - 1)
@@ -308,8 +314,8 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('height', bbox.height + 2)
       .attr('rx', 3)
       .attr('ry', 3)
-      .attr('fill', this.sgroup.selected ? SELECTION_COLOR : '#fff')
-      .attr('stroke', this.sgroup.selected ? SELECTION_COLOR : '#fff');
+      .attr('fill', valueBackgroundColor)
+      .attr('stroke', valueBackgroundColor);
   }
 
   private appendText(
@@ -325,7 +331,10 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('y', position.y)
       .attr(
         'font-size',
-        Math.ceil(1.9 * (this.editorSettings.macroModeScale / 6)),
+        Math.ceil(
+          LABEL_FONT_SIZE_FACTOR *
+            (this.editorSettings.macroModeScale / LABEL_FONT_SIZE_DIVISOR),
+        ),
       )
       .attr('font-family', FONT_FAMILY)
       .attr('data-testid', 's-group-label')

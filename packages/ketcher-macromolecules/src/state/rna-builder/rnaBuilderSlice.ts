@@ -105,6 +105,7 @@ interface IRnaBuilderState {
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
+  invalidPresetNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
   presetPhosphateFilter: PresetPhosphateFilter;
 }
@@ -127,6 +128,7 @@ const initialState: IRnaBuilderState = {
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
+  invalidPresetNameError: '',
   activePresetForContextMenu: null,
   presetPhosphateFilter: readPersistedPresetPhosphateFilter(),
 };
@@ -280,6 +282,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setInvalidPresetError: (state, action: PayloadAction<string>) => {
       state.invalidPresetError = action.payload;
+    },
+    setInvalidPresetNameError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -472,6 +477,10 @@ export const selectInvalidPresetError = (state: RootState) => {
   return state.rnaBuilder.invalidPresetError;
 };
 
+export const selectInvalidPresetNameError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetNameError;
+};
+
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
   return (
@@ -636,6 +645,7 @@ export const {
   setIsEditMode,
   setUniqueNameError,
   setInvalidPresetError,
+  setInvalidPresetNameError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

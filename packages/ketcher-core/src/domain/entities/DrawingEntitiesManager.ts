@@ -26,6 +26,7 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
+import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
@@ -139,6 +140,11 @@ import {
   StereoFlagAddOperation,
   StereoFlagDeleteOperation,
 } from 'application/editor/operations/stereoFlag';
+import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import {
+  SGroupAddOperation,
+  SGroupDeleteOperation,
+} from 'application/editor/operations/coreSGroup/sgroup';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -179,6 +185,7 @@ export class DrawingEntitiesManager {
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
   public stereoFlags: Map<number, CoreStereoFlag> = new Map();
+  public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -346,6 +353,9 @@ export class DrawingEntitiesManager {
     this.allEntities.forEach(([, drawingEntity]) => {
       const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
+    });
+    this.sgroups.forEach((sgroup) => {
+      mergedCommand.merge(this.deleteSGroup(sgroup));
     });
     this.clearMicromoleculesHiddenEntities();
     this.resetArrowIdCounter();
@@ -2461,6 +2471,25 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
     });
 
+    this.sgroups.forEach((sgroup) => {
+      const monomer = monomerToNewMonomer.get(sgroup.monomer);
+
+      if (!monomer) {
+        return;
+      }
+
+      const sgroupAddCommand = targetDrawingEntitiesManager.addSGroup(
+        sgroup.sgroup,
+        monomer,
+        sgroup.sgroupIdInMicroMode,
+      );
+      const addedSGroup = sgroupAddCommand.operations[0]
+        .sgroupDrawingEntity as SGroupDrawingEntity;
+
+      command.merge(sgroupAddCommand);
+      mergedDrawingEntities.sgroups.set(addedSGroup.id, addedSGroup);
+    });
+
     this.rxnArrows.forEach((rxnArrow) => {
       const rxnArrowAddCommand = targetDrawingEntitiesManager.addRxnArrow(
         rxnArrow.type,
@@ -3225,6 +3254,77 @@ export class DrawingEntitiesManager {
         command.merge(this.deleteAtom(atom, true));
       });
     });
+    return command;
+  }
+
+  private addSGroupChangeModel(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+    _sgroupDrawingEntity?: SGroupDrawingEntity,
+  ) {
+    if (_sgroupDrawingEntity) {
+      this.sgroups.set(_sgroupDrawingEntity.id, _sgroupDrawingEntity);
+
+      return _sgroupDrawingEntity;
+    }
+
+    const sgroupDrawingEntity = new SGroupDrawingEntity(
+      sgroup,
+      monomer,
+      sgroupIdInMicroMode,
+    );
+
+    this.sgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+
+    return sgroupDrawingEntity;
+  }
+
+  public addSGroup(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+  ) {
+    const command = new Command();
+    const sgroupAddOperation = new SGroupAddOperation(
+      (sgroupDrawingEntity?: SGroupDrawingEntity) =>
+        this.addSGroupChangeModel(
+          sgroup,
+          monomer,
+          sgroupIdInMicroMode,
+          sgroupDrawingEntity,
+        ),
+      this.deleteSGroupChangeModel.bind(this),
+    );
+
+    command.addOperation(sgroupAddOperation);
+
+    return command;
+  }
+
+  private deleteSGroupChangeModel(sgroupDrawingEntity: SGroupDrawingEntity) {
+    this.sgroups.delete(sgroupDrawingEntity.id);
+
+    return sgroupDrawingEntity;
+  }
+
+  private deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    const command = new Command();
+
+    command.addOperation(
+      new SGroupDeleteOperation(
+        sgroupDrawingEntity,
+        this.deleteSGroupChangeModel.bind(this, sgroupDrawingEntity),
+        (sgroupToRestore: SGroupDrawingEntity) =>
+          this.addSGroupChangeModel(
+            sgroupToRestore.sgroup,
+            sgroupToRestore.monomer,
+            sgroupToRestore.sgroupIdInMicroMode,
+            sgroupToRestore,
+          ),
+      ),
+    );
+
     return command;
   }
 

@@ -538,6 +538,12 @@ export class MacromoleculesConverter {
 
       command.merge(monomerAddCommand);
 
+      fragmentStruct.sgroups.forEach((sgroup, sgroupId) => {
+        command.merge(
+          drawingEntitiesManager.addSGroup(sgroup, monomer, sgroupId),
+        );
+      });
+
       if (
         monomer.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(monomer)

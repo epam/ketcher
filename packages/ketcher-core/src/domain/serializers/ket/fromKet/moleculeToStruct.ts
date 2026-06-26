@@ -164,10 +164,6 @@ export function sgroupToStruct(source) {
       );
       break;
     }
-    case 'nucleotideComponent': {
-      ifDef(sgroup.data, 'class', source.class);
-      break;
-    }
     case 'DAT': {
       ifDef(sgroup.data, 'absolute', source.placement);
       ifDef(sgroup.data, 'attached', source.display);

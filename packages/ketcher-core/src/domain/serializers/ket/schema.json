@@ -508,16 +508,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "GEN",
-              "MUL",
-              "SRU",
-              "SUP",
-              "DAT",
-              "queryComponent",
-              "nucleotideComponent",
-              "COP"
-            ]
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent", "COP"]
           }
         },
         "if": {

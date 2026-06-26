@@ -6,19 +6,16 @@ import {
   Render,
 } from 'application/render';
 import {
-  Atom,
+  type Struct,
   Bond,
   Pool,
   RGroupAttachmentPoint,
   SGroup,
-  SUPERATOM_CLASS,
-  Struct,
   Vec2,
 } from 'domain/entities';
 import { restruct } from '../../../mock-data';
 import { mockFn } from 'jest-mock-extended';
 import type { RenderOptions } from 'application/render/render.types';
-import { RenderStruct } from 'application/render/renderStruct';
 
 describe('resgroup should draw brackets with attachment points correctly', () => {
   const mockBonds = [
@@ -109,9 +106,8 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       height: 100,
     } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
-    const reStruct = restruct as unknown as ReStruct;
-    render.ctab = reStruct;
-    reStruct.render = render;
+    render.ctab = restruct as unknown as ReStruct;
+    restruct.render = render as any;
     sGroup = new SGroup('MUL');
     reSgroup = new ReSGroup(sGroup);
     sGroup.isNotContractible = mockFn().mockReturnValue(false);
@@ -148,7 +144,7 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
     restruct.rgroupAttachmentPoints.set(1, reRGroupAttachmentPoint);
     restruct.molecule.getRGroupAttachmentPointsByAtomId =
       mockFn().mockReturnValue([0, 1]);
-    reSgroup.draw(restruct as unknown as ReStruct, sGroup);
+    reSgroup.draw(restruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
   });
 
@@ -171,52 +167,5 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       .mockReturnValueOnce([1]);
     reSgroup.draw(restruct, sGroup);
     expect(attachmentsSpy).toHaveBeenCalled();
-  });
-});
-
-describe('resgroup should draw nucleotide component S-groups', () => {
-  it('should draw nucleotide component brackets and class label', () => {
-    const option = {
-      microModeScale: 20,
-      width: 100,
-      height: 100,
-    } as RenderOptions;
-    const render = new Render(document as unknown as HTMLElement, option);
-    const reStruct = restruct as unknown as ReStruct;
-    render.ctab = reStruct;
-    reStruct.render = render;
-
-    const sGroup = new SGroup('nucleotideComponent');
-    const reSgroup = new ReSGroup(sGroup);
-    const atomIdWithAttachmentPoint = 2;
-    sGroup.data.class = SUPERATOM_CLASS.BASE;
-    SGroup.addAtom(
-      sGroup,
-      atomIdWithAttachmentPoint,
-      restruct.molecule as unknown as Struct,
-    );
-
-    reSgroup.draw(reStruct, sGroup);
-
-    expect(
-      render.paper.canvas.querySelector('[data-label-text="Base"]'),
-    ).toBeTruthy();
-  });
-});
-
-describe('RenderStruct.prepareStruct in macromolecules mode', () => {
-  it('should preserve S-groups for macromolecules rendering', () => {
-    const struct = new Struct();
-    const atomId = struct.atoms.add(new Atom({ label: 'C' }));
-    const sGroup = new SGroup('GEN');
-    SGroup.addAtom(sGroup, atomId, struct);
-    sGroup.id = struct.sgroups.add(sGroup);
-
-    const preparedStruct = RenderStruct.prepareStruct(struct, true);
-    const preparedSGroup = preparedStruct.sgroups.get(sGroup.id);
-
-    expect(preparedStruct.sgroups.size).toBe(1);
-    expect(preparedSGroup?.type).toBe(sGroup.type);
-    expect(preparedSGroup?.atoms).toEqual(sGroup.atoms);
   });
 });

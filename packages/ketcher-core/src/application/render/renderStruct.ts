@@ -19,13 +19,10 @@ export class RenderStruct {
    * for S-Groups we want to show expanded structure
    * without brackets
    */
-  static prepareStruct(struct: Struct, preserveSgroups = false) {
+  static prepareStruct(struct: Struct) {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
       convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
-      if (preserveSgroups) {
-        return newStruct;
-      }
       if (!newStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
         newStruct.sgroups.delete(0);
       }
@@ -81,10 +78,7 @@ export class RenderStruct {
         return;
       }
 
-      const preparedStruct = this.prepareStruct(
-        struct.clone(),
-        window.isPolymerEditorTurnedOn,
-      );
+      const preparedStruct = this.prepareStruct(struct.clone());
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();

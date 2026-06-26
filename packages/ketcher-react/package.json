@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "3.17.0-rc.1",
+  "version": "3.17.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -27,8 +27,8 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
+    "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:circ test:unit",
     "test:circ": "dpdm --no-warning --no-tree -T --exit-code circular:1 --skip-dynamic-imports tree ./src/index.tsx",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
@@ -66,7 +66,7 @@
     "ketcher-core": "*",
     "lexical": "^0.40.0",
     "lodash": "^4.18.1",
-    "miew-react": "0.11.0",
+    "miew-react": "0.12.0",
     "paper": "^0.12.18",
     "react-colorful": "^5.4.0",
     "react-contexify": "^6.0.0",
@@ -88,7 +88,7 @@
     "whatwg-fetch": "^3.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
@@ -102,9 +102,10 @@
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "14.4.3",
+    "@types/assert": "^1.5.11",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.14.178",
-    "@types/node": "^16.11.12",
+    "@types/node": "^20.19.43",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
@@ -119,7 +120,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-testing-library": "^5.0.1",
     "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0",
+    "jest-environment-jsdom": "^30.4.1",
     "less": "^3.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
@@ -132,8 +133,8 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
-    "ts-jest": "^29.4.6",
-    "typescript": "^4.5.2"
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   },
   "files": [
     "dist"
@@ -146,7 +147,8 @@
     },
     "./dist/index.css": {
       "import": "./dist/index.css",
-      "require": "./dist/index.css"
+      "require": "./dist/index.css",
+      "default": "./dist/index.css"
     }
   }
 }

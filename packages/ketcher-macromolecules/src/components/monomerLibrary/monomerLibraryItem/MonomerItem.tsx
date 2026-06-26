@@ -28,7 +28,7 @@ import {
 import { IMonomerItemProps } from './types';
 import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
-import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { useLibraryItemDrag } from 'components/monomerLibrary/monomerLibraryItem/hooks/useLibraryItemDrag';
 import {
   selectEditor,
@@ -51,6 +51,7 @@ const MonomerItem = ({
   isSelected,
   disabled,
   onClick = EmptyFunction,
+  onStarClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
@@ -80,9 +81,10 @@ const MonomerItem = ({
   const addFavorite = useCallback(
     (event: MouseEvent) => {
       event.stopPropagation();
+      onStarClick();
       dispatch(toggleMonomerFavorites(item));
     },
-    [dispatch, item],
+    [dispatch, item, onStarClick],
   );
 
   const onAutochainIconClick = useCallback(

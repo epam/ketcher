@@ -12,6 +12,7 @@ export class MonomerToAtomBondSequenceRenderer extends BaseSequenceRenderer {
     private readonly monomerNode: SubChainNode,
   ) {
     super(monomerToAtomBond);
+    this.monomerToAtomBond.setRenderer(this);
   }
 
   private get monomer() {

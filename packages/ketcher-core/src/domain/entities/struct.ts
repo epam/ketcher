@@ -963,6 +963,12 @@ export class Struct {
     this.multitailArrows.forEach((multitailArrow) =>
       multitailArrow.rescaleSize(scale),
     );
+    this.frags.forEach((fragment) => {
+      if (fragment?.enhancedStereoFlag && fragment?.stereoFlagPosition) {
+        fragment.stereoFlagPosition =
+          fragment.stereoFlagPosition?.scaled(scale);
+      }
+    });
   }
 
   scaleMonomerMicromoleculeSgroups(scale: number) {

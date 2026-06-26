@@ -71,7 +71,7 @@ class Visel {
   translate(x: number, y: number): void;
   translate(...args: [Vec2] | [number, number]): void {
     if (args.length === 1) {
-      const vector = args[0] as Vec2;
+      const vector = args[0];
       this.translate(vector.x, vector.y);
     } else {
       const [x, y] = args;

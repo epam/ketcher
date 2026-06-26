@@ -65,3 +65,4 @@ export * from './BackBoneSequenceNode';
 export * from './DrawingEntitiesManager.replaceMonomer';
 export * from './Command';
 export { Atom as CoreAtom } from './CoreAtom';
+export * from './CoreStereoFlag';

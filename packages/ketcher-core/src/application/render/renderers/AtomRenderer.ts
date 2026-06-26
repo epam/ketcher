@@ -3,12 +3,16 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { editorEvents } from 'application/editor/editorEvents';
+import { ketcherProvider } from 'application/ketcherProvider';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import { StereoLabel } from 'domain/entities/atom';
+import { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
+import { StereoFlag } from 'domain/entities/fragment';
+import type { Settings } from 'application/settings';
 import util from '../util';
 import assert from 'assert';
 import {
@@ -283,6 +287,13 @@ export class AtomRenderer extends BaseRenderer {
       !hasExplicitValence &&
       !hasExplicitIsotope
     ) {
+      // Show carbon label when bonds are collinear (180 degree angle),
+      if (atomNeighborsHalfEdges?.length === 2) {
+        const [hb1, hb2] = atomNeighborsHalfEdges;
+        if (Math.abs(Vec2.cross(hb1.direction, hb2.direction)) < 0.2) {
+          return true;
+        }
+      }
       return false;
     }
 
@@ -753,11 +764,27 @@ export class AtomRenderer extends BaseRenderer {
       return false;
     }
 
-    const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+    const editor = provideEditorInstance();
+    const settings = ketcherProvider
+      .getKetcher(editor.ketcherId)
+      .settingsService?.getSettings();
+    const labelStyle = getStereoLabelStyleType(settings?.stereoLabelStyle);
+    const ignoreChiralFlag = settings?.ignoreChiralFlag ?? false;
+    const enhancedStereoFlag = this.getEnhancedStereoFlag();
 
-    return (
-      stereoLabelType === StereoLabel.And || stereoLabelType === StereoLabel.Or
+    return shouldDisplayStereoLabel(
+      stereoLabel,
+      labelStyle,
+      ignoreChiralFlag,
+      enhancedStereoFlag,
     );
+  }
+
+  private getEnhancedStereoFlag(): StereoFlag | undefined {
+    const struct = this.atom.monomer.monomerItem.struct;
+    const structAtom = struct.atoms.get(this.atom.atomIdInMicroMode);
+
+    return struct.frags.get(Number(structAtom?.fragment))?.enhancedStereoFlag;
   }
 
   private appendStereoLabel() {
@@ -878,5 +905,50 @@ export class AtomRenderer extends BaseRenderer {
   protected removeHover(): void {
     this.hoverElement?.remove();
     this.hoverElement = undefined;
+  }
+}
+function getStereoLabelStyleType(
+  stereoLabelStyle: Settings['stereoLabelStyle'] | undefined,
+): StereoLabelStyleType | undefined {
+  switch (stereoLabelStyle) {
+    case 'IUPAC':
+      return StereoLabelStyleType.IUPAC;
+    case 'classic':
+      return StereoLabelStyleType.Classic;
+    case 'On-Atoms':
+      return StereoLabelStyleType.On;
+    case 'off':
+      return StereoLabelStyleType.Off;
+    default:
+      return undefined;
+  }
+}
+
+function shouldDisplayStereoLabel(
+  stereoLabel: string,
+  labelStyle: StereoLabelStyleType | undefined,
+  ignoreChiralFlag: boolean,
+  flag: StereoFlag | undefined,
+): boolean {
+  const stereoLabelType = stereoLabel.match(/\D+/g)?.[0];
+
+  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+    return false;
+  }
+  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+    return true;
+  }
+
+  switch (labelStyle) {
+    case StereoLabelStyleType.Off:
+      return false;
+    case StereoLabelStyleType.On:
+      return true;
+    case StereoLabelStyleType.Classic:
+      return flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or;
+    case StereoLabelStyleType.IUPAC:
+      return flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs;
+    default:
+      return true;
   }
 }

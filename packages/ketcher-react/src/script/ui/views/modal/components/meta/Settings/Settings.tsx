@@ -321,6 +321,12 @@ const SettingsDialog = (props: Props) => {
           name="gross-formula-add-isotopes"
           data-testid="gross-formula-add-isotopes"
         />
+        <Field
+          name="valence-mode"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.['valence-mode'])}
+          data-testid="valence-mode"
+        />
       </fieldset>
     ),
   };

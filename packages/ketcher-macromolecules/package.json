@@ -1,6 +1,6 @@
 {
   "name": "ketcher-macromolecules",
-  "version": "3.17.0-rc.1",
+  "version": "3.17.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -29,8 +29,8 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true",
+    "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
@@ -67,7 +67,7 @@
     "redux-saga": "^1.1.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "^7.29.6",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
@@ -90,6 +90,7 @@
     "@types/node": "^16.11.12",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@zerollup/ts-transform-paths": "^1.7.18",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^30.3.0",
     "cross-env": "^7.0.3",
@@ -101,7 +102,7 @@
     "eslint-plugin-testing-library": "^5.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
-    "jest-environment-jsdom": "^30.3.0",
+    "jest-environment-jsdom": "^30.4.1",
     "less": "^3.12.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
@@ -110,6 +111,7 @@
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
     "rollup-plugin-typescript2": "^0.37.0",
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "^29.4.11",

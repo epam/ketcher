@@ -277,6 +277,7 @@ class Attach extends Component<AttachProps> {
   checkIsValidName(name: string) {
     return (
       !!name &&
+      name.trim().length > 0 &&
       !this.props.templateLib.some(
         (tmpl) =>
           tmpl.struct.name === name && tmpl.props.group === 'User Templates',

@@ -1663,6 +1663,8 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup, options?: any) {
 
   if (atom.alias) return atom.alias;
 
+  if (atom.queryProperties?.customQuery) return 'A';
+
   if (
     atom.label &&
     atom.rglabel !== null &&

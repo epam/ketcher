@@ -418,20 +418,6 @@ export default defineConfig({
       preventAssignment: true,
       values: polymerEditorValues,
     }),
-    replace({
-      include: '**/example/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
-    replace({
-      include: '**/ketcher-core/src/**',
-      preventAssignment: true,
-      values: {
-        require: 'await import',
-      },
-    }),
     normalizeHtmlTransformHook(
       createHtmlPlugin({
         pages: htmlPages,
@@ -502,6 +488,10 @@ export default defineConfig({
   build: {
     outDir: 'build',
     sourcemap: true,
+    commonjsOptions: {
+      include: [/node_modules/, /packages[\\/]ketcher-core[\\/]src/],
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         entryFileNames: 'static/js/[name]-[hash].js',

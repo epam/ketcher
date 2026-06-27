@@ -1,5 +1,6 @@
 import replace from '@rollup/plugin-replace';
 import react from '@vitejs/plugin-react';
+import { copyFileSync, mkdirSync } from 'node:fs';
 import { resolve } from 'path';
 import { createLogger, defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
@@ -15,8 +16,14 @@ import { envVariables as exampleEnv } from './config/webpack.config';
 import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
 import commonjs from 'vite-plugin-commonjs';
 
-const dotEnv = loadEnv('development', '.', '');
-Object.assign(process.env, dotEnv, exampleEnv);
+const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');
+Object.assign(process.env, dotEnv, exampleEnv, {
+  MODE: process.env.MODE || exampleEnv.MODE || 'standalone',
+  NODE_ENV: process.env.NODE_ENV || 'development',
+  PUBLIC_URL: process.env.PUBLIC_URL || '',
+  REACT_APP_API_PATH:
+    process.env.REACT_APP_API_PATH || exampleEnv.API_PATH || '',
+});
 
 const PACKAGE_DIRECTORIES = {
   'ketcher-core': resolve(__dirname, '../packages/ketcher-core'),
@@ -136,6 +143,67 @@ const PROCESS_ENV_DEFINE_KEYS = [
   'SEPARATE_INDIGO_RENDER',
 ];
 
+const normalizePathForRollup = (id) => id.replaceAll('\\', '/');
+
+const manualChunks = (id) => {
+  const normalizedId = normalizePathForRollup(id);
+
+  if (normalizedId.endsWith('/application/editor/data/monomers.ket')) {
+    return 'data-monomers';
+  }
+
+  if (!normalizedId.includes('/node_modules/')) {
+    if (normalizedId.includes('/packages/ketcher-core/')) {
+      return 'ketcher-core';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-react/')) {
+      return 'ketcher-react';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-macromolecules/')) {
+      return 'ketcher-macromolecules';
+    }
+
+    if (normalizedId.includes('/packages/ketcher-standalone/')) {
+      return 'ketcher-standalone';
+    }
+
+    return undefined;
+  }
+
+  if (
+    normalizedId.includes('/node_modules/react/') ||
+    normalizedId.includes('/node_modules/react-dom/') ||
+    normalizedId.includes('/node_modules/react-router/') ||
+    normalizedId.includes('/node_modules/react-router-dom/')
+  ) {
+    return 'vendor-react';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/@mui/') ||
+    normalizedId.includes('/node_modules/@emotion/')
+  ) {
+    return 'vendor-mui';
+  }
+
+  if (normalizedId.includes('/node_modules/indigo-ketcher/')) {
+    return 'vendor-indigo';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/d3') ||
+    normalizedId.includes('/node_modules/paper/') ||
+    normalizedId.includes('/node_modules/raphael/') ||
+    normalizedId.includes('/node_modules/svgpath/')
+  ) {
+    return 'vendor-chemistry';
+  }
+
+  return 'vendor';
+};
+
 const processEnvDefines = Object.fromEntries(
   PROCESS_ENV_DEFINE_KEYS.map((key) => [
     `process.env.${key}`,
@@ -147,8 +215,14 @@ const HtmlReplaceVitePlugin = () => {
   return {
     name: 'ketcher-html-transform',
     transformIndexHtml(html) {
+      const publicUrl = process.env.PUBLIC_URL || '';
+      const publicUrlWithTrailingSlash = publicUrl
+        ? `${publicUrl.replace(/\/$/, '')}/`
+        : '';
+
       return html
-        .replaceAll('%PUBLIC_URL%/', process.env.PUBLIC_URL)
+        .replaceAll('%PUBLIC_URL%/', publicUrlWithTrailingSlash)
+        .replaceAll('%PUBLIC_URL%', publicUrl)
         .replaceAll(
           '@@version',
           JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
@@ -194,6 +268,64 @@ const normalizeHtmlTransformHook = (plugin) => {
   return plugin;
 };
 
+const globalHtmlTags = [
+  {
+    /**
+     * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
+     * Fix: global is not defined
+     */
+    injectTo: 'body',
+    tag: 'script',
+    children: 'var global = global || window',
+  },
+];
+
+const htmlPages = [
+  {
+    filename: 'index.html',
+    template: 'public/index.html',
+    entry: '/src/index.tsx',
+  },
+  {
+    filename: 'popup.html',
+    template: 'public/popup.html',
+    entry: '/src/popupIndex.tsx',
+  },
+  {
+    filename: 'duo.html',
+    template: 'public/duo.html',
+    entry: '/src/duoIndex.tsx',
+  },
+  {
+    filename: 'closable.html',
+    template: 'public/closable.html',
+    entry: '/src/closableIndex.tsx',
+  },
+].map((page) => ({
+  ...page,
+  injectOptions: {
+    tags: globalHtmlTags,
+  },
+}));
+
+const CopyServeConfigPlugin = () => {
+  let outDir;
+
+  return {
+    name: 'ketcher-copy-serve-config',
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir);
+    },
+    closeBundle() {
+      mkdirSync(outDir, { recursive: true });
+      copyFileSync(
+        resolve(__dirname, 'serve.json'),
+        resolve(outDir, 'serve.json'),
+      );
+    },
+  };
+};
+
 const logger = createLogger();
 const loggerWarn = logger.warn;
 logger.warn = (msg, options) => {
@@ -229,6 +361,7 @@ export default defineConfig({
         },
       },
     },
+    exclude: ['@mui/material', '@mui/material/Autocomplete'],
     include: [
       '@emotion/react',
       '@emotion/react/jsx-runtime',
@@ -239,6 +372,20 @@ export default defineConfig({
       '@emotion/sheet',
       '@emotion/utils',
       '@emotion/weak-memoize',
+      '@mui/system',
+      '@mui/system/Box',
+      '@mui/system/colorManipulator',
+      '@mui/system/createTheme',
+      '@mui/system/createStyled',
+      '@mui/system/RtlProvider',
+      '@mui/system/styled',
+      '@mui/system/styleFunctionSx',
+      '@mui/system/useTheme',
+      '@mui/system/useThemeProps',
+      '@mui/system/useThemeWithoutDefault',
+      '@mui/utils',
+      'prop-types',
+      'react-is',
     ],
   },
   css: {
@@ -287,30 +434,18 @@ export default defineConfig({
     }),
     normalizeHtmlTransformHook(
       createHtmlPlugin({
-        entry: '/src/index.tsx',
-        template: 'public/index.html',
-        inject: {
-          tags: [
-            {
-              /**
-               * HACK: https://github.com/bevacqua/dragula/issues/602#issuecomment-1109840139
-               * Fix: global is not defined
-               */
-              injectTo: 'body',
-              tag: 'script',
-              children: 'var global = global || window',
-            },
-          ],
-        },
+        pages: htmlPages,
       }),
     ),
     HtmlReplaceVitePlugin(),
+    CopyServeConfigPlugin(),
     commonjs(),
   ],
   define: {
     ...processEnvDefines,
   },
   resolve: {
+    dedupe: ['react', 'react-dom', 'react-is'],
     alias: [
       {
         // HACK: to ignore dist/index.css, you can set any file as replacement
@@ -363,6 +498,24 @@ export default defineConfig({
         replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
       },
     ],
+  },
+  build: {
+    outDir: 'build',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'static/js/[name]-[hash].js',
+        chunkFileNames: 'static/js/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'static/css/[name]-[hash][extname]';
+          }
+
+          return 'static/media/[name]-[hash][extname]';
+        },
+        manualChunks,
+      },
+    },
   },
   customLogger: logger,
   tsconfig: './tsconfig.json',

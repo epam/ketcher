@@ -95,7 +95,6 @@ import {
   keyNorm,
   SettingsManager,
 } from 'utilities';
-import monomersDataRaw from './data/monomers.ket';
 import { type HistoryOperationType, EditorHistory } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
@@ -236,6 +235,12 @@ let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
 
+const loadDefaultMonomersData = async () => {
+  const monomersDataModule = await import('./data/monomers.ket');
+
+  return monomersDataModule.default;
+};
+
 let editor;
 
 export class CoreEditor {
@@ -287,6 +292,7 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
+  private readonly defaultMonomersLibraryReady: Promise<void>;
 
   constructor({
     ketcherId,
@@ -311,8 +317,8 @@ export class CoreEditor {
     resetEditorEvents();
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
-    this.setMonomersLibrary(monomersDataRaw);
-    this.events.updateMonomersLibrary.dispatch();
+    this.clearMonomersLibrary();
+    this.defaultMonomersLibraryReady = this.initializeDefaultMonomersLibrary();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -393,6 +399,8 @@ export class CoreEditor {
     monomersLibraryReplace?: string | JSON,
     onError?: (err: unknown) => void,
   ): Promise<void> {
+    await this.ensureDefaultMonomersLibraryLoaded();
+
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
     if (!monomersLibraryUpdateData) {
@@ -435,6 +443,29 @@ export class CoreEditor {
       });
       onError?.(err);
     }
+  }
+
+  public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
+    await this.defaultMonomersLibraryReady;
+  }
+
+  private async initializeDefaultMonomersLibrary(): Promise<void> {
+    try {
+      const monomersDataRaw = await loadDefaultMonomersData();
+      this.setMonomersLibrary(monomersDataRaw);
+    } catch (err) {
+      KetcherLogger.error(
+        'Editor::initializeDefaultMonomersLibrary failed:',
+        err,
+      );
+      this.clearMonomersLibrary();
+      this.events.openErrorModal.dispatch({
+        errorMessage: 'Failed to load default monomers library',
+        errorTitle: 'Monomer library load failed',
+      });
+    }
+
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   private setMonomersLibrary(monomersDataRaw: string) {

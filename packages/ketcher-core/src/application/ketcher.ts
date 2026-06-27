@@ -882,6 +882,8 @@ export class Ketcher {
       );
     }
 
+    await editor.ensureDefaultMonomersLibraryLoaded();
+
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,
       params,
@@ -915,6 +917,8 @@ export class Ketcher {
         'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
       );
     }
+
+    await editor.ensureDefaultMonomersLibraryLoaded();
 
     const dataInKetFormat = await this.ensureMonomersLibraryDataInKetFormat(
       rawMonomersData,

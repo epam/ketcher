@@ -235,10 +235,34 @@ let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
 
+const MONOMERS_DATA_URL_REGEXP = /^(?:\/|\.\/|\.\.\/|https?:\/\/|data:)/;
+
+const isMonomersDataUrl = (monomersData: string) =>
+  MONOMERS_DATA_URL_REGEXP.test(monomersData);
+
+const fetchMonomersData = async (monomersDataUrl: string) => {
+  if (typeof fetch !== 'function') {
+    throw new Error('Default monomers library asset requires fetch.');
+  }
+
+  const response = await fetch(monomersDataUrl);
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to load default monomers library: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  return response.text();
+};
+
 const loadDefaultMonomersData = async () => {
   const monomersDataModule = await import('./data/monomers.ket');
+  const monomersData = await monomersDataModule.default;
 
-  return monomersDataModule.default;
+  return isMonomersDataUrl(monomersData)
+    ? fetchMonomersData(monomersData)
+    : monomersData;
 };
 
 let editor;
@@ -292,7 +316,7 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
   private contextMenuEventHandler: (event: MouseEvent) => void = () => {};
   private readonly cleanupsForDomEvents: Array<() => void> = [];
-  private readonly defaultMonomersLibraryReady: Promise<void>;
+  private defaultMonomersLibraryReady?: Promise<void>;
 
   constructor({
     ketcherId,
@@ -318,7 +342,6 @@ export class CoreEditor {
     this.events = editorEvents;
     KetSerializer.setMonomerFactory(monomerFactory);
     this.clearMonomersLibrary();
-    this.defaultMonomersLibraryReady = this.initializeDefaultMonomersLibrary();
     this.subscribeEvents();
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -399,13 +422,13 @@ export class CoreEditor {
     monomersLibraryReplace?: string | JSON,
     onError?: (err: unknown) => void,
   ): Promise<void> {
-    await this.ensureDefaultMonomersLibraryLoaded();
-
     const monomersLibraryUpdateData =
       monomersLibraryUpdate || monomersLibraryReplace;
     if (!monomersLibraryUpdateData) {
       return;
     }
+
+    await this.ensureDefaultMonomersLibraryLoaded();
 
     try {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
@@ -446,6 +469,11 @@ export class CoreEditor {
   }
 
   public async ensureDefaultMonomersLibraryLoaded(): Promise<void> {
+    if (!this.defaultMonomersLibraryReady) {
+      this.defaultMonomersLibraryReady =
+        this.initializeDefaultMonomersLibrary();
+    }
+
     await this.defaultMonomersLibraryReady;
   }
 

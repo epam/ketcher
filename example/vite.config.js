@@ -14,7 +14,6 @@ import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import { envVariables as exampleEnv } from './config/webpack.config';
 import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config.mjs';
-import commonjs from 'vite-plugin-commonjs';
 
 const dotEnv = loadEnv(process.env.NODE_ENV || 'development', __dirname, '');
 Object.assign(process.env, dotEnv, exampleEnv, {
@@ -145,23 +144,117 @@ const PROCESS_ENV_DEFINE_KEYS = [
 
 const normalizePathForRollup = (id) => id.replaceAll('\\', '/');
 
-const manualChunks = (id) => {
+const MAX_JS_CHUNK_SIZE_BYTES = 450 * 1024;
+
+const isReactVendorModule = (normalizedId) => {
+  if (normalizedId.includes('/packages/ketcher-react/')) {
+    return false;
+  }
+
+  return [
+    '/node_modules/react/',
+    '/node_modules/react-dom/',
+    '/node_modules/react-router/',
+    '/node_modules/react-router-dom/',
+    '/node_modules/scheduler/',
+    '/node_modules/react-contexify/',
+    '/node_modules/react-dropzone/',
+    'react-dom/',
+    'react-dom/client',
+    'react/jsx-runtime',
+    'react/jsx-dev-runtime',
+    'scheduler/',
+  ].some((reactModuleIdPart) => normalizedId.includes(reactModuleIdPart));
+};
+
+const getChunkName = (id) => {
   const normalizedId = normalizePathForRollup(id);
 
   if (normalizedId.endsWith('/application/editor/data/monomers.ket')) {
     return 'data-monomers';
   }
 
+  if (isReactVendorModule(normalizedId)) {
+    return 'vendor-react';
+  }
+
   if (!normalizedId.includes('/node_modules/')) {
     if (normalizedId.includes('/packages/ketcher-core/')) {
+      if (
+        normalizedId.includes('/application/formatters/') ||
+        normalizedId.includes('/domain/services/struct/structService.types')
+      ) {
+        return 'ketcher-core-formatters';
+      }
+
+      if (normalizedId.includes('/domain/serializers/')) {
+        return 'ketcher-core-serializers';
+      }
+
+      if (normalizedId.includes('/application/render/')) {
+        return 'ketcher-core-render';
+      }
+
+      if (normalizedId.includes('/application/editor/')) {
+        return 'ketcher-core-editor';
+      }
+
+      if (normalizedId.includes('/domain/entities/')) {
+        return 'ketcher-core-entities';
+      }
+
+      if (normalizedId.includes('/domain/')) {
+        return 'ketcher-core-domain';
+      }
+
+      if (normalizedId.includes('/utilities/')) {
+        return 'ketcher-core-utilities';
+      }
+
       return 'ketcher-core';
     }
 
     if (normalizedId.includes('/packages/ketcher-react/')) {
+      if (normalizedId.endsWith('/src/templates/library.sdf')) {
+        return 'ketcher-react-templates';
+      }
+
+      if (normalizedId.includes('/src/assets/icons/')) {
+        return 'ketcher-react-icons';
+      }
+
+      if (normalizedId.includes('/src/script/ui/views/modal/')) {
+        return 'ketcher-react-modals';
+      }
+
+      if (normalizedId.includes('/src/script/ui/views/toolbars/')) {
+        return 'ketcher-react-toolbars';
+      }
+
+      if (normalizedId.includes('/src/script/editor/tool/')) {
+        return 'ketcher-react-tools';
+      }
+
+      if (normalizedId.includes('/src/script/ui/state/')) {
+        return 'ketcher-react-state';
+      }
+
       return 'ketcher-react';
     }
 
     if (normalizedId.includes('/packages/ketcher-macromolecules/')) {
+      if (normalizedId.includes('/src/components/preview/')) {
+        return 'ketcher-macromolecules-preview';
+      }
+
+      if (normalizedId.includes('/src/components/')) {
+        return 'ketcher-macromolecules-components';
+      }
+
+      if (normalizedId.includes('/src/utils/')) {
+        return 'ketcher-macromolecules-utils';
+      }
+
       return 'ketcher-macromolecules';
     }
 
@@ -172,13 +265,24 @@ const manualChunks = (id) => {
     return undefined;
   }
 
+  if (normalizedId.includes('/node_modules/three/')) {
+    return 'vendor-three';
+  }
+
+  if (normalizedId.includes('/node_modules/miew')) {
+    return 'vendor-miew';
+  }
+
   if (
-    normalizedId.includes('/node_modules/react/') ||
-    normalizedId.includes('/node_modules/react-dom/') ||
-    normalizedId.includes('/node_modules/react-router/') ||
-    normalizedId.includes('/node_modules/react-router-dom/')
+    normalizedId.includes('/node_modules/core-js/') ||
+    normalizedId.includes('/node_modules/react-app-polyfill/') ||
+    normalizedId.includes('/node_modules/regenerator-runtime/')
   ) {
-    return 'vendor-react';
+    return 'vendor-polyfills';
+  }
+
+  if (normalizedId.includes('/node_modules/lodash/')) {
+    return 'vendor-lodash';
   }
 
   if (
@@ -192,16 +296,54 @@ const manualChunks = (id) => {
     return 'vendor-indigo';
   }
 
+  if (normalizedId.includes('/node_modules/paper/')) {
+    return 'vendor-paper';
+  }
+
   if (
-    normalizedId.includes('/node_modules/d3') ||
-    normalizedId.includes('/node_modules/paper/') ||
     normalizedId.includes('/node_modules/raphael/') ||
     normalizedId.includes('/node_modules/svgpath/')
   ) {
-    return 'vendor-chemistry';
+    return 'vendor-svg-rendering';
+  }
+
+  if (
+    normalizedId.includes('/node_modules/acorn/') ||
+    normalizedId.includes('/node_modules/ajv/') ||
+    normalizedId.includes('/node_modules/jsonschema/')
+  ) {
+    return 'vendor-parsers';
+  }
+
+  if (normalizedId.includes('/node_modules/cfb/')) {
+    return 'vendor-file-formats';
+  }
+
+  if (normalizedId.includes('/node_modules/d3')) {
+    return 'vendor-d3';
   }
 
   return 'vendor';
+};
+
+const codeSplitting = {
+  minSize: 16 * 1024,
+  maxSize: MAX_JS_CHUNK_SIZE_BYTES,
+  groups: [
+    {
+      name: 'vendor-react',
+      test: (id) => isReactVendorModule(normalizePathForRollup(id)),
+      priority: 100,
+      minSize: MAX_JS_CHUNK_SIZE_BYTES,
+      maxSize: MAX_JS_CHUNK_SIZE_BYTES,
+      minShareCount: 1,
+      entriesAware: false,
+      entriesAwareMergeThreshold: MAX_JS_CHUNK_SIZE_BYTES,
+    },
+    {
+      name: getChunkName,
+    },
+  ],
 };
 
 const processEnvDefines = Object.fromEntries(
@@ -344,6 +486,7 @@ export default defineConfig({
   server: {
     open: true,
   },
+  assetsInclude: ['**/*.ket'],
   optimizeDeps: {
     // Vite 8 pre-bundler (rolldown) creates shared chunks between deps which causes
     // cross-chunk free-variable references for init_xxx() functions (rolldown bug).
@@ -406,7 +549,7 @@ export default defineConfig({
       },
     }),
     vitePluginRaw({
-      match: /\.sdf|\.ket/,
+      match: /\.sdf/,
     }),
     replace({
       include: '**/ketcher-react/src/**',
@@ -425,7 +568,6 @@ export default defineConfig({
     ),
     HtmlReplaceVitePlugin(),
     CopyServeConfigPlugin(),
-    commonjs(),
   ],
   define: {
     ...processEnvDefines,
@@ -469,6 +611,10 @@ export default defineConfig({
           '../packages/ketcher-macromolecules/src/index.tsx',
         ),
       },
+      {
+        find: 'miew-react',
+        replacement: resolve(__dirname, 'src/vite/MiewReactRuntime.jsx'),
+      },
 
       /** Web worker in ketcher-standalone */
       {
@@ -488,14 +634,11 @@ export default defineConfig({
   build: {
     outDir: 'build',
     sourcemap: true,
-    commonjsOptions: {
-      include: [/node_modules/, /packages[\\/]ketcher-core[\\/]src/],
-      transformMixedEsModules: true,
-    },
-    rollupOptions: {
+    rolldownOptions: {
       output: {
         entryFileNames: 'static/js/[name]-[hash].js',
         chunkFileNames: 'static/js/[name]-[hash].js',
+        strictExecutionOrder: true,
         assetFileNames: (assetInfo) => {
           if (assetInfo.name?.endsWith('.css')) {
             return 'static/css/[name]-[hash][extname]';
@@ -503,7 +646,7 @@ export default defineConfig({
 
           return 'static/media/[name]-[hash][extname]';
         },
-        manualChunks,
+        codeSplitting,
       },
     },
   },

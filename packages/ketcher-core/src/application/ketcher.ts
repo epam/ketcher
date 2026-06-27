@@ -84,10 +84,13 @@ const allowedApiSettings = {
   bondThickness: 'bondThickness',
 };
 
+const MONOMER_LIBRARY_MIME_TYPE =
+  'chemical/x-monomer-library' as ChemicalMimeType.MonomerLibrary;
+
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
-  inputFormat: ChemicalMimeType.MonomerLibrary,
-  outputFormat: ChemicalMimeType.MonomerLibrary,
-  outputContentType: ChemicalMimeType.MonomerLibrary,
+  inputFormat: MONOMER_LIBRARY_MIME_TYPE,
+  outputFormat: MONOMER_LIBRARY_MIME_TYPE,
+  outputContentType: MONOMER_LIBRARY_MIME_TYPE,
 } as const;
 
 export class Ketcher {

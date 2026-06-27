@@ -33,8 +33,10 @@ type Data = {
   oldSgroup?: SGroup;
 };
 
+const SUP_SGROUP_TYPE = 'SUP';
+
 const SGROUP_TYPE_MAPPING = {
-  nucleotideComponent: SGroup.TYPES.SUP,
+  nucleotideComponent: SUP_SGROUP_TYPE,
 };
 
 class SGroupCreate extends BaseOperation {
@@ -66,9 +68,9 @@ class SGroupCreate extends BaseOperation {
     let sgroup: SGroup;
 
     if (oldSgroup && oldSgroup instanceof MonomerMicromolecule) {
-      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer);
+      sgroup = new MonomerMicromolecule(SUP_SGROUP_TYPE, oldSgroup.monomer);
     } else if (this.monomer) {
-      sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, this.monomer);
+      sgroup = new MonomerMicromolecule(SUP_SGROUP_TYPE, this.monomer);
     } else {
       sgroup = new SGroup(
         SGROUP_TYPE_MAPPING[this.data.type] || this.data.type,

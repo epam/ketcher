@@ -589,7 +589,7 @@ export class MacromoleculesConverter {
 
         // Add stereo flag if the fragment has an enhanced stereo flag
         monomer.monomerItem.struct.frags.forEach((fragment) => {
-          if (fragment && fragment.enhancedStereoFlag) {
+          if (fragment?.enhancedStereoFlag) {
             const stereoFlagPosition =
               fragment.stereoFlagPosition ||
               Fragment.getDefaultStereoFlagPosition(

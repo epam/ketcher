@@ -15,11 +15,8 @@
  ***************************************************************************/
 
 const isMac =
-  typeof navigator !== 'undefined'
-    ? navigator.userAgentData?.platform
-      ? /mac/i.test(navigator.userAgentData.platform)
-      : /Mac/.test(navigator.userAgent)
-    : false; // eslint-disable-line no-undef
+  typeof navigator !== 'undefined' &&
+  /mac/i.test(navigator.userAgentData?.platform ?? navigator.userAgent);
 
 export const KeyboardModifiers = {
   Alt: 'Alt',

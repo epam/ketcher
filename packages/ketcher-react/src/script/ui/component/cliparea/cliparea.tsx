@@ -38,7 +38,6 @@ const isAsyncClipboardWriteAvailable = (): boolean =>
   isClipboardAPIAvailable() && !isSafariBrowser();
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
-let needSkipCopyEvent = false;
 
 const isUserEditing = (): boolean => {
   const el = document.activeElement;
@@ -64,11 +63,6 @@ const isUserEditing = (): boolean => {
 interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
-}
-
-interface LegacyClipboardDocument {
-  queryCommandSupported(commandId: string): boolean;
-  execCommand(commandId: string, showUI?: boolean, value?: string): boolean;
 }
 
 interface ClipAreaProps {
@@ -148,31 +142,12 @@ class ClipArea extends Component<ClipAreaProps> {
             }
             event.preventDefault();
           } else {
-            if (needSkipCopyEvent) {
-              needSkipCopyEvent = false;
-              return;
-            }
-            needSkipCopyEvent = true;
-
             this.props.onCopy().then((data) => {
-              // It is possible to have access to clipboard data through evt.clipboardData
-              // only in synchronous code. That's why we dispatch 'copy' event here after server call.
-              // It will not work with long operations which time > 5 sec, because browser will close access
-              // to clipboard data if user did not interact with application.
-              addEventListener(
-                'copy',
-                (evt: Event) => {
-                  const clipboardEvent = evt as ClipboardEvent;
-                  if (clipboardEvent.clipboardData && data) {
-                    legacyCopy(clipboardEvent.clipboardData, data);
-                  }
-                  evt.preventDefault();
-                },
-                { once: true },
-              );
-              (document as unknown as LegacyClipboardDocument).execCommand('copy');
+              if (!data) return;
+              navigator.clipboard
+                ?.writeText(data['text/plain'])
+                ?.catch((e) => KetcherLogger.error('cliparea.tsx::copy', e));
             });
-
             event.preventDefault();
           }
         }
@@ -390,24 +365,19 @@ async function pasteByKeydown(
 export const actions = ['cut', 'copy', 'paste'];
 
 export function exec(action: string): boolean {
-  const legacyDoc = document as unknown as LegacyClipboardDocument;
-  let enabled = legacyDoc.queryCommandSupported(action);
-  if (enabled) {
-    try {
-      const windowWithClipboardEvent = window as Window & {
-        ClipboardEvent?: typeof ClipboardEvent;
-      };
-      enabled =
-        legacyDoc.execCommand(action) ||
-        Boolean(windowWithClipboardEvent.ClipboardEvent) ||
-        Boolean(ieCb);
-    } catch (e) {
-      // FF < 41
-      KetcherLogger.error('cliparea.tsx::exec', e);
-      enabled = false;
-    }
+  const clipAreaEl = document.querySelector<HTMLElement>('[data-cliparea]');
+  if (!clipAreaEl) {
+    return false;
   }
-  return enabled;
+  try {
+    clipAreaEl.dispatchEvent(
+      new ClipboardEvent(action, { bubbles: true, cancelable: true }),
+    );
+    return true;
+  } catch (e) {
+    KetcherLogger.error('cliparea.tsx::exec', e);
+    return false;
+  }
 }
 
 export default ClipArea;

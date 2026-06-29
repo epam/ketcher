@@ -303,6 +303,7 @@ export const bond: StructSchema = {
         'singlearomatic',
         'doublearomatic',
         'dative',
+        'haptic',
       ],
       enumNames: [
         '',
@@ -320,6 +321,7 @@ export const bond: StructSchema = {
         'Single/Aromatic',
         'Double/Aromatic',
         'Dative',
+        'Haptic',
       ],
       default: 'single',
     },

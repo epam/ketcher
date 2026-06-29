@@ -24,6 +24,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
+import { remapEndpointAtomIds } from 'domain/helpers/hapticBond';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;
@@ -41,6 +42,8 @@ export interface BondAttributes {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  endpoints?: number[];
+  attach?: 'ALL' | 'ANY';
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -55,6 +58,7 @@ export class Bond extends BaseMicromoleculeEntity {
       DOUBLE_OR_AROMATIC: 7,
       ANY: 8,
       DATIVE: 9,
+      HAPTIC: 91,
       HYDROGEN: 10,
     },
 
@@ -113,6 +117,8 @@ export class Bond extends BaseMicromoleculeEntity {
   endSuperatomAttachmentPointNumber?: number;
   beginSgroup?: SGroup;
   endSgroup?: SGroup;
+  endpoints?: number[];
+  attach?: 'ALL' | 'ANY';
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);
@@ -134,6 +140,8 @@ export class Bond extends BaseMicromoleculeEntity {
       attributes.beginSuperatomAttachmentPointNumber;
     this.endSuperatomAttachmentPointNumber =
       attributes.endSuperatomAttachmentPointNumber;
+    this.endpoints = attributes.endpoints;
+    this.attach = attributes.attach;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -311,6 +319,10 @@ export class Bond extends BaseMicromoleculeEntity {
     if (aidMap) {
       cp.begin = aidMap.get(cp.begin)!;
       cp.end = aidMap.get(cp.end)!;
+
+      if (cp.endpoints?.length) {
+        cp.endpoints = remapEndpointAtomIds(cp.endpoints, aidMap);
+      }
     }
     return cp;
   }

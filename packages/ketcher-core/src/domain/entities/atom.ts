@@ -104,6 +104,11 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
   initiallySelected?: initiallySelectedType;
+  /**
+   * Endpoints of a super-attachment point atom.
+   * In `.ket` format, it equals to `ENDPTS` property for haptic bonds.
+   */
+  endpoints?: number[];
 }
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<
@@ -176,6 +181,7 @@ export class Atom extends BaseMicromoleculeEntity {
     stereoLabel: null,
     stereoParity: 0,
     implicitHCount: null,
+    endpoints: [],
   };
 
   label: string;
@@ -210,6 +216,7 @@ export class Atom extends BaseMicromoleculeEntity {
   stereoParity: number;
   hasImplicitH?: boolean;
   pseudo!: string;
+  endpoints: number[];
 
   /** @deprecated */
   get attpnt() {
@@ -307,6 +314,12 @@ export class Atom extends BaseMicromoleculeEntity {
         }
       },
     });
+
+    // super-attachment point
+    this.endpoints = getValueOrDefault(
+      attributes.endpoints,
+      Atom.attrlist.endpoints,
+    );
   }
 
   get isRGroupAttachmentPointEditDisabled() {

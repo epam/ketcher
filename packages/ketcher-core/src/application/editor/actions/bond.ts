@@ -18,6 +18,7 @@ import type { AtomAttributes } from 'domain/entities/atom';
 import { type BondAttributes, Bond } from 'domain/entities/bond';
 import type { Vec2 } from 'domain/entities/vec2';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { prepareHapticBondAttributes } from 'domain/helpers/hapticBond';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { SGroup } from 'domain/entities/sgroup';
 import {
@@ -165,6 +166,12 @@ export function fromBondAddition(
         }
       });
     }
+  }
+
+  if (bond.type === Bond.PATTERN.TYPE.HAPTIC) {
+    const beginAtom = struct.atoms.get(beginAtomId);
+    const endAtom = struct.atoms.get(endAtomId);
+    bond = prepareHapticBondAttributes(bond, beginAtom, endAtom);
   }
 
   const newBondId = (

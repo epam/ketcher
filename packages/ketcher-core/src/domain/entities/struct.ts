@@ -37,6 +37,10 @@ import { Vec2 } from './vec2';
 import type { Highlight } from './highlight';
 import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import {
+  mergeHapticBondFragments,
+  remapEndpointAtomIds,
+} from 'domain/helpers/hapticBond';
 import { isNumber } from 'lodash';
 import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
@@ -350,6 +354,19 @@ export class Struct {
       if (atoms.has(aid) && rgroupsIds.indexOf(atom.fragment) !== -1) {
         aids.set(aid, cp.atoms.add(atom.clone(fidMap)));
       }
+    });
+
+    // A super attachment point atom stores its endpoint atom ids in
+    // `endpoints`. Now that the atom id map is complete, remap them so they
+    // point at the cloned atoms instead of the originals.
+    this.atoms.forEach((atom, aid) => {
+      if (!atoms.has(aid) || !atom.endpoints?.length) return;
+      const clonedAtomId = aids.get(aid);
+      const clonedAtom =
+        clonedAtomId === undefined ? undefined : cp.atoms.get(clonedAtomId);
+      if (!clonedAtom) return;
+      const remappedEndpoints = remapEndpointAtomIds(atom.endpoints, aids);
+      clonedAtom.endpoints = remappedEndpoints;
     });
 
     fidMap.forEach((newfid, oldfid) => {
@@ -923,6 +940,7 @@ export class Struct {
       }
       this.markFragment(comp, properties);
     });
+    mergeHapticBondFragments(this);
   }
 
   scale(scale: number) {

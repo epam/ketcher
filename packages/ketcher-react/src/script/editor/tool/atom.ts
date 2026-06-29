@@ -337,6 +337,8 @@ class AtomTool implements Tool {
 
 export function atomLongtapEvent(tool, render) {
   const { dragCtx, editor } = tool;
+  if (!dragCtx) return;
+
   const atomid = dragCtx.item?.id;
   const fgs = render.ctab.molecule.functionalGroups;
   // edit atom or add atom

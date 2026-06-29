@@ -20,6 +20,7 @@ import { FunctionalGroup } from 'domain/entities/functionalGroup';
 import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { Box2Abs } from 'domain/entities/box2Abs';
+import { isSuperAttachmentPointExcludedFromSelection } from 'domain/helpers/hapticBond';
 import { Pile } from 'domain/entities/pile';
 import { Pool } from 'domain/entities/pool';
 import type { RGroupAttachmentPoint } from 'domain/entities/rgroupAttachmentPoint';
@@ -834,6 +835,10 @@ class ReStruct {
       if (ReStruct.maps[map].isSelectable() || mapValues instanceof ReSGroup) {
         this[map].forEach((item, id) => {
           if (item instanceof ReAtom) {
+            if (isSuperAttachmentPointExcludedFromSelection(item.a)) {
+              return;
+            }
+
             let sgroup;
             for (const sgId of item.a.sgs.values()) {
               sgroup = sgId;

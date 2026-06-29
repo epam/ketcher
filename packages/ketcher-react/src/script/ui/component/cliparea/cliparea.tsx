@@ -165,7 +165,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 },
                 { once: true },
               );
-              document.execCommand('copy');
+              (document as unknown as { execCommand: (cmd: string) => boolean }).execCommand('copy');
             });
 
             event.preventDefault();
@@ -384,15 +384,21 @@ async function pasteByKeydown(
 
 export const actions = ['cut', 'copy', 'paste'];
 
+interface LegacyClipboardDocument {
+  queryCommandSupported(commandId: string): boolean;
+  execCommand(commandId: string, showUI?: boolean, value?: string): boolean;
+}
+
 export function exec(action: string): boolean {
-  let enabled = document.queryCommandSupported(action);
+  const legacyDoc = document as unknown as LegacyClipboardDocument;
+  let enabled = legacyDoc.queryCommandSupported(action);
   if (enabled) {
     try {
       const windowWithClipboardEvent = window as Window & {
         ClipboardEvent?: typeof ClipboardEvent;
       };
       enabled =
-        document.execCommand(action) ||
+        legacyDoc.execCommand(action) ||
         Boolean(windowWithClipboardEvent.ClipboardEvent) ||
         Boolean(ieCb);
     } catch (e) {

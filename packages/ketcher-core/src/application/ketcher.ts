@@ -68,11 +68,13 @@ import {
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
+import type { ISettingsService, Settings } from 'application/settings';
 import { getStructure } from 'application/getStructure';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
   needZoom?: boolean;
+  preserveCanvasPosition?: boolean;
 };
 
 const allowedApiSettings = {
@@ -96,6 +98,7 @@ export class Ketcher {
   #editor: Editor | null = null;
   _indigo: Indigo;
   readonly #eventBus: EventEmitter;
+  readonly #settingsService?: ISettingsService;
   changeEvent: Subscription;
   libraryUpdateEvent: Subscription;
 
@@ -109,9 +112,18 @@ export class Ketcher {
     return this.#eventBus;
   }
 
+  /**
+   * Get settings service for managing application settings
+   * Returns undefined if settings service was not provided during construction
+   */
+  get settingsService(): ISettingsService | undefined {
+    return this.#settingsService;
+  }
+
   constructor(
     structService: StructService,
     formatterFactory: FormatterFactory,
+    settingsService?: ISettingsService,
   ) {
     assert(structService != null);
     assert(formatterFactory != null);
@@ -120,6 +132,7 @@ export class Ketcher {
     this.libraryUpdateEvent = new Subscription();
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
+    this.#settingsService = settingsService;
     this._indigo = new Indigo(this.structService);
     this.#eventBus = new EventEmitter();
     this.logging = {
@@ -127,6 +140,24 @@ export class Ketcher {
       level: LogLevel.ERROR,
       showTrace: false,
     };
+
+    // Subscribe to settings changes if settings service is provided
+    if (this.#settingsService) {
+      this.#settingsService.subscribe((newSettings) => {
+        this.#onSettingsChanged(newSettings);
+      });
+    }
+  }
+
+  /**
+   * Handle settings changes from settings service
+   * Updates editor and triggers re-render if needed
+   */
+  #onSettingsChanged(settings: Settings): void {
+    // This will be called when settings change
+    // The editor will need to be updated with new settings
+    // For now, this is a placeholder for Phase 2 integration
+    KetcherLogger.info('Settings changed', settings);
   }
 
   get id() {
@@ -513,7 +544,11 @@ export class Ketcher {
           this,
         );
 
-        struct.rescale();
+        const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+
+        if (!preserveCanvasPosition) {
+          struct.rescale();
+        }
 
         const { x, y } = options?.position ?? {};
 
@@ -526,8 +561,10 @@ export class Ketcher {
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
 
-        this.editor.zoomAccordingContent(struct);
-        if (x == null && y == null) {
+        if (!preserveCanvasPosition) {
+          this.editor.zoomAccordingContent(struct);
+        }
+        if (x == null && y == null && !preserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }
@@ -648,7 +685,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.aromatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 
@@ -660,7 +699,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.dearomatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 

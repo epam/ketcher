@@ -51,7 +51,7 @@ test.describe('Peptide library testing', () => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
     await Library(page).addMonomerToFavorites(Peptide.A);
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -70,7 +70,7 @@ test.describe('Peptide library testing', () => {
     /* 
     Test case: Actions with structures
     Description: Monomers is getting removed from favourites when clicking star sign.
-    The test is currently not functioning correctly as the bug has not been fixed https://github.com/epam/ketcher/issues/3963
+    After unfavoriting via the star, the library preview is dismissed (fix for https://github.com/epam/ketcher/issues/3963).
     */
     await Library(page).addMonomersToFavorites([
       Peptide.dA,
@@ -89,7 +89,7 @@ test.describe('Peptide library testing', () => {
     ]);
 
     await Library(page).removeMonomerFromFavorites(Preset.A);
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
+    await MonomerPreviewTooltip(page).waitForBecomeHidden();
     await takeMonomerLibraryScreenshot(page);
   });
 

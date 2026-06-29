@@ -332,8 +332,10 @@ const server: {
   'ignore-stereochemistry-errors': ExtendedSchema;
   'mass-skip-error-on-pseudoatoms': ExtendedSchema;
   'gross-formula-add-rsites': ExtendedSchema;
+  'aromatize-skip-superatoms': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
+  'valence-mode': ExtendedSchema;
   ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
@@ -341,6 +343,12 @@ const server: {
     type: 'boolean',
     description: 'slider',
     default: false,
+  },
+  'valence-mode': {
+    title: 'Valence mode',
+    enum: ['biovia-2009', 'biovia-2017', 'default'],
+    enumNames: ['BIOVIA 2009', 'BIOVIA 2017', 'Default'],
+    default: 'default',
   },
   'smart-layout': {
     title: 'Smart-layout',
@@ -368,6 +376,12 @@ const server: {
   },
   'gross-formula-add-rsites': {
     title: 'Add Rsites at mass calculation',
+    type: 'boolean',
+    description: 'slider',
+    default: true,
+  },
+  'aromatize-skip-superatoms': {
+    title: 'Skip Superatoms at aromatization',
     type: 'boolean',
     description: 'slider',
     default: true,

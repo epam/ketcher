@@ -28,6 +28,7 @@ export interface Option {
   label: string;
   children?: ReactNode;
   disabled?: boolean;
+  markedAsUsed?: boolean;
 }
 
 interface Props {
@@ -112,8 +113,10 @@ const Select = ({
             key={option.value}
             disableRipple={true}
             disabled={option.disabled}
+            title={option.markedAsUsed ? 'Already in use' : undefined}
             className={clsx({
               [`dropdown-${formName}_${name}`]: formName,
+              [styles.usedOption]: option.markedAsUsed,
             })}
             data-testid={`${option.label}-option`}
           >

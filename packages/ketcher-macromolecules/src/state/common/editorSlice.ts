@@ -22,11 +22,11 @@ import {
   SettingsManager,
   type EditorLineLength,
   type SingleChainMacromoleculeProperties,
+  DeepPartial,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
-import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
 import { SELECT_SUBMENU_ID } from 'components/menu/constants';
 
@@ -218,7 +218,7 @@ export const editorSlice: Slice<EditorState> = createSlice({
       state.editorLineLength = {
         ...state.editorLineLength,
         ...action.payload,
-      };
+      } as EditorLineLength;
     },
     setUnipositiveIonsValue: (state, action: PayloadAction<number>) => {
       state.unipositiveIonsValue = action.payload;

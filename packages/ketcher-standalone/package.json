@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.17.0-rc.1",
+  "version": "3.17.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -29,8 +29,8 @@
     "node": ">=24.14.1"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c rollup.config.mjs -m true",
+    "start": "cross-env NODE_ENV=development rollup -c rollup.config.mjs -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
@@ -43,10 +43,11 @@
   "dependencies": {
     "@babel/runtime": "^7.26.10",
     "indigo-ketcher": "1.45.0-rc.2",
-    "ketcher-core": "*"
+    "ketcher-core": "*",
+    "lodash": "^4.18.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
+    "@babel/core": "^7.29.6",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",

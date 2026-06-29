@@ -194,7 +194,7 @@ export function fromBondAddition(
     );
   }
 
-  return [action, beginAtomId, endAtomId, newBondId as number];
+  return [action, beginAtomId, endAtomId, newBondId];
 }
 
 export function fromBondsAttrs(

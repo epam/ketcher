@@ -44,4 +44,8 @@ export class ReassignLeavingAtomOperation extends BaseOperation {
       this.newLeavingAtomId,
     );
   }
+
+  isDummy() {
+    return this.newLeavingAtomId === this.previousLeavingAtomId;
+  }
 }

@@ -78,8 +78,8 @@ export function fromChain(
       pos,
     );
     action = ret[0].mergeWith(action);
-    id0 = ret[2] as number;
-    chainItems.bonds.push(ret[3] as number);
+    id0 = ret[2];
+    chainItems.bonds.push(ret[3]);
     chainItems.atoms.push(id0);
   }
 

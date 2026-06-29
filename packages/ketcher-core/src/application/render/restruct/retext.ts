@@ -22,6 +22,7 @@ import { flatten } from 'lodash/fp';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
+import { countTextLines, getMultilineTopAnchorOffset } from './retext.utils';
 import { Scale } from 'domain/helpers';
 import type { RaphaelBaseElement } from 'raphael';
 
@@ -238,6 +239,13 @@ class ReText extends ReObject {
             restruct.molecule.texts.keyOf(this.item),
           );
           path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
+          const lineCount = countTextLines(text);
+          if (lineCount > 1) {
+            path.translateAbs(
+              0,
+              getMultilineTopAnchorOffset(path.getBBox().height, lineCount),
+            );
+          }
           row.push(path);
           shiftX += path.getBBox().width;
         });

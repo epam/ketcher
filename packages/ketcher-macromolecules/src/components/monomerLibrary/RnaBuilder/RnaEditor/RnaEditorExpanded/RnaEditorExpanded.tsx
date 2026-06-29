@@ -530,8 +530,8 @@ export const RnaEditorExpanded = ({
     if (!presetName) {
       return;
     }
-    if (newPreset.editedName && !isValidPresetName(newPreset.name)) {
-      dispatch(setInvalidPresetNameError(newPreset.name));
+    if (newPreset.editedName && !isValidPresetName(presetName)) {
+      dispatch(setInvalidPresetNameError(presetName));
       return;
     }
 

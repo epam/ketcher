@@ -2,7 +2,7 @@ import { Atom, SGroup, Struct, Vec2 } from 'domain/entities';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Molfile } from '../molfile';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { geometricCenter } from 'domain/entities/geometry';
+import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 const PRECISION = 4;
 
@@ -66,9 +66,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     expect(sgroup).toBeDefined();
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = sgroup!.atoms
-      .map((id) => parsed.atoms.get(id)?.pp)
-      .filter((pp): pp is Vec2 => pp != null);
+    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -92,9 +90,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     expect(sgroup).toBeDefined();
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const positions = sgroup!.atoms
-      .map((id) => parsed.atoms.get(id)?.pp)
-      .filter((pp): pp is Vec2 => pp != null);
+    const positions = getAtomPositions(sgroup!.atoms, parsed.atoms);
     const center = geometricCenter(positions);
     expect(center.x).toBeCloseTo(monomerPosition.x, PRECISION);
     expect(center.y).toBeCloseTo(monomerPosition.y, PRECISION);
@@ -112,9 +108,7 @@ describe('centerMonomerMicromoleculeAtoms', () => {
     expect(sgroup).toBeDefined();
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parsedPositions = sgroup!.atoms
-      .map((id) => parsed.atoms.get(id)?.pp)
-      .filter((pp): pp is Vec2 => pp != null);
+    const parsedPositions = getAtomPositions(sgroup!.atoms, parsed.atoms);
 
     // Bond length between first two atoms should be preserved (distance = 2)
     const dx = parsedPositions[0].x - parsedPositions[1].x;

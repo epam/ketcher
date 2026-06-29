@@ -12,7 +12,7 @@ import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
-const BRACKET_STROKE = '#000';
+const BRACKET_STROKE = '#a9a9a9';
 const DATA_SGROUP_BACKGROUND = '#fff';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
@@ -211,17 +211,17 @@ export class SGroupRenderer extends BaseRenderer {
   }
 
   private getBracketParameters(bracketBox: Box2Abs): BracketParams[] {
-    const direction = this.sgroup.bracketDirection;
-    const bracketDirection = direction.rotateSC(1, 0);
+    const angleDirection = this.sgroup.bracketDirection;
+    const bracketDirection = angleDirection.rotateSC(1, 0);
     const bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3);
     const leftCenter = Vec2.lc2(
-      direction,
+      angleDirection,
       bracketBox.p0.x,
       bracketDirection,
       0.5 * (bracketBox.p0.y + bracketBox.p1.y),
     );
     const rightCenter = Vec2.lc2(
-      direction,
+      angleDirection,
       bracketBox.p1.x,
       bracketDirection,
       0.5 * (bracketBox.p0.y + bracketBox.p1.y),
@@ -231,15 +231,15 @@ export class SGroupRenderer extends BaseRenderer {
     return [
       {
         center: leftCenter,
-        direction: direction.negated(),
-        angleDirection: bracketDirection,
+        direction: angleDirection.negated().rotateSC(1, 0),
+        angleDirection: angleDirection.negated(),
         width: bracketWidth,
         height: bracketHeight,
       },
       {
         center: rightCenter,
-        direction,
-        angleDirection: bracketDirection,
+        direction: bracketDirection,
+        angleDirection,
         width: bracketWidth,
         height: bracketHeight,
       },
@@ -284,13 +284,12 @@ export class SGroupRenderer extends BaseRenderer {
     isLowerText: boolean,
     indexAttribute?: Record<string, string>,
   ): void {
-    const bracketDirection = bracket.direction.rotateSC(1, 0);
     const bracketEdge = bracket.center.addScaled(
-      bracketDirection,
+      bracket.direction,
       (isLowerText ? 0.5 : -0.5) * bracket.height,
     );
     const position = Scale.modelToCanvas(
-      bracketEdge.addScaled(bracket.direction, 0.35),
+      bracketEdge.addScaled(bracket.angleDirection, 0.35),
       this.editorSettings,
     );
 

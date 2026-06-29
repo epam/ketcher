@@ -481,23 +481,9 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
     const skippedItems: SkippedMonomerItem[] = [];
-    let shouldThrowMonomerLibraryUpdateError = false;
-    const reportValidationError = (
-      name: string,
-      reason: string,
-      shouldThrow = true,
-    ) => {
-      const consoleMessage = `[Monomer Library] Failed to load monomer "${name}": ${reason}`;
-      globalThis.console.error(consoleMessage);
-
-      if (reason.startsWith('Editor::updateMonomersLibrary')) {
-        KetcherLogger.error(reason);
-      } else {
-        KetcherLogger.error('Editor::updateMonomersLibrary', reason);
-      }
-
+    const shouldThrowMonomerLibraryUpdateError = false;
+    const reportValidationError = (name: string, reason: string) => {
       skippedItems.push({ name, reason });
-      shouldThrowMonomerLibraryUpdateError ||= shouldThrow;
     };
     let didCommitAnyItem = false;
 
@@ -579,7 +565,6 @@ export class CoreEditor {
         reportValidationError(
           newMonomer.props.MonomerName,
           `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
-          false,
         );
         return;
       }
@@ -687,7 +672,6 @@ export class CoreEditor {
           reportValidationError(
             newMonomer.props.MonomerName,
             `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`,
-            false,
           );
           return;
         }

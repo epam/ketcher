@@ -141,7 +141,7 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
   },
   {
     testDescription: '26. Single Down bond connected to R-Group',
-    loadString: '[#6]%91.[*:1]\\%91',
+    loadString: '[#6]%91.[*:1]\%91',
   },
   {
     testDescription: '29. Molecule with eight R-Groups on terminal positions',

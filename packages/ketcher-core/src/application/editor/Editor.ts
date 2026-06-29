@@ -483,6 +483,11 @@ export class CoreEditor {
     const skippedItems: SkippedMonomerItem[] = [];
     let shouldThrowMonomerLibraryUpdateError = false;
     const reportValidationError = (name: string, reason: string) => {
+      if (reason.startsWith('Editor::updateMonomersLibrary')) {
+        KetcherLogger.error(reason);
+      } else {
+        KetcherLogger.error('Editor::updateMonomersLibrary', reason);
+      }
       skippedItems.push({ name, reason });
       shouldThrowMonomerLibraryUpdateError = true;
     };

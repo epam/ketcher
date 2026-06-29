@@ -481,9 +481,10 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
     const skippedItems: SkippedMonomerItem[] = [];
-    const shouldThrowMonomerLibraryUpdateError = false;
+    let shouldThrowMonomerLibraryUpdateError = false;
     const reportValidationError = (name: string, reason: string) => {
       skippedItems.push({ name, reason });
+      shouldThrowMonomerLibraryUpdateError = true;
     };
     let didCommitAnyItem = false;
 

@@ -141,6 +141,8 @@ const eligableForMonomerCreation: IMoleculesForMonomerCreation[] = [
   },
   {
     testDescription: '26. Single Down bond connected to R-Group',
+    // prettier-ignore
+    // eslint-disable-next-line no-useless-escape
     loadString: '[#6]%91.[*:1]\%91',
   },
   {

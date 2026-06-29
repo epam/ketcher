@@ -66,6 +66,11 @@ interface ClipboardData {
   [key: string]: string;
 }
 
+interface LegacyClipboardDocument {
+  queryCommandSupported(commandId: string): boolean;
+  execCommand(commandId: string, showUI?: boolean, value?: string): boolean;
+}
+
 interface ClipAreaProps {
   formats: string[];
   focused: () => boolean;
@@ -165,7 +170,7 @@ class ClipArea extends Component<ClipAreaProps> {
                 },
                 { once: true },
               );
-              (document as unknown as { execCommand: (cmd: string) => boolean }).execCommand('copy');
+              (document as unknown as LegacyClipboardDocument).execCommand('copy');
             });
 
             event.preventDefault();
@@ -383,11 +388,6 @@ async function pasteByKeydown(
 }
 
 export const actions = ['cut', 'copy', 'paste'];
-
-interface LegacyClipboardDocument {
-  queryCommandSupported(commandId: string): boolean;
-  execCommand(commandId: string, showUI?: boolean, value?: string): boolean;
-}
 
 export function exec(action: string): boolean {
   const legacyDoc = document as unknown as LegacyClipboardDocument;

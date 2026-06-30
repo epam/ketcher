@@ -27,12 +27,16 @@ const createMonomerItem = (overrides: Partial<MonomerItemType['props']>) => {
   } as unknown as MonomerItemType;
 };
 
-const createRendererForNode = (node: LinkerSequenceNode) => {
+const createRendererForNode = (
+  node: LinkerSequenceNode,
+  monomerIndexInChain = 0,
+  isLastMonomerInChain = true,
+) => {
   return SequenceNodeRendererFactory.fromNode(
     node,
     new Vec2(0, 0),
-    0,
-    true,
+    monomerIndexInChain,
+    isLastMonomerInChain,
     {} as never,
     0,
     0,
@@ -41,18 +45,60 @@ const createRendererForNode = (node: LinkerSequenceNode) => {
 };
 
 describe('SequenceNodeRendererFactory', () => {
-  it('uses phosphate renderer for linker nodes that contain only phosphate monomers', () => {
-    const phosphate = new Phosphate(
-      createMonomerItem({
-        MonomerType: MONOMER_CONST.RNA,
-        MonomerClass: KetMonomerClass.Phosphate,
-        MonomerNaturalAnalogCode: MONOMER_CONST.P,
-      }),
-    );
+  describe('phosphate linker rendering at edge positions', () => {
+    it('uses phosphate renderer for phosphate linker at first position (index 0)', () => {
+      const phosphate = new Phosphate(
+        createMonomerItem({
+          MonomerType: MONOMER_CONST.RNA,
+          MonomerClass: KetMonomerClass.Phosphate,
+          MonomerNaturalAnalogCode: MONOMER_CONST.P,
+        }),
+      );
 
-    const renderer = createRendererForNode(new LinkerSequenceNode(phosphate));
+      const renderer = createRendererForNode(
+        new LinkerSequenceNode(phosphate),
+        0, // first position
+        false, // not last
+      );
 
-    expect(renderer).toBeInstanceOf(PhosphateSequenceItemRenderer);
+      expect(renderer).toBeInstanceOf(PhosphateSequenceItemRenderer);
+    });
+
+    it('uses phosphate renderer for phosphate linker at last position', () => {
+      const phosphate = new Phosphate(
+        createMonomerItem({
+          MonomerType: MONOMER_CONST.RNA,
+          MonomerClass: KetMonomerClass.Phosphate,
+          MonomerNaturalAnalogCode: MONOMER_CONST.P,
+        }),
+      );
+
+      const renderer = createRendererForNode(
+        new LinkerSequenceNode(phosphate),
+        5, // some position
+        true, // last in chain
+      );
+
+      expect(renderer).toBeInstanceOf(PhosphateSequenceItemRenderer);
+    });
+
+    it('uses chem renderer for phosphate linker in middle position', () => {
+      const phosphate = new Phosphate(
+        createMonomerItem({
+          MonomerType: MONOMER_CONST.RNA,
+          MonomerClass: KetMonomerClass.Phosphate,
+          MonomerNaturalAnalogCode: MONOMER_CONST.P,
+        }),
+      );
+
+      const renderer = createRendererForNode(
+        new LinkerSequenceNode(phosphate),
+        2, // middle position (not 0)
+        false, // not last
+      );
+
+      expect(renderer).toBeInstanceOf(ChemSequenceItemRenderer);
+    });
   });
 
   it('keeps chem renderer for regular linker nodes', () => {

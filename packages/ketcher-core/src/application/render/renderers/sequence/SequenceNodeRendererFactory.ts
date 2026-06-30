@@ -29,7 +29,11 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class SequenceNodeRendererFactory {
-  private static getLinkerRendererClass(node: LinkerSequenceNode) {
+  private static getLinkerRendererClass(
+    node: LinkerSequenceNode,
+    monomerIndexInChain: number,
+    isLastMonomerInChain: boolean,
+  ) {
     const isPhosphateOnlyLinker = node.monomers.every(
       (monomer) =>
         monomer instanceof Phosphate ||
@@ -37,7 +41,9 @@ export class SequenceNodeRendererFactory {
           monomer.monomerClass === KetMonomerClass.Phosphate),
     );
 
-    return isPhosphateOnlyLinker
+    const isAtEdgeOfChain = monomerIndexInChain === 0 || isLastMonomerInChain;
+
+    return isPhosphateOnlyLinker && isAtEdgeOfChain
       ? PhosphateSequenceItemRenderer
       : ChemSequenceItemRenderer;
   }
@@ -72,6 +78,8 @@ export class SequenceNodeRendererFactory {
       case LinkerSequenceNode:
         RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
           node as LinkerSequenceNode,
+          monomerIndexInChain,
+          isLastMonomerInChain,
         );
         break;
       case AmbiguousMonomerSequenceNode:

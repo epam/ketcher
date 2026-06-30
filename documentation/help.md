@@ -323,6 +323,24 @@ To draw pathway reactions you can:
 - Adjust the length of the head or tail by grabbing its end and moving the cursor left and right;
 - Reposition the head or tail vertically by grabbing its end and moving the cursor up and down.
 
+### Reaction-specific format support
+
+Ketcher (through Indigo) supports export of reactions by:
+- Grouping structures to the left of an arrow (in case of left-to-right oriented arrow) as reactants.
+     - Arrows can be drawn in any direction;
+     - Reactants can, but don't have to, have pluses between them;
+          - If there are pluses, vertical or hirozontal distance between two structures is irrelevant;
+          - If there are no pluses, structures with the distance between them being less than 2 bond lenghts are grouped together.
+- Grouping structures to the right of an arrow (in case of left-to-right oriented arrow) as products.
+     - All points for reactants stand for products as well.
+- Grouping structures above and below the arrow (in case of a horizontal arrow) as reagents/catalysts.
+     - The distance between components stands for reagents as well.
+     - Reaction-specific formats except KET, CDX, and CDXML will not save any pluses between reagents/catalysts.
+     - KET, CDX, and CDXML support text as a reagent/catalyst.
+ - Reactions containing multi-tailed arrows are supported only by KET. This reaction <img src=images/Reaction-Saving-3.17..png width = "300"/> will be saved with a modification (arrow + lines) in CDX and CDXML <img src=images/Reaction-Saving-2-3.17..png width = "300"/>, and as linear in all other formats <img src=images/Reaction-Saving-3-3.17..png width = "200"/>.
+ - Multi-step reactions are supported in KET, CDX, and CDXML. All other formats will save the reaction as: reactants from the first reaction --reagents/catalysts from all reactions--> all other reaction participants. For example, this multi-step reaction <img src=images/Reaction-Saving-4-3.17..png width = "300"/> becomes <img src=images/Reaction-Saving-5-3.17..png width = "300"/>
+ 
+
 ## Drawing Graphical Objects
 
 To draw graphical objects click the arrow on the _Shape Ellipse_ tool <img src=images/39_objects_icon-1.png width = "35"/> in the Tools palette to open the drop-down list with the following tools <img src=images/40_objects_menu.png width = "130"/>:
@@ -602,9 +620,9 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 ##### Creating New Monomers
 
-A chemical structure can be loaded into the monomer creation wizard in molecules mode by clicking on _Create a monomer_ button on the left toolbar,
+A chemical structure can be loaded into the monomer creation wizard in molecules mode by clicking on _Create a monomer_ button on the left toolbar
 <img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
-choosing the same option from the context menu, or using the hotkey (_Ctrl+M_):
+, choosing the same option from the context menu, or using the hotkey (_Ctrl+M_):
 
 <img src=images/Monomer-Creation-Wizard-2-3.17..png width = "450"/>
 

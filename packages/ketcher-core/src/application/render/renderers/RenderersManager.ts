@@ -661,6 +661,9 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
+    this.sgroups.forEach((sgroupRenderer) => {
+      sgroupRenderer.moveLabelsToFront();
+    });
   }
 
   public rerenderSideConnectionPolymerBonds() {

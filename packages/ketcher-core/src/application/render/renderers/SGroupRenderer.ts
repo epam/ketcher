@@ -20,6 +20,7 @@ const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
 const FONT_SIZE_SCALE_BASE = 6;
 const LINE_WIDTH_SCALE_BASE = 20;
 const ATTACHED_LABEL_VERTICAL_SHIFT_FACTOR = 0.8;
+const INDEX_LABEL_VERTICAL_SHIFT = 4;
 
 interface BracketParams {
   center: Vec2;
@@ -36,6 +37,8 @@ interface DrawBracketsOptions {
 }
 
 export class SGroupRenderer extends BaseRenderer {
+  private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
+
   constructor(public sgroupDrawingEntity: SGroupDrawingEntity) {
     super(sgroupDrawingEntity);
     this.sgroupDrawingEntity.setRenderer(this);
@@ -47,6 +50,16 @@ export class SGroupRenderer extends BaseRenderer {
 
   private get sgroup() {
     return this.sgroupDrawingEntity.sgroup;
+  }
+
+  private addLabelElement<ElementType extends SVGElement>(
+    element: D3SvgElementSelection<ElementType, void>,
+  ): D3SvgElementSelection<ElementType, void> {
+    this.labelElements.push(
+      element as never as D3SvgElementSelection<SVGElement, void>,
+    );
+
+    return element;
   }
 
   public show(): void {
@@ -299,9 +312,9 @@ export class SGroupRenderer extends BaseRenderer {
       (isLowerText ? 0.5 : -0.5) * bracket.height,
     );
     const position = Scale.modelToCanvas(
-      bracketEdge.addScaled(bracket.angleDirection, 0.35),
+      bracketEdge.addScaled(bracket.angleDirection, 0.05),
       this.editorSettings,
-    );
+    ).add(new Vec2(0, INDEX_LABEL_VERTICAL_SHIFT));
 
     this.appendText(position, text, indexAttribute);
   }
@@ -328,7 +341,7 @@ export class SGroupRenderer extends BaseRenderer {
     scaledPosition: Vec2,
     getLabelShift: (bbox: SVGRect) => Vec2,
   ): void {
-    const valueGroup = this.rootElement?.append('g');
+    const valueGroup = this.addLabelElement(this.canvas.append('g'));
     const textElement = this.appendText(
       scaledPosition,
       this.sgroup.data.fieldValue,
@@ -337,7 +350,7 @@ export class SGroupRenderer extends BaseRenderer {
     );
     const bbox = textElement?.node()?.getBBox();
 
-    if (!bbox || !valueGroup) {
+    if (!bbox) {
       return;
     }
 
@@ -371,11 +384,10 @@ export class SGroupRenderer extends BaseRenderer {
     position: Vec2,
     text: string,
     attributes?: Record<string, string>,
-    parent: D3SvgElementSelection<SVGGElement, void> | undefined = this
-      .rootElement,
+    parent?: D3SvgElementSelection<SVGGElement, void>,
   ): D3SvgElementSelection<SVGTextElement, void> | undefined {
-    const textElement = parent
-      ?.append('text')
+    const textElement = (parent || this.canvas)
+      .append('text')
       .attr('x', position.x)
       .attr('y', position.y)
       .attr(
@@ -390,6 +402,10 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('data-label-text', text)
       .text(text);
 
+    if (!parent) {
+      this.addLabelElement(textElement);
+    }
+
     if (attributes) {
       Object.entries(attributes).forEach(([attribute, value]) => {
         textElement?.attr(attribute, value);
@@ -397,6 +413,27 @@ export class SGroupRenderer extends BaseRenderer {
     }
 
     return textElement as D3SvgElementSelection<SVGTextElement, void>;
+  }
+
+  public moveLabelsToFront(): void {
+    this.labelElements.forEach((labelElement) => {
+      labelElement.raise();
+    });
+  }
+
+  public remove(): void {
+    super.remove();
+    this.labelElements.forEach((labelElement) => {
+      labelElement.remove();
+    });
+    this.labelElements = [];
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+    this.labelElements.forEach((labelElement) => {
+      labelElement.style('opacity', isVisible ? 1 : 0);
+    });
   }
 
   public drawSelection(): void {

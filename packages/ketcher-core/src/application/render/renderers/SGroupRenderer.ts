@@ -11,6 +11,7 @@ import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { editorEvents } from 'application/editor/editorEvents';
+import paperjs from 'paper';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
@@ -46,6 +47,8 @@ interface DrawBracketsOptions {
 
 export class SGroupRenderer extends BaseRenderer {
   private labelElements: D3SvgElementSelection<SVGElement, void>[] = [];
+  private atomRenderers = new Map<number, AtomRenderer>();
+  private bondRenderers = new Map<number, BondRenderer>();
 
   constructor(public sgroupDrawingEntity: SGroupDrawingEntity) {
     super(sgroupDrawingEntity);
@@ -172,6 +175,9 @@ export class SGroupRenderer extends BaseRenderer {
     atomRenderers: Map<number, AtomRenderer>,
     bondRenderers: Map<number, BondRenderer>,
   ): void {
+    this.atomRenderers = atomRenderers;
+    this.bondRenderers = bondRenderers;
+
     if (this.sgroup.isExpanded()) {
       return;
     }
@@ -545,23 +551,119 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('ry', HOVER_RECT_RADIUS);
   }
 
-  protected appendHover(): D3SvgElementSelection<SVGRectElement, void> | void {
+  private getSGroupAtomRenderers(): AtomRenderer[] {
+    const sgroupAtomIds = this.getSGroupAtomIds();
+
+    return [...this.atomRenderers.values()].filter(
+      (atomRenderer) =>
+        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode),
+    );
+  }
+
+  private getSGroupBondRenderers(): BondRenderer[] {
+    const sgroupAtomIds = this.getSGroupAtomIds();
+
+    return [...this.bondRenderers.values()].filter((bondRenderer) => {
+      const { firstAtom, secondAtom } = bondRenderer.bond;
+      const isSameMonomer =
+        firstAtom.monomer === this.sgroupDrawingEntity.monomer &&
+        secondAtom.monomer === this.sgroupDrawingEntity.monomer;
+
+      return (
+        isSameMonomer &&
+        sgroupAtomIds.has(firstAtom.atomIdInMicroMode) &&
+        sgroupAtomIds.has(secondAtom.atomIdInMicroMode)
+      );
+    });
+  }
+
+  private getAtomHoverPath(atomRenderer: AtomRenderer): paper.Path {
+    const contour = atomRenderer.getHoverContour();
+
+    if (contour.type === 'circle') {
+      return new paperjs.Path.Circle(
+        new paperjs.Point(contour.center.x, contour.center.y),
+        contour.radius,
+      );
+    }
+
+    return new paperjs.Path.Rectangle(
+      new paperjs.Rectangle(
+        contour.x,
+        contour.y,
+        contour.width,
+        contour.height,
+      ),
+      new paperjs.Size(contour.radius, contour.radius),
+    );
+  }
+
+  private getBondHoverPath(
+    bondRenderer: BondRenderer,
+  ): paper.CompoundPath | null {
+    const pathData = bondRenderer.getHoverContourPath();
+
+    return pathData ? new paperjs.CompoundPath(pathData) : null;
+  }
+
+  private getCombinedStructureHoverPathData(): string | undefined {
+    paperjs.setup(document.createElement('canvas'));
+
+    const hoverPaths = [
+      ...this.getSGroupAtomRenderers().map((atomRenderer) =>
+        this.getAtomHoverPath(atomRenderer),
+      ),
+      ...this.getSGroupBondRenderers()
+        .map((bondRenderer) => this.getBondHoverPath(bondRenderer))
+        .filter((path): path is paper.CompoundPath => Boolean(path)),
+    ];
+
+    let combinedPath: paper.PathItem | undefined;
+
+    hoverPaths.forEach((path) => {
+      if (!path.closed) {
+        path.closePath();
+      }
+
+      combinedPath = combinedPath ? combinedPath.unite(path) : path;
+    });
+
+    return combinedPath?.pathData;
+  }
+
+  protected appendHover(): D3SvgElementSelection<SVGGElement, void> | void {
     if (!this.rootElement || this.hoverElement || !this.sgroup.bracketBox) {
       return;
     }
 
-    this.hoverElement = this.rootElement
-      .insert('rect', ':first-child')
-      .attr('fill', 'none')
-      .attr('stroke', HOVER_STROKE)
-      .attr('stroke-width', HOVER_STROKE_WIDTH)
+    const hoverGroup = this.rootElement
+      .insert('g', ':first-child')
       .attr('pointer-events', 'none')
       .attr('class', 'dynamic-element') as D3SvgElementSelection<
-      SVGRectElement,
+      SVGGElement,
       void
     >;
 
-    this.setHoverRectAttributes(this.hoverElement);
+    const combinedPathData = this.getCombinedStructureHoverPathData();
+
+    if (combinedPathData) {
+      hoverGroup
+        .append('path')
+        .attr('d', combinedPathData)
+        .attr('fill', 'none')
+        .attr('stroke', HOVER_STROKE)
+        .attr('stroke-width', HOVER_STROKE_WIDTH);
+    }
+
+    const hoverRect = hoverGroup
+      .append('rect')
+      .attr('fill', 'none')
+      .attr('stroke', HOVER_STROKE)
+      .attr('stroke-width', HOVER_STROKE_WIDTH);
+
+    this.setHoverRectAttributes(hoverRect);
+    this.hoverElement = hoverGroup;
 
     return this.hoverElement;
   }

@@ -437,6 +437,8 @@ export class RenderersManager {
 
     this.sgroups.set(sgroupDrawingEntity.id, sgroupRenderer);
     sgroupRenderer.show();
+    sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
+    sgroupRenderer.moveLabelsToFront();
   }
 
   public deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {

@@ -450,8 +450,10 @@ class Editor implements KetcherEditor {
     });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
-    // Preserve atom coordinates when applying editor options (e.g. viewOnlyMode).
-    this.struct(struct.clone(), false);
+    // Preserve atom coordinates when structure exists on canvas and options change.
+    // Only center the structure if canvas was empty (no atoms).
+    const hasAtoms = struct.atoms.size > 0;
+    this.struct(struct.clone(), !hasAtoms);
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;

@@ -97,9 +97,12 @@ type OptionsForDebuggingSectionLocators = {
 
 type SettingsDialogLocators = {
   window: Locator;
+  settingsPresetsButton: Locator;
   openFromFileButton: Locator;
   saveToFileButton: Locator;
   resetButton: Locator;
+  resetToSubmenuButton: Locator;
+  defaultSettingsButton: Locator;
   closeWindowButton: Locator;
   generalSection: Locator;
   stereochemistrySection: Locator;
@@ -274,9 +277,12 @@ export const SettingsDialog = (page: Page) => {
 
   const locators: SettingsDialogLocators = {
     window: page.getByTestId('settings-dialog'),
+    settingsPresetsButton: page.getByTestId('settings-presets-button'),
     openFromFileButton: page.getByTestId('open-settings-from-file-button'),
     saveToFileButton: page.getByTestId('save-settings-to-file-button'),
-    resetButton: page.getByTestId('reset-settings-button'),
+    resetButton: page.getByTestId('settings-presets-button'),
+    resetToSubmenuButton: page.getByTestId('reset-to-submenu-button'),
+    defaultSettingsButton: page.getByTestId('reset-settings-button'),
     closeWindowButton: page.getByTestId('close-window-button'),
     generalSection,
     stereochemistrySection,
@@ -323,7 +329,13 @@ export const SettingsDialog = (page: Page) => {
       await locators.cancelButton.click();
     },
 
+    async openSettingsPresetsMenu() {
+      await locators.settingsPresetsButton.click();
+    },
+
     async setACSSettings() {
+      await this.openSettingsPresetsMenu();
+      await locators.resetToSubmenuButton.click();
       await locators.setACSSettingsButton.click();
     },
 
@@ -352,7 +364,9 @@ export const SettingsDialog = (page: Page) => {
 
     async reset() {
       if (await locators.resetButton.isEnabled()) {
-        await locators.resetButton.click();
+        await this.openSettingsPresetsMenu();
+        await locators.resetToSubmenuButton.click();
+        await locators.defaultSettingsButton.click();
       }
     },
   };

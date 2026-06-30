@@ -188,7 +188,7 @@ export class RotationView extends TransientView {
           STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN
         }`;
 
-    transientLayer
+    const linkLine = transientLayer
       .append('path')
       .attr('d', linkPath)
       .attr('stroke', isRotating ? STYLE.ACTIVE_COLOR : STYLE.INITIAL_COLOR)
@@ -238,6 +238,19 @@ export class RotationView extends TransientView {
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
       .attr('style', 'pointer-events: none');
+
+    if (!isRotating) {
+      const hoverLinkPath = `M${handleCenterX},${handleCenterY}L${center.x},${center.y}`;
+      crossGroup
+        .on('mouseenter', () => {
+          crossGroup.select('path').attr('stroke', STYLE.ACTIVE_COLOR);
+          linkLine.attr('d', hoverLinkPath).attr('stroke', STYLE.ACTIVE_COLOR);
+        })
+        .on('mouseleave', () => {
+          crossGroup.select('path').attr('stroke', STYLE.INITIAL_COLOR);
+          linkLine.attr('d', linkPath).attr('stroke', STYLE.INITIAL_COLOR);
+        });
+    }
 
     // Draw handle circle
     const handleGroup = transientLayer

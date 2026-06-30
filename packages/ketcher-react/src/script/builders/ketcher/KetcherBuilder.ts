@@ -166,9 +166,9 @@ class KetcherBuilder {
         {
           buttons: buttons ?? {},
           errorHandler: errorHandler ?? null,
-          version: process.env.VERSION ?? '',
-          buildDate: process.env.BUILD_DATE ?? '',
-          buildNumber: process.env.BUILD_NUMBER ?? '',
+          version: import.meta.env.VERSION ?? '',
+          buildDate: import.meta.env.BUILD_DATE ?? '',
+          buildNumber: import.meta.env.BUILD_NUMBER ?? '',
           customButtons: customButtons ?? [],
         },
         structService,

@@ -290,6 +290,92 @@ describe('Drawing Entities Manager', () => {
     expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
   });
 
+  it('should store monomer expanded state as a boolean in converted S-groups', () => {
+    const struct = new Struct();
+    const monomer = new Peptide(peptideMonomerItem);
+    monomer.monomerItem.expanded = undefined;
+
+    const collapsedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(collapsedSGroup.data.expanded).toBe(false);
+
+    monomer.monomerItem.expanded = true;
+    const expandedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(expandedSGroup.data.expanded).toBe(true);
+  });
+
+  it('should render only S-group name for collapsed macro superatom S-groups', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct, sgroup } = createStructWithSGroup(SGroup.TYPES.SUP);
+    sgroup.data.name = 'CollapsedMacroSGroupLabel';
+    sgroup.data.expanded = false;
+
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(
+      document.querySelector(
+        '[data-testid="s-group"][data-sgroup-expanded="false"]',
+      ),
+    ).toBeTruthy();
+    expect(
+      document.querySelector('[data-label-text="CollapsedMacroSGroupLabel"]'),
+    ).toBeTruthy();
+    expect(
+      document
+        .querySelector('[data-label-text="CollapsedMacroSGroupLabel"]')
+        ?.getAttribute('font-weight'),
+    ).toBe('bold');
+    editor.renderersContainer.atoms.forEach((atomRenderer) => {
+      const atomElement = document.querySelector(
+        `[data-testid="atom"][data-atomid="${atomRenderer.atom.id}"]`,
+      );
+      expect((atomElement as SVGElement).style.display).toBe('none');
+    });
+    editor.renderersContainer.bonds.forEach((bondRenderer) => {
+      const bondElement = document.querySelector(
+        `[data-testid="bond"][data-bondid="${bondRenderer.bond.id}"]`,
+      );
+      expect((bondElement as SVGElement).style.display).toBe('none');
+    });
+
+    [
+      ...editor.drawingEntitiesManager.sgroups.values(),
+    ][0].sgroup.data.expanded = true;
+    editor.renderersContainer.update();
+
+    editor.renderersContainer.atoms.forEach((atomRenderer) => {
+      const atomElement = document.querySelector(
+        `[data-testid="atom"][data-atomid="${atomRenderer.atom.id}"]`,
+      );
+      expect((atomElement as SVGElement).style.display).not.toBe('none');
+    });
+    editor.renderersContainer.bonds.forEach((bondRenderer) => {
+      const bondElement = document.querySelector(
+        `[data-testid="bond"][data-bondid="${bondRenderer.bond.id}"]`,
+      );
+      expect((bondElement as SVGElement).style.display).not.toBe('none');
+    });
+  });
+
   it('should render macro data S-group field values', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),

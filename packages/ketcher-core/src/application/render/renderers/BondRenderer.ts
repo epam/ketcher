@@ -1017,6 +1017,14 @@ export class BondRenderer extends BaseRenderer {
     this.removeSelection();
   }
 
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
+  }
+
   public move() {
     if (!this.rootElement) {
       return;

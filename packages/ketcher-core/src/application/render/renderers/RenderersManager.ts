@@ -445,9 +445,17 @@ export class RenderersManager {
   }
 
   private rerenderSGroups() {
+    this.atoms.forEach((atomRenderer) => {
+      atomRenderer.setVisibility(true);
+    });
+    this.bonds.forEach((bondRenderer) => {
+      bondRenderer.setVisibility(true);
+    });
+
     this.sgroups.forEach((sgroupRenderer) => {
       sgroupRenderer.remove();
       sgroupRenderer.show();
+      sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
       sgroupRenderer.moveLabelsToFront();
     });
   }

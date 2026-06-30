@@ -898,6 +898,16 @@ export class AtomRenderer extends BaseRenderer {
     super.remove();
   }
 
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
+    this.cipLabelElement?.style('display', display);
+    this.stereoLabelElement?.style('display', display);
+  }
+
   protected appendHoverAreaElement(): void {
     // intentional no-op: this renderer type does not require a hover area element
   }

@@ -8,6 +8,8 @@ import type { SUPERATOM_CLASS } from 'domain/entities/sgroup';
 import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
 import { SgContexts } from 'application/editor/shared/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
+import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import type { BondRenderer } from 'application/render/renderers/BondRenderer';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
@@ -72,6 +74,7 @@ export class SGroupRenderer extends BaseRenderer {
       .data([this])
       .attr('data-testid', 's-group')
       .attr('data-sgroup-type', this.sgroup.type)
+      .attr('data-sgroup-expanded', String(this.sgroup.isExpanded()))
       .attr(
         'data-sgroup-id',
         this.sgroupDrawingEntity.sgroupIdInMicroMode,
@@ -95,6 +98,12 @@ export class SGroupRenderer extends BaseRenderer {
     this.sgroup.bracketDirection = new Vec2(1, 0);
     this.sgroup.areas = [bracketBox];
 
+    if (this.sgroup.isContracted()) {
+      this.drawContractedSGroupLabel();
+
+      return;
+    }
+
     const options: DrawBracketsOptions = {};
     switch (this.sgroup.type) {
       case SGroup.TYPES.MUL:
@@ -116,9 +125,7 @@ export class SGroupRenderer extends BaseRenderer {
         }
         break;
       case SGroup.TYPES.SUP:
-        options.lowerIndexText =
-          this.sgroup.data.name ||
-          SUPERATOM_CLASS_TEXT[this.sgroup.data.class as SUPERATOM_CLASS];
+        options.lowerIndexText = this.getSuperatomLabel();
         options.indexAttribute = { 'font-style': 'italic' };
         break;
       default:
@@ -126,6 +133,65 @@ export class SGroupRenderer extends BaseRenderer {
     }
 
     this.drawBrackets(bracketBox, options);
+  }
+
+  private getSuperatomLabel(): string | undefined {
+    return (
+      this.sgroup.data.name ||
+      SUPERATOM_CLASS_TEXT[this.sgroup.data.class as SUPERATOM_CLASS]
+    );
+  }
+
+  private drawContractedSGroupLabel(): void {
+    const label = this.getSuperatomLabel();
+
+    if (!label) {
+      return;
+    }
+
+    const { position } = this.sgroup.getContractedPosition(this.struct);
+
+    this.appendText(Scale.modelToCanvas(position, this.editorSettings), label, {
+      'font-weight': 'bold',
+    });
+  }
+
+  private getSGroupAtomIds(): Set<number> {
+    return new Set(SGroup.getAtoms(this.struct, this.sgroup));
+  }
+
+  public applyExpandedStateToStructure(
+    atomRenderers: Map<number, AtomRenderer>,
+    bondRenderers: Map<number, BondRenderer>,
+  ): void {
+    if (this.sgroup.isExpanded()) {
+      return;
+    }
+
+    const sgroupAtomIds = this.getSGroupAtomIds();
+
+    atomRenderers.forEach((atomRenderer) => {
+      if (
+        atomRenderer.atom.monomer === this.sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atomRenderer.atom.atomIdInMicroMode)
+      ) {
+        atomRenderer.setVisibility(false);
+      }
+    });
+
+    bondRenderers.forEach((bondRenderer) => {
+      const { firstAtom, secondAtom } = bondRenderer.bond;
+      const isSameMonomer =
+        firstAtom.monomer === this.sgroupDrawingEntity.monomer &&
+        secondAtom.monomer === this.sgroupDrawingEntity.monomer;
+      const isBondInsideSGroup =
+        sgroupAtomIds.has(firstAtom.atomIdInMicroMode) &&
+        sgroupAtomIds.has(secondAtom.atomIdInMicroMode);
+
+      if (isSameMonomer && isBondInsideSGroup) {
+        bondRenderer.setVisibility(false);
+      }
+    });
   }
 
   private drawDataSGroup(): void {

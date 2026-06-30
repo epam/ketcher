@@ -53,7 +53,7 @@ export class MacromoleculesConverter {
     const sgroupId = struct.sgroups.add(monomerMicromolecule);
 
     monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = monomer.monomerItem.expanded;
+    monomerMicromolecule.data.expanded = Boolean(monomer.monomerItem.expanded);
     monomerMicromolecule.id = sgroupId;
     monomerMicromolecule.pp = monomer.position;
 

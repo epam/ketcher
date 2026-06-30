@@ -58,19 +58,7 @@ import useSaltsAndSolvents from './useSaltsAndSolvets';
 import { Icon } from 'components';
 import clsx from 'clsx';
 
-// Memoized wrapper to avoid re-rendering unchanged table content.
-// Keep callback props in the comparator to prevent stale closures.
-const MemoizedTemplateTable = memo(TemplateTable, (prevProps, nextProps) => {
-  return (
-    prevProps.templates === nextProps.templates &&
-    prevProps.selected === nextProps.selected &&
-    prevProps.renderOptions === nextProps.renderOptions &&
-    prevProps.titleRows === nextProps.titleRows &&
-    prevProps.onSelect === nextProps.onSelect &&
-    prevProps.onDelete === nextProps.onDelete &&
-    prevProps.onAttach === nextProps.onAttach
-  );
-});
+const MemoizedTemplateTable = memo(TemplateTable);
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -184,6 +172,8 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   );
 };
 
+const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
+
 const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
@@ -282,8 +272,6 @@ const TemplateDialog: FC<Props> = (props) => {
     () => Object.keys(filteredTemplateLib),
     [filteredTemplateLib],
   );
-
-  const EMPTY_TEMPLATES: Template[] = [];
 
   return (
     <Dialog

@@ -444,6 +444,14 @@ export class RenderersManager {
     sgroupDrawingEntity.renderer?.remove();
   }
 
+  private rerenderSGroups() {
+    this.sgroups.forEach((sgroupRenderer) => {
+      sgroupRenderer.remove();
+      sgroupRenderer.show();
+      sgroupRenderer.moveLabelsToFront();
+    });
+  }
+
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
     bond.renderer?.remove();
     this.redrawDrawingEntity(bond.atom);
@@ -661,9 +669,7 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
-    this.sgroups.forEach((sgroupRenderer) => {
-      sgroupRenderer.moveLabelsToFront();
-    });
+    this.rerenderSGroups();
   }
 
   public rerenderSideConnectionPolymerBonds() {

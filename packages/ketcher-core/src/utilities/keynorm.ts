@@ -16,7 +16,10 @@
 
 const isMac =
   typeof navigator !== 'undefined' &&
-  /mac/i.test(navigator.userAgentData?.platform ?? navigator.userAgent);
+  /mac/i.test(
+    (navigator as Navigator & { userAgentData?: { platform?: string } })
+      .userAgentData?.platform ?? navigator.userAgent,
+  );
 
 export const KeyboardModifiers = {
   Alt: 'Alt',

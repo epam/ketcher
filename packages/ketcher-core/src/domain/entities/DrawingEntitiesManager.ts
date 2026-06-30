@@ -26,7 +26,7 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
-import type { SGroup } from 'domain/entities/sgroup';
+import { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
@@ -2827,7 +2827,6 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
-    drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (
         selectedDrawingEntities: DrawingEntity[],
@@ -2849,11 +2848,66 @@ export class DrawingEntitiesManager {
     return { command, drawingEntities: newDrawingEntities };
   }
 
+  private getAllSelectedEntitiesForSGroup(
+    sgroupDrawingEntity: SGroupDrawingEntity,
+    selectedDrawingEntities?: DrawingEntity[],
+  ) {
+    const command = new Command();
+    const drawingEntities: DrawingEntity[] = [];
+    const struct = sgroupDrawingEntity.monomer.monomerItem.struct;
+    const sgroupAtomIds = new Set(
+      SGroup.getAtoms(struct, sgroupDrawingEntity.sgroup),
+    );
+    const sgroupBondIds = new Set(
+      SGroup.getBonds(struct, sgroupDrawingEntity.sgroup),
+    );
+    const addDrawingEntity = (drawingEntity: DrawingEntity) => {
+      if (
+        drawingEntities.includes(drawingEntity) ||
+        selectedDrawingEntities?.includes(drawingEntity)
+      ) {
+        return;
+      }
+
+      drawingEntity.turnOnSelection();
+      drawingEntities.push(drawingEntity);
+      command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    };
+
+    this.atoms.forEach((atom) => {
+      if (
+        atom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atom.atomIdInMicroMode)
+      ) {
+        addDrawingEntity(atom);
+      }
+    });
+
+    this.bonds.forEach((bond) => {
+      if (
+        bond.firstAtom.monomer === sgroupDrawingEntity.monomer &&
+        bond.secondAtom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupBondIds.has(bond.bondIdInMicroMode)
+      ) {
+        addDrawingEntity(bond);
+      }
+    });
+
+    return { command, drawingEntities };
+  }
+
   public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof SGroupDrawingEntity) {
+      return this.getAllSelectedEntitiesForSGroup(
+        drawingEntity,
+        selectedDrawingEntities,
+      );
+    }
+
     const command = new Command();
     command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     drawingEntity.turnOnSelection();

@@ -13,11 +13,13 @@ const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
 const COP_PADDING_VECTOR = new Vec2(1.2, 1.2);
 const BRACKET_STROKE = '#a9a9a9';
-const DATA_SGROUP_BACKGROUND = '#fff';
+const DATA_SGROUP_BACKGROUND = '#F5F5F5';
 const FONT_FAMILY = 'Arial';
 // Matches AtomRenderer/BondRenderer label sizing: Math.ceil(1.9 * (macroModeScale / 6)).
 const FONT_SIZE_SCALE_MULTIPLIER = 1.9;
 const FONT_SIZE_SCALE_BASE = 6;
+const LINE_WIDTH_SCALE_BASE = 20;
+const ATTACHED_LABEL_VERTICAL_SHIFT_FACTOR = 0.8;
 
 interface BracketParams {
   center: Vec2;
@@ -127,20 +129,28 @@ export class SGroupRenderer extends BaseRenderer {
           return;
         }
 
-        const position = atom.pp.add(new Vec2(0.25, -0.1));
-        this.appendValue(position);
+        const position = Scale.modelToCanvas(atom.pp, this.editorSettings).add(
+          new Vec2(
+            this.editorSettings.microModeScale / LINE_WIDTH_SCALE_BASE,
+            0,
+          ),
+        );
+        this.appendValue(position, (bbox) =>
+          this.getAttachedDataSGroupLabelShift(position, bbox),
+        );
       });
 
       return;
     }
 
-    const position =
-      this.sgroup.data.context === SgContexts.Bond
-        ? this.sgroup.pp
-        : this.sgroup.pp?.add(new Vec2(0.25, -0.1));
+    if (this.sgroup.pp) {
+      const position = Scale.modelToCanvas(this.sgroup.pp, this.editorSettings);
 
-    if (position) {
-      this.appendValue(position);
+      this.appendValue(position, (bbox) =>
+        this.sgroup.data.context === SgContexts.Bond
+          ? this.getCenteredDataSGroupLabelShift(position, bbox)
+          : this.getAbsoluteDataSGroupLabelShift(position, bbox),
+      );
     }
   }
 
@@ -296,8 +306,28 @@ export class SGroupRenderer extends BaseRenderer {
     this.appendText(position, text, indexAttribute);
   }
 
-  private appendValue(position: Vec2): void {
-    const scaledPosition = Scale.modelToCanvas(position, this.editorSettings);
+  private getCenteredDataSGroupLabelShift(position: Vec2, bbox: SVGRect): Vec2 {
+    return new Vec2(
+      position.x - bbox.x - bbox.width / 2,
+      position.y - bbox.y - bbox.height / 2,
+    );
+  }
+
+  private getAbsoluteDataSGroupLabelShift(position: Vec2, bbox: SVGRect): Vec2 {
+    return new Vec2(position.x - bbox.x, position.y - bbox.y - bbox.height);
+  }
+
+  private getAttachedDataSGroupLabelShift(position: Vec2, bbox: SVGRect): Vec2 {
+    return new Vec2(
+      position.x - bbox.x,
+      position.y - bbox.y - ATTACHED_LABEL_VERTICAL_SHIFT_FACTOR * bbox.height,
+    );
+  }
+
+  private appendValue(
+    scaledPosition: Vec2,
+    getLabelShift: (bbox: SVGRect) => Vec2,
+  ): void {
     const valueGroup = this.rootElement?.append('g');
     const textElement = this.appendText(
       scaledPosition,
@@ -325,6 +355,16 @@ export class SGroupRenderer extends BaseRenderer {
       .attr('ry', 3)
       .attr('fill', valueBackgroundColor)
       .attr('stroke', valueBackgroundColor);
+
+    const valueBBox = valueGroup.node()?.getBBox();
+
+    if (!valueBBox) {
+      return;
+    }
+
+    const labelShift = getLabelShift(valueBBox);
+
+    valueGroup.attr('transform', `translate(${labelShift.x},${labelShift.y})`);
   }
 
   private appendText(

@@ -568,7 +568,7 @@ RNA builder can be found in the RNA section of the library. It can be used to cr
 
 To create a preset either click on the downwards pointing arrow to open RNA Builder or on _New Preset_ in the Presets section of the library:
 
-<img src=images/Create-Preset-3.8..png width = "200"/>
+<img src=images/Create-Preset-3.17..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will open appropriate sections of the library where monomers can be picked. Library search is also available while RNA builder is active. 
 
@@ -600,55 +600,75 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 
 #### Monomer Creation Wizard
 
-A chemical structure can be loaded into the monomer creation wizard in molecules mode, after a selection is made, and the _Create a monomer_ button on the left toolbar is clicked:
+##### Creating New Monomers
 
-<img src=images/Monomer-Creation-Wizard-3.16..png width = "450"/>
+A chemical structure can be loaded into the monomer creation wizard in molecules mode by clicking on _Create a monomer_ button on the left toolbar,
 <img src=images/Create-Monomer-Icon-3.7..png width = "40"/>
-<img src=images/Monomer-Creation-Wizard-2-3.16..png width = "450"/>
+choosing the same option from the context menu, or using the hotkey (_Ctrl+M_):
 
-The selected structure can contain bonds to non-selected parts of the structure and/or R-groups. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
+<img src=images/Monomer-Creation-Wizard-2-3.17..png width = "450"/>
+
+If no structure is selected, the entire contents of the canvas will be loaded into the Wizard.
+
+The selected structure can contain R-groups and/or bonds to non-selected parts of the structure. In those cases Ketcher will automatically assign an attachment point with a hydrogen leaving group.
 
 Using the `Attributes` panel, the user is able to define following monomer properties:
-- Monomer type (amino acid, sugar, base, phosphate, nucleotide or CHEM);
+- Monomer type (amino acid, sugar, base, phosphate, nucleotide, or CHEM);
 - Monomer symbol (used on library cards, appears on canvas, and is used during HELM export if a different HELM alias is not specified);
 - Monomer name (appears on monomer preview);
 - Monomer natural analogue (can be defined only for amino acids, bases, and nucleotides);
 - Monomer modification type (optional property used for modifying amino acids);
 - Monomer HELM alias (optional property used on HELM export/import; can be defined for sugars, bases, phosphates, and amino acids);
+- Monomer BILN alias (optional property used on BILN export/import; can be defined for amino acids and CHEMs)
 - Phosphate position (5' or 3'; only when defining presets).
 
-<img src=images/Monomer-Creation-Wizard-3-3.16..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-3-3.17..png width = "450"/>
 
 User can edit the structure of the monomer, and change the properties of the attachment points. In this example, the leaving group is changed from hydrogen to hydroxyl by switching between the atoms:
 
-<img src=images/Monomer-Creation-Wizard-4-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-4-3.17..png width = "200"/>
 
 New attachment points can be added by right-clicking on atoms and selecting _Mark as a leaving group_:
 
-<img src=images/Monomer-Creation-Wizard-5-3.9..png width = "200"/>
-<img src=images/Monomer-Creation-Wizard-6-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-5-3.17..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-6-3.17..png width = "200"/>
 
 or _Mark as a connection point_:
 
-<img src=images/Monomer-Creation-Wizard-7-3.9..png width = "200"/>
-<img src=images/Monomer-Creation-Wizard-8-3.9..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-7-3.17..png width = "200"/>
+<img src=images/Monomer-Creation-Wizard-8-3.17..png width = "200"/>
 
 The Attachment points section of the _Attributes_ panel allows the users to delete an already set attachment point, change the R-number, or change the leaving group atom(s):
 
-<img src=images/Monomer-Creation-Wizard-9-3.16..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-9-3.17..png width = "450"/>
 
 After _Submit_ is clicked, the user will see an expanded monomer in molecules mode, a standard monomer (with an appropriate shape and colour) in macromolecules mode, and that monomer in the library:
 
 <img src=images/Monomer-Creation-Wizard-11-3.11..png width = "500"/>
 
+New monomers can be created using existing monomers by choosing _Edit Instance_ option in the context menu:
+
+<img src=images/Monomer-Creation-Wizard-16-3.17..png width = "300"/>
+<img src=images/Monomer-Creation-Wizard-17-3.17..png width = "450"/>
+
+In this case a copy of the original monomer is loaded into the Wizard (with some of its properties modified in relation to the original).
+
+##### Creating New Presets
+
 In addition to adding single monomers, users are able to define three monomers (sugar, base, and phosphate) and save a preset containing them:
 
-<img src=images/Monomer-Creation-Wizard-12-3.16..png width = "450"/>
+<img src=images/Monomer-Creation-Wizard-12-3.17..png width = "450"/>
 
 Nucleotide components are defined by selecting their atoms and marking them as base, sugar, and phosphate in appropriate tabs:
-<img src=images/Monomer-Creation-Wizard-13-3.16..png width = "450"/>
 
-**Note**: _Fragment Selection tool_ can help with selecting appropriate nucleotide components. While in the Monomer Creation Wizard, atoms and bonds already marked as a particular component will not be selected using that tool.
+<img src=images/Monomer-Creation-Wizard-13-3.17..png width = "450"/>
+
+Or by choosing _Mark as a..._ from the context menu:
+<img src=images/Monomer-Creation-Wizard-14-3.17..png width = "300"/>
+
+**Note**: _Fragment Selection tool_ can help with selecting appropriate nucleotide components. While in the Monomer Creation Wizard, atoms and bonds already marked as a particular component will not be selected using that tool:
+
+<img src=images/Monomer-Creation-Wizard-15-3.17..png width = "200"/>
 
 #### Monomer Addition Through API
 
@@ -977,6 +997,7 @@ In **macromolecules mode**, the supported file formats are:
 - AxoLabs*,
 - SVG Document;
 - HELM;
+- BILN
 
 * _IDT and AxoLabs are vendors of oligonucleotides where modifications are indicated in their own formats._
 
@@ -986,7 +1007,7 @@ Structures can be opened using the _Open..._ button on the main toolbars of both
 
 - _Paste From Clipboard_ allows pasting of the file contents (for both modes) and selecting of the format (only for macromolecules mode - in molecules mode the recondition of the format is possible unambiguously);
 
-<img src=images/Open-Structure-Macro-2-3.10..png width = "350"/>
+<img src=images/Open-Structure-Macro-2-3.17..png width = "350"/>
 
 - _Open from File_ allows browsing for a file. After the file is selected editable file contents are visible before the structure is added to the canvas;
 

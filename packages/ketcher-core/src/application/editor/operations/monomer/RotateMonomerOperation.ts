@@ -46,7 +46,11 @@ export class RotateMonomerOperation extends BaseOperation {
       return;
     }
 
-    monomerTransformation.rotate = this.previousValue + this.data.value;
+    const newRotation = this.previousValue + this.data.value;
+    const normalizedRotation =
+      ((newRotation + Math.PI) % (2 * Math.PI)) - Math.PI;
+
+    monomerTransformation.rotate = normalizedRotation;
   }
 
   invert() {

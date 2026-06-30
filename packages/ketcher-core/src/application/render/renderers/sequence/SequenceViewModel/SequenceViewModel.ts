@@ -354,8 +354,13 @@ export class SequenceViewModel {
         antisenseNodeIndex++;
       }
 
-      lastHandledSenseNode = (senseNode ||
-        lastHandledSenseNode) as SubChainNode;
+      const isRealSenseNode =
+        senseNode &&
+        !(senseNode instanceof BackBoneSequenceNode) &&
+        !(senseNode instanceof EmptySequenceNode);
+      lastHandledSenseNode = (
+        isRealSenseNode ? senseNode : lastHandledSenseNode
+      ) as SubChainNode;
       lastHandledAntisenseNode = (antisenseNode ||
         lastHandledAntisenseNode) as SubChainNode;
       lastHandledAntisenseChain =

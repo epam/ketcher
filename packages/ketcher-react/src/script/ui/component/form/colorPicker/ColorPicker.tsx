@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
@@ -134,10 +135,12 @@ const ColorPicker = (props: Props) => {
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const paletteId = 'color-picker-' + useId();
 
-  // Sync internal state when popup opens
+  // Sync internal state and compute popup position when popup opens
   useEffect(() => {
     if (isOpen) {
       const initialColor = value || '#FF3232';
@@ -147,8 +150,30 @@ const ColorPicker = (props: Props) => {
       setLightness(l);
       setHexInput(initialColor.replace('#', '').toUpperCase());
       setIsCustomOpen(false);
+
+      if (triggerRef.current) {
+        const rect = triggerRef.current.getBoundingClientRect();
+        setPopupPosition({ top: rect.bottom + 4, left: rect.left });
+      }
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Close on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(e.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isOpen]);
 
   const applyColorFromHsl = useCallback((h: number, l: number) => {
     const hex = hslToHex(h, 100, l);
@@ -228,12 +253,6 @@ const ColorPicker = (props: Props) => {
     setIsOpen(false);
   }, []);
 
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-      setIsOpen(false);
-    }
-  }, []);
-
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -270,6 +289,7 @@ const ColorPicker = (props: Props) => {
     >
       {/* Trigger button */}
       <button
+        ref={triggerRef}
         type="button"
         className={clsx(
           classes.colorPickerInput,
@@ -292,171 +312,176 @@ const ColorPicker = (props: Props) => {
         />
       </button>
 
-      {/* Dropdown popup */}
-      {isOpen && (
-        <div
-          ref={popupRef}
-          className={classes.colorPickerWrap}
-          id={paletteId}
-          onBlur={handleBlur}
-          data-testid="color-picker-preset"
-          role="none"
-          tabIndex={-1}
-        >
-          {/* Preset color grid */}
+      {/* Dropdown popup — rendered in a portal to escape modal overflow:hidden */}
+      {isOpen &&
+        createPortal(
           <div
-            className={classes.presetGrid}
-            data-testid="color-picker-preset-grid"
+            ref={popupRef}
+            className={classes.colorPickerWrap}
+            id={paletteId}
+            data-testid="color-picker-preset"
+            role="none"
+            tabIndex={-1}
+            style={{ top: popupPosition.top, left: popupPosition.left }}
           >
-            {presetColors.map((color) => (
-              <button
-                key={color}
-                type="button"
-                onClick={() => handlePresetClick(color)}
-                style={{ backgroundColor: color }}
-                className={clsx(
-                  classes.presetSwatch,
-                  pendingColor.toUpperCase() === color.toUpperCase() &&
-                    classes.presetSwatchSelected,
-                )}
-                aria-label={color}
-              />
-            ))}
-          </div>
-
-          {/* Custom Colors section */}
-          <div className={classes.customSection}>
-            {/* Custom Colors header */}
-            <div className={classes.customHeader}>
-              <span className={classes.customLabel}>Custom Colors</span>
-              <button
-                type="button"
-                className={classes.customToggleBtn}
-                onClick={() => setIsCustomOpen((prev) => !prev)}
-                aria-label={
-                  isCustomOpen ? 'Close custom colors' : 'Open custom colors'
-                }
-                data-testid="color-picker-btn"
-              >
-                {isCustomOpen ? (
-                  <Icon name="close" className={classes.toggleIcon} />
-                ) : (
-                  <span className={classes.plusIcon}>+</span>
-                )}
-              </button>
+            {/* Preset color grid */}
+            <div
+              className={classes.presetGrid}
+              data-testid="color-picker-preset-grid"
+            >
+              {presetColors.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => handlePresetClick(color)}
+                  style={{ backgroundColor: color }}
+                  className={clsx(
+                    classes.presetSwatch,
+                    pendingColor.toUpperCase() === color.toUpperCase() &&
+                      classes.presetSwatchSelected,
+                  )}
+                  aria-label={color}
+                />
+              ))}
             </div>
 
-            {/* Saved custom color swatches */}
-            {customColors.length > 0 && (
-              <div className={classes.customSwatchRow}>
-                {customColors.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => handleCustomColorClick(color)}
-                    style={{ backgroundColor: color }}
-                    className={clsx(
-                      classes.presetSwatch,
-                      pendingColor.toUpperCase() === color.toUpperCase() &&
-                        classes.presetSwatchSelected,
-                    )}
-                    aria-label={color}
-                  />
-                ))}
+            {/* Custom Colors section */}
+            <div className={classes.customSection}>
+              {/* Custom Colors header */}
+              <div className={classes.customHeader}>
+                <span className={classes.customLabel}>Custom Colors</span>
+                <button
+                  type="button"
+                  className={classes.customToggleBtn}
+                  onClick={() => setIsCustomOpen((prev) => !prev)}
+                  aria-label={
+                    isCustomOpen ? 'Close custom colors' : 'Open custom colors'
+                  }
+                  data-testid="color-picker-btn"
+                >
+                  {isCustomOpen ? (
+                    <Icon name="close" className={classes.toggleIcon} />
+                  ) : (
+                    <span className={classes.plusIcon}>+</span>
+                  )}
+                </button>
               </div>
-            )}
 
-            {/* Custom color editor */}
-            {isCustomOpen && (
-              <div className={classes.customEditor} data-testid="color-palette">
-                {/* Sliders + preview */}
-                <div className={classes.slidersRow}>
-                  <div className={classes.slidersCol}>
-                    {/* Hue slider */}
-                    <div className={classes.sliderTrackWrap}>
-                      <input
-                        type="range"
-                        min={0}
-                        max={360}
-                        step={1}
-                        value={hue}
-                        onChange={handleHueChange}
-                        className={classes.slider}
-                        style={{ background: hueBg }}
-                        aria-label="Hue"
-                      />
+              {/* Saved custom color swatches */}
+              {customColors.length > 0 && (
+                <div className={classes.customSwatchRow}>
+                  {customColors.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => handleCustomColorClick(color)}
+                      style={{ backgroundColor: color }}
+                      className={clsx(
+                        classes.presetSwatch,
+                        pendingColor.toUpperCase() === color.toUpperCase() &&
+                          classes.presetSwatchSelected,
+                      )}
+                      aria-label={color}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Custom color editor */}
+              {isCustomOpen && (
+                <div
+                  className={classes.customEditor}
+                  data-testid="color-palette"
+                >
+                  {/* Sliders + preview */}
+                  <div className={classes.slidersRow}>
+                    <div className={classes.slidersCol}>
+                      {/* Hue slider */}
+                      <div className={classes.sliderTrackWrap}>
+                        <input
+                          type="range"
+                          min={0}
+                          max={360}
+                          step={1}
+                          value={hue}
+                          onChange={handleHueChange}
+                          className={classes.slider}
+                          style={{ background: hueBg }}
+                          aria-label="Hue"
+                        />
+                      </div>
+                      {/* Lightness slider */}
+                      <div className={classes.sliderTrackWrap}>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          step={1}
+                          value={lightness}
+                          onChange={handleLightnessChange}
+                          className={classes.slider}
+                          style={{ background: lightnessBg }}
+                          aria-label="Lightness"
+                        />
+                      </div>
                     </div>
-                    {/* Lightness slider */}
-                    <div className={classes.sliderTrackWrap}>
-                      <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        step={1}
-                        value={lightness}
-                        onChange={handleLightnessChange}
-                        className={classes.slider}
-                        style={{ background: lightnessBg }}
-                        aria-label="Lightness"
-                      />
-                    </div>
+                    {/* Color preview */}
+                    <div
+                      className={classes.colorPreviewBox}
+                      style={{ backgroundColor: pendingColor }}
+                      aria-label="Color preview"
+                    />
                   </div>
-                  {/* Color preview */}
-                  <div
-                    className={classes.colorPreviewBox}
-                    style={{ backgroundColor: pendingColor }}
-                    aria-label="Color preview"
-                  />
-                </div>
 
-                {/* HEX input row */}
-                <div className={classes.hexRow}>
-                  <label className={classes.hexLabel} htmlFor="hex-input">
-                    HEX#
-                  </label>
-                  <input
-                    id="hex-input"
-                    type="text"
-                    value={hexInput}
-                    onChange={handleHexInputChange}
-                    className={classes.hexInput}
-                    maxLength={6}
-                    placeholder="RRGGBB"
-                    data-testid="color-picker-input"
-                  />
-                  <button
-                    type="button"
-                    className={classes.deleteBtn}
-                    onClick={handleDeleteCustomColor}
-                    aria-label="Clear custom color"
-                  >
-                    <Icon name="delete" className={classes.deleteIcon} />
-                  </button>
+                  {/* HEX input row */}
+                  <div className={classes.hexRow}>
+                    <label className={classes.hexLabel} htmlFor="hex-input">
+                      HEX#
+                    </label>
+                    <input
+                      id="hex-input"
+                      type="text"
+                      value={hexInput}
+                      onChange={handleHexInputChange}
+                      className={classes.hexInput}
+                      maxLength={6}
+                      placeholder="RRGGBB"
+                      data-testid="color-picker-input"
+                    />
+                    <button
+                      type="button"
+                      className={classes.deleteBtn}
+                      onClick={handleDeleteCustomColor}
+                      aria-label="Clear custom color"
+                    >
+                      <Icon name="delete" className={classes.deleteIcon} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {/* Action buttons */}
-          <div className={classes.actionRow}>
-            <button
-              type="button"
-              className={classes.cancelBtn}
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className={classes.applyBtn}
-              onClick={handleApply}
-            >
-              <Icon name="check" className={classes.checkIcon} />
-              Apply
-            </button>
-          </div>
-        </div>
-      )}
+            {/* Action buttons */}
+            <div className={classes.actionRow}>
+              <button
+                type="button"
+                className={classes.cancelBtn}
+                onClick={handleCancel}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={classes.applyBtn}
+                onClick={handleApply}
+              >
+                <Icon name="check" className={classes.checkIcon} />
+                Apply
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };

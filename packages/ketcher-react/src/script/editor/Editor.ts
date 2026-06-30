@@ -731,19 +731,54 @@ class Editor implements KetcherEditor {
   private terminalRGroupAtoms: Array<[number, string]> = [];
   private potentialLeavingAtomsForAutoAssignment: number[] = [];
   private potentialLeavingAtomsForManualAssignment: number[] = [];
+  private static readonly suitableAttachmentPointStereoTypes = new Set([
+    Bond.PATTERN.STEREO.NONE,
+    Bond.PATTERN.STEREO.UP,
+    Bond.PATTERN.STEREO.DOWN,
+  ]);
 
   private static isBondSuitableForAttachmentPoint(bond: Bond) {
     if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
       return false;
     }
 
-    const acceptableStereoTypes = new Set([
-      Bond.PATTERN.STEREO.NONE,
-      Bond.PATTERN.STEREO.UP,
-      Bond.PATTERN.STEREO.DOWN,
-    ]);
+    return Editor.suitableAttachmentPointStereoTypes.has(bond.stereo);
+  }
 
-    return acceptableStereoTypes.has(bond.stereo);
+  private static isValidTerminalRGroupAtom(
+    atom: Atom | undefined,
+    struct: Struct,
+  ): boolean {
+    // Caller must ensure: atom !== null, atom.rglabel !== null, atom.neighbors.length === 1
+    if (!atom) {
+      return false;
+    }
+
+    const bondToTerminalRGroupAtom = Editor.getBondByNeighborHalfBondId(
+      struct,
+      atom.neighbors[0],
+    );
+
+    return (
+      bondToTerminalRGroupAtom !== null &&
+      Editor.isBondSuitableForAttachmentPoint(bondToTerminalRGroupAtom)
+    );
+  }
+
+  private static getBondByNeighborHalfBondId(
+    struct: Struct,
+    neighborHalfBondId?: number,
+  ): Bond | null {
+    if (!isNumber(neighborHalfBondId)) {
+      return null;
+    }
+
+    const halfBond = struct.halfBonds.get(neighborHalfBondId);
+    if (!halfBond) {
+      return null;
+    }
+
+    return struct.bonds.get(halfBond.bid) ?? null;
   }
 
   public get isMonomerCreationWizardEnabled() {
@@ -781,6 +816,11 @@ class Editor implements KetcherEditor {
       const belongsToSGroup = sgs.size > 0;
       const isAttachmentPoint = attachmentPoints !== null;
       const isNonTerminalRGroupLabel = rglabel !== null && neighbors.length > 1;
+      const isTerminalRGroupCandidate =
+        rglabel !== null && neighbors.length === 1;
+      const hasUnsupportedTerminalRGroupBond =
+        isTerminalRGroupCandidate &&
+        !Editor.isValidTerminalRGroupAtom(atom, currentStruct);
       const hasMultipleRGroupLabel =
         rglabel !== null && !isSingleRGroupAttachmentPoint(Number(rglabel));
       const belongsToRGroup = currentStruct.rgroups.some((rgroup) =>
@@ -792,6 +832,7 @@ class Editor implements KetcherEditor {
         belongsToSGroup ||
         isAttachmentPoint ||
         isNonTerminalRGroupLabel ||
+        hasUnsupportedTerminalRGroupBond ||
         hasMultipleRGroupLabel ||
         belongsToRGroup ||
         isExtendedTableAtom
@@ -805,11 +846,8 @@ class Editor implements KetcherEditor {
     const terminalRGroupAtoms = atomsToProcess.filter((atomId) => {
       const atom = currentStruct.atoms.get(atomId);
 
-      if (!atom) {
-        return false;
-      }
-
-      return atom.rglabel !== null && atom.neighbors.length === 1;
+      // Bond suitability is already enforced in selectionInvalid for terminal R-group candidates.
+      return atom?.rglabel !== null && atom?.neighbors.length === 1;
     });
 
     const atomsToProcessSet = new Set(atomsToProcess);
@@ -848,21 +886,14 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const bondIdToSelectionAtom = currentStruct.bonds.find((_, bond) => {
-        return (
-          bond.hb1 === selectionAtom.neighbors[0] ||
-          bond.hb2 === selectionAtom.neighbors[0]
-        );
-      });
+      const bondToSelectionAtom = Editor.getBondByNeighborHalfBondId(
+        currentStruct,
+        selectionAtom.neighbors[0],
+      );
 
-      if (bondIdToSelectionAtom === null) {
+      if (!bondToSelectionAtom) {
         return;
       }
-
-      const bondToSelectionAtom = currentStruct.bonds.get(
-        bondIdToSelectionAtom,
-      );
-      assert(bondToSelectionAtom);
 
       if (!Editor.isBondSuitableForAttachmentPoint(bondToSelectionAtom)) {
         return;

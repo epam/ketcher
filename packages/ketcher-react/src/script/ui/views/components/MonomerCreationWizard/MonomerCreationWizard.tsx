@@ -1962,6 +1962,7 @@ const MonomerCreationWizardInternal = ({
                     handleFieldChange('type', value);
                   }}
                   error={errors.type}
+                  noWidth
                 />
               }
               required

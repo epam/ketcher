@@ -444,7 +444,7 @@ export class RenderersManager {
     sgroupDrawingEntity.renderer?.remove();
   }
 
-  private rerenderSGroups() {
+  public rerenderSGroups() {
     this.atoms.forEach((atomRenderer) => {
       atomRenderer.setVisibility(true);
     });
@@ -677,7 +677,6 @@ export class RenderersManager {
       this.recalculateMonomersEnumeration();
     }
     this.renderAromaticCircles();
-    this.rerenderSGroups();
   }
 
   public rerenderSideConnectionPolymerBonds() {

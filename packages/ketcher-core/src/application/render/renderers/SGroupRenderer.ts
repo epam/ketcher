@@ -10,6 +10,7 @@ import { SgContexts } from 'application/editor/shared/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { editorEvents } from 'application/editor/editorEvents';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const DEFAULT_PADDING_VECTOR = new Vec2(0.2, 0.4);
@@ -23,6 +24,11 @@ const FONT_SIZE_SCALE_BASE = 6;
 const LINE_WIDTH_SCALE_BASE = 20;
 const ATTACHED_LABEL_VERTICAL_SHIFT_FACTOR = 0.8;
 const INDEX_LABEL_VERTICAL_SHIFT = 4;
+// Canvas-pixel margin used to make the hover contour cover both structure and brackets.
+const HOVER_RECT_PADDING = 4;
+const HOVER_RECT_RADIUS = 4;
+const HOVER_STROKE = '#0097A8';
+const HOVER_STROKE_WIDTH = 1.2;
 
 interface BracketParams {
   center: Vec2;
@@ -85,6 +91,8 @@ export class SGroupRenderer extends BaseRenderer {
     } else {
       this.drawBracketSGroup();
     }
+
+    this.appendHoverAreaElement();
   }
 
   private drawBracketSGroup(): void {
@@ -510,15 +518,85 @@ export class SGroupRenderer extends BaseRenderer {
     // S-groups are rendered as non-selectable macro overlays.
   }
 
-  protected appendHover(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+  private getScaledBracketBox(): Box2Abs | undefined {
+    return this.sgroup.bracketBox?.transform(
+      Scale.modelToCanvas,
+      this.editorSettings,
+    );
+  }
+
+  private setHoverRectAttributes(
+    element: D3SvgElementSelection<SVGRectElement, void>,
+  ): void {
+    const scaledBracketBox = this.getScaledBracketBox();
+
+    if (!scaledBracketBox) {
+      return;
+    }
+
+    const size = scaledBracketBox.sz();
+
+    element
+      .attr('x', scaledBracketBox.p0.x - HOVER_RECT_PADDING)
+      .attr('y', scaledBracketBox.p0.y - HOVER_RECT_PADDING)
+      .attr('width', size.x + HOVER_RECT_PADDING * 2)
+      .attr('height', size.y + HOVER_RECT_PADDING * 2)
+      .attr('rx', HOVER_RECT_RADIUS)
+      .attr('ry', HOVER_RECT_RADIUS);
+  }
+
+  protected appendHover(): D3SvgElementSelection<SVGRectElement, void> | void {
+    if (!this.rootElement || this.hoverElement || !this.sgroup.bracketBox) {
+      return;
+    }
+
+    this.hoverElement = this.rootElement
+      .insert('rect', ':first-child')
+      .attr('fill', 'none')
+      .attr('stroke', HOVER_STROKE)
+      .attr('stroke-width', HOVER_STROKE_WIDTH)
+      .attr('pointer-events', 'none')
+      .attr('class', 'dynamic-element') as D3SvgElementSelection<
+      SVGRectElement,
+      void
+    >;
+
+    this.setHoverRectAttributes(this.hoverElement);
+
+    return this.hoverElement;
   }
 
   protected removeHover(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    this.hoverElement?.remove();
+    this.hoverElement = undefined;
   }
 
   protected appendHoverAreaElement(): void {
-    // S-groups are rendered as non-selectable macro overlays.
+    if (!this.rootElement || !this.sgroup.bracketBox) {
+      return;
+    }
+
+    this.hoverAreaElement = this.rootElement
+      .insert('rect', ':first-child')
+      .data([this])
+      .attr('fill', 'none')
+      .attr('stroke', 'none')
+      .attr('pointer-events', 'all')
+      .attr('class', 'dynamic-element') as never as D3SvgElementSelection<
+      SVGRectElement,
+      void
+    >;
+
+    this.setHoverRectAttributes(this.hoverAreaElement);
+
+    this.hoverAreaElement
+      .on('mouseover', (event) => {
+        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        this.appendHover();
+      })
+      .on('mouseleave', (event) => {
+        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        this.removeHover();
+      });
   }
 }

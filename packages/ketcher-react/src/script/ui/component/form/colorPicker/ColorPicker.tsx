@@ -212,7 +212,8 @@ const ColorPicker = (props: Props) => {
 
   const handleLightnessChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const l = parseInt(e.target.value, 10);
+      const sliderLightness = parseInt(e.target.value, 10);
+      const l = 100 - sliderLightness;
       setLightness(l);
       applyColorFromHsl(hue, l);
     },
@@ -425,7 +426,7 @@ const ColorPicker = (props: Props) => {
                           min={0}
                           max={100}
                           step={1}
-                          value={lightness}
+                          value={100 - lightness}
                           onChange={handleLightnessChange}
                           className={classes.slider}
                           style={{ background: lightnessBg }}

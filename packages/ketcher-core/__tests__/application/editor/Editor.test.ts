@@ -794,12 +794,15 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(
-        JSON.stringify(monomersWithDuplicatePositionIdtAlias),
-      );
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomersWithDuplicatePositionIdtAlias),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected for monomer RNA2'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('RNA2: Alias collision detected'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
       expect(
@@ -967,18 +970,23 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(
-        JSON.stringify(monomersWithShorthandIdtAliases),
-      );
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomersWithShorthandIdtAliases),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected for monomer RNA4'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('RNA4: Alias collision detected'),
       );
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected for monomer RNA6'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('RNA6: Alias collision detected'),
       );
       expect(errorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Alias collision detected for monomer RNA8'),
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('RNA8: Alias collision detected'),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 3);
       expect(

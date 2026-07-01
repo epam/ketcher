@@ -652,20 +652,12 @@ export class CoreEditor {
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
-        if (idtAliasCollision) {
-          KetcherLogger.error(
-            `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
-              newMonomer.props.MonomerName
-            }${
-              aliasDetails ? ` (${aliasDetails})` : ''
-            }. Conflicting IDT alias "${idtAliasCollision}". The monomer was not added to the library.`,
-          );
-          return;
-        }
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Alias collision detected${
-            aliasDetails ? ` (${aliasDetails})` : ''
+          `Alias collision detected${aliasDetails ? ` (${aliasDetails})` : ''}${
+            idtAliasCollision
+              ? `. Conflicting IDT alias "${idtAliasCollision}"`
+              : ''
           }. The monomer was not added to the library.`,
         );
         return;

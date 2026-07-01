@@ -7,6 +7,7 @@ import { PhosphateSequenceItemRenderer } from 'application/render/renderers/sequ
 import { ChemSequenceItemRenderer } from 'application/render/renderers/sequence/ChemSequenceItemRenderer';
 import { Vec2 } from 'domain/entities/vec2';
 import { KetMonomerClass, MONOMER_CONST } from 'domain/constants/monomers';
+import { KetAmbiguousMonomerTemplateSubType } from 'application/formatters/types/ket';
 import type { MonomerItemType } from 'domain/types';
 
 const createMonomerItem = (overrides: Partial<MonomerItemType['props']>) => {
@@ -44,11 +45,13 @@ const createFakeChain = () => {
  * NOTE: If BaseSequenceItemRenderer starts accessing twoStrandedNode properties during construction,
  * this helper will need to be updated to include those properties.
  */
-const createFakeTwoStrandedNode = () => {
+const createFakeTwoStrandedNode = (): Parameters<
+  typeof SequenceNodeRendererFactory.fromNode
+>[7] => {
   return {
     chain: createFakeChain(),
     senseNodeIndex: 0,
-  } as unknown as Parameters<typeof SequenceNodeRendererFactory.fromNode>[8];
+  } as Parameters<typeof SequenceNodeRendererFactory.fromNode>[7];
 };
 
 const createRendererForNode = (
@@ -194,13 +197,21 @@ describe('SequenceNodeRendererFactory', () => {
     });
 
     it('uses phosphate renderer for ambiguous phosphate monomer at edge', () => {
-      const ambiguousPhosphate = new AmbiguousMonomer(
-        createMonomerItem({
-          MonomerType: MONOMER_CONST.RNA,
-          MonomerClass: KetMonomerClass.Phosphate,
-          MonomerNaturalAnalogCode: '',
-        }),
-      );
+      const phosphateMonomerItem = createMonomerItem({
+        MonomerType: MONOMER_CONST.RNA,
+        MonomerClass: KetMonomerClass.Phosphate,
+        MonomerNaturalAnalogCode: '',
+      });
+      const phosphateMonomer = new Phosphate(phosphateMonomerItem);
+
+      const ambiguousPhosphate = new AmbiguousMonomer({
+        id: 'test-ambiguous',
+        label: 'P',
+        monomers: [phosphateMonomer],
+        subtype: KetAmbiguousMonomerTemplateSubType.ALTERNATIVES,
+        options: [],
+        isAmbiguous: true,
+      });
       ambiguousPhosphate.monomerClass = KetMonomerClass.Phosphate;
 
       const linkerNode = new LinkerSequenceNode(ambiguousPhosphate);

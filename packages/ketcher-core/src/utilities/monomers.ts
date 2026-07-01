@@ -91,8 +91,8 @@ export function isValidIdtAlias(alias: string): boolean {
 
 export function isValidIdtAliasLength(alias: string): boolean {
   if (!alias) return true;
-  const withoutSlashes = alias.replace(/^\//, '').replace(/\/$/, '');
-  return withoutSlashes.length <= IDT_ALIAS_LENGTH_MAX;
+  if (alias.startsWith('/') || alias.endsWith('/')) return true;
+  return alias.length <= IDT_ALIAS_LENGTH_MAX;
 }
 
 export function getTooLongIdtAliasEntries(

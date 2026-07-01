@@ -30,6 +30,7 @@ import {
   isBaseTool,
 } from 'application/editor/tools/Tool';
 import {
+  type IKetIdtAliases,
   type IKetMacromoleculesContent,
   type IKetMonomerGroupTemplate,
   KetMonomerGroupTemplateClass,
@@ -135,6 +136,30 @@ import {
 import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
+
+type IdtAliasModifications = NonNullable<IKetIdtAliases['modifications']> & {
+  ep3?: string;
+  ep5?: string;
+  i?: string;
+};
+
+const getIdtAliasValues = (idtAliases?: IKetIdtAliases): string[] => {
+  const modifications = idtAliases?.modifications as
+    | IdtAliasModifications
+    | undefined;
+
+  return [
+    idtAliases?.base,
+    modifications?.endpoint3 ?? modifications?.ep3,
+    modifications?.endpoint5 ?? modifications?.ep5,
+    modifications?.internal ?? modifications?.i,
+  ].filter((value): value is string => Boolean(value));
+};
+
+const formatIdtAliasDetails = (idtAliases?: IKetIdtAliases) =>
+  getIdtAliasValues(idtAliases)
+    .map((alias) => `IDT alias "${alias}"`)
+    .join(', ');
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -510,21 +535,62 @@ export class CoreEditor {
         monomer.props?.aliasBILN
           ? `BILN alias "${monomer.props.aliasBILN}"`
           : null,
-        monomer.props?.idtAliases?.base
-          ? `IDT base alias "${monomer.props.idtAliases.base}"`
-          : null,
-        monomer.props?.idtAliases?.modifications?.endpoint3
-          ? `IDT 3' alias "${monomer.props.idtAliases.modifications.endpoint3}"`
-          : null,
-        monomer.props?.idtAliases?.modifications?.endpoint5
-          ? `IDT 5' alias "${monomer.props.idtAliases.modifications.endpoint5}"`
-          : null,
-        monomer.props?.idtAliases?.modifications?.internal
-          ? `IDT internal alias "${monomer.props.idtAliases.modifications.internal}"`
-          : null,
+        formatIdtAliasDetails(monomer.props?.idtAliases),
       ]
         .filter((value): value is string => Boolean(value))
         .join(', ');
+
+    const findIdtAliasCollision = (
+      idtAliases?: IKetIdtAliases,
+      ignoredMonomer?: MonomerItemType,
+      ignoredTemplateRef?: string,
+    ): string | undefined => {
+      const newValues = new Set(getIdtAliasValues(idtAliases));
+
+      if (newValues.size === 0) {
+        return undefined;
+      }
+
+      for (const monomer of this._monomersLibrary) {
+        if (ignoredMonomer && areSameMonomers(monomer, ignoredMonomer)) {
+          continue;
+        }
+
+        const existingValues = getIdtAliasValues(monomer.props?.idtAliases);
+        const collision = existingValues.find((value) => newValues.has(value));
+
+        if (collision) {
+          return collision;
+        }
+      }
+
+      for (const templateRef of this._monomersLibraryParsedJson?.root
+        .templates ?? []) {
+        if (templateRef.$ref === ignoredTemplateRef) {
+          continue;
+        }
+
+        const templateDefinition =
+          this._monomersLibraryParsedJson?.[templateRef.$ref];
+
+        if (
+          templateDefinition?.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
+          continue;
+        }
+
+        const existingValues = getIdtAliasValues(
+          (templateDefinition as IKetMonomerGroupTemplate).idtAliases,
+        );
+        const collision = existingValues.find((value) => newValues.has(value));
+
+        if (collision) {
+          return collision;
+        }
+      }
+
+      return undefined;
+    };
 
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
@@ -558,8 +624,9 @@ export class CoreEditor {
         newMonomer.props?.aliasBILN &&
         !isValidBilnAlias(newMonomer.props.aliasBILN)
       ) {
-        const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`;
-        KetcherLogger.error(errorMessage);
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+        );
         return;
       }
 
@@ -574,7 +641,8 @@ export class CoreEditor {
         return;
       }
 
-      const aliasCollisionExists = this._monomersLibrary.some((monomer) => {
+      let idtAliasCollision: string | undefined;
+      let aliasCollisionExists = this._monomersLibrary.some((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
@@ -585,28 +653,26 @@ export class CoreEditor {
           (newMonomerHasBilnAliasUniquenessScope &&
             Boolean(newMonomer.props?.aliasBILN) &&
             hasBilnAliasUniquenessScope(monomer.props?.MonomerClass) &&
-            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN) ||
-          (Boolean(newMonomer.props?.idtAliases?.base) &&
-            monomer.props?.idtAliases?.base ===
-              newMonomer.props?.idtAliases?.base) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint3) &&
-            monomer.props?.idtAliases?.modifications?.endpoint3 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint3) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.endpoint5) &&
-            monomer.props?.idtAliases?.modifications?.endpoint5 ===
-              newMonomer.props?.idtAliases?.modifications?.endpoint5) ||
-          (Boolean(newMonomer.props?.idtAliases?.modifications?.internal) &&
-            monomer.props?.idtAliases?.modifications?.internal ===
-              newMonomer.props?.idtAliases?.modifications?.internal)
+            monomer.props?.aliasBILN === newMonomer.props?.aliasBILN)
         );
       });
+
+      if (!aliasCollisionExists) {
+        idtAliasCollision = findIdtAliasCollision(
+          newMonomer.props?.idtAliases,
+          newMonomer,
+        );
+        aliasCollisionExists = Boolean(idtAliasCollision);
+      }
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Alias collision detected${
-            aliasDetails ? ` (${aliasDetails})` : ''
+          `Alias collision detected${aliasDetails ? ` (${aliasDetails})` : ''}${
+            idtAliasCollision
+              ? `. Conflicting IDT alias "${idtAliasCollision}"`
+              : ''
           }. The monomer was not added to the library.`,
         );
         return;
@@ -623,13 +689,9 @@ export class CoreEditor {
 
       // Validate that slashes in IDT aliases only appear at first/last position
       if (newMonomer.props?.idtAliases) {
-        const { base, modifications } = newMonomer.props.idtAliases;
-        const aliasesToValidate = [
-          base,
-          modifications?.endpoint3,
-          modifications?.endpoint5,
-          modifications?.internal,
-        ].filter(Boolean) as string[];
+        const aliasesToValidate = getIdtAliasValues(
+          newMonomer.props.idtAliases,
+        );
 
         const hasInvalidSlash = aliasesToValidate.some(
           (alias) => !isValidIdtAlias(alias),
@@ -651,8 +713,9 @@ export class CoreEditor {
           const offenders = tooLongEntries
             .map(({ alias: field, value }) => `${field}="${value}"`)
             .join(', ');
-          const errorMessage = `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`;
-          KetcherLogger.error(errorMessage);
+          KetcherLogger.error(
+            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`,
+          );
           return;
         }
       }
@@ -742,6 +805,53 @@ export class CoreEditor {
         )}...`;
         KetcherLogger.error(
           `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+        );
+        return;
+      }
+
+      if (
+        templateDefinition.idtAliases &&
+        !templateDefinition.idtAliases.base
+      ) {
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for preset ${templateDefinition.name}. The preset was not added to the library.`,
+        );
+        return;
+      }
+
+      if (templateDefinition.idtAliases) {
+        const aliasesToValidate = getIdtAliasValues(
+          templateDefinition.idtAliases,
+        );
+
+        const hasInvalidSlash = aliasesToValidate.some(
+          (alias) => !isValidIdtAlias(alias),
+        );
+
+        if (hasInvalidSlash) {
+          KetcherLogger.error(
+            `Editor::updateMonomersLibrary: Load of "${templateDefinition.name}" preset has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The preset was not added to the library.`,
+          );
+          return;
+        }
+      }
+
+      const idtAliasCollision = findIdtAliasCollision(
+        templateDefinition.idtAliases,
+        undefined,
+        templateRef.$ref,
+      );
+
+      if (idtAliasCollision) {
+        const aliasDetails = formatIdtAliasDetails(
+          templateDefinition.idtAliases,
+        );
+        KetcherLogger.error(
+          `Editor::updateMonomersLibrary: Alias collision detected for preset ${
+            templateDefinition.name
+          }${
+            aliasDetails ? ` (${aliasDetails})` : ''
+          }. Conflicting IDT alias "${idtAliasCollision}". The preset was not added to the library.`,
         );
         return;
       }

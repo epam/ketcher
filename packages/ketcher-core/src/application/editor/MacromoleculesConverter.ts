@@ -53,7 +53,7 @@ export class MacromoleculesConverter {
     const sgroupId = struct.sgroups.add(monomerMicromolecule);
 
     monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = monomer.monomerItem.expanded;
+    monomerMicromolecule.data.expanded = Boolean(monomer.monomerItem.expanded);
     monomerMicromolecule.id = sgroupId;
     monomerMicromolecule.pp = monomer.position;
 
@@ -537,6 +537,12 @@ export class MacromoleculesConverter {
       });
 
       command.merge(monomerAddCommand);
+
+      fragmentStruct.sgroups.forEach((sgroup, sgroupId) => {
+        command.merge(
+          drawingEntitiesManager.addSGroup(sgroup, monomer, sgroupId),
+        );
+      });
 
       if (
         monomer.monomerItem.props.isMicromoleculeFragment &&

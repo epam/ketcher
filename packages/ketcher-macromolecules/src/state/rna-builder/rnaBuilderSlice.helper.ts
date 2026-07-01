@@ -11,17 +11,21 @@ import {
 } from 'ketcher-core';
 import { IRnaPreset as IRnaPresetWithAliases } from 'components/monomerLibrary/RnaBuilder/types';
 
-// Build a key identifying the sugar/base/phosphate components of a preset so
-// that two presets built from the same monomers can be recognized as equal.
-const getPresetComponentsKey = (preset: IRnaPresetWithAliases): string => {
+// Returns null when any component id is missing so that incomplete presets
+// (which can be saved without a base or phosphate) never match each other or a
+// default preset through empty-string keys like "||".
+const getPresetComponentsKey = (
+  preset: IRnaPresetWithAliases,
+): string | null => {
   const getComponentId = (monomer?: MonomerItemType) =>
     monomer?.props?.id ?? '';
 
-  return [
-    getComponentId(preset.sugar),
-    getComponentId(preset.base),
-    getComponentId(preset.phosphate),
-  ].join('|');
+  const ids = [preset.sugar, preset.base, preset.phosphate].map(getComponentId);
+  if (ids.some((id) => !id)) {
+    return null;
+  }
+
+  return ids.join('|');
 };
 
 // A newly created custom preset has no IDT alias of its own. When it is built
@@ -38,6 +42,10 @@ export const deriveRnaPresetAliasesFromDefaults = (
   }
 
   const presetKey = getPresetComponentsKey(preset);
+  if (presetKey === null) {
+    return {};
+  }
+
   const matchingDefaultPreset = defaultPresets.find(
     (defaultPreset) => getPresetComponentsKey(defaultPreset) === presetKey,
   );

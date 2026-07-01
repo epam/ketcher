@@ -72,6 +72,12 @@ const presetColors: string[] = [
   '#4D4D4D',
 ];
 
+function isPresetColor(color: string): boolean {
+  return presetColors.some(
+    (presetColor) => presetColor.toUpperCase() === color.toUpperCase(),
+  );
+}
+
 // ── Color conversion helpers ──────────────────────────────────────────────────
 
 function hexToHsl(hex: string): { h: number; s: number; l: number } {
@@ -151,6 +157,17 @@ const ColorPicker = (props: Props) => {
       setHexInput(initialColor.replace('#', '').toUpperCase());
       setIsCustomOpen(false);
 
+      if (initialColor && !isPresetColor(initialColor)) {
+        setCustomColors((prev) => {
+          const normalizedColor = initialColor.toUpperCase();
+          const nextColors = prev.filter(
+            (customColor) => customColor.toUpperCase() !== normalizedColor,
+          );
+
+          return [normalizedColor, ...nextColors].slice(0, 5);
+        });
+      }
+
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
         setPopupPosition({ top: rect.bottom + 4, left: rect.left });
@@ -225,7 +242,7 @@ const ColorPicker = (props: Props) => {
       const raw = e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
       setHexInput(raw.toUpperCase());
       if (isValidHex(raw)) {
-        const hex = '#' + raw;
+        const hex = '#' + raw.toUpperCase();
         setPendingColor(hex);
         const { h, l } = hexToHsl(hex);
         setHue(h);
@@ -339,7 +356,7 @@ const ColorPicker = (props: Props) => {
                   className={clsx(
                     classes.presetSwatch,
                     pendingColor.toUpperCase() === color.toUpperCase() &&
-                      classes.presetSwatchSelected,
+                      classes.swatchSelected,
                   )}
                   aria-label={color}
                 />
@@ -387,7 +404,7 @@ const ColorPicker = (props: Props) => {
                         className={clsx(
                           classes.customSwatch,
                           pendingColor.toUpperCase() === color.toUpperCase() &&
-                            classes.customSwatchSelected,
+                            classes.swatchSelected,
                         )}
                         aria-label={color}
                       />

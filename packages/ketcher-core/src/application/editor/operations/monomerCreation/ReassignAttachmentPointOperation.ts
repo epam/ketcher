@@ -15,7 +15,10 @@
  ***************************************************************************/
 
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import type { MonomerCreationState } from 'application/render';
+import type {
+  AttachmentPointId,
+  MonomerCreationState,
+} from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
 import type { AttachmentPointName } from 'domain/types';
@@ -24,8 +27,9 @@ import type Restruct from 'application/render/restruct/restruct';
 export class ReassignAttachmentPointOperation extends BaseOperation {
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
-    private readonly currentName: AttachmentPointName,
+    private readonly attachmentPointId: AttachmentPointId,
     private readonly newName: AttachmentPointName,
+    private previousName?: AttachmentPointName,
   ) {
     super(OperationType.MONOMER_CREATION_REASSIGN_AP);
 
@@ -38,36 +42,28 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
     const { assignedAttachmentPoints, problematicAttachmentPoints } =
       this.monomerCreationState;
 
-    problematicAttachmentPoints.delete(this.currentName);
+    problematicAttachmentPoints.delete(this.attachmentPointId);
 
-    const atomPair = assignedAttachmentPoints.get(this.currentName);
-    assert(atomPair);
+    const attachmentPoint = assignedAttachmentPoints.get(
+      this.attachmentPointId,
+    );
+    assert(attachmentPoint);
 
-    if (assignedAttachmentPoints.has(this.newName)) {
-      const existingAtomPair = assignedAttachmentPoints.get(this.newName);
-      assert(existingAtomPair);
+    this.previousName = attachmentPoint.name;
+    attachmentPoint.name = this.newName;
 
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.set(this.currentName, existingAtomPair);
-
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[0]);
-      BaseOperation.invalidateAtom(restruct, existingAtomPair[1]);
-    } else {
-      assignedAttachmentPoints.set(this.newName, atomPair);
-      assignedAttachmentPoints.delete(this.currentName);
-
-      BaseOperation.invalidateAtom(restruct, atomPair[0]);
-      BaseOperation.invalidateAtom(restruct, atomPair[1]);
-    }
+    BaseOperation.invalidateAtom(restruct, attachmentPoint.attachmentAtomId);
+    BaseOperation.invalidateAtom(restruct, attachmentPoint.leavingAtomId);
   }
 
   invert() {
+    assert(this.previousName);
+
     return new ReassignAttachmentPointOperation(
       this.monomerCreationState,
+      this.attachmentPointId,
+      this.previousName,
       this.newName,
-      this.currentName,
     );
   }
 

@@ -1,7 +1,9 @@
 import {
+  AttachmentPointName,
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
   type RnaPresetComponentKey,
   type Struct,
-  AttachmentPointName,
 } from 'ketcher-core';
 
 import type { RnaPresetWizardState } from './MonomerCreationWizard.types';
@@ -11,11 +13,19 @@ import {
 } from './RnaPresetAttachmentPointValidation';
 import { findBondBetweenRnaPresetComponents } from './RnaPresetStructureValidation';
 
-type AttachmentPointMap = Map<AttachmentPointName, [number, number]>;
+type AttachmentPointMap = AssignedAttachmentPoints;
+
 type ComponentAttachmentPointNames = Record<
   RnaPresetComponentKey,
   AttachmentPointName[]
 >;
+
+const CONNECTION_ATTACHMENT_POINT_IDS = {
+  'sugar-base': -1,
+  'base-sugar': -2,
+  'sugar-phosphate': -3,
+  'phosphate-sugar': -4,
+} as const;
 
 const RNA_COMPONENT_KEYS: RnaPresetComponentKey[] = [
   'base',
@@ -63,7 +73,7 @@ export const getAttachmentPointsForRnaPresetComponent = (
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([, [attachmentAtomId]]) => componentAtomIds.has(attachmentAtomId),
+      ([, { attachmentAtomId }]) => componentAtomIds.has(attachmentAtomId),
     ),
   );
 };
@@ -142,8 +152,21 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
   struct: Struct,
   componentKey: RnaPresetComponentKey,
   phosphatePosition?: PhosphatePosition,
-): Map<AttachmentPointName, [number, number]> => {
-  const result = new Map<AttachmentPointName, [number, number]>();
+): AttachmentPointMap => {
+  const result: AttachmentPointMap = new Map();
+
+  const addConnectionAttachmentPoint = (
+    id: 'sugar-base' | 'base-sugar' | 'sugar-phosphate' | 'phosphate-sugar',
+    name: AttachmentPointName,
+    attachmentAtomId: number,
+    leavingAtomId: number,
+  ) => {
+    result.set(CONNECTION_ATTACHMENT_POINT_IDS[id], {
+      name,
+      attachmentAtomId,
+      leavingAtomId,
+    });
+  };
 
   const baseAtoms = wizardState.base.structure?.atoms ?? [];
   const sugarAtoms = wizardState.sugar.structure?.atoms ?? [];
@@ -163,9 +186,19 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
       const baseAtomId = baseAtoms.includes(bond.begin) ? bond.begin : bond.end;
 
       if (componentKey === 'sugar') {
-        result.set(AttachmentPointName.R3, [sugarAtomId, baseAtomId]);
+        addConnectionAttachmentPoint(
+          'sugar-base',
+          AttachmentPointName.R3,
+          sugarAtomId,
+          baseAtomId,
+        );
       } else if (componentKey === 'base') {
-        result.set(AttachmentPointName.R1, [baseAtomId, sugarAtomId]);
+        addConnectionAttachmentPoint(
+          'base-sugar',
+          AttachmentPointName.R1,
+          baseAtomId,
+          sugarAtomId,
+        );
       }
     }
   }
@@ -189,9 +222,19 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
         getRequiredAttachmentPointsForPhosphatePosition(phosphatePosition);
 
       if (componentKey === 'sugar') {
-        result.set(sugarApName, [sugarAtomId, phosphateAtomId]);
+        addConnectionAttachmentPoint(
+          'sugar-phosphate',
+          sugarApName,
+          sugarAtomId,
+          phosphateAtomId,
+        );
       } else if (componentKey === 'phosphate') {
-        result.set(phosphateApName, [phosphateAtomId, sugarAtomId]);
+        addConnectionAttachmentPoint(
+          'phosphate-sugar',
+          phosphateApName,
+          phosphateAtomId,
+          sugarAtomId,
+        );
       }
     }
   }
@@ -205,10 +248,10 @@ export const getVisibleAttachmentPointsForRnaPreset = (
   struct: Struct,
 ): AttachmentPointMap => {
   const atomToComponentMap = getAtomToComponentMap(wizardState);
-  const occupiedAttachmentPoints = new Set<AttachmentPointName>();
+  const occupiedAttachmentPointIds = new Set<AttachmentPointId>();
 
   assignedAttachmentPoints.forEach(
-    ([attachmentAtomId, leavingAtomId], attachmentPointName) => {
+    ({ attachmentAtomId, leavingAtomId }, attachmentPointId) => {
       const componentKey = atomToComponentMap.get(attachmentAtomId);
 
       if (!componentKey) {
@@ -252,15 +295,15 @@ export const getVisibleAttachmentPointsForRnaPreset = (
       );
 
       if (isOccupiedByPresetComponentConnection) {
-        occupiedAttachmentPoints.add(attachmentPointName);
+        occupiedAttachmentPointIds.add(attachmentPointId);
       }
     },
   );
 
   return new Map(
     Array.from(assignedAttachmentPoints.entries()).filter(
-      ([attachmentPointName]) =>
-        !occupiedAttachmentPoints.has(attachmentPointName),
+      ([attachmentPointId]) =>
+        !occupiedAttachmentPointIds.has(attachmentPointId),
     ),
   );
 };

@@ -1,79 +1,28 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
-import type { MonomerCreationState, ReStruct } from 'application/render';
+import {
+  type AssignedAttachmentPoints,
+  type AttachmentPointId,
+  getAttachmentPointNames,
+  getNextAttachmentPointId,
+  type MonomerCreationState,
+  type ReStruct,
+} from 'application/render';
 import { OperationType } from 'application/editor/operations/OperationType';
 import assert from 'assert';
 import { getNextFreeAttachmentPoint } from 'domain/helpers';
 import type { AttachmentPointName } from 'domain/types';
-import type Restruct from 'application/render/restruct/restruct';
-
-export class RemoveAttachmentPointOperation extends BaseOperation {
-  private readonly atomPair: [number, number];
-  private readonly assignedAttachmentPoints: Map<
-    AttachmentPointName,
-    [number, number]
-  > = new Map();
-
-  constructor(
-    private readonly monomerCreationState: MonomerCreationState,
-    private readonly attachmentPointName: AttachmentPointName,
-    private readonly potentialLeavingAtoms?: Set<number>,
-    private _assignedAttachmentPoints?: Map<
-      AttachmentPointName,
-      [number, number]
-    >,
-  ) {
-    super(OperationType.MONOMER_CREATION_REMOVE_AP);
-
-    assert(this.monomerCreationState);
-
-    this.assignedAttachmentPoints =
-      this._assignedAttachmentPoints ||
-      this.monomerCreationState.assignedAttachmentPoints;
-    const atomPair = this.assignedAttachmentPoints.get(
-      this.attachmentPointName,
-    );
-
-    assert(atomPair);
-
-    this.atomPair = atomPair;
-  }
-
-  execute(restruct: Restruct) {
-    assert(this.monomerCreationState);
-
-    const { potentialAttachmentPoints } = this.monomerCreationState;
-
-    const [attachmentAtomId, leavingAtomId] = this.atomPair;
-    this.assignedAttachmentPoints.delete(this.attachmentPointName);
-
-    if (this.potentialLeavingAtoms)
-      potentialAttachmentPoints.set(
-        attachmentAtomId,
-        this.potentialLeavingAtoms,
-      );
-
-    BaseOperation.invalidateAtom(restruct, attachmentAtomId);
-    BaseOperation.invalidateAtom(restruct, leavingAtomId);
-  }
-
-  invert() {
-    const leavingAtomId = this.atomPair[1];
-
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    return new AssignLeavingGroupAtomOperation(
-      this.monomerCreationState,
-      leavingAtomId,
-    );
-  }
-}
+import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
 
 export class AssignLeavingGroupAtomOperation extends BaseOperation {
-  private attachmentPointName: AttachmentPointName | null = null;
+  private attachmentPointId: AttachmentPointId | null = null;
   private potentialLeavingAtoms: Set<number> = new Set();
 
   constructor(
     private readonly monomerCreationState: MonomerCreationState,
     private readonly atomId: number,
+    private readonly _attachmentPointName?: AttachmentPointName,
+    private readonly _assignedAttachmentPoints?: AssignedAttachmentPoints,
+    private readonly _attachmentPointId?: AttachmentPointId,
   ) {
     super(OperationType.MONOMER_CREATION_ASSIGN_LGA);
   }
@@ -81,8 +30,10 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   execute(restruct: ReStruct) {
     assert(this.monomerCreationState);
 
-    const { assignedAttachmentPoints, potentialAttachmentPoints } =
-      this.monomerCreationState;
+    const { potentialAttachmentPoints } = this.monomerCreationState;
+    const assignedAttachmentPoints =
+      this._assignedAttachmentPoints ??
+      this.monomerCreationState.assignedAttachmentPoints;
 
     let atomPairForLeavingGroup: [number, number] | null = null;
     for (const attachmentPointAtoms of potentialAttachmentPoints.entries()) {
@@ -99,12 +50,20 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
 
     const [attachmentAtomId, leavingAtomId] = atomPairForLeavingGroup;
 
-    const attachmentPointName = getNextFreeAttachmentPoint(
-      Array.from(assignedAttachmentPoints.keys()),
-    );
-    this.attachmentPointName = attachmentPointName;
-
-    assignedAttachmentPoints.set(attachmentPointName, atomPairForLeavingGroup);
+    const attachmentPointName =
+      this._attachmentPointName ??
+      getNextFreeAttachmentPoint(
+        getAttachmentPointNames(assignedAttachmentPoints),
+      );
+    const attachmentPointId =
+      this._attachmentPointId ??
+      getNextAttachmentPointId(this.monomerCreationState);
+    this.attachmentPointId = attachmentPointId;
+    assignedAttachmentPoints.set(attachmentPointId, {
+      name: attachmentPointName,
+      attachmentAtomId,
+      leavingAtomId,
+    });
 
     const potentialAttachmentAtoms =
       potentialAttachmentPoints.get(attachmentAtomId);
@@ -118,11 +77,11 @@ export class AssignLeavingGroupAtomOperation extends BaseOperation {
   }
 
   invert() {
-    assert(this.attachmentPointName !== null);
+    assert(this.attachmentPointId !== null);
 
     return new RemoveAttachmentPointOperation(
       this.monomerCreationState,
-      this.attachmentPointName,
+      this.attachmentPointId,
       this.potentialLeavingAtoms,
     );
   }

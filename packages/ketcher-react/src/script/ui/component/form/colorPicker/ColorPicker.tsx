@@ -352,7 +352,10 @@ const ColorPicker = (props: Props) => {
                 <span className={classes.customLabel}>Custom Colors</span>
                 <button
                   type="button"
-                  className={classes.customToggleBtn}
+                  className={clsx(
+                    classes.customToggleBtn,
+                    isCustomOpen && classes.customToggleBtnClose,
+                  )}
                   onClick={() => setIsCustomOpen((prev) => !prev)}
                   aria-label={
                     isCustomOpen ? 'Close custom colors' : 'Open custom colors'
@@ -377,9 +380,9 @@ const ColorPicker = (props: Props) => {
                       onClick={() => handleCustomColorClick(color)}
                       style={{ backgroundColor: color }}
                       className={clsx(
-                        classes.presetSwatch,
+                        classes.customSwatch,
                         pendingColor.toUpperCase() === color.toUpperCase() &&
-                          classes.presetSwatchSelected,
+                          classes.customSwatchSelected,
                       )}
                       aria-label={color}
                     />

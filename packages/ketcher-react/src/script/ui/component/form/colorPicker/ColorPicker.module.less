@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 @import '../../../../../style/variables';
+@import '../../../../../style/mixins';
 
 // ── Trigger button ────────────────────────────────────────────────────────────
 
@@ -154,8 +155,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 22px;
+  width: 24px;
+  height: 20px;
   border: 1px solid @color-grey-6;
   border-radius: 1px;
   background: @color-background-primary;
@@ -170,14 +171,26 @@
   }
 }
 
+.customToggleBtnClose {
+  border: none;
+  background: transparent;
+
+  &:hover {
+    border: none;
+  }
+}
+
 .toggleIcon {
   width: 14px;
   height: 14px;
 }
 
 .plusIcon {
-  font-size: 16px;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 0;
   color: @color-grey-6;
 }
 
@@ -188,6 +201,38 @@
   flex-direction: row;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+.customSwatch {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+  position: relative;
+  flex-shrink: 0;
+
+  &:hover {
+    outline: 2px solid @color-grey-6;
+    outline-offset: 1px;
+  }
+}
+
+.customSwatchSelected {
+  outline: 2px solid @color-grey-6;
+  outline-offset: 1px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border: 2px solid @color-background-primary;
+    border-radius: 1px;
+    pointer-events: none;
+  }
 }
 
 // ── Custom color editor ───────────────────────────────────────────────────────
@@ -333,58 +378,26 @@
 .actionRow {
   display: flex;
   flex-direction: row;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .cancelBtn {
-  flex-shrink: 0;
-  width: 72px;
-  height: 24px;
-  border: 1px solid @color-grey-6;
-  border-radius: 4px;
-  background: @color-background-primary;
+  .button-secondary();
   cursor: pointer;
   font-family: @Inter;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14px;
-  color: @color-grey-6;
-  padding: 4px 8px;
-  box-sizing: border-box;
-
-  &:hover {
-    border-color: #333333;
-    color: #333333;
-  }
 }
 
 .applyBtn {
-  flex: 1;
-  height: 24px;
-  border: none;
-  border-radius: 4px;
-  background: @color-primary-green;
+  .button-primary();
   cursor: pointer;
   font-family: @Inter;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14px;
-  color: @color-background-primary;
-  padding: 4px;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-
-  &:hover {
-    background: @color-primary-hover;
-  }
+  gap: 4px;
 }
 
 .checkIcon {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
 }

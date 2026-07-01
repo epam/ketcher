@@ -144,7 +144,16 @@ export function load(struct: string | Struct, options?) {
       // scaling works bad with molecule-to-monomer connections.
       // preserveViewport also skips rescale so aromatize/dearomatize keep the
       // current canvas position instead of re-normalizing coordinates.
-      if (!preserveViewport && !hasMoleculeToMonomerConnections) {
+      // KET is Ketcher's native format — coordinates are already in canvas
+      // scale, so rescaling a KET paste would shrink elements when bond
+      // lengths differ from 1 Å (e.g. corrupted molecules with moved atoms).
+      const pastedFormat =
+        typeof struct === 'string' ? identifyStructFormat(struct) : null;
+      if (
+        !preserveViewport &&
+        !hasMoleculeToMonomerConnections &&
+        !(isPaste && pastedFormat === SupportedFormat.ket)
+      ) {
         parsedStruct.rescale(); // TODO: move out parsing?
       }
 

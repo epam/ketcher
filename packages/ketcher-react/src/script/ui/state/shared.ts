@@ -142,13 +142,6 @@ export function load(struct: string | Struct, options?) {
         );
       }
 
-      // scaling works bad with molecule-to-monomer connections.
-      // preserveViewport also skips rescale so aromatize/dearomatize keep the
-      // current canvas position instead of re-normalizing coordinates.
-      if (!preserveViewport && !hasMoleculeToMonomerConnections) {
-        parsedStruct.rescale(); // TODO: move out parsing?
-      }
-
       if (editor.struct().atoms.size) {
         // NB: reset id
         const oldStruct = editor.struct().clone();

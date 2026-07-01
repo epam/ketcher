@@ -247,14 +247,14 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.2',
+      '149.169',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.1',
+      '149.060',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
-    ).toHaveValue('C 50.0 H 5.6 O 44.4');
+    ).toHaveValue('C 72.5 H 6.1 O 21.4');
   });
 
   test('Calculation of exact mass for the reaction components', async () => {

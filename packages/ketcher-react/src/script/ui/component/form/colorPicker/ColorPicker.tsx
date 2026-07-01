@@ -347,57 +347,62 @@ const ColorPicker = (props: Props) => {
 
             {/* Custom Colors section */}
             <div className={classes.customSection}>
-              {/* Custom Colors header */}
-              <div className={classes.customHeader}>
-                <span className={classes.customLabel}>Custom Colors</span>
-                <button
-                  type="button"
-                  className={clsx(
-                    classes.customToggleBtn,
-                    isCustomOpen && classes.customToggleBtnClose,
-                  )}
-                  onClick={() => setIsCustomOpen((prev) => !prev)}
-                  aria-label={
-                    isCustomOpen ? 'Close custom colors' : 'Open custom colors'
-                  }
-                  data-testid="color-picker-btn"
-                >
-                  {isCustomOpen ? (
-                    <Icon name="close" className={classes.toggleIcon} />
-                  ) : (
-                    <span className={classes.plusIcon}>+</span>
-                  )}
-                </button>
-              </div>
-
-              {/* Saved custom color swatches */}
-              {customColors.length > 0 && (
-                <div className={classes.customSwatchRow}>
-                  {customColors.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => handleCustomColorClick(color)}
-                      style={{ backgroundColor: color }}
-                      className={clsx(
-                        classes.customSwatch,
-                        pendingColor.toUpperCase() === color.toUpperCase() &&
-                          classes.customSwatchSelected,
-                      )}
-                      aria-label={color}
-                    />
-                  ))}
+              {/* Header group: label + optional saved swatches */}
+              <div className={classes.headerGroup}>
+                {/* Custom Colors header */}
+                <div className={classes.customHeader}>
+                  <span className={classes.customLabel}>Custom Colors</span>
+                  <button
+                    type="button"
+                    className={clsx(
+                      classes.customToggleBtn,
+                      isCustomOpen && classes.customToggleBtnClose,
+                    )}
+                    onClick={() => setIsCustomOpen((prev) => !prev)}
+                    aria-label={
+                      isCustomOpen
+                        ? 'Close custom colors'
+                        : 'Open custom colors'
+                    }
+                    data-testid="color-picker-btn"
+                  >
+                    {isCustomOpen ? (
+                      <Icon name="close" className={classes.toggleIcon} />
+                    ) : (
+                      <span className={classes.plusIcon}>+</span>
+                    )}
+                  </button>
                 </div>
-              )}
+
+                {/* Saved custom color swatches */}
+                {customColors.length > 0 && (
+                  <div className={classes.customSwatchRow}>
+                    {customColors.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => handleCustomColorClick(color)}
+                        style={{ backgroundColor: color }}
+                        className={clsx(
+                          classes.customSwatch,
+                          pendingColor.toUpperCase() === color.toUpperCase() &&
+                            classes.customSwatchSelected,
+                        )}
+                        aria-label={color}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {/* Custom color editor */}
               {isCustomOpen && (
-                <div
-                  className={classes.customEditor}
-                  data-testid="color-palette"
-                >
+                <>
                   {/* Sliders + preview */}
-                  <div className={classes.slidersRow}>
+                  <div
+                    className={classes.slidersRow}
+                    data-testid="color-palette"
+                  >
                     <div className={classes.slidersCol}>
                       {/* Hue slider */}
                       <div className={classes.sliderTrackWrap}>
@@ -438,19 +443,21 @@ const ColorPicker = (props: Props) => {
 
                   {/* HEX input row */}
                   <div className={classes.hexRow}>
-                    <label className={classes.hexLabel} htmlFor="hex-input">
-                      HEX#
-                    </label>
-                    <input
-                      id="hex-input"
-                      type="text"
-                      value={hexInput}
-                      onChange={handleHexInputChange}
-                      className={classes.hexInput}
-                      maxLength={6}
-                      placeholder="RRGGBB"
-                      data-testid="color-picker-input"
-                    />
+                    <div className={classes.hexInputGroup}>
+                      <label className={classes.hexLabel} htmlFor="hex-input">
+                        HEX#
+                      </label>
+                      <input
+                        id="hex-input"
+                        type="text"
+                        value={hexInput}
+                        onChange={handleHexInputChange}
+                        className={classes.hexInput}
+                        maxLength={6}
+                        placeholder="RRGGBB"
+                        data-testid="color-picker-input"
+                      />
+                    </div>
                     <button
                       type="button"
                       className={classes.deleteBtn}
@@ -460,27 +467,27 @@ const ColorPicker = (props: Props) => {
                       <Icon name="delete" className={classes.deleteIcon} />
                     </button>
                   </div>
-                </div>
+                </>
               )}
-            </div>
 
-            {/* Action buttons */}
-            <div className={classes.actionRow}>
-              <button
-                type="button"
-                className={classes.cancelBtn}
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className={classes.applyBtn}
-                onClick={handleApply}
-              >
-                <Icon name="check" className={classes.checkIcon} />
-                Apply
-              </button>
+              {/* Action buttons */}
+              <div className={classes.actionRow}>
+                <button
+                  type="button"
+                  className={classes.cancelBtn}
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className={classes.applyBtn}
+                  onClick={handleApply}
+                >
+                  <Icon name="check" className={classes.checkIcon} />
+                  Apply
+                </button>
+              </div>
             </div>
           </div>,
           document.body,

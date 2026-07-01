@@ -467,6 +467,7 @@ const ColorPicker = (props: Props) => {
                     type="button"
                     className={clsx(
                       classes.customToggleBtn,
+                      !isCustomOpen && classes.customToggleBtnPlus,
                       isCustomOpen && classes.customToggleBtnClose,
                     )}
                     onClick={() => setIsCustomOpen((prev) => !prev)}

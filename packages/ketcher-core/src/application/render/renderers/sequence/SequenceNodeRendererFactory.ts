@@ -34,7 +34,8 @@ export class SequenceNodeRendererFactory {
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
   ) {
-    const isPhosphateOnlyLinker = node.monomers.every(
+    const monomers = node.monomers;
+    const isPhosphateOnlyLinker = monomers.every(
       (monomer) =>
         monomer instanceof Phosphate ||
         (monomer instanceof AmbiguousMonomer &&

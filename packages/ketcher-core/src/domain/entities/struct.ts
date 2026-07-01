@@ -1162,6 +1162,11 @@ export class Struct {
           atom.implicitH = 1 - radicalElectrons(atom.radical);
           return;
         }
+        if (conn >= 4) {
+          atom.implicitH = 0;
+          atom.badConn = true;
+          return;
+        }
       } else if (
         (atom.label === 'O' && charge === 0) ||
         (atom.label === 'N' && charge === 0 && conn === 3) ||

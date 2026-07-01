@@ -645,11 +645,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 3: Select the whole structure and open Create Monomer wizard
     // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
     // Pan left so all atoms are within the visible canvas area before the wizard opens.
-    await shiftCanvas(page, -300, 0);
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
     await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -55, 0);
 
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);

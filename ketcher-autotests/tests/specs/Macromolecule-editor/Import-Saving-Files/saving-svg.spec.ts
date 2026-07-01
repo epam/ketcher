@@ -20,6 +20,8 @@ test.afterAll(async ({ closePage }) => {
 });
 
 test.describe('Saving in .svg files', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('Should convert .ket file to .svg format in save modal', async () => {
     await openFileAndAddToCanvasMacro(page, 'KET/rna-and-peptide.ket');
     // Coordinates for rectangle selection

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Bond } from 'domain/entities/bond';
 import { RxnArrow } from 'domain/entities/rxnArrow';
 import { RxnPlus } from 'domain/entities/rxnPlus';
 import { Struct } from 'domain/entities/struct';
@@ -74,34 +73,34 @@ function partitionLineFixed(
 
 const fmtInfo = {
   bondTypeMap: {
-    1: Bond.PATTERN.TYPE.SINGLE,
-    2: Bond.PATTERN.TYPE.DOUBLE,
-    3: Bond.PATTERN.TYPE.TRIPLE,
-    4: Bond.PATTERN.TYPE.AROMATIC,
-    5: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-    6: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-    7: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-    8: Bond.PATTERN.TYPE.ANY,
-    9: Bond.PATTERN.TYPE.DATIVE,
-    10: Bond.PATTERN.TYPE.HYDROGEN,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
   },
   bondStereoMap: {
-    0: Bond.PATTERN.STEREO.NONE,
-    1: Bond.PATTERN.STEREO.UP,
-    4: Bond.PATTERN.STEREO.EITHER,
-    6: Bond.PATTERN.STEREO.DOWN,
-    3: Bond.PATTERN.STEREO.CIS_TRANS,
+    0: 0,
+    1: 1,
+    4: 4,
+    6: 6,
+    3: 3,
   },
   v30bondStereoMap: {
-    0: Bond.PATTERN.STEREO.NONE,
-    1: Bond.PATTERN.STEREO.UP,
-    2: Bond.PATTERN.STEREO.EITHER,
-    3: Bond.PATTERN.STEREO.DOWN,
+    0: 0,
+    1: 1,
+    2: 4,
+    3: 6,
   },
   bondTopologyMap: {
-    0: Bond.PATTERN.TOPOLOGY.EITHER,
-    1: Bond.PATTERN.TOPOLOGY.RING,
-    2: Bond.PATTERN.TOPOLOGY.CHAIN,
+    0: 0,
+    1: 1,
+    2: 2,
   },
   countsLinePartition: [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 6],
   atomLinePartition: [10, 10, 10, 1, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],

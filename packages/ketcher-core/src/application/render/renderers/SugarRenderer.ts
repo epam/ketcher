@@ -5,14 +5,12 @@ import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
-const SUGAR_HOVERED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].hover;
-const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].body;
+const SUGAR_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS.Sugar.hover;
+const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS.Sugar.body;
 const SUGAR_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].autochainPreview;
+  MONOMER_SYMBOLS_IDS.Sugar.autochainPreview;
 
 export class SugarRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';

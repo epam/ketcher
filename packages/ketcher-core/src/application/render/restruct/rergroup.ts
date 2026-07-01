@@ -26,8 +26,8 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 
-const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-const PADDING_VECTOR = new Vec2(0.2, 0.4);
+const createBorderExt = () => new Vec2(0.05 * 3, 0.05 * 3);
+const createPaddingVector = () => new Vec2(0.2, 0.4);
 
 class ReRGroup extends ReObject {
   public labelBox: Box2Abs | null;
@@ -87,7 +87,7 @@ class ReRGroup extends ReObject {
     }
 
     rGroupBoundingBox = rGroupBoundingBox
-      ? rGroupBoundingBox.extend(BORDER_EXT, BORDER_EXT)
+      ? rGroupBoundingBox.extend(createBorderExt(), createBorderExt())
       : rGroupBoundingBox;
 
     return rGroupBoundingBox;
@@ -103,7 +103,7 @@ class ReRGroup extends ReObject {
       return { data: [] };
     } else {
       // add a little space between the attachment points and brackets
-      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
+      bb = bb.extend(createPaddingVector(), createPaddingVector());
     }
 
     const ret: { data: unknown[] } = { data: [] };
@@ -166,7 +166,7 @@ class ReRGroup extends ReObject {
     if (!vbox) {
       return null;
     }
-    const bb = vbox.extend(BORDER_EXT, BORDER_EXT);
+    const bb = vbox.extend(createBorderExt(), createBorderExt());
 
     if (!bb) {
       return null;

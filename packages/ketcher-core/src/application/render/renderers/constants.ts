@@ -1,4 +1,4 @@
-import { KetMonomerClass } from 'application/formatters/types/ket';
+import type { KetMonomerClass } from 'application/formatters/types/ket';
 
 export const UNRESOLVED_MONOMER_COLOR = '#585858';
 
@@ -9,37 +9,47 @@ export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
 
 export const MONOMER_SYMBOLS_IDS = {
-  [KetMonomerClass.AminoAcid]: {
+  AminoAcid: {
     hover: '#peptide-hover',
     body: '#peptide',
     autochainPreview: '#peptide-autochain-preview',
   },
-  [KetMonomerClass.CHEM]: {
+  CHEM: {
     hover: '#chem-selection',
     body: '#chem',
     autochainPreview: '#chem-autochain-preview',
   },
-  [KetMonomerClass.Sugar]: {
+  Sugar: {
     hover: '#sugar-selection',
     body: '#sugar',
     variant: '#sugar-variant',
     autochainPreview: '#sugar-autochain-preview',
   },
-  [KetMonomerClass.Base]: {
+  Base: {
     hover: '#rna-base-selection',
     body: '#rna-base',
     variant: '#rna-base-variant',
     autochainPreview: '#rna-base-autochain-preview',
   },
-  [KetMonomerClass.Phosphate]: {
+  Phosphate: {
     hover: '#phosphate-selection',
     body: '#phosphate',
     variant: '#phosphate-variant',
     autochainPreview: '#phosphate-autochain-preview',
   },
-  [KetMonomerClass.RNA]: {
+  RNA: {
     hover: '#nucleotide-hover',
     body: '#nucleotide',
     autochainPreview: '#nucleotide-autochain-preview',
   },
-};
+} as const satisfies Partial<
+  Record<
+    KetMonomerClass,
+    {
+      hover: string;
+      body: string;
+      variant?: string;
+      autochainPreview: string;
+    }
+  >
+>;

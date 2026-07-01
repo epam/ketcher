@@ -338,9 +338,6 @@ const TemplateDialog: FC<Props> = (props) => {
                     key={groupName}
                     onChange={handleAccordionChange(groupName)}
                     expanded={shouldGroupBeRended}
-                    slotProps={{
-                      transition: { unmountOnExit: true },
-                    }}
                   >
                     <AccordionSummary
                       className={classes.accordionSummary}

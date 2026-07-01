@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { FC, KeyboardEvent } from 'react';
-import { memo, useState, useEffect, useRef } from 'react';
+import {
+  type FC,
+  type KeyboardEvent,
+  memo,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import type { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';

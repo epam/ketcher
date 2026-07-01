@@ -28,7 +28,7 @@ import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
-import { geometricCenter } from 'domain/entities/geometry';
+import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
 
 export enum SUPERATOM_CLASS {
   SUGAR = 'SUGAR',
@@ -351,9 +351,7 @@ export class SGroup {
     }
 
     // position: always the geometric center of all atoms in the group.
-    const positions = this.atoms
-      .map((id) => struct.atoms.get(id)?.pp)
-      .filter((pp): pp is Vec2 => Boolean(pp));
+    const positions = getAtomPositions(this.atoms, struct.atoms);
 
     if (positions.length > 0) {
       return { atomId, position: geometricCenter(positions) };

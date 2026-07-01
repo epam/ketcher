@@ -48,11 +48,18 @@ export const Loader = styled.div`
 
 export const SvgPreview = styled('div')(({ theme }) => ({
   height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   position: 'relative',
+  overflow: 'hidden',
   border: `1px solid ${theme.ketcher.color.input.border.regular}`,
   '& svg': {
-    width: '100%',
-    height: '100%',
+    width: 'auto',
+    height: 'auto',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    overflow: 'visible',
     '& .drawn-structures': {
       '& .monomer': {
         lineHeight: 'initial !important',

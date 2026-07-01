@@ -247,10 +247,10 @@ test.describe('Calculated Values Tools', () => {
       CalculatedValuesDialog(page).chemicalFormulaInput,
     ).toContainText('C9H9O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.2',
+      '149.169',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.1',
+      '149.060',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,

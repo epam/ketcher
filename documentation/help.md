@@ -337,7 +337,7 @@ Ketcher (through Indigo) supports export of reactions by:
      - The distance between components stands for reagents as well.
      - Reaction-specific formats except KET, CDX, and CDXML will not save any pluses between reagents/catalysts.
      - KET, CDX, and CDXML support text as a reagent/catalyst.
- - Reactions containing multi-tailed arrows are supported only by KET. This reaction <img src=images/Reaction-Saving-3.17..png width = "300"/> will be saved with a modification (arrow + lines) in CDX and CDXML <img src=images/Reaction-Saving-2-3.17..png width = "300"/>, and as linear in all other formats <img src=images/Reaction-Saving-3-3.17..png width = "200"/>.
+ - Reactions containing multi-tailed arrows are supported by KET and RDF. This reaction <img src=images/Reaction-Saving-3.17..png width = "300"/> will be saved with a modification (arrow + lines) in CDX and CDXML <img src=images/Reaction-Saving-2-3.17..png width = "300"/>, and as linear in all other formats <img src=images/Reaction-Saving-3-3.17..png width = "200"/>.
  - Multi-step reactions are supported in KET, CDX, and CDXML. All other formats will save the reaction as: reactants from the first reaction --reagents/catalysts from all reactions--> all other reaction participants. For example, this multi-step reaction <img src=images/Reaction-Saving-4-3.17..png width = "300"/> becomes <img src=images/Reaction-Saving-5-3.17..png width = "300"/>
  
 

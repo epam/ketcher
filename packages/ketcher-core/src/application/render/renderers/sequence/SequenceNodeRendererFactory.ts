@@ -25,26 +25,33 @@ import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class SequenceNodeRendererFactory {
-  private static getLinkerRendererClass(
+  /**
+   * Determines the appropriate renderer class for a linker node.
+   *
+   * A linker composed only of phosphate monomers at the first or last position
+   * of the chain renders as P (PhosphateSequenceItemRenderer), because terminal
+   * phosphates are chemically meaningful, especially on antisense strands.
+   * Interior phosphate-only linkers continue rendering as CHEM (ChemSequenceItemRenderer).
+   *
+   * @see https://github.com/epam/ketcher/issues/6438
+   * @param node - The linker sequence node to render
+   * @param monomerIndexInChain - Zero-based position in the chain
+   * @param isLastMonomerInChain - Whether this is the last monomer in the chain
+   * @returns The appropriate renderer class (PhosphateSequenceItemRenderer or ChemSequenceItemRenderer)
+   *
+   * Public for testing purposes.
+   */
+  public static getLinkerRendererClass(
     node: LinkerSequenceNode,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
   ) {
-    const monomers = node.monomers;
-    const isPhosphateOnlyLinker = monomers.every(
-      (monomer) =>
-        monomer instanceof Phosphate ||
-        (monomer instanceof AmbiguousMonomer &&
-          monomer.monomerClass === KetMonomerClass.Phosphate),
-    );
-
+    // Terminal phosphates (first or last position) are chemically significant
     const isAtEdgeOfChain = monomerIndexInChain === 0 || isLastMonomerInChain;
 
-    return isPhosphateOnlyLinker && isAtEdgeOfChain
+    return node.isPhosphateOnly && isAtEdgeOfChain
       ? PhosphateSequenceItemRenderer
       : ChemSequenceItemRenderer;
   }

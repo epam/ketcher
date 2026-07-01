@@ -136,40 +136,8 @@ describe('SequenceNodeRendererFactory', () => {
     expect(renderer).toBeInstanceOf(ChemSequenceItemRenderer);
   });
 
-  describe('multi-monomer linker rendering', () => {
-    it('uses phosphate renderer for multi-monomer linker with only phosphates at edge', () => {
-      const phosphate1 = new Phosphate(
-        createMonomerItem({
-          MonomerType: MONOMER_CONST.RNA,
-          MonomerClass: KetMonomerClass.Phosphate,
-          MonomerNaturalAnalogCode: MONOMER_CONST.P,
-        }),
-      );
-      const phosphate2 = new Phosphate(
-        createMonomerItem({
-          MonomerType: MONOMER_CONST.RNA,
-          MonomerClass: KetMonomerClass.Phosphate,
-          MonomerNaturalAnalogCode: MONOMER_CONST.P,
-        }),
-      );
-
-      const linkerNode = new LinkerSequenceNode(phosphate1);
-      // Mock the monomers getter to return multiple phosphates
-      Object.defineProperty(linkerNode, 'monomers', {
-        get: () => [phosphate1, phosphate2],
-        configurable: true,
-      });
-
-      const renderer = createRendererForNode(
-        linkerNode,
-        0, // first position
-        false,
-      );
-
-      expect(renderer).toBeInstanceOf(PhosphateSequenceItemRenderer);
-    });
-
-    it('uses chem renderer for mixed linker (phosphate + chem) at edge', () => {
+  describe('linker rendering logic', () => {
+    it('uses phosphate renderer for phosphate-only linker at edge', () => {
       const phosphate = new Phosphate(
         createMonomerItem({
           MonomerType: MONOMER_CONST.RNA,
@@ -177,23 +145,36 @@ describe('SequenceNodeRendererFactory', () => {
           MonomerNaturalAnalogCode: MONOMER_CONST.P,
         }),
       );
-      const chem = new Chem(createMonomerItem({}));
 
       const linkerNode = new LinkerSequenceNode(phosphate);
-      // Mock the monomers getter to return mixed monomers
-      Object.defineProperty(linkerNode, 'monomers', {
-        get: () => [phosphate, chem],
-        configurable: true,
-      });
 
-      const renderer = createRendererForNode(
+      const RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
+        linkerNode,
+        0, // first position
+        false, // not last
+      );
+
+      expect(RendererClass).toBe(PhosphateSequenceItemRenderer);
+    });
+
+    it('uses phosphate renderer for single phosphate linker at edge', () => {
+      const phosphate = new Phosphate(
+        createMonomerItem({
+          MonomerType: MONOMER_CONST.RNA,
+          MonomerClass: KetMonomerClass.Phosphate,
+          MonomerNaturalAnalogCode: MONOMER_CONST.P,
+        }),
+      );
+
+      const linkerNode = new LinkerSequenceNode(phosphate);
+
+      const RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
         linkerNode,
         0, // first position (edge)
         false,
       );
 
-      // Mixed linker should use ChemSequenceItemRenderer even at edge
-      expect(renderer).toBeInstanceOf(ChemSequenceItemRenderer);
+      expect(RendererClass).toBe(PhosphateSequenceItemRenderer);
     });
 
     it('uses phosphate renderer for ambiguous phosphate monomer at edge', () => {
@@ -215,30 +196,18 @@ describe('SequenceNodeRendererFactory', () => {
       ambiguousPhosphate.monomerClass = KetMonomerClass.Phosphate;
 
       const linkerNode = new LinkerSequenceNode(ambiguousPhosphate);
-      // Mock the monomers getter
-      Object.defineProperty(linkerNode, 'monomers', {
-        get: () => [ambiguousPhosphate],
-        configurable: true,
-      });
 
-      const renderer = createRendererForNode(
+      const RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
         linkerNode,
         0, // first position
         false,
       );
 
-      expect(renderer).toBeInstanceOf(PhosphateSequenceItemRenderer);
+      expect(RendererClass).toBe(PhosphateSequenceItemRenderer);
     });
 
-    it('uses chem renderer for multi-phosphate linker in middle position', () => {
-      const phosphate1 = new Phosphate(
-        createMonomerItem({
-          MonomerType: MONOMER_CONST.RNA,
-          MonomerClass: KetMonomerClass.Phosphate,
-          MonomerNaturalAnalogCode: MONOMER_CONST.P,
-        }),
-      );
-      const phosphate2 = new Phosphate(
+    it('uses chem renderer for phosphate linker in middle position', () => {
+      const phosphate = new Phosphate(
         createMonomerItem({
           MonomerType: MONOMER_CONST.RNA,
           MonomerClass: KetMonomerClass.Phosphate,
@@ -246,21 +215,16 @@ describe('SequenceNodeRendererFactory', () => {
         }),
       );
 
-      const linkerNode = new LinkerSequenceNode(phosphate1);
-      // Mock the monomers getter
-      Object.defineProperty(linkerNode, 'monomers', {
-        get: () => [phosphate1, phosphate2],
-        configurable: true,
-      });
+      const linkerNode = new LinkerSequenceNode(phosphate);
 
-      const renderer = createRendererForNode(
+      const RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
         linkerNode,
         2, // middle position (not edge)
         false, // not last
       );
 
       // Even all-phosphate linker uses Chem renderer in middle
-      expect(renderer).toBeInstanceOf(ChemSequenceItemRenderer);
+      expect(RendererClass).toBe(ChemSequenceItemRenderer);
     });
   });
 });

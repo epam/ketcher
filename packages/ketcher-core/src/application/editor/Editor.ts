@@ -538,43 +538,6 @@ export class CoreEditor {
         .filter((value): value is string => Boolean(value))
         .join(', ');
 
-    const getExistingMonomerGroupTemplates = () => {
-      const parsedJson = this._monomersLibraryParsedJson;
-
-      if (!parsedJson) {
-        return [];
-      }
-
-      return parsedJson.root.templates
-        .map((templateRef) => ({
-          ref: templateRef.$ref,
-          definition: parsedJson[templateRef.$ref],
-        }))
-        .filter(
-          (
-            template,
-          ): template is {
-            ref: string;
-            definition: IKetMonomerGroupTemplate;
-          } =>
-            template.definition?.type ===
-            KetTemplateType.MONOMER_GROUP_TEMPLATE,
-        );
-    };
-
-    let existingMonomerGroupTemplates = getExistingMonomerGroupTemplates();
-    const upsertExistingMonomerGroupTemplate = (
-      ref: string,
-      definition: IKetMonomerGroupTemplate,
-    ) => {
-      existingMonomerGroupTemplates = [
-        ...existingMonomerGroupTemplates.filter(
-          (template) => template.ref !== ref,
-        ),
-        { ref, definition },
-      ];
-    };
-
     const findIdtAliasCollision = (
       idtAliases?: IKetIdtAliases,
       ignoredMonomer?: MonomerItemType,
@@ -599,13 +562,23 @@ export class CoreEditor {
         }
       }
 
-      for (const template of existingMonomerGroupTemplates) {
-        if (template.ref === ignoredTemplateRef) {
+      for (const templateRef of this._monomersLibraryParsedJson?.root
+        .templates ?? []) {
+        if (templateRef.$ref === ignoredTemplateRef) {
+          continue;
+        }
+
+        const templateDefinition =
+          this._monomersLibraryParsedJson?.[templateRef.$ref];
+
+        if (
+          templateDefinition?.type !== KetTemplateType.MONOMER_GROUP_TEMPLATE
+        ) {
           continue;
         }
 
         const existingValues = getIdtAliasValues(
-          template.definition.idtAliases,
+          (templateDefinition as IKetMonomerGroupTemplate).idtAliases,
         );
         const collision = existingValues.find((value) => newValues.has(value));
 
@@ -679,16 +652,13 @@ export class CoreEditor {
 
       if (aliasCollisionExists) {
         const aliasDetails = formatAliasDetails(newMonomer);
-        const idtAliasCollisionDetails = idtAliasCollision
-          ? ` Conflicting IDT alias "${idtAliasCollision}".`
-          : '';
         if (idtAliasCollision) {
           KetcherLogger.error(
             `Editor::updateMonomersLibrary: Alias collision detected for monomer ${
               newMonomer.props.MonomerName
             }${
               aliasDetails ? ` (${aliasDetails})` : ''
-            }.${idtAliasCollisionDetails} The monomer was not added to the library.`,
+            }. Conflicting IDT alias "${idtAliasCollision}". The monomer was not added to the library.`,
           );
           return;
         }
@@ -696,7 +666,7 @@ export class CoreEditor {
           newMonomer.props.MonomerName,
           `Alias collision detected${
             aliasDetails ? ` (${aliasDetails})` : ''
-          }.${idtAliasCollisionDetails} The monomer was not added to the library.`,
+          }. The monomer was not added to the library.`,
         );
         return;
       }
@@ -892,7 +862,6 @@ export class CoreEditor {
         // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
         this._monomersLibraryParsedJson!.root.templates.push(templateRef);
       }
-      upsertExistingMonomerGroupTemplate(templateRef.$ref, templateDefinition);
     });
 
     this.events.updateMonomersLibrary.dispatch();

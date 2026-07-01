@@ -17,6 +17,16 @@
 import { KetcherLogger } from 'utilities';
 import { SupportedFormat } from './structFormatter.types';
 
+function isIdtString(stringifiedStruct: string): boolean {
+  const idtBaseSequence = /^(?:[ACGTU])(?:\*(?:[ACGTU]))+$/i;
+  const idtModificationToken = /\/(?:3|5|i|r)[a-zA-Z0-9][a-zA-Z0-9-]*\/?/;
+
+  return (
+    idtBaseSequence.test(stringifiedStruct) ||
+    idtModificationToken.test(stringifiedStruct)
+  );
+}
+
 export function identifyStructFormat(
   stringifiedStruct: string,
   isMacromolecules = false,
@@ -94,11 +104,6 @@ export function identifyStructFormat(
     return SupportedFormat.inChI;
   }
 
-  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
-    // TODO: smiles regexp
-    return SupportedFormat.smiles;
-  }
-
   if (sanitizedString.indexOf('<CDXML') !== -1) {
     return SupportedFormat.cdxml;
   }
@@ -107,13 +112,19 @@ export function identifyStructFormat(
     return SupportedFormat.fasta;
   }
 
+  if (isIdtString(sanitizedString)) {
+    return SupportedFormat.idt;
+  }
+
+  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
+    // TODO: smiles regexp
+    return SupportedFormat.smiles;
+  }
+
   const isSequence = /^[a-zA-Z\s]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
-  const isIdt = /([a-zA-Z0-9]+)\/*([a-zA-Z0-9*-]+)/.test(sanitizedString);
 
-  if (!isThreeLetter && isIdt) {
-    return SupportedFormat.idt;
-  } else if (isSequence) {
+  if (!isThreeLetter && isSequence) {
     return SupportedFormat.sequence;
   }
 

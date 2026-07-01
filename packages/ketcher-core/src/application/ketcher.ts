@@ -528,7 +528,6 @@ export class Ketcher {
 
     await runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
-
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);

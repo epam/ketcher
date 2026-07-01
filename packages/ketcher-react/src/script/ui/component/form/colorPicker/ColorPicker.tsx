@@ -72,10 +72,85 @@ const presetColors: string[] = [
   '#4D4D4D',
 ];
 
+const MAX_CUSTOM_COLORS = 5;
+const CUSTOM_COLORS_STORAGE_KEY = 'ketcher_color_picker_custom_colors';
+
 function isPresetColor(color: string): boolean {
   return presetColors.some(
     (presetColor) => presetColor.toUpperCase() === color.toUpperCase(),
   );
+}
+
+function normalizeHexColor(color: string): string {
+  return color.toUpperCase();
+}
+
+function sanitizeCustomColors(colors: string[]): string[] {
+  const uniqueColors = new Set<string>();
+
+  colors.forEach((color) => {
+    const normalizedColor = normalizeHexColor(color);
+
+    if (!/^#[0-9A-F]{6}$/.test(normalizedColor)) {
+      return;
+    }
+
+    if (isPresetColor(normalizedColor)) {
+      return;
+    }
+
+    uniqueColors.add(normalizedColor);
+  });
+
+  return Array.from(uniqueColors).slice(0, MAX_CUSTOM_COLORS);
+}
+
+function addCustomColor(colors: string[], color: string): string[] {
+  const normalizedColor = normalizeHexColor(color);
+
+  if (isPresetColor(normalizedColor)) {
+    return sanitizeCustomColors(colors);
+  }
+
+  return sanitizeCustomColors([normalizedColor, ...colors]);
+}
+
+function readCustomColorsFromStorage(): string[] {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const raw = window.localStorage.getItem(CUSTOM_COLORS_STORAGE_KEY);
+
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return sanitizeCustomColors(parsed);
+  } catch {
+    return [];
+  }
+}
+
+function writeCustomColorsToStorage(colors: string[]): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      CUSTOM_COLORS_STORAGE_KEY,
+      JSON.stringify(sanitizeCustomColors(colors)),
+    );
+  } catch {
+    // Ignore storage write errors (e.g. private mode/quota exceeded).
+  }
 }
 
 // ── Color conversion helpers ──────────────────────────────────────────────────
@@ -137,7 +212,9 @@ const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [pendingColor, setPendingColor] = useState(value || '#FF3232');
-  const [customColors, setCustomColors] = useState<string[]>([]);
+  const [customColors, setCustomColors] = useState<string[]>(
+    readCustomColorsFromStorage,
+  );
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');
@@ -149,6 +226,7 @@ const ColorPicker = (props: Props) => {
   // Sync internal state and compute popup position when popup opens
   useEffect(() => {
     if (isOpen) {
+      const storedCustomColors = readCustomColorsFromStorage();
       const initialColor = value || '#FF3232';
       setPendingColor(initialColor);
       const { h, l } = hexToHsl(initialColor);
@@ -157,16 +235,7 @@ const ColorPicker = (props: Props) => {
       setHexInput(initialColor.replace('#', '').toUpperCase());
       setIsCustomOpen(false);
 
-      if (initialColor && !isPresetColor(initialColor)) {
-        setCustomColors((prev) => {
-          const normalizedColor = initialColor.toUpperCase();
-          const nextColors = prev.filter(
-            (customColor) => customColor.toUpperCase() !== normalizedColor,
-          );
-
-          return [normalizedColor, ...nextColors].slice(0, 5);
-        });
-      }
+      setCustomColors(addCustomColor(storedCustomColors, initialColor));
 
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
@@ -174,6 +243,30 @@ const ColorPicker = (props: Props) => {
       }
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    writeCustomColorsToStorage(customColors);
+  }, [customColors]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== CUSTOM_COLORS_STORAGE_KEY) {
+        return;
+      }
+
+      setCustomColors(readCustomColorsFromStorage());
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -261,11 +354,11 @@ const ColorPicker = (props: Props) => {
 
   const handleApply = useCallback(() => {
     onChange(pendingColor);
-    if (isCustomOpen && !customColors.includes(pendingColor)) {
-      setCustomColors((prev) => [pendingColor, ...prev].slice(0, 5));
+    if (isCustomOpen) {
+      setCustomColors((prev) => addCustomColor(prev, pendingColor));
     }
     setIsOpen(false);
-  }, [onChange, pendingColor, isCustomOpen, customColors]);
+  }, [onChange, pendingColor, isCustomOpen]);
 
   const handleCancel = useCallback(() => {
     setIsOpen(false);
@@ -502,7 +595,6 @@ const ColorPicker = (props: Props) => {
                   className={classes.applyBtn}
                   onClick={handleApply}
                 >
-                  <Icon name="check" className={classes.checkIcon} />
                   Apply
                 </button>
               </div>

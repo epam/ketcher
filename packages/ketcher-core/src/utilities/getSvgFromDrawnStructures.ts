@@ -67,10 +67,8 @@ export const getSvgFromDrawnStructures = (
     marginValues.horizontal;
   const viewBoxY =
     drawStructureClientRect.y - ADDITIONAL_TOP_MARGIN - marginValues.vertical;
-  const viewBoxWidth =
-    drawStructureClientRect.width + marginValues.horizontal * 2;
-  const viewBoxHeight =
-    drawStructureClientRect.height + marginValues.vertical * 2;
+  const viewBoxWidth = drawStructureClientRect.width + DEFAULT_MARGIN * 2;
+  const viewBoxHeight = drawStructureClientRect.height + DEFAULT_MARGIN * 2;
   const viewBox = `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`;
 
   if (type === 'preview')

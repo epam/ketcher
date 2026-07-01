@@ -52,6 +52,7 @@ import {
   setIsEditMode,
   selectPresetFullName,
   setUniqueNameError,
+  setInvalidPresetNameError,
   setSequenceSelection,
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
@@ -79,7 +80,10 @@ import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 import clsx from 'clsx';
 import Tooltip from '@mui/material/Tooltip';
-import { getPhosphatePositionAvailability } from 'helpers/rnaValidations';
+import {
+  getPhosphatePositionAvailability,
+  isValidPresetName,
+} from 'helpers/rnaValidations';
 import { Icon } from 'ketcher-react';
 import styles from './RnaEditorExpanded.module.less';
 
@@ -522,7 +526,12 @@ export const RnaEditorExpanded = ({
   };
 
   const onSave = () => {
-    if (!newPreset?.name) {
+    const presetName = newPreset?.name;
+    if (!presetName) {
+      return;
+    }
+    if (newPreset.editedName && !isValidPresetName(presetName)) {
+      dispatch(setInvalidPresetNameError(presetName));
       return;
     }
 
@@ -541,13 +550,13 @@ export const RnaEditorExpanded = ({
     };
 
     const presetWithSameName = presets.find(
-      (preset) => preset.name === presetToSave.name,
+      (preset) => preset.name === presetName,
     );
     if (
       presetWithSameName &&
       activePreset.nameInList !== presetWithSameName.name
     ) {
-      dispatch(setUniqueNameError(presetToSave.name!));
+      dispatch(setUniqueNameError(presetName));
       return;
     }
     dispatch(savePreset(presetToSave));
@@ -556,7 +565,7 @@ export const RnaEditorExpanded = ({
       editor?.events.selectPreset.dispatch(presetToSave);
     }
     setTimeout(() => {
-      scrollToSelectedPreset(presetToSave.name);
+      scrollToSelectedPreset(presetName);
     }, 0);
     resetRnaBuilder(dispatch);
   };

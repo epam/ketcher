@@ -32,6 +32,8 @@ import { fromPaste } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
 import type { ReStruct } from 'application/render';
+import { KetcherLogger } from 'utilities';
+import { isNumber } from 'lodash';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
@@ -78,27 +80,36 @@ function extraBondAction(
     );
     action = actionRes[0];
     action.operations.reverse();
-    additionalAtom = actionRes[2] as number;
+    additionalAtom = actionRes[2];
   } else {
+    const pivotAtom = restruct.molecule.atoms.get(aid);
+    if (!pivotAtom) {
+      KetcherLogger.error(
+        `template.ts::extraBondAction: atom ${aid} not found`,
+      );
+      return { action, aid1: aid };
+    }
+
     const operation = new AtomAdd(
       { label: 'C', fragment: frid },
-      new Vec2(1, 0)
-        .rotate(angle)
-        .add((restruct.molecule.atoms.get(aid) as Atom).pp)
-        .get_xy0(),
-    ).perform(restruct) as AtomAdd;
+      new Vec2(1, 0).rotate(angle).add(pivotAtom.pp).get_xy0(),
+    ).perform(restruct);
 
     action.addOp(operation);
-    action.addOp(
-      new BondAdd(aid, operation.data.aid as number, { type: 1 }).perform(
-        restruct,
-      ),
-    );
+    const newAtomId = operation.data.aid;
+    if (!isNumber(newAtomId)) {
+      KetcherLogger.error(
+        'template.ts::extraBondAction: atom id was not assigned after AtomAdd',
+      );
+      return { action, aid1: aid };
+    }
 
-    additionalAtom = operation.data.aid as number;
+    action.addOp(new BondAdd(aid, newAtomId, { type: 1 }).perform(restruct));
+
+    additionalAtom = newAtomId;
   }
 
-  return { action, aid1: additionalAtom as number };
+  return { action, aid1: additionalAtom };
 }
 
 export function fromTemplateOnAtom(
@@ -222,6 +233,26 @@ export function fromTemplateOnAtom(
   return [action, pasteItems];
 }
 
+type FromTemplateOnBondResult = [Action, { atoms: number[]; bonds: number[] }];
+
+export function fromTemplateOnBondAction(
+  restruct,
+  template,
+  bid,
+  events,
+  flip,
+  force: false,
+  isPreview?: boolean,
+): FromTemplateOnBondResult;
+export function fromTemplateOnBondAction(
+  restruct,
+  template,
+  bid,
+  events,
+  flip,
+  force: true,
+  isPreview?: boolean,
+): Promise<FromTemplateOnBondResult>;
 export function fromTemplateOnBondAction(
   restruct,
   template,

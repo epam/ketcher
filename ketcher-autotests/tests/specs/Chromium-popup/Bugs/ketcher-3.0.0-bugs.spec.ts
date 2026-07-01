@@ -69,6 +69,7 @@ import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/Conf
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import { AmbiguousMonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/AmbiguousMonomerPreviewTooltip';
 
 let page: Page;
 
@@ -283,7 +284,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await selectAllStructuresOnCanvas(page);
     const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
-    await symbolU.click();
     await modifyInRnaBuilder(page, symbolU);
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAA');
@@ -655,6 +655,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .locator('..')
       .first()
       .hover();
+    await AmbiguousMonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

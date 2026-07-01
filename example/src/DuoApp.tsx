@@ -1,25 +1,17 @@
 import 'ketcher-react/dist/index.css';
 import { StrictMode, useEffect, useState } from 'react';
-import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
+import {
+  getHiddenButtonsConfig,
+  isMacromoleculesEditorDisabled,
+} from './utils/editorUrlConfig';
 import { safePostMessage } from './utils/safePostMessage';
-
-const getHiddenButtonsConfig = (): ButtonsConfig => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const hiddenButtons = searchParams.get('hiddenControls');
-
-  if (!hiddenButtons) return {};
-
-  return hiddenButtons.split(',').reduce((acc, button) => {
-    if (button) acc[button] = { hidden: true };
-
-    return acc;
-  }, {} as { [val: string]: { hidden: boolean } });
-};
 
 const DuoApp = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
+  const disableMacromoleculesEditor = isMacromoleculesEditorDisabled();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -50,6 +42,7 @@ const DuoApp = () => {
               setErrorMessage(message.toString());
             }}
             buttons={hiddenButtonsConfig}
+            disableMacromoleculesEditor={disableMacromoleculesEditor}
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider1}
             onInit={(ketcher: Ketcher) => {
@@ -83,6 +76,7 @@ const DuoApp = () => {
               setErrorMessage(message.toString());
             }}
             buttons={hiddenButtonsConfig}
+            disableMacromoleculesEditor={disableMacromoleculesEditor}
             staticResourcesUrl={process.env.PUBLIC_URL}
             structServiceProvider={structServiceProvider2}
             onInit={(ketcher: Ketcher) => {

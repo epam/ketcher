@@ -28,7 +28,6 @@ type Data = {
 
 class AtomDelete extends BaseOperation {
   data: Data;
-  static InverseConstructor: new () => BaseOperation;
 
   constructor(atomId?: number) {
     super(OperationType.ATOM_DELETE, OperationPriority.ATOM_DELETE);
@@ -62,12 +61,6 @@ class AtomDelete extends BaseOperation {
     restruct.atoms.delete(aid);
     restruct.markItemRemoved();
     struct.atoms.delete(aid);
-  }
-
-  invert() {
-    const inverted = new AtomDelete.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

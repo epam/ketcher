@@ -114,17 +114,9 @@
 }
 
 .presetSwatchSelected {
-  outline: 2px solid @color-grey-6;
-  outline-offset: 1px;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border: 2px solid @color-background-primary;
-    border-radius: 1px;
-    pointer-events: none;
-  }
+  box-shadow:
+    0 0 0 2px @color-background-primary,
+    0 0 0 3px @color-grey-6;
 }
 
 // ── Custom colors section ─────────────────────────────────────────────────────
@@ -228,18 +220,10 @@
   }
 }
 
-.customSwatchSelected {
-  outline: 2px solid @color-grey-6;
-  outline-offset: 1px;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border: 2px solid @color-background-primary;
-    border-radius: 1px;
-    pointer-events: none;
-  }
+.swatchSelected {
+  box-shadow:
+    0 0 0 2px @color-background-primary,
+    0 0 0 3px @color-grey-6;
 }
 
 // ── Custom color editor ───────────────────────────────────────────────────────

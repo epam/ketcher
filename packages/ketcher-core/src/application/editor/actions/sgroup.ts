@@ -300,30 +300,6 @@ export function setExpandMonomerSGroup(
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
 
-  // The monomer label is rendered at sGroup.pp, while the molecule occupies
-  // the bounding box of the monomer's own atoms. Keep the two centered on
-  // each other so neither the collapsed label nor the expanded molecule
-  // appears far away from the other.
-  //
-  // Only recenter independent (standalone) monomers. When the monomer is
-  // bonded to outside structure, the connecting bond already anchors it on
-  // its attachment point; recentering onto the bbox center would instead
-  // slide the collapsed label over the neighboring atom.
-  let moleculeMoveVector: Vec2 | undefined;
-  let labelMoveVector: Vec2 | undefined;
-  if (
-    sGroup instanceof MonomerMicromolecule &&
-    sGroup.pp &&
-    bondsToOutside.size === 0
-  ) {
-    const sGroupBBoxCenter = sGroupBBox.centre();
-    if (attrs.expanded) {
-      moleculeMoveVector = sGroup.pp.sub(sGroupBBoxCenter);
-    } else {
-      labelMoveVector = sGroupBBoxCenter.sub(sGroup.pp);
-    }
-  }
-
   const sGroupCenter = sGroup.isContracted()
     ? sGroup.getContractedPosition(struct).position
     : sGroup.pp;
@@ -557,15 +533,34 @@ export function setExpandMonomerSGroup(
     });
   });
 
-  // Apply the recentering computed above (independent monomers only): shift
-  // the monomer's own atoms when expanding, or the label when collapsing, so
-  // the label and the molecule stay centered on each other.
-  if (moleculeMoveVector && moleculeMoveVector.length() > 0) {
+  // The monomer label is rendered at sGroup.pp, while the molecule occupies
+  // the bounding box of the monomer's own atoms. Keep the two centered on
+  // each other so neither the collapsed label nor the expanded molecule
+  // appears far away from the other: shift the monomer's own atoms when
+  // expanding, or the label when collapsing.
+  //
+  // Only recenter independent (standalone) monomers. When the monomer is
+  // bonded to outside structure, the connecting bond already anchors it on
+  // its attachment point; recentering onto the bbox center would instead
+  // slide the collapsed label over the neighboring atom.
+  let recenter: { target: 'atoms' | 'label'; vec: Vec2 } | undefined;
+  if (
+    sGroup instanceof MonomerMicromolecule &&
+    sGroup.pp &&
+    bondsToOutside.size === 0
+  ) {
+    const sGroupBBoxCenter = sGroupBBox.centre();
+    recenter = attrs.expanded
+      ? { target: 'atoms', vec: sGroup.pp.sub(sGroupBBoxCenter) }
+      : { target: 'label', vec: sGroupBBoxCenter.sub(sGroup.pp) };
+  }
+
+  if (recenter?.target === 'atoms') {
     sGroupAtoms.forEach((aid) => {
-      action.addOp(new AtomMove(aid, moleculeMoveVector));
+      action.addOp(new AtomMove(aid, recenter!.vec));
     });
-  } else if (labelMoveVector && labelMoveVector.length() > 0) {
-    action.addOp(new SGroupDataMove(sgid, labelMoveVector));
+  } else if (recenter?.target === 'label') {
+    action.addOp(new SGroupDataMove(sgid, recenter.vec));
   }
 
   sGroupAtoms.forEach((aid) => {

@@ -299,6 +299,31 @@ export function setExpandMonomerSGroup(
   );
   const sGroupWidth = sGroupBBox.p1.x - sGroupBBox.p0.x;
   const sGroupHeight = sGroupBBox.p1.y - sGroupBBox.p0.y;
+
+  // The monomer label is rendered at sGroup.pp, while the molecule occupies
+  // the bounding box of the monomer's own atoms. Keep the two centered on
+  // each other so neither the collapsed label nor the expanded molecule
+  // appears far away from the other.
+  //
+  // Only recenter independent (standalone) monomers. When the monomer is
+  // bonded to outside structure, the connecting bond already anchors it on
+  // its attachment point; recentering onto the bbox center would instead
+  // slide the collapsed label over the neighboring atom.
+  let moleculeMoveVector: Vec2 | undefined;
+  let labelMoveVector: Vec2 | undefined;
+  if (
+    sGroup instanceof MonomerMicromolecule &&
+    sGroup.pp &&
+    bondsToOutside.size === 0
+  ) {
+    const sGroupBBoxCenter = sGroupBBox.centre();
+    if (attrs.expanded) {
+      moleculeMoveVector = sGroup.pp.sub(sGroupBBoxCenter);
+    } else {
+      labelMoveVector = sGroupBBoxCenter.sub(sGroup.pp);
+    }
+  }
+
   const sGroupCenter = sGroup.isContracted()
     ? sGroup.getContractedPosition(struct).position
     : sGroup.pp;
@@ -532,28 +557,15 @@ export function setExpandMonomerSGroup(
     });
   });
 
-  // The monomer label is rendered at sGroup.pp, while the molecule occupies the
-  // bounding box of the monomer's own atoms. Keep the two centered on each
-  // other so neither the collapsed label nor the expanded molecule appears far
-  // away from the other.
-  if (sGroup instanceof MonomerMicromolecule && sGroup.pp) {
-    const sGroupBBoxCenter = sGroupBBox.centre();
-    if (attrs.expanded) {
-      // Expanding: shift the monomer's own atoms so the expanded molecule is
-      // centered on the label position instead of jumping away from it.
-      const moleculeMoveVector = sGroup.pp.sub(sGroupBBoxCenter);
-      if (moleculeMoveVector.length() > 0) {
-        sGroupAtoms.forEach((aid) => {
-          action.addOp(new AtomMove(aid, moleculeMoveVector));
-        });
-      }
-    } else {
-      // Collapsing: shift the label to the center of the expanded molecule.
-      const labelMoveVector = sGroupBBoxCenter.sub(sGroup.pp);
-      if (labelMoveVector.length() > 0) {
-        action.addOp(new SGroupDataMove(sgid, labelMoveVector));
-      }
-    }
+  // Apply the recentering computed above (independent monomers only): shift
+  // the monomer's own atoms when expanding, or the label when collapsing, so
+  // the label and the molecule stay centered on each other.
+  if (moleculeMoveVector && moleculeMoveVector.length() > 0) {
+    sGroupAtoms.forEach((aid) => {
+      action.addOp(new AtomMove(aid, moleculeMoveVector));
+    });
+  } else if (labelMoveVector && labelMoveVector.length() > 0) {
+    action.addOp(new SGroupDataMove(sgid, labelMoveVector));
   }
 
   sGroupAtoms.forEach((aid) => {

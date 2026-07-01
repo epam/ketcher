@@ -20,8 +20,16 @@ import {
   type AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond, type BondAttributes } from 'domain/entities/bond';
-import { Elements } from 'domain/constants';
+import { Elements, CUSTOM_QUERY_MAX_LENGTH } from 'domain/constants';
 import { ifDef } from 'utilities';
+
+function assertCustomQueryLength(customQuery: string, context: string): void {
+  if (customQuery.length > CUSTOM_QUERY_MAX_LENGTH) {
+    throw new Error(
+      `${context} custom query exceeds the maximum allowed length of ${CUSTOM_QUERY_MAX_LENGTH} characters (got ${customQuery.length})`,
+    );
+  }
+}
 
 export function atomToStruct(source) {
   const params: Partial<AtomAttributes> = {};
@@ -73,6 +81,9 @@ export function atomToStruct(source) {
     source.queryProperties &&
     Object.values(source.queryProperties).some((property) => property !== null)
   ) {
+    if (typeof source.queryProperties.customQuery === 'string') {
+      assertCustomQueryLength(source.queryProperties.customQuery, 'Atom');
+    }
     params.queryProperties = {};
     queryAttribute.forEach((attributeName) => {
       ifDef(
@@ -117,6 +128,9 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
+  if (typeof source.customQuery === 'string') {
+    assertCustomQueryLength(source.customQuery, 'Bond');
+  }
   ifDef(params, 'customQuery', source.customQuery);
   ifDef(params, 'begin', source.atoms[0] + atomOffset);
   ifDef(params, 'end', source.atoms[1] + atomOffset);

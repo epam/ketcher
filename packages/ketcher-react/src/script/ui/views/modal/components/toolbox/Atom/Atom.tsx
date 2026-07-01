@@ -28,7 +28,10 @@ import {
   SettingsManager,
   getAtomCustomQuery,
 } from 'ketcher-core';
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import {
+  atom as atomSchema,
+  CUSTOM_QUERY_MAX_LENGTH,
+} from '../../../../../data/schema/struct-schema';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
@@ -293,6 +296,7 @@ const Atom: FC<Props> = (props: Props) => {
                 disabled={!isCustomQuery}
                 checkboxValue={isCustomQuery}
                 onCheckboxChange={handleCustomQueryCheckBoxChange}
+                maxLength={CUSTOM_QUERY_MAX_LENGTH}
                 data-testid="atom-custom-query"
               />
             </div>

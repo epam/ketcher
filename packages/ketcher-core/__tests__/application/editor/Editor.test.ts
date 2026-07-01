@@ -256,9 +256,7 @@ describe('CoreEditor', () => {
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);
-    });
 
-    it('should accept monomer with idtAliases and base alias', () => {
       const monomerWithBase = {
         root: {
           templates: [
@@ -290,7 +288,7 @@ describe('CoreEditor', () => {
         },
       };
 
-      const initialLibrarySize = editor.monomersLibrary.length;
+      const initialLibrarySizeAfter = editor.monomersLibrary.length;
       editor.updateMonomersLibrary(JSON.stringify(monomerWithBase));
 
       expect(errorSpy).not.toHaveBeenCalledWith(
@@ -298,7 +296,7 @@ describe('CoreEditor', () => {
           'Base IDT alias is required when idtAliases is defined',
         ),
       );
-      expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
+      expect(editor.monomersLibrary.length).toBe(initialLibrarySizeAfter + 1);
     });
 
     it('should accept monomer without idtAliases', () => {
@@ -482,6 +480,10 @@ describe('CoreEditor', () => {
           reason: expect.stringContaining('Alias collision detected'),
         },
       ]);
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
+        expect.stringContaining('Alias collision detected'),
+      );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize + 1);
     });
 
@@ -593,8 +595,17 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithInvalidBilnAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(
+          JSON.stringify(monomerWithInvalidBilnAlias),
+        );
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
           'Load of "PEPTIDE_BILN_INVALID" monomer has failed, monomer definition contains invalid BILN alias value.',
@@ -734,7 +745,7 @@ describe('CoreEditor', () => {
       ).toThrow(MonomerLibraryUpdateError);
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
-        expect.stringContaining('Alias collision detected'),
+        expect.stringContaining('duplicate IDT aliases detected'),
       );
     });
 
@@ -764,8 +775,15 @@ describe('CoreEditor', () => {
       };
 
       const initialLibrarySize = editor.monomersLibrary.length;
-      editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      let thrownError: MonomerLibraryUpdateError | undefined;
+      try {
+        editor.updateMonomersLibrary(JSON.stringify(monomerWithLongIdtAlias));
+      } catch (error) {
+        thrownError = error as MonomerLibraryUpdateError;
+      }
 
+      expect(thrownError).toBeInstanceOf(MonomerLibraryUpdateError);
+      expect(thrownError?.partialSuccess).toBe(false);
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
           'The maximum number of characters of an IDT alias without slashes (/) is 10.',

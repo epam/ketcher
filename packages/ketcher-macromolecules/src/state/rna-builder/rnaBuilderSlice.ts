@@ -244,7 +244,14 @@ export const rnaBuilderSlice = createSlice({
       const preset = action.payload;
       const newPreset = {
         ...preset,
-        ...deriveRnaPresetAliasesFromDefaults(preset, state.presetsDefault),
+        // Cast strips Immer's WritableDraft<> wrapper: state.presetsDefault is
+        // already an IRnaPreset[] (which carries the alias fields), but as an
+        // Immer draft its element type is WritableDraft<IRnaPreset>, whose deep
+        // Draft<Struct> is not assignable to Struct.
+        ...deriveRnaPresetAliasesFromDefaults(
+          preset,
+          state.presetsDefault as IRnaPreset[],
+        ),
       };
 
       setCachedCustomRnaPreset(transformRnaPresetToRnaLabeledPreset(newPreset));

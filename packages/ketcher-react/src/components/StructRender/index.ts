@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export { default as StructRender } from './StructRender';
+export type { IStructRenderProps } from './types';

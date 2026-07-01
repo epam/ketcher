@@ -7,6 +7,7 @@ import { RxnArrow as MicromoleculesRxnArrow } from 'domain/entities/rxnArrow';
 import { MultitailArrow as MicromoleculesMultitailArrow } from 'domain/entities/multitailArrow';
 import { RxnPlus as MicromoleculesRxnPlus } from 'domain/entities/rxnPlus';
 import { SGroup } from 'domain/entities/sgroup';
+import { Fragment } from 'domain/entities/fragment';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -159,6 +160,16 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     drawingEntitiesManager.monomers.forEach((monomer) => {
+      const stereoFlag =
+        drawingEntitiesManager.getStereoFlagForMonomer(monomer);
+      if (stereoFlag) {
+        monomer.monomerItem.struct.frags.forEach((fragment) => {
+          if (fragment?.enhancedStereoFlag) {
+            fragment.stereoFlagPosition = new Vec2(stereoFlag.position);
+          }
+        });
+      }
+
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         const atomIdMap = new Map<number, number>();
         monomer.monomerItem.struct.mergeInto(
@@ -574,6 +585,28 @@ export class MacromoleculesConverter {
               bond.cip,
             ),
           );
+        });
+
+        // Add stereo flag if the fragment has an enhanced stereo flag
+        monomer.monomerItem.struct.frags.forEach((fragment) => {
+          if (fragment?.enhancedStereoFlag) {
+            const stereoFlagPosition =
+              fragment.stereoFlagPosition ||
+              Fragment.getDefaultStereoFlagPosition(
+                monomer.monomerItem.struct,
+                0,
+              );
+
+            if (stereoFlagPosition) {
+              command.merge(
+                drawingEntitiesManager.addStereoFlag(
+                  stereoFlagPosition,
+                  fragment.enhancedStereoFlag,
+                  monomer,
+                ),
+              );
+            }
+          }
         });
       }
       fragmentNumber++;

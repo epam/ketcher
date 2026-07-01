@@ -1,4 +1,4 @@
-import { ChemicalMimeType } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 /**
  *

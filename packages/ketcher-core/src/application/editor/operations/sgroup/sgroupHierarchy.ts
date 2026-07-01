@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
-
-// todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
   sgid: any;
@@ -48,12 +45,6 @@ class SGroupAddToHierarchy extends BaseOperation {
     this.data.parent = relations.parent;
     this.data.children = relations.children;
   }
-
-  invert() {
-    const inverted = new SGroupRemoveFromHierarchy();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
 
 class SGroupRemoveFromHierarchy extends BaseOperation {
@@ -72,12 +63,9 @@ class SGroupRemoveFromHierarchy extends BaseOperation {
     this.data.children = struct.sGroupForest.children.get(sgid);
     struct.sGroupForest.remove(sgid);
   }
-
-  invert() {
-    const inverted = new SGroupAddToHierarchy();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
+
+SGroupAddToHierarchy.InverseConstructor = SGroupRemoveFromHierarchy;
+SGroupRemoveFromHierarchy.InverseConstructor = SGroupAddToHierarchy;
 
 export { SGroupAddToHierarchy, SGroupRemoveFromHierarchy };

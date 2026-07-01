@@ -74,6 +74,7 @@ import { getStructure } from 'application/getStructure';
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
   needZoom?: boolean;
+  preserveCanvasPosition?: boolean;
 };
 
 const allowedApiSettings = {
@@ -543,7 +544,11 @@ export class Ketcher {
           this,
         );
 
-        struct.rescale();
+        const preserveCanvasPosition = options?.preserveCanvasPosition === true;
+
+        if (!preserveCanvasPosition) {
+          struct.rescale();
+        }
 
         const { x, y } = options?.position ?? {};
 
@@ -556,8 +561,10 @@ export class Ketcher {
         // Clean up initiallySelected flags after restoring selection
         this.editor.struct().disableInitiallySelected();
 
-        this.editor.zoomAccordingContent(struct);
-        if (x == null && y == null) {
+        if (!preserveCanvasPosition) {
+          this.editor.zoomAccordingContent(struct);
+        }
+        if (x == null && y == null && !preserveCanvasPosition) {
           this.editor.centerStruct();
         }
       }
@@ -678,7 +685,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.aromatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 
@@ -690,7 +699,9 @@ export class Ketcher {
     await runAsyncAction<void>(async () => {
       const struct = await this._indigo.dearomatize(this.editor.struct());
       const ketSerializer = new KetSerializer();
-      await this.setMolecule(ketSerializer.serialize(struct));
+      await this.setMolecule(ketSerializer.serialize(struct), {
+        preserveCanvasPosition: true,
+      });
     }, this.eventBus);
   }
 

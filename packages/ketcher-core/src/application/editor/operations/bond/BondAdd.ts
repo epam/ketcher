@@ -30,7 +30,6 @@ type Data = {
 
 class BondAdd extends BaseOperation {
   data: Data;
-  static InverseConstructor: new (bondId?: number) => BaseOperation;
 
   constructor(
     begin?: number,
@@ -92,12 +91,6 @@ class BondAdd extends BaseOperation {
     // notifyBondAdded
     restruct.bonds.set(bid, new ReBond(structBond));
     restruct.markBond(bid, 1);
-  }
-
-  invert() {
-    const inverted = new BondAdd.InverseConstructor();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 

@@ -2,6 +2,10 @@
  * Settings type definitions for Ketcher
  */
 
+import type { DeepPartial } from 'types';
+
+export type { DeepPartial };
+
 /**
  * Complete settings structure in flat format
  */
@@ -71,6 +75,7 @@ export interface Settings {
   readonly 'aromatize-skip-superatoms': boolean;
   readonly 'dearomatize-on-load': boolean;
   readonly 'gross-formula-add-isotopes': boolean;
+  readonly 'valence-mode': 'biovia-2009' | 'biovia-2017' | 'default';
 
   // Debug/developer settings
   readonly showAtomIds: boolean;
@@ -106,13 +111,6 @@ export interface ValidationResult {
   valid: boolean;
   errors?: ValidationError[];
 }
-
-/**
- * Deep partial type helper
- */
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
 
 /**
  * Storage abstraction interface

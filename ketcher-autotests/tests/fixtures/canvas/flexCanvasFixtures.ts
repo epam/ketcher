@@ -3,6 +3,7 @@ import { test as utils } from '../utilsFixtures';
 import { test as pageObjects } from '../commonPageObjectFixtures';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 import { mergeTests, Page } from '@playwright/test';
+import { NotificationBanner } from '@tests/pages/macromolecules/canvas/NotificationBanner';
 
 export const test = mergeTests(utils, pageObjects).extend<
   { FlexCanvas: void },
@@ -24,6 +25,11 @@ export const test = mergeTests(utils, pageObjects).extend<
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await use();
     await CommonTopLeftToolbar(page).clearCanvas();
+    await page.keyboard.press('Escape');
+    const banner = NotificationBanner(page);
+    while (await banner.isVisible()) {
+      await banner.waitForBecomeHidden();
+    }
     await resetZoomLevelToDefault(page);
     await clearLocalStorage(page);
   },

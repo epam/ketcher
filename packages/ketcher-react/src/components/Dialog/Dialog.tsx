@@ -91,14 +91,14 @@ export const Dialog: FC<PropsWithChildren & Props> = (props) => {
     // in popup mode the native <dialog> lives inside a MUI portal appended to
     // document.body — outside the .Ketcher-root subtree — so closest() returns
     // null and clipArea would be undefined.
-    const clipArea = document.querySelector(
+    const clipArea = document.querySelector<HTMLElement>(
       `${KETCHER_ROOT_NODE_CSS_SELECTOR} .${CLIP_AREA_BASE_CLASS}`,
-    ) as HTMLElement | null;
+    );
 
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     if (focusable && dialogElement) {
       timeoutId = setTimeout(() => {
-        (dialogElement as HTMLElement).focus();
+        dialogElement.focus();
       }, 0);
     }
 

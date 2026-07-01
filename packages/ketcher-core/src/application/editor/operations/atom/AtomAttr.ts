@@ -60,9 +60,10 @@ export class AtomAttr extends BaseOperation {
   }
 
   isDummy(restruct: ReStruct) {
-    return (
-      restruct.molecule.atoms.get(this.data?.aid)![this.data?.attribute] ===
-      this.data?.value
-    );
+    const atom = restruct.molecule.atoms.get(this.data?.aid);
+    if (!atom) {
+      return false;
+    }
+    return atom[this.data?.attribute] === this.data?.value;
   }
 }

@@ -14,7 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type Dispatch, type FC, useState, useEffect, useRef } from 'react';
+import {
+  type Dispatch,
+  type FC,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  memo,
+} from 'react';
 import TemplateTable, { type Template } from './TemplateTable';
 import {
   changeFilter,
@@ -48,6 +57,8 @@ import Tab from '@mui/material/Tab';
 import useSaltsAndSolvents from './useSaltsAndSolvets';
 import { Icon } from 'components';
 import clsx from 'clsx';
+
+const MemoizedTemplateTable = memo(TemplateTable);
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -161,6 +172,8 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   );
 };
 
+const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
+
 const TemplateDialog: FC<Props> = (props) => {
   const {
     filter,
@@ -220,10 +233,10 @@ const TemplateDialog: FC<Props> = (props) => {
   }, [isMonomerCreationWizardActive, tab, onTabChange]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
-    setExpandedAccordions(
+    setExpandedAccordions((prevAccordions) =>
       isExpanded
-        ? [...expandedAccordions, accordion]
-        : [...expandedAccordions].filter(
+        ? [...prevAccordions, accordion]
+        : prevAccordions.filter(
             (expandedAccordion) => expandedAccordion !== accordion,
           ),
     );
@@ -233,18 +246,32 @@ const TemplateDialog: FC<Props> = (props) => {
     onTabChange(value);
   };
 
-  const sdfSerializer = new SdfSerializer();
-  const serializerMapper = {
-    [TemplateTabs.TemplateLibrary]: templateLib,
-    [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
-    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
-  };
-  const data = sdfSerializer.serialize(serializerMapper[tab]);
+  // Memoize SDF serialization to prevent recomputation on accordion toggles
+  // Only recompute when tab or library data actually changes
+  const data = useMemo(() => {
+    const sdfSerializer = new SdfSerializer();
+    const serializerMapper = {
+      [TemplateTabs.TemplateLibrary]: templateLib,
+      [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
+      [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
+    };
+    return sdfSerializer.serialize(serializerMapper[tab]);
+  }, [tab, templateLib, functionalGroups, saltsAndSolvents]);
 
-  const select = (tmpl: Template): void => {
-    onChangeGroup(tmpl.props.group);
-    props.onSelect(tmpl);
-  };
+  // Recreate selection handler only when upstream callbacks change.
+  const select = useCallback(
+    (tmpl: Template): void => {
+      onChangeGroup(tmpl.props.group);
+      onSelect(tmpl);
+    },
+    [onChangeGroup, onSelect],
+  );
+
+  // Memoize group names to avoid Object.keys call on every render
+  const groupNames = useMemo(
+    () => Object.keys(filteredTemplateLib),
+    [filteredTemplateLib],
+  );
 
   return (
     <Dialog
@@ -300,8 +327,8 @@ const TemplateDialog: FC<Props> = (props) => {
       <div className={classes.tabsContent}>
         <TabPanel value={tab} index={TemplateTabs.TemplateLibrary}>
           <div>
-            {Object.keys(filteredTemplateLib).length ? (
-              Object.keys(filteredTemplateLib).map((groupName) => {
+            {groupNames.length ? (
+              groupNames.map((groupName) => {
                 const shouldGroupBeRended =
                   expandedAccordions.includes(groupName);
                 return (
@@ -331,13 +358,13 @@ const TemplateDialog: FC<Props> = (props) => {
                       })`}
                     </AccordionSummary>
                     <AccordionDetails>
-                      <TemplateTable
+                      <MemoizedTemplateTable
                         templates={
                           shouldGroupBeRended
                             ? filteredTemplateLib[groupName]
-                            : []
+                            : EMPTY_TEMPLATES
                         }
-                        onSelect={(templ) => select(templ)}
+                        onSelect={select}
                         selected={props.selected}
                         onDelete={props.onDelete}
                         onAttach={props.onAttach}
@@ -357,10 +384,10 @@ const TemplateDialog: FC<Props> = (props) => {
         <TabPanel value={tab} index={TemplateTabs.FunctionalGroupLibrary}>
           {filteredFG?.length ? (
             <div className={classes.resultsContainer}>
-              <TemplateTable
+              <MemoizedTemplateTable
                 titleRows={1}
                 templates={filteredFG}
-                onSelect={(templ) => select(templ)}
+                onSelect={select}
                 selected={props.selected}
                 renderOptions={props.renderOptions}
               />
@@ -374,10 +401,10 @@ const TemplateDialog: FC<Props> = (props) => {
         <TabPanel value={tab} index={TemplateTabs.SaltsAndSolvents}>
           {filteredSaltsAndSolvents?.length ? (
             <div className={classes.resultsContainer}>
-              <TemplateTable
+              <MemoizedTemplateTable
                 titleRows={1}
                 templates={filteredSaltsAndSolvents}
-                onSelect={(templ) => select(templ)}
+                onSelect={select}
                 selected={props.selected}
                 renderOptions={props.renderOptions}
               />

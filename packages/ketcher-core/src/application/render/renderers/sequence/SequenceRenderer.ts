@@ -42,7 +42,6 @@ import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/
 import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModel';
 import { sequenceRendererStore } from 'application/render/renderers/sequence/SequenceRendererStore';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import type { SequenceViewModelChain } from 'application/render/renderers/sequence/SequenceViewModel/SequenceViewModelChain';
 import { SettingsManager } from 'utilities';
 import { SequenceEventDelegationManager } from './SequenceEventDelegationManager';
@@ -400,30 +399,6 @@ export class SequenceRenderer {
                   getRnaBaseFromSugar(monomer) === anotherMonomer) ||
                 (anotherMonomer instanceof Sugar &&
                   getRnaBaseFromSugar(anotherMonomer) === monomer)
-              ) {
-                return;
-              }
-
-              // Skip rendering side chain connections for LinkerSequenceNode
-              // (e.g., terminal phosphate-only linkers rendered as P)
-              if (node instanceof LinkerSequenceNode) {
-                return;
-              }
-
-              // Skip rendering inter-chain side connections for Phosphates
-              // (e.g., phosphates with R3 connections to bases in another chain)
-              // This prevents vertical lines from phosphates covering counters below
-              // Intra-chain side connections for phosphates are preserved
-              const monomerChain = monomerToChain.get(monomer);
-              const anotherMonomerChain = monomerToChain.get(anotherMonomer);
-
-              // Only skip if both monomers are in chains and they're different chains
-              if (
-                monomerChain &&
-                anotherMonomerChain &&
-                monomerChain !== anotherMonomerChain &&
-                (monomer instanceof Phosphate ||
-                  anotherMonomer instanceof Phosphate)
               ) {
                 return;
               }

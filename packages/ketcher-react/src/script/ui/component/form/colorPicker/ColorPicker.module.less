@@ -32,7 +32,6 @@
   border: 1px solid @color-grey-4;
   background-color: @color-background-primary;
   color: @color-text-primary;
-  font-family: @Inter;
   font-size: @font-size-input;
   padding-right: 7px;
   padding-left: 3px;
@@ -95,7 +94,8 @@
   gap: 6px;
 }
 
-.presetSwatch {
+.presetSwatch,
+.customSwatch {
   width: 100%;
   aspect-ratio: 28 / 16;
   min-height: 16px;
@@ -113,7 +113,8 @@
   }
 }
 
-.presetSwatchSelected {
+.presetSwatchSelected,
+.swatchSelected {
   box-shadow:
     0 0 0 2px @color-background-primary,
     0 0 0 3px @color-grey-6;
@@ -141,12 +142,12 @@
   padding: 4px 0;
 }
 
-.customLabel {
-  font-family: @Inter;
-  font-size: 12px;
+.customLabel,
+.hexLabel {
+  font-size: @font-size-regular;
   font-weight: 400;
-  line-height: 14px;
-  color: #333333;
+  line-height: @line-height-regular;
+  color: @color-text-primary;
   white-space: nowrap;
 }
 
@@ -204,30 +205,6 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-}
-
-.customSwatch {
-  width: 100%;
-  aspect-ratio: 28 / 16;
-  min-height: 16px;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-  padding: 0;
-  box-sizing: border-box;
-  outline: none;
-  position: relative;
-
-  &:hover {
-    outline: 2px solid @color-grey-6;
-    outline-offset: 1px;
-  }
-}
-
-.swatchSelected {
-  box-shadow:
-    0 0 0 2px @color-background-primary,
-    0 0 0 3px @color-grey-6;
 }
 
 // ── Custom color editor ───────────────────────────────────────────────────────
@@ -314,12 +291,6 @@
 }
 
 .hexLabel {
-  font-family: @Inter;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14px;
-  color: #333333;
-  white-space: nowrap;
   flex-shrink: 0;
 }
 
@@ -330,11 +301,10 @@
   border: 1px solid @color-grey-4;
   border-radius: 4px;
   padding: 4px;
-  font-family: @Inter;
-  font-size: 14px;
+  font-size: @font-size-input;
   font-weight: 400;
-  line-height: 16px;
-  color: #333333;
+  line-height: @line-height-input;
+  color: @color-text-primary;
   background: @color-background-primary;
   box-sizing: border-box;
   outline: none;

@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import classes from './ColorPicker.module.less';
@@ -34,7 +41,7 @@ interface ColorPickerCallProps {
 type Props = ColorPickerProps & ColorPickerCallProps;
 
 // Preset colors: 5 columns × 6 rows (light → dark per column)
-const presetColors: string[] = [
+const presetColors = [
   // Row 1 (blue/purple)
   '#B2B2FF',
   '#8080FF',
@@ -179,35 +186,75 @@ const ColorPicker = (props: Props) => {
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [popupPosition, setPopupPosition] = useState<{
+    top?: number;
+    bottom?: number;
+    left: number;
+    visibility: 'hidden' | 'visible';
+  }>({ left: 0, visibility: 'hidden' });
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
   const paletteId = 'color-picker-' + useId();
 
+  const applyHexColor = useCallback((hex: string) => {
+    setPendingColor(hex);
+    const { h, l } = hexToHsl(hex);
+    setHue(h);
+    setLightness(l);
+    setHexInput(hex.replace('#', '').toUpperCase());
+  }, []);
+
   // Sync internal state and compute popup position when popup opens
   useEffect(() => {
     if (isOpen) {
-      const savedColors = sanitizeCustomColors([
-        ...(settings?.colorPickerCustomColors ?? []),
-      ]);
       const initialColor = value || '#FF3232';
-      setPendingColor(initialColor);
-      const { h, l } = hexToHsl(initialColor);
-      setHue(h);
-      setLightness(l);
-      setHexInput(initialColor.replace('#', '').toUpperCase());
+      applyHexColor(initialColor);
       setIsCustomOpen(false);
 
-      const newColors = addCustomColor(savedColors, initialColor);
+      const newColors = addCustomColor(
+        [...(settings?.colorPickerCustomColors ?? [])],
+        initialColor,
+      );
       setCustomColors(newColors);
       updateSettings({ colorPickerCustomColors: newColors });
 
-      if (triggerRef.current) {
-        const rect = triggerRef.current.getBoundingClientRect();
-        setPopupPosition({ top: rect.bottom + 4, left: rect.left });
-      }
+      // Position is calculated by useLayoutEffect after the popup renders
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset popup position visibility when closed so next open starts hidden (prevents flash)
+  useEffect(() => {
+    if (!isOpen) {
+      setPopupPosition({ left: 0, visibility: 'hidden' });
+    }
+  }, [isOpen]);
+
+  // Calculate popup position after it renders — open upward if not enough space below
+  useLayoutEffect(() => {
+    if (!isOpen || !triggerRef.current || !popupRef.current) return;
+
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const popupHeight = popupRef.current.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - triggerRect.bottom - 4;
+    const spaceAbove = triggerRect.top - 4;
+
+    if (spaceBelow < popupHeight && spaceAbove > spaceBelow) {
+      // Not enough space below — open upward
+      setPopupPosition({
+        bottom: viewportHeight - triggerRect.top + 4,
+        left: triggerRect.left,
+        visibility: 'visible',
+      });
+    } else {
+      // Enough space below (or more space below than above) — open downward
+      setPopupPosition({
+        top: triggerRect.bottom + 4,
+        left: triggerRect.left,
+        visibility: 'visible',
+      });
+    }
+  }, [isOpen]);
 
   // Close on outside click
   useEffect(() => {
@@ -236,22 +283,6 @@ const ColorPicker = (props: Props) => {
     setIsOpen((prev) => !prev);
   }, []);
 
-  const handlePresetClick = useCallback((color: string) => {
-    setPendingColor(color);
-    const { h, l } = hexToHsl(color);
-    setHue(h);
-    setLightness(l);
-    setHexInput(color.replace('#', '').toUpperCase());
-  }, []);
-
-  const handleCustomColorClick = useCallback((color: string) => {
-    setPendingColor(color);
-    const { h, l } = hexToHsl(color);
-    setHue(h);
-    setLightness(l);
-    setHexInput(color.replace('#', '').toUpperCase());
-  }, []);
-
   const handleHueChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const h = parseInt(e.target.value, 10);
@@ -276,14 +307,10 @@ const ColorPicker = (props: Props) => {
       const raw = e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
       setHexInput(raw.toUpperCase());
       if (isValidHex(raw)) {
-        const hex = '#' + raw.toUpperCase();
-        setPendingColor(hex);
-        const { h, l } = hexToHsl(hex);
-        setHue(h);
-        setLightness(l);
+        applyHexColor('#' + raw.toUpperCase());
       }
     },
-    [],
+    [applyHexColor],
   );
 
   const selectedCustomColor = customColors.find(
@@ -350,7 +377,6 @@ const ColorPicker = (props: Props) => {
       onKeyDown={handleWrapperKeyDown}
       role="none"
     >
-      {/* Trigger button */}
       <button
         ref={triggerRef}
         type="button"
@@ -385,9 +411,13 @@ const ColorPicker = (props: Props) => {
             data-testid="color-picker-preset"
             role="none"
             tabIndex={-1}
-            style={{ top: popupPosition.top, left: popupPosition.left }}
+            style={{
+              top: popupPosition.top,
+              bottom: popupPosition.bottom,
+              left: popupPosition.left,
+              visibility: popupPosition.visibility,
+            }}
           >
-            {/* Preset color grid */}
             <div
               className={classes.presetGrid}
               data-testid="color-picker-preset-grid"
@@ -396,7 +426,7 @@ const ColorPicker = (props: Props) => {
                 <button
                   key={color}
                   type="button"
-                  onClick={() => handlePresetClick(color)}
+                  onClick={() => applyHexColor(color)}
                   style={{ backgroundColor: color }}
                   className={clsx(
                     classes.presetSwatch,
@@ -408,11 +438,8 @@ const ColorPicker = (props: Props) => {
               ))}
             </div>
 
-            {/* Custom Colors section */}
             <div className={classes.customSection}>
-              {/* Header group: label + optional saved swatches */}
               <div className={classes.headerGroup}>
-                {/* Custom Colors header */}
                 <div className={classes.customHeader}>
                   <span className={classes.customLabel}>Custom Colors</span>
                   <button
@@ -438,14 +465,13 @@ const ColorPicker = (props: Props) => {
                   </button>
                 </div>
 
-                {/* Saved custom color swatches */}
                 {customColors.length > 0 && (
                   <div className={classes.customSwatchRow}>
                     {customColors.map((color) => (
                       <button
                         key={color}
                         type="button"
-                        onClick={() => handleCustomColorClick(color)}
+                        onClick={() => applyHexColor(color)}
                         style={{ backgroundColor: color }}
                         className={clsx(
                           classes.customSwatch,
@@ -459,16 +485,13 @@ const ColorPicker = (props: Props) => {
                 )}
               </div>
 
-              {/* Custom color editor */}
               {isCustomOpen && (
                 <>
-                  {/* Sliders + preview */}
                   <div
                     className={classes.slidersRow}
                     data-testid="color-palette"
                   >
                     <div className={classes.slidersCol}>
-                      {/* Hue slider */}
                       <div className={classes.sliderTrackWrap}>
                         <input
                           type="range"
@@ -482,7 +505,6 @@ const ColorPicker = (props: Props) => {
                           aria-label="Hue"
                         />
                       </div>
-                      {/* Lightness slider */}
                       <div className={classes.sliderTrackWrap}>
                         <input
                           type="range"
@@ -497,7 +519,6 @@ const ColorPicker = (props: Props) => {
                         />
                       </div>
                     </div>
-                    {/* Color preview */}
                     <div
                       className={classes.colorPreviewBox}
                       style={{ backgroundColor: pendingColor }}
@@ -505,7 +526,6 @@ const ColorPicker = (props: Props) => {
                     />
                   </div>
 
-                  {/* HEX input row */}
                   <div className={classes.hexRow}>
                     <div className={classes.hexInputGroup}>
                       <label className={classes.hexLabel} htmlFor="hex-input">
@@ -535,7 +555,6 @@ const ColorPicker = (props: Props) => {
                 </>
               )}
 
-              {/* Action buttons */}
               <div className={classes.actionRow}>
                 <button
                   type="button"

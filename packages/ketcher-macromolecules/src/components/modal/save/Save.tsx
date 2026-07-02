@@ -114,15 +114,7 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
       setSvgData(svgData);
       return;
     }
@@ -187,15 +179,7 @@ export const Save = ({
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
       if (!svgData) {
         onClose();
         return;

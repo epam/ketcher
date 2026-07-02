@@ -187,9 +187,13 @@ export function saveSettings(newSettings, ketcherId) {
  */
 export function syncSettingsFromCore(coreSettings) {
   // Transform from SettingsService format to Redux format
-  const reduxSettings = normalizeSettingsForForm(coreSettings, {
+  const normalizedSettings = normalizeSettingsForForm(coreSettings, {
     removeCoreOnlyFields: true,
   });
+  const reduxSettings = pick(
+    Object.keys(getDefaultOptions()),
+    normalizedSettings,
+  );
 
   return {
     type: 'SYNC_SETTINGS_FROM_CORE',

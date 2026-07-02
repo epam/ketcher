@@ -299,7 +299,8 @@ abstract class SelectBase implements BaseTool {
 
     if (!shiftKey && !modKey) {
       this.startMoveIfNeeded(renderer);
-      if (renderer.drawingEntity.selected) {
+      const isSequenceItem = renderer instanceof BaseSequenceItemRenderer;
+      if (renderer.drawingEntity.selected && !isSequenceItem) {
         return;
       }
       modelChanges.merge(

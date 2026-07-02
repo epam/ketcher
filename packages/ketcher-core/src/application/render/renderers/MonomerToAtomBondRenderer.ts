@@ -169,8 +169,8 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         'y2',
         this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
       )
-      .attr('stroke', '#333333')
-      .attr('stroke-width', 1);
+      .attr('stroke', '#000')
+      .attr('stroke-width', this.editorSettings.microModeScale / 20);
     this.appendHover();
   }
 

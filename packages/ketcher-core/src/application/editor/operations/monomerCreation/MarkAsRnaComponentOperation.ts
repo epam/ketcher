@@ -1,4 +1,5 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
+import type ReStruct from 'application/render/restruct/restruct';
 import type {
   MonomerCreationState,
   RnaComponentAtoms,
@@ -23,7 +24,7 @@ export class MarkAsRnaComponentOperation extends BaseOperation {
     super(OperationType.MONOMER_CREATION_MARK_RNA_COMPONENT);
   }
 
-  execute(): void {
+  execute(_restruct: ReStruct): void {
     assert(this.monomerCreationState);
 
     if (!this.monomerCreationState.rnaComponentAtoms) {

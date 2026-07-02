@@ -92,7 +92,7 @@ describe('useSettings', () => {
 
   describe('initialization', () => {
     it('should return null settings when service is unavailable', () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
       });
@@ -159,7 +159,7 @@ describe('useSettings', () => {
     });
 
     it('should throw error when service unavailable', async () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
 
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
@@ -255,7 +255,7 @@ describe('useSettings', () => {
     });
 
     it('should return empty array when service unavailable', () => {
-      const store = createMockStore(undefined);
+      const store = createMockStore();
 
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),

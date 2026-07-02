@@ -36,11 +36,11 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import {
-  type RenderOptions,
-  type RenderOptionStyles,
-  UsageInMacromolecule,
+import type {
+  RenderOptions,
+  RenderOptionStyles,
 } from 'application/render/render.types';
+import { UsageInMacromolecule } from 'application/render/render.constants';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';

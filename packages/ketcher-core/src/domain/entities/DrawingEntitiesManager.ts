@@ -26,6 +26,7 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
+import { SGroup } from 'domain/entities/sgroup';
 import type { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
@@ -133,6 +134,17 @@ import {
 } from 'application/editor/operations/coreRxn/rxnPlus';
 import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
+import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
+import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import {
+  StereoFlagAddOperation,
+  StereoFlagDeleteOperation,
+} from 'application/editor/operations/stereoFlag';
+import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import {
+  SGroupAddOperation,
+  SGroupDeleteOperation,
+} from 'application/editor/operations/coreSGroup/sgroup';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -172,6 +184,8 @@ export class DrawingEntitiesManager {
   public rxnArrows: Map<number, RxnArrow> = new Map();
   public multitailArrows: Map<number, MultitailArrow> = new Map();
   public rxnPluses: Map<number, RxnPlus> = new Map();
+  public stereoFlags: Map<number, CoreStereoFlag> = new Map();
+  public sgroups: Map<number, SGroupDrawingEntity> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -296,6 +310,7 @@ export class DrawingEntitiesManager {
       ...(this.rxnArrows as Map<number, DrawingEntity>),
       ...(this.multitailArrows as Map<number, DrawingEntity>),
       ...(this.rxnPluses as Map<number, DrawingEntity>),
+      ...(this.stereoFlags as Map<number, DrawingEntity>),
     ];
   }
 
@@ -338,6 +353,9 @@ export class DrawingEntitiesManager {
     this.allEntities.forEach(([, drawingEntity]) => {
       const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
+    });
+    this.sgroups.forEach((sgroup) => {
+      mergedCommand.merge(this.deleteSGroup(sgroup));
     });
     this.clearMicromoleculesHiddenEntities();
     this.resetArrowIdCounter();
@@ -445,6 +463,8 @@ export class DrawingEntitiesManager {
       return this.deleteMultitailArrow(drawingEntity);
     } else if (drawingEntity instanceof RxnPlus) {
       return this.deleteRxnPlus(drawingEntity);
+    } else if (drawingEntity instanceof CoreStereoFlag) {
+      return this.deleteStereoFlag(drawingEntity);
     } else {
       return new Command();
     }
@@ -455,6 +475,9 @@ export class DrawingEntitiesManager {
 
     drawingEntity.turnOnSelection();
     command.merge(this.createDrawingEntitySelectionCommand(drawingEntity));
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
     return command;
   }
@@ -473,6 +496,10 @@ export class DrawingEntitiesManager {
       );
       command.addOperation(operation);
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     return command;
   }
 
@@ -520,6 +547,8 @@ export class DrawingEntitiesManager {
       }
     });
 
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(
       this.selectedEntities.map((entity) => entity[1]),
@@ -538,6 +567,7 @@ export class DrawingEntitiesManager {
       }
       command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     });
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
     return command;
   }
 
@@ -594,6 +624,7 @@ export class DrawingEntitiesManager {
       ...this.rxnArrows.values(),
       ...this.multitailArrows.values(),
       ...this.rxnPluses.values(),
+      ...this.stereoFlags.values(),
     ].forEach((drawingEntity) => {
       if (
         drawingEntity instanceof BaseMonomer &&
@@ -1022,6 +1053,10 @@ export class DrawingEntitiesManager {
         command.merge(selectionCommand);
       }
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
     return command;
   }
 
@@ -1065,6 +1100,40 @@ export class DrawingEntitiesManager {
         command.merge(selectionCommand);
       }
     });
+
+    // Sync stereo flag selection with monomer selection
+    command.merge(this.syncStereoFlagsSelectionWithMonomers());
+
+    return command;
+  }
+
+  /**
+   * Syncs stereo flag selection with their associated monomers.
+   * When a monomer is selected, its stereo flag should also be selected.
+   */
+  public syncStereoFlagsSelectionWithMonomers(): Command {
+    const command = new Command();
+
+    this.stereoFlags.forEach((stereoFlag) => {
+      const relatedMonomer = stereoFlag.relatedMonomer;
+      const monomerAtoms = [...this.atoms.values()].filter(
+        (atom) => atom.monomer === relatedMonomer,
+      );
+      const allMonomerAtomsSelected =
+        monomerAtoms.length > 0 && monomerAtoms.every((atom) => atom.selected);
+      const shouldBeSelected =
+        relatedMonomer.selected || allMonomerAtomsSelected;
+
+      if (stereoFlag.selected !== shouldBeSelected) {
+        if (shouldBeSelected) {
+          stereoFlag.turnOnSelection();
+        } else {
+          stereoFlag.turnOffSelection();
+        }
+        command.merge(this.createDrawingEntitySelectionCommand(stereoFlag));
+      }
+    });
+
     return command;
   }
 
@@ -2402,6 +2471,28 @@ export class DrawingEntitiesManager {
       mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
     });
 
+    this.sgroups.forEach((sgroup) => {
+      const monomer = monomerToNewMonomer.get(sgroup.monomer);
+
+      if (!monomer) {
+        return;
+      }
+
+      const sgroupAddCommand = targetDrawingEntitiesManager.addSGroup(
+        sgroup.sgroup,
+        monomer,
+        sgroup.sgroupIdInMicroMode,
+      );
+      const addedSGroup = sgroupAddCommand.operations[0]?.sgroupDrawingEntity;
+
+      if (!addedSGroup) {
+        return;
+      }
+
+      command.merge(sgroupAddCommand);
+      mergedDrawingEntities.sgroups.set(addedSGroup.id, addedSGroup);
+    });
+
     this.rxnArrows.forEach((rxnArrow) => {
       const rxnArrowAddCommand = targetDrawingEntitiesManager.addRxnArrow(
         rxnArrow.type,
@@ -2660,6 +2751,14 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteRxnPlus(rxnPlus);
     });
 
+    this.stereoFlags.forEach((stereoFlag) => {
+      editor.renderersContainer.deleteStereoFlag(stereoFlag);
+    });
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.deleteSGroup(sgroup);
+    });
+
     SequenceRenderer.clear();
   }
 
@@ -2728,7 +2827,6 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const editor = provideEditorInstance();
     editor.events.selectEntities.dispatch(drawingEntities);
-    drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (
         selectedDrawingEntities: DrawingEntity[],
@@ -2750,11 +2848,66 @@ export class DrawingEntitiesManager {
     return { command, drawingEntities: newDrawingEntities };
   }
 
+  private getAllSelectedEntitiesForSGroup(
+    sgroupDrawingEntity: SGroupDrawingEntity,
+    selectedDrawingEntities?: DrawingEntity[],
+  ) {
+    const command = new Command();
+    const drawingEntities: DrawingEntity[] = [];
+    const struct = sgroupDrawingEntity.monomer.monomerItem.struct;
+    const sgroupAtomIds = new Set(
+      SGroup.getAtoms(struct, sgroupDrawingEntity.sgroup),
+    );
+    const sgroupBondIds = new Set(
+      SGroup.getBonds(struct, sgroupDrawingEntity.sgroup),
+    );
+    const addDrawingEntity = (drawingEntity: DrawingEntity) => {
+      if (
+        drawingEntities.includes(drawingEntity) ||
+        selectedDrawingEntities?.includes(drawingEntity)
+      ) {
+        return;
+      }
+
+      drawingEntity.turnOnSelection();
+      drawingEntities.push(drawingEntity);
+      command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    };
+
+    this.atoms.forEach((atom) => {
+      if (
+        atom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupAtomIds.has(atom.atomIdInMicroMode)
+      ) {
+        addDrawingEntity(atom);
+      }
+    });
+
+    this.bonds.forEach((bond) => {
+      if (
+        bond.firstAtom.monomer === sgroupDrawingEntity.monomer &&
+        bond.secondAtom.monomer === sgroupDrawingEntity.monomer &&
+        sgroupBondIds.has(bond.bondIdInMicroMode)
+      ) {
+        addDrawingEntity(bond);
+      }
+    });
+
+    return { command, drawingEntities };
+  }
+
   public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    if (drawingEntity instanceof SGroupDrawingEntity) {
+      return this.getAllSelectedEntitiesForSGroup(
+        drawingEntity,
+        selectedDrawingEntities,
+      );
+    }
+
     const command = new Command();
     command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     drawingEntity.turnOnSelection();
@@ -3162,6 +3315,80 @@ export class DrawingEntitiesManager {
         command.merge(this.deleteAtom(atom, true));
       });
     });
+    return command;
+  }
+
+  private addSGroupChangeModel(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+    existingSGroupDrawingEntity?: SGroupDrawingEntity,
+  ) {
+    if (existingSGroupDrawingEntity) {
+      this.sgroups.set(
+        existingSGroupDrawingEntity.id,
+        existingSGroupDrawingEntity,
+      );
+
+      return existingSGroupDrawingEntity;
+    }
+
+    const sgroupDrawingEntity = new SGroupDrawingEntity(
+      sgroup,
+      monomer,
+      sgroupIdInMicroMode,
+    );
+
+    this.sgroups.set(sgroupDrawingEntity.id, sgroupDrawingEntity);
+
+    return sgroupDrawingEntity;
+  }
+
+  public addSGroup(
+    sgroup: SGroup,
+    monomer: BaseMonomer,
+    sgroupIdInMicroMode: number,
+  ) {
+    const command = new Command();
+    const sgroupAddOperation = new SGroupAddOperation(
+      (sgroupDrawingEntity?: SGroupDrawingEntity) =>
+        this.addSGroupChangeModel(
+          sgroup,
+          monomer,
+          sgroupIdInMicroMode,
+          sgroupDrawingEntity,
+        ),
+      this.deleteSGroupChangeModel.bind(this),
+    );
+
+    command.addOperation(sgroupAddOperation);
+
+    return command;
+  }
+
+  private deleteSGroupChangeModel(sgroupDrawingEntity: SGroupDrawingEntity) {
+    this.sgroups.delete(sgroupDrawingEntity.id);
+
+    return sgroupDrawingEntity;
+  }
+
+  private deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    const command = new Command();
+
+    command.addOperation(
+      new SGroupDeleteOperation(
+        sgroupDrawingEntity,
+        this.deleteSGroupChangeModel.bind(this, sgroupDrawingEntity),
+        (sgroupToRestore: SGroupDrawingEntity) =>
+          this.addSGroupChangeModel(
+            sgroupToRestore.sgroup,
+            sgroupToRestore.monomer,
+            sgroupToRestore.sgroupIdInMicroMode,
+            sgroupToRestore,
+          ),
+      ),
+    );
+
     return command;
   }
 
@@ -4189,5 +4416,83 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  private deleteStereoFlagModelChange(stereoFlag: CoreStereoFlag) {
+    this.stereoFlags.delete(stereoFlag.id);
+  }
+
+  private addStereoFlagModelChange(
+    position: Vec2,
+    flagType: StereoFlagEnum,
+    relatedMonomer: BaseMonomer,
+    _stereoFlag?: CoreStereoFlag,
+  ) {
+    if (_stereoFlag) {
+      this.stereoFlags.set(_stereoFlag.id, _stereoFlag);
+
+      return _stereoFlag;
+    }
+
+    const stereoFlag = new CoreStereoFlag(position, flagType, relatedMonomer);
+
+    this.stereoFlags.set(stereoFlag.id, stereoFlag);
+
+    return stereoFlag;
+  }
+
+  public addStereoFlag(
+    position: Vec2,
+    flagType: StereoFlagEnum,
+    relatedMonomer: BaseMonomer,
+  ) {
+    const command = new Command();
+    const operation = new StereoFlagAddOperation(
+      this.addStereoFlagModelChange.bind(
+        this,
+        position,
+        flagType,
+        relatedMonomer,
+      ),
+      this.deleteStereoFlagModelChange.bind(this),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public deleteStereoFlag(stereoFlag: CoreStereoFlag) {
+    const command = new Command();
+    const operation = new StereoFlagDeleteOperation(
+      stereoFlag,
+      this.deleteStereoFlagModelChange.bind(this),
+      this.addStereoFlagModelChange.bind(
+        this,
+        stereoFlag.position,
+        stereoFlag.flagType,
+        stereoFlag.relatedMonomer,
+      ),
+    );
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  /**
+   * Gets the stereo flag associated with a monomer.
+   * Note: Linear search is acceptable here as stereo flags are rare
+   * (typically one per fragment with stereo atoms).
+   */
+  public getStereoFlagForMonomer(
+    monomer: BaseMonomer,
+  ): CoreStereoFlag | undefined {
+    for (const stereoFlag of this.stereoFlags.values()) {
+      if (stereoFlag.relatedMonomer === monomer) {
+        return stereoFlag;
+      }
+    }
+    return undefined;
   }
 }

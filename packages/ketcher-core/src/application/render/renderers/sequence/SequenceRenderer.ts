@@ -456,7 +456,7 @@ export class SequenceRenderer {
     });
   }
 
-  private static showBondRenderer(bondRenderer: SequenceBondRenderer) {
+  public static showBondRenderer(bondRenderer: SequenceBondRenderer) {
     bondRenderer.show();
     this.sequenceBondRenderers.add(bondRenderer);
   }

@@ -211,6 +211,10 @@ export class BondRenderer extends BaseRenderer {
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
+    if (!pathShape) {
+      return;
+    }
+
     if (this.selectionElement) {
       this.selectionElement.attr('d', pathShape);
     } else {
@@ -241,6 +245,10 @@ export class BondRenderer extends BaseRenderer {
     }
 
     const pathShape = this.getSelectionContour();
+
+    if (!pathShape) {
+      return;
+    }
 
     this.hoverElement = this.canvas
       ?.insert('path', ':first-child')
@@ -450,7 +458,17 @@ export class BondRenderer extends BaseRenderer {
     ];
   }
 
-  private getSelectionContour() {
+  public getHoverContourPath(): string | undefined {
+    return this.getSelectionContour();
+  }
+
+  private getSelectionContour(): string | undefined {
+    const selectionPoints = this.getSelectionPoints();
+
+    if (selectionPoints.length !== 8) {
+      return undefined;
+    }
+
     const [
       startPadTop,
       startTop,
@@ -460,17 +478,15 @@ export class BondRenderer extends BaseRenderer {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints();
+    ] = selectionPoints;
 
-    const pathString = `
+    return `
       M ${startTop.x} ${startTop.y}
       L ${endTop.x} ${endTop.y}
       C ${endPadTop.x} ${endPadTop.y}, ${endPadBottom.x} ${endPadBottom.y}, ${endBottom.x} ${endBottom.y}
       L ${startBottom.x} ${startBottom.y}
       C ${startPadBottom.x} ${startPadBottom.y}, ${startPadTop.x} ${startPadTop.y}, ${startTop.x} ${startTop.y}
     `;
-
-    return pathString;
   }
 
   public moveSelection() {
@@ -1015,6 +1031,14 @@ export class BondRenderer extends BaseRenderer {
     super.remove();
     this.removeHover();
     this.removeSelection();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
   }
 
   public move() {

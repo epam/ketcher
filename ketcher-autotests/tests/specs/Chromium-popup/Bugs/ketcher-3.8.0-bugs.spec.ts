@@ -104,6 +104,7 @@ test.describe('Ketcher bugs in 3.8.0', () => {
     await page.keyboard.press('Backspace');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
+    await TextEditorDialog(page).cancel();
   });
 
   test('Case 2: In Macro mode selection tool not resets to Rectangle when switching between Flex, Snake, and Sequence modes', async ({

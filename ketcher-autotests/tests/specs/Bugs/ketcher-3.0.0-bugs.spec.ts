@@ -290,7 +290,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await selectAllStructuresOnCanvas(page);
     const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
-    await symbolU.click();
     await modifyInRnaBuilder(page, symbolU);
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAA');

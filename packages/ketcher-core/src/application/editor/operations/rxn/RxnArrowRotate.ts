@@ -53,4 +53,8 @@ export class RxnArrowRotate extends Base {
     );
     return move;
   }
+
+  isDummy() {
+    return this.data.angle === 0;
+  }
 }

@@ -55,4 +55,8 @@ export class RotateMonomerOperation extends BaseOperation {
       value: this.previousValue,
     });
   }
+
+  isDummy() {
+    return this.data.value === 0;
+  }
 }

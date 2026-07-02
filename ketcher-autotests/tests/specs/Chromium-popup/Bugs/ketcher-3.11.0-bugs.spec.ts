@@ -1127,7 +1127,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[d12r]}$$$$V2.0',
+      'RNA1{[12ddR]}$$$$V2.0',
     );
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -1407,7 +1407,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
       getMonomerLocator(page, Sugar.R),
       getMonomerLocator(page, Base._Base3),
     );
-    await verifyHELMExport(page, 'RNA1{r([_Base3_HELM***---])}$$$$V2.0');
+    await verifyHELMExport(page, 'RNA1{R([_Base3_HELM***---])}$$$$V2.0');
   });
 
   test('Case 38 - SVG/PNG: Export of any atom with Isotope (atomic mass) value set does not work', async () => {

@@ -162,6 +162,14 @@ export function resetEditorEvents() {
     editorEvents[key] = new Subscription();
   }
 }
+
+export function createEditorEvents(): IEditorEvents {
+  const events = {} as IEditorEvents;
+  for (const key of Object.keys(editorEvents) as Array<keyof IEditorEvents>) {
+    events[key] = new Subscription();
+  }
+  return events;
+}
 export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverPolymerBond',
   'mouseLeavePolymerBond',

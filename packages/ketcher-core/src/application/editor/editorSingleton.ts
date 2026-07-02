@@ -1,15 +1,34 @@
 import type { CoreEditor } from './Editor';
 
-let editorInstance: CoreEditor | undefined;
+const editorInstances = new Map<string, CoreEditor>();
 
-export function provideEditorInstance(): CoreEditor {
-  return editorInstance as CoreEditor;
+let _renderingContext: CoreEditor | undefined;
+
+export function setEditorRenderingContext(
+  editor: CoreEditor | undefined,
+): void {
+  _renderingContext = editor;
 }
 
 export function setEditorInstance(editor: CoreEditor): void {
-  editorInstance = editor;
+  if (editor.ketcherId) {
+    editorInstances.set(editor.ketcherId, editor);
+  }
 }
 
-export function resetEditorInstance(): void {
-  editorInstance = undefined;
+export function resetEditorInstance(ketcherId?: string): void {
+  if (ketcherId) {
+    editorInstances.delete(ketcherId);
+  }
+}
+
+export function provideEditorInstance(ketcherId?: string): CoreEditor {
+  if (_renderingContext) return _renderingContext;
+  if (ketcherId) {
+    const editor = editorInstances.get(ketcherId);
+    if (editor) return editor;
+  }
+  // Fall back to the most recently registered instance for callers without context
+  const values = [...editorInstances.values()];
+  return values[values.length - 1] as CoreEditor;
 }

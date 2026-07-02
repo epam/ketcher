@@ -27,6 +27,35 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SequenceNodeRendererFactory {
+  /**
+   * Determines the appropriate renderer class for a linker node.
+   *
+   * A linker composed only of phosphate monomers at the first or last position
+   * of the chain renders as P (PhosphateSequenceItemRenderer), because terminal
+   * phosphates are chemically meaningful, especially on antisense strands.
+   * Interior phosphate-only linkers continue rendering as CHEM (ChemSequenceItemRenderer).
+   *
+   * @see https://github.com/epam/ketcher/issues/6438
+   * @param node - The linker sequence node to render
+   * @param monomerIndexInChain - Zero-based position in the chain
+   * @param isLastMonomerInChain - Whether this is the last monomer in the chain
+   * @returns The appropriate renderer class (PhosphateSequenceItemRenderer or ChemSequenceItemRenderer)
+   *
+   * Public for testing purposes.
+   */
+  public static getLinkerRendererClass(
+    node: LinkerSequenceNode,
+    monomerIndexInChain: number,
+    isLastMonomerInChain: boolean,
+  ) {
+    // Terminal phosphates (first or last position) are chemically significant
+    const isAtEdgeOfChain = monomerIndexInChain === 0 || isLastMonomerInChain;
+
+    return node.isPhosphateOnly && isAtEdgeOfChain
+      ? PhosphateSequenceItemRenderer
+      : ChemSequenceItemRenderer;
+  }
+
   static fromNode(
     node: SequenceNode,
     firstMonomerInChainPosition: Vec2,
@@ -55,7 +84,11 @@ export class SequenceNodeRendererFactory {
         RendererClass = BackBoneSequenceItemRenderer;
         break;
       case LinkerSequenceNode:
-        RendererClass = ChemSequenceItemRenderer;
+        RendererClass = SequenceNodeRendererFactory.getLinkerRendererClass(
+          node as LinkerSequenceNode,
+          monomerIndexInChain,
+          isLastMonomerInChain,
+        );
         break;
       case AmbiguousMonomerSequenceNode:
         RendererClass = AmbiguousSequenceItemRenderer;

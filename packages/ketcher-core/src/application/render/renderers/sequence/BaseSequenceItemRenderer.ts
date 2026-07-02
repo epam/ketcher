@@ -301,13 +301,22 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
       if (nodeIndex === -1) return false;
-      if (this.node.monomer instanceof Phosphate) return false;
+      // Skip counter for non-linker phosphate nodes (e.g., standalone phosphate monomers)
+      // LinkerSequenceNode with phosphate should still be processed (handled by inIgnoreList)
+      if (
+        !(this.node instanceof LinkerSequenceNode) &&
+        this.node.monomer instanceof Phosphate
+      )
+        return false;
 
       const linkerNodeIndex = subChain.nodes.findIndex(
         (node) => node instanceof LinkerSequenceNode,
       );
+      // Find standalone phosphate nodes (not LinkerSequenceNode with phosphate)
       const phosphateNodeIndex = subChain.nodes.findIndex(
-        ({ monomer }) => monomer instanceof Phosphate,
+        (node) =>
+          !(node instanceof LinkerSequenceNode) &&
+          node.monomer instanceof Phosphate,
       );
       const ambiguousMonomerNonPeptideNodeIndex = subChain.nodes.findIndex(
         this.checkIfNodeIsAmbiguousMonomerNotPeptide,
@@ -330,6 +339,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         nodeIndex === 0 ||
         nodeIndex === subChain.nodes.length - 1 ||
         (nodeIndex === subChain.nodes.length - 2 &&
+          !(
+            subChain.nodes[subChain.nodes.length - 1] instanceof
+            LinkerSequenceNode
+          ) &&
           subChain.nodes[subChain.nodes.length - 1].monomer instanceof
             Phosphate) ||
         this.isNthNodeInChain

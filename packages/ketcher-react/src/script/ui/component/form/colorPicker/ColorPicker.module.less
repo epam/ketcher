@@ -201,15 +201,15 @@
 // ── Saved custom swatches ─────────────────────────────────────────────────────
 
 .customSwatchRow {
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
 }
 
 .customSwatch {
-  width: 28px;
-  height: 16px;
+  width: 100%;
+  aspect-ratio: 28 / 16;
+  min-height: 16px;
   border: none;
   border-radius: 2px;
   cursor: pointer;
@@ -217,7 +217,6 @@
   box-sizing: border-box;
   outline: none;
   position: relative;
-  flex-shrink: 0;
 
   &:hover {
     outline: 2px solid @color-grey-6;

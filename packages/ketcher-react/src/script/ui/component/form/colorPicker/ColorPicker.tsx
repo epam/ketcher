@@ -72,7 +72,7 @@ const presetColors: string[] = [
   '#4D4D4D',
 ];
 
-const MAX_CUSTOM_COLORS = 5;
+const MAX_CUSTOM_COLORS = 10;
 const CUSTOM_COLORS_STORAGE_KEY = 'ketcher_color_picker_custom_colors';
 
 function isPresetColor(color: string): boolean {

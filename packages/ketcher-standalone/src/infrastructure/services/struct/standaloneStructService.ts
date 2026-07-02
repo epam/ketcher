@@ -79,7 +79,6 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { getIndigoWorker } from '_indigo-worker-import-alias_';
-import { get } from 'lodash';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;

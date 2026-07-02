@@ -2,6 +2,7 @@ import {
   provideEditorInstance,
   setEditorRenderingContext,
 } from 'application/editor/editorSingleton';
+import type { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -62,7 +63,7 @@ type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 export class RenderersManager {
   private readonly theme: ThemeType;
   public zoomTool?: ZoomTool;
-  public editor?: import('application/editor/Editor').CoreEditor;
+  public editor?: CoreEditor;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 

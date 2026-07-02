@@ -16,7 +16,7 @@
 
 import { fromAtomMerge } from 'application/editor/actions/atomMerge';
 import { Render } from 'application/render';
-import { RenderOptions } from 'application/render/render.types';
+import type { RenderOptions } from 'application/render/render.types';
 import { ReStruct } from 'application/render/restruct';
 import {
   Atom,

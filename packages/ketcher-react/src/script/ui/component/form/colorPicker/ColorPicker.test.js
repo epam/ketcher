@@ -2,6 +2,11 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ColorPicker from './ColorPicker';
+import { useSettings } from 'src/hooks';
+
+jest.mock('src/hooks', () => ({
+  useSettings: jest.fn(),
+}));
 
 const defaultProps = {
   value: '#000000',
@@ -9,7 +14,8 @@ const defaultProps = {
   onChange: jest.fn(),
 };
 
-const customColorsStorageKey = 'ketcher_color_picker_custom_colors';
+let mockSettings;
+let mockUpdateSettings;
 
 const renderColorPicker = (props = {}) => {
   const mergedProps = { ...defaultProps, ...props };
@@ -17,7 +23,12 @@ const renderColorPicker = (props = {}) => {
 };
 
 beforeEach(() => {
-  localStorage.clear();
+  mockSettings = { colorPickerCustomColors: [] };
+  mockUpdateSettings = jest.fn().mockResolvedValue({});
+  useSettings.mockReturnValue({
+    settings: mockSettings,
+    updateSettings: mockUpdateSettings,
+  });
 });
 
 const openPreset = async () => {
@@ -93,27 +104,23 @@ describe('should pick color correctly', () => {
     renderColorPicker({ value: '#123456' });
 
     await openPreset();
-
     const customSwatch = screen.getByRole('button', { name: '#123456' });
     expect(customSwatch.className).toContain('swatchSelected');
   });
 
-  it('should persist custom colors in localStorage', async () => {
+  it('should persist custom colors via SettingsService', async () => {
     renderColorPicker({ value: '#123456' });
     await openPreset();
 
-    const storedColors = JSON.parse(
-      localStorage.getItem(customColorsStorageKey) || '[]',
+    expect(mockUpdateSettings).toHaveBeenCalledWith(
+      expect.objectContaining({
+        colorPickerCustomColors: expect.arrayContaining(['#123456']),
+      }),
     );
-
-    expect(storedColors).toContain('#123456');
   });
 
-  it('should restore custom colors from localStorage', async () => {
-    localStorage.setItem(
-      customColorsStorageKey,
-      JSON.stringify(['#123456', '#ABCDEF']),
-    );
+  it('should restore custom colors from SettingsService', async () => {
+    mockSettings.colorPickerCustomColors = ['#123456', '#ABCDEF'];
 
     renderColorPicker();
     await openPreset();
@@ -122,25 +129,22 @@ describe('should pick color correctly', () => {
     expect(screen.getByRole('button', { name: '#ABCDEF' })).toBeInTheDocument();
   });
 
-  it('should ignore preset colors from localStorage custom list', async () => {
-    localStorage.setItem(
-      customColorsStorageKey,
-      JSON.stringify(['#0095FF', '#123456']),
-    );
+  it('should ignore preset colors from SettingsService custom list', async () => {
+    mockSettings.colorPickerCustomColors = ['#8080FF', '#123456'];
 
     renderColorPicker();
     await openPreset();
 
     const duplicatedPresetCustomSwatch = screen
-      .queryAllByRole('button', { name: '#0095FF' })
+      .queryAllByRole('button', { name: '#8080FF' })
       .find((button) => button.className.includes('customSwatch'));
 
     expect(duplicatedPresetCustomSwatch).toBeUndefined();
     expect(screen.getByRole('button', { name: '#123456' })).toBeInTheDocument();
   });
 
-  it('should read custom colors from localStorage on every picker open', async () => {
-    localStorage.setItem(customColorsStorageKey, JSON.stringify(['#123456']));
+  it('should read custom colors from SettingsService on every picker open', async () => {
+    mockSettings.colorPickerCustomColors = ['#123456'];
 
     render(
       <>
@@ -159,7 +163,11 @@ describe('should pick color correctly', () => {
       ).not.toBeInTheDocument(),
     );
 
-    localStorage.setItem(customColorsStorageKey, JSON.stringify(['#ABCDEF']));
+    mockSettings.colorPickerCustomColors = ['#ABCDEF'];
+    useSettings.mockReturnValue({
+      settings: mockSettings,
+      updateSettings: mockUpdateSettings,
+    });
 
     await userEvent.click(screen.getByTestId('picker-b-color-picker-preview'));
     expect(screen.getByRole('button', { name: '#ABCDEF' })).toBeInTheDocument();

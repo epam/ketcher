@@ -93,6 +93,9 @@ export interface Settings {
   readonly editorLineLength: Record<string, number>;
   readonly disableCustomQuery: boolean;
   readonly monomerLibraryUpdates: string[];
+
+  // Color picker
+  readonly colorPickerCustomColors: readonly string[];
 }
 
 /**

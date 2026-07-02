@@ -20,6 +20,7 @@ import { createPortal } from 'react-dom';
 import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
+import { useSettings } from 'src/hooks';
 
 interface ColorPickerProps {
   value: string;
@@ -73,7 +74,6 @@ const presetColors: string[] = [
 ];
 
 const MAX_CUSTOM_COLORS = 10;
-const CUSTOM_COLORS_STORAGE_KEY = 'ketcher_color_picker_custom_colors';
 
 function isPresetColor(color: string): boolean {
   return presetColors.some(
@@ -113,44 +113,6 @@ function addCustomColor(colors: string[], color: string): string[] {
   }
 
   return sanitizeCustomColors([normalizedColor, ...colors]);
-}
-
-function readCustomColorsFromStorage(): string[] {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-
-  try {
-    const raw = window.localStorage.getItem(CUSTOM_COLORS_STORAGE_KEY);
-
-    if (!raw) {
-      return [];
-    }
-
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return sanitizeCustomColors(parsed);
-  } catch {
-    return [];
-  }
-}
-
-function writeCustomColorsToStorage(colors: string[]): void {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  try {
-    window.localStorage.setItem(
-      CUSTOM_COLORS_STORAGE_KEY,
-      JSON.stringify(sanitizeCustomColors(colors)),
-    );
-  } catch {
-    // Ignore storage write errors (e.g. private mode/quota exceeded).
-  }
 }
 
 // ── Color conversion helpers ──────────────────────────────────────────────────
@@ -209,12 +171,11 @@ function isValidHex(hex: string): boolean {
 
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
+  const { settings, updateSettings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [pendingColor, setPendingColor] = useState(value || '#FF3232');
-  const [customColors, setCustomColors] = useState<string[]>(
-    readCustomColorsFromStorage,
-  );
+  const [customColors, setCustomColors] = useState<string[]>([]);
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');
@@ -226,7 +187,9 @@ const ColorPicker = (props: Props) => {
   // Sync internal state and compute popup position when popup opens
   useEffect(() => {
     if (isOpen) {
-      const storedCustomColors = readCustomColorsFromStorage();
+      const savedColors = sanitizeCustomColors([
+        ...(settings?.colorPickerCustomColors ?? []),
+      ]);
       const initialColor = value || '#FF3232';
       setPendingColor(initialColor);
       const { h, l } = hexToHsl(initialColor);
@@ -235,7 +198,9 @@ const ColorPicker = (props: Props) => {
       setHexInput(initialColor.replace('#', '').toUpperCase());
       setIsCustomOpen(false);
 
-      setCustomColors(addCustomColor(storedCustomColors, initialColor));
+      const newColors = addCustomColor(savedColors, initialColor);
+      setCustomColors(newColors);
+      updateSettings({ colorPickerCustomColors: newColors });
 
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
@@ -243,30 +208,6 @@ const ColorPicker = (props: Props) => {
       }
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    writeCustomColorsToStorage(customColors);
-  }, [customColors]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key !== CUSTOM_COLORS_STORAGE_KEY) {
-        return;
-      }
-
-      setCustomColors(readCustomColorsFromStorage());
-    };
-
-    window.addEventListener('storage', handleStorage);
-
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-    };
-  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -354,20 +295,22 @@ const ColorPicker = (props: Props) => {
       return;
     }
 
-    setCustomColors((prev) =>
-      prev.filter(
-        (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
-      ),
+    const newColors = customColors.filter(
+      (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
     );
-  }, [selectedCustomColor]);
+    setCustomColors(newColors);
+    updateSettings({ colorPickerCustomColors: newColors });
+  }, [selectedCustomColor, customColors, updateSettings]);
 
   const handleApply = useCallback(() => {
     onChange(pendingColor);
     if (isCustomOpen) {
-      setCustomColors((prev) => addCustomColor(prev, pendingColor));
+      const newColors = addCustomColor(customColors, pendingColor);
+      setCustomColors(newColors);
+      updateSettings({ colorPickerCustomColors: newColors });
     }
     setIsOpen(false);
-  }, [onChange, pendingColor, isCustomOpen]);
+  }, [onChange, pendingColor, isCustomOpen, customColors, updateSettings]);
 
   const handleCancel = useCallback(() => {
     setIsOpen(false);

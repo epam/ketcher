@@ -3,6 +3,8 @@ import type { CoreEditor } from './Editor';
 const editorInstances = new Map<string, CoreEditor>();
 
 let _renderingContext: CoreEditor | undefined;
+// fallback for a single editor instance without a ketcherId, for example in tests or in a single-editor application
+let _lastEditorInstance: CoreEditor | undefined;
 
 export function setEditorRenderingContext(
   editor: CoreEditor | undefined,
@@ -11,6 +13,7 @@ export function setEditorRenderingContext(
 }
 
 export function setEditorInstance(editor: CoreEditor): void {
+  _lastEditorInstance = editor;
   if (editor.ketcherId) {
     editorInstances.set(editor.ketcherId, editor);
   }
@@ -19,6 +22,9 @@ export function setEditorInstance(editor: CoreEditor): void {
 export function resetEditorInstance(ketcherId?: string): void {
   if (ketcherId) {
     editorInstances.delete(ketcherId);
+  }
+  if (_lastEditorInstance?.ketcherId === ketcherId) {
+    _lastEditorInstance = undefined;
   }
 }
 
@@ -30,5 +36,5 @@ export function provideEditorInstance(ketcherId?: string): CoreEditor {
   }
   // Fall back to the most recently registered instance for callers without context
   const values = [...editorInstances.values()];
-  return values[values.length - 1] as CoreEditor;
+  return (values[values.length - 1] ?? _lastEditorInstance) as CoreEditor;
 }

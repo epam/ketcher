@@ -62,11 +62,11 @@ export class SettingsService implements ISettingsService {
   private static instance: SettingsService | null = null;
 
   private settings: Settings;
-  private storage: ISettingsStorage;
-  private validator: ISettingsValidator;
-  private emitter: EventEmitter;
-  private storageKey: string;
-  private autoSave: boolean;
+  private readonly storage: ISettingsStorage;
+  private readonly validator: ISettingsValidator;
+  private readonly emitter: EventEmitter;
+  private readonly storageKey: string;
+  private readonly autoSave: boolean;
   private initialized = false;
 
   /**

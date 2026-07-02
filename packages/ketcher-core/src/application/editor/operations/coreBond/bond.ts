@@ -101,9 +101,11 @@ export class BondDeleteOperation implements Operation {
 
   public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteBond(this.bond);
+    renderersManager.rerenderSGroups();
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addBond(this.bond);
+    renderersManager.rerenderSGroups();
   }
 }

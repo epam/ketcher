@@ -109,20 +109,13 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     onAttach,
   }) => {
     return (
-      <div
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         className={
           !isSelected ? classes.td : `${classes.td} ${classes.selected}`
         }
         title={greekify(getTemplateTitle(tmpl, index))}
-        key={
-          !isSelected
-            ? `${tmpl.struct.name}_${index}`
-            : `${tmpl.struct.name}_${index}_selected`
-        }
         onClick={() => onSelect(tmpl)}
-        onKeyDown={createKeyDownHandler(() => onSelect(tmpl))}
       >
         <MemoizedStructRender
           testId={tmpl.struct.name}
@@ -169,7 +162,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
             <Icon name="edit" />
           </button>
         )}
-      </div>
+      </button>
     );
   },
   // Custom comparison: only re-render if these specific props change
@@ -280,9 +273,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     >
       {visibleTemplates.map((tmpl, i) => (
         <TemplateItem
-          key={`${tmpl.struct.name}_${i}_${
-            selected?.struct === tmpl.struct ? 'selected' : 'unselected'
-          }`}
+          key={`${tmpl.struct.name}_${i}`}
           tmpl={tmpl}
           index={i}
           isSelected={selected?.struct === tmpl.struct}

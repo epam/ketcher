@@ -3363,7 +3363,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
 
   await verifyHELMExport(
     page,
-    `RNA1{r(U)p.r(G)p.r(C)p}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}|PEPTIDE2{[Asp_OMe].[Cys_Bn].[1Nal]}|RNA2{p.r(G)p.r(C)p.r(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
+    `RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[Asp_OMe]}|PEPTIDE2{[Asp_OMe].[Cys_Bn].[1Nal]}|RNA2{P.R(G)P.R(C)P.R(A)}$RNA1,PEPTIDE1,9:R2-1:R1|PEPTIDE2,RNA2,3:R2-1:R1|RNA1,RNA2,8:pair-3:pair|RNA1,RNA2,5:pair-6:pair|RNA1,RNA2,2:pair-9:pair$$$V2.0`,
   );
 });
 

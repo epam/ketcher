@@ -206,7 +206,7 @@
         "id": "12ddR___1',2'-dideoxyribose",
         "fullName": "1',2'-dideoxyribose",
         "alias": "12ddR",
-        "aliasHELM": "d12r",
+        "aliasHELM": "12ddR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 6,
@@ -318,7 +318,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

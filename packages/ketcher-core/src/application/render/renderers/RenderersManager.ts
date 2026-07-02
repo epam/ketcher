@@ -50,6 +50,8 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import type { Loop } from '../view-model/Loop';
 import type { DeepPartial } from 'types';
+import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import { SGroupRenderer } from 'application/render/renderers/SGroupRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -72,6 +74,8 @@ export class RenderersManager {
   public atoms = new Map<number, AtomRenderer>();
 
   public bonds = new Map<number, BondRenderer>();
+
+  public sgroups = new Map<number, SGroupRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
 
@@ -158,6 +162,9 @@ export class RenderersManager {
     });
     this.polymerBonds.forEach((polymerBondRenderer) => {
       polymerBondRenderer.remove();
+    });
+    this.sgroups.forEach((sgroupRenderer) => {
+      sgroupRenderer.remove();
     });
   }
 
@@ -431,6 +438,40 @@ export class RenderersManager {
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
+  }
+
+  public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    if (sgroupDrawingEntity.renderer) {
+      sgroupDrawingEntity.renderer.remove();
+    }
+
+    const sgroupRenderer = new SGroupRenderer(sgroupDrawingEntity);
+
+    this.sgroups.set(sgroupDrawingEntity.id, sgroupRenderer);
+    sgroupRenderer.show();
+    sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
+    sgroupRenderer.moveLabelsToFront();
+  }
+
+  public deleteSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {
+    this.sgroups.delete(sgroupDrawingEntity.id);
+    sgroupDrawingEntity.renderer?.remove();
+  }
+
+  public rerenderSGroups() {
+    this.atoms.forEach((atomRenderer) => {
+      atomRenderer.setVisibility(true);
+    });
+    this.bonds.forEach((bondRenderer) => {
+      bondRenderer.setVisibility(true);
+    });
+
+    this.sgroups.forEach((sgroupRenderer) => {
+      sgroupRenderer.remove();
+      sgroupRenderer.show();
+      sgroupRenderer.applyExpandedStateToStructure(this.atoms, this.bonds);
+      sgroupRenderer.moveLabelsToFront();
+    });
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {

@@ -6,4 +6,11 @@
 // @ts-ignore
 import IndigoWorker from 'web-worker:./../indigoWorker';
 
-export const indigoWorker = new IndigoWorker();
+let _indigoWorker: InstanceType<typeof IndigoWorker> | null = null;
+
+export function getIndigoWorker(): Worker {
+  if (!_indigoWorker) {
+    _indigoWorker = new IndigoWorker();
+  }
+  return _indigoWorker;
+}

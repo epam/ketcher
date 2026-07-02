@@ -174,6 +174,117 @@ function isValidHex(hex: string): boolean {
   return /^[0-9A-Fa-f]{6}$/.test(hex);
 }
 
+// ── Custom slider with arrow-shaped thumb ───────────────────────────────────
+
+interface ColorSliderProps {
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  onValueChange: (value: number) => void;
+  background: string;
+  thumbColor: string;
+  ariaLabel: string;
+}
+
+function ColorSlider({
+  value,
+  min,
+  max,
+  step = 1,
+  onValueChange,
+  background,
+  thumbColor,
+  ariaLabel,
+}: ColorSliderProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Track container width as state so re-measuring on resize triggers re-render
+  const [containerWidth, setContainerWidth] = useState(0);
+  const dragRef = useRef<{ startX: number; startValue: number } | null>(null);
+
+  // Measure once after mount (before paint) and on resize
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+    setContainerWidth(containerRef.current.offsetWidth);
+    const ro = new ResizeObserver((entries) => {
+      setContainerWidth(entries[0].contentRect.width);
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Derive thumb position synchronously in render — no extra re-render cycle needed
+  const thumbWidth = 10;
+  const ratio = containerWidth > 0 ? (value - min) / (max - min) : 0;
+  const thumbLeft = ratio * (containerWidth - thumbWidth);
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      e.preventDefault();
+      e.currentTarget.setPointerCapture(e.pointerId);
+      dragRef.current = { startX: e.clientX, startValue: value };
+    },
+    [value],
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      if (!dragRef.current || !containerRef.current) return;
+      const containerW = containerRef.current.offsetWidth;
+      const dx = e.clientX - dragRef.current.startX;
+      const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);
+      const raw = dragRef.current.startValue + deltaValue;
+      const stepped = Math.round(raw / step) * step;
+      const clamped = Math.min(max, Math.max(min, stepped));
+      onValueChange(clamped);
+    },
+    [min, max, step, onValueChange],
+  );
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<SVGSVGElement>) => {
+      dragRef.current = null;
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    },
+    [],
+  );
+
+  return (
+    <div ref={containerRef} className={classes.sliderContainer}>
+      <svg
+        className={classes.sliderThumb}
+        style={{ left: thumbLeft }}
+        width="10"
+        height="15"
+        viewBox="0 0 10 15"
+        aria-hidden="true"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
+        <path
+          d="M 0.5,0.5 L 9.5,0.5 L 9.5,9.5 L 5,14.5 L 0.5,9.5 Z"
+          fill={thumbColor}
+          stroke="#585858"
+          strokeWidth="1"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onValueChange(parseInt(e.target.value, 10))}
+        className={classes.sliderInput}
+        style={{ background }}
+        aria-label={ariaLabel}
+      />
+    </div>
+  );
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const ColorPicker = (props: Props) => {
@@ -284,8 +395,7 @@ const ColorPicker = (props: Props) => {
   }, []);
 
   const handleHueChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const h = parseInt(e.target.value, 10);
+    (h: number) => {
       setHue(h);
       applyColorFromHsl(h, lightness);
     },
@@ -293,8 +403,7 @@ const ColorPicker = (props: Props) => {
   );
 
   const handleLightnessChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const sliderLightness = parseInt(e.target.value, 10);
+    (sliderLightness: number) => {
       const l = 100 - sliderLightness;
       setLightness(l);
       applyColorFromHsl(hue, l);
@@ -492,32 +601,24 @@ const ColorPicker = (props: Props) => {
                     data-testid="color-palette"
                   >
                     <div className={classes.slidersCol}>
-                      <div className={classes.sliderTrackWrap}>
-                        <input
-                          type="range"
-                          min={0}
-                          max={360}
-                          step={1}
-                          value={hue}
-                          onChange={handleHueChange}
-                          className={classes.slider}
-                          style={{ background: hueBg }}
-                          aria-label="Hue"
-                        />
-                      </div>
-                      <div className={classes.sliderTrackWrap}>
-                        <input
-                          type="range"
-                          min={0}
-                          max={100}
-                          step={1}
-                          value={100 - lightness}
-                          onChange={handleLightnessChange}
-                          className={classes.slider}
-                          style={{ background: lightnessBg }}
-                          aria-label="Lightness"
-                        />
-                      </div>
+                      <ColorSlider
+                        value={hue}
+                        min={0}
+                        max={360}
+                        onValueChange={handleHueChange}
+                        background={hueBg}
+                        thumbColor={hslToHex(hue, 100, 50)}
+                        ariaLabel="Hue"
+                      />
+                      <ColorSlider
+                        value={100 - lightness}
+                        min={0}
+                        max={100}
+                        onValueChange={handleLightnessChange}
+                        background={lightnessBg}
+                        thumbColor={pendingColor}
+                        ariaLabel="Lightness"
+                      />
                     </div>
                     <div
                       className={classes.colorPreviewBox}

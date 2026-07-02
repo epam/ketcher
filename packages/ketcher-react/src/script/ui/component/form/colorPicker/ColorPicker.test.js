@@ -70,12 +70,7 @@ describe('should toggle color picker dialog', () => {
     await openPreset();
     await openPalette();
     const overlay = screen.getByTestId('color-picker-field-open');
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        userEvent.click(overlay);
-        resolve();
-      }, 1000);
-    });
+    await userEvent.click(overlay);
     expect(await screen.findByTestId('color-picker-field')).toBeInTheDocument();
     expect(screen.queryByTestId('color-palette')).not.toBeInTheDocument();
   });

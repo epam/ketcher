@@ -34,37 +34,37 @@ type Props = ColorPickerProps & ColorPickerCallProps;
 
 // Preset colors: 5 columns × 6 rows (light → dark per column)
 const presetColors: string[] = [
-  // Row 1
-  '#99D5FF',
-  '#59BAFF',
-  '#0095FF',
-  '#0077CC',
-  '#005999',
-  // Row 2
+  // Row 1 (blue/purple)
+  '#B2B2FF',
+  '#8080FF',
+  '#4D4DFF',
+  '#0000CD',
+  '#000099',
+  // Row 2 (yellow)
   '#FFE599',
   '#FFD559',
   '#FFBF00',
   '#CC9900',
   '#997300',
-  // Row 3
-  '#FFADAD',
-  '#FF7A7A',
+  // Row 3 (red)
+  '#FFB2B2',
+  '#FF8585',
   '#FF3232',
-  '#CC2828',
-  '#991E1E',
-  // Row 4
+  '#FF0000',
+  '#CC0000',
+  // Row 4 (purple/violet)
   '#E6B3FF',
   '#D683FF',
   '#C040FF',
   '#9A33CC',
   '#732699',
-  // Row 5
-  '#99EBB4',
-  '#59DE85',
-  '#00CC44',
-  '#00A336',
-  '#007A29',
-  // Row 6
+  // Row 5 (green)
+  '#84E184',
+  '#5BD75B',
+  '#2DB82D',
+  '#228B22',
+  '#186218',
+  // Row 6 (grey)
   '#CCCCCC',
   '#ACACAC',
   '#808080',
@@ -345,12 +345,21 @@ const ColorPicker = (props: Props) => {
     [],
   );
 
+  const selectedCustomColor = customColors.find(
+    (color) => color.toUpperCase() === pendingColor.toUpperCase(),
+  );
+
   const handleDeleteCustomColor = useCallback(() => {
-    setHexInput('');
-    setPendingColor('#FF3232');
-    setHue(0);
-    setLightness(50);
-  }, []);
+    if (!selectedCustomColor) {
+      return;
+    }
+
+    setCustomColors((prev) =>
+      prev.filter(
+        (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
+      ),
+    );
+  }, [selectedCustomColor]);
 
   const handleApply = useCallback(() => {
     onChange(pendingColor);
@@ -574,7 +583,8 @@ const ColorPicker = (props: Props) => {
                       type="button"
                       className={classes.deleteBtn}
                       onClick={handleDeleteCustomColor}
-                      aria-label="Clear custom color"
+                      aria-label="Delete custom color"
+                      disabled={!selectedCustomColor}
                     >
                       <Icon name="delete" className={classes.deleteIcon} />
                     </button>

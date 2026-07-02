@@ -174,3 +174,133 @@ describe('should pick color correctly', () => {
     expect(screen.queryByRole('button', { name: '#123456' })).toBeNull();
   });
 });
+
+describe('Cancel and Apply actions', () => {
+  it('should NOT call onChange when Cancel is clicked', async () => {
+    const onChange = jest.fn();
+    renderColorPicker({ onChange });
+    await openPreset();
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('should close the popup when Cancel is clicked', async () => {
+    renderColorPicker();
+    await openPreset();
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('color-picker-preset'),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it('should call onChange with the preset color when a swatch is clicked and Apply is pressed', async () => {
+    const onChange = jest.fn();
+    renderColorPicker({ onChange });
+    await openPreset();
+    // Click the first swatch in the preset grid (#B2B2FF)
+    await userEvent.click(screen.getByRole('button', { name: '#B2B2FF' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(onChange).toHaveBeenCalledWith('#B2B2FF');
+  });
+
+  it('should close the popup after Apply', async () => {
+    renderColorPicker();
+    await openPreset();
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('color-picker-preset'),
+      ).not.toBeInTheDocument(),
+    );
+  });
+});
+
+describe('Keyboard interactions', () => {
+  it('should close the popup when Escape is pressed', async () => {
+    renderColorPicker();
+    await openPreset();
+    expect(screen.getByTestId('color-picker-preset')).toBeInTheDocument();
+    // Escape fires on the trigger button; the event bubbles up to the wrapper's keydown handler
+    const trigger = screen.getByTestId('testname-color-picker-preview');
+    fireEvent.keyDown(trigger, { key: 'Escape' });
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('color-picker-preset'),
+      ).not.toBeInTheDocument(),
+    );
+  });
+});
+
+describe('Hex input validation', () => {
+  it('should strip non-hex characters from the hex input', async () => {
+    renderColorPicker();
+    await openPreset();
+    await openPalette();
+    const hexInput = screen.getByTestId('color-picker-input');
+    fireEvent.change(hexInput, { target: { value: 'GG!!ZZ' } });
+    // All non-hex characters removed → empty string
+    expect(hexInput.value).toBe('');
+  });
+
+  it('should not apply color for partial hex input (fewer than 6 chars)', async () => {
+    const onChange = jest.fn();
+    renderColorPicker({ onChange });
+    await openPreset();
+    await openPalette();
+    const hexInput = screen.getByTestId('color-picker-input');
+    fireEvent.change(hexInput, { target: { value: 'FF00' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    // onChange should be called with the last valid pending color, not the partial input
+    expect(onChange).not.toHaveBeenCalledWith(expect.stringMatching(/^#FF00/));
+  });
+
+  it('should apply color when exactly 6 valid hex chars are typed', async () => {
+    const onChange = jest.fn();
+    renderColorPicker({ onChange });
+    await openPreset();
+    await openPalette();
+    const hexInput = screen.getByTestId('color-picker-input');
+    fireEvent.change(hexInput, { target: { value: 'AABBCC' } });
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(onChange).toHaveBeenCalledWith('#AABBCC');
+  });
+});
+
+describe('Delete custom color', () => {
+  it('should remove selected custom color and update settings', async () => {
+    // value #123456 is not a preset, so it will be added to custom colors on open
+    renderColorPicker({ value: '#123456' });
+    await openPreset();
+    // The delete button lives inside the custom panel — open it first
+    await openPalette();
+
+    const deleteBtn = screen.getByRole('button', {
+      name: 'Delete custom color',
+    });
+    expect(deleteBtn).not.toBeDisabled();
+
+    await userEvent.click(deleteBtn);
+    expect(mockUpdateSettings).toHaveBeenLastCalledWith({
+      colorPickerCustomColors: [],
+    });
+    // Swatch is removed from the UI
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('button', { name: '#123456' }),
+      ).not.toBeInTheDocument(),
+    );
+  });
+
+  it('should disable the delete button when no custom color is selected', async () => {
+    // value #FF0000 is a preset color → not added to custom colors → delete disabled
+    renderColorPicker({ value: '#FF0000' });
+    await openPreset();
+    await openPalette();
+    const deleteBtn = screen.getByRole('button', {
+      name: 'Delete custom color',
+    });
+    expect(deleteBtn).toBeDisabled();
+  });
+});

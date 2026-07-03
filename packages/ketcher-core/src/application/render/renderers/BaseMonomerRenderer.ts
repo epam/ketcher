@@ -43,6 +43,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
   private hoveredAttachmentPoint: AttachmentPointName | null = null;
+  private _dragTargetAttachmentPoint: AttachmentPointName | null = null;
 
   private readonly monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public readonly monomerSize: { width: number; height: number };
@@ -289,6 +290,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       applyZoomForPositionCalculation: true,
       // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
+      isDragTarget: this._dragTargetAttachmentPoint === attachmentPointName,
     };
   }
 
@@ -314,6 +316,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
     this.hoveredAttachmentPoint = attachmentPointName;
+  }
+
+  public setDragTargetAttachmentPoint(
+    attachmentPointName: AttachmentPointName | null,
+  ): void {
+    this._dragTargetAttachmentPoint = attachmentPointName;
   }
 
   protected raiseAttachmentPoints() {

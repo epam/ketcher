@@ -57,6 +57,7 @@ export class AttachmentPoint {
 
   protected initialAngle = 0;
   private readonly isUsed: boolean;
+  private readonly isDragTarget: boolean;
   private readonly isSnake;
   private get editorEvents() {
     return provideEditorInstance().events;
@@ -80,6 +81,7 @@ export class AttachmentPoint {
       constructorParams.monomer.renderer?.center ?? new Vec2(0, 0, 0);
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
+    this.isDragTarget = constructorParams.isDragTarget ?? false;
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
@@ -92,6 +94,7 @@ export class AttachmentPoint {
 
   private get fill() {
     if (
+      this.isDragTarget ||
       this.monomer.isAttachmentPointPotentiallyUsed(this.attachmentPointName)
     ) {
       return AttachmentPoint.colors.fillPotentially;
@@ -157,6 +160,21 @@ export class AttachmentPoint {
       .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
       .attr('fill', fill);
+
+    if (this.isDragTarget) {
+      attachmentPointElement
+        .append('text')
+        .text('+')
+        .attr('x', attachmentPointCoordinates.x)
+        .attr('y', attachmentPointCoordinates.y)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'central')
+        .style('font-size', '5px')
+        .style('font-weight', 'bold')
+        .style('fill', 'white')
+        .style('pointer-events', 'none')
+        .style('user-select', 'none');
+    }
 
     const labelGroup = this.attachmentPoint.append('text');
 

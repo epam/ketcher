@@ -50,6 +50,7 @@ import {
   type SubChainNode,
   ChainsCollection,
   Phosphate,
+  RNABase,
   Struct,
   Sugar,
   Vec2,
@@ -137,8 +138,11 @@ import {
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
+import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
+import { AttachmentPoint } from 'domain/AttachmentPoint';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
+const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -271,6 +275,11 @@ export class CoreEditor {
 
   private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
+  private dragDropBondTarget: {
+    monomer: BaseMonomer;
+    attachmentPointName: AttachmentPointName;
+  } | null = null;
+  private isDragDropBondModalOpen = false;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -1204,6 +1213,11 @@ export class CoreEditor {
 
     this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
       this.libraryItemDragState = state;
+      if (state) {
+        this.onLibraryItemDragOver(state);
+      } else {
+        this.clearDragDropBondTarget();
+      }
     });
 
     this.events.placeLibraryItemOnCanvas.add(
@@ -1243,6 +1257,63 @@ export class CoreEditor {
         }
 
         modelChanges.merge(monomersAddResult.modelChanges);
+
+        // If dragged near a free attachment point, establish a bond
+        if (this.dragDropBondTarget) {
+          const { monomer: targetMonomer, attachmentPointName: targetAP } =
+            this.dragDropBondTarget;
+
+          const addedMonomers = monomersAddResult.drawingEntities.filter(
+            (e): e is BaseMonomer => e instanceof BaseMonomer,
+          );
+
+          const droppedMonomer = isLibraryItemRnaPreset(item)
+            ? this.findPresetMonomerForBonding(addedMonomers, targetAP)
+            : monomersAddResult.firstMonomer;
+
+          if (droppedMonomer && droppedMonomer.hasFreeAttachmentPoint) {
+            targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
+            const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
+            targetMonomer.setPotentialSecondAttachmentPoint(null);
+
+            if (sourceAP) {
+              modelChanges.merge(
+                this.drawingEntitiesManager.createPolymerBond(
+                  droppedMonomer,
+                  targetMonomer,
+                  sourceAP,
+                  targetAP,
+                ),
+              );
+
+              if (sourceAP === targetAP) {
+                this.events.error.dispatch(
+                  'You have connected monomers with attachment points of the same group',
+                );
+              }
+
+              if (this.mode.modeName === 'snake-layout-mode') {
+                modelChanges.merge(
+                  this.drawingEntitiesManager.recalculateCanvasMatrix(
+                    this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
+                    this.drawingEntitiesManager.snakeLayoutMatrix,
+                  ),
+                );
+              }
+            } else if (
+              droppedMonomer.unUsedAttachmentPointsNamesList.length > 0
+            ) {
+              this.isDragDropBondModalOpen = true;
+              this.events.openMonomerConnectionModal.dispatch({
+                firstMonomer: droppedMonomer,
+                secondMonomer: targetMonomer,
+              });
+            }
+          }
+
+          this.setMonomerDragTargetAP(this.dragDropBondTarget.monomer, null);
+          this.dragDropBondTarget = null;
+        }
 
         modelChanges.merge(
           this.drawingEntitiesManager.selectDrawingEntities(
@@ -1882,13 +1953,271 @@ export class CoreEditor {
 
     if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreation(payload);
+      return;
+    }
+
+    // Drag-drop from library: bond creation via modal
+    if (this.isDragDropBondModalOpen) {
+      const {
+        firstMonomer,
+        secondMonomer,
+        firstSelectedAttachmentPoint,
+        secondSelectedAttachmentPoint,
+      } = payload;
+
+      const command = new Command();
+      command.merge(
+        this.drawingEntitiesManager.createPolymerBond(
+          firstMonomer,
+          secondMonomer,
+          firstSelectedAttachmentPoint,
+          secondSelectedAttachmentPoint,
+        ),
+      );
+
+      if (this.mode.modeName === 'snake-layout-mode') {
+        command.merge(
+          this.drawingEntitiesManager.recalculateCanvasMatrix(
+            this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
+            this.drawingEntitiesManager.snakeLayoutMatrix,
+          ),
+        );
+      }
+
+      const history = EditorHistory.getInstance(this);
+      history.update(command);
+      this.renderersContainer.update(command);
+
+      if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
+        this.events.error.dispatch(
+          'You have connected monomers with attachment points of the same group',
+        );
+      }
+
+      this.isDragDropBondModalOpen = false;
     }
   }
 
   private onCancelBondCreation(secondMonomer: BaseMonomer) {
     if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreationCancellation(secondMonomer);
+      return;
     }
+    if (this.isDragDropBondModalOpen) {
+      this.isDragDropBondModalOpen = false;
+    }
+  }
+
+  /**
+   * Sets or clears the drag-target attachment point on a monomer's renderer,
+   * guarded by instanceof to ensure only BaseMonomerRenderer is used.
+   */
+  private setMonomerDragTargetAP(
+    monomer: BaseMonomer,
+    apName: AttachmentPointName | null,
+  ): void {
+    const renderer = monomer.renderer;
+    if (renderer instanceof BaseMonomerRenderer) {
+      renderer.setDragTargetAttachmentPoint(apName);
+    }
+  }
+
+  /**
+   * Returns the approximate canvas-space position of an attachment point
+   * on a monomer renderer, based on the canonical angle for that AP.
+   */
+  private getAttachmentPointApproxCanvasPosition(
+    renderer: BaseMonomerRenderer,
+    apName: AttachmentPointName,
+  ): Vec2 {
+    const center = renderer.center;
+    const angleDeg =
+      attachmentPointNumberToAngle[
+        apName as keyof typeof attachmentPointNumberToAngle
+      ];
+    // The AP arm points outward from the monomer center in direction (angleDeg - 180)
+    const outwardAngleDeg = angleDeg - 180;
+    const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
+
+    const { width, height } = renderer.monomerSize;
+    const bodyRadius = (width + height) / 4;
+    const apDistance =
+      bodyRadius +
+      AttachmentPoint.attachmentPointLength +
+      AttachmentPoint.radius;
+
+    return new Vec2(
+      center.x + Math.cos(outwardAngleRad) * apDistance,
+      center.y + Math.sin(outwardAngleRad) * apDistance,
+    );
+  }
+
+  /**
+   * Finds the nearest free attachment point of any on-canvas monomer
+   * within DRAG_BOND_PROXIMITY_THRESHOLD_PX of the given ketcherRoot-relative position.
+   */
+  private findNearestFreeAttachmentPointForDrag(position: {
+    x: number;
+    y: number;
+  }): {
+    monomer: BaseMonomer;
+    attachmentPointName: AttachmentPointName;
+  } | null {
+    const rootOffset = this.ketcherRootElementBoundingClientRect;
+    if (!rootOffset) return null;
+
+    const canvasOffset = this.canvasOffset;
+    // Offset of canvas top-left relative to ketcherRoot
+    const canvasRelLeft = canvasOffset.left - rootOffset.left;
+    const canvasRelTop = canvasOffset.top - rootOffset.top;
+
+    let nearest: {
+      monomer: BaseMonomer;
+      attachmentPointName: AttachmentPointName;
+    } | null = null;
+    let minDist = DRAG_BOND_PROXIMITY_THRESHOLD_PX;
+
+    for (const [, monomer] of this.drawingEntitiesManager.monomers) {
+      const renderer = monomer.renderer;
+      if (!renderer || !(renderer instanceof BaseMonomerRenderer)) continue;
+
+      for (const apName of monomer.unUsedAttachmentPointsNamesList) {
+        // Skip if this AP's angle is not defined (unusual AP names)
+        if (
+          !(apName in (attachmentPointNumberToAngle as Record<string, unknown>))
+        ) {
+          continue;
+        }
+
+        const apCanvasPos = this.getAttachmentPointApproxCanvasPosition(
+          renderer,
+          apName,
+        );
+        const apViewPos = Coordinates.canvasToView(apCanvasPos);
+
+        // Convert view position to ketcherRoot-relative
+        const apScreenX = canvasRelLeft + apViewPos.x;
+        const apScreenY = canvasRelTop + apViewPos.y;
+
+        const dist = Math.sqrt(
+          (position.x - apScreenX) ** 2 + (position.y - apScreenY) ** 2,
+        );
+
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = { monomer, attachmentPointName: apName };
+        }
+      }
+    }
+
+    return nearest;
+  }
+
+  /**
+   * Called on each drag event from the library. Updates the visual hover state
+   * to indicate the nearest free attachment point.
+   */
+  private onLibraryItemDragOver(
+    state: NonNullable<LibraryItemDragState>,
+  ): void {
+    // Skip in sequence mode
+    if (this.mode.modeName === 'sequence-layout-mode') return;
+
+    const nearestAP = this.findNearestFreeAttachmentPointForDrag(
+      state.position,
+    );
+
+    // No change — avoid unnecessary re-renders
+    if (
+      nearestAP?.monomer === this.dragDropBondTarget?.monomer &&
+      nearestAP?.attachmentPointName ===
+        this.dragDropBondTarget?.attachmentPointName
+    ) {
+      return;
+    }
+
+    // Clear old drag-target marker from the previous renderer
+    if (this.dragDropBondTarget) {
+      this.setMonomerDragTargetAP(this.dragDropBondTarget.monomer, null);
+    }
+
+    const command = new Command();
+    command.merge(this.drawingEntitiesManager.removeHoverForAllMonomers());
+
+    this.dragDropBondTarget = nearestAP;
+
+    if (nearestAP) {
+      // Mark the nearest AP on its renderer before triggering re-render
+      this.setMonomerDragTargetAP(
+        nearestAP.monomer,
+        nearestAP.attachmentPointName,
+      );
+      command.merge(
+        this.drawingEntitiesManager.intendToStartBondCreation(
+          nearestAP.monomer,
+        ),
+      );
+    }
+
+    this.renderersContainer.update(command);
+  }
+
+  /**
+   * Clears any drag-drop bond target hover state and resets related fields.
+   */
+  private clearDragDropBondTarget(): void {
+    if (!this.dragDropBondTarget) return;
+
+    this.setMonomerDragTargetAP(this.dragDropBondTarget.monomer, null);
+    this.dragDropBondTarget = null;
+
+    const clearCommand =
+      this.drawingEntitiesManager.removeHoverForAllMonomers();
+    this.renderersContainer.update(clearCommand);
+  }
+
+  /**
+   * For a preset being dropped onto a target attachment point, find the
+   * best monomer within the preset to form the bond.
+   *
+   * Implements requirements 3.1–3.3:
+   * - R1 target → preset component with free R2
+   * - R2 target → preset component with free R1
+   * - Otherwise → sugar (if free), then phosphate (if free), then base (if free)
+   */
+  private findPresetMonomerForBonding(
+    addedMonomers: BaseMonomer[],
+    targetAP: AttachmentPointName,
+  ): BaseMonomer | undefined {
+    const oppositeAP =
+      targetAP === AttachmentPointName.R1
+        ? AttachmentPointName.R2
+        : targetAP === AttachmentPointName.R2
+        ? AttachmentPointName.R1
+        : null;
+
+    if (oppositeAP) {
+      const match = addedMonomers.find((m) =>
+        m.isAttachmentPointExistAndFree(oppositeAP),
+      );
+      if (match) return match;
+    }
+
+    // Fallback per requirement 3.3: sugar → phosphate → base
+    const sugar = addedMonomers.find(
+      (m) => m instanceof Sugar && m.hasFreeAttachmentPoint,
+    );
+    if (sugar) return sugar;
+
+    const phosphate = addedMonomers.find(
+      (m) => m instanceof Phosphate && m.hasFreeAttachmentPoint,
+    );
+    if (phosphate) return phosphate;
+
+    const base = addedMonomers.find(
+      (m) => m instanceof RNABase && m.hasFreeAttachmentPoint,
+    );
+    return base;
   }
 
   private onSelectMode(

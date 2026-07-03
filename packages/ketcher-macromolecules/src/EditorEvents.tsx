@@ -16,6 +16,7 @@
 import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
+  notifyAntisenseChainsCreated,
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
@@ -404,6 +405,18 @@ export const EditorEvents = () => {
       editor?.events.resetSequenceEditMode.dispatch();
     }
   }, [hasAtLeastOneAntisense]);
+
+  useEffect(() => {
+    const handleAntisenseChainCreated = () => {
+      dispatch(notifyAntisenseChainsCreated({}));
+    };
+
+    editor?.events.createAntisenseChain.add(handleAntisenseChainCreated);
+
+    return () => {
+      editor?.events.createAntisenseChain.remove(handleAntisenseChainCreated);
+    };
+  }, [editor, dispatch]);
 
   return <></>;
 };

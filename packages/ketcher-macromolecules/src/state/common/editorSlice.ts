@@ -69,6 +69,7 @@ interface EditorState {
   oligonucleotidesValue: number;
   app: AppMeta;
   selectedMenuGroupItems: Record<string, string>;
+  antisenseChainsVersion: number;
 }
 
 const initialState: EditorState = {
@@ -100,6 +101,7 @@ const initialState: EditorState = {
     version: process.env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
+  antisenseChainsVersion: 0,
 };
 
 export const editorSlice: Slice<EditorState> = createSlice({
@@ -229,6 +231,9 @@ export const editorSlice: Slice<EditorState> = createSlice({
     setAppMeta: (state, action: PayloadAction<AppMeta>) => {
       state.app = action.payload;
     },
+    notifyAntisenseChainsCreated: (state) => {
+      state.antisenseChainsVersion += 1;
+    },
     setSelectedMenuGroupItem: (
       state,
       action: PayloadAction<{ groupName: string; activeItemName: string }>,
@@ -263,6 +268,7 @@ export const {
   setUnipositiveIonsValue,
   setOligonucleotidesValue,
   setAppMeta,
+  notifyAntisenseChainsCreated,
   setSelectedMenuGroupItem,
 } = editorSlice.actions;
 

@@ -30,6 +30,7 @@ export class AttachmentPoint {
   static readonly labelOffset = 3.5;
   static readonly radius = 3;
   static readonly labelSize = { x: 3.5, y: 2.5 };
+  static readonly DRAG_TARGET_INDICATOR_FONT_SIZE = '5px';
   static readonly colors = {
     fillUsed: '#0097A8',
     fill: 'white',
@@ -169,7 +170,7 @@ export class AttachmentPoint {
         .attr('y', attachmentPointCoordinates.y)
         .attr('text-anchor', 'middle')
         .attr('dominant-baseline', 'central')
-        .style('font-size', '5px')
+        .style('font-size', AttachmentPoint.DRAG_TARGET_INDICATOR_FONT_SIZE)
         .style('font-weight', 'bold')
         .style('fill', 'white')
         .style('pointer-events', 'none')

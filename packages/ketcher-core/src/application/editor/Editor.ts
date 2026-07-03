@@ -1288,7 +1288,7 @@ export class CoreEditor {
 
               if (sourceAP === targetAP) {
                 this.events.error.dispatch(
-                  'You have connected monomers with attachment points of the same group',
+                  'You have connected monomers using attachment points with the same name (e.g., both R1 or both R2)',
                 );
               }
 
@@ -1965,32 +1965,16 @@ export class CoreEditor {
         secondSelectedAttachmentPoint,
       } = payload;
 
-      const command = new Command();
-      command.merge(
-        this.drawingEntitiesManager.createPolymerBond(
-          firstMonomer,
-          secondMonomer,
-          firstSelectedAttachmentPoint,
-          secondSelectedAttachmentPoint,
-        ),
+      this.commitPolymerBond(
+        firstMonomer,
+        secondMonomer,
+        firstSelectedAttachmentPoint,
+        secondSelectedAttachmentPoint,
       );
-
-      if (this.mode.modeName === 'snake-layout-mode') {
-        command.merge(
-          this.drawingEntitiesManager.recalculateCanvasMatrix(
-            this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
-            this.drawingEntitiesManager.snakeLayoutMatrix,
-          ),
-        );
-      }
-
-      const history = EditorHistory.getInstance(this);
-      history.update(command);
-      this.renderersContainer.update(command);
 
       if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
         this.events.error.dispatch(
-          'You have connected monomers with attachment points of the same group',
+          'You have connected monomers using attachment points with the same name (e.g., both R1 or both R2)',
         );
       }
 
@@ -2023,6 +2007,42 @@ export class CoreEditor {
   }
 
   /**
+   * Creates a polymer bond between two monomers, applies a snake-mode
+   * recalculation when applicable, and commits the result to history.
+   * Extracted to avoid duplicating this pattern across the PolymerBondTool
+   * path and the drag-drop modal path.
+   */
+  private commitPolymerBond(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+    firstAP: AttachmentPointName,
+    secondAP: AttachmentPointName,
+  ): void {
+    const command = new Command();
+    command.merge(
+      this.drawingEntitiesManager.createPolymerBond(
+        firstMonomer,
+        secondMonomer,
+        firstAP,
+        secondAP,
+      ),
+    );
+
+    if (this.mode.modeName === 'snake-layout-mode') {
+      command.merge(
+        this.drawingEntitiesManager.recalculateCanvasMatrix(
+          this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
+          this.drawingEntitiesManager.snakeLayoutMatrix,
+        ),
+      );
+    }
+
+    const history = EditorHistory.getInstance(this);
+    history.update(command);
+    this.renderersContainer.update(command);
+  }
+
+  /**
    * Returns the approximate canvas-space position of an attachment point
    * on a monomer renderer, based on the canonical angle for that AP.
    */
@@ -2035,11 +2055,16 @@ export class CoreEditor {
       attachmentPointNumberToAngle[
         apName as keyof typeof attachmentPointNumberToAngle
       ];
-    // The AP arm points outward from the monomer center in direction (angleDeg - 180)
+    // `attachmentPointNumberToAngle` stores the inward-facing angle (toward the
+    // monomer centre).  Subtract 180° to get the outward direction used to
+    // position the AP circle relative to the monomer body.
     const outwardAngleDeg = angleDeg - 180;
     const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
 
     const { width, height } = renderer.monomerSize;
+    // Average half-dimension approximates the body radius for a roughly
+    // circular/square monomer: (w + h) / 2 gives the average side, then /2
+    // gives the approximate radius → (w + h) / 4.
     const bodyRadius = (width + height) / 4;
     const apDistance =
       bodyRadius +

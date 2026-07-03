@@ -451,12 +451,10 @@ class Editor implements KetcherEditor {
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
 
-    // Preserve atom coordinates only when viewOnlyMode is being set/changed on existing structure.
-    // This prevents structures from shifting when enabling/disabling viewOnlyMode.
-    // In all other cases (opening files, changing settings), center as before.
-    const hasAtoms = struct.atoms.size > 0;
-    const isSettingViewOnlyMode = value && 'viewOnlyMode' in value;
-    const shouldPreservePosition = hasAtoms && isSettingViewOnlyMode;
+    const shouldPreservePosition = this.shouldPreserveStructPosition(
+      value,
+      struct,
+    );
 
     this.struct(struct.clone(), !shouldPreservePosition);
     this.render.setZoom(zoom);
@@ -466,6 +464,18 @@ class Editor implements KetcherEditor {
 
   public setServerSettings(serverSettings) {
     this.serverSettings = serverSettings;
+  }
+
+  /**
+   * Determines whether structure position should be preserved when applying options.
+   * Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
+   * This prevents structures from shifting when enabling/disabling viewOnlyMode.
+   * In all other cases (opening files, changing settings), structures are centered as before.
+   */
+  private shouldPreserveStructPosition(options: any, struct: Struct): boolean {
+    const hasAtoms = struct.atoms.size > 0;
+    const isSettingViewOnlyMode = options && 'viewOnlyMode' in options;
+    return hasAtoms && isSettingViewOnlyMode;
   }
 
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {

@@ -131,46 +131,57 @@ export class Chain {
       }
     }
 
-    const nextMonomer = getNextMonomerInChain(monomer);
-    const previousMonomer = getPreviousMonomerInChain(monomer);
-    const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
+    // Helper to check if a monomer is part of nucleic acid backbone
+    const isBackboneMonomer = (m: BaseMonomer | undefined) => {
       const isNucleosideOrNucleotide =
-        nextMonomer instanceof Sugar &&
-        (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
-      return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
-    };
-    const isPreviousMonomerNucleosideOrNucleotideOrPeptide = () => {
-      const isNucleosideOrNucleotide =
-        previousMonomer instanceof Sugar &&
-        (isValidNucleotide(previousMonomer) ||
-          isValidNucleoside(previousMonomer));
-      return isNucleosideOrNucleotide || previousMonomer instanceof Peptide;
+        m instanceof Sugar && (isValidNucleotide(m) || isValidNucleoside(m));
+      return isNucleosideOrNucleotide || m instanceof Peptide;
     };
 
-    // Check if phosphate is terminal in antisense chain
-    // Terminal means: NOT sandwiched between two Nucleoside/Nucleotide/Peptide
-    // So if EITHER previous OR next is NOT a Nucleoside/Nucleotide/Peptide, it's terminal
-    const isTerminalPhosphateInAntisense = () => {
-      if (!(monomer instanceof Phosphate) || !monomer.monomerItem.isAntisense) {
+    const nextMonomer = getNextMonomerInChain(monomer);
+
+    // Check if phosphate is a standard inter-nucleoside phosphate
+    // (positioned between nucleosides/nucleotides in a regular backbone)
+    const isStandardInterNucleosidePhosphate = () =>
+      (!this.lastNode ||
+        this.lastNode instanceof Nucleoside ||
+        this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
+      (!nextMonomer || isBackboneMonomer(nextMonomer));
+
+    // Check if antisense phosphate should be treated as standalone monomer (displayed as "p")
+    // rather than as part of a linker sequence (displayed as "@").
+    // Terminal phosphates in antisense chains should show as "p":
+    // - Phosphate at chain start/end (no previous/next)
+    // - Phosphate adjacent to terminal phosphate (e.g., p-p at chain end)
+    // All other phosphates (e.g., in middle of backbone) remain as "@"
+    const shouldShowAntisensePhosphateAsStandalone = () => {
+      if (!monomer.monomerItem.isAntisense) {
         return false;
       }
-      // Terminal phosphate if previous OR next monomer is not valid for backbone
-      // This handles cases like: p-p (both terminal), U-p (terminal), p-Sugar (terminal)
-      return (
-        !previousMonomer ||
-        !isPreviousMonomerNucleosideOrNucleotideOrPeptide() ||
-        !nextMonomer ||
-        !isNextMonomerNucleosideOrNucleotideOrPeptide()
-      );
+      // Only compute previousMonomer when needed (performance optimization)
+      const previousMonomer = getPreviousMonomerInChain(monomer);
+
+      // Check if phosphate is at chain end (terminal)
+      const isAtChainEnd = !previousMonomer || !nextMonomer;
+      if (isAtChainEnd) {
+        return true;
+      }
+
+      // Check if phosphate is adjacent to chain end through another phosphate
+      // E.g., in "p1-p2-[end]": p2 is terminal, p1 is adjacent to terminal
+      const isAdjacentToChainEndThroughPhosphate =
+        (previousMonomer instanceof Phosphate &&
+          !getPreviousMonomerInChain(previousMonomer)) ||
+        (nextMonomer instanceof Phosphate &&
+          !getNextMonomerInChain(nextMonomer));
+
+      return isAdjacentToChainEndThroughPhosphate;
     };
 
     if (
       monomer instanceof Phosphate &&
-      (isTerminalPhosphateInAntisense() ||
-        ((!this.lastNode ||
-          this.lastNode instanceof Nucleoside ||
-          this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
-          (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())))
+      (shouldShowAntisensePhosphateAsStandalone() ||
+        isStandardInterNucleosidePhosphate())
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
       return;

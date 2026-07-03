@@ -30,6 +30,12 @@ export enum MonomerOnMicroOption {
   ExpandMonomers = 'Expand monomers-option',
   CollapseMonomer = 'Collapse monomer-option',
   CollapseMonomers = 'Collapse monomers-option',
+  RemoveGrouping = 'Remove Grouping-option',
+  CreateMonomer = 'Create Monomer-option',
+  SelectAllIdenticalMonomers = 'Select All Identical Monomers-option',
+  EditMonomer = 'Edit Monomer-option',
+  EditAllMonomers = 'Edit All Monomers-option',
+  Delete = 'Delete-option',
 }
 
 export enum SuperatomOption {

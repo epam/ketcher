@@ -111,6 +111,7 @@ export function load(struct: string | Struct, options?) {
       isPaste,
       method,
       preserveViewport = false,
+      skipCenter = false,
       ...otherOptions
     } = options;
     otherOptions = {
@@ -233,7 +234,7 @@ export function load(struct: string | Struct, options?) {
       }
 
       const isIndigoFunctionCalled = !!method;
-      if (!isPaste && !isIndigoFunctionCalled) {
+      if (!isPaste && !isIndigoFunctionCalled && !skipCenter) {
         editor.centerStruct();
       }
       if (!fragment) {

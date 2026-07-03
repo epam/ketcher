@@ -3,6 +3,7 @@ import { expect, Page, test } from '@fixtures';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
+  getKet,
   MolFileFormat,
   Monomer,
   moveMouseAway,
@@ -97,6 +98,29 @@ interface IFailedTestSequenceReplaceMonomer {
   SequenceId?: number[];
   ReplaceMonomerId?: number[];
   BugsInTests: string[];
+}
+
+interface IKetEndpoint {
+  monomerId: string;
+  attachmentPointId: string;
+}
+
+interface IKetConnection {
+  endpoint1: IKetEndpoint;
+  endpoint2: IKetEndpoint;
+}
+
+interface IKetRoot {
+  connections: IKetConnection[];
+}
+
+interface IKetNode {
+  alias?: string;
+}
+
+interface IKetDocument {
+  root: IKetRoot;
+  [key: string]: IKetRoot | IKetNode;
 }
 
 enum monomerIDs {
@@ -1658,6 +1682,70 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerDescription: 'CHEM (sDBL)',
   },
 ];
+
+test('Preset replacement preserves side connection on the same preset component in view mode', async () => {
+  /*
+    Test case: https://github.com/epam/ketcher/issues/5237
+    Description: If a preset is replaced with another preset, the side connection
+                 remains on the same component and attachment point when the new
+                 preset has that attachment point.
+    Scenario:
+    1. Load presets connected through a side chain.
+    2. Select the side-connected preset in Sequence mode.
+    3. Replace it with another preset that has the same base R3 attachment point.
+    4. Verify the exported model still connects the new preset base through R3.
+  */
+  const sequence: ISequence = {
+    Id: 16,
+    FileName:
+      'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
+    SequenceName: 'base to sugar connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
+  };
+  const replacementPreset: IReplaceMonomer = {
+    Id: 13,
+    MonomerAlias: '25mo3r(nC6n5C)Test-6-Ph',
+    MonomerTestId: '25mo3r(nC6n5C)Test-6-Ph_nC6n5C_25mo3r_Test-6-Ph',
+    MonomerDescription: 'preset (25mo3r(nC6n5C)Test-6-Ph)',
+    IsCustomPreset: true,
+  };
+
+  await openFileAndAddToCanvasMacro(page, sequence.FileName);
+  await selectAndReplaceSymbol(
+    page,
+    replacementPreset,
+    sequence,
+    sequence.ReplacementPositions.Center,
+  );
+
+  const exportedKet = JSON.parse(await getKet(page)) as IKetDocument;
+  const getAlias = (endpoint: IKetEndpoint) => {
+    const node = exportedKet[endpoint.monomerId];
+
+    return 'alias' in node ? node.alias : undefined;
+  };
+  const hasPreservedBaseSideConnection = exportedKet.root.connections.some(
+    ({ endpoint1, endpoint2 }) => {
+      const endpoint1IsNewBaseR3 =
+        getAlias(endpoint1) === 'nC6n5C' &&
+        endpoint1.attachmentPointId === 'R3';
+      const endpoint2IsNewBaseR3 =
+        getAlias(endpoint2) === 'nC6n5C' &&
+        endpoint2.attachmentPointId === 'R3';
+      const endpoint1IsConnectedSugarR1 =
+        getAlias(endpoint1) === 'R' && endpoint1.attachmentPointId === 'R1';
+      const endpoint2IsConnectedSugarR1 =
+        getAlias(endpoint2) === 'R' && endpoint2.attachmentPointId === 'R1';
+
+      return (
+        (endpoint1IsNewBaseR3 && endpoint2IsConnectedSugarR1) ||
+        (endpoint2IsNewBaseR3 && endpoint1IsConnectedSugarR1)
+      );
+    },
+  );
+
+  expect(hasPreservedBaseSideConnection).toBe(true);
+});
 
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   for (const sequence of twoSequences) {

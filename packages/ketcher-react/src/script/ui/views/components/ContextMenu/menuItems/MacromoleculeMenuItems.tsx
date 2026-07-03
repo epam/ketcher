@@ -144,7 +144,7 @@ const MacromoleculeMenuItems = (
     editor.update(removeAction);
   }, [ketcherId, functionalGroups]);
 
-  const handleCreateMonomer = useCallback(async () => {
+  const handleCreateMonomer = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     editor.openMonomerCreationWizard();
   }, [ketcherId]);
@@ -174,7 +174,7 @@ const MacromoleculeMenuItems = (
     editor.selection({ atoms: atomsToSelect });
   }, [ketcherId, monomerFGs]);
 
-  const handleDelete = useCallback(async () => {
+  const handleDelete = useCallback(() => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const molecule = editor.render.ctab;
     const allFGAtoms =

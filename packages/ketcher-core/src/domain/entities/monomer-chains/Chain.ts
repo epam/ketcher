@@ -15,6 +15,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   getNextMonomerInChain,
+  getPreviousMonomerInChain,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -131,18 +132,45 @@ export class Chain {
     }
 
     const nextMonomer = getNextMonomerInChain(monomer);
+    const previousMonomer = getPreviousMonomerInChain(monomer);
     const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
       const isNucleosideOrNucleotide =
         nextMonomer instanceof Sugar &&
         (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
       return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
     };
+    const isPreviousMonomerNucleosideOrNucleotideOrPeptide = () => {
+      const isNucleosideOrNucleotide =
+        previousMonomer instanceof Sugar &&
+        (isValidNucleotide(previousMonomer) ||
+          isValidNucleoside(previousMonomer));
+      return isNucleosideOrNucleotide || previousMonomer instanceof Peptide;
+    };
+
+    // Check if phosphate is terminal in antisense chain
+    // Terminal means: NOT sandwiched between two Nucleoside/Nucleotide/Peptide
+    // So if EITHER previous OR next is NOT a Nucleoside/Nucleotide/Peptide, it's terminal
+    const isTerminalPhosphateInAntisense = () => {
+      if (!(monomer instanceof Phosphate) || !monomer.monomerItem.isAntisense) {
+        return false;
+      }
+      // Terminal phosphate if previous OR next monomer is not valid for backbone
+      // This handles cases like: p-p (both terminal), U-p (terminal), p-Sugar (terminal)
+      return (
+        !previousMonomer ||
+        !isPreviousMonomerNucleosideOrNucleotideOrPeptide() ||
+        !nextMonomer ||
+        !isNextMonomerNucleosideOrNucleotideOrPeptide()
+      );
+    };
+
     if (
       monomer instanceof Phosphate &&
-      (!this.lastNode ||
-        this.lastNode instanceof Nucleoside ||
-        this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
-      (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
+      (isTerminalPhosphateInAntisense() ||
+        ((!this.lastNode ||
+          this.lastNode instanceof Nucleoside ||
+          this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
+          (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())))
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
       return;

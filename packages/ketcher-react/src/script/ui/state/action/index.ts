@@ -139,6 +139,31 @@ function buildStateWithStatuses(
   );
 }
 
+function isPersistedSelectionTool(
+  action: UiActionAction | null | undefined,
+): action is { tool: string; opts?: string } {
+  return (
+    typeof action !== 'function' &&
+    !!action?.tool &&
+    action.tool === 'select' &&
+    (action.opts === undefined || typeof action.opts === 'string')
+  );
+}
+
+function getSavedSelectionAction(): UiActionAction {
+  const savedSelectedTool = SettingsManager.selectionTool;
+  if (savedSelectedTool === 'lasso') {
+    return actions['select-lasso'].action;
+  }
+  if (savedSelectedTool === 'rectangle') {
+    return actions['select-rectangle'].action;
+  }
+  if (typeof savedSelectedTool !== 'string' && savedSelectedTool) {
+    return { tool: savedSelectedTool.tool, opts: savedSelectedTool.opts };
+  }
+  return actions['select-rectangle'].action;
+}
+
 export default function (
   state: ActionState | null = null,
   { type, action, ...params }: ReducerAction,
@@ -146,14 +171,11 @@ export default function (
   let activeTool: UiActionAction | null | undefined;
   switch (type) {
     case 'INIT': {
-      const savedSelectedTool = SettingsManager.selectionTool;
-      const resolvedAction =
-        savedSelectedTool || actions['select-rectangle'].action;
       activeTool = execute(state?.activeTool, {
         ...(params as ActionParams),
-        action: resolvedAction,
+        action: getSavedSelectionAction(),
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
@@ -167,7 +189,7 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(

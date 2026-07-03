@@ -6,6 +6,13 @@ import type { DeepPartial } from 'types';
 
 export type { DeepPartial };
 
+export type SelectionToolSetting =
+  | string
+  | {
+      readonly tool: string;
+      readonly opts?: string;
+    };
+
 /**
  * Complete settings structure in flat format
  */
@@ -89,7 +96,7 @@ export interface Settings {
   readonly miewAtomLabel: string;
 
   // Macromolecules editor settings
-  readonly selectionTool: string;
+  readonly selectionTool: SelectionToolSetting;
   readonly editorLineLength: Record<string, number>;
   readonly disableCustomQuery: boolean;
   readonly monomerLibraryUpdates: string[];

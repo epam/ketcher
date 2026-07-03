@@ -105,15 +105,25 @@ const ToolbarMultiToolItem = (props: Props) => {
   if (!currentStatus && options.length) {
     const savedSelectionTool = SettingsManager.selectionTool;
     const savedSelectionToolId =
-      savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
+      savedSelectionTool === 'lasso'
+        ? 'select-lasso'
+        : savedSelectionTool === 'rectangle'
+        ? 'select-rectangle'
+        : savedSelectionTool &&
+          typeof savedSelectionTool !== 'string' &&
+          savedSelectionTool.tool === 'select' &&
+          typeof savedSelectionTool.opts === 'string'
+        ? `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+        : undefined;
+    if (savedSelectionTool && savedSelectionToolId) {
+      const visibleSavedOption = options.find(
         (option) =>
           !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+      );
+      if (visibleSavedOption) {
+        currentId = visibleSavedOption.id;
+      }
+    }
 
     if (!currentId) {
       currentId =

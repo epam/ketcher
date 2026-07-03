@@ -20,6 +20,7 @@ import type { Struct } from 'domain/entities/struct';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
+import type { MonomerOrAmbiguousType } from 'domain/types';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
@@ -105,7 +106,7 @@ export interface Editor {
 }
 
 export type LibraryItemDragState = {
-  item: IRnaPreset;
+  item: IRnaPreset | MonomerOrAmbiguousType;
   position: {
     x: number;
     y: number;

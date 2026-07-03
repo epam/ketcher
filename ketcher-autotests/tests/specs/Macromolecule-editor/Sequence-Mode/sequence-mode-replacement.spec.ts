@@ -35,6 +35,8 @@ import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
 import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/ConfirmYourActionDialog';
 
 let page: Page;
+const issue5237PresetReplacementTitle =
+  'Preset replacement preserves side connection on the same preset component in view mode';
 
 async function configureInitialState(page: Page) {
   await Library(page).switchToRNATab();
@@ -44,10 +46,12 @@ test.beforeAll(async ({ initSequenceCanvas }) => {
   page = await initSequenceCanvas();
 });
 
-test.beforeEach(async ({ SequenceCanvas: _ }) => {
+test.beforeEach(async ({ SequenceCanvas: _ }, testInfo) => {
   await configureInitialState(page);
   // Creation of custom presets needed for testing
-  await createTestPresets(page);
+  if (testInfo.title !== issue5237PresetReplacementTitle) {
+    await createTestPresets(page);
+  }
 });
 
 test.afterEach(async () => {
@@ -552,21 +556,24 @@ async function createTestPresets(page: Page) {
     await Library(page).rnaBuilder.addToPresets();
   }
 
-  // Create preset 25mo3r(nC6n5C)Test-6-Ph
-  if (!(await Library(page).isMonomerExist(Preset._25mo3r_nC6n5C_Test_6_Ph))) {
+  await createPreset25mo3rNC6n5CTest6Ph(page);
+
+  await createPreset25mo3rNC6n5C(page);
+
+  // Create preset 25mo3r()Test-6-Ph
+  if (!(await Library(page).isMonomerExist(Preset._25mo3r__Test_6_Ph))) {
     await Library(page).newPreset();
 
     await Library(page).rnaBuilder.selectSugarSlot();
     await Library(page).selectMonomer(Sugar._25mo3r);
-    await Library(page).rnaBuilder.selectBaseSlot();
-    await Library(page).selectMonomer(Base.nC6n5C);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
     await Library(page).rnaBuilder.addToPresets();
   }
+}
 
-  // Create preset 25mo3r(nC6n5C)
+async function createPreset25mo3rNC6n5C(page: Page) {
   if (!(await Library(page).isMonomerExist(Preset._25mo3r_nC6n5C_))) {
     await Library(page).newPreset();
 
@@ -577,13 +584,16 @@ async function createTestPresets(page: Page) {
 
     await Library(page).rnaBuilder.addToPresets();
   }
+}
 
-  // Create preset 25mo3r()Test-6-Ph
-  if (!(await Library(page).isMonomerExist(Preset._25mo3r__Test_6_Ph))) {
+async function createPreset25mo3rNC6n5CTest6Ph(page: Page) {
+  if (!(await Library(page).isMonomerExist(Preset._25mo3r_nC6n5C_Test_6_Ph))) {
     await Library(page).newPreset();
 
     await Library(page).rnaBuilder.selectSugarSlot();
     await Library(page).selectMonomer(Sugar._25mo3r);
+    await Library(page).rnaBuilder.selectBaseSlot();
+    await Library(page).selectMonomer(Base.nC6n5C);
     await Library(page).rnaBuilder.selectPhosphateSlot();
     await Library(page).selectMonomer(Phosphate.Test_6_Ph);
 
@@ -1683,7 +1693,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
   },
 ];
 
-test('Preset replacement preserves side connection on the same preset component in view mode', async () => {
+test(issue5237PresetReplacementTitle, async () => {
   /*
     Test case: https://github.com/epam/ketcher/issues/5237
     Description: If a preset is replaced with another preset, the side connection
@@ -1703,19 +1713,20 @@ test('Preset replacement preserves side connection on the same preset component 
     ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
   const replacementPreset: IReplaceMonomer = {
-    Id: 13,
-    MonomerAlias: '25mo3r(nC6n5C)Test-6-Ph',
-    MonomerTestId: '25mo3r(nC6n5C)Test-6-Ph_nC6n5C_25mo3r_Test-6-Ph',
-    MonomerDescription: 'preset (25mo3r(nC6n5C)Test-6-Ph)',
+    Id: 14,
+    MonomerAlias: '25mo3r(nC6n5C)',
+    MonomerTestId: '25mo3r(nC6n5C)_nC6n5C_25mo3r_.',
+    MonomerDescription: 'preset (25mo3r(nC6n5C))',
     IsCustomPreset: true,
   };
 
+  await createPreset25mo3rNC6n5C(page);
   await openFileAndAddToCanvasMacro(page, sequence.FileName);
   await selectAndReplaceSymbol(
     page,
     replacementPreset,
     sequence,
-    sequence.ReplacementPositions.Center,
+    sequence.ReplacementPositions.LeftEnd,
   );
 
   const exportedKet = JSON.parse(await getKet(page)) as IKetDocument;

@@ -61,6 +61,7 @@ export class AttachmentPoint {
   private get editorEvents() {
     return provideEditorInstance().events;
   }
+
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(

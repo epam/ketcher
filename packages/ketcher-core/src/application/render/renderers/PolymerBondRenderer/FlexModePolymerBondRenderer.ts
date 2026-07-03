@@ -28,6 +28,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private get editorEvents() {
     return provideEditorInstance().events;
   }
+
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;

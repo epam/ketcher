@@ -56,6 +56,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private get editorEvents() {
     return provideEditorInstance().events;
   }
+
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
   // TODO: Specify the types.
   private selectionElement;

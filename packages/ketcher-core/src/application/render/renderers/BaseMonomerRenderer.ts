@@ -35,6 +35,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private get editorEvents() {
     return provideEditorInstance().events;
   }
+
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;

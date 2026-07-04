@@ -13,7 +13,8 @@ export class SequenceEventDelegationManager {
   // eslint-disable-next-line no-use-before-define
   private static _instance: SequenceEventDelegationManager | null = null;
   private canvas: D3SvgElementSelection<SVGGElement, void> | null = null;
-  private boundHandlers: Map<string, (event: MouseEvent) => void> = new Map();
+  private readonly boundHandlers: Map<string, (event: MouseEvent) => void> =
+    new Map();
 
   public static get instance() {
     if (!SequenceEventDelegationManager._instance) {

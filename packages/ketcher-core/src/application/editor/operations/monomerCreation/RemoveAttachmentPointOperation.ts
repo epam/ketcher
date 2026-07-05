@@ -74,7 +74,7 @@ function createRestoreAttachmentPointOperation(
   attachmentPoint: AssignedAttachmentPoint,
   assignedAttachmentPoints: AssignedAttachmentPoints,
   potentialLeavingAtoms?: Set<number>,
-) {
+): BaseOperation {
   class RestoreAttachmentPointOperation extends BaseOperation {
     constructor() {
       super(OperationType.MONOMER_CREATION_ASSIGN_LGA);

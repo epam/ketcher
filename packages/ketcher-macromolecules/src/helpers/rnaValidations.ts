@@ -79,3 +79,8 @@ export const getValidations = (
     baseValidations,
   };
 };
+
+const PRESET_NAME_REGEX = /^[a-zA-Z0-9-_*]+$/;
+
+export const isValidPresetName = (name: string): boolean =>
+  PRESET_NAME_REGEX.test(name);

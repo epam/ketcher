@@ -3,6 +3,11 @@ declare module '*.less' {
   export default classes;
 }
 
+declare namespace JSX {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type Element = React.ReactElement<any, any>;
+}
+
 declare module '*.sdf' {
   const content: string;
   export default content;

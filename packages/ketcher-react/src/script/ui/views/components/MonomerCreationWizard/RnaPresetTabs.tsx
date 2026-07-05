@@ -14,6 +14,7 @@ import {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from 'react';
 import type {
   RnaPresetWizardAction,
@@ -33,6 +34,7 @@ import {
 } from '../../../state/editor/selectors';
 import { useSelector } from 'react-redux';
 import type { Editor } from '../../../../editor';
+import { isStructureContinuous } from '../../../../editor/utils/structureContinuity';
 import selectStyles from '../../../component/form/Select/Select.module.less';
 import {
   type RnaPresetComponentType,
@@ -91,6 +93,12 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   const assignedAttachmentPoints =
     monomerCreationState?.assignedAttachmentPoints ?? new Map();
   const struct = editor.struct();
+  // Memoized so the connectivity check does not re-run on every wizard
+  // keystroke / tab switch.
+  const isSelectionContinuous = useMemo(
+    () => isStructureContinuous(struct, structureSelection),
+    [struct, structureSelection],
+  );
 
   const presetAttachmentPoints = getVisibleAttachmentPointsForRnaPreset(
     assignedAttachmentPoints,
@@ -473,7 +481,7 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
                       monomerCreationWizardStyles.buttonSubmit,
                       styles.createComponentButton,
                     )}
-                    disabled={!hasSelectedAtoms}
+                    disabled={!hasSelectedAtoms || !isSelectionContinuous}
                     onClick={() => handleClickCreateComponent(rnaComponentKey)}
                   >
                     Mark as {rnaComponentKey}

@@ -66,4 +66,8 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
       this.newName,
     );
   }
+
+  isDummy() {
+    return this.previousName === this.newName;
+  }
 }

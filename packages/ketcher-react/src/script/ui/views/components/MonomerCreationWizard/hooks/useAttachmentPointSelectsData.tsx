@@ -131,12 +131,22 @@ export const useAttachmentPointSelectsData = (
   const attachmentPointNameOptionsLength =
     maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
+  const usedNames = new Set(
+    Array.from(assignedAttachmentPoints.values())
+      .filter(({ name }) => name !== attachmentPointName)
+      .map(({ name }) => name),
+  );
+
   const nameOptions: Option[] = Array.from({
     length: attachmentPointNameOptionsLength,
-  }).map((_, i) => ({
-    value: `R${i + 1}`,
-    label: `R${i + 1}`,
-  }));
+  }).map((_, i) => {
+    const name = `R${i + 1}`;
+    return {
+      value: name,
+      label: name,
+      markedAsUsed: usedNames.has(name as AttachmentPointName),
+    };
+  });
 
   // Build atom type options for leaving group
   const currentLeavingAtomLabel = leavingAtom.label;

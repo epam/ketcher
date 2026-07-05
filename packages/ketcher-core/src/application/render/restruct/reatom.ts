@@ -36,11 +36,11 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
-import {
-  type RenderOptions,
-  type RenderOptionStyles,
-  UsageInMacromolecule,
+import type {
+  RenderOptions,
+  RenderOptionStyles,
 } from 'application/render/render.types';
+import { UsageInMacromolecule } from 'application/render/render.constants';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -305,7 +305,8 @@ class ReAtom extends ReObject {
   getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
       (this.a.pseudo?.length > 1 && !getQueryAttrsText(this)) ||
-      (this.showLabel && this.a.implicitH !== 0);
+      (this.showLabel && this.a.implicitH !== 0) ||
+      this.a.atomList !== null;
 
     return hasLabel
       ? this.getLabeledSelectionContour(render, highlightPadding)

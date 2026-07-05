@@ -16,7 +16,6 @@
 
 import { Atom } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import {
   AtomAttr,
   AtomDelete,
@@ -100,10 +99,7 @@ export function fromAtomMerge(
     for (const attachmentPoint of sgroup.getAttachmentPoints()) {
       if (attachmentPoint.atomId === srcId) {
         action.addOp(
-          new SGroupAttachmentPointRemove(
-            sgroupId,
-            new SGroupAttachmentPoint(srcId, undefined, undefined),
-          ),
+          new SGroupAttachmentPointRemove(sgroupId, attachmentPoint),
         );
         return;
       }

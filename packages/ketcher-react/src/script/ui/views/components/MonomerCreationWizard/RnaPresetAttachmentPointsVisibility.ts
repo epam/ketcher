@@ -20,7 +20,16 @@ type ComponentAttachmentPointNames = Record<
   AttachmentPointName[]
 >;
 
-const CONNECTION_ATTACHMENT_POINT_IDS = {
+type ConnectionAttachmentPointId =
+  | 'sugar-base'
+  | 'base-sugar'
+  | 'sugar-phosphate'
+  | 'phosphate-sugar';
+
+const CONNECTION_ATTACHMENT_POINT_IDS: Record<
+  ConnectionAttachmentPointId,
+  number
+> = {
   'sugar-base': -1,
   'base-sugar': -2,
   'sugar-phosphate': -3,
@@ -156,7 +165,7 @@ export const getConnectionAttachmentPointAtomIdsForComponent = (
   const result: AttachmentPointMap = new Map();
 
   const addConnectionAttachmentPoint = (
-    id: 'sugar-base' | 'base-sugar' | 'sugar-phosphate' | 'phosphate-sugar',
+    id: ConnectionAttachmentPointId,
     name: AttachmentPointName,
     attachmentAtomId: number,
     leavingAtomId: number,

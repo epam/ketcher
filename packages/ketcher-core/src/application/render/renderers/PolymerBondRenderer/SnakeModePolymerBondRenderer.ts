@@ -919,7 +919,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
   }
 
-  private moveSnakeBondEnd(): void {
+  private moveSnakeBond(): void {
     const startPosition = this.scaledPosition.startPosition;
     const endPosition = this.scaledPosition.endPosition;
     this.updateSnakeBondPath(startPosition, endPosition);
@@ -930,6 +930,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     this.hoverAreaElement.attr('d', this.path);
     this.selectionElement?.attr('d', this.path);
+  }
+
+  private moveSnakeBondEnd(): void {
+    this.moveSnakeBond();
   }
 
   private moveGraphBondEnd(): void {
@@ -964,16 +968,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private moveSnakeBondStart(): void {
-    const startPosition = this.scaledPosition.startPosition;
-    const endPosition = this.scaledPosition.endPosition;
-    this.updateSnakeBondPath(startPosition, endPosition);
-
-    assert(this.bodyElement);
-    assert(this.hoverAreaElement);
-    this.bodyElement.attr('d', this.path);
-
-    this.hoverAreaElement.attr('d', this.path);
-    this.selectionElement?.attr('d', this.path);
+    this.moveSnakeBond();
   }
 
   private moveGraphBondStart(): void {

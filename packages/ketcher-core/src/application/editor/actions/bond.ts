@@ -316,11 +316,7 @@ export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   return action;
 }
 
-const plainBondTypes = [
-  Bond.PATTERN.TYPE.SINGLE,
-  Bond.PATTERN.TYPE.DOUBLE,
-  Bond.PATTERN.TYPE.TRIPLE,
-];
+const plainBondTypes: BondAttributes['type'][] = [1, 2, 3];
 
 export function bondChangingAction(
   restruct: ReStruct,

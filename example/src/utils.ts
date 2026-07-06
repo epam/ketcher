@@ -10,10 +10,9 @@ export async function getStructServiceProvider() {
     );
 
   if (process.env.MODE === 'standalone') {
-    const {
-      StandaloneStructServiceProvider,
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-    } = require('ketcher-standalone');
+    const { StandaloneStructServiceProvider } = await import(
+      'ketcher-standalone'
+    );
     structServiceProvider =
       new StandaloneStructServiceProvider() as StructServiceProvider;
   }

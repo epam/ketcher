@@ -43,6 +43,7 @@ interface Props {
   'data-testid'?: string;
   error?: boolean;
   title?: string;
+  noWidth?: boolean;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -62,6 +63,7 @@ const Select = ({
   'data-testid': testId,
   error,
   title,
+  noWidth = false,
 }: Props) => {
   const currentValue = options?.find((option) => option.value === value);
   const isFullscreen = !!document.fullscreenElement;
@@ -75,7 +77,10 @@ const Select = ({
 
   return (
     <MuiSelect
-      className={clsx(styles.selectContainer, className)}
+      className={clsx(
+        noWidth ? styles.selectContainerBase : styles.selectContainer,
+        className,
+      )}
       value={currentValue?.value ?? ''}
       title={title}
       onChange={handleChange}

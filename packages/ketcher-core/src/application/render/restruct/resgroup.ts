@@ -45,10 +45,10 @@ interface SGroupdrawBracketsOptions {
   superatomClass?: SUPERATOM_CLASS;
 }
 
-export const SUPERATOM_CLASS_TEXT = {
-  [SUPERATOM_CLASS.BASE]: 'Base',
-  [SUPERATOM_CLASS.SUGAR]: 'Sugar',
-  [SUPERATOM_CLASS.PHOSPHATE]: 'Phosphate',
+export const SUPERATOM_CLASS_TEXT: Record<SUPERATOM_CLASS, string> = {
+  BASE: 'Base',
+  SUGAR: 'Sugar',
+  PHOSPHATE: 'Phosphate',
 };
 
 // Helper function to convert SVG elements into Paper.js paths

@@ -5,14 +5,11 @@ import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
-import { KetMonomerClass } from 'application/formatters/types/ket';
 
-const PEPTIDE_HOVERED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
-const PEPTIDE_SYMBOL_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
+const PEPTIDE_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS.AminoAcid.hover;
+const PEPTIDE_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS.AminoAcid.body;
 const PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].autochainPreview;
+  MONOMER_SYMBOLS_IDS.AminoAcid.autochainPreview;
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';

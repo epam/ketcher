@@ -120,11 +120,92 @@ interface IKetRoot {
 
 interface IKetNode {
   alias?: string;
+  position?: {
+    x: number;
+    y: number;
+  };
 }
 
 interface IKetDocument {
   root: IKetRoot;
   [key: string]: IKetRoot | IKetNode;
+}
+
+interface IKetConnectionEndpointMatcher {
+  alias: string;
+  attachmentPointId: string;
+  position: {
+    x: number;
+    y: number;
+  };
+}
+
+function isKetNode(node?: IKetRoot | IKetNode): node is IKetNode {
+  return Boolean(node && 'alias' in node);
+}
+
+function getKetNode(ket: IKetDocument, endpoint: IKetEndpoint) {
+  const node = ket[endpoint.monomerId];
+
+  return isKetNode(node) ? node : undefined;
+}
+
+function endpointMatches(
+  ket: IKetDocument,
+  endpoint: IKetEndpoint,
+  matcher: IKetConnectionEndpointMatcher,
+) {
+  const node = getKetNode(ket, endpoint);
+
+  if (
+    node?.alias !== matcher.alias ||
+    endpoint.attachmentPointId !== matcher.attachmentPointId
+  ) {
+    return false;
+  }
+
+  return (
+    node.position?.x === matcher.position.x &&
+    node.position?.y === matcher.position.y
+  );
+}
+
+function connectionMatches(
+  ket: IKetDocument,
+  connection: IKetConnection,
+  endpointA: IKetConnectionEndpointMatcher,
+  endpointB: IKetConnectionEndpointMatcher,
+) {
+  const { endpoint1, endpoint2 } = connection;
+
+  return (
+    (endpointMatches(ket, endpoint1, endpointA) &&
+      endpointMatches(ket, endpoint2, endpointB)) ||
+    (endpointMatches(ket, endpoint2, endpointA) &&
+      endpointMatches(ket, endpoint1, endpointB))
+  );
+}
+
+function countKetConnections(
+  ket: IKetDocument,
+  endpointA: IKetConnectionEndpointMatcher,
+  endpointB: IKetConnectionEndpointMatcher,
+) {
+  return ket.root.connections.filter((connection) =>
+    connectionMatches(ket, connection, endpointA, endpointB),
+  ).length;
+}
+
+function countKetConnectionsForEndpoint(
+  ket: IKetDocument,
+  endpointMatcher: IKetConnectionEndpointMatcher,
+) {
+  return ket.root.connections.filter(({ endpoint1, endpoint2 }) => {
+    return (
+      endpointMatches(ket, endpoint1, endpointMatcher) ||
+      endpointMatches(ket, endpoint2, endpointMatcher)
+    );
+  }).length;
 }
 
 enum monomerIDs {
@@ -1730,32 +1811,225 @@ test(issue5237PresetReplacementTitle, async () => {
   );
 
   const exportedKet = JSON.parse(await getKet(page)) as IKetDocument;
-  const getAlias = (endpoint: IKetEndpoint) => {
-    const node = exportedKet[endpoint.monomerId];
-
-    return 'alias' in node ? node.alias : undefined;
+  const replacementEndpoint = {
+    alias: 'nC6n5C',
+    attachmentPointId: 'R3',
+    position: { x: 1.25, y: -2.5665 },
   };
-  const hasPreservedBaseSideConnection = exportedKet.root.connections.some(
-    ({ endpoint1, endpoint2 }) => {
-      const endpoint1IsNewBaseR3 =
-        getAlias(endpoint1) === 'nC6n5C' &&
-        endpoint1.attachmentPointId === 'R3';
-      const endpoint2IsNewBaseR3 =
-        getAlias(endpoint2) === 'nC6n5C' &&
-        endpoint2.attachmentPointId === 'R3';
-      const endpoint1IsConnectedSugarR1 =
-        getAlias(endpoint1) === 'R' && endpoint1.attachmentPointId === 'R1';
-      const endpoint2IsConnectedSugarR1 =
-        getAlias(endpoint2) === 'R' && endpoint2.attachmentPointId === 'R1';
+  const connectedSugarEndpoint = {
+    alias: 'R',
+    attachmentPointId: 'R1',
+    position: { x: 3.376116831663088, y: -4.590217447739866 },
+  };
 
-      return (
-        (endpoint1IsNewBaseR3 && endpoint2IsConnectedSugarR1) ||
-        (endpoint2IsNewBaseR3 && endpoint1IsConnectedSugarR1)
-      );
-    },
+  expect(
+    countKetConnections(
+      exportedKet,
+      replacementEndpoint,
+      connectedSugarEndpoint,
+    ),
+  ).toBe(1);
+  expect(countKetConnectionsForEndpoint(exportedKet, replacementEndpoint)).toBe(
+    1,
   );
+});
 
-  expect(hasPreservedBaseSideConnection).toBe(true);
+test('Preset replacement preserves side-chain component and attachment point in representative cases', async () => {
+  const replacementPresetWithBaseAndPhosphate: IReplaceMonomer = {
+    Id: 13,
+    MonomerAlias: '25mo3r(nC6n5C)Test-6-Ph',
+    MonomerTestId: '25mo3r(nC6n5C)Test-6-Ph_nC6n5C_25mo3r_Test-6-Ph',
+    MonomerDescription: 'preset (25mo3r(nC6n5C)Test-6-Ph)',
+    IsCustomPreset: true,
+  };
+  const replacementPresetWithoutPhosphate: IReplaceMonomer = {
+    Id: 14,
+    MonomerAlias: '25mo3r(nC6n5C)',
+    MonomerTestId: '25mo3r(nC6n5C)_nC6n5C_25mo3r_.',
+    MonomerDescription: 'preset w/o phosphate (25mo3r(nC6n5C))',
+    IsCustomPreset: true,
+  };
+  const replacementPresetWithoutBase: IReplaceMonomer = {
+    Id: 15,
+    MonomerAlias: '25mo3r()Test-6-Ph',
+    MonomerTestId: '25mo3r()Test-6-Ph_._25mo3r_Test-6-Ph',
+    MonomerDescription: 'preset without base (25mo3r()Test-6-Ph)',
+    IsCustomPreset: true,
+  };
+  const cases: {
+    name: string;
+    sequence: ISequence;
+    replacementPreset: IReplaceMonomer;
+    replacementPosition: number;
+    beforeConnection: [
+      IKetConnectionEndpointMatcher,
+      IKetConnectionEndpointMatcher,
+    ];
+    afterConnection: [
+      IKetConnectionEndpointMatcher,
+      IKetConnectionEndpointMatcher,
+    ];
+    oldConnectionShouldBeRemoved: boolean;
+  }[] = [
+    {
+      name: 'base-to-sugar side chain stays on replacement base R3',
+      sequence: {
+        Id: 16,
+        FileName:
+          'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
+        SequenceName: 'base to sugar connected two sequences of presets (U)',
+        ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
+      },
+      replacementPreset: replacementPresetWithoutPhosphate,
+      replacementPosition: 0,
+      beforeConnection: [
+        {
+          alias: 'nC6n5U',
+          attachmentPointId: 'R3',
+          position: { x: 1.25, y: -2.5665 },
+        },
+        {
+          alias: 'R',
+          attachmentPointId: 'R1',
+          position: { x: 3.376116831663088, y: -4.590217447739866 },
+        },
+      ],
+      afterConnection: [
+        {
+          alias: 'nC6n5C',
+          attachmentPointId: 'R3',
+          position: { x: 1.25, y: -2.5665 },
+        },
+        {
+          alias: 'R',
+          attachmentPointId: 'R1',
+          position: { x: 3.376116831663088, y: -4.590217447739866 },
+        },
+      ],
+      oldConnectionShouldBeRemoved: true,
+    },
+    {
+      name: 'base-to-base side chain stays on replacement base R3',
+      sequence: {
+        Id: 14,
+        FileName:
+          'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U).ket',
+        SequenceName: 'base to base connected two sequences of presets (U)',
+        ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
+      },
+      replacementPreset: replacementPresetWithBaseAndPhosphate,
+      replacementPosition: 1,
+      beforeConnection: [
+        {
+          alias: 'nC6n5U',
+          attachmentPointId: 'R3',
+          position: { x: 4.25, y: -2.5665 },
+        },
+        {
+          alias: 'nC6n5U',
+          attachmentPointId: 'R3',
+          position: { x: 6.376116831663089, y: -5.906717447739866 },
+        },
+      ],
+      afterConnection: [
+        {
+          alias: 'nC6n5C',
+          attachmentPointId: 'R3',
+          position: { x: 4.25, y: -2.5665 },
+        },
+        {
+          alias: 'nC6n5U',
+          attachmentPointId: 'R3',
+          position: { x: 6.376116831663089, y: -5.906717447739866 },
+        },
+      ],
+      oldConnectionShouldBeRemoved: true,
+    },
+    {
+      name: 'phosphate-to-phosphate side chain stays on replacement phosphate R3',
+      sequence: {
+        Id: 18,
+        FileName:
+          'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U) w_o base.ket',
+        SequenceName:
+          'phosphate to phosphate connected two sequences of presets (U) w_o base',
+        ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
+        ConfirmationOnReplecement: true,
+      },
+      replacementPreset: replacementPresetWithoutBase,
+      replacementPosition: 2,
+      beforeConnection: [
+        {
+          alias: 'Test-6-Ph',
+          attachmentPointId: 'R3',
+          position: { x: 5.75, y: -1.25 },
+        },
+        {
+          alias: 'Test-6-Ph',
+          attachmentPointId: 'R3',
+          position: { x: 5.75, y: -2.75 },
+        },
+      ],
+      afterConnection: [
+        {
+          alias: 'Test-6-Ph',
+          attachmentPointId: 'R3',
+          position: { x: 5.75, y: -1.25 },
+        },
+        {
+          alias: 'Test-6-Ph',
+          attachmentPointId: 'R3',
+          position: { x: 5.75, y: -2.75 },
+        },
+      ],
+      oldConnectionShouldBeRemoved: false,
+    },
+  ];
+
+  for (const sideConnectionCase of cases) {
+    await test.step(sideConnectionCase.name, async () => {
+      await pageReload(page);
+      await configureInitialState(page);
+      await createTestPresets(page);
+      await openFileAndAddToCanvasMacro(
+        page,
+        sideConnectionCase.sequence.FileName,
+      );
+      const initialKet = JSON.parse(await getKet(page)) as IKetDocument;
+
+      expect(
+        countKetConnections(initialKet, ...sideConnectionCase.beforeConnection),
+      ).toBe(1);
+
+      await selectAndReplaceSymbol(
+        page,
+        sideConnectionCase.replacementPreset,
+        sideConnectionCase.sequence,
+        sideConnectionCase.replacementPosition,
+      );
+
+      const exportedKet = JSON.parse(await getKet(page)) as IKetDocument;
+
+      expect(
+        countKetConnections(exportedKet, ...sideConnectionCase.afterConnection),
+      ).toBe(1);
+      expect(
+        countKetConnectionsForEndpoint(
+          exportedKet,
+          sideConnectionCase.afterConnection[0],
+        ),
+      ).toBe(1);
+
+      if (sideConnectionCase.oldConnectionShouldBeRemoved) {
+        expect(
+          countKetConnections(
+            exportedKet,
+            ...sideConnectionCase.beforeConnection,
+          ),
+        ).toBe(0);
+      }
+    });
+  }
 });
 
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {

@@ -2121,7 +2121,7 @@ class Editor implements KetcherEditor {
         atomIdMap.forEach((newAtomId) => {
           const atom = struct.atoms.get(newAtomId);
           if (atom?.pp) {
-            atom.pp = atom.pp.add(monomerShiftVector as Vec2);
+            atom.pp = atom.pp.add(monomerShiftVector);
           }
         });
       }

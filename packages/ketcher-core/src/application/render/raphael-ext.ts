@@ -29,7 +29,8 @@ function resolveRaphael(): any {
 
   return typeof raphaelModule === 'function'
     ? raphaelModule
-    : (raphaelModule as any).default;
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (raphaelModule as any).default;
 }
 
 const Raphael = resolveRaphael();

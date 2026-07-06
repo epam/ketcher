@@ -75,6 +75,7 @@ import {
   generateSequenceSelectionName,
   resetRnaBuilder,
   resetRnaBuilderAfterSequenceUpdate,
+  resetRnaBuilderToNewPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
@@ -573,15 +574,32 @@ export const RnaEditorExpanded = ({
   const onCancel = () => {
     if (isSequenceEditInRNABuilderMode) {
       resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
-    } else {
-      setNewPreset(activePreset);
-      setSelectedPhosphatePosition(
-        activePreset?.connections?.length
-          ? getRnaPresetPhosphatePosition(activePreset)
-          : undefined,
-      );
-      resetRnaBuilder(dispatch);
+      return;
     }
+
+    // Cancelling a brand-new (never-saved) preset keeps the builder active so the
+    // user can immediately start a new preset (#4009). Editing an existing preset
+    // keeps the previous behaviour: revert changes and leave edit mode.
+    if (isActivePresetEmpty) {
+      setNewPreset(activePreset);
+      setSelectedPhosphatePosition(undefined);
+      resetRnaBuilderToNewPreset(dispatch);
+      dispatch(
+        recalculateRnaBuilderValidations({
+          rnaPreset: activePreset,
+          isEditMode: true,
+        }),
+      );
+      return;
+    }
+
+    setNewPreset(activePreset);
+    setSelectedPhosphatePosition(
+      activePreset?.connections?.length
+        ? getRnaPresetPhosphatePosition(activePreset)
+        : undefined,
+    );
+    resetRnaBuilder(dispatch);
   };
 
   const turnOnEditMode = () => {

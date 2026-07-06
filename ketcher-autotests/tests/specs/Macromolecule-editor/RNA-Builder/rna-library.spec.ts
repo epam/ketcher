@@ -546,6 +546,23 @@ test.describe('RNA Library', () => {
     await takePresetsScreenshot(page);
   });
 
+  test('#4009: RNA Builder stays active after Cancel on a new preset', async () => {
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
+    const rnaBuilder = Library(page).rnaBuilder;
+    await rnaBuilder.expand();
+    await Library(page).selectMonomers([Sugar._25R, Base.A]);
+    await rnaBuilder.cancel();
+
+    await expect(rnaBuilder.cancelButton).toBeVisible();
+    await expect(rnaBuilder.sugarSlot).toContainText('Not selected');
+    await expect(rnaBuilder.baseSlot).toContainText('Not selected');
+
+    await Library(page).selectMonomers([Sugar._25R]);
+    await expect(rnaBuilder.sugarSlot).toContainText('25R');
+  });
+
   test('After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved', async () => {
     /* 
     Test case: #3633 - Edit RNA mode

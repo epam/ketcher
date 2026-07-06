@@ -24,6 +24,12 @@ describe('Test Rna Editor Expanded component', () => {
               phosphate: undefined,
               base: undefined,
             },
+            groupItemValidations: {
+              Bases: [],
+              Sugars: [],
+              Phosphates: [],
+            },
+            isEditMode: true,
           },
         },
       ),

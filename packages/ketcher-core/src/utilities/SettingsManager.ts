@@ -34,13 +34,10 @@ export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 type SavedSelectionToolOption = 'rectangle' | 'lasso' | 'fragment';
 
-type SavedSelectionTool =
-  | 'lasso'
-  | 'rectangle'
-  | {
-      tool: 'select';
-      opts: SavedSelectionToolOption;
-    };
+type SavedSelectionTool = null | {
+  tool: 'select';
+  opts: SavedSelectionToolOption;
+};
 
 interface SavedSettings {
   selectionTool?: SavedSelectionTool;

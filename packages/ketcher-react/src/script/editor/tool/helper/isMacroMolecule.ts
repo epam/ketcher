@@ -1,18 +1,20 @@
 import type { Editor } from '../../Editor';
+import type { DragContext } from '../select/select.types';
 
 const isMacroMolecule = (editor: Editor, id: number): boolean => {
   const struct = editor.struct();
   return struct.isFunctionalGroupFromMacromolecule(id);
 };
 
-// dragCtx is actually "any" in the code
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isMergingToMacroMolecule = (editor: Editor, dragCtx: any): boolean => {
+const isMergingToMacroMolecule = (
+  editor: Editor,
+  dragCtx: DragContext,
+): boolean => {
   const funcGroups = dragCtx?.mergeItems?.atomToFunctionalGroup;
   if (!funcGroups?.size) {
     return false;
   }
-  const targetObjectId = funcGroups.entries().next().value[1];
+  const [[, targetObjectId]] = funcGroups;
   return isMacroMolecule(editor, targetObjectId);
 };
 

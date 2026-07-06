@@ -148,7 +148,7 @@ class Form extends Component<FormProps> {
 
     if (init) {
       const { valid, errors } = this.schema.serialize(init);
-      const errs = getErrorsObj(errors as FormValidationError[]);
+      const errs = getErrorsObj(errors);
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
@@ -173,7 +173,7 @@ class Form extends Component<FormProps> {
   updateState(newState: Record<string, unknown>) {
     const { onUpdate } = this.props;
     const { instance, valid, errors } = this.schema.serialize(newState);
-    const errs = getErrorsObj(errors as FormValidationError[]);
+    const errs = getErrorsObj(errors);
     onUpdate(instance as Record<string, unknown>, valid, errs);
   }
 

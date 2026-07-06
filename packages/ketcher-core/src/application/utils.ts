@@ -62,7 +62,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
 ) {
   const editor = provideEditorInstance();
   const ketSerializer = new KetSerializer();
-  const format = identifyStructFormat(struct);
+  const format = identifyStructFormat(struct, true);
   let ketStruct = struct;
   if (format !== SupportedFormat.ket) {
     ketStruct = (

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -86,11 +85,7 @@ const Select = ({
       title={title}
       onChange={handleChange}
       renderValue={(selected: string) =>
-        (currentValue?.children ??
-          currentValue?.label ??
-          placeholder ??
-          selected ??
-          '') as any
+        currentValue?.children ?? currentValue?.label ?? placeholder ?? selected
       }
       displayEmpty
       multiple={multiple}

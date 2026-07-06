@@ -84,7 +84,7 @@ class SGroupCreate extends BaseOperation {
       sgroup.pp = new Vec2(pp);
     }
 
-    if (expanded) {
+    if (expanded !== undefined) {
       sgroup.data.expanded = expanded;
       if (sgroup instanceof MonomerMicromolecule) {
         if (Object.isFrozen(sgroup.monomer.monomerItem)) {

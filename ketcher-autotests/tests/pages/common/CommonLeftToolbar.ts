@@ -26,7 +26,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .getByTestId('hand')
       .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownButton: page
-      .getByTestId('select-rectangle')
+      .getByTestId('select-drop-down-button')
       .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')

@@ -55,6 +55,24 @@ type ReducerAction = {
   action?: UiActionAction;
 } & Partial<ActionParams>;
 
+type PersistedSelectionTool = {
+  tool: 'select';
+  opts: 'rectangle' | 'lasso' | 'fragment';
+};
+
+function isPersistedSelectionTool(
+  value: UiActionAction | null | undefined,
+): value is PersistedSelectionTool {
+  return (
+    !!value &&
+    typeof value !== 'function' &&
+    value.tool === 'select' &&
+    (value.opts === 'rectangle' ||
+      value.opts === 'lasso' ||
+      value.opts === 'fragment')
+  );
+}
+
 function execute(
   activeTool: UiActionAction | null | undefined,
   { action, editor, server, options }: ExecuteParams,
@@ -153,7 +171,7 @@ export default function (
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
@@ -167,7 +185,7 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(

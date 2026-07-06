@@ -107,13 +107,15 @@ const ToolbarMultiToolItem = (props: Props) => {
     const savedSelectionToolId =
       savedSelectionTool &&
       `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
-    currentId =
-      savedSelectionTool &&
-      savedSelectionToolId &&
-      options.filter(
+    if (savedSelectionTool && savedSelectionToolId) {
+      const visibleSavedOption = options.find(
         (option) =>
           !status[option.id]?.hidden && option.id === savedSelectionToolId,
-      )[0]?.id;
+      );
+      if (visibleSavedOption) {
+        currentId = visibleSavedOption.id;
+      }
+    }
 
     if (!currentId) {
       currentId =

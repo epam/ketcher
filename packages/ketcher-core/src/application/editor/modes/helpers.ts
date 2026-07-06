@@ -1,7 +1,6 @@
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import type { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import type { SequenceNode } from 'domain/entities/monomer-chains/types';
 
@@ -10,7 +9,6 @@ export function isNodeRestrictedForHydrogenBondCreation(
 ) {
   return (
     !node ||
-    node instanceof LinkerSequenceNode ||
     node instanceof BackBoneSequenceNode ||
     node instanceof EmptySequenceNode
   );

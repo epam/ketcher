@@ -32,9 +32,18 @@ const DefaultEditorLineLength: EditorLineLength = {
 
 export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
+type SavedSelectionToolOption = 'rectangle' | 'lasso' | 'fragment';
+
+type SavedSelectionTool =
+  | 'lasso'
+  | 'rectangle'
+  | {
+      tool: 'select';
+      opts: SavedSelectionToolOption;
+    };
+
 interface SavedSettings {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selectionTool?: any;
+  selectionTool?: SavedSelectionTool;
   disableCustomQuery?: boolean;
   editorLineLength?: EditorLineLength;
   monomerLibraryUpdates?: string[];
@@ -101,12 +110,12 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
   }
 
-  static get selectionTool() {
+  static get selectionTool(): SavedSelectionTool | undefined {
     const { selectionTool } = this.getSettings();
     return selectionTool;
   }
 
-  static set selectionTool(selectionTool) {
+  static set selectionTool(selectionTool: SavedSelectionTool | undefined) {
     const settings = this.getSettings();
 
     this.saveSettings({

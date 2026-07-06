@@ -46,7 +46,7 @@ describe('monomers utilities', () => {
     });
 
     it('returns an empty array when modification types are missing or empty', () => {
-      expect(getDisallowedModificationTypes(undefined)).toEqual([]);
+      expect(getDisallowedModificationTypes()).toEqual([]);
       expect(getDisallowedModificationTypes([])).toEqual([]);
     });
 

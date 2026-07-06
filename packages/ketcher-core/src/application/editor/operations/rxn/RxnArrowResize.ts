@@ -169,6 +169,11 @@ export class RxnArrowResize extends Base {
       this.isSnappingEnabled,
     );
   }
+
+  isDummy() {
+    const { d } = this.data;
+    return d.x === 0 && d.y === 0;
+  }
 }
 
 export function getSnappedArrowVector(arrow: Vec2) {

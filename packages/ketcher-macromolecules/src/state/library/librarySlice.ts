@@ -31,9 +31,9 @@ import {
   AmbiguousMonomer,
   MonomerGroups,
   AmbiguousMonomerType,
-  isAmbiguousMonomerLibraryItem,
   IKetIdtAliases,
   IKetMonomerGroupTemplate,
+  isAmbiguousMonomerLibraryItem,
 } from 'ketcher-core';
 import {
   LibraryNameType,
@@ -74,9 +74,14 @@ const initialState: LibraryState = {
 };
 
 export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {
-  return isAmbiguousMonomerLibraryItem(monomer)
-    ? monomer.id || monomer.label
-    : `${monomer.props.MonomerName}___${monomer.props?.Name}`;
+  if (isAmbiguousMonomerLibraryItem(monomer)) {
+    const ambiguousMonomer = monomer as AmbiguousMonomerType;
+    return ambiguousMonomer.id || ambiguousMonomer.label;
+  }
+
+  const monomerItem = monomer as MonomerItemType;
+
+  return `${monomerItem.props.MonomerName}___${monomerItem.props?.Name}`;
 }
 
 export function getPresetUniqueKey(preset: IRnaPreset) {

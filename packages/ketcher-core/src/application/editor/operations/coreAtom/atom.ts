@@ -150,9 +150,11 @@ export class AtomDeleteOperation implements Operation {
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 
   public executeAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.deleteAtom(this.atom);
+    renderersManager.rerenderSGroups();
   }
 }

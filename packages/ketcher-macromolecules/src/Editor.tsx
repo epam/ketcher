@@ -331,7 +331,7 @@ function Editor({
     };
   }, [dispatch]);
 
-  const handleCloseErrorTooltip = (text?: string) => {
+  const handleCloseErrorTooltip = (text: string) => {
     dispatch(closeErrorTooltip(text));
   };
 
@@ -443,8 +443,6 @@ function Editor({
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={errorTooltips.length > 0}
-        onClose={() => handleCloseErrorTooltip()}
-        autoHideDuration={6000}
       >
         <StyledToastContainer
           id="error-tooltip-list"

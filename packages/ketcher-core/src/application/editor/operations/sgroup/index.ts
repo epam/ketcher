@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { FunctionalGroup } from 'domain/entities/functionalGroup';
@@ -24,8 +23,6 @@ import { type ReStruct, ReSGroup } from '../../../render';
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-
-// todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
   sgid: any;
@@ -85,7 +82,7 @@ class SGroupCreate extends BaseOperation {
       sgroup.pp = new Vec2(pp);
     }
 
-    if (expanded) {
+    if (expanded !== undefined) {
       sgroup.data.expanded = expanded;
       if (sgroup instanceof MonomerMicromolecule) {
         if (Object.isFrozen(sgroup.monomer.monomerItem)) {
@@ -111,12 +108,6 @@ class SGroupCreate extends BaseOperation {
       }
     }
     this.data.sgid = sgid;
-  }
-
-  invert() {
-    const inverted = new SGroupDelete();
-    inverted.data = this.data;
-    return inverted;
   }
 }
 
@@ -166,13 +157,10 @@ class SGroupDelete extends BaseOperation {
     restruct.sgroups.delete(sgid);
     struct.sgroups.delete(sgid);
   }
-
-  invert() {
-    const inverted = new SGroupCreate();
-    inverted.data = this.data;
-    return inverted;
-  }
 }
+
+SGroupCreate.InverseConstructor = SGroupDelete;
+SGroupDelete.InverseConstructor = SGroupCreate;
 
 export { SGroupCreate, SGroupDelete };
 export * from './sgroupAtom';

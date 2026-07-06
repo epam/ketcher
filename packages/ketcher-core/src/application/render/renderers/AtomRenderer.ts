@@ -26,6 +26,21 @@ import {
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
 
+export type AtomHoverContour =
+  | {
+      type: 'circle';
+      center: Vec2;
+      radius: number;
+    }
+  | {
+      type: 'rect';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      radius: number;
+    };
+
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -147,6 +162,37 @@ export class AtomRenderer extends BaseRenderer {
         .attr('rx', HOVER_RECTANGLE_RADIUS)
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
+  }
+
+  public getHoverContour(): AtomHoverContour {
+    if (
+      (this.labelLength < 2 || !this.isLabelVisible) &&
+      !this.atom.hasCharge
+    ) {
+      const macroModeScale = this.editorSettings.macroModeScale;
+
+      return {
+        type: 'circle',
+        center: this.center,
+        radius: Math.ceil(1.9 * (macroModeScale / 6)),
+      };
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    const labelX = labelBbox?.x ?? 0;
+    const labelWidth = labelBbox?.width ?? 8;
+    const labelHeight = labelBbox?.height ?? 8;
+    const HOVER_PADDING = 4;
+    const HOVER_RECTANGLE_RADIUS = 10;
+
+    return {
+      type: 'rect',
+      x: this.center.x + labelX - HOVER_PADDING,
+      y: this.center.y - (labelHeight / 2 + HOVER_PADDING),
+      width: labelWidth + HOVER_PADDING * 2,
+      height: labelHeight + HOVER_PADDING * 2,
+      radius: HOVER_RECTANGLE_RADIUS,
+    };
   }
 
   /**
@@ -287,6 +333,13 @@ export class AtomRenderer extends BaseRenderer {
       !hasExplicitValence &&
       !hasExplicitIsotope
     ) {
+      // Show carbon label when bonds are collinear (180 degree angle),
+      if (atomNeighborsHalfEdges?.length === 2) {
+        const [hb1, hb2] = atomNeighborsHalfEdges;
+        if (Math.abs(Vec2.cross(hb1.direction, hb2.direction)) < 0.2) {
+          return true;
+        }
+      }
       return false;
     }
 
@@ -889,6 +942,16 @@ export class AtomRenderer extends BaseRenderer {
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
     super.remove();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
+    this.cipLabelElement?.style('display', display);
+    this.stereoLabelElement?.style('display', display);
   }
 
   protected appendHoverAreaElement(): void {

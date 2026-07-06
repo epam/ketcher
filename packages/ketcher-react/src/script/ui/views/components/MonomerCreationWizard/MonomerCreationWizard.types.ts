@@ -72,6 +72,8 @@ export type WizardNotificationId =
   | 'invalidPresetCode'
   | 'invalidPhosphatePositionAttachmentPoints'
   | 'phosphatePositionNotSelected'
+  | 'editAllPresetWarning'
+  | 'editAllPresetError'
   | 'invalidName';
 
 export type WizardNotificationTypeMap = Record<
@@ -149,6 +151,9 @@ export type WizardAction =
     }
   | {
       type: 'ResetErrors';
+    }
+  | {
+      type: 'ResetValidationNotifications';
     };
 
 export type RnaPresetWizardAction =
@@ -169,6 +174,9 @@ export type RnaPresetWizardAction =
     }
   | {
       type: 'ResetErrors';
+    }
+  | {
+      type: 'ResetValidationNotifications';
     }
   | {
       type: 'ResetWizard';

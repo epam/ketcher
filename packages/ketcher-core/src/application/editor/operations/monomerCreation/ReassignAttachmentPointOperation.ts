@@ -70,4 +70,8 @@ export class ReassignAttachmentPointOperation extends BaseOperation {
       this.currentName,
     );
   }
+
+  isDummy() {
+    return this.currentName === this.newName;
+  }
 }

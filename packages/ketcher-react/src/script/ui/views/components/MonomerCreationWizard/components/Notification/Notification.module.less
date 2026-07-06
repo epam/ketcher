@@ -36,6 +36,14 @@
     }
   }
 
+  &.warning {
+    background-color: #FFF4CC;
+
+    .notificationStrip {
+      background-color: #FFB800;
+    }
+  }
+
   &Icon {
     min-width: 18px;
     min-height: 18px;
@@ -45,6 +53,7 @@
   &Text {
     flex-grow: 1;
     margin: 0;
+    overflow-wrap: anywhere;
   }
 
   &Button {
@@ -55,7 +64,6 @@
     cursor: pointer;
   }
 }
-
 
 
 

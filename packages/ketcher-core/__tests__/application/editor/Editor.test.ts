@@ -1040,7 +1040,7 @@ describe('CoreEditor', () => {
           templates: [],
           connections: [],
           idtAliases: {
-            base: 'ValidPresetBase',
+            base: 'VldPrstBs',
             modifications: {
               endpoint5: '/valid_preset_ep5/',
             },
@@ -1093,7 +1093,7 @@ describe('CoreEditor', () => {
           templates: [],
           connections: [],
           idtAliases: {
-            base: 'PresetInternalBase1',
+            base: 'PrstBase1',
             modifications: {
               internal: '/same_preset_internal/',
             },
@@ -1107,7 +1107,7 @@ describe('CoreEditor', () => {
           templates: [],
           connections: [],
           idtAliases: {
-            base: 'PresetInternalBase2',
+            base: 'PrstBase2',
             modifications: {
               internal: '/same_preset_internal/',
             },
@@ -1189,7 +1189,7 @@ describe('CoreEditor', () => {
           templates: [],
           connections: [],
           idtAliases: {
-            base: 'PresetEndpoint5Base',
+            base: 'PrstBase3',
             modifications: {
               endpoint5: '/same_monomer_preset_ep5/',
             },
@@ -1250,7 +1250,7 @@ describe('CoreEditor', () => {
 
       expect(errorSpy).toHaveBeenCalledWith(
         expect.stringContaining(
-          'The maximum number of characters of an IDT alias without slashes (/) is 10.',
+          'The maximum number of characters of a bare IDT alias',
         ),
       );
       expect(editor.monomersLibrary.length).toBe(initialLibrarySize);

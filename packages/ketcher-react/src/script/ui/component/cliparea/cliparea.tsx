@@ -196,7 +196,9 @@ class ClipArea extends Component<ClipAreaProps> {
         if (!this.props.focused() || isUserEditing()) {
           return;
         }
-        if (isClipboardAPIAvailable()) {
+        // Safari rejects navigator.clipboard.read() in this context, so fall
+        // back to the synchronous paste event data (same approach as copy/cut).
+        if (isClipboardAPIAvailable() && !isSafariBrowser()) {
           navigator.clipboard.read().then((data: ClipboardItem[]) => {
             if (!data) {
               return;

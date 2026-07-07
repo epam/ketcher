@@ -57,27 +57,82 @@ export type RnaComponentAtoms = Map<
   { atoms: number[]; bonds: number[] }
 >;
 
+export type AttachmentPointId = number;
+
+export type AssignedAttachmentPoint = {
+  name: AttachmentPointName;
+  attachmentAtomId: number;
+  leavingAtomId: number;
+};
+
+export type AssignedAttachmentPoints = Map<
+  AttachmentPointId,
+  AssignedAttachmentPoint
+>;
+
+export const getAttachmentPointNames = (
+  assignedAttachmentPoints: AssignedAttachmentPoints,
+): AttachmentPointName[] =>
+  Array.from(assignedAttachmentPoints.values()).map(({ name }) => name);
+
+export const getAttachmentPointAtomPair = ({
+  attachmentAtomId,
+  leavingAtomId,
+}: AssignedAttachmentPoint): [number, number] => [
+  attachmentAtomId,
+  leavingAtomId,
+];
+
+export const convertAssignedAttachmentPointsToMapByName = (
+  assignedAttachmentPoints?: AssignedAttachmentPoints,
+): Map<AttachmentPointName, [number, number]> | undefined => {
+  if (!assignedAttachmentPoints) {
+    return undefined;
+  }
+
+  return new Map(
+    Array.from(assignedAttachmentPoints.values()).map(
+      ({ name, attachmentAtomId, leavingAtomId }) => [
+        name,
+        [attachmentAtomId, leavingAtomId],
+      ],
+    ),
+  );
+};
+
 export type MonomerCreationState = {
-  // R-label mapping to [attachment atom id, leaving atom id]
-  assignedAttachmentPoints: Map<AttachmentPointName, [number, number]>;
-  // Optional restriction: when set to a subset of assignedAttachmentPoints,
-  // only those are drawn on canvas. When undefined, all assigned attachment
-  // points are displayed.
-  visibleAssignedAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  // Unique id mapping to attachment point R-label and [attachment atom id, leaving atom id]
+  assignedAttachmentPoints: AssignedAttachmentPoints;
+  // Subset of assignedAttachmentPoints to show on canvas (used to restrict
+  // display to the active RNA component tab). When undefined, all assigned
+  // attachment points are displayed.
+  visibleAssignedAttachmentPoints?: AssignedAttachmentPoints;
   // Attachment atom id to a set of connected leaving atom ids
   potentialAttachmentPoints: Map<number, Set<number>>;
-  problematicAttachmentPoints: Set<AttachmentPointName>;
+  problematicAttachmentPoints: Set<AttachmentPointId>;
   problematicAtoms?: Set<number>;
-  clickedAttachmentPoint?: AttachmentPointName | null;
+  clickedAttachmentPoint?: AttachmentPointId | null;
+  nextAttachmentPointId?: number;
   selectedMonomerClass?: KetMonomerClass | 'rnaPreset';
   hasDefaultAttachmentPoints?: boolean;
   // RNA preset component atoms and bonds
   rnaComponentAtoms?: RnaComponentAtoms;
   isRnaPresetMode?: boolean;
-  // Connection APs: inter-component links (readonly). Maps AP name to [component atom id, other-component atom id]
-  connectionAttachmentPoints?: Map<AttachmentPointName, [number, number]>;
+  // Connection APs: inter-component links (readonly). Maps AP id to name and [component atom id, other-component atom id]
+  connectionAttachmentPoints?: AssignedAttachmentPoints;
   editInstanceInitialValues?: MonomerCreationInitialValues;
 } | null;
+
+export const getNextAttachmentPointId = (
+  monomerCreationState: Exclude<MonomerCreationState, null>,
+): AttachmentPointId => {
+  const nextAttachmentPointId =
+    monomerCreationState.nextAttachmentPointId ??
+    monomerCreationState.assignedAttachmentPoints.size;
+  monomerCreationState.nextAttachmentPointId = nextAttachmentPointId + 1;
+
+  return nextAttachmentPointId;
+};
 
 export class Render {
   public skipRaphaelInitialization = false;

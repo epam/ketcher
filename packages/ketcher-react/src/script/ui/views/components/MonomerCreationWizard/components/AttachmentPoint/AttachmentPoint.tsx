@@ -1,4 +1,8 @@
-import type { AtomLabel, AttachmentPointName } from 'ketcher-core';
+import type {
+  AtomLabel,
+  AttachmentPointId,
+  AttachmentPointName,
+} from 'ketcher-core';
 import styles from './AttachmentPoint.module.less';
 
 import { useAttachmentPointSelectsData } from '../../hooks/useAttachmentPointSelectsData';
@@ -8,20 +12,22 @@ import { Icon } from '../../../../../../../components';
 import { useEffect, useRef, useState } from 'react';
 
 type Props = {
+  id: AttachmentPointId;
   name: AttachmentPointName;
   editor: Editor;
   onNameChange: (
-    currentName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newName: AttachmentPointName,
   ) => void;
   onLeavingAtomChange: (
-    apName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newLeavingAtomLabel: AtomLabel,
   ) => void;
-  onRemove: (name: AttachmentPointName) => void;
+  onRemove: (attachmentPointId: AttachmentPointId) => void;
 };
 
 const AttachmentPoint = ({
+  id,
   name,
   editor,
   onNameChange,
@@ -37,7 +43,7 @@ const AttachmentPoint = ({
     }
 
     const mouseOverHandler = () => {
-      editor.highlightAttachmentPoint(name);
+      editor.highlightAttachmentPoint(id);
     };
 
     const mouseLeaveHandler = () => {
@@ -51,20 +57,20 @@ const AttachmentPoint = ({
       element.removeEventListener('mouseover', mouseOverHandler);
       element.removeEventListener('mouseleave', mouseLeaveHandler);
     };
-  }, [editor, name]);
+  }, [editor, id]);
 
   const [highlight, setHighlight] = useState(false);
 
   useEffect(() => {
     const handleAttachmentPointHighlight = (event: Event) => {
-      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
+      const attachmentPointId = (event as CustomEvent<AttachmentPointId>)
         .detail;
-      setHighlight(attachmentPointName === name);
+      setHighlight(attachmentPointId === id);
     };
     const handleResetAttachmentPointHighlight = (event: Event) => {
-      const attachmentPointName = (event as CustomEvent<AttachmentPointName>)
+      const attachmentPointId = (event as CustomEvent<AttachmentPointId>)
         .detail;
-      if (attachmentPointName === name) {
+      if (attachmentPointId === id) {
         setHighlight(false);
       }
     };
@@ -88,9 +94,9 @@ const AttachmentPoint = ({
         handleResetAttachmentPointHighlight,
       );
     };
-  }, [name]);
+  }, [id]);
 
-  const selectsData = useAttachmentPointSelectsData(editor, name);
+  const selectsData = useAttachmentPointSelectsData(editor, id);
 
   if (!selectsData) {
     return null;
@@ -98,16 +104,16 @@ const AttachmentPoint = ({
 
   const handleNameChange = (newName: AttachmentPointName) => {
     if (newName !== name) {
-      onNameChange(name, newName);
+      onNameChange(id, newName);
     }
   };
 
   const handleLeavingAtomChange = (newLeavingAtomLabel: AtomLabel) => {
-    onLeavingAtomChange(name, newLeavingAtomLabel);
+    onLeavingAtomChange(id, newLeavingAtomLabel);
   };
 
   const handleRemove = () => {
-    onRemove(name);
+    onRemove(id);
   };
 
   return (

@@ -2,7 +2,7 @@ import type { KetMonomerClass } from 'application/formatters';
 import type { IconName } from 'components';
 import type { Editor } from '../../../../editor';
 import type { Selection } from '../../../../editor/Editor';
-import type { AttachmentPointName } from 'domain/types';
+import type { AssignedAttachmentPoints } from 'ketcher-core';
 import type { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {
@@ -197,7 +197,7 @@ export type RnaPresetWizardAction =
 
 export type AssignedAttachmentPointsByMonomerType = Map<
   WizardState,
-  Map<AttachmentPointName, [number, number]>
+  AssignedAttachmentPoints
 >;
 
 export function isDispatchActionForRnaPreset(

@@ -1,7 +1,8 @@
 import {
-  type AttachmentPointName,
   AtomLabel,
   getAttachmentPointNumberFromLabel,
+  type AttachmentPointId,
+  type AttachmentPointName,
 } from 'ketcher-core';
 import type { Editor } from '../../../../../editor';
 import type { Option } from '../../../../component/form/Select';
@@ -94,7 +95,7 @@ export const createReadonlyAttachmentPointSelectData = (
 
 export const useAttachmentPointSelectsData = (
   editor: Editor,
-  attachmentPointName: AttachmentPointName,
+  attachmentPointId: AttachmentPointId,
 ): AttachmentPointSelectData | null => {
   if (!editor.monomerCreationState) {
     return null;
@@ -102,12 +103,16 @@ export const useAttachmentPointSelectsData = (
 
   const { assignedAttachmentPoints } = editor.monomerCreationState;
 
-  const atomPair = assignedAttachmentPoints.get(attachmentPointName);
-  if (!atomPair) {
+  const attachmentPoint = assignedAttachmentPoints.get(attachmentPointId);
+  if (!attachmentPoint) {
     return null;
   }
 
-  const [attachmentAtomId, leavingAtomId] = atomPair;
+  const {
+    name: attachmentPointName,
+    attachmentAtomId,
+    leavingAtomId,
+  } = attachmentPoint;
   const attachmentAtom = editor.struct().atoms.get(attachmentAtomId);
   if (!attachmentAtom) {
     return null;
@@ -118,8 +123,8 @@ export const useAttachmentPointSelectsData = (
     return null;
   }
 
-  const usedNumbers = Array.from(assignedAttachmentPoints.keys()).map((name) =>
-    getAttachmentPointNumberFromLabel(name),
+  const usedNumbers = Array.from(assignedAttachmentPoints.values()).map(
+    ({ name }) => getAttachmentPointNumberFromLabel(name),
   );
   const maxUsedNumber = Math.max(...usedNumbers);
 
@@ -127,9 +132,9 @@ export const useAttachmentPointSelectsData = (
     maxUsedNumber <= 3 ? 3 : Math.min(maxUsedNumber, 8);
 
   const usedNames = new Set(
-    Array.from(assignedAttachmentPoints.keys()).filter(
-      (name) => name !== attachmentPointName,
-    ),
+    Array.from(assignedAttachmentPoints.values())
+      .filter(({ name }) => name !== attachmentPointName)
+      .map(({ name }) => name),
   );
 
   const nameOptions: Option[] = Array.from({

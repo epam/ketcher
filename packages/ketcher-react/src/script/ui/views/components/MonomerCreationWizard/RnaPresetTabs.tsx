@@ -2,10 +2,11 @@ import Tab from '@mui/material/Tab';
 import { Icon } from 'components';
 import Tabs from '@mui/material/Tabs';
 import {
+  KetMonomerClass,
   type AtomLabel,
+  type AttachmentPointId,
   type AttachmentPointName,
   type RnaPresetComponentKey,
-  KetMonomerClass,
 } from 'ketcher-core';
 import {
   type ChangeEvent,
@@ -47,7 +48,6 @@ import {
 import {
   getAttachmentPointsForRnaPresetComponent,
   getConnectionAttachmentPointAtomIdsForComponent,
-  getConnectionAttachmentPointsForRnaPresetComponent,
   getVisibleAttachmentPointsForRnaPreset,
 } from './RnaPresetAttachmentPointsVisibility';
 import { hasRequiredRnaPresetComponents } from './RnaPresetStructureValidation';
@@ -123,19 +123,19 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     ),
   };
   const componentConnectionAttachmentPoints = {
-    base: getConnectionAttachmentPointsForRnaPresetComponent(
+    base: getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
       struct,
       'base',
       phosphatePosition as PhosphatePosition | undefined,
     ),
-    sugar: getConnectionAttachmentPointsForRnaPresetComponent(
+    sugar: getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
       struct,
       'sugar',
       phosphatePosition as PhosphatePosition | undefined,
     ),
-    phosphate: getConnectionAttachmentPointsForRnaPresetComponent(
+    phosphate: getConnectionAttachmentPointAtomIdsForComponent(
       wizardState,
       struct,
       'phosphate',
@@ -143,20 +143,32 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
     ),
   };
   const readonlyComponentAttachmentPoints = {
-    base: componentConnectionAttachmentPoints.base.map((name) => ({
+    base: Array.from(componentConnectionAttachmentPoints.base.entries()).map(
+      ([id, { name, attachmentAtomId }]) => ({
+        id,
+        name,
+        atomId: attachmentAtomId,
+        leavingAtomLabel:
+          connectionLeavingAtoms?.get(`base:${name}`) ??
+          getLeavingAtomForAttachmentPoint(KetMonomerClass.Base, name),
+      }),
+    ),
+    sugar: Array.from(componentConnectionAttachmentPoints.sugar.entries()).map(
+      ([id, { name, attachmentAtomId }]) => ({
+        id,
+        name,
+        atomId: attachmentAtomId,
+        leavingAtomLabel:
+          connectionLeavingAtoms?.get(`sugar:${name}`) ??
+          getLeavingAtomForAttachmentPoint(KetMonomerClass.Sugar, name),
+      }),
+    ),
+    phosphate: Array.from(
+      componentConnectionAttachmentPoints.phosphate.entries(),
+    ).map(([id, { name, attachmentAtomId }]) => ({
+      id,
       name,
-      leavingAtomLabel:
-        connectionLeavingAtoms?.get(`base:${name}`) ??
-        getLeavingAtomForAttachmentPoint(KetMonomerClass.Base, name),
-    })),
-    sugar: componentConnectionAttachmentPoints.sugar.map((name) => ({
-      name,
-      leavingAtomLabel:
-        connectionLeavingAtoms?.get(`sugar:${name}`) ??
-        getLeavingAtomForAttachmentPoint(KetMonomerClass.Sugar, name),
-    })),
-    phosphate: componentConnectionAttachmentPoints.phosphate.map((name) => ({
-      name,
+      atomId: attachmentAtomId,
       leavingAtomLabel:
         connectionLeavingAtoms?.get(`phosphate:${name}`) ??
         getLeavingAtomForAttachmentPoint(KetMonomerClass.Phosphate, name),
@@ -225,21 +237,23 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
   };
 
   const handleAttachmentPointNameChange = (
-    currentName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newName: AttachmentPointName,
   ) => {
-    editor.reassignAttachmentPoint(currentName, newName);
+    editor.reassignAttachmentPoint(attachmentPointId, newName);
   };
 
   const handleLeavingAtomChange = (
-    apName: AttachmentPointName,
+    attachmentPointId: AttachmentPointId,
     newLeavingAtomLabel: AtomLabel,
   ) => {
-    editor.changeLeavingAtomLabel(apName, newLeavingAtomLabel);
+    editor.changeLeavingAtomLabel(attachmentPointId, newLeavingAtomLabel);
   };
 
-  const handleAttachmentPointRemove = (name: AttachmentPointName) => {
-    editor.removeAttachmentPoint(name);
+  const handleAttachmentPointRemove = (
+    attachmentPointId: AttachmentPointId,
+  ) => {
+    editor.removeAttachmentPoint(attachmentPointId);
   };
 
   const currentTabStructure = currentTabState?.structure;
@@ -267,14 +281,32 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
       return;
     }
 
-    const connectionAtomIds = getConnectionAttachmentPointAtomIdsForComponent(
-      wizardState,
-      struct,
-      activeComponentKey,
-      phosphatePosition as PhosphatePosition | undefined,
+    // Component tab: restrict visible assigned APs to those belonging to this
+    // component only, so APs from other components are hidden on the canvas.
+    editor.setVisibleAssignedAttachmentPoints(
+      getAttachmentPointsForRnaPresetComponent(
+        assignedAttachmentPoints,
+        wizardState,
+        activeComponentKey,
+      ),
     );
-    editor.setConnectionAttachmentPoints(connectionAtomIds);
-  }, [editor, selectedTab, struct, wizardState, phosphatePosition]);
+
+    editor.setConnectionAttachmentPoints(
+      getConnectionAttachmentPointAtomIdsForComponent(
+        wizardState,
+        struct,
+        activeComponentKey,
+        phosphatePosition as PhosphatePosition | undefined,
+      ),
+    );
+  }, [
+    assignedAttachmentPoints,
+    editor,
+    phosphatePosition,
+    selectedTab,
+    struct,
+    wizardState,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -420,14 +452,15 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
               {presetAttachmentPoints.size > 0 && (
                 <div className={monomerCreationWizardStyles.attachmentPoints}>
                   {Array.from(presetAttachmentPoints.entries()).map(
-                    ([name, atomPair]) => (
+                    ([attachmentPointId, attachmentPoint]) => (
                       <AttachmentPoint
-                        name={name}
+                        id={attachmentPointId}
+                        name={attachmentPoint.name}
                         editor={editor}
                         onNameChange={handleAttachmentPointNameChange}
                         onLeavingAtomChange={handleLeavingAtomChange}
                         onRemove={handleAttachmentPointRemove}
-                        key={`${name}-${atomPair[0]}-${atomPair[1]}`}
+                        key={attachmentPointId}
                       />
                     ),
                   )}

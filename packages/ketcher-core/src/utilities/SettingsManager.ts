@@ -165,6 +165,7 @@ export class SettingsManager {
 
   static get monomerLibraryUpdates() {
     const { monomerLibraryUpdates } = this.getSettings();
+    console.log('lashaa');
     return monomerLibraryUpdates ?? [];
   }
 

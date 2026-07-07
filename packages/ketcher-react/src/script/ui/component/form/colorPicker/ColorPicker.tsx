@@ -28,14 +28,16 @@ import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
 import { useSettings } from 'src/hooks';
-import { presetColors } from './ColorPicker.constants';
 import {
   addCustomColor,
   hslToHex,
   hexToHsl,
   isValidHex,
+  sanitizeHexInput,
 } from './ColorPicker.utils';
-import ColorSlider from './ColorSlider';
+import PresetGrid from './PresetGrid';
+import CustomColorSwatches from './CustomColorSwatches';
+import CustomColorEditor from './CustomColorEditor';
 
 interface Props {
   value: string;
@@ -169,10 +171,10 @@ const ColorPicker = (props: Props) => {
 
   const handleHexInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const raw = e.target.value.replace(/[^0-9a-fA-F]/g, '').slice(0, 6);
-      setHexInput(raw.toUpperCase());
+      const raw = sanitizeHexInput(e.target.value);
+      setHexInput(raw);
       if (isValidHex(raw)) {
-        applyHexColor('#' + raw.toUpperCase());
+        applyHexColor('#' + raw);
       }
     },
     [applyHexColor],
@@ -226,14 +228,6 @@ const ColorPicker = (props: Props) => {
     }
   }, []);
 
-  const hueBg =
-    'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)';
-  const lightnessBg = `linear-gradient(to right, #ffffff, ${hslToHex(
-    hue,
-    100,
-    50,
-  )}, #000000)`;
-
   return (
     <div
       className={classes.colorPickerWrapper}
@@ -283,133 +277,32 @@ const ColorPicker = (props: Props) => {
               visibility: popupPosition.visibility,
             }}
           >
-            <div
-              className={classes.presetGrid}
-              data-testid="color-picker-preset-grid"
-            >
-              {presetColors.map((color) => (
-                <button
-                  key={color}
-                  type="button"
-                  onClick={() => applyHexColor(color)}
-                  style={{ backgroundColor: color }}
-                  className={clsx(
-                    classes.presetSwatch,
-                    pendingColor.toUpperCase() === color.toUpperCase() &&
-                      classes.swatchSelected,
-                  )}
-                  aria-label={color}
-                />
-              ))}
-            </div>
+            <PresetGrid
+              selectedColor={pendingColor}
+              onSelectColor={applyHexColor}
+            />
 
             <div className={classes.customSection}>
-              <div className={classes.headerGroup}>
-                <div className={classes.customHeader}>
-                  <span className={classes.customLabel}>Custom Colors</span>
-                  <button
-                    type="button"
-                    className={clsx(
-                      classes.customToggleBtn,
-                      !isCustomOpen && classes.customToggleBtnPlus,
-                      isCustomOpen && classes.customToggleBtnClose,
-                    )}
-                    onClick={() => setIsCustomOpen((prev) => !prev)}
-                    aria-label={
-                      isCustomOpen
-                        ? 'Close custom colors'
-                        : 'Open custom colors'
-                    }
-                    data-testid="color-picker-btn"
-                  >
-                    {isCustomOpen ? (
-                      <Icon name="close" className={classes.toggleIcon} />
-                    ) : (
-                      <span className={classes.plusIcon}>+</span>
-                    )}
-                  </button>
-                </div>
-
-                {customColors.length > 0 && (
-                  <div className={classes.customSwatchRow}>
-                    {customColors.map((color) => (
-                      <button
-                        key={color}
-                        type="button"
-                        onClick={() => applyHexColor(color)}
-                        style={{ backgroundColor: color }}
-                        className={clsx(
-                          classes.customSwatch,
-                          pendingColor.toUpperCase() === color.toUpperCase() &&
-                            classes.swatchSelected,
-                        )}
-                        aria-label={color}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+              <CustomColorSwatches
+                customColors={customColors}
+                pendingColor={pendingColor}
+                onSelectColor={applyHexColor}
+                isCustomOpen={isCustomOpen}
+                onToggleCustomOpen={() => setIsCustomOpen((prev) => !prev)}
+              />
 
               {isCustomOpen && (
-                <>
-                  <div
-                    className={classes.slidersRow}
-                    data-testid="color-palette"
-                  >
-                    <div className={classes.slidersCol}>
-                      <ColorSlider
-                        value={hue}
-                        min={0}
-                        max={360}
-                        onValueChange={handleHueChange}
-                        background={hueBg}
-                        thumbColor={hslToHex(hue, 100, 50)}
-                        ariaLabel="Hue"
-                      />
-                      <ColorSlider
-                        value={100 - lightness}
-                        min={0}
-                        max={100}
-                        onValueChange={handleLightnessChange}
-                        background={lightnessBg}
-                        thumbColor={pendingColor}
-                        ariaLabel="Lightness"
-                      />
-                    </div>
-                    <div
-                      className={classes.colorPreviewBox}
-                      style={{ backgroundColor: pendingColor }}
-                      aria-label="Color preview"
-                    />
-                  </div>
-
-                  <div className={classes.hexRow}>
-                    <div className={classes.hexInputGroup}>
-                      <label className={classes.hexLabel} htmlFor="hex-input">
-                        HEX#
-                      </label>
-                      <input
-                        id="hex-input"
-                        type="text"
-                        value={hexInput}
-                        onChange={handleHexInputChange}
-                        className={classes.hexInput}
-                        maxLength={6}
-                        placeholder="RRGGBB"
-                        data-testid="color-picker-input"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      className={classes.deleteBtn}
-                      onClick={handleDeleteCustomColor}
-                      aria-label="Delete custom color"
-                      disabled={!selectedCustomColor}
-                    >
-                      <Icon name="delete" className={classes.deleteIcon} />
-                    </button>
-                  </div>
-                </>
+                <CustomColorEditor
+                  customColors={customColors}
+                  pendingColor={pendingColor}
+                  hue={hue}
+                  lightness={lightness}
+                  hexInput={hexInput}
+                  onHueChange={handleHueChange}
+                  onLightnessChange={handleLightnessChange}
+                  onHexInputChange={handleHexInputChange}
+                  onDeleteCustomColor={handleDeleteCustomColor}
+                />
               )}
 
               <div className={classes.actionRow}>

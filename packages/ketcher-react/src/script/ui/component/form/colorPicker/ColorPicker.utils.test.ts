@@ -6,6 +6,7 @@ import {
   isValidHex,
   normalizeHexColor,
   sanitizeCustomColors,
+  sanitizeHexInput,
 } from './ColorPicker.utils';
 
 describe('isValidHex', () => {
@@ -150,6 +151,24 @@ describe('sanitizeCustomColors', () => {
       '#123456',
       '#ABCDEF',
     ]);
+  });
+});
+
+describe('sanitizeHexInput', () => {
+  it('strips non-hex characters', () => {
+    expect(sanitizeHexInput('GG!!ZZ')).toBe('');
+  });
+
+  it('truncates input longer than 6 characters', () => {
+    expect(sanitizeHexInput('AABBCCDD')).toBe('AABBCC');
+  });
+
+  it('converts to uppercase', () => {
+    expect(sanitizeHexInput('aabbcc')).toBe('AABBCC');
+  });
+
+  it('keeps valid hex characters mixed with invalid ones', () => {
+    expect(sanitizeHexInput('FF-00-4d')).toBe('FF004D');
   });
 });
 

@@ -105,3 +105,10 @@ export function hslToHex(h: number, s: number, l: number): string {
 export function isValidHex(hex: string): boolean {
   return /^[0-9A-Fa-f]{6}$/.test(hex);
 }
+
+export function sanitizeHexInput(rawInput: string): string {
+  return rawInput
+    .replace(/[^0-9a-fA-F]/g, '')
+    .slice(0, 6)
+    .toUpperCase();
+}

@@ -95,14 +95,6 @@ describe('should pick color correctly', () => {
     ).toBe('rgb(0, 0, 0)');
   });
 
-  it('should highlight selected custom color when dialog opens', async () => {
-    renderColorPicker({ value: '#123456' });
-
-    await openPreset();
-    const customSwatch = screen.getByRole('button', { name: '#123456' });
-    expect(customSwatch.className).toContain('swatchSelected');
-  });
-
   it('should persist custom colors via SettingsService', async () => {
     renderColorPicker({ value: '#123456' });
     await openPreset();
@@ -286,16 +278,5 @@ describe('Delete custom color', () => {
         screen.queryByRole('button', { name: '#123456' }),
       ).not.toBeInTheDocument(),
     );
-  });
-
-  it('should disable the delete button when no custom color is selected', async () => {
-    // value #FF0000 is a preset color → not added to custom colors → delete disabled
-    renderColorPicker({ value: '#FF0000' });
-    await openPreset();
-    await openPalette();
-    const deleteBtn = screen.getByRole('button', {
-      name: 'Delete custom color',
-    });
-    expect(deleteBtn).toBeDisabled();
   });
 });

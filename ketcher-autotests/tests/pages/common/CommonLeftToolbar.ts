@@ -10,6 +10,7 @@ import {
 type LeftToolbarLocators = {
   handToolButton: Locator;
   areaSelectionDropdownButton: Locator;
+  areaSelectionDropdownButtonAnyState: Locator;
   areaSelectionDropdownExpandButton: Locator;
   toolSelectionDropdownPanel: Locator;
   eraseButton: Locator;
@@ -21,6 +22,7 @@ type LeftToolbarLocators = {
 export const CommonLeftToolbar = (page: Page) => {
   const bondToolbarActionTimeout = 5000;
   const bondTypeButtonVisibleTimeout = 1500;
+  const selectionToolbarActionTimeout = 5000;
   const locators: LeftToolbarLocators = {
     handToolButton: page
       .getByTestId('hand')
@@ -28,6 +30,9 @@ export const CommonLeftToolbar = (page: Page) => {
     areaSelectionDropdownButton: page
       .getByTestId('select-drop-down-button')
       .filter({ has: page.locator(':visible') }),
+    areaSelectionDropdownButtonAnyState: page
+      .getByTestId('select-drop-down-button')
+      .first(),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')
       .filter({ has: page.locator(':visible') })
@@ -64,7 +69,20 @@ export const CommonLeftToolbar = (page: Page) => {
           .first()
           .click();
       } else {
-        await locators.areaSelectionDropdownButton.click();
+        try {
+          await locators.areaSelectionDropdownButton.click({
+            timeout: bondTypeButtonVisibleTimeout,
+          });
+        } catch (error) {
+          console.warn(
+            'Selection drop-down button was not visible, trying non-filtered click...',
+            error,
+          );
+          await locators.areaSelectionDropdownButtonAnyState.click({
+            force: true,
+            timeout: selectionToolbarActionTimeout,
+          });
+        }
       }
     },
 

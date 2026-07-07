@@ -181,7 +181,9 @@ export const defaultTheme: EditorTheme = {
     family: {
       montserrat: 'Montserrat, sans-serif',
       inter:
-        "Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
+        // TODO: revert to original font-family in #10400
+        //"Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',\n" +
+        // 'Arial, sans-serif',
         'Arial, sans-serif',
       roboto:
         'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif',

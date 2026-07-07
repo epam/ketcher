@@ -1053,6 +1053,7 @@ describe('CoreEditor', () => {
       editor.updateMonomersLibrary(JSON.stringify(presetsWithMixedIdtAliases));
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Base IDT alias is required when idtAliases is defined for preset Invalid Preset IDT Alias',
         ),
@@ -1121,6 +1122,7 @@ describe('CoreEditor', () => {
       );
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Alias collision detected for preset Preset With Duplicate Internal Alias',
         ),
@@ -1203,6 +1205,7 @@ describe('CoreEditor', () => {
       );
 
       expect(errorSpy).toHaveBeenCalledWith(
+        'Editor::updateMonomersLibrary',
         expect.stringContaining(
           'Alias collision detected for preset Preset With Colliding Endpoint5 Alias',
         ),

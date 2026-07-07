@@ -16,7 +16,7 @@ export const IDT_ALIAS_SLASH_ERROR_MESSAGE =
 
 export const IDT_ALIAS_LENGTH_MAX = 10;
 
-export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of an IDT alias without slashes (/) is ${IDT_ALIAS_LENGTH_MAX}.`;
+export const IDT_ALIAS_LENGTH_ERROR_MESSAGE = `The maximum number of characters of a bare IDT alias (without leading or trailing slashes) is ${IDT_ALIAS_LENGTH_MAX}. Modification aliases enclosed in slashes are not subject to a length limit.`;
 
 export const MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH = 200;
 
@@ -89,6 +89,11 @@ export function isValidIdtAlias(alias: string): boolean {
   return !inner.includes('/');
 }
 
+/**
+ * Returns true when the alias is within the IDT length limit.
+ * Modification aliases enclosed in slashes (e.g. `/iSp18/`) are exempt from
+ * the limit because they follow IDT modification notation and can exceed 10 chars.
+ */
 export function isValidIdtAliasLength(alias: string): boolean {
   if (!alias) return true;
   if (alias.startsWith('/') || alias.endsWith('/')) return true;
@@ -104,6 +109,9 @@ export function getTooLongIdtAliasEntries(
     { alias: 'endpoint3', value: modifications?.endpoint3 },
     { alias: 'endpoint5', value: modifications?.endpoint5 },
     { alias: 'internal', value: modifications?.internal },
+    { alias: 'ep3', value: modifications?.ep3 },
+    { alias: 'ep5', value: modifications?.ep5 },
+    { alias: 'i', value: modifications?.i },
   ]
     .filter((entry): entry is { alias: string; value: string } =>
       Boolean(entry.value),

@@ -137,16 +137,8 @@ import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 
-type IdtAliasModifications = NonNullable<IKetIdtAliases['modifications']> & {
-  ep3?: string;
-  ep5?: string;
-  i?: string;
-};
-
 const getIdtAliasValues = (idtAliases?: IKetIdtAliases): string[] => {
-  const modifications = idtAliases?.modifications as
-    | IdtAliasModifications
-    | undefined;
+  const modifications = idtAliases?.modifications;
 
   return [
     idtAliases?.base,
@@ -813,8 +805,9 @@ export class CoreEditor {
         templateDefinition.idtAliases &&
         !templateDefinition.idtAliases.base
       ) {
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Base IDT alias is required when idtAliases is defined for preset ${templateDefinition.name}. The preset was not added to the library.`,
+        reportValidationError(
+          templateDefinition.name,
+          `Base IDT alias is required when idtAliases is defined for preset ${templateDefinition.name}. The preset was not added to the library.`,
         );
         return;
       }
@@ -829,8 +822,24 @@ export class CoreEditor {
         );
 
         if (hasInvalidSlash) {
-          KetcherLogger.error(
-            `Editor::updateMonomersLibrary: Load of "${templateDefinition.name}" preset has failed. ${IDT_ALIAS_SLASH_ERROR_MESSAGE} The preset was not added to the library.`,
+          reportValidationError(
+            templateDefinition.name,
+            `${IDT_ALIAS_SLASH_ERROR_MESSAGE} The preset was not added to the library.`,
+          );
+          return;
+        }
+
+        const tooLongEntries = getTooLongIdtAliasEntries(
+          templateDefinition.idtAliases,
+        );
+
+        if (tooLongEntries.length > 0) {
+          const offenders = tooLongEntries
+            .map(({ alias: field, value }) => `${field}="${value}"`)
+            .join(', ');
+          reportValidationError(
+            templateDefinition.name,
+            `${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The preset was not added to the library.`,
           );
           return;
         }
@@ -846,10 +855,9 @@ export class CoreEditor {
         const aliasDetails = formatIdtAliasDetails(
           templateDefinition.idtAliases,
         );
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Alias collision detected for preset ${
-            templateDefinition.name
-          }${
+        reportValidationError(
+          templateDefinition.name,
+          `Alias collision detected for preset ${templateDefinition.name}${
             aliasDetails ? ` (${aliasDetails})` : ''
           }. Conflicting IDT alias "${idtAliasCollision}". The preset was not added to the library.`,
         );

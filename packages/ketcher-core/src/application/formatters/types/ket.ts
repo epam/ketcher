@@ -118,6 +118,9 @@ export interface IKetIdtAliases {
     internal?: string;
     endpoint3?: string;
     endpoint5?: string;
+    ep3?: string; // SDF shorthand for endpoint3
+    ep5?: string; // SDF shorthand for endpoint5
+    i?: string; // SDF shorthand for internal
   };
 }
 

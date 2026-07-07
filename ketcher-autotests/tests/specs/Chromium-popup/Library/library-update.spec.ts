@@ -291,7 +291,7 @@ test('Case 12: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
-  expect(error).toContain('Invalid HELM alias value');
+  expect(error).toContain('The HELM alias must consist only of');
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();
@@ -321,7 +321,7 @@ test('Case 13: Update Library item with compound that contains MOLv3000 file wit
 
   const error = await updateMonomersLibrary(page, sdfFile);
   expect(error).not.toBeNull();
-  expect(error).toContain('Invalid HELM alias value');
+  expect(error).toContain('The HELM alias must consist only of');
   expect(
     await Library(page).isMonomerExist(Phosphate._Phosphate1),
   ).not.toBeTruthy();

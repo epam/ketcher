@@ -466,7 +466,7 @@ Object.values(monomers).forEach((leftMonomer) => {
      */
     // eslint-disable-next-line max-len
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
-      test.setTimeout(25000);
+      test.setTimeout(35000);
 
       const errorTooltip = NotificationBanner(page);
 

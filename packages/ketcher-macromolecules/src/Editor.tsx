@@ -240,7 +240,7 @@ function Editor({
       return;
     }
 
-    void editor.ensureDefaultMonomersLibraryLoaded();
+    editor.ensureDefaultMonomersLibraryLoaded();
   }, [editor, isMacromoleculesEditorTurnedOn]);
 
   useSetRnaPresets();

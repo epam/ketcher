@@ -1050,7 +1050,11 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(JSON.stringify(presetsWithMixedIdtAliases));
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(presetsWithMixedIdtAliases),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1117,9 +1121,11 @@ describe('CoreEditor', () => {
 
       const initialTemplatesCount =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(
-        JSON.stringify(presetsWithDuplicateIdtAliases),
-      );
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(presetsWithDuplicateIdtAliases),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',
@@ -1200,9 +1206,11 @@ describe('CoreEditor', () => {
       editor.updateMonomersLibrary(JSON.stringify(monomerWithEndpoint5Alias));
       const templatesCountAfterMonomer =
         editor.monomersLibraryParsedJson?.root.templates.length ?? 0;
-      editor.updateMonomersLibrary(
-        JSON.stringify(presetWithCollidingEndpoint5Alias),
-      );
+      expect(() =>
+        editor.updateMonomersLibrary(
+          JSON.stringify(presetWithCollidingEndpoint5Alias),
+        ),
+      ).toThrow(MonomerLibraryUpdateError);
 
       expect(errorSpy).toHaveBeenCalledWith(
         'Editor::updateMonomersLibrary',

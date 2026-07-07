@@ -21,6 +21,7 @@ import {
   useState,
   useEffect,
   useRef,
+  useTransition,
 } from 'react';
 import type { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
@@ -92,6 +93,7 @@ interface TemplateItemProps {
   tmpl: Template;
   index: number;
   isSelected: boolean;
+  shouldRenderPreview: boolean;
   renderOptions?: any;
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
@@ -103,6 +105,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     tmpl,
     index,
     isSelected,
+    shouldRenderPreview,
     renderOptions,
     onSelect,
     onDelete,
@@ -117,18 +120,27 @@ const TemplateItem: FC<TemplateItemProps> = memo(
         title={greekify(getTemplateTitle(tmpl, index))}
         onClick={() => onSelect(tmpl)}
       >
-        <MemoizedStructRender
-          testId={tmpl.struct.name}
-          struct={tmpl.struct}
-          className={classes.struct}
-          fullsize={true}
-          options={{
-            ...renderOptions,
-            autoScaleMargin: 10,
-            cachePrefix: 'templates',
-            downScale: true,
-          }}
-        />
+        <div className={classes.structSlot}>
+          {!shouldRenderPreview && (
+            <div className={classes.structPlaceholder} />
+          )}
+          {shouldRenderPreview && (
+            <div className={`${classes.structFade} ${classes.structVisible}`}>
+              <MemoizedStructRender
+                testId={tmpl.struct.name}
+                struct={tmpl.struct}
+                className={classes.struct}
+                fullsize={true}
+                options={{
+                  ...renderOptions,
+                  autoScaleMargin: 10,
+                  cachePrefix: 'templates',
+                  downScale: true,
+                }}
+              />
+            </div>
+          )}
+        </div>
         <div
           className={`${classes.structTitle} ${
             isSelected ? classes.selectedTitle : ''
@@ -169,6 +181,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
   (prevProps, nextProps) => {
     return (
       prevProps.isSelected === nextProps.isSelected &&
+      prevProps.shouldRenderPreview === nextProps.shouldRenderPreview &&
       prevProps.tmpl === nextProps.tmpl &&
       prevProps.index === nextProps.index &&
       prevProps.renderOptions === nextProps.renderOptions &&
@@ -190,12 +203,14 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     renderOptions,
   } = props;
 
-  // Progressive rendering: only render first batch initially,
-  // then render remaining items in idle time to avoid blocking main thread
-  const BATCH_SIZE = 8; // Render 8 items per frame (~65-75ms for first batch, then rest progressively)
-  const [renderedCount, setRenderedCount] = useState(
-    Math.min(BATCH_SIZE, templates.length),
+  // Render all tiles immediately to keep accordion height stable,
+  // then progressively mount heavy SVG previews with low-priority updates.
+  const INITIAL_PREVIEW_COUNT = 4;
+  const PREVIEW_BATCH_SIZE = 4;
+  const [previewRenderedCount, setPreviewRenderedCount] = useState(
+    Math.min(INITIAL_PREVIEW_COUNT, templates.length),
   );
+  const [, startTransition] = useTransition();
   const [containerSize, setContainerSize] = useState<{
     width: number;
     height: number;
@@ -225,36 +240,41 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    if (renderedCount >= templates.length) {
+    setPreviewRenderedCount(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+  }, [templates]);
+
+  useEffect(() => {
+    if (previewRenderedCount >= templates.length) {
       return;
     }
 
-    // Use requestIdleCallback if available for non-blocking rendering
-    // Otherwise fall back to setTimeout
-    if ('requestIdleCallback' in window) {
-      const callback = window.requestIdleCallback?.(
+    // Use idle/frame scheduling for progressive preview hydration.
+    const requestIdle = window.requestIdleCallback;
+    if (typeof requestIdle === 'function') {
+      const callback = requestIdle(
         () => {
-          setRenderedCount((prev) =>
-            Math.min(prev + BATCH_SIZE, templates.length),
-          );
+          startTransition(() => {
+            setPreviewRenderedCount((prev) =>
+              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+            );
+          });
         },
-        { timeout: 500 }, // Force render after 500ms even if main thread is busy
+        { timeout: 500 },
       );
       return () => {
         if (callback) window.cancelIdleCallback?.(callback);
       };
     } else {
-      // Fallback for browsers without requestIdleCallback
-      const timeoutId = setTimeout(() => {
-        setRenderedCount((prev) =>
-          Math.min(prev + BATCH_SIZE, templates.length),
-        );
-      }, 50);
-      return () => clearTimeout(timeoutId);
+      const frameId = window.requestAnimationFrame(() => {
+        startTransition(() => {
+          setPreviewRenderedCount((prev) =>
+            Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+          );
+        });
+      });
+      return () => window.cancelAnimationFrame(frameId);
     }
-  }, [renderedCount, templates.length]);
-
-  const visibleTemplates = templates.slice(0, renderedCount);
+  }, [previewRenderedCount, templates.length, startTransition]);
 
   // Pass container size to StructRender to avoid getBoundingClientRect() calls
   // This eliminates forced reflows during rendering batches
@@ -271,12 +291,13 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       data-testid="templates-modal"
       ref={containerRef}
     >
-      {visibleTemplates.map((tmpl, i) => (
+      {templates.map((tmpl, i) => (
         <TemplateItem
           key={`${tmpl.struct.name}_${i}`}
           tmpl={tmpl}
           index={i}
           isSelected={selected?.struct === tmpl.struct}
+          shouldRenderPreview={i < previewRenderedCount}
           renderOptions={optimizedRenderOptions}
           onSelect={onSelect}
           onDelete={onDelete}

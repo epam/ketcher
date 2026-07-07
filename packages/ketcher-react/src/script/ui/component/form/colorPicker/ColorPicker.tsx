@@ -45,12 +45,14 @@ interface Props {
   onChange: (value: string) => void;
 }
 
+const DEFAULT_COLOR = '#FF3232';
+
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
   const { settings, updateSettings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomOpen, setIsCustomOpen] = useState(false);
-  const [pendingColor, setPendingColor] = useState(value || '#FF3232');
+  const [pendingColor, setPendingColor] = useState(value || DEFAULT_COLOR);
   const [customColors, setCustomColors] = useState<string[]>([]);
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
@@ -76,7 +78,7 @@ const ColorPicker = (props: Props) => {
   // Sync internal state and compute popup position when popup opens
   useEffect(() => {
     if (isOpen) {
-      const initialColor = value || '#FF3232';
+      const initialColor = value || DEFAULT_COLOR;
       applyHexColor(initialColor);
       setIsCustomOpen(false);
 

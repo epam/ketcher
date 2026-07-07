@@ -14,14 +14,9 @@ import {
 type Props = {
   transform: ZoomTransform;
   layoutMode: LayoutMode;
-  lineLengthValue: number;
 };
 
-const RulerScale = ({
-  transform,
-  layoutMode,
-  lineLengthValue: _lineLengthValue,
-}: Props) => {
+const RulerScale = ({ transform, layoutMode }: Props) => {
   const ref = useRef<SVGSVGElement>(null);
   const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 

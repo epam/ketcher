@@ -15,7 +15,7 @@ const atomProps = atomSchema.properties;
 
 type ChangeFunction = (value: string) => void;
 
-const AtomElement = ({ formState }: BaseProps) => {
+const AtomElement = ({ formState }: Pick<BaseProps, 'formState'>) => {
   const { atomType, atomList, notList, pseudo, label } = formState.result;
   const dispatch = useDispatch();
 

@@ -62,7 +62,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       isOpen={isModalOpen}
       title="Delete RNA Preset"
       onClose={onCloseCallback}
-      data-testid="delete-preset-modal"
+      testId="delete-preset-modal"
     >
       <Modal.Content>
         <DeleteTextWrapper data-testid="delete-preset-popup-content">

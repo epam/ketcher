@@ -232,7 +232,6 @@ interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   labelPos?: string | boolean;
   title?: string;
   tooltip?: string;
-  error?: string;
   children?: React.ReactNode;
 }
 
@@ -297,7 +296,6 @@ function Label({
   labelPos,
   title,
   tooltip,
-  error: _error,
   children,
   ...props
 }: Readonly<LabelProps>) {
@@ -376,7 +374,6 @@ function Field(props: Readonly<FieldProps>) {
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
-      error={dataError}
       title={rest.title ?? desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
@@ -433,7 +430,6 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   return (
     <Label
       className={className}
-      error={dataError}
       title={title ?? desc.title}
       labelPos={labelPos}
       tooltip={tooltip}

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect, useState } from 'react';
 
 import ColorPicker from './ColorPicker';
 import { useSettings } from 'src/hooks';
@@ -14,7 +15,10 @@ const defaultProps = {
   onChange: jest.fn(),
 };
 
+// mockSettings is the "server" state shared by every ColorPicker instance,
+// mirroring the real settingsService that all useSettings() calls subscribe to.
 let mockSettings;
+let subscribers;
 let mockUpdateSettings;
 
 const renderColorPicker = (props = {}) => {
@@ -24,10 +28,22 @@ const renderColorPicker = (props = {}) => {
 
 beforeEach(() => {
   mockSettings = { colorPickerCustomColors: [] };
-  mockUpdateSettings = jest.fn().mockResolvedValue({});
-  useSettings.mockReturnValue({
-    settings: mockSettings,
-    updateSettings: mockUpdateSettings,
+  subscribers = new Set();
+  mockUpdateSettings = jest.fn((partial) => {
+    mockSettings = { ...mockSettings, ...partial };
+    subscribers.forEach((setSettings) => setSettings(mockSettings));
+    return Promise.resolve({});
+  });
+
+  useSettings.mockImplementation(() => {
+    const [settings, setSettings] = useState(mockSettings);
+
+    useEffect(() => {
+      subscribers.add(setSettings);
+      return () => subscribers.delete(setSettings);
+    }, [setSettings]);
+
+    return { settings, updateSettings: mockUpdateSettings };
   });
 });
 
@@ -150,11 +166,8 @@ describe('should pick color correctly', () => {
       ).not.toBeInTheDocument(),
     );
 
-    mockSettings.colorPickerCustomColors = ['#ABCDEF'];
-    useSettings.mockReturnValue({
-      settings: mockSettings,
-      updateSettings: mockUpdateSettings,
-    });
+    mockSettings = { colorPickerCustomColors: ['#ABCDEF'] };
+    subscribers.forEach((setSettings) => setSettings(mockSettings));
 
     await userEvent.click(screen.getByTestId('picker-b-color-picker-preview'));
     expect(screen.getByRole('button', { name: '#ABCDEF' })).toBeInTheDocument();

@@ -46,6 +46,7 @@ interface Props {
 }
 
 const DEFAULT_COLOR = '#FF3232';
+const DEFAULT_CUSTOM_COLORS = [];
 
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
@@ -53,7 +54,10 @@ const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [pendingColor, setPendingColor] = useState(value || DEFAULT_COLOR);
-  const [customColors, setCustomColors] = useState<string[]>([]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const customColors = [
+    ...(settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS),
+  ];
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');
@@ -86,7 +90,6 @@ const ColorPicker = (props: Props) => {
         [...(settings?.colorPickerCustomColors ?? [])],
         initialColor,
       );
-      setCustomColors(newColors);
       updateSettings({ colorPickerCustomColors: newColors });
 
       // Position is calculated by useLayoutEffect after the popup renders
@@ -194,7 +197,6 @@ const ColorPicker = (props: Props) => {
     const newColors = customColors.filter(
       (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
     );
-    setCustomColors(newColors);
     updateSettings({ colorPickerCustomColors: newColors });
   }, [selectedCustomColor, customColors, updateSettings]);
 
@@ -202,7 +204,6 @@ const ColorPicker = (props: Props) => {
     onChange(pendingColor);
     if (isCustomOpen) {
       const newColors = addCustomColor(customColors, pendingColor);
-      setCustomColors(newColors);
       updateSettings({ colorPickerCustomColors: newColors });
     }
     setIsOpen(false);

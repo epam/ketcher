@@ -78,8 +78,17 @@ export const CommonLeftToolbar = (page: Page) => {
             'Selection drop-down button was not visible, trying non-filtered click...',
             error,
           );
-          await locators.areaSelectionDropdownButtonAnyState.click({
-            force: true,
+          const isSelectionToolAlreadyActive =
+            (await locators.areaSelectionDropdownButtonAnyState.getAttribute(
+              'data-is-selected',
+            )) === 'true';
+
+          if (isSelectionToolAlreadyActive) {
+            return;
+          }
+
+          await this.handTool();
+          await locators.areaSelectionDropdownButton.click({
             timeout: selectionToolbarActionTimeout,
           });
         }

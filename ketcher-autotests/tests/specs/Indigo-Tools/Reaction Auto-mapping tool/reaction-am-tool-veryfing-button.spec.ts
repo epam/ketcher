@@ -40,11 +40,11 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-2865
      * Description: Verifying of the button
      */
-    const reactionMappingToolsButton = page.getByTestId(
+    const leftToolbar = LeftToolbar(page);
+    await leftToolbar.selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
     );
-    await reactionMappingToolsButton.click();
-    expect(reactionMappingToolsButton).toHaveAttribute(
+    await expect(leftToolbar.reactionMappingToolsButton).toHaveAttribute(
       'title',
       'Reaction Mapping Tool',
     );

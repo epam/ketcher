@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import {
   ClickTarget,
   ContextMenuOption,
@@ -37,7 +37,8 @@ export const ContextMenu = (page: Page, element: ClickTarget) => {
       for (const optionId of options) {
         const option = getOption(optionId).first();
         await option.waitFor({ state: 'visible' });
-        await option.click();
+        await expect(option).toBeEnabled({ timeout: 5000 });
+        await option.click({ timeout: 5000 });
       }
       try {
         // Wait for the context menu to close after clicking the last option

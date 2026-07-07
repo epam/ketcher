@@ -481,23 +481,9 @@ export class CoreEditor {
       monomersLibrary: newMonomersLibraryChunk,
     } = parseMonomersLibrary(monomersDataRaw);
     const skippedItems: SkippedMonomerItem[] = [];
-    let shouldThrowMonomerLibraryUpdateError = false;
-    const reportValidationError = (
-      name: string,
-      reason: string,
-      shouldThrow = true,
-    ) => {
-      const consoleMessage = `[Monomer Library] Failed to load monomer "${name}": ${reason}`;
-      globalThis.console.error(consoleMessage);
-
-      if (reason.startsWith('Editor::updateMonomersLibrary')) {
-        KetcherLogger.error(reason);
-      } else {
-        KetcherLogger.error('Editor::updateMonomersLibrary', reason);
-      }
-
+    const reportValidationError = (name: string, reason: string) => {
+      KetcherLogger.error('Editor::updateMonomersLibrary', reason);
       skippedItems.push({ name, reason });
-      shouldThrowMonomerLibraryUpdateError ||= shouldThrow;
     };
     let didCommitAnyItem = false;
 
@@ -515,10 +501,13 @@ export class CoreEditor {
         firstMonomer.props.hidden === secondMonomer.props.hidden
       );
     };
-    const getIdtModificationAliases = (monomer?: MonomerItemType) =>
-      Object.values(monomer?.props?.idtAliases?.modifications ?? {}).filter(
-        Boolean,
-      ) as string[];
+    const getIdtModificationAliases = (monomer?: MonomerItemType): string[] => {
+      const mods = monomer?.props?.idtAliases?.modifications;
+      if (!mods) return [];
+      return [mods.internal, mods.endpoint3, mods.endpoint5].filter(
+        (v): v is string => typeof v === 'string' && v.length > 0,
+      );
+    };
 
     const formatAliasDetails = (monomer: MonomerItemType) =>
       [
@@ -544,6 +533,27 @@ export class CoreEditor {
         .filter((value): value is string => Boolean(value))
         .join(', ');
 
+    const getCollisionErrorMessage = (
+      incoming: MonomerItemType,
+      conflicting: MonomerItemType,
+      aliasDetails: string,
+      bilnUniquenessScope: boolean,
+    ): string => {
+      const detail = aliasDetails ? ` (${aliasDetails})` : '';
+      const isHelmCollision =
+        Boolean(incoming.props?.aliasHELM) &&
+        conflicting.props?.aliasHELM === incoming.props?.aliasHELM;
+      const isBilnCollision =
+        bilnUniquenessScope &&
+        Boolean(incoming.props?.aliasBILN) &&
+        hasBilnAliasUniquenessScope(conflicting.props?.MonomerClass) &&
+        conflicting.props?.aliasBILN === incoming.props?.aliasBILN;
+      if (isHelmCollision || isBilnCollision) {
+        return `Alias collision detected${detail}.`;
+      }
+      return `Duplicate IDT aliases detected${detail}. IDT aliases for 5', 3', internal and base positions must be unique.`;
+    };
+
     // handle monomer templates
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const disallowedModificationTypes = getDisallowedModificationTypes(
@@ -568,7 +578,7 @@ export class CoreEditor {
       ) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Invalid HELM alias value. ${HELM_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
+          `${HELM_ALIAS_FORMAT_ERROR_MESSAGE}`,
         );
         return;
       }
@@ -578,8 +588,7 @@ export class CoreEditor {
       ) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed, monomer definition contains invalid BILN alias value. ${BILN_ALIAS_FORMAT_ERROR_MESSAGE} The monomer was not added to the library.`,
-          false,
+          `${BILN_ALIAS_FORMAT_ERROR_MESSAGE}`,
         );
         return;
       }
@@ -590,18 +599,19 @@ export class CoreEditor {
       ) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Invalid HELM alias value. ${HELM_ALIAS_LENGTH_ERROR_MESSAGE} The monomer was not added to the library.`,
+          `${HELM_ALIAS_LENGTH_ERROR_MESSAGE}`,
         );
         return;
       }
+
+      const newMonomerModificationAliases =
+        getIdtModificationAliases(newMonomer);
 
       const conflictingMonomer = this._monomersLibrary.find((monomer) => {
         if (areSameMonomers(monomer, newMonomer)) {
           return false;
         }
 
-        const newMonomerModificationAliases =
-          getIdtModificationAliases(newMonomer);
         const existingMonomerModificationAliases =
           getIdtModificationAliases(monomer);
 
@@ -622,25 +632,14 @@ export class CoreEditor {
       });
 
       if (conflictingMonomer) {
-        const aliasDetails = formatAliasDetails(newMonomer);
-        const isHelmCollision =
-          Boolean(newMonomer.props?.aliasHELM) &&
-          conflictingMonomer.props?.aliasHELM === newMonomer.props?.aliasHELM;
-        const isBilnCollision =
-          newMonomerHasBilnAliasUniquenessScope &&
-          Boolean(newMonomer.props?.aliasBILN) &&
-          hasBilnAliasUniquenessScope(conflictingMonomer.props?.MonomerClass) &&
-          conflictingMonomer.props?.aliasBILN === newMonomer.props?.aliasBILN;
-
         reportValidationError(
           newMonomer.props.MonomerName,
-          isHelmCollision || isBilnCollision
-            ? `Alias collision detected${
-                aliasDetails ? ` (${aliasDetails})` : ''
-              }. The monomer was not added to the library.`
-            : `duplicate IDT aliases detected${
-                aliasDetails ? ` (${aliasDetails})` : ''
-              }. IDT aliases for 5', 3', internal and base positions must be unique. The monomer was not added to the library.`,
+          getCollisionErrorMessage(
+            newMonomer,
+            conflictingMonomer,
+            formatAliasDetails(newMonomer),
+            newMonomerHasBilnAliasUniquenessScope,
+          ),
         );
         return;
       }
@@ -649,7 +648,7 @@ export class CoreEditor {
       if (newMonomer.props?.idtAliases && !newMonomer.props.idtAliases.base) {
         reportValidationError(
           newMonomer.props.MonomerName,
-          `Base IDT alias is required when idtAliases is defined. The monomer was not added to the library.`,
+          `Base IDT alias is required when idtAliases is defined.`,
         );
         return;
       }
@@ -686,8 +685,7 @@ export class CoreEditor {
             .join(', ');
           reportValidationError(
             newMonomer.props.MonomerName,
-            `Editor::updateMonomersLibrary: Load of "${newMonomer.props.MonomerName}" monomer has failed. ${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}. The monomer was not added to the library.`,
-            false,
+            `${IDT_ALIAS_LENGTH_ERROR_MESSAGE} Offending field(s): ${offenders}.`,
           );
           return;
         }
@@ -799,10 +797,7 @@ export class CoreEditor {
 
     this.events.updateMonomersLibrary.dispatch();
 
-    if (
-      skippedItems.length > 0 &&
-      (didCommitAnyItem || shouldThrowMonomerLibraryUpdateError)
-    ) {
+    if (skippedItems.length > 0) {
       throw new MonomerLibraryUpdateError(skippedItems, didCommitAnyItem);
     }
   }

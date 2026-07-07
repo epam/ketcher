@@ -41,7 +41,7 @@ type ModalContentProps = Omit<Props, 'modal'> & {
 function ModalContent({ modal, ...rest }: ModalContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: containerRef,
+    ref: containerRef as React.RefObject<HTMLDivElement>,
   });
 
   const Component = modals[modal.name];

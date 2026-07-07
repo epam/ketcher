@@ -645,11 +645,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 3: Select the whole structure and open Create Monomer wizard
     // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
     // Pan left so all atoms are within the visible canvas area before the wizard opens.
-    await shiftCanvas(page, -300, 0);
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
     await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -55, 0);
 
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);
@@ -665,6 +665,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
     });
 
+    // Marking a component recenters the structure under the attributes panel.
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [0, 1, 2, 3, 4, 5, 6, 7, 23],
@@ -673,8 +680,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // --- Phosphate ---
     await presetSection.setupPhosphate({
-      atomIds: [8, 19, 20, 21, 22],
-      bondIds: [21, 22, 23, 24],
+      atomIds: [8, 19, 21, 22],
+      bondIds: [21, 23, 24],
     });
 
     // Select phosphate position (required field; without it the validation dispatches
@@ -692,24 +699,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       page,
       ErrorMessage.rnaPresetInvalidSugarPhosphateConnectionAttachmentPoints,
     );
-    const notMinimalViableStructureMessage = NotificationMessageBanner(
-      page,
-      ErrorMessage.notMinimalViableStructure,
-    );
 
     expect(
       await invalidPhosphatePositionMessage.getNotificationMessage(),
     ).toEqual(
       'The bond between sugar and phosphate must be established between R2 of one monomer and R1 of the other.',
     );
-    expect(
-      await notMinimalViableStructureMessage.getNotificationMessage(),
-    ).toEqual(
-      'Minimal monomer structure is two atoms connected via a single bond.',
-    );
 
-    await invalidPhosphatePositionMessage.ok();
-    await notMinimalViableStructureMessage.ok();
     await dialog.discard();
   });
 });

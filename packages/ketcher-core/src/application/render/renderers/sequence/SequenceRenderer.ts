@@ -456,7 +456,7 @@ export class SequenceRenderer {
     });
   }
 
-  private static showBondRenderer(bondRenderer: SequenceBondRenderer) {
+  public static showBondRenderer(bondRenderer: SequenceBondRenderer) {
     bondRenderer.show();
     this.sequenceBondRenderers.add(bondRenderer);
   }
@@ -965,12 +965,6 @@ export class SequenceRenderer {
 
   public static get currentEdittingNode() {
     return SequenceRenderer.getNodeByPointer(this.caretPosition);
-  }
-
-  public static get previousFromCurrentEdittingMonomer() {
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.previousCaretPosition,
-    );
   }
 
   public static get currentChain() {

@@ -295,8 +295,6 @@ test.describe('Exiting the wizard - presets in the monomer creation wizard: ', (
     // No success message should appear
     await expect(NotificationBanner(page).message).not.toBeVisible();
 
-    await errorNotification.ok();
-
     // Fix the validation error
     await presetSection.openTab(NucleotidePresetTab.Preset);
     await presetSection.setName('ValidatedPreset');

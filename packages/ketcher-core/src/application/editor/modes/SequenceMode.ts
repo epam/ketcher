@@ -1018,7 +1018,8 @@ export class SequenceMode extends BaseMode {
         !nodeInSameChainBeforeSelection &&
         nodeAfterSelection &&
         selectionStartNode &&
-        !(nodeAfterSelection instanceof EmptySequenceNode)
+        !(nodeAfterSelection instanceof EmptySequenceNode) &&
+        nodeAfterSelection === nodeInSameChainAfterSelection
       ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.moveMonomer(
@@ -1517,6 +1518,25 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
+          const selectionsBeforeDeletion = SequenceRenderer.selections;
+          const isWholeChainSelected =
+            selectionsBeforeDeletion.length > 0 &&
+            selectionsBeforeDeletion.every((selectionRange) => {
+              const firstNode = selectionRange[0]?.node;
+              const lastNode = selectionRange[selectionRange.length - 1]?.node;
+              const prevInSameChain = firstNode
+                ? SequenceRenderer.getPreviousNodeInSameChain(firstNode)
+                : null;
+              const nextInSameChain = lastNode
+                ? SequenceRenderer.getNextNodeInSameChain(lastNode)
+                : null;
+              return (
+                !prevInSameChain &&
+                (!nextInSameChain ||
+                  nextInSameChain.senseNode instanceof EmptySequenceNode)
+              );
+            });
+
           if (!this.deleteSelection()) {
             return;
           }
@@ -1532,7 +1552,14 @@ export class SequenceMode extends BaseMode {
                 currentTwoStrandedNode,
               )) ??
             undefined;
-          let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
+          // If a whole chain was selected and deleted, the caret may have landed on
+          // the start of the NEXT chain. Do not connect the new monomer to that chain;
+          // instead insert it as a new standalone chain.
+          const insertAsStandaloneChain =
+            isWholeChainSelected && !previousTwoStrandedNodeInSameChain;
+          let senseNodeToConnect = insertAsStandaloneChain
+            ? null
+            : currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
           const isRnaEnteringMode =
@@ -1548,7 +1575,7 @@ export class SequenceMode extends BaseMode {
                     isDnaEnteringMode,
                   )
                 : enteredSymbol,
-              currentTwoStrandedNode?.senseNode,
+              senseNodeToConnect,
               previousTwoStrandedNodeInSameChain?.senseNode,
             );
 
@@ -1561,19 +1588,34 @@ export class SequenceMode extends BaseMode {
             senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
+          const prevSense = previousTwoStrandedNodeInSameChain?.senseNode;
+          const prevAntisense =
+            previousTwoStrandedNodeInSameChain?.antisenseNode;
+          const currSense = currentTwoStrandedNode?.senseNode;
+          const currAntisense = currentTwoStrandedNode?.antisenseNode;
+
+          const prevHasRealSenseAndAntisense =
+            !!prevSense &&
+            !(prevSense instanceof EmptySequenceNode) &&
+            !!prevAntisense;
+
+          const currHasAntisenseWithNonEmptyContent =
+            !!currAntisense &&
+            (!(currSense instanceof EmptySequenceNode) ||
+              !(currAntisense instanceof EmptySequenceNode));
+
+          const shouldEditAntisenseInSyncMode =
+            prevHasRealSenseAndAntisense || currHasAntisenseWithNonEmptyContent;
+
+          const shouldEditAntisenseInAsyncMode =
+            !(prevAntisense instanceof EmptySequenceNode) ||
+            !(currAntisense instanceof EmptySequenceNode);
+
           if (
             this.needToEditAntisense &&
             (this.isSyncEditMode
-              ? previousTwoStrandedNodeInSameChain?.antisenseNode ??
-                currentTwoStrandedNode?.antisenseNode
-              : !(
-                  previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
-                  EmptySequenceNode
-                ) ||
-                !(
-                  currentTwoStrandedNode?.antisenseNode instanceof
-                  EmptySequenceNode
-                ))
+              ? shouldEditAntisenseInSyncMode
+              : shouldEditAntisenseInAsyncMode)
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
@@ -1851,7 +1893,12 @@ export class SequenceMode extends BaseMode {
   }
 
   private preserveSideChainConnections(selectedNode: SequenceNode) {
-    if (selectedNode.monomer.sideConnections.length === 0) {
+    const allMonomers = selectedNode.monomers;
+    const hasAnySideConnection = allMonomers.some(
+      (monomer) => monomer.sideConnections.length > 0,
+    );
+
+    if (!hasAnySideConnection) {
       return null;
     }
 
@@ -1861,8 +1908,8 @@ export class SequenceMode extends BaseMode {
       secondMonomerAttachmentPointName: AttachmentPointName;
     }> = [];
 
-    Object.entries(selectedNode.monomer.attachmentPointsToBonds).forEach(
-      ([key, bond]) => {
+    allMonomers.forEach((monomer) => {
+      Object.entries(monomer.attachmentPointsToBonds).forEach(([key, bond]) => {
         if (
           !bond ||
           bond instanceof MonomerToAtomBond ||
@@ -1871,13 +1918,13 @@ export class SequenceMode extends BaseMode {
           return;
         }
 
-        const secondMonomer = bond.getAnotherMonomer(selectedNode.monomer);
+        const secondMonomer = bond.getAnotherMonomer(monomer);
         if (!secondMonomer?.attachmentPointsToBonds) {
           return;
         }
 
         const secondMonomerBondData = Object.entries(
-          secondMonomer?.attachmentPointsToBonds,
+          secondMonomer.attachmentPointsToBonds,
         ).find(([, value]) => value === bond);
 
         if (!secondMonomerBondData) {
@@ -1892,8 +1939,8 @@ export class SequenceMode extends BaseMode {
           secondMonomerAttachmentPointName:
             secondMonomerAttachmentPointName as AttachmentPointName,
         });
-      },
-    );
+      });
+    });
 
     return sideConnectionsData;
   }
@@ -1957,7 +2004,6 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
-    // TODO: Check for multiple side chain connections in Linkers
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         firstMonomerAttachmentPointName,
@@ -2759,8 +2805,7 @@ export class SequenceMode extends BaseMode {
     if (this.isEditMode) {
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
       const currentNode = currentTwoStrandedNode?.senseNode;
-      const previousTwoStrandedNode =
-        SequenceRenderer.previousFromCurrentEdittingMonomer;
+      const previousTwoStrandedNode = SequenceRenderer.previousNode;
       const previousNode = previousTwoStrandedNode?.senseNode;
       const twoStrandedNodeBeforePreviousNode = previousNode
         ? SequenceRenderer.getPreviousNodeInSameChain(previousTwoStrandedNode)
@@ -2801,12 +2846,19 @@ export class SequenceMode extends BaseMode {
 
     if (previousNode && !(previousNode instanceof EmptySequenceNode)) {
       return previousNode.lastMonomerInNode.position.add(offsetFromPrevious);
-    } else if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
-      return currentNode.firstMonomerInNode.position.add(offsetFromPrevious);
     } else if (nodeBeforePreviousNode) {
+      // When previousNode is an EmptySequenceNode (end-of-chain cursor), use the
+      // last real node of that chain rather than the first node of the next chain.
+      // This ensures a standalone inserted monomer is positioned between the two
+      // existing chains instead of after the next chain.
       return nodeBeforePreviousNode.lastMonomerInNode.position.add(
         offsetFromPrevious,
       );
+    } else if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
+      // When there is no previous node (caret at position 0, replacing the first chain),
+      // place the new standalone monomer above-left of the current first chain so the
+      // sort key in ChainsCollection.rearrange() (Y-dominant) puts it earlier.
+      return currentNode.firstMonomerInNode.position.sub(offsetFromPrevious);
     } else {
       return new Vec2(0, 0);
     }

@@ -614,26 +614,24 @@ function findCloseMerge(
           mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result);
       });
     } else {
-      result[map] = Array.from(pos[map].keys()).reduce(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (res: Map<any, any>, srcId) => {
-          const skip = { map, id: srcId };
-          const item = findMaps[map](
-            restruct,
-            pos[map].get(srcId),
-            skip,
-            null,
-            options,
-          );
+      result[map] = Array.from<number>(pos[map].keys()).reduce<
+        Map<number, number>
+      >((res, srcId) => {
+        const skip = { map, id: srcId };
+        const item = findMaps[map](
+          restruct,
+          pos[map].get(srcId),
+          skip,
+          null,
+          options,
+        );
 
-          if (item && !selected[map].includes(item.id)) {
-            res.set(srcId, item.id);
-          }
+        if (item && !selected[map].includes(item.id)) {
+          res.set(srcId, item.id);
+        }
 
-          return res;
-        },
-        new Map(),
-      );
+        return res;
+      }, new Map());
     }
   });
 

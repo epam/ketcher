@@ -16,15 +16,13 @@
 
 import { syncSettingsFromCore } from '../index';
 import { getDefaultOptions } from '../../../data/schema/options-schema';
-import { getDefaultSettings, normalizeSettingsForForm } from 'ketcher-core';
+import { getDefaultSettings } from 'ketcher-core';
 
 describe('syncSettingsFromCore', () => {
   it('should keep React initial defaults equal to normalized Core defaults', () => {
-    expect(getDefaultOptions()).toEqual(
-      normalizeSettingsForForm(getDefaultSettings(), {
-        removeCoreOnlyFields: true,
-      }),
-    );
+    const action = syncSettingsFromCore(getDefaultSettings());
+
+    expect(action.data).toEqual(getDefaultOptions());
   });
 
   it('should create SYNC_SETTINGS_FROM_CORE action', () => {

@@ -206,11 +206,9 @@ export class KetSerializer implements Serializer<Struct> {
           break;
         }
         case 'rgroup': {
-          result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` });
-          result[`rg${item.data!.rgnumber}`] = rgroupToKet(
-            item.fragment!,
-            item.data,
-          );
+          const { rgnumber } = item.data as { rgnumber: number };
+          result.root.nodes.push({ $ref: `rg${rgnumber}` });
+          result[`rg${rgnumber}`] = rgroupToKet(item.fragment!, item.data);
           break;
         }
         case 'plus': {
@@ -573,10 +571,20 @@ export class KetSerializer implements Serializer<Struct> {
         }
         case KetConnectionType.HYDROGEN: {
           const firstMonomer = drawingEntitiesManager.monomers.get(
-            Number(monomerIdsMap[connection.endpoint1.monomerId]),
+            Number(
+              monomerIdsMap[
+                connection.endpoint1.monomerId ??
+                  connection.endpoint1.moleculeId
+              ],
+            ),
           );
           const secondMonomer = drawingEntitiesManager.monomers.get(
-            Number(monomerIdsMap[connection.endpoint2.monomerId]),
+            Number(
+              monomerIdsMap[
+                connection.endpoint2.monomerId ??
+                  connection.endpoint2.moleculeId
+              ],
+            ),
           );
 
           if (!firstMonomer || !secondMonomer) {

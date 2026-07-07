@@ -204,12 +204,9 @@ const addToCanvas = ({
   const editorHistory = EditorHistory.getInstance(editor);
 
   if (isFlexMode) {
-    if (editor.drawingEntitiesManager.hasAntisenseChains) {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.applySnakeLayout(true, true, true),
-      );
-      modelChanges.setUndoOperationsByPriority();
-    }
+    modelChanges.merge(
+      editor.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
   }
 
   editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();

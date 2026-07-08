@@ -16,6 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
+import { resolveAromaticAtomValence } from './atomValence';
 import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
@@ -1153,31 +1154,27 @@ export class Struct {
     atom.badConn = false;
 
     if (isAromatic) {
-      if (atom.label === 'C' && charge === 0) {
-        if (conn === 3) {
-          atom.implicitH = -radicalElectrons(atom.radical);
-          return;
-        }
-        if (conn === 2) {
-          atom.implicitH = 1 - radicalElectrons(atom.radical);
-          return;
-        }
-        if (conn >= 4) {
-          atom.implicitH = 0;
-          atom.badConn = true;
-          return;
-        }
-      } else if (
-        (atom.label === 'O' && charge === 0) ||
-        (atom.label === 'N' && charge === 0 && conn === 3) ||
-        (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3) ||
-        !atom.implicitH
-      ) {
-        atom.implicitH = 0;
+      const aromaticResolution = resolveAromaticAtomValence(
+        {
+          label: atom.label,
+          charge,
+          connectionCount: conn,
+          radicalCount: radicalElectrons(atom.radical),
+          absCharge: Math.abs(charge),
+        },
+        {
+          currentImplicitHydrogenCount: atom.implicitH,
+          hasImplicitHydrogenFlag: atom.hasImplicitH,
+        },
+      );
+
+      if (aromaticResolution.kind === 'calculated') {
+        atom.implicitH = aromaticResolution.hydrogenCount;
+        atom.badConn = aromaticResolution.badValence;
         return;
-      } else if (!atom.hasImplicitH) {
-        correctConn++;
+      }
+      if (aromaticResolution.kind === 'correctedConnectivity') {
+        correctConn = aromaticResolution.connectionCount;
       }
     }
 

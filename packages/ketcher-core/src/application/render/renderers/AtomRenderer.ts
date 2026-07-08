@@ -310,6 +310,19 @@ export class AtomRenderer extends BaseRenderer {
     );
   }
 
+  private get shouldDisplayBadValenceWarning() {
+    if (!this.atom.hasBadValence) {
+      return false;
+    }
+
+    const editor = provideEditorInstance();
+    const settings = ketcherProvider
+      .getKetcher(editor.ketcherId)
+      .settingsService?.getSettings();
+
+    return settings?.showValenceWarnings ?? true;
+  }
+
   public get isLabelVisible() {
     const editor = provideEditorInstance();
     const viewModel = editor.viewModel;
@@ -323,6 +336,7 @@ export class AtomRenderer extends BaseRenderer {
     const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
+    const hasBadValenceWarning = this.shouldDisplayBadValenceWarning;
 
     if (
       isCarbon &&
@@ -331,7 +345,8 @@ export class AtomRenderer extends BaseRenderer {
       !hasRadical &&
       !hasAlias &&
       !hasExplicitValence &&
-      !hasExplicitIsotope
+      !hasExplicitIsotope &&
+      !hasBadValenceWarning
     ) {
       // Show carbon label when bonds are collinear (180 degree angle),
       if (atomNeighborsHalfEdges?.length === 2) {
@@ -644,7 +659,7 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendBadValenceWarning() {
-    if (!this.atom.hasBadValence || !this.isLabelVisible) {
+    if (!this.shouldDisplayBadValenceWarning || !this.isLabelVisible) {
       return;
     }
 

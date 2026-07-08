@@ -84,7 +84,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    await openFileAndAddToCanvasAsNewProject(page, 'Molfiles-V2000/query-features.mol');
+    await openFileAndAddToCanvasAsNewProject(
+      page,
+      'Molfiles-V2000/query-features.mol',
+    );
     await getAtomLocator(page, { atomLabel: 'C', atomId: 11 }).click({
       force: true,
     });

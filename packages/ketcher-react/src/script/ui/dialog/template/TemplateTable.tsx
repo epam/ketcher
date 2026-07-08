@@ -112,44 +112,49 @@ const TemplateItem: FC<TemplateItemProps> = memo(
     onAttach,
   }) => {
     return (
-      <button
-        type="button"
+      <div
         className={
           !isSelected ? classes.td : `${classes.td} ${classes.selected}`
         }
-        title={greekify(getTemplateTitle(tmpl, index))}
-        onClick={() => onSelect(tmpl)}
       >
-        <div className={classes.structSlot}>
-          {!shouldRenderPreview && (
-            <div className={classes.structPlaceholder} />
-          )}
-          {shouldRenderPreview && (
-            <div className={`${classes.structFade} ${classes.structVisible}`}>
-              <MemoizedStructRender
-                testId={tmpl.struct.name}
-                struct={tmpl.struct}
-                className={classes.struct}
-                fullsize={true}
-                options={{
-                  ...renderOptions,
-                  autoScaleMargin: 10,
-                  cachePrefix: 'templates',
-                  downScale: true,
-                }}
-              />
-            </div>
-          )}
-        </div>
-        <div
-          className={`${classes.structTitle} ${
-            isSelected ? classes.selectedTitle : ''
-          }`}
+        <button
+          type="button"
+          data-testid={tmpl.struct.name}
+          className={classes.selectButton}
+          title={greekify(getTemplateTitle(tmpl, index))}
+          onClick={() => onSelect(tmpl)}
         >
-          {greekify(tmplName(tmpl, index))}
-        </div>
+          <div className={classes.structSlot}>
+            {!shouldRenderPreview && (
+              <div className={classes.structPlaceholder} />
+            )}
+            {shouldRenderPreview && (
+              <div className={`${classes.structFade} ${classes.structVisible}`}>
+                <MemoizedStructRender
+                  struct={tmpl.struct}
+                  className={classes.struct}
+                  fullsize={true}
+                  options={{
+                    ...renderOptions,
+                    autoScaleMargin: 10,
+                    cachePrefix: 'templates',
+                    downScale: true,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div
+            className={`${classes.structTitle} ${
+              isSelected ? classes.selectedTitle : ''
+            }`}
+          >
+            {greekify(tmplName(tmpl, index))}
+          </div>
+        </button>
         {tmpl.props.group === 'User Templates' && (
           <button
+            type="button"
             data-testid={'delete-template-button'}
             className={`${classes.button} ${classes.deleteButton}`}
             onClick={(e) => {
@@ -163,6 +168,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
         )}
         {!isFunctionalGroupTemplate(tmpl) && !isSaltOrSolventTemplate(tmpl) && (
           <button
+            type="button"
             data-testid={'edit-template-button'}
             className={`${classes.button} ${classes.editButton}`}
             onClick={(e) => {
@@ -174,7 +180,7 @@ const TemplateItem: FC<TemplateItemProps> = memo(
             <Icon name="edit" />
           </button>
         )}
-      </button>
+      </div>
     );
   },
   // Custom comparison: only re-render if these specific props change

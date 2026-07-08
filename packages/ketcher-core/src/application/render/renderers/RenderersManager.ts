@@ -426,11 +426,6 @@ export class RenderersManager {
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
-
-    // redraw connected atoms labels as their connections numbers can be updated after bond is deleted
-    [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
-      this.atoms.get(bondAtom.id)?.redrawLabel();
-    });
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {

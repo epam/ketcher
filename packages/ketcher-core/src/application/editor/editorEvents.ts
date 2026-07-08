@@ -44,6 +44,7 @@ export interface IEditorEvents {
   deleteHydrogenBond: Subscription;
   turnOnSequenceEditInRNABuilderMode: Subscription;
   turnOffSequenceEditInRNABuilderMode: Subscription;
+  cancelSequenceEditInRNABuilderMode: Subscription;
   modifySequenceInRnaBuilder: Subscription;
   mouseOverSequenceItem: Subscription;
   mouseOnMoveSequenceItem: Subscription;
@@ -120,6 +121,7 @@ export const editorEvents: IEditorEvents = {
   deleteHydrogenBond: new Subscription(),
   turnOnSequenceEditInRNABuilderMode: new Subscription(),
   turnOffSequenceEditInRNABuilderMode: new Subscription(),
+  cancelSequenceEditInRNABuilderMode: new Subscription(),
   modifySequenceInRnaBuilder: new Subscription(),
   mouseOverSequenceItem: new Subscription(),
   mouseOnMoveSequenceItem: new Subscription(),

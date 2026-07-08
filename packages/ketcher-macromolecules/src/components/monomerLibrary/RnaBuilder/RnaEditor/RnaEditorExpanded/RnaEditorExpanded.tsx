@@ -627,6 +627,16 @@ export const RnaEditorExpanded = ({
     };
   }, [editor, sequenceSelection]);
 
+  useEffect(() => {
+    if (!isSequenceEditInRNABuilderMode) return;
+
+    const handleCancel = () => onCancel();
+    editor?.events.cancelSequenceEditInRNABuilderMode.add(handleCancel);
+    return () => {
+      editor?.events.cancelSequenceEditInRNABuilderMode.remove(handleCancel);
+    };
+  }, [editor, isSequenceEditInRNABuilderMode]);
+
   let mainButton: JSX.Element;
   const isSaveButtonDisabled =
     !selectIsPresetReadyToSave(newPreset) ||

@@ -11,10 +11,14 @@ import {
   isAmbiguousMonomerLibraryItem,
   ketcherProvider,
   MonomerMicromolecule,
+  provideEditorInstance,
 } from 'ketcher-core';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
-import { getEditInstanceInitialValues } from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
+import {
+  getEditAllInstancesInitialValues,
+  getEditInstanceInitialValues,
+} from '../../MonomerCreationWizard/MonomerCreationWizard.utils';
 
 const MacromoleculeMenuItems = (
   props: MenuItemsProps<MacromoleculeContextMenuProps>,
@@ -40,7 +44,7 @@ const MacromoleculeMenuItems = (
     isAmbiguousMonomerLibraryItem(sgroup.monomer.monomerItem) ||
     sgroup.monomer.monomerItem.props.unresolved;
 
-  const handleEditInstance = () => {
+  const handleEdit = (editAllInstances = false) => {
     const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sgroup = functionalGroups?.[0]?.relatedSGroup;
 
@@ -65,7 +69,12 @@ const MacromoleculeMenuItems = (
         texts: [],
         rgroupAttachmentPoints: [],
       },
-      getEditInstanceInitialValues(sgroup.monomer),
+      editAllInstances
+        ? getEditAllInstancesInitialValues(
+            sgroup.monomer,
+            provideEditorInstance()?.monomersLibraryParsedJson,
+          )
+        : getEditInstanceInitialValues(sgroup.monomer),
       sgroup.getAttachmentPoints(),
     );
   };
@@ -75,10 +84,18 @@ const MacromoleculeMenuItems = (
       <Item
         {...props}
         data-testid="Edit Instance-option"
-        onClick={handleEditInstance}
+        onClick={() => handleEdit()}
         disabled={editInstanceDisabled}
       >
         Edit Instance
+      </Item>
+      <Item
+        {...props}
+        data-testid="Edit All Instances-option"
+        onClick={() => handleEdit(true)}
+        disabled={editInstanceDisabled}
+      >
+        Edit All Instances
       </Item>
       <Item
         {...props}

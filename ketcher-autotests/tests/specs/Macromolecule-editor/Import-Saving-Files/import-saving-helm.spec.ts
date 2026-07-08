@@ -46,11 +46,11 @@ interface IHELMString {
 const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '1. Simple standard RNA, no phosphate',
-    HELMString: 'RNA1{r(A)}$$$$V2.0',
+    HELMString: 'RNA1{R(A)}$$$$V2.0',
   },
   {
     helmDescription: '2. Simple standard RNA',
-    HELMString: 'RNA1{r(A)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A)P}$$$$V2.0',
   },
   {
     helmDescription: '3. imple unusual RNA, no phosphate',
@@ -82,8 +82,8 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '10. trash after ending token (RNA)',
-    HELMString: 'RNA1{r(A)p}$$$$Bla-bla-bla',
-    differentHELMExport: 'RNA1{r(A)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A)P}$$$$Bla-bla-bla',
+    differentHELMExport: 'RNA1{R(A)P}$$$$V2.0',
   },
   {
     helmDescription: '11. trash after ending token (PEPTIDE)',
@@ -104,7 +104,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '14. RNA (one letter names): “.” is used between connected monomer units which are groups that represent the repetitive functional unit of the given polymer type.',
-    HELMString: 'RNA1{r(A)p.r(C)p.r(G)p.r(T)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A)P.R(C)P.R(G)P.R(T)P}$$$$V2.0',
   },
   {
     helmDescription:
@@ -114,7 +114,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '16. ListOfSimplePolymers - RNAs only',
-    HELMString: 'RNA1{r(A)}|RNA2{r(A)p}|RNA3{r(G)p}|RNA4{r(C)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A)}|RNA2{R(A)P}|RNA3{R(G)P}|RNA4{R(C)P}$$$$V2.0',
   },
   {
     helmDescription: '17. ListOfSimplePolymers - Peptides only',
@@ -127,25 +127,25 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '19. ListOfSimplePolymers - Mix',
     HELMString:
-      'RNA1{r(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{r(A)p}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{r(G)p}|CHEM3{[Az]}$$$$V2.0',
+      'RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{R(G)P}|CHEM3{[Az]}$$$$V2.0',
   },
   {
     helmDescription: '20. ListOfSimplePolymers - Mix - reverse order',
     HELMString:
-      'RNA3{r(G)p}|CHEM3{[Az]}|RNA2{r(A)p}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{r(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
+      'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{r(G)p}|CHEM1{[Az]}|RNA2{r(A)p}|PEPTIDE1{C}|CHEM2{[SMPEG2]}|RNA3{r(A)}|PEPTIDE2{A}|CHEM3{[A6OH]}$$$$V2.0',
+      'RNA1{R(G)P}|CHEM1{[Az]}|RNA2{R(A)P}|PEPTIDE1{C}|CHEM2{[SMPEG2]}|RNA3{R(A)}|PEPTIDE2{A}|CHEM3{[A6OH]}$$$$V2.0',
   },
   {
     helmDescription: '21. Index starts from 100',
     HELMString:
-      'RNA100{r(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{r(A)p}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{r(G)p}|CHEM3{[Az]}$$$$V2.0',
+      'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{r(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{r(A)p}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{r(G)p}|CHEM3{[Az]}$$$$V2.0',
+      'RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{R(G)P}|CHEM3{[Az]}$$$$V2.0',
   },
   {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
-    HELMString: 'PEPTIDE1{A}|RNA1{r(A)p}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
+    HELMString: 'PEPTIDE1{A}|RNA1{R(A)P}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
   },
   {
     helmDescription: '23. Connection CHEM1(R2) to Peptide(R1)',
@@ -153,14 +153,14 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '24. Connection RNA(R2) to CHEM1(R1)',
-    HELMString: 'RNA1{r(A)p}|CHEM1{[A6OH]}$CHEM1,RNA1,1:R1-3:R2$$$V2.0',
+    HELMString: 'RNA1{R(A)P}|CHEM1{[A6OH]}$CHEM1,RNA1,1:R1-3:R2$$$V2.0',
   },
   {
     helmDescription:
       '25. Connection RNA1(R2) to Peptide1(R1), Peptide1(R2) to CHEM1(R1), CHEM1(R2) to RNA2(R1), RNA2(R2) to Peptide2(R1), Peptide2(R2) to CHEM2(R1), ' +
       'CHEM2(R2) to RNA3(R1), RNA3(R2) to Peptide3(R1), Peptide3(R2) to CHEM3(R1)',
     HELMString:
-      'RNA1{r(A)}|PEPTIDE1{A}|CHEM1{[SMPEG2]}|RNA2{r(A)p}|PEPTIDE2{C}|CHEM2{[A6OH]}|RNA3{r(A)p}|PEPTIDE3{D}|CHEM3{[SMCC]}$RNA1,PEPTIDE1,1:R2-1:R1|RNA2,' +
+      'RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[SMPEG2]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[A6OH]}|RNA3{R(A)P}|PEPTIDE3{D}|CHEM3{[SMCC]}$RNA1,PEPTIDE1,1:R2-1:R1|RNA2,' +
       'PEPTIDE2,3:R2-1:R1|RNA3,PEPTIDE3,3:R2-1:R1|PEPTIDE1,CHEM3,1:R2-1:R1|CHEM3,RNA2,1:R2-1:R1|PEPTIDE2,CHEM2,1:R2-1:R1|CHEM2,RNA3,1:R2-1:R1|PEPTIDE3,CHEM1,1:R2-1:R1$$$V2.0',
   },
   {
@@ -173,13 +173,13 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '27. List of peptides connected to another list of RNAs via R1 to R2',
     HELMString:
-      'PEPTIDE1{[1Nal].[D-1Nal].C.E.G}|RNA1{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$RNA1,PEPTIDE1,15:R2-1:R1$$$V2.0',
+      'PEPTIDE1{[1Nal].[D-1Nal].C.E.G}|RNA1{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$RNA1,PEPTIDE1,15:R2-1:R1$$$V2.0',
   },
   {
     helmDescription:
       '28. List of CHEMs connected to another list of RNAs via R1 to R2',
     HELMString:
-      'CHEM1{[MCC]}|RNA1{r(A)p.r(C)p.r(G)p.r(T)p.r(U)p}$RNA1,CHEM1,15:R2-1:R1$$$V2.0',
+      'CHEM1{[MCC]}|RNA1{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$RNA1,CHEM1,15:R2-1:R1$$$V2.0',
   },
   {
     helmDescription: '29. Two connections between list of peptides',
@@ -188,7 +188,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '30. Cycled RNAs',
-    HELMString: 'RNA1{r(A)p.r(C)p.r(G)p}$RNA1,RNA1,9:R2-1:R1$$$V2.0',
+    HELMString: 'RNA1{R(A)P.R(C)P.R(G)P}$RNA1,RNA1,9:R2-1:R1$$$V2.0',
   },
   {
     helmDescription:
@@ -203,7 +203,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '33. Simple RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
-    HELMString: 'RNA1{r(A+C)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A+C)P}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -233,7 +233,7 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '37. Simple RNAs - The ratio of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
-    HELMString: 'RNA1{r(A:100+C:200)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A:100+C:200)P}$$$$V2.0',
   },
   {
     helmDescription:
@@ -266,7 +266,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '42. Simple RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
-    HELMString: 'RNA1{r(A,C)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A,C)P}$$$$V2.0',
   },
   {
     helmDescription:
@@ -296,7 +296,7 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '46. Simple RNAs - The probability of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
-    HELMString: 'RNA1{r(A:10,C:90)p}$$$$V2.0',
+    HELMString: 'RNA1{R(A:10,C:90)P}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -312,43 +312,43 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
     HELMString:
-      'RNA1{r([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
+      'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
     pageReloadNeeded: true,
     differentHELMExport:
-      'RNA1{r([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])}$$$$V2.0',
+      'RNA1{R([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])}$$$$V2.0',
   },
   {
     helmDescription: '49. RNA(RAP) with single inline Extended SMILES (A)',
     HELMString:
-      'RNA1{r([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])p}$$$$V2.0',
+      'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])P}$$$$V2.0',
     differentHELMExport:
-      'RNA1{r([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])p}$$$$V2.0',
+      'RNA1{R([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])P}$$$$V2.0',
   },
   {
     helmDescription: '50. RNA(RP) with single inline Extended SMILES (p)',
     HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{r.[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R.[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
   },
   {
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (r)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]p}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|].P}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (p)',
     HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
-    differentHELMExport: 'RNA1{r(A)[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R(A)[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription:
       '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
     HELMString:
-      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)p}$$$$V2.0',
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)p}$$$$V2.0',
+      'RNA1{[O1[C@H](CO[*:1])[C@@H](O[*:2])[C@@H](O)[C@@H]1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)P}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -399,7 +399,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription:
-      '59. List of RNAs of inline Extended Smiles (r(A)p, r(C)p, r(G)p)',
+      '59. List of RNAs of inline Extended Smiles (R(A)P, R(C)P, R(G)P)',
     HELMString:
       // eslint-disable-next-line max-len
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])[p%91%92(=O)O.[*:2]%91.[*:1]%92 |$;;;_R2;_R1$|].' +
@@ -430,28 +430,28 @@ const correctHELMStrings: IHELMString[] = [
       '63. Multi-character presets of monomers with one monomer ID without square brackets',
     HELMString: 'RNA1{25moe3(A)P-.5S6Rm5(nC6n5U)P.R(mo4bn3)fl2me}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])p.r([mo4bn3T])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])P.R([mo4bn3T])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
       '64. Multi-character presets of monomers with two monomer IDs without square brackets',
     HELMString: 'RNA1{5R6Sm5(C)P.R(purine)P.R(T)m2nen}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[5R6Sm5cEt](C)p.r([purine])p.r(T)[m2nen]}$$$$V2.0',
+      'RNA1{[5R6Sm5cEt](C)P.R([purine])P.R(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
       '65. Multi-character presets of monomers without phosphate with IDs without square brackets',
     HELMString: 'RNA1{[afl2Nm]([nC6n5C]).R([tCnitr]).[Sm5ALl](G)}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[afl2Nmc]([nC6ncee5C]).r([tCnitro]).[Sm5ALlna](G)}$$$$V2.0',
+      'RNA1{[afl2Nmc]([nC6ncee5C]).R([tCnitro]).[Sm5ALlna](G)}$$$$V2.0',
   },
   {
     helmDescription:
       '66. Multi-character presets of monomers without base with IDs without square brackets',
     HELMString: 'RNA1{ALmecl.m2nen.ALtri1.P.R.moen}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[ALmeclna].[m2nen].[ALtrina1].p.r.[moen]}$$$$V2.0',
+      'RNA1{[ALmeclna].[m2nen].[ALtrina1].P.R.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -465,9 +465,9 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '68. Multi-character CHEMs with IDs without square brackets',
     HELMString:
-      'CHEM1{4aPEGMal}|CHEM2{PEG-2}|CHEM3{PEG-4}|CHEM4{PEG-6}|CHEM5{SMPEG2}|CHEM6{SS3}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
+      'CHEM1{4aPEGMal}|CHEM2{PEG2}|CHEM3{PEG-4}|CHEM4{PEG-6}|CHEM5{SMPEG2}|CHEM6{SS3}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
     differentHELMExport:
-      'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
+      'CHEM1{[4aPEGMal]}|CHEM2{[PEG2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}$CHEM1,CHEM2,1:R2-1:R1|CHEM2,CHEM3,1:R2-1:R1|CHEM3,CHEM4,1:R2-1:R1|CHEM4,CHEM5,1:R2-1:R1|CHEM5,CHEM6,1:R2-1:R1$$$V2.0',
   },
   {
     helmDescription:
@@ -489,7 +489,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{25moe3(A)P-.[25moe3](A)P-.5S6Rm5(nC6n5U)P.[5S6Rm5]([nC6n5U])P.R(mo4bn3)fl2me.R([mo4bn3])[fl2me]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[25moe3r](A)[P-].[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])p.[5S6Rm5cEt]([nC6ncee5U])p.r([mo4bn3T])[fl2me].r([mo4bn3T])[fl2me]}$$$$V2.0',
+      'RNA1{[25moe3r](A)[P-].[25moe3r](A)[P-].[5S6Rm5cEt]([nC6ncee5U])P.[5S6Rm5cEt]([nC6ncee5U])P.R([mo4bn3T])[fl2me].R([mo4bn3T])[fl2me]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -497,7 +497,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{5R6Sm5(C)P.[5R6Sm5](C)P.R(purine)P.R([purine])P.R(T)m2nen.R(T)[m2nen]}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[5R6Sm5cEt](C)p.[5R6Sm5cEt](C)p.r([purine])p.r([purine])p.r(T)[m2nen].r(T)[m2nen]}$$$$V2.0',
+      'RNA1{[5R6Sm5cEt](C)P.[5R6Sm5cEt](C)P.R([purine])P.R([purine])P.R(T)[m2nen].R(T)[m2nen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -505,7 +505,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[afl2Nm]([nC6n5C]).[afl2Nm]([nC6n5C]).R([tCnitr]).R([tCnitr]).[Sm5ALl](G).[Sm5ALl](G)}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[afl2Nmc]([nC6ncee5C]).[afl2Nmc]([nC6ncee5C]).r([tCnitro]).r([tCnitro]).[Sm5ALlna](G).[Sm5ALlna](G)}$$$$V2.0',
+      'RNA1{[afl2Nmc]([nC6ncee5C]).[afl2Nmc]([nC6ncee5C]).R([tCnitro]).R([tCnitro]).[Sm5ALlna](G).[Sm5ALlna](G)}$$$$V2.0',
   },
   {
     helmDescription:
@@ -513,7 +513,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{[ALmecl][m2nen].ALmecl.m2nen.[ALtri1]P.ALtri1.P.R[moen].R.moen}$$$$V2.0',
     differentHELMExport:
-      'RNA1{[ALmeclna].[m2nen].[ALmeclna].[m2nen].[ALtrina1].p.[ALtrina1].p.r.[moen].r.[moen]}$$$$V2.0',
+      'RNA1{[ALmeclna].[m2nen].[ALmeclna].[m2nen].[ALtrina1].P.[ALtrina1].P.R.[moen].R.[moen]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -527,9 +527,9 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '76. Mix of multi-character CHEMs with IDs with and without square brackets',
     HELMString:
-      'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{4aPEGMal}|CHEM8{PEG-2}|CHEM9{PEG-4}|CHEM10{PEG-6}|CHEM11{SMPEG2}|CHEM12{SS3}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
+      'CHEM1{[4aPEGMal]}|CHEM2{[PEG2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{4aPEGMal}|CHEM8{PEG2}|CHEM9{PEG-4}|CHEM10{PEG-6}|CHEM11{SMPEG2}|CHEM12{SS3}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
     differentHELMExport:
-      'CHEM1{[4aPEGMal]}|CHEM2{[PEG-2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{[4aPEGMal]}|CHEM8{[PEG-2]}|CHEM9{[PEG-4]}|CHEM10{[PEG-6]}|CHEM11{[SMPEG2]}|CHEM12{[SS3]}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
+      'CHEM1{[4aPEGMal]}|CHEM2{[PEG2]}|CHEM3{[PEG-4]}|CHEM4{[PEG-6]}|CHEM5{[SMPEG2]}|CHEM6{[SS3]}|CHEM7{[4aPEGMal]}|CHEM8{[PEG2]}|CHEM9{[PEG-4]}|CHEM10{[PEG-6]}|CHEM11{[SMPEG2]}|CHEM12{[SS3]}$CHEM1,CHEM7,1:R2-1:R1|CHEM7,CHEM2,1:R2-1:R1|CHEM2,CHEM8,1:R2-1:R1|CHEM8,CHEM3,1:R2-1:R1|CHEM3,CHEM9,1:R2-1:R1|CHEM9,CHEM4,1:R2-1:R1|CHEM4,CHEM10,1:R2-1:R1|CHEM10,CHEM5,1:R2-1:R1|CHEM5,CHEM11,1:R2-1:R1|CHEM11,CHEM6,1:R2-1:R1|CHEM6,CHEM12,1:R2-1:R1$$$V2.0',
   },
   {
     helmDescription: '77. Single unknown peptide',
@@ -545,25 +545,25 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '79. Unknown sugar in single nucleotide',
-    HELMString: 'RNA1{[Unknown Sugar](A)p}$$$$V2.0',
+    HELMString: 'RNA1{[Unknown Sugar](A)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
   {
     helmDescription: '80. Unknown base in single nucleotide',
-    HELMString: 'RNA1{r([Unknown Base])p}$$$$V2.0',
+    HELMString: 'RNA1{R([Unknown Base])P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
   {
     helmDescription: '81. Unknown phosphate in single nucleotide',
-    HELMString: 'RNA1{r(A)[Unknown Phosphate]}$$$$V2.0',
+    HELMString: 'RNA1{R(A)[Unknown Phosphate]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
   {
     helmDescription: '82. Unknown sugar and unknown base in single nucleotide',
-    HELMString: 'RNA1{[Unknown Sugar]([Unknown Base])p}$$$$V2.0',
+    HELMString: 'RNA1{[Unknown Sugar]([Unknown Base])P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
@@ -577,7 +577,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription:
       '84. Unknown base and unknown phosphate in single nucleotide',
-    HELMString: 'RNA1{r([Unknown Base])[Unknown Phosphate]}$$$$V2.0',
+    HELMString: 'RNA1{R([Unknown Base])[Unknown Phosphate]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
@@ -597,7 +597,7 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '87. Unknown base in single nucleoside',
-    HELMString: 'RNA1{r([Unknown Base])}$$$$V2.0',
+    HELMString: 'RNA1{R([Unknown Base])}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
@@ -635,7 +635,7 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '93. Combination of all monomers on one canvas',
     HELMString:
-      'PEPTIDE1{[Unknown Peptide]}|RNA1{[Unknown Unsplit Nucleotide]}|RNA2{[Unknown Sugar](A)p.r([Unknown Base])p.r(A)[Unknown Phosphate].[Unknown Sugar]([Unknown Base])p.[Unknown Sugar](A)[Unknown Phosphate].r([Unknown Base])[Unknown Phosphate].[Unknown Sugar]([Unknown Base])[Unknown Phosphate].[Unknown Sugar](A)}|RNA3{r([Unknown Base])}|RNA4{[Unknown Sugar]([Unknown Base])}|RNA5{[Unknown Sugar].p.r.[Unknown Phosphate].[Unknown Sugar].[Unknown Phosphate]}|CHEM1{[Unknown CHEM]}$PEPTIDE1,RNA1,1:R2-1:R1|RNA1,RNA2,1:R2-1:R1|RNA2,RNA3,22:R2-1:R1|RNA3,RNA4,1:R2-1:R1|RNA4,RNA5,1:R2-1:R1|RNA5,CHEM1,6:R2-1:R1$$$V2.0',
+      'PEPTIDE1{[Unknown Peptide]}|RNA1{[Unknown Unsplit Nucleotide]}|RNA2{[Unknown Sugar](A)P.R([Unknown Base])P.R(A)[Unknown Phosphate].[Unknown Sugar]([Unknown Base])P.[Unknown Sugar](A)[Unknown Phosphate].R([Unknown Base])[Unknown Phosphate].[Unknown Sugar]([Unknown Base])[Unknown Phosphate].[Unknown Sugar](A)}|RNA3{R([Unknown Base])}|RNA4{[Unknown Sugar]([Unknown Base])}|RNA5{[Unknown Sugar].P.R.[Unknown Phosphate].[Unknown Sugar].[Unknown Phosphate]}|CHEM1{[Unknown CHEM]}$PEPTIDE1,RNA1,1:R2-1:R1|RNA1,RNA2,1:R2-1:R1|RNA2,RNA3,22:R2-1:R1|RNA3,RNA4,1:R2-1:R1|RNA4,RNA5,1:R2-1:R1|RNA5,CHEM1,6:R2-1:R1$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
@@ -665,14 +665,14 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '97. Unknown sugar with all attachment points occupied',
     HELMString:
-      'RNA1{[Unknown sugar](A)p}|PEPTIDE1{A}|PEPTIDE2{A}$PEPTIDE1,RNA1,1:R2-1:R1|PEPTIDE2,RNA1,1:R1-1:R4$$$V2.0',
+      'RNA1{[Unknown sugar](A)P}|PEPTIDE1{A}|PEPTIDE2{A}$PEPTIDE1,RNA1,1:R2-1:R1|PEPTIDE2,RNA1,1:R1-1:R4$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
   {
     helmDescription: '98. Unknown base with all attachment points occupied',
     HELMString:
-      'RNA1{r([Unknown base])p}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE2,2:R2-1:R1|RNA1,PEPTIDE1,2:R3-1:R2|RNA1,PEPTIDE3,2:R4-1:R1$$$V2.0',
+      'RNA1{R([Unknown base])P}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE2,2:R2-1:R1|RNA1,PEPTIDE1,2:R3-1:R2|RNA1,PEPTIDE3,2:R4-1:R1$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },
@@ -680,9 +680,9 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '99. Unknown phosphate with all attachment points occupied',
     HELMString:
-      'RNA1{r(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
+      'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
     differentHELMExport:
-      'RNA1{r(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
+      'RNA1{R(A)[Unknown phosphate]}|PEPTIDE1{A}|PEPTIDE2{A}|PEPTIDE3{A}$RNA1,PEPTIDE1,3:R2-1:R1|RNA1,PEPTIDE2,3:R3-1:R2|RNA1,PEPTIDE3,3:R4-1:R1$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2969',
   },

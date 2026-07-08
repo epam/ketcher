@@ -390,7 +390,7 @@ describe('Settings Integration Tests', () => {
   describe('Backward Compatibility', () => {
     it('should work without settings service (legacy mode)', async () => {
       // Create store without settings service
-      const store = createIntegrationStore(undefined);
+      const store = createIntegrationStore();
 
       const { result } = renderHook(() => useSettings(), {
         wrapper: createWrapper(store),
@@ -402,7 +402,7 @@ describe('Settings Integration Tests', () => {
     });
 
     it('should not break Redux actions when service unavailable', async () => {
-      const store = createIntegrationStore(undefined);
+      const store = createIntegrationStore();
 
       // This should not throw
       await act(async () => {

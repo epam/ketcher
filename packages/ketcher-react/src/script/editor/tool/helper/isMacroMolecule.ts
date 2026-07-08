@@ -14,7 +14,7 @@ const isMergingToMacroMolecule = (
   if (!funcGroups?.size) {
     return false;
   }
-  const targetObjectId = funcGroups.entries().next().value[1];
+  const [[, targetObjectId]] = funcGroups;
   return isMacroMolecule(editor, targetObjectId);
 };
 

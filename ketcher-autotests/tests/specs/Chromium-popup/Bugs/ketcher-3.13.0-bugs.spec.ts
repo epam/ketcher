@@ -665,6 +665,13 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
       bondIds: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20],
     });
 
+    // Marking a component recenters the structure under the attributes panel.
+    await CommonLeftToolbar(page).handTool();
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
     // --- Sugar ---
     await presetSection.setupSugar({
       atomIds: [0, 1, 2, 3, 4, 5, 6, 7, 23],
@@ -673,8 +680,8 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
 
     // --- Phosphate ---
     await presetSection.setupPhosphate({
-      atomIds: [8, 19, 20, 21, 22],
-      bondIds: [21, 22, 23, 24],
+      atomIds: [8, 19, 21, 22],
+      bondIds: [21, 23, 24],
     });
 
     // Select phosphate position (required field; without it the validation dispatches

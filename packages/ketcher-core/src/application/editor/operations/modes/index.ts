@@ -29,10 +29,8 @@ export class ReinitializeModeOperation implements Operation {
     editor.mode.initialize(false);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    const editor = provideEditorInstance();
-
-    editor.mode.initialize(false);
+  public invert(renderersManager: RenderersManager) {
+    this.execute(renderersManager);
   }
 }
 

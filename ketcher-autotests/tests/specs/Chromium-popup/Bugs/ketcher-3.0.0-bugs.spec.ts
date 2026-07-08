@@ -69,6 +69,7 @@ import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/Conf
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import { AmbiguousMonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/AmbiguousMonomerPreviewTooltip';
 
 let page: Page;
 
@@ -654,6 +655,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .locator('..')
       .first()
       .hover();
+    await AmbiguousMonomerPreviewTooltip(page).waitForBecomeVisible();
     await takeEditorScreenshot(page);
   });
 

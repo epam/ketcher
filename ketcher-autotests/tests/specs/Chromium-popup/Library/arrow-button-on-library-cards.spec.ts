@@ -1062,7 +1062,7 @@ test.describe('Arrow button on Library cards', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await verifyHELMExport(page, `RNA1{[moe](T)p.[moe](T)p.[moe](T)p}$$$$V2.0`);
+    await verifyHELMExport(page, `RNA1{[MOE](T)P.[MOE](T)P.[MOE](T)P}$$$$V2.0`);
   });
 
   test('Case 28: Check saving and opening monomers added by arrow button (SVG Document)', async () => {

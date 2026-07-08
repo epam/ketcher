@@ -135,7 +135,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
 
     return monomerCaps;
   }
-  
+
   // TODO: Optimize that function on ketcher start it iterate only ambigouse monomer instead of whole library
   public get isModification() {
     const ownTemplateIds = this.variantMonomerItem.options

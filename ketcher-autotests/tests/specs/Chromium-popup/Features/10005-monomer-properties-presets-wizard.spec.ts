@@ -106,6 +106,8 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      *
      * Version 3.15.0
      */
+    // Expected behavior not yet implemented: component monomers are currently always hidden
+    test.fail();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
@@ -139,14 +141,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    // In current behavior, components created in preset flow remain hidden in library
+    // Component monomers created via preset wizard are currently saved as hidden entries
     expect(
       await Library(page).isMonomerExist({
         alias: 'VisibleBase',
         testId: 'VisibleBase___Visible Base Monomer',
         monomerType: MonomerType.Base,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     // Verify preset is created
     expect(
@@ -170,6 +172,8 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      *
      * Version 3.15.0
      */
+    // Expected behavior not yet implemented: component monomers are currently always hidden
+    test.fail();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
@@ -202,14 +206,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    // In current behavior, components created in preset flow remain hidden in library
+    // Component monomers created via preset wizard are currently saved as hidden entries
     expect(
       await Library(page).isMonomerExist({
         alias: 'VisibleSugar',
         testId: 'VisibleSugar___Visible Sugar Monomer',
         monomerType: MonomerType.Sugar,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     // Verify preset is created
     expect(
@@ -233,6 +237,8 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      *
      * Version 3.15.0
      */
+    // Expected behavior not yet implemented: component monomers are currently always hidden
+    test.fail();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
@@ -265,14 +271,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    // In current behavior, components created in preset flow remain hidden in library
+    // Component monomers created via preset wizard are currently saved as hidden entries
     expect(
       await Library(page).isMonomerExist({
         alias: 'VisiblePhosphate',
         testId: 'VisiblePhosphate___Visible Phosphate Monomer',
         monomerType: MonomerType.Phosphate,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     // Verify preset is created
     expect(
@@ -295,6 +301,8 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      *
      * Version 3.15.0
      */
+    // Expected behavior not yet implemented: component monomers are currently always hidden
+    test.fail();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
@@ -333,14 +341,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    // In current behavior, components created in preset flow remain hidden in library
+    // Component monomers created via preset wizard are currently saved as hidden entries
     expect(
       await Library(page).isMonomerExist({
         alias: 'AllVisibleBase',
         testId: 'AllVisibleBase___All Visible Base',
         monomerType: MonomerType.Base,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     expect(
       await Library(page).isMonomerExist({
@@ -348,7 +356,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
         testId: 'AllVisibleSugar___All Visible Sugar',
         monomerType: MonomerType.Sugar,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     expect(
       await Library(page).isMonomerExist({
@@ -356,7 +364,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
         testId: 'AllVisiblePhosphate___All Visible Phosphate',
         monomerType: MonomerType.Phosphate,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     // Verify preset is created
     expect(
@@ -459,6 +467,8 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      *
      * Version 3.15.0
      */
+    // Expected behavior not yet implemented: base is currently hidden along with sugar/phosphate
+    test.fail();
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
     await LeftToolbar(page).createMonomer();
@@ -492,14 +502,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
-    // In current behavior, components created in preset flow remain hidden in library
+    // Component monomers created via preset wizard are currently saved as hidden entries
     expect(
       await Library(page).isMonomerExist({
         alias: 'MixedVisibleBase',
         testId: 'MixedVisibleBase___Mixed Visible Base',
         monomerType: MonomerType.Base,
       }),
-    ).toBeFalsy();
+    ).toBeTruthy();
 
     // Verify sugar and phosphate are hidden
     expect(
@@ -586,10 +596,15 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       page,
       ErrorMessage.symbolExists,
     );
-    if (await symbolExistsMessageBannerCase8.isVisible()) {
+    if (
+      await symbolExistsMessageBannerCase8.notificationMessageOkButton.isVisible()
+    ) {
       await symbolExistsMessageBannerCase8.ok();
       await dialog.discard();
+    } else if (await dialog.window.isVisible()) {
+      await dialog.discard();
     }
+    await expect(dialog.window).toBeHidden();
   });
 
   test('Case 9 - Verify hidden monomer auto-assigned type matches component type', async () => {
@@ -696,10 +711,10 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * Test task: https://github.com/epam/ketcher/issues/10005
      * Description: Verify auto-assigned code/name for hidden sugar
      * Scenario:
-     * 1. Create preset with code abc
+     * 1. Create preset with code xyz
      * 2. Leave sugar undefined
      * 3. Create preset
-     * Expected result: Sugar receives code abcS and name abcS
+     * Expected result: Sugar receives code xyzS and name xyzS
      *
      * Version 3.15.0
      */
@@ -746,10 +761,10 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * Test task: https://github.com/epam/ketcher/issues/10005
      * Description: Verify auto-assigned code/name for hidden phosphate
      * Scenario:
-     * 1. Create preset with code abc
+     * 1. Create preset with code pqr
      * 2. Leave phosphate undefined
      * 3. Create preset
-     * Expected result: Phosphate receives code abcP and name abcP
+     * Expected result: Phosphate receives code pqrP and name pqrP
      *
      * Version 3.15.0
      */
@@ -870,14 +885,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [4, 5],
       bondIds: [4],
       code: 'AP_Phosphate_1_1',
-      name: 'AP Phosphate 1.1',
+      name: 'AP Phosphate 1-1',
     });
 
     await presetSection.setupBase({
       atomIds: [0, 1],
       bondIds: [0],
       code: 'AP_Base_1_1',
-      name: 'AP Base 1.1',
+      name: 'AP Base 1-1',
       naturalAnalogue: NucleotideNaturalAnalogue.A,
     });
 
@@ -885,13 +900,30 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [2, 3],
       bondIds: [2],
       code: 'AP_Sugar_1_1',
-      name: 'AP Sugar 1.1',
+      name: 'AP Sugar 1-1',
     });
 
     await dialog.submit();
-    if (await dialog.window.isVisible()) {
-      await dialog.discard();
-    }
+    await expect(dialog.window).toBeHidden();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Verify preset was created; drag to canvas to inspect AP layout
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `APScenario11_AP_Base_1_1_AP_Sugar_1_1_AP_Phosphate_1_1`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `APScenario11_AP_Base_1_1_AP_Sugar_1_1_AP_Phosphate_1_1`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
   });
 
   test('Case 15 - Verify AP Scenario 1.2: base→phosphate→sugar', async () => {
@@ -920,7 +952,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [0, 1],
       bondIds: [0],
       code: 'AP_Base_1_2',
-      name: 'AP Base 1.2',
+      name: 'AP Base 1-2',
       naturalAnalogue: NucleotideNaturalAnalogue.G,
     });
 
@@ -928,20 +960,37 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [4, 5],
       bondIds: [4],
       code: 'AP_Phosphate_1_2',
-      name: 'AP Phosphate 1.2',
+      name: 'AP Phosphate 1-2',
     });
 
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
       code: 'AP_Sugar_1_2',
-      name: 'AP Sugar 1.2',
+      name: 'AP Sugar 1-2',
     });
 
     await dialog.submit();
-    if (await dialog.window.isVisible()) {
-      await dialog.discard();
-    }
+    await expect(dialog.window).toBeHidden();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Verify preset was created; drag to canvas to inspect AP layout
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `APScenario12_AP_Base_1_2_AP_Sugar_1_2_AP_Phosphate_1_2`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `APScenario12_AP_Base_1_2_AP_Sugar_1_2_AP_Phosphate_1_2`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
   });
 
   test('Case 16 - Verify AP Scenario 2.1: phosphate→sugar', async () => {
@@ -970,14 +1019,14 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [4, 5],
       bondIds: [4],
       code: 'AP_Phosphate_2_1',
-      name: 'AP Phosphate 2.1',
+      name: 'AP Phosphate 2-1',
     });
 
     await presetSection.setupSugar({
       atomIds: [2, 3],
       bondIds: [2],
       code: 'AP_Sugar_2_1',
-      name: 'AP Sugar 2.1',
+      name: 'AP Sugar 2-1',
     });
 
     await presetSection.setupBase({
@@ -986,9 +1035,26 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     });
 
     await dialog.submit();
-    if (await dialog.window.isVisible()) {
-      await dialog.discard();
-    }
+    await expect(dialog.window).toBeHidden();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Verify preset was created; drag to canvas to inspect AP layout
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `APScenario21_APScenario21B_AP_Sugar_2_1_AP_Phosphate_2_1`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `APScenario21_APScenario21B_AP_Sugar_2_1_AP_Phosphate_2_1`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
   });
 
   test('Case 17 - Verify AP Scenario 3.1: base→sugar', async () => {
@@ -1017,7 +1083,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [0, 1],
       bondIds: [0],
       code: 'AP_Base_3_1',
-      name: 'AP Base 3.1',
+      name: 'AP Base 3-1',
       naturalAnalogue: NucleotideNaturalAnalogue.C,
     });
 
@@ -1025,7 +1091,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
       atomIds: [2, 3],
       bondIds: [2],
       code: 'AP_Sugar_3_1',
-      name: 'AP Sugar 3.1',
+      name: 'AP Sugar 3-1',
     });
 
     // Leave phosphate undefined (hidden)
@@ -1035,9 +1101,26 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     });
 
     await dialog.submit();
-    if (await dialog.window.isVisible()) {
-      await dialog.discard();
-    }
+    await expect(dialog.window).toBeHidden();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+
+    // Verify preset was created; drag to canvas to inspect AP layout
+    expect(
+      await Library(page).isMonomerExist({
+        alias: presetName,
+        testId: `APScenario31_AP_Base_3_1_AP_Sugar_3_1_APScenario31P`,
+        monomerType: MonomerType.Preset,
+      }),
+    ).toBeTruthy();
+
+    await Library(page).dragMonomerOnCanvas(
+      {
+        alias: presetName,
+        testId: `APScenario31_AP_Base_3_1_AP_Sugar_3_1_APScenario31P`,
+        monomerType: MonomerType.Preset,
+      },
+      { x: 150, y: 150 },
+    );
   });
 
   test('Case 18 - Integration: verify preset works in RNA/DNA builder', async () => {
@@ -1184,7 +1267,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await shiftCanvas(page, -150, 50);
     await dialog.selectType(MonomerTypeInDropdown.Base);
     await dialog.codeEditbox.fill('R');
-    // Same code
+    // 'R' is the code of an existing visible monomer (Ribose) - should trigger uniqueness validation error
     await dialog.nameEditbox.fill('Duplicate Base');
     await dialog.naturalAnalogueCombobox.click();
     await page.getByTestId(NucleotideNaturalAnalogue.A).click();

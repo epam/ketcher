@@ -46,7 +46,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 5. Click Next and Finish
      * Expected result: Wizard allows progression and preset creation without validation errors
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -104,7 +104,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 5. Create preset
      * Expected result: Preset created; base appears in Monomer Library as visible item
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     // Expected behavior not yet implemented: component monomers are currently always hidden
     test.fail();
@@ -170,7 +170,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Sugar becomes visible in library
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     // Expected behavior not yet implemented: component monomers are currently always hidden
     test.fail();
@@ -235,7 +235,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Phosphate becomes visible in library
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     // Expected behavior not yet implemented: component monomers are currently always hidden
     test.fail();
@@ -299,7 +299,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 2. Create preset
      * Expected result: All three monomers appear as visible items
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     // Expected behavior not yet implemented: component monomers are currently always hidden
     test.fail();
@@ -386,7 +386,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Component saved internally but not shown in library or search
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -465,7 +465,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 4. Open monomer library
      * Expected result: Only base is visible; sugar/phosphate exist internally but hidden
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     // Expected behavior not yet implemented: base is currently hidden along with sugar/phosphate
     test.fail();
@@ -547,7 +547,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 2. Create visible base manually with same code abcB
      * Expected result: No duplicate-code error; visible monomer saved successfully
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -616,7 +616,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 2. Export or inspect value
      * Expected result: Type = base (likewise sugar= sugar, phosphate= phosphate)
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -666,7 +666,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Hidden base receives code abcB and name abcB
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -716,7 +716,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Sugar receives code xyzS and name xyzS
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -766,7 +766,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Create preset
      * Expected result: Phosphate receives code pqrP and name pqrP
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -815,7 +815,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 2. Inspect natural analogue
      * Expected result: Value = X
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -869,7 +869,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 4. Inspect APs
      * Expected result: APs match expected final sugar-base-phosphate layout
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -936,7 +936,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Assign sugar
      * Expected result: Same AP layout as Scenario 1.1
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -1003,7 +1003,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Inspect AP
      * Expected result: Correct sugar–phosphate AP assignment
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -1067,7 +1067,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Inspect AP
      * Expected result: Correct sugar-base AP assignment
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -1133,7 +1133,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Inspect generated structure
      * Expected result: Chain builds successfully with correct bonding and AP behavior
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -1199,7 +1199,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 4. Inspect monomers/APs
      * Expected result: Data preserved; hidden/visible monomers remain correct
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 
@@ -1258,7 +1258,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
      * 3. Save monomer
      * Expected result: Behavior unchanged; uniqueness validation works normally
      *
-     * Version 3.15.0
+     * Version 3.12.0
      */
     await pasteFromClipboardAndOpenAsNewProject(page, 'CCCCCC');
 

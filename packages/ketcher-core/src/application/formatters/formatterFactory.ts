@@ -90,6 +90,12 @@ export class FormatterFactory {
         } else {
           formatter = new MolfileV2000Formatter(
             new MolSerializer(molSerializerOptions),
+            new ServerFormatter(
+              this.#structService,
+              new KetSerializer(),
+              SupportedFormat.molAuto,
+              structServiceOptions,
+            ),
           );
         }
         break;

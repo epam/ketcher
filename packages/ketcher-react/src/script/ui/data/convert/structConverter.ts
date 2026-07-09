@@ -21,6 +21,7 @@ import {
   Bond,
   RxnArrowMode,
   StereoFlag,
+  exceedsMolfileV2000Limit,
   getPropertiesByFormat,
 } from 'ketcher-core';
 
@@ -140,6 +141,15 @@ export function couldBeSaved(
     const isVal = struct.atoms.find((_ind, atom) => atom.explicitValence >= 0);
     if (isVal !== null)
       warnings.push(`In ${formatName} valence is not supported`);
+  }
+
+  if (
+    (['mol'] as SupportedFormat[]).includes(format) &&
+    exceedsMolfileV2000Limit(struct)
+  ) {
+    warnings.push(
+      'The structure exceeds the MDL Molfile V2000 limit (999 atoms/bonds) and will be saved in V3000 format.',
+    );
   }
 
   if (

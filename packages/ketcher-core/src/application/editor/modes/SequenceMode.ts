@@ -1629,7 +1629,9 @@ export class SequenceMode extends BaseMode {
                     isDnaEnteringMode,
                   ),
               previousTwoStrandedNodeInSameChain?.antisenseNode ?? null,
-              currentTwoStrandedNode?.antisenseNode,
+              insertAsStandaloneChain
+                ? undefined
+                : currentTwoStrandedNode?.antisenseNode,
             );
 
             if (antisenseNodeCreationResult) {

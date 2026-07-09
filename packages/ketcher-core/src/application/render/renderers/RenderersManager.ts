@@ -376,16 +376,8 @@ export class RenderersManager {
     atom.renderer?.remove();
   }
 
-  public addBond(bond: Bond) {
-    if (bond.renderer) {
-      bond.renderer.remove();
-    }
-
-    const bondRenderer = new BondRenderer(bond);
-
-    this.bonds.set(bond.id, bondRenderer);
-
-    // redraw connected atoms labels as their connections numbers can be updated after bond is added
+  // redraw connected atoms labels as their connections numbers can be updated after bond is added
+  private syncAndRedrawBondAtomLabels(bond: Bond) {
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
       if (bondAtom.bonds.indexOf(bond) !== -1) return;
 
@@ -396,6 +388,25 @@ export class RenderersManager {
         atom.redrawLabel();
       });
     });
+  }
+
+  // redraw connected atoms labels as their connections numbers can be updated after bond is deleted
+  private redrawConnectedAtomLabels(bond: Bond) {
+    [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
+      this.atoms.get(bondAtom.id)?.redrawLabel();
+    });
+  }
+
+  public addBond(bond: Bond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
+    const bondRenderer = new BondRenderer(bond);
+
+    this.bonds.set(bond.id, bondRenderer);
+
+    this.syncAndRedrawBondAtomLabels(bond);
 
     bondRenderer.show();
 
@@ -426,6 +437,8 @@ export class RenderersManager {
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
+
+    this.redrawConnectedAtomLabels(bond);
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {

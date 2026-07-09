@@ -467,6 +467,14 @@ const sgroup: Omit<StructSchema, 'properties'> & {
       },
       required: ['class'],
     },
+    {
+      key: 'GEN',
+      title: 'Generic',
+      type: 'object',
+      properties: {
+        type: { enum: ['GEN'] },
+      },
+    },
   ],
 };
 

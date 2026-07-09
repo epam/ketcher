@@ -14,18 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { EditorSelection } from 'application/editor/editor.types';
 import type { MolSerializer } from 'domain/serializers/mol/molSerializer';
 import type { Struct } from 'domain/entities/struct';
+import { exceedsMolfileV2000Limit } from './constants';
 import type { StructFormatter } from './structFormatter.types';
 
 export class MolfileV2000Formatter implements StructFormatter {
   readonly #molSerializer: MolSerializer;
+  readonly #fallbackFormatter?: StructFormatter;
 
-  constructor(molSerializer: MolSerializer) {
+  constructor(
+    molSerializer: MolSerializer,
+    fallbackFormatter?: StructFormatter,
+  ) {
     this.#molSerializer = molSerializer;
+    this.#fallbackFormatter = fallbackFormatter;
   }
 
-  async getStringFromStructureAsync(struct: Struct): Promise<string> {
+  async getStringFromStructureAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string> {
+    if (this.#fallbackFormatter && exceedsMolfileV2000Limit(struct)) {
+      return this.#fallbackFormatter.getStringFromStructureAsync(
+        struct,
+        drawingEntitiesManager,
+        selection,
+      );
+    }
+
     const stringifiedMolfile = this.#molSerializer.serialize(struct);
     return stringifiedMolfile;
   }

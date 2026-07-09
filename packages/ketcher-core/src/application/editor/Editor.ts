@@ -6,10 +6,9 @@ import {
 } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
-  editorEvents,
+  createEditorEvents,
   hotkeysConfiguration,
   renderersEvents,
-  resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
@@ -308,8 +307,7 @@ export class CoreEditor {
       drawnStructuresSelector,
     ) as SVGGElement;
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
-    resetEditorEvents();
-    this.events = editorEvents;
+    this.events = createEditorEvents();
     KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
@@ -324,7 +322,12 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
-    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.zoomTool = ZoomTool.initInstance(
+      this.drawingEntitiesManager,
+      this.canvas,
+    );
+    this.renderersContainer.zoomTool = this.zoomTool;
+    this.renderersContainer.editor = this;
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
@@ -2272,7 +2275,7 @@ export class CoreEditor {
 
   private resetModeIfNeeded() {
     if (this.previousModes.length === 0) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
       const newModeName = isBlank
@@ -2402,6 +2405,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
-    resetEditorInstance();
+    resetEditorInstance(this.ketcherId);
   }
 }

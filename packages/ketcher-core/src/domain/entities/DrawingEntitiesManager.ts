@@ -2788,6 +2788,14 @@ export class DrawingEntitiesManager {
     SequenceRenderer.clear();
   }
 
+  public restoreSGroupRenderers() {
+    const editor = provideEditorInstance();
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.addSGroup(sgroup);
+    });
+  }
+
   public applyFlexLayoutMode(needRedrawBonds = false) {
     const editor = provideEditorInstance();
     const command = new Command();

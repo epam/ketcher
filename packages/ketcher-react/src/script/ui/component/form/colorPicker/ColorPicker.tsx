@@ -14,23 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ChangeEvent, useId, useRef, useState } from 'react';
-import { Popover } from '@mui/material';
+import { useId, useRef, useState } from 'react';
+import { Popover, type PopoverActions } from '@mui/material';
 
 import classes from './ColorPicker.module.less';
 import clsx from 'clsx';
 import { Icon } from 'components';
-import { useSettings } from 'src/hooks';
-import {
-  addCustomColor,
-  hslToHex,
-  hexToHsl,
-  isValidHex,
-  sanitizeHexInput,
-} from './ColorPicker.utils';
-import PresetGrid from './PresetGrid';
-import CustomColorSwatches from './CustomColorSwatches';
-import CustomColorEditor from './CustomColorEditor';
+import ColorPickerContent from './ColorPickerContent';
 
 interface Props {
   value: string;
@@ -38,92 +28,23 @@ interface Props {
   onChange: (value: string) => void;
 }
 
-const DEFAULT_COLOR = '#FF3232';
-const DEFAULT_CUSTOM_COLORS = [];
-
 const ColorPicker = (props: Props) => {
   const { onChange, value } = props;
-  const { settings, updateSettings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
-  const [isCustomOpen, setIsCustomOpen] = useState(false);
-  const [pendingColor, setPendingColor] = useState(value || DEFAULT_COLOR);
-  const customColors =
-    settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS;
-  const [hue, setHue] = useState(0);
-  const [lightness, setLightness] = useState(50);
-  const [hexInput, setHexInput] = useState('');
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
 
-  const applyHexColor = (hex: string) => {
-    setPendingColor(hex);
-    const { h, l } = hexToHsl(hex);
-    setHue(h);
-    setLightness(l);
-    setHexInput(hex.replace('#', '').toUpperCase());
-  };
-
-  const applyColorFromHsl = (h: number, l: number) => {
-    const hex = hslToHex(h, 100, l);
-    setPendingColor(hex);
-    setHexInput(hex.replace('#', ''));
+  const handleContentResize = () => {
+    popoverActionRef.current?.updatePosition();
   };
 
   const handleToggleOpen = () => {
-    if (!isOpen) {
-      const initialColor = value || DEFAULT_COLOR;
-      applyHexColor(initialColor);
-      setIsCustomOpen(false);
-
-      const newColors = addCustomColor(
-        [...(settings?.colorPickerCustomColors ?? [])],
-        initialColor,
-      );
-      updateSettings({ colorPickerCustomColors: newColors });
-    }
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
   };
 
-  const handleHueChange = (h: number) => {
-    setHue(h);
-    applyColorFromHsl(h, lightness);
-  };
-
-  const handleLightnessChange = (sliderLightness: number) => {
-    const l = 100 - sliderLightness;
-    setLightness(l);
-    applyColorFromHsl(hue, l);
-  };
-
-  const handleHexInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const raw = sanitizeHexInput(e.target.value);
-    setHexInput(raw);
-    if (isValidHex(raw)) {
-      applyHexColor('#' + raw);
-    }
-  };
-
-  const selectedCustomColor = customColors.find(
-    (color) => color.toUpperCase() === pendingColor.toUpperCase(),
-  );
-
-  const handleDeleteCustomColor = () => {
-    if (!selectedCustomColor) {
-      return;
-    }
-
-    const newColors = customColors.filter(
-      (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
-    );
-    updateSettings({ colorPickerCustomColors: newColors });
-  };
-
-  const handleApply = () => {
-    onChange(pendingColor);
-    if (isCustomOpen) {
-      const newColors = addCustomColor(customColors, pendingColor);
-      updateSettings({ colorPickerCustomColors: newColors });
-    }
+  const handleApply = (color: string) => {
+    onChange(color);
     setIsOpen(false);
   };
 
@@ -163,6 +84,7 @@ const ColorPicker = (props: Props) => {
 
       <Popover
         id={paletteId}
+        action={popoverActionRef}
         open={isOpen}
         anchorEl={triggerRef.current}
         onClose={handleCancel}
@@ -173,51 +95,12 @@ const ColorPicker = (props: Props) => {
           'data-testid': 'color-picker-preset',
         }}
       >
-        <PresetGrid
-          selectedColor={pendingColor}
-          onSelectColor={applyHexColor}
+        <ColorPickerContent
+          value={value}
+          onCancel={handleCancel}
+          onApply={handleApply}
+          onContentResize={handleContentResize}
         />
-
-        <div className={classes.customSection}>
-          <CustomColorSwatches
-            customColors={customColors}
-            pendingColor={pendingColor}
-            onSelectColor={applyHexColor}
-            isCustomOpen={isCustomOpen}
-            onToggleCustomOpen={() => setIsCustomOpen((prev) => !prev)}
-          />
-
-          {isCustomOpen && (
-            <CustomColorEditor
-              customColors={customColors}
-              pendingColor={pendingColor}
-              hue={hue}
-              lightness={lightness}
-              hexInput={hexInput}
-              onHueChange={handleHueChange}
-              onLightnessChange={handleLightnessChange}
-              onHexInputChange={handleHexInputChange}
-              onDeleteCustomColor={handleDeleteCustomColor}
-            />
-          )}
-
-          <div className={classes.actionRow}>
-            <button
-              type="button"
-              className={classes.cancelBtn}
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className={classes.applyBtn}
-              onClick={handleApply}
-            >
-              Apply
-            </button>
-          </div>
-        </div>
       </Popover>
     </div>
   );

@@ -47,10 +47,8 @@ const ColorPicker = (props: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCustomOpen, setIsCustomOpen] = useState(false);
   const [pendingColor, setPendingColor] = useState(value || DEFAULT_COLOR);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const customColors = [
-    ...(settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS),
-  ];
+  const customColors =
+    settings?.colorPickerCustomColors ?? DEFAULT_CUSTOM_COLORS;
   const [hue, setHue] = useState(0);
   const [lightness, setLightness] = useState(50);
   const [hexInput, setHexInput] = useState('');

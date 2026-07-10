@@ -23,7 +23,7 @@ const HUE_BACKGROUND =
   'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)';
 
 interface CustomColorEditorProps {
-  customColors: string[];
+  customColors: string[] | readonly string[];
   pendingColor: string;
   hue: number;
   lightness: number;

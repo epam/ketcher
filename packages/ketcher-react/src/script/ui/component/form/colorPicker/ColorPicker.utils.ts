@@ -26,7 +26,9 @@ export function normalizeHexColor(color: string): string {
   return color.toUpperCase();
 }
 
-export function sanitizeCustomColors(colors: string[]): string[] {
+export function sanitizeCustomColors(
+  colors: string[] | readonly string[],
+): string[] {
   const uniqueColors = new Set<string>();
 
   colors.forEach((color) => {
@@ -46,7 +48,10 @@ export function sanitizeCustomColors(colors: string[]): string[] {
   return Array.from(uniqueColors).slice(0, MAX_CUSTOM_COLORS);
 }
 
-export function addCustomColor(colors: string[], color: string): string[] {
+export function addCustomColor(
+  colors: string[] | readonly string[],
+  color: string,
+): string[] {
   const normalizedColor = normalizeHexColor(color);
 
   if (isPresetColor(normalizedColor)) {

@@ -20,7 +20,7 @@ import classes from './ColorPicker.module.less';
 import { Icon } from 'components';
 
 interface CustomColorSwatchesProps {
-  customColors: string[];
+  customColors: string[] | readonly string[];
   pendingColor: string;
   onSelectColor: (color: string) => void;
   isCustomOpen: boolean;

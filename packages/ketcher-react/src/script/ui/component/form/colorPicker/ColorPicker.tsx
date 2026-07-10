@@ -14,14 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type ChangeEvent,
-  type KeyboardEvent,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type ChangeEvent, useId, useRef, useState } from 'react';
 import { Popover } from '@mui/material';
 
 import classes from './ColorPicker.module.less';
@@ -70,9 +63,14 @@ const ColorPicker = (props: Props) => {
     setHexInput(hex.replace('#', '').toUpperCase());
   };
 
-  // Sync internal state when popup opens
-  useEffect(() => {
-    if (isOpen) {
+  const applyColorFromHsl = (h: number, l: number) => {
+    const hex = hslToHex(h, 100, l);
+    setPendingColor(hex);
+    setHexInput(hex.replace('#', ''));
+  };
+
+  const handleToggleOpen = () => {
+    if (!isOpen) {
       const initialColor = value || DEFAULT_COLOR;
       applyHexColor(initialColor);
       setIsCustomOpen(false);
@@ -83,16 +81,7 @@ const ColorPicker = (props: Props) => {
       );
       updateSettings({ colorPickerCustomColors: newColors });
     }
-  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const applyColorFromHsl = (h: number, l: number) => {
-    const hex = hslToHex(h, 100, l);
-    setPendingColor(hex);
-    setHexInput(hex.replace('#', ''));
-  };
-
-  const handleToggleOpen = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen(!isOpen);
   };
 
   const handleHueChange = (h: number) => {
@@ -142,13 +131,6 @@ const ColorPicker = (props: Props) => {
     setIsOpen(false);
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleToggleOpen();
-    }
-  };
-
   return (
     <div
       className={classes.colorPickerWrapper}
@@ -167,7 +149,6 @@ const ColorPicker = (props: Props) => {
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={handleToggleOpen}
-        onKeyDown={handleKeyDown}
       >
         <div
           className={classes.colorPickerPreview}

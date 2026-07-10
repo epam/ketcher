@@ -49,6 +49,7 @@ function ColorSlider({
     if (!containerRef.current) {
       return;
     }
+
     setContainerWidth(containerRef.current.offsetWidth);
     const ro = new ResizeObserver((entries) => {
       setContainerWidth(entries[0].contentRect.width);
@@ -72,6 +73,7 @@ function ColorSlider({
     if (!dragRef.current || !containerRef.current) {
       return;
     }
+
     const containerW = containerRef.current.offsetWidth;
     const dx = e.clientX - dragRef.current.startX;
     const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);

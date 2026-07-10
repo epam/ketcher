@@ -17,7 +17,6 @@
 import {
   type ChangeEvent,
   type KeyboardEvent,
-  useCallback,
   useEffect,
   useId,
   useRef,
@@ -63,13 +62,13 @@ const ColorPicker = (props: Props) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const paletteId = 'color-picker-' + useId();
 
-  const applyHexColor = useCallback((hex: string) => {
+  const applyHexColor = (hex: string) => {
     setPendingColor(hex);
     const { h, l } = hexToHsl(hex);
     setHue(h);
     setLightness(l);
     setHexInput(hex.replace('#', '').toUpperCase());
-  }, []);
+  };
 
   // Sync internal state when popup opens
   useEffect(() => {
@@ -86,49 +85,40 @@ const ColorPicker = (props: Props) => {
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const applyColorFromHsl = useCallback((h: number, l: number) => {
+  const applyColorFromHsl = (h: number, l: number) => {
     const hex = hslToHex(h, 100, l);
     setPendingColor(hex);
     setHexInput(hex.replace('#', ''));
-  }, []);
+  };
 
-  const handleToggleOpen = useCallback(() => {
+  const handleToggleOpen = () => {
     setIsOpen((prev) => !prev);
-  }, []);
+  };
 
-  const handleHueChange = useCallback(
-    (h: number) => {
-      setHue(h);
-      applyColorFromHsl(h, lightness);
-    },
-    [lightness, applyColorFromHsl],
-  );
+  const handleHueChange = (h: number) => {
+    setHue(h);
+    applyColorFromHsl(h, lightness);
+  };
 
-  const handleLightnessChange = useCallback(
-    (sliderLightness: number) => {
-      const l = 100 - sliderLightness;
-      setLightness(l);
-      applyColorFromHsl(hue, l);
-    },
-    [hue, applyColorFromHsl],
-  );
+  const handleLightnessChange = (sliderLightness: number) => {
+    const l = 100 - sliderLightness;
+    setLightness(l);
+    applyColorFromHsl(hue, l);
+  };
 
-  const handleHexInputChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const raw = sanitizeHexInput(e.target.value);
-      setHexInput(raw);
-      if (isValidHex(raw)) {
-        applyHexColor('#' + raw);
-      }
-    },
-    [applyHexColor],
-  );
+  const handleHexInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const raw = sanitizeHexInput(e.target.value);
+    setHexInput(raw);
+    if (isValidHex(raw)) {
+      applyHexColor('#' + raw);
+    }
+  };
 
   const selectedCustomColor = customColors.find(
     (color) => color.toUpperCase() === pendingColor.toUpperCase(),
   );
 
-  const handleDeleteCustomColor = useCallback(() => {
+  const handleDeleteCustomColor = () => {
     if (!selectedCustomColor) {
       return;
     }
@@ -137,30 +127,27 @@ const ColorPicker = (props: Props) => {
       (color) => color.toUpperCase() !== selectedCustomColor.toUpperCase(),
     );
     updateSettings({ colorPickerCustomColors: newColors });
-  }, [selectedCustomColor, customColors, updateSettings]);
+  };
 
-  const handleApply = useCallback(() => {
+  const handleApply = () => {
     onChange(pendingColor);
     if (isCustomOpen) {
       const newColors = addCustomColor(customColors, pendingColor);
       updateSettings({ colorPickerCustomColors: newColors });
     }
     setIsOpen(false);
-  }, [onChange, pendingColor, isCustomOpen, customColors, updateSettings]);
+  };
 
-  const handleCancel = useCallback(() => {
+  const handleCancel = () => {
     setIsOpen(false);
-  }, []);
+  };
 
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleToggleOpen();
-      }
-    },
-    [handleToggleOpen],
-  );
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleToggleOpen();
+    }
+  };
 
   return (
     <div

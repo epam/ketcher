@@ -14,13 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type PointerEvent,
-} from 'react';
+import { useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 
 import classes from './ColorPicker.module.less';
 
@@ -66,33 +60,27 @@ function ColorSlider({
   const ratio = containerWidth > 0 ? (value - min) / (max - min) : 0;
   const thumbLeft = ratio * (containerWidth - thumbWidth);
 
-  const handlePointerDown = useCallback(
-    (e: PointerEvent<SVGSVGElement>) => {
-      e.preventDefault();
-      e.currentTarget.setPointerCapture(e.pointerId);
-      dragRef.current = { startX: e.clientX, startValue: value };
-    },
-    [value],
-  );
+  const handlePointerDown = (e: PointerEvent<SVGSVGElement>) => {
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragRef.current = { startX: e.clientX, startValue: value };
+  };
 
-  const handlePointerMove = useCallback(
-    (e: PointerEvent<SVGSVGElement>) => {
-      if (!dragRef.current || !containerRef.current) return;
-      const containerW = containerRef.current.offsetWidth;
-      const dx = e.clientX - dragRef.current.startX;
-      const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);
-      const raw = dragRef.current.startValue + deltaValue;
-      const stepped = Math.round(raw / step) * step;
-      const clamped = Math.min(max, Math.max(min, stepped));
-      onValueChange(clamped);
-    },
-    [min, max, step, onValueChange],
-  );
+  const handlePointerMove = (e: PointerEvent<SVGSVGElement>) => {
+    if (!dragRef.current || !containerRef.current) return;
+    const containerW = containerRef.current.offsetWidth;
+    const dx = e.clientX - dragRef.current.startX;
+    const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);
+    const raw = dragRef.current.startValue + deltaValue;
+    const stepped = Math.round(raw / step) * step;
+    const clamped = Math.min(max, Math.max(min, stepped));
+    onValueChange(clamped);
+  };
 
-  const handlePointerUp = useCallback((e: PointerEvent<SVGSVGElement>) => {
+  const handlePointerUp = (e: PointerEvent<SVGSVGElement>) => {
     dragRef.current = null;
     e.currentTarget.releasePointerCapture(e.pointerId);
-  }, []);
+  };
 
   return (
     <div ref={containerRef} className={classes.sliderContainer}>

@@ -16,12 +16,12 @@
 import { useCallback, useEffect } from 'react';
 import {
   hasAntisenseChains,
-  notifyAntisenseChainsCreated,
   selectEditor,
   selectEditorActiveTool,
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
+  setHasAntisenseChains,
   showPreview,
 } from 'state/common';
 import { openErrorModal, openErrorTooltip, openModal } from 'state/modal';
@@ -370,14 +370,24 @@ export const EditorEvents = () => {
   }, [hasAtLeastOneAntisense]);
 
   useEffect(() => {
-    const handleAntisenseChainCreated = () => {
-      dispatch(notifyAntisenseChainsCreated({}));
+    if (!editor) {
+      return;
+    }
+
+    const updateHasAntisenseChains = () => {
+      dispatch(
+        setHasAntisenseChains(editor.drawingEntitiesManager.hasAntisenseChains),
+      );
     };
 
-    editor?.events.createAntisenseChain.add(handleAntisenseChainCreated);
+    editor.events.createAntisenseChain.add(updateHasAntisenseChains);
+    editor.events.selectHistory.add(updateHasAntisenseChains);
+    editor.events.deleteSelectedStructure.add(updateHasAntisenseChains);
 
     return () => {
-      editor?.events.createAntisenseChain.remove(handleAntisenseChainCreated);
+      editor.events.createAntisenseChain.remove(updateHasAntisenseChains);
+      editor.events.selectHistory.remove(updateHasAntisenseChains);
+      editor.events.deleteSelectedStructure.remove(updateHasAntisenseChains);
     };
   }, [editor, dispatch]);
 

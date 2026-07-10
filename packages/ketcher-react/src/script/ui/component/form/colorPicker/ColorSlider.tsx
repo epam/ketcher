@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type PointerEvent,
+} from 'react';
 
 import classes from './ColorPicker.module.less';
 
@@ -61,7 +67,7 @@ function ColorSlider({
   const thumbLeft = ratio * (containerWidth - thumbWidth);
 
   const handlePointerDown = useCallback(
-    (e: React.PointerEvent<SVGSVGElement>) => {
+    (e: PointerEvent<SVGSVGElement>) => {
       e.preventDefault();
       e.currentTarget.setPointerCapture(e.pointerId);
       dragRef.current = { startX: e.clientX, startValue: value };
@@ -70,7 +76,7 @@ function ColorSlider({
   );
 
   const handlePointerMove = useCallback(
-    (e: React.PointerEvent<SVGSVGElement>) => {
+    (e: PointerEvent<SVGSVGElement>) => {
       if (!dragRef.current || !containerRef.current) return;
       const containerW = containerRef.current.offsetWidth;
       const dx = e.clientX - dragRef.current.startX;
@@ -83,13 +89,10 @@ function ColorSlider({
     [min, max, step, onValueChange],
   );
 
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent<SVGSVGElement>) => {
-      dragRef.current = null;
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    },
-    [],
-  );
+  const handlePointerUp = useCallback((e: PointerEvent<SVGSVGElement>) => {
+    dragRef.current = null;
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  }, []);
 
   return (
     <div ref={containerRef} className={classes.sliderContainer}>

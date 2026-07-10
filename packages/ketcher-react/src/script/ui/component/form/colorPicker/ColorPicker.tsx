@@ -14,7 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { Popover } from '@mui/material';
 
 import classes from './ColorPicker.module.less';
@@ -106,7 +114,7 @@ const ColorPicker = (props: Props) => {
   );
 
   const handleHexInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       const raw = sanitizeHexInput(e.target.value);
       setHexInput(raw);
       if (isValidHex(raw)) {
@@ -145,7 +153,7 @@ const ColorPicker = (props: Props) => {
   }, []);
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
+    (e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         handleToggleOpen();

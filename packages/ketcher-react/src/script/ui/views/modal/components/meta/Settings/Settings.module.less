@@ -20,6 +20,7 @@
 .headerContent {
   display: flex;
   gap: 8px;
+  align-items: center;
 
   .title {
     padding-right: 4px;
@@ -44,6 +45,97 @@
       color: @color-icon-disabled;
     }
   }
+}
+
+.settingsMenuWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.settingsMenuIcon {
+  width: 16px;
+  height: 16px;
+  transform: rotate(0deg);
+  transition: transform 200ms ease-in-out;
+}
+
+.settingsMenuIconOpened {
+  transform: rotate(180deg);
+}
+
+.settingsMenu {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+  padding: 8px;
+  border: 1px solid @color-border-input;
+  border-radius: 8px;
+  background-color: @color-background-primary;
+  box-shadow: 0 6px 10px @color-select-box-shadow;
+  // Keep the portaled menu above the MUI dialog layer (1300).
+  z-index: 1301;
+}
+
+.settingsSubmenuWrapper {
+  position: relative;
+}
+
+.settingsSubmenu {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 8px);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: 8px;
+  border: 1px solid @color-border-input;
+  border-radius: 8px;
+  background-color: @color-background-primary;
+  box-shadow: 0 6px 10px @color-select-box-shadow;
+  z-index: 1;
+}
+
+.settingsMenuItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 32px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: @color-text-primary;
+  padding: 6px 10px;
+  text-align: left;
+
+  &:hover:not(:disabled) {
+    background-color: fade(@color-primary-green, 10%);
+  }
+
+  &:focus-visible {
+    outline: 1px solid @color-primary-green;
+  }
+
+  &:disabled {
+    color: @color-icon-disabled;
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+}
+
+.settingsMenuItemOpened {
+  background-color: fade(@color-primary-green, 10%);
+}
+
+.settingsSubmenuIcon {
+  margin-left: 16px;
+  transform: rotate(90deg);
+}
+
+.settingsSubmenuIconOpened {
+  transform: rotate(180deg);
 }
 
 .accordion {
@@ -113,10 +205,4 @@
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
     z-index: 10;
   }
-}
-
-.acsStyleButton {
-  margin-right: auto;
-
-  .button-primary();
 }

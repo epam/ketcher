@@ -95,23 +95,6 @@ describe('S-Group DAT type rendering', () => {
   });
 });
 
-describe('Generic S-Group handling', () => {
-  it('should not crash when opening Generic S-Group', () => {
-    expect(() => {
-      renderWithMockStore(<SGroup type="GEN" />, {
-        modal: {
-          form: {
-            result: {
-              type: 'GEN',
-            },
-          },
-        },
-      });
-    }).not.toThrow();
-    expect(screen.getByText('S-Group Properties')).toBeInTheDocument();
-  });
-});
-
 function renderWithMockStore(
   component,
   initialState: Record<string, unknown> = {

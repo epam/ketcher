@@ -46,7 +46,9 @@ function ColorSlider({
 
   // Measure once after mount (before paint) and on resize
   useLayoutEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) {
+      return;
+    }
     setContainerWidth(containerRef.current.offsetWidth);
     const ro = new ResizeObserver((entries) => {
       setContainerWidth(entries[0].contentRect.width);
@@ -67,7 +69,9 @@ function ColorSlider({
   };
 
   const handlePointerMove = (e: PointerEvent<SVGSVGElement>) => {
-    if (!dragRef.current || !containerRef.current) return;
+    if (!dragRef.current || !containerRef.current) {
+      return;
+    }
     const containerW = containerRef.current.offsetWidth;
     const dx = e.clientX - dragRef.current.startX;
     const deltaValue = (dx / (containerW - thumbWidth)) * (max - min);

@@ -89,6 +89,12 @@ export const CommonLeftToolbar = (page: Page) => {
       }
     },
 
+    isMacroBondTool(
+      value: MacroBondTool | MicroBondTool,
+    ): value is MacroBondTool {
+      return Object.values(MacroBondTool).includes(value as MacroBondTool);
+    },
+
     async bondTool(bondType: MacroBondTool | MicroBondTool) {
       let attempts = 0;
       const maxAttempts = 5;
@@ -96,6 +102,15 @@ export const CommonLeftToolbar = (page: Page) => {
         .getByTestId(bondType)
         .filter({ has: page.locator(':visible') })
         .first();
+
+      if (
+        (await bondTypeButton.isVisible()) &&
+        this.isMacroBondTool(bondType)
+      ) {
+        await bondTypeButton.click({ force: true });
+        return;
+      }
+
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();

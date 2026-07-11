@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
 import {
@@ -107,7 +107,9 @@ export const CommonLeftToolbar = (page: Page) => {
         (await bondTypeButton.isVisible()) &&
         this.isMacroBondTool(bondType)
       ) {
+        await page.waitForTimeout(200);
         await bondTypeButton.click({ force: true });
+        await expect(bondTypeButton).toHaveAttribute('class', /active/);
         return;
       }
 

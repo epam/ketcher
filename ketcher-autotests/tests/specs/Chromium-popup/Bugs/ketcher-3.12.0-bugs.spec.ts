@@ -596,7 +596,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     });
 
     await presetSection.setupSugar({
-      atomIds: [16, 17, 18, 19, 20, 21, 22, 23],
+      atomIds: [21, 16, 17, 18, 19, 20, 22, 23],
       bondIds: [18, 19, 20, 21, 22, 23, 24, 25],
       symbol: Sugar.Sugar.alias,
       name: 'S1',

@@ -871,7 +871,6 @@ Object.entries(MacroBondTool).forEach(([key, dataTestId]) => {
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await commonLeftToolbar.handTool();
     await commonLeftToolbar.bondTool(dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });

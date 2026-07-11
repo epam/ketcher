@@ -20,12 +20,12 @@ import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoin
 import { SGroup } from 'domain/entities/sgroup';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
-import { Elements } from 'domain/constants';
+import { Elements } from '../../constants/elements';
 import common from './common';
 import type { Mapping } from './mol.types';
 import utils from './utils';
 import { KetcherLogger } from 'utilities';
-import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
+import { geometricCenter, getAtomPositions } from '../../entities/geometry';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 type NumberTuple = [number, number];

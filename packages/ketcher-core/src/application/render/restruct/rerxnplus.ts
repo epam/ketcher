@@ -18,7 +18,7 @@ import { Box2Abs } from 'domain/entities/box2Abs';
 import type { RxnPlus } from 'domain/entities/rxnPlus';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import draw from '../draw';
 import util from '../util';
 import type { Render } from '../raphaelRender';

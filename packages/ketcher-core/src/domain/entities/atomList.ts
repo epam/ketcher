@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { type ElementLabel, Elements } from 'domain/constants';
+import type { ElementLabel } from '../constants/element.types';
+import { Elements } from '../constants/elements';
 
 export interface AtomListParams {
   readonly notList: boolean;

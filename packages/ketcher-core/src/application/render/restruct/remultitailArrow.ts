@@ -7,7 +7,7 @@ import type ReStruct from './restruct';
 import type { RenderOptions } from 'application/render/render.types';
 import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { Pool } from 'domain/entities/pool';
 import { Vec2 } from 'domain/entities/vec2';
 import type { RaphaelPaper } from 'raphael';

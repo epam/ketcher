@@ -2,7 +2,7 @@ import type { Vec2 } from 'domain/entities/vec2';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { ReStruct } from 'application/render';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 export class ImageMove extends BaseOperation {
   constructor(private readonly id: number, private readonly offset: Vec2) {

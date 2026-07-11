@@ -1,10 +1,10 @@
 import { BaseMonomer } from './BaseMonomer';
-import { type MonomerItemType, AttachmentPointName } from 'domain/types';
+import { type MonomerItemType, AttachmentPointName } from '../types/monomers';
 import type { Vec2 } from './vec2';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import { isSugarOrAmbiguousSugar } from 'domain/helpers/monomers';
+import { PhosphateSubChain } from './monomer-chains/PhosphateSubChain';
+import type { SubChainNode } from './monomer-chains/types';
+import { RnaSubChain } from './monomer-chains/RnaSubChain';
+import { isSugarOrAmbiguousSugar } from '../helpers/monomers';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {

@@ -1,26 +1,26 @@
-import type { RNABase } from 'domain/entities/RNABase';
-import type { Sugar } from 'domain/entities/Sugar';
+import type { RNABase } from './RNABase';
+import type { Sugar } from './Sugar';
 import assert from 'assert';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
-} from 'domain/helpers/monomers';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Vec2 } from 'domain/entities/vec2';
+} from '../helpers/monomers';
+import type { SubChainNode } from './monomer-chains/types';
+import { Vec2 } from './vec2';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import { AttachmentPointName } from 'domain/types';
-import { Command } from 'domain/entities/Command';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { AttachmentPointName } from '../types/monomers';
+import { Command } from './Command';
+import { getRnaPartLibraryItem } from '../helpers/rna';
+import type { BaseMonomer } from './BaseMonomer';
+import type { AmbiguousMonomer } from './AmbiguousMonomer';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
 } from 'domain/constants/monomers';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from '../constants/layout';
 import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleoside {

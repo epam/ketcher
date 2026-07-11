@@ -21,14 +21,14 @@ import type { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
 import type { ReStruct } from '../../application/render';
-import type { FunctionalGroup } from 'domain/entities/functionalGroup';
-import type { Pool } from 'domain/entities/pool';
-import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import type { FunctionalGroup } from './functionalGroup';
+import type { Pool } from './pool';
+import type { SGroupAttachmentPoint } from './sGroupAttachmentPoint';
 import type { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 import { isNumber } from 'lodash';
-import { geometricCenter, getAtomPositions } from 'domain/entities/geometry';
+import { geometricCenter, getAtomPositions } from './geometry';
 
 export enum SUPERATOM_CLASS {
   SUGAR = 'SUGAR',

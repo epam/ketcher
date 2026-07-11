@@ -2,9 +2,14 @@ import type {
   IKetAttachmentPoint,
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Struct, Vec2, BaseMonomer } from 'domain/entities';
-import { type MonomerItemType, AttachmentPointName } from 'domain/types';
-import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
+import { Struct } from '../../../entities/struct';
+import { Vec2 } from '../../../entities/vec2';
+import { BaseMonomer } from '../../../entities/BaseMonomer';
+import {
+  type MonomerItemType,
+  AttachmentPointName,
+} from '../../../types/monomers';
+import { getAttachmentPointLabelWithBinaryShift } from '../../../helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
 import assert from 'assert';
 import { moleculeToStruct } from './moleculeToStruct';
@@ -14,10 +19,8 @@ import { textToStruct } from './textToStruct';
 import { imageToStruct } from './imageToStruct';
 import { multitailArrowToStruct } from './multitailArrowToStruct';
 import { rgroupToStruct } from './rgroupToStruct';
-import {
-  IMAGE_SERIALIZE_KEY,
-  MULTITAIL_ARROW_SERIALIZE_KEY,
-} from 'domain/constants';
+import { IMAGE_SERIALIZE_KEY } from '../../../constants/image';
+import { MULTITAIL_ARROW_SERIALIZE_KEY } from '../../../constants/multitailArrow';
 
 function parseNode(node, struct) {
   const type = node.type;

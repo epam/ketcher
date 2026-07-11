@@ -1,12 +1,12 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { DrawingEntity } from './DrawingEntity';
 import {
   type KetFileMultitailArrowNode,
   type MultitailArrowsReferencePositions,
   MultitailArrow as MicromoleculeMultitailArrow,
-} from 'domain/entities/multitailArrow';
-import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
-import type { Pool } from 'domain/entities/pool';
-import { Vec2 } from 'domain/entities/vec2';
+} from './multitailArrow';
+import { FixedPrecisionCoordinates } from './fixedPrecision';
+import type { Pool } from './pool';
+import { Vec2 } from './vec2';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import type { BaseRenderer } from 'application/render';
 import type { MultitailArrowRenderer } from 'application/render/renderers/MultitailArrowRenderer';

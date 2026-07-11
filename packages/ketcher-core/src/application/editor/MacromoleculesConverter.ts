@@ -30,12 +30,12 @@ import type { AttachmentPointName } from 'domain/types';
 import {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
-} from 'domain/helpers/attachmentPointCalculations';
+} from '../../domain/helpers/attachmentPointCalculations';
 import { invert, isNumber } from 'lodash';
 import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import type { Atom } from 'domain/entities/CoreAtom';
-import type { AtomLabel } from 'domain/constants';
+import type { AtomLabel } from 'domain/constants/element.types';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MONOMER_CONST } from 'domain/constants/monomers';

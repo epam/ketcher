@@ -1,7 +1,7 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Peptide } from 'domain/entities/Peptide';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { BaseMonomer } from './BaseMonomer';
+import { Peptide } from './Peptide';
+import type { SubChainNode } from './monomer-chains/types';
+import { RnaSubChain } from './monomer-chains/RnaSubChain';
 
 export class UnsplitNucleotide extends BaseMonomer {
   public getValidSourcePoint(monomer?: BaseMonomer) {

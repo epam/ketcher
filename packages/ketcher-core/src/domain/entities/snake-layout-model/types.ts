@@ -1,7 +1,7 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { Chain } from 'domain/entities/monomer-chains/Chain';
-import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
-import { EmptySnakeLayoutNode } from 'domain/entities/snake-layout-model/EmptySnakeLayoutNode';
+import type { BaseMonomer } from '../BaseMonomer';
+import type { Chain } from '../monomer-chains/Chain';
+import { MoleculeSnakeLayoutNode } from '../snake-layout-model/MoleculeSnakeLayoutNode';
+import { EmptySnakeLayoutNode } from '../snake-layout-model/EmptySnakeLayoutNode';
 
 export interface ISnakeLayoutMonomersNode {
   monomers: BaseMonomer[];

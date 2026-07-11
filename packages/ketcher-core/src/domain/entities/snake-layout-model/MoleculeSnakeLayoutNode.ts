@@ -1,5 +1,5 @@
-import type { Atom } from 'domain/entities/CoreAtom';
-import type { Bond } from 'domain/entities/CoreBond';
+import type { Atom } from '../CoreAtom';
+import type { Bond } from '../CoreBond';
 
 export class MoleculeSnakeLayoutNode {
   constructor(public molecule: (Atom | Bond)[]) {}

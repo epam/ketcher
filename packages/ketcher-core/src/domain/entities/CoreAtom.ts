@@ -1,9 +1,10 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import type { Vec2 } from 'domain/entities/vec2';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { type Bond, BondType } from 'domain/entities/CoreBond';
+import { DrawingEntity } from './DrawingEntity';
+import type { Vec2 } from './vec2';
+import type { BaseMonomer } from './BaseMonomer';
+import { type Bond, BondType } from './CoreBond';
 import type { BaseRenderer } from 'application/render';
-import { AtomLabel, Elements } from 'domain/constants';
+import { AtomLabel } from '../constants/element.types';
+import { Elements } from '../constants/elements';
 import type { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';

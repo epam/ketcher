@@ -4,7 +4,7 @@ import type { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { type Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Bond as StructBond } from 'domain/entities/bond';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import type { HalfEdge } from 'application/render/view-model/HalfEdge';

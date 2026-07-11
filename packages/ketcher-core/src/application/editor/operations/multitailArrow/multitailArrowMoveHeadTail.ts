@@ -1,7 +1,7 @@
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { type ReStruct, MultitailArrowRefName } from 'application/render';
-import { MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 export class MultitailArrowMoveHeadTail extends BaseOperation {
   constructor(

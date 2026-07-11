@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { IMAGE_SERIALIZE_KEY } from '../../../constants/image';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import type { KetFileImageNode } from 'domain/entities/image';
 

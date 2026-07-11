@@ -1,5 +1,5 @@
-import type { Atom } from 'domain/entities/CoreAtom';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { Atom } from './CoreAtom';
+import type { BaseMonomer } from './BaseMonomer';
 import type { BaseRenderer } from 'application/render';
 import type { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import type { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';

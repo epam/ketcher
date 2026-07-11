@@ -21,9 +21,9 @@ import { Vec2 } from './vec2';
 import {
   type initiallySelectedType,
   BaseMicromoleculeEntity,
-} from 'domain/entities/BaseMicromoleculeEntity';
-import type { SGroup } from 'domain/entities/sgroup';
-import type { BondCIP } from 'domain/entities/types';
+} from './BaseMicromoleculeEntity';
+import type { SGroup } from './sgroup';
+import type { BondCIP } from './types';
 
 export interface BondAttributes {
   reactingCenterStatus?: number | null;

@@ -19,7 +19,7 @@ import { Atom, radicalElectrons } from './atom';
 import type { EditorSelection } from 'application/editor/editor.types';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
-import { Elements } from 'domain/constants';
+import { Elements } from '../constants/elements';
 import { Fragment } from './fragment';
 import { FunctionalGroup } from './functionalGroup';
 import { HalfBond } from './halfBond';
@@ -36,7 +36,7 @@ import type { Text } from './text';
 import { Vec2 } from './vec2';
 import type { Highlight } from './highlight';
 import type { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { MonomerMicromolecule } from './monomerMicromolecule';
 import { isNumber } from 'lodash';
 import type { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
@@ -45,7 +45,7 @@ import {
   flipPointByCenter,
   rotateDelta,
 } from 'application/editor/shared/utils';
-import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+import { getAttachmentPointStereoBond } from '../helpers/getAttachmentPointStereoBond';
 
 export type Neighbor = {
   aid: number;

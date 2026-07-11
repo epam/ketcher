@@ -29,7 +29,7 @@ import {
   isAmbiguousMonomerLibraryItem,
   isMonomerItemPhosphate,
   isMonomerItemSugar,
-} from 'domain/helpers/monomers';
+} from './monomers';
 import {
   KetMonomerClass,
   MONOMER_CONST,

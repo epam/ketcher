@@ -1,9 +1,9 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName } from 'domain/types';
-import { getSugarFromRnaBase } from 'domain/helpers/monomers';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { BaseMonomer } from './BaseMonomer';
+import { ChemSubChain } from './monomer-chains/ChemSubChain';
+import type { PolymerBond } from './PolymerBond';
+import { AttachmentPointName } from '../types/monomers';
+import { getSugarFromRnaBase } from '../helpers/monomers';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint() {

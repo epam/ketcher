@@ -1,6 +1,6 @@
 import { Vec2 } from 'domain/entities/vec2';
 import type { Render } from './raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 const canvasToView = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);

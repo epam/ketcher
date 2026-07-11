@@ -14,7 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+// Keep a runtime artifact for the serializers barrel to support preserveModules consumers.
+export const serializersRuntimeBarrel = true;
+
 export * from './serializers.types';
-export * from './ket';
-export * from './mol';
-export * from './sdf';
+export * from './ket/ketSerializer';
+export * from './ket/helpers';
+export * from './mol/molSerializer';
+export * from './sdf/sdfSerializer';
+export {
+  getKetRef,
+  getMonomerTemplateRefFromMonomerItem,
+  setAmbiguousMonomerTemplatePrefix,
+  setMonomerTemplatePrefix,
+} from './ket/helpers';

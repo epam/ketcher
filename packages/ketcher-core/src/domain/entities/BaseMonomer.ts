@@ -1,29 +1,29 @@
 import { type DrawingEntityConfig, DrawingEntity } from './DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from './vec2';
 import {
   type AttachmentPointsToBonds,
   type MonomerItemType,
-  type MonomerBond,
   AttachmentPointName,
-} from 'domain/types';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+} from '../types/monomers';
+import type { MonomerBond } from '../types/entities';
+import { PolymerBond } from './PolymerBond';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabel } from '../helpers/attachmentPointCalculations';
 import type { IKetAttachmentPoint } from 'application/formatters/types/ket';
-import type { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import type { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import type { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import type { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import type { RnaSubChain } from './monomer-chains/RnaSubChain';
+import type { ChemSubChain } from './monomer-chains/ChemSubChain';
+import type { PeptideSubChain } from './monomer-chains/PeptideSubChain';
+import type { SubChainNode } from './monomer-chains/types';
+import type { PhosphateSubChain } from './monomer-chains/PhosphateSubChain';
 import type { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { compact, isNumber, values } from 'lodash';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
+import { HydrogenBond } from './HydrogenBond';
 import {
   isMonomerItemPhosphate,
   isMonomerItemSugar,
-} from 'domain/helpers/monomerItem';
+} from '../helpers/monomerItem';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';

@@ -16,7 +16,7 @@
 
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 interface RxnArrowMoveData {
   id: number;

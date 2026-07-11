@@ -6,7 +6,7 @@ import {
   type KetFileMultitailArrowNode,
   MultitailArrow,
 } from 'domain/entities/multitailArrow';
-import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
+import { MULTITAIL_ARROW_SERIALIZE_KEY } from '../../constants/multitailArrow';
 
 export const validateMultitailArrows = (json: KetFileRootContent): boolean => {
   const nodes: Array<KetFileNode<unknown>> = json.root.nodes;

@@ -119,18 +119,18 @@ import {
   setEditorInstance,
   resetEditorInstance,
 } from 'application/editor/editorSingleton';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from 'domain/constants/layout';
 import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
 import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
+import { KetSerializer } from 'domain/serializers';
 import {
   getKetRef,
   getMonomerTemplateRefFromMonomerItem,
-  KetSerializer,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 import type { SequenceMode } from './modes/types/sequenceMode';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;

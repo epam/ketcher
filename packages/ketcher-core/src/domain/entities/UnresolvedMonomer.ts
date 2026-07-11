@@ -1,8 +1,8 @@
 import { BaseMonomer } from './BaseMonomer';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Peptide } from 'domain/entities/Peptide';
+import { ChemSubChain } from './monomer-chains/ChemSubChain';
+import { PeptideSubChain } from './monomer-chains/PeptideSubChain';
+import type { SubChainNode } from './monomer-chains/types';
+import { Peptide } from './Peptide';
 
 export class UnresolvedMonomer extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer) {

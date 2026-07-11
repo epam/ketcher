@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
-import { Vec2 } from 'domain/entities/vec2';
+import { BaseMicromoleculeEntity } from './BaseMicromoleculeEntity';
+import { Vec2 } from './vec2';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 import { getNodeWithInvertedYCoord } from 'domain/serializers/ket/helpers';
-import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { IMAGE_SERIALIZE_KEY } from '../constants/image';
 
 export interface KetFileImageNode extends KetFileNode<string> {
   format: string;

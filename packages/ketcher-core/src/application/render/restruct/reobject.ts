@@ -17,9 +17,9 @@
 import type { Box2Abs } from 'domain/entities/box2Abs';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import Visel from './visel';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
 
 class ReObject {
   public visel: Visel;

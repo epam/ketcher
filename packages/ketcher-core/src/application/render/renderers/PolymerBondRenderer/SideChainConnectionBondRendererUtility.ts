@@ -3,7 +3,7 @@ import type {
   BaseSequenceItemRenderer,
 } from 'application/render';
 import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from 'domain/constants/layout';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {

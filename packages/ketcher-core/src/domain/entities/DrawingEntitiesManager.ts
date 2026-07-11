@@ -4,12 +4,12 @@ import {
   type MonomerItemType,
   type MonomerOrAmbiguousType,
   AttachmentPointName,
-} from 'domain/types';
-import { Vec2 } from 'domain/entities/vec2';
-import { Command } from 'domain/entities/Command';
-import type { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { getStructureBbox } from 'domain/entities/structureBbox';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+} from '../types/monomers';
+import { Vec2 } from './vec2';
+import { Command } from './Command';
+import type { DrawingEntity } from './DrawingEntity';
+import { getStructureBbox } from './structureBbox';
+import { PolymerBond } from './PolymerBond';
 import assert from 'assert';
 import {
   type KetFileMultitailArrowNode,
@@ -26,8 +26,8 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
-import { SGroup } from 'domain/entities/sgroup';
-import type { BondCIP } from 'domain/entities/types';
+import { SGroup } from './sgroup';
+import type { BondCIP } from './types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -51,31 +51,31 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerEntityFactory } from 'domain/helpers/monomerEntityFactory';
+import { monomerEntityFactory } from '../helpers/monomerEntityFactory';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import {
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
   isValidNucleotide,
-} from 'domain/helpers/monomers';
+} from '../helpers/monomers';
 import {
   type GrouppedChain,
   ChainsCollection,
-} from 'domain/entities/monomer-chains/ChainsCollection';
+} from './monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
-import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
+import { CanvasMatrix } from './canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
-import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Matrix } from './canvas-matrix/Matrix';
+import { Cell } from './canvas-matrix/Cell';
+import { AmbiguousMonomer } from './AmbiguousMonomer';
 import type { IKetTemplateConnection } from 'application/formatters';
-import { type AtomProperties, Atom } from 'domain/entities/CoreAtom';
-import { Bond } from 'domain/entities/CoreBond';
+import { type AtomProperties, Atom } from './CoreAtom';
+import { Bond } from './CoreBond';
 import {
   AtomAddOperation,
   AtomDeleteOperation,
@@ -84,63 +84,61 @@ import {
   BondAddOperation,
   BondDeleteOperation,
 } from 'application/editor/operations/coreBond/bond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
 import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
-import {
-  type AtomLabel,
-  HalfMonomerSize,
-  SnakeLayoutCellWidth,
-} from 'domain/constants';
+import type { AtomLabel } from '../constants/element.types';
+import { SnakeLayoutCellWidth } from '../constants/layout';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { HydrogenBond } from './HydrogenBond';
 import {
+  HalfMonomerSize,
   KetMonomerClass,
   MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
-import type { Chain } from 'domain/entities/monomer-chains/Chain';
+import type { Chain } from './monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { SnakeLayoutModel } from './snake-layout-model/SnakeLayoutModel';
 import {
   type ISnakeLayoutMonomersNode,
   isTwoStrandedSnakeLayoutNode,
 } from './snake-layout-model/types';
-import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
-import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { SugarWithBaseSnakeLayoutNode } from './snake-layout-model/SugarWithBaseSnakeLayoutNode';
+import { SingleMonomerSnakeLayoutNode } from './snake-layout-model/SingleMonomerSnakeLayoutNode';
+import { getRnaPartLibraryItem } from '../helpers/rna';
 import { KetcherLogger, SettingsManager } from 'utilities';
-import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+import { EmptyMonomer } from './EmptyMonomer';
 import {
   RxnArrowAddOperation,
   RxnArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnArrow';
-import { RxnArrow } from 'domain/entities/CoreRxnArrow';
-import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
+import { RxnArrow } from './CoreRxnArrow';
+import { MultitailArrow } from './CoreMultitailArrow';
 import {
   MultitailArrowAddOperation,
   MultitailArrowDeleteOperation,
 } from 'application/editor/operations/coreRxn/multitailArrow';
 import { getMonomerTemplateRefFromMonomerItem } from 'domain/serializers/ket/helpers';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
-import { RxnPlus } from 'domain/entities/CoreRxnPlus';
+import { RxnPlus } from './CoreRxnPlus';
 import {
   RxnPlusAddOperation,
   RxnPlusDeleteOperation,
 } from 'application/editor/operations/coreRxn/rxnPlus';
-import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
-import { MoleculeSnakeLayoutNode } from 'domain/entities/snake-layout-model/MoleculeSnakeLayoutNode';
-import { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
-import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import type { initiallySelectedType } from './BaseMicromoleculeEntity';
+import { MoleculeSnakeLayoutNode } from './snake-layout-model/MoleculeSnakeLayoutNode';
+import { CoreStereoFlag } from './CoreStereoFlag';
+import type { StereoFlag as StereoFlagEnum } from './fragment';
 import {
   StereoFlagAddOperation,
   StereoFlagDeleteOperation,
 } from 'application/editor/operations/stereoFlag';
-import { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import { SGroupDrawingEntity } from './SGroupDrawingEntity';
 import {
   SGroupAddOperation,
   SGroupDeleteOperation,

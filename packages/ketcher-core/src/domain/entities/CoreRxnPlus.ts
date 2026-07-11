@@ -1,8 +1,8 @@
 import type { BaseRenderer } from 'application/render';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import type { Vec2 } from 'domain/entities/vec2';
+import { DrawingEntity } from './DrawingEntity';
+import type { Vec2 } from './vec2';
 import type { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
-import type { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
+import type { initiallySelectedType } from './BaseMicromoleculeEntity';
 
 export class RxnPlus extends DrawingEntity {
   public renderer?: RxnPlusRenderer = undefined;

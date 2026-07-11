@@ -1,7 +1,7 @@
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { Box2Abs } from 'domain/entities/box2Abs';

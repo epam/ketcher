@@ -16,7 +16,7 @@
 
 import { Bond } from 'domain/entities/bond';
 import { Vec2 } from 'domain/entities/vec2';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { toFixed } from 'utilities';
 
 import { LayerMap } from './generalEnumTypes';

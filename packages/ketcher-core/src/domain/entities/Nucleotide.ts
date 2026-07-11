@@ -1,25 +1,25 @@
 import { provideEditorInstance } from 'application/editor/editorSingleton';
-import type { RNABase } from 'domain/entities/RNABase';
-import type { Phosphate } from 'domain/entities/Phosphate';
-import { Sugar } from 'domain/entities/Sugar';
+import type { RNABase } from './RNABase';
+import type { Phosphate } from './Phosphate';
+import { Sugar } from './Sugar';
 import assert from 'assert';
 import {
   getPhosphateFromSugar,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
-} from 'domain/helpers/monomers';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+} from '../helpers/monomers';
+import type { SubChainNode } from './monomer-chains/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Vec2 } from 'domain/entities/vec2';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { Vec2 } from './vec2';
+import { getRnaPartLibraryItem } from '../helpers/rna';
 import {
   KetMonomerClass,
   RNA_DNA_NON_MODIFIED_PART,
 } from 'domain/constants/monomers';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import type { BaseMonomer } from './BaseMonomer';
+import type { AmbiguousMonomer } from './AmbiguousMonomer';
+import { SnakeLayoutCellWidth } from '../constants/layout';
 import { getMonomerSize } from 'application/render/renderers/monomerSizeState';
 
 export class Nucleotide {

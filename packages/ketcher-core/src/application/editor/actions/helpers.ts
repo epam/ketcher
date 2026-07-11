@@ -1,7 +1,7 @@
 import { Atom, StereoLabel } from 'domain/entities/atom';
 import { Bond } from 'domain/entities/bond';
 import type { Neighbor, Struct } from 'domain/entities/struct';
-import { StereoValidator } from 'domain/helpers';
+import { StereoValidator } from 'domain/helpers/stereoValidator';
 
 function resetStereoAtomIfNotCorrect(
   stereoAtomsMap: Map<number, unknown>,

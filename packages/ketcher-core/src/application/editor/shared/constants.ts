@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 export const SgContexts = {
   Fragment: 'Fragment',

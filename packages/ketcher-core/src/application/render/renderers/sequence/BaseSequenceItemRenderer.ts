@@ -16,7 +16,7 @@ import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/Chain
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import { MONOMER_CONST } from 'domain/constants';
+import { MONOMER_CONST } from 'domain/constants/monomers';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';

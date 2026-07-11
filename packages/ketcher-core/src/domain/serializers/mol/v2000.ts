@@ -26,7 +26,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 
-import { Elements } from 'domain/constants';
+import { Elements } from '../../constants/elements';
 import sGroup from './parseSGroup';
 import utils from './utils';
 import type { AtomMap, SGroupMap } from './mol.types';

@@ -21,7 +21,7 @@ import type { Fragment } from 'domain/entities/fragment';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 class ReFrag extends ReObject {
   public item: Fragment;

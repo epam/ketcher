@@ -7,11 +7,11 @@ import {
   isBondBetweenSugarAndBaseOfRna,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
-} from 'domain/helpers/polymerBondMonomerConnections';
-import { AttachmentPointName } from 'domain/types';
+} from '../helpers/polymerBondMonomerConnections';
+import { AttachmentPointName } from '../types/monomers';
 import type { BaseMonomer } from './BaseMonomer';
-import { BaseBond } from 'domain/entities/BaseBond';
-import { HalfMonomerSize } from 'domain/constants';
+import { BaseBond } from './BaseBond';
+import { HalfMonomerSize } from '../constants/monomers';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer

@@ -6,18 +6,18 @@ import type {
   IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
 import {
-  type Struct,
   type BaseMonomer,
   type BaseMonomerConfig,
-  Vec2,
-} from 'domain/entities';
-import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import type { MonomerItemType } from 'domain/types/monomers';
+} from '../../../entities/BaseMonomer';
+import { Vec2 } from '../../../entities/vec2';
+import type { Struct } from '../../../entities/struct';
+import type { DrawingEntitiesManager } from '../../../entities/DrawingEntitiesManager';
+import type { MonomerItemType } from '../../../types/monomers';
 import {
   modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
-} from 'domain/serializers/ket/helpers';
+} from '../helpers';
 import {
   convertMonomerTemplateToStruct,
   fillStructRgLabelsByMonomerTemplate,

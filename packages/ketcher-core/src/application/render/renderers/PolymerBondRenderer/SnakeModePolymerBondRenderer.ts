@@ -33,7 +33,7 @@ import {
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
 } from './helpers';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from 'domain/constants/layout';
 
 enum LineDirection {
   Horizontal = 'Horizontal',

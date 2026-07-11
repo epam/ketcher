@@ -10,7 +10,7 @@ import { AttachmentPointName } from 'domain/types';
 import {
   setAmbiguousMonomerTemplatePrefix,
   setMonomerTemplatePrefix,
-} from 'domain/serializers';
+} from 'domain/serializers/ket/helpers';
 
 const getMonomerTemplateId = (monomer: IRnaPreset['base']) => {
   const templateId =

@@ -39,7 +39,8 @@ import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import type { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
-import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });

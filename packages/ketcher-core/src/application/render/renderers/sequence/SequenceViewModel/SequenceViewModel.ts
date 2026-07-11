@@ -19,7 +19,7 @@ import { isNumber } from 'lodash';
 import {
   getNextConnectedNode,
   getPreviousConnectedNode,
-} from 'domain/helpers/chains';
+} from '../../../../../domain/helpers/chains';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
 import { SettingsManager } from 'utilities';
 

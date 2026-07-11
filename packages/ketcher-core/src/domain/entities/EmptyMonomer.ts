@@ -1,6 +1,6 @@
 import { BaseMonomer } from './BaseMonomer';
-import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { Struct } from 'domain/entities/struct';
+import { EmptySubChain } from './monomer-chains/EmptySubChain';
+import { Struct } from './struct';
 
 function getEmptyMonomerItem() {
   return {

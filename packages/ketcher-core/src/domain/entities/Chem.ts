@@ -1,7 +1,7 @@
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Peptide } from 'domain/entities/Peptide';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { BaseMonomer } from './BaseMonomer';
+import { Peptide } from './Peptide';
+import { ChemSubChain } from './monomer-chains/ChemSubChain';
+import type { SubChainNode } from './monomer-chains/types';
 
 export class Chem extends BaseMonomer {
   public getValidSourcePoint(monomer?: BaseMonomer) {

@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+// Keep a runtime artifact for the helpers barrel to support preserveModules consumers.
+export const helpersRuntimeBarrel = true;
+
 export * from './scale';
 export * from './stereoValidator';
 export * from './functionalGroupsProvider';

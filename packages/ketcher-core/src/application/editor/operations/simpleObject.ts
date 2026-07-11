@@ -21,7 +21,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import Base from './BaseOperation';
 import { OperationType } from './OperationType';
 import { ReSimpleObject } from '../../render';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { toFixed } from 'utilities';
 
 interface SimpleObjectAddData {

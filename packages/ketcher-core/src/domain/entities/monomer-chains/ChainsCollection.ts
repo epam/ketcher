@@ -1,18 +1,14 @@
-import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Chem } from 'domain/entities/Chem';
-import {
-  type SequenceNode,
-  type SubChainNode,
-  IsChainCycled,
-} from 'domain/entities/monomer-chains/types';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { Chain } from './Chain';
+import { AmbiguousMonomer } from '../AmbiguousMonomer';
+import type { BaseMonomer } from '../BaseMonomer';
+import { Chem } from '../Chem';
+import { type SequenceNode, type SubChainNode, IsChainCycled } from './types';
+import { Peptide } from '../Peptide';
+import { Phosphate } from '../Phosphate';
+import { RNABase } from '../RNABase';
+import { Sugar } from '../Sugar';
+import { UnresolvedMonomer } from '../UnresolvedMonomer';
+import { UnsplitNucleotide } from '../UnsplitNucleotide';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
@@ -21,8 +17,8 @@ import {
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
-import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import type { BaseSubChain } from './BaseSubChain';
+import { MonomerToAtomBond } from '../MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 export interface ComplimentaryChainsWithData {

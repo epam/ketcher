@@ -1,5 +1,8 @@
 import { EditorHistory } from 'application/editor/EditorHistory';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  tryProvideEditorInstance,
+} from 'application/editor/editorSingleton';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import type { LayoutMode } from 'application/editor/modes/types';
 import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
@@ -2309,7 +2312,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else if (editor.isSequenceEditMode) {
+    } else if (tryProvideEditorInstance()?.isSequenceEditMode ?? false) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -2609,7 +2612,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithPreset(selections, preset);
       }
-    } else if (editor.isSequenceEditMode) {
+    } else if (tryProvideEditorInstance()?.isSequenceEditMode ?? false) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 

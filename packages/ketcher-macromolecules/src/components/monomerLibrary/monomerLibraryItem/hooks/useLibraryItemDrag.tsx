@@ -9,10 +9,11 @@ export const useLibraryItemDrag = (
   itemRef: RefObject<HTMLElement>,
 ) => {
   const editor = useSelector(selectEditor);
+  const editorEvents = editor?.events;
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!editor || !itemRef.current) {
+    if (!editor || !editorEvents || !itemRef.current) {
       return;
     }
 
@@ -35,7 +36,7 @@ export const useLibraryItemDrag = (
         dispatch(setIsDragging(true));
 
         const { clientX: x, clientY: y } = event.sourceEvent;
-        editor.events.setLibraryItemDragState.dispatch({
+        editorEvents.setLibraryItemDragState.dispatch({
           item,
           position: {
             x: x - (editor.ketcherRootElementBoundingClientRect?.left || 0),
@@ -58,7 +59,7 @@ export const useLibraryItemDrag = (
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
             if (mouseWithinCanvas) {
-              editor.events.placeLibraryItemOnCanvas.dispatch(item, {
+              editorEvents.placeLibraryItemOnCanvas.dispatch(item, {
                 x: scaledX,
                 y: scaledY,
               });
@@ -66,7 +67,7 @@ export const useLibraryItemDrag = (
           }
         }
 
-        editor.events.setLibraryItemDragState.dispatch(null);
+        editorEvents.setLibraryItemDragState.dispatch(null);
         editor.isLibraryItemDragCancelled = false;
         document.body.style.cursor = '';
         dispatch(setIsDragging(false));
@@ -77,5 +78,5 @@ export const useLibraryItemDrag = (
     return () => {
       itemElement.on('.drag', null);
     };
-  }, [editor, item, itemRef, dispatch]);
+  }, [dispatch, editor, editorEvents, item, itemRef]);
 };

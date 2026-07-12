@@ -43,6 +43,7 @@ export function TopMenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const layoutMode = useLayoutMode();
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
@@ -86,31 +87,35 @@ export function TopMenuComponent() {
       }
     };
 
-    editor?.events.selectEntities.add(selectEntitiesHandler);
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.selectEntities.add(selectEntitiesHandler);
 
     return () => {
-      editor?.events.selectEntities.remove(selectEntitiesHandler);
+      editorEvents.selectEntities.remove(selectEntitiesHandler);
     };
-  }, [editor]);
+  }, [editorEvents]);
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else if (name === 'undo' || name === 'redo') {
-      editor?.events.selectHistory.dispatch(name);
+      editorEvents?.selectHistory.dispatch(name);
     } else if (name === 'clear') {
-      editor?.events.resetSequenceEditMode.dispatch();
-      editor?.events.selectTool.dispatch([name]);
+      editorEvents?.resetSequenceEditMode.dispatch();
+      editorEvents?.selectTool.dispatch([name]);
       dispatch(selectTool(lastSelectedSelectionMenuItem));
-      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      editorEvents?.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
-      editor?.events.createAntisenseChain.dispatch(
+      editorEvents?.createAntisenseChain.dispatch(
         name === 'antisenseDnaStrand',
       );
     } else if (name === 'arrange-ring') {
-      editor?.events.layoutCircular.dispatch();
+      editorEvents?.layoutCircular.dispatch();
     }
   };
 

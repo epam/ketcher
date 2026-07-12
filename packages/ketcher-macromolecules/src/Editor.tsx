@@ -196,6 +196,7 @@ function Editor({
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltips = useAppSelector(selectErrorTooltips);
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
@@ -244,7 +245,11 @@ function Editor({
   useMacromoleculesHotkeys();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add(([event, selections]) => {
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       setContextMenuEvent(event);
       updatePasteAvailability();
@@ -257,7 +262,7 @@ function Editor({
         },
       });
     });
-    editor?.events.rightClickPolymerBond.add(
+    editorEvents.rightClickPolymerBond.add(
       ([event, polymerBondRenderer]: [
         PointerEvent,
         DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
@@ -273,7 +278,7 @@ function Editor({
       },
     );
 
-    editor?.events.rightClickSelectedMonomers.add(
+    editorEvents.rightClickSelectedMonomers.add(
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
@@ -284,7 +289,7 @@ function Editor({
         });
       },
     );
-    editor?.events.rightClickCanvas.add(
+    editorEvents.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
@@ -297,7 +302,7 @@ function Editor({
         });
       },
     );
-    editor?.events.rightClickCanvasSequence.add(
+    editorEvents.rightClickCanvasSequence.add(
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
         updatePasteAvailability();
@@ -310,10 +315,16 @@ function Editor({
         });
       },
     );
-    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+    editorEvents.toggleMacromoleculesPropertiesVisibility.add(() => {
       dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
     });
-  }, [editor]);
+  }, [
+    dispatch,
+    editorEvents,
+    showSequenceContextMenu,
+    showSelectedMonomersContextMenu,
+    updatePasteAvailability,
+  ]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

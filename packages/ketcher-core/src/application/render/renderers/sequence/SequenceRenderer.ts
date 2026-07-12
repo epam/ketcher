@@ -1,4 +1,7 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  tryProvideEditorInstance,
+} from 'application/editor/editorSingleton';
 import {
   type ITwoStrandedChainItem,
   ChainsCollection,
@@ -184,7 +187,7 @@ export class SequenceRenderer {
     let hasAntisenseInRow = false;
     let previousRowsWithAntisense = 0;
     const isEditInRnaBuilderMode =
-      provideEditorInstance().isSequenceEditInRNABuilderMode;
+      tryProvideEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
     const handledNodes = new Set<SequenceNode>();
 
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
@@ -476,7 +479,10 @@ export class SequenceRenderer {
     options?: SetCaretPositionOptions,
   ) {
     this.isCaretAfterRowEnd = options?.afterRowEnd ?? false;
-    const editor = provideEditorInstance();
+    const editor = tryProvideEditorInstance();
+    if (!editor) {
+      return;
+    }
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {

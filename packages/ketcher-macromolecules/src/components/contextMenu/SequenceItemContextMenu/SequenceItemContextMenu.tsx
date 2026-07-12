@@ -74,6 +74,7 @@ export const SequenceItemContextMenu = ({
   isPasteAvailable = true,
 }: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
   const selectedMonomers: BaseMonomer[] =
@@ -237,13 +238,13 @@ export const SequenceItemContextMenu = ({
   ];
 
   const handleMenuChange = ({ id: menuItemId, props }: ItemParams) => {
-    if (!editor) {
+    if (!editorEvents) {
       return;
     }
 
     switch (true) {
       case menuItemId === SequenceItemContextMenuNames.modifyInRnaBuilder:
-        editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
+        editorEvents.turnOnSequenceEditInRNABuilderMode.dispatch();
         dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));
         dispatch(setActivePreset({}));
@@ -264,21 +265,19 @@ export const SequenceItemContextMenu = ({
         }
         break;
       case menuItemId === SequenceItemContextMenuNames.startNewSequence:
-        editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
+        editorEvents.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
       case menuItemId === SequenceItemContextMenuNames.editSequence:
-        editor.events.editSequence.dispatch(props.sequenceItemRenderer);
+        editorEvents.editSequence.dispatch(props.sequenceItemRenderer);
         break;
       case menuItemId === SequenceItemContextMenuNames.createRnaAntisenseStrand:
-        editor.events.createAntisenseChain.dispatch(false);
+        editorEvents.createAntisenseChain.dispatch(false);
         break;
       case menuItemId === SequenceItemContextMenuNames.createDnaAntisenseStrand:
-        editor.events.createAntisenseChain.dispatch(true);
+        editorEvents.createAntisenseChain.dispatch(true);
         break;
       case menuItemId === SequenceItemContextMenuNames.establishHydrogenBond:
-        editor.events.establishHydrogenBond.dispatch(
-          props.sequenceItemRenderer,
-        );
+        editorEvents.establishHydrogenBond.dispatch(props.sequenceItemRenderer);
         break;
       case menuItemId === SequenceItemContextMenuNames.deleteHydrogenBond: {
         const sequenceViewModel = SequenceRenderer.sequenceViewModel;
@@ -371,18 +370,18 @@ export const SequenceItemContextMenu = ({
         );
 
         if (isGoingToDeleteAllHydrogenBondsForAnyChain) {
-          editor.events.openConfirmationDialog.dispatch({
+          editorEvents.openConfirmationDialog.dispatch({
             title: 'Deletion of all Hydrogen Bonds',
             confirmationText:
               'Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?',
             onConfirm: () => {
-              editor.events.deleteHydrogenBond.dispatch(
+              editorEvents.deleteHydrogenBond.dispatch(
                 props.sequenceItemRenderer,
               );
             },
           });
         } else {
-          editor.events.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
+          editorEvents.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
         }
         break;
       }
@@ -392,20 +391,20 @@ export const SequenceItemContextMenu = ({
           '',
         );
 
-        editor.events.modifyAminoAcids.dispatch({
+        editorEvents.modifyAminoAcids.dispatch({
           monomers: monomersForAminoAcidModification,
           modificationType,
         });
         break;
       }
       case menuItemId === 'copy':
-        editor.events.copySelectedStructure.dispatch();
+        editorEvents.copySelectedStructure.dispatch();
         break;
       case menuItemId === 'paste':
-        editor.events.pasteFromClipboard.dispatch();
+        editorEvents.pasteFromClipboard.dispatch();
         break;
       case menuItemId === 'delete':
-        editor.events.deleteSelectedStructure.dispatch();
+        editorEvents.deleteSelectedStructure.dispatch();
         break;
       default:
         break;

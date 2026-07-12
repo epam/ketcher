@@ -152,6 +152,9 @@ class KetcherBuilder {
       throw new Error('You should append Api before initializing UI');
     }
     let cleanup: ReturnType<typeof initApp> | null = null;
+    const version = process.env.VERSION;
+    const buildDate = process.env.BUILD_DATE;
+    const buildNumber = process.env.BUILD_NUMBER;
 
     const { editor, setServer } = await new Promise<{
       editor: Editor;
@@ -166,9 +169,9 @@ class KetcherBuilder {
         {
           buttons: buttons ?? {},
           errorHandler: errorHandler ?? null,
-          version: process.env.VERSION ?? '',
-          buildDate: process.env.BUILD_DATE ?? '',
-          buildNumber: process.env.BUILD_NUMBER ?? '',
+          version: version || '',
+          buildDate: buildDate || '',
+          buildNumber: buildNumber || '',
           customButtons: customButtons ?? [],
         },
         structService,

@@ -510,6 +510,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private dispatchSelectEntities(drawingEntities: DrawingEntity[]) {
+    const editor = provideEditorInstance();
+    editor?.events?.selectEntities?.dispatch(drawingEntities);
+  }
   public unselectAllDrawingEntities() {
     const command = new Command();
 
@@ -519,8 +523,7 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const editor = provideEditorInstance();
-    editor.events.selectEntities.dispatch(
+    this.dispatchSelectEntities(
       this.selectedEntities.map((entity) => entity[1]),
     );
 
@@ -547,8 +550,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.syncStereoFlagsSelectionWithMonomers());
 
-    const editor = provideEditorInstance();
-    editor.events.selectEntities.dispatch(
+    this.dispatchSelectEntities(
       this.selectedEntities.map((entity) => entity[1]),
     );
 
@@ -2825,7 +2827,7 @@ export class DrawingEntitiesManager {
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
     const editor = provideEditorInstance();
-    editor.events.selectEntities.dispatch(drawingEntities);
+    this.dispatchSelectEntities(drawingEntities);
     const newDrawingEntities = drawingEntities.reduce(
       (
         selectedDrawingEntities: DrawingEntity[],

@@ -306,8 +306,13 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     this.events = createEditorEvents();
+    // Register as early as possible so renderer/helpers that rely on
+    // provideEditorInstance().events cannot observe an undefined instance.
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    editor = this;
+    setEditorInstance(this);
+    this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
     KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
@@ -329,9 +334,6 @@ export class CoreEditor {
     this.renderersContainer.zoomTool = this.zoomTool;
     this.renderersContainer.editor = this;
     this.transientDrawingView = new TransientDrawingView();
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    editor = this;
-    setEditorInstance(this);
     this.micromoleculesEditor = ketcher?.editor;
     this.initializeGlobalEventListeners();
   }
@@ -2029,23 +2031,37 @@ export class CoreEditor {
   }
 
   public get isSequenceEditMode() {
+    const mode = this.mode;
+    if (!mode) {
+      return false;
+    }
+
     return (
-      this.mode.modeName === 'sequence-layout-mode' &&
-      this.sequenceMode.isEditMode
+      mode.modeName === 'sequence-layout-mode' && this.sequenceMode.isEditMode
     );
   }
 
   public get isSequenceEditInRNABuilderMode() {
+    const mode = this.mode;
+    if (!mode) {
+      return false;
+    }
+
     return (
-      this.mode.modeName === 'sequence-layout-mode' &&
+      mode.modeName === 'sequence-layout-mode' &&
       this.sequenceMode.isEditInRNABuilderMode
     );
   }
 
   public get isSequenceAnyEditMode() {
+    const mode = this.mode;
+    if (!mode) {
+      return false;
+    }
+
     const sequenceMode = this.sequenceMode;
     return (
-      this.mode.modeName === 'sequence-layout-mode' &&
+      mode.modeName === 'sequence-layout-mode' &&
       (sequenceMode.isEditMode || sequenceMode.isEditInRNABuilderMode)
     );
   }

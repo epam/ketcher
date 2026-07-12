@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "src",
     "module": "esnext",
     "lib": ["dom", "esnext"],
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "sourceMap": true,
     "declaration": true,
@@ -19,6 +20,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,

@@ -100,6 +100,7 @@ export const Save = ({
   const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = provideEditorInstance();
+  const editorEvents = editor?.events;
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -120,7 +121,7 @@ export const Save = ({
     }
     if (fileFormat === 'helm') {
       if (editor.drawingEntitiesManager.molecules.length > 0) {
-        editor.events.error.dispatch(
+        editorEvents?.error.dispatch(
           'The molecule will be exported using inline SMILES, and on load will appear as a CHEM monomer',
         );
       }
@@ -130,7 +131,7 @@ export const Save = ({
           editor.monomersLibrary,
         )
       ) {
-        editor.events.error.dispatch(
+        editorEvents?.error.dispatch(
           'Some of the monomers do not have aliases in the HELM Core Library - they are exported using Ketcher aliases.',
         );
       }

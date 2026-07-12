@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { tryProvideEditorInstance } from 'application/editor/editorSingleton';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
@@ -126,19 +126,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return provideEditorInstance().isSequenceEditMode;
+    return tryProvideEditorInstance()?.isSequenceEditMode ?? false;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return tryProvideEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
   }
 
   private get isAntisenseEditMode() {
-    return provideEditorInstance().mode.isAntisenseEditMode;
+    return tryProvideEditorInstance()?.mode?.isAntisenseEditMode ?? false;
   }
 
   private get isSyncEditMode() {
-    return provideEditorInstance().mode.isSyncEditMode;
+    return tryProvideEditorInstance()?.mode?.isSyncEditMode ?? false;
   }
 
   protected appendRootElement() {

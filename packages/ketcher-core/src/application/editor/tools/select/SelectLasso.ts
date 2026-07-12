@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { tryProvideEditorInstance } from 'application/editor/editorSingleton';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -42,7 +42,8 @@ export class SelectLasso extends SelectBase {
   }
 
   protected onSelectionMove(isShiftPressed: boolean) {
-    const editor = provideEditorInstance();
+    const editor = tryProvideEditorInstance();
+    if (!editor) return;
     if (editor.isSequenceEditMode || editor.isSequenceEditInRNABuilderMode)
       return;
 

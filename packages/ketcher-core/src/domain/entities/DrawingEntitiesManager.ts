@@ -514,6 +514,7 @@ export class DrawingEntitiesManager {
     const editor = provideEditorInstance();
     editor?.events?.selectEntities?.dispatch(drawingEntities);
   }
+
   public unselectAllDrawingEntities() {
     const command = new Command();
 

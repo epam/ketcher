@@ -1,8 +1,7 @@
-import type { KetMonomerClass } from 'ketcher-core';
+import type { KetMonomerClass, AttachmentPointName } from 'ketcher-core';
 import type { IconName } from 'components';
 import type { Editor } from '../../../../editor';
 import type { Selection } from '../../../../editor/Editor';
-import type { AttachmentPointName } from 'ketcher-core';
 import type { ActionDispatch } from 'react';
 
 export type MonomerTypeSelectItem = {

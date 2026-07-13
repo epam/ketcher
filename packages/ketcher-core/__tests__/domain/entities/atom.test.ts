@@ -106,7 +106,7 @@ describe('Atom', () => {
       );
       let positionCounter = 0;
 
-      const addBond = (type: number, donor: boolean) => {
+      const addBond = (type: number, isDonor: boolean) => {
         const otherAtomId = struct.atoms.add(
           new Atom({
             label: 'C',
@@ -116,8 +116,8 @@ describe('Atom', () => {
         struct.bonds.add(
           new Bond({
             type,
-            begin: donor ? atomId : otherAtomId,
-            end: donor ? otherAtomId : atomId,
+            begin: isDonor ? atomId : otherAtomId,
+            end: isDonor ? otherAtomId : atomId,
           }),
         );
       };

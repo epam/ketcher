@@ -1210,7 +1210,7 @@ export class Struct {
         acceptorCount,
       });
 
-      // Dative bonds occupy orbitals but do not add to the covalent bond order.
+      // #10427 counts dative bonds as occupied orbitals, not covalent bond order.
       atom.valence = Math.ceil(dativeBondOrder);
       atom.badConn = !dativeValence.isValid;
       atom.implicitH = atom.badConn ? 0 : dativeValence.hydrogenCount;

@@ -16,12 +16,12 @@ export interface DativeValenceResult {
 
 type AtomicNumberRange = readonly [number, number];
 
-const F_BLOCK_RANGES: AtomicNumberRange[] = [
+const F_BLOCK_RANGES: readonly AtomicNumberRange[] = [
   [57, 70],
   [89, 102],
 ];
 // #10427 assigns 9 orbitals to d-block ranges and selected alkaline-earth atoms.
-const NINE_ORBITAL_RANGES: AtomicNumberRange[] = [
+const NINE_ORBITAL_RANGES: readonly AtomicNumberRange[] = [
   [12, 12],
   [20, 30],
   [38, 48],
@@ -33,7 +33,7 @@ const NINE_ORBITAL_RANGES: AtomicNumberRange[] = [
 
 function isInRanges(
   atomicNumber: number,
-  ranges: AtomicNumberRange[],
+  ranges: readonly AtomicNumberRange[],
 ): boolean {
   return ranges.some(
     ([firstAtomicNumber, lastAtomicNumber]) =>

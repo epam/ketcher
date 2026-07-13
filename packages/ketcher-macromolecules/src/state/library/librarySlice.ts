@@ -43,6 +43,7 @@ import {
   DNA_TEMPLATE_NAME_PART,
   RNA_TEMPLATE_NAME_PART,
   LIBRARY_TAB_INDEX,
+  AMINO_ACID_ONE_TO_THREE_LETTER_CODE,
 } from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
@@ -63,6 +64,16 @@ export type GroupedAmbiguousMonomerLibraryItemType = {
 const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
   [MonomerGroups.PEPTIDES]: KetMonomerClass.AminoAcid,
   [MonomerGroups.BASES]: KetMonomerClass.Base,
+};
+
+const matchesAminoAcidThreeLetterCode = (
+  oneLetterCode: string | undefined,
+  isAminoAcid: boolean,
+  searchFilter: string,
+): boolean => {
+  if (!isAminoAcid || !oneLetterCode) return false;
+  const code = AMINO_ACID_ONE_TO_THREE_LETTER_CODE[oneLetterCode.toUpperCase()];
+  return code ? code.toLowerCase().includes(searchFilter) : false;
 };
 
 const initialState: LibraryState = {
@@ -550,8 +561,20 @@ export const selectFilteredMonomers = createSelector(
             id,
           );
 
+          const isAminoAcidAmbiguous =
+            components.length > 0 &&
+            components.every(
+              (c) =>
+                c.monomerItem.props.MonomerClass === KetMonomerClass.AminoAcid,
+            );
+
           return (
             matchesMonomer ||
+            matchesAminoAcidThreeLetterCode(
+              label,
+              isAminoAcidAmbiguous,
+              normalizedSearchFilter,
+            ) ||
             components.some((monomer) => {
               const {
                 Name,
@@ -576,6 +599,7 @@ export const selectFilteredMonomers = createSelector(
             })
           );
         } else {
+          const props = (item as MonomerItemType).props;
           const {
             Name,
             MonomerName,
@@ -584,17 +608,24 @@ export const selectFilteredMonomers = createSelector(
             aliasBILN,
             aliasAxoLabs,
             modificationTypes,
-          } = (item as MonomerItemType).props;
+          } = props;
 
-          return checkMonomerMatch(
-            idtAliases,
-            normalizedSearchFilter,
-            Name,
-            MonomerName,
-            aliasHELM,
-            aliasBILN,
-            aliasAxoLabs,
-            modificationTypes,
+          return (
+            checkMonomerMatch(
+              idtAliases,
+              normalizedSearchFilter,
+              Name,
+              MonomerName,
+              aliasHELM,
+              aliasBILN,
+              aliasAxoLabs,
+              modificationTypes,
+            ) ||
+            matchesAminoAcidThreeLetterCode(
+              MonomerName,
+              props.MonomerClass === KetMonomerClass.AminoAcid,
+              normalizedSearchFilter,
+            )
           );
         }
       })

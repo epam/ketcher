@@ -39,7 +39,7 @@ export const SetEditorLineLengthAction = 'SetEditorLineLength';
  * UI-layer action types.
  */
 export interface PersistedSelectionTool {
-  tool: string;
+  tool: 'select';
   opts?: unknown;
 }
 

@@ -168,6 +168,28 @@ describe('Atom', () => {
     });
 
     it.each([
+      [5, 0],
+      [0, 6],
+    ])(
+      'enforces nickel dative capacity (%i donor, %i acceptor)',
+      (donors, acceptors) => {
+        const { atom, atomId, struct } = createStructure(
+          'Ni',
+          2,
+          0,
+          [],
+          donors,
+          acceptors,
+        );
+
+        struct.calcImplicitHydrogen(atomId);
+
+        expect(atom.badConn).toBe(true);
+        expect(atom.implicitH).toBe(0);
+      },
+    );
+
+    it.each([
       [1, 0],
       [0, 1],
     ])(

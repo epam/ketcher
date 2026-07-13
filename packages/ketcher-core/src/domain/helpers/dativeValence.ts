@@ -20,7 +20,8 @@ const F_BLOCK_RANGES: AtomicNumberRange[] = [
   [57, 70],
   [89, 102],
 ];
-const D_BLOCK_ORBITAL_RANGES: AtomicNumberRange[] = [
+// The issue assigns 9 orbitals to d-block ranges and selected alkaline-earth atoms.
+const NINE_ORBITAL_RANGES: AtomicNumberRange[] = [
   [12, 12],
   [20, 30],
   [38, 48],
@@ -88,7 +89,7 @@ function getValenceOrbitalCount(atomicNumber: number): number {
   if (isInRanges(atomicNumber, F_BLOCK_RANGES)) {
     return 13;
   }
-  if (isInRanges(atomicNumber, D_BLOCK_ORBITAL_RANGES)) {
+  if (isInRanges(atomicNumber, NINE_ORBITAL_RANGES)) {
     return 9;
   }
   return 4;
@@ -145,7 +146,10 @@ export function calculateDativeValence({
       remainingAcceptorCount <= maximumAcceptorCount);
   const isValid = donorIsValid && acceptorIsValid;
 
-  if (!isValid || !canHaveImplicitHydrogens(element.number)) {
+  if (!isValid) {
+    return { hydrogenCount: 0, isValid };
+  }
+  if (!canHaveImplicitHydrogens(element.number)) {
     return { hydrogenCount: 0, isValid };
   }
 

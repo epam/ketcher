@@ -1195,6 +1195,7 @@ export class Struct {
     if (donorCount > 0 || acceptorCount > 0) {
       const element = Elements.get(atom.label);
 
+      // Query and attachment-point atoms do not have a defined electron count.
       if (!element || atom.isQuery() || atom.attachmentPoints) {
         atom.implicitH = 0;
         return;
@@ -1209,6 +1210,7 @@ export class Struct {
         acceptorCount,
       });
 
+      // Dative bonds occupy orbitals but do not add to the covalent bond order.
       atom.valence = Math.ceil(dativeBondOrder);
       atom.badConn = !dativeValence.isValid;
       atom.implicitH = atom.badConn ? 0 : dativeValence.hydrogenCount;

@@ -138,19 +138,43 @@ describe('Atom', () => {
     };
 
     it.each([
-      ['Ni', 2, 0, [], 4, 0],
-      ['Ni', 2, 0, [], 0, 5],
-      ['Pr', -1, 1, [1, 1, 1, 1], 0, 7],
+      {
+        label: 'Ni',
+        charge: 2,
+        radical: 0,
+        bonds: [],
+        donors: 4,
+        acceptors: 0,
+        role: 'donor',
+      },
+      {
+        label: 'Ni',
+        charge: 2,
+        radical: 0,
+        bonds: [],
+        donors: 0,
+        acceptors: 5,
+        role: 'acceptor',
+      },
+      {
+        label: 'Pr',
+        charge: -1,
+        radical: 1,
+        bonds: [1, 1, 1, 1],
+        donors: 0,
+        acceptors: 7,
+        role: 'acceptor',
+      },
     ])(
-      'allows valid dative capacity for %s',
-      (label, charge, radical, bonds, donors, acceptors) => {
+      'allows $label (charge $charge, radical $radical) as a $role',
+      ({ label, charge, radical, bonds, donors, acceptors }) => {
         const { atom, atomId, struct } = createStructure({
-          label: label as string,
-          charge: charge as number,
-          radical: radical as number,
-          covalentBondTypes: bonds as number[],
-          donorCount: donors as number,
-          acceptorCount: acceptors as number,
+          label,
+          charge,
+          radical,
+          covalentBondTypes: bonds,
+          donorCount: donors,
+          acceptorCount: acceptors,
         });
 
         struct.calcImplicitHydrogen(atomId);

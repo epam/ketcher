@@ -20,7 +20,7 @@ const F_BLOCK_RANGES: AtomicNumberRange[] = [
   [57, 70],
   [89, 102],
 ];
-// The issue assigns 9 orbitals to d-block ranges and selected alkaline-earth atoms.
+// #10427 assigns 9 orbitals to d-block ranges and selected alkaline-earth atoms.
 const NINE_ORBITAL_RANGES: AtomicNumberRange[] = [
   [12, 12],
   [20, 30],
@@ -42,7 +42,7 @@ function isInRanges(
 }
 
 function getValenceElectronCount(atomicNumber: number): number {
-  // El0 follows #10427 by subtracting each preceding filled block from Z.
+  // El0 is the neutral atom's outer-shell electron count from #10427.
   if (atomicNumber <= 2) {
     return atomicNumber;
   }
@@ -134,6 +134,7 @@ export function calculateDativeValence({
     getValenceOrbitalCount(element.number) - roundedBondOrder - radicalCount;
   const maximumDonorCount = Math.floor(electronCount / 2);
   const maximumAcceptorCount = orbitalCount - Math.ceil(electronCount / 2);
+  // The capacity itself must fit the available orbitals, as required by #10427.
   const donorIsValid =
     remainingDonorCount === 0 ||
     (maximumDonorCount > 0 &&

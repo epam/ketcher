@@ -1374,6 +1374,47 @@ export class SequenceMode extends BaseMode {
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
+          const hasValidAntisense = (node: ITwoStrandedChainItem | undefined) =>
+            node?.antisenseNode &&
+            !(node.antisenseNode instanceof EmptySequenceNode);
+
+          // Gap case: cursor is to the left of a gap in the antisense strand.
+          // The previous node has a valid antisense but the current does not.
+          // Find the next node in the same chain that has a valid antisense and
+          // connect the two antisense nodes to fill the gap.
+          if (
+            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
+            !hasValidAntisense(currentTwoStrandedNode)
+          ) {
+            let nextNodeWithAntisense = currentTwoStrandedNode
+              ? SequenceRenderer.getNextNodeInSameChain(currentTwoStrandedNode)
+              : undefined;
+
+            while (
+              nextNodeWithAntisense &&
+              !hasValidAntisense(nextNodeWithAntisense)
+            ) {
+              nextNodeWithAntisense = SequenceRenderer.getNextNodeInSameChain(
+                nextNodeWithAntisense,
+              );
+            }
+
+            if (!nextNodeWithAntisense) return;
+
+            const newNodePosition = this.getNewNodePosition();
+            this.connectNodes(
+              nextNodeWithAntisense.antisenseNode,
+              previousTwoStrandedNodeInSameChain!.antisenseNode,
+              modelChanges,
+              newNodePosition,
+            );
+
+            modelChanges.addOperation(new ReinitializeModeOperation());
+            editor.renderersContainer.update(modelChanges);
+            history.update(modelChanges);
+            return;
+          }
+
           if (
             !currentTwoStrandedNode?.senseNode ||
             !currentTwoStrandedNode?.antisenseNode ||

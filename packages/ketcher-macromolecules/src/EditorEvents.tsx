@@ -380,14 +380,10 @@ export const EditorEvents = () => {
       );
     };
 
-    editor.events.createAntisenseChain.add(updateHasAntisenseChains);
-    editor.events.selectHistory.add(updateHasAntisenseChains);
-    editor.events.deleteSelectedStructure.add(updateHasAntisenseChains);
+    window.addEventListener('renderComplete', updateHasAntisenseChains);
 
     return () => {
-      editor.events.createAntisenseChain.remove(updateHasAntisenseChains);
-      editor.events.selectHistory.remove(updateHasAntisenseChains);
-      editor.events.deleteSelectedStructure.remove(updateHasAntisenseChains);
+      window.removeEventListener('renderComplete', updateHasAntisenseChains);
     };
   }, [editor, dispatch]);
 

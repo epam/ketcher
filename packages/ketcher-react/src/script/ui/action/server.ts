@@ -51,7 +51,7 @@ const config: ServerConfig = {
     hidden: (options) => isHidden(options, 'arom'),
   },
   dearom: {
-    shortcut: 'Ctrl+Alt+a',
+    shortcut: 'Mod+Alt+a',
     title: 'Dearomatize',
     action: {
       thunk: serverTransform('dearomatize'),

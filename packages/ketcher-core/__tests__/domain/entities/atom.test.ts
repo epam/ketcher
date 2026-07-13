@@ -12,31 +12,6 @@ describe('radicalElectrons', () => {
     expect(radicalElectrons(2)).toBe(1);
   });
 
-  describe('CoreAtom dative bond valence', () => {
-    it('uses dative direction to calculate implicit hydrogens', () => {
-      const monomer = {} as BaseMonomer;
-      const chlorine = new CoreAtom(new Vec2(), monomer, 0, AtomLabel.Cl, {
-        charge: 3,
-      });
-      const covalentNeighbor = new CoreAtom(
-        new Vec2(),
-        monomer,
-        1,
-        AtomLabel.C,
-      );
-      const dativeNeighbor = new CoreAtom(new Vec2(), monomer, 2, AtomLabel.C);
-      chlorine.addBond(
-        new CoreBond(chlorine, covalentNeighbor, 0, BondType.Single),
-      );
-      chlorine.addBond(
-        new CoreBond(chlorine, dativeNeighbor, 1, BondType.Dative),
-      );
-
-      expect(chlorine.calculateValence().hydrogenAmount).toBe(1);
-      expect(chlorine.hasBadValence).toBe(false);
-    });
-  });
-
   it('should return 2 if passed radical is singlet (value = 1) or triplet (value = 3)', () => {
     expect(radicalElectrons(1)).toBe(2);
     expect(radicalElectrons(3)).toBe(2);
@@ -48,6 +23,26 @@ describe('radicalElectrons', () => {
       expect(radicalElectrons(radical)).toBe(0);
     },
   );
+});
+
+describe('CoreAtom dative bond valence', () => {
+  it('uses dative direction to calculate implicit hydrogens', () => {
+    const monomer = {} as BaseMonomer;
+    const chlorine = new CoreAtom(new Vec2(), monomer, 0, AtomLabel.Cl, {
+      charge: 3,
+    });
+    const covalentNeighbor = new CoreAtom(new Vec2(), monomer, 1, AtomLabel.C);
+    const dativeNeighbor = new CoreAtom(new Vec2(), monomer, 2, AtomLabel.C);
+    chlorine.addBond(
+      new CoreBond(chlorine, covalentNeighbor, 0, BondType.Single),
+    );
+    chlorine.addBond(
+      new CoreBond(chlorine, dativeNeighbor, 1, BondType.Dative),
+    );
+
+    expect(chlorine.calculateValence().hydrogenAmount).toBe(1);
+    expect(chlorine.hasBadValence).toBe(false);
+  });
 });
 
 describe('Atom', () => {
@@ -85,145 +80,145 @@ describe('Atom', () => {
       const atom = new Atom(hydrogenParams);
       expect(atom.pseudo).toBe('');
     });
+  });
 
-    describe('dative bond valence', () => {
-      const createStructure = (
-        label: string,
-        charge: number,
-        radical: number,
-        covalentBondTypes: number[],
-        donorCount: number,
-        acceptorCount: number,
-      ) => {
-        const struct = new Struct();
-        const atomId = struct.atoms.add(
-          new Atom({ label, charge, radical, pp: new Vec2(0, 0) }),
+  describe('dative bond valence', () => {
+    const createStructure = (
+      label: string,
+      charge: number,
+      radical: number,
+      covalentBondTypes: number[],
+      donorCount: number,
+      acceptorCount: number,
+    ) => {
+      const struct = new Struct();
+      const atomId = struct.atoms.add(
+        new Atom({ label, charge, radical, pp: new Vec2(0, 0) }),
+      );
+      let neighborId = 0;
+
+      const addBond = (type: number, donor: boolean) => {
+        const otherAtomId = struct.atoms.add(
+          new Atom({
+            label: 'C',
+            pp: new Vec2(++neighborId, neighborId % 2),
+          }),
         );
-        let neighborId = 0;
-
-        const addBond = (type: number, donor: boolean) => {
-          const otherAtomId = struct.atoms.add(
-            new Atom({
-              label: 'C',
-              pp: new Vec2(++neighborId, neighborId % 2),
-            }),
-          );
-          struct.bonds.add(
-            new Bond({
-              type,
-              begin: donor ? atomId : otherAtomId,
-              end: donor ? otherAtomId : atomId,
-            }),
-          );
-        };
-
-        covalentBondTypes.forEach((type) => addBond(type, true));
-        for (let index = 0; index < donorCount; index++) {
-          addBond(Bond.PATTERN.TYPE.DATIVE, true);
-        }
-        for (let index = 0; index < acceptorCount; index++) {
-          addBond(Bond.PATTERN.TYPE.DATIVE, false);
-        }
-        struct.initHalfBonds();
-        struct.initNeighbors();
-        const atom = struct.atoms.get(atomId);
-        expect(atom).toBeDefined();
-
-        return { atom: atom as Atom, atomId, struct };
+        struct.bonds.add(
+          new Bond({
+            type,
+            begin: donor ? atomId : otherAtomId,
+            end: donor ? otherAtomId : atomId,
+          }),
+        );
       };
 
-      it.each([
-        ['Ni', 2, 0, [], 4, 0],
-        ['Ni', 2, 0, [], 0, 5],
-        ['Pr', -1, 1, [1, 1, 1, 1], 0, 7],
-      ])(
-        'allows valid dative capacity for %s',
-        (label, charge, radical, bonds, donors, acceptors) => {
-          const { atom, atomId, struct } = createStructure(
-            label as string,
-            charge as number,
-            radical as number,
-            bonds as number[],
-            donors as number,
-            acceptors as number,
-          );
+      covalentBondTypes.forEach((type) => addBond(type, true));
+      for (let index = 0; index < donorCount; index++) {
+        addBond(Bond.PATTERN.TYPE.DATIVE, true);
+      }
+      for (let index = 0; index < acceptorCount; index++) {
+        addBond(Bond.PATTERN.TYPE.DATIVE, false);
+      }
+      struct.initHalfBonds();
+      struct.initNeighbors();
+      const atom = struct.atoms.get(atomId);
+      expect(atom).toBeDefined();
 
-          struct.calcImplicitHydrogen(atomId);
+      return { atom: atom as Atom, atomId, struct };
+    };
 
-          expect(atom.badConn).toBe(false);
-          expect(atom.implicitH).toBe(0);
-        },
-      );
-
-      it('marks an atom with too many donor dative bonds and hides hydrogens', () => {
+    it.each([
+      ['Ni', 2, 0, [], 4, 0],
+      ['Ni', 2, 0, [], 0, 5],
+      ['Pr', -1, 1, [1, 1, 1, 1], 0, 7],
+    ])(
+      'allows valid dative capacity for %s',
+      (label, charge, radical, bonds, donors, acceptors) => {
         const { atom, atomId, struct } = createStructure(
-          'N',
-          0,
-          0,
-          [1, 1, 1],
-          2,
-          0,
-        );
-
-        struct.calcImplicitHydrogen(atomId);
-
-        expect(atom.badConn).toBe(true);
-        expect(atom.implicitH).toBe(0);
-      });
-
-      it.each([
-        [1, 0],
-        [0, 1],
-      ])(
-        'calculates implicit hydrogens for chlorine with a directional dative bond',
-        (donors, acceptors) => {
-          const { atom, atomId, struct } = createStructure(
-            'Cl',
-            3,
-            0,
-            [1],
-            donors,
-            acceptors,
-          );
-
-          struct.calcImplicitHydrogen(atomId);
-
-          expect(atom.badConn).toBe(false);
-          expect(atom.implicitH).toBe(1);
-        },
-      );
-
-      it('cancels donor and acceptor dative bonds on the same atom', () => {
-        const { atom, atomId, struct } = createStructure(
-          'N',
-          0,
-          0,
-          [1, 1, 1],
-          1,
-          1,
+          label as string,
+          charge as number,
+          radical as number,
+          bonds as number[],
+          donors as number,
+          acceptors as number,
         );
 
         struct.calcImplicitHydrogen(atomId);
 
         expect(atom.badConn).toBe(false);
         expect(atom.implicitH).toBe(0);
-      });
+      },
+    );
 
-      it('rounds up aromatic bond orders when calculating dative capacity', () => {
+    it('marks an atom with too many donor dative bonds and hides hydrogens', () => {
+      const { atom, atomId, struct } = createStructure(
+        'N',
+        0,
+        0,
+        [1, 1, 1],
+        2,
+        0,
+      );
+
+      struct.calcImplicitHydrogen(atomId);
+
+      expect(atom.badConn).toBe(true);
+      expect(atom.implicitH).toBe(0);
+    });
+
+    it.each([
+      [1, 0],
+      [0, 1],
+    ])(
+      'calculates implicit hydrogens for chlorine (%i donor, %i acceptor)',
+      (donors, acceptors) => {
         const { atom, atomId, struct } = createStructure(
-          'N',
+          'Cl',
+          3,
           0,
-          0,
-          [Bond.PATTERN.TYPE.AROMATIC],
-          2,
-          0,
+          [1],
+          donors,
+          acceptors,
         );
 
         struct.calcImplicitHydrogen(atomId);
 
-        expect(atom.badConn).toBe(true);
-        expect(atom.implicitH).toBe(0);
-      });
+        expect(atom.badConn).toBe(false);
+        expect(atom.implicitH).toBe(1);
+      },
+    );
+
+    it('cancels donor and acceptor dative bonds on the same atom', () => {
+      const { atom, atomId, struct } = createStructure(
+        'N',
+        0,
+        0,
+        [1, 1, 1],
+        1,
+        1,
+      );
+
+      struct.calcImplicitHydrogen(atomId);
+
+      expect(atom.badConn).toBe(false);
+      expect(atom.implicitH).toBe(0);
+    });
+
+    it('rounds up aromatic bond orders when calculating dative capacity', () => {
+      const { atom, atomId, struct } = createStructure(
+        'N',
+        0,
+        0,
+        [Bond.PATTERN.TYPE.AROMATIC],
+        2,
+        0,
+      );
+
+      struct.calcImplicitHydrogen(atomId);
+
+      expect(atom.badConn).toBe(true);
+      expect(atom.implicitH).toBe(0);
     });
   });
 

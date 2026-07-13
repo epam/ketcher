@@ -14,8 +14,34 @@ export interface DativeValenceResult {
   isValid: boolean;
 }
 
+type AtomicNumberRange = readonly [number, number];
+
+const F_BLOCK_RANGES: AtomicNumberRange[] = [
+  [57, 70],
+  [89, 102],
+];
+const D_BLOCK_ORBITAL_RANGES: AtomicNumberRange[] = [
+  [12, 12],
+  [20, 30],
+  [38, 48],
+  [56, 56],
+  [71, 80],
+  [88, 88],
+  [103, 112],
+];
+
+function isInRanges(
+  atomicNumber: number,
+  ranges: AtomicNumberRange[],
+): boolean {
+  return ranges.some(
+    ([firstAtomicNumber, lastAtomicNumber]) =>
+      atomicNumber >= firstAtomicNumber && atomicNumber <= lastAtomicNumber,
+  );
+}
+
 function getValenceElectronCount(atomicNumber: number): number {
-  // The ranges encode El0 from the issue's periodic-table definition.
+  // El0 is the neutral atom's valence electron count defined in #10427.
   if (atomicNumber <= 2) {
     return atomicNumber;
   }
@@ -56,25 +82,13 @@ function getValenceElectronCount(atomicNumber: number): number {
 }
 
 function getValenceOrbitalCount(atomicNumber: number): number {
-  // f-block atoms have 13 eligible orbitals and d-block atoms have 9.
   if (atomicNumber <= 2) {
     return 1;
   }
-  if (
-    (atomicNumber >= 57 && atomicNumber <= 70) ||
-    (atomicNumber >= 89 && atomicNumber <= 102)
-  ) {
+  if (isInRanges(atomicNumber, F_BLOCK_RANGES)) {
     return 13;
   }
-  if (
-    atomicNumber === 12 ||
-    (atomicNumber >= 20 && atomicNumber <= 30) ||
-    (atomicNumber >= 38 && atomicNumber <= 48) ||
-    atomicNumber === 56 ||
-    (atomicNumber >= 71 && atomicNumber <= 80) ||
-    atomicNumber === 88 ||
-    (atomicNumber >= 103 && atomicNumber <= 112)
-  ) {
+  if (isInRanges(atomicNumber, D_BLOCK_ORBITAL_RANGES)) {
     return 9;
   }
   return 4;

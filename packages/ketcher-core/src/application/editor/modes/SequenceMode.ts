@@ -1404,7 +1404,7 @@ export class SequenceMode extends BaseMode {
             const newNodePosition = this.getNewNodePosition();
             this.connectNodes(
               nextNodeWithAntisense.antisenseNode,
-              previousTwoStrandedNodeInSameChain!.antisenseNode,
+              previousTwoStrandedNodeInSameChain?.antisenseNode,
               modelChanges,
               newNodePosition,
             );

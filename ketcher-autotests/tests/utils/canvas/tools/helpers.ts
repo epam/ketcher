@@ -86,3 +86,31 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await TemplateEditDialog(page).setMoleculeName(templateName);
   await TemplateEditDialog(page).save();
 }
+
+export async function selectByAtomAndBondIds(
+  page: Page,
+  selection: { atoms?: number[]; bonds?: number[] },
+  options?: { clearBefore?: boolean },
+) {
+  const atoms = selection.atoms ?? [];
+  const bonds = selection.bonds ?? [];
+  const clearBefore = options?.clearBefore ?? true;
+
+  await waitForRender(page, async () => {
+    await page.evaluate(
+      ({ atoms, bonds, clearBefore }) => {
+        const editor = window.ketcher?.editor;
+        if (!editor) {
+          throw new Error('Ketcher editor is not initialized');
+        }
+
+        if (clearBefore) {
+          editor.selection(null);
+        }
+
+        editor.selection({ atoms, bonds });
+      },
+      { atoms, bonds, clearBefore },
+    );
+  });
+}

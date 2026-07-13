@@ -1195,7 +1195,7 @@ export class Struct {
     if (donorCount > 0 || acceptorCount > 0) {
       const element = Elements.get(atom.label);
 
-      // Query and attachment-point atoms do not have a defined electron count.
+      // Query and attachment-point atoms are ignored rather than marked invalid.
       if (!element || atom.isQuery() || atom.attachmentPoints) {
         atom.implicitH = 0;
         return;

@@ -83,25 +83,34 @@ describe('Atom', () => {
   });
 
   describe('dative bond valence', () => {
-    const createStructure = (
-      label: string,
-      charge: number,
-      radical: number,
-      covalentBondTypes: number[],
-      donorCount: number,
-      acceptorCount: number,
-    ) => {
+    interface StructureOptions {
+      label: string;
+      charge: number;
+      radical: number;
+      covalentBondTypes: number[];
+      donorCount: number;
+      acceptorCount: number;
+    }
+
+    const createStructure = ({
+      label,
+      charge,
+      radical,
+      covalentBondTypes,
+      donorCount,
+      acceptorCount,
+    }: StructureOptions) => {
       const struct = new Struct();
       const atomId = struct.atoms.add(
         new Atom({ label, charge, radical, pp: new Vec2(0, 0) }),
       );
-      let neighborId = 0;
+      let positionCounter = 0;
 
       const addBond = (type: number, donor: boolean) => {
         const otherAtomId = struct.atoms.add(
           new Atom({
             label: 'C',
-            pp: new Vec2(++neighborId, neighborId % 2),
+            pp: new Vec2(++positionCounter, positionCounter % 2),
           }),
         );
         struct.bonds.add(
@@ -135,14 +144,14 @@ describe('Atom', () => {
     ])(
       'allows valid dative capacity for %s',
       (label, charge, radical, bonds, donors, acceptors) => {
-        const { atom, atomId, struct } = createStructure(
-          label as string,
-          charge as number,
-          radical as number,
-          bonds as number[],
-          donors as number,
-          acceptors as number,
-        );
+        const { atom, atomId, struct } = createStructure({
+          label: label as string,
+          charge: charge as number,
+          radical: radical as number,
+          covalentBondTypes: bonds as number[],
+          donorCount: donors as number,
+          acceptorCount: acceptors as number,
+        });
 
         struct.calcImplicitHydrogen(atomId);
 
@@ -152,14 +161,14 @@ describe('Atom', () => {
     );
 
     it('marks an atom with too many donor dative bonds and hides hydrogens', () => {
-      const { atom, atomId, struct } = createStructure(
-        'N',
-        0,
-        0,
-        [1, 1, 1],
-        2,
-        0,
-      );
+      const { atom, atomId, struct } = createStructure({
+        label: 'N',
+        charge: 0,
+        radical: 0,
+        covalentBondTypes: [1, 1, 1],
+        donorCount: 2,
+        acceptorCount: 0,
+      });
 
       struct.calcImplicitHydrogen(atomId);
 
@@ -173,14 +182,14 @@ describe('Atom', () => {
     ])(
       'enforces nickel dative capacity (%i donor, %i acceptor)',
       (donors, acceptors) => {
-        const { atom, atomId, struct } = createStructure(
-          'Ni',
-          2,
-          0,
-          [],
-          donors,
-          acceptors,
-        );
+        const { atom, atomId, struct } = createStructure({
+          label: 'Ni',
+          charge: 2,
+          radical: 0,
+          covalentBondTypes: [],
+          donorCount: donors,
+          acceptorCount: acceptors,
+        });
 
         struct.calcImplicitHydrogen(atomId);
 
@@ -195,14 +204,14 @@ describe('Atom', () => {
     ])(
       'calculates implicit hydrogens for chlorine (%i donor, %i acceptor)',
       (donors, acceptors) => {
-        const { atom, atomId, struct } = createStructure(
-          'Cl',
-          3,
-          0,
-          [1],
-          donors,
-          acceptors,
-        );
+        const { atom, atomId, struct } = createStructure({
+          label: 'Cl',
+          charge: 3,
+          radical: 0,
+          covalentBondTypes: [1],
+          donorCount: donors,
+          acceptorCount: acceptors,
+        });
 
         struct.calcImplicitHydrogen(atomId);
 
@@ -212,14 +221,14 @@ describe('Atom', () => {
     );
 
     it('cancels donor and acceptor dative bonds on the same atom', () => {
-      const { atom, atomId, struct } = createStructure(
-        'N',
-        0,
-        0,
-        [1, 1, 1],
-        1,
-        1,
-      );
+      const { atom, atomId, struct } = createStructure({
+        label: 'N',
+        charge: 0,
+        radical: 0,
+        covalentBondTypes: [1, 1, 1],
+        donorCount: 1,
+        acceptorCount: 1,
+      });
 
       struct.calcImplicitHydrogen(atomId);
 
@@ -228,14 +237,14 @@ describe('Atom', () => {
     });
 
     it('rounds up aromatic bond orders when calculating dative capacity', () => {
-      const { atom, atomId, struct } = createStructure(
-        'N',
-        0,
-        0,
-        [Bond.PATTERN.TYPE.AROMATIC],
-        2,
-        0,
-      );
+      const { atom, atomId, struct } = createStructure({
+        label: 'N',
+        charge: 0,
+        radical: 0,
+        covalentBondTypes: [Bond.PATTERN.TYPE.AROMATIC],
+        donorCount: 2,
+        acceptorCount: 0,
+      });
 
       struct.calcImplicitHydrogen(atomId);
 

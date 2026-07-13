@@ -42,7 +42,7 @@ function isInRanges(
 }
 
 function getValenceElectronCount(atomicNumber: number): number {
-  // El0 is the neutral atom's valence electron count defined in #10427.
+  // El0 follows #10427 by subtracting each preceding filled block from Z.
   if (atomicNumber <= 2) {
     return atomicNumber;
   }
@@ -96,7 +96,7 @@ function getValenceOrbitalCount(atomicNumber: number): number {
 }
 
 function canHaveImplicitHydrogens(atomicNumber: number): boolean {
-  // Keep the same element set that receives hydrogens when drawn standalone.
+  // Match standalone H rendering: H, alkali metals, and groups 13-17.
   return (
     atomicNumber === 1 ||
     atomicNumber === 3 ||

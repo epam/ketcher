@@ -316,6 +316,9 @@ export const selectIsHandToolSelected = (state: RootState) =>
 export const hasAntisenseChains = (state: RootState): boolean =>
   state.editor.hasAntisenseChains;
 
+export const selectHasAntisenseChainsLive = (state: RootState): boolean =>
+  Boolean(state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains);
+
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
 

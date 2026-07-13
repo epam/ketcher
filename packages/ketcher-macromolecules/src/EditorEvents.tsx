@@ -15,9 +15,9 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
-  hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
+  selectHasAntisenseChainsLive,
   selectIsContextMenuActive,
   selectLastSelectedSelectionMenuItem,
   selectTool,
@@ -63,7 +63,7 @@ export const EditorEvents = () => {
   const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
-  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
+  const hasAtLeastOneAntisense = useAppSelector(selectHasAntisenseChainsLive);
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );

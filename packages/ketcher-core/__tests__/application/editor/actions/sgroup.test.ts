@@ -73,6 +73,52 @@ const addAttachmentPoint = (
   );
 };
 
+// Two S-group atoms (so the S-group has a non-zero bounding box) plus one
+// outside atom bonded to the S-group's attachment atom — the minimal shape
+// that triggers the "make room" repositioning of the attached structure.
+const buildAttachedStructure = () => {
+  const struct = new Struct();
+  const insideAtom1Id = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+  );
+  const insideAtom2Id = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+  );
+  const outsideAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 2) }),
+  );
+
+  const insideBondId = struct.bonds.add(
+    new Bond({
+      begin: insideAtom1Id,
+      end: insideAtom2Id,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  struct.bondInitHalfBonds(insideBondId);
+  const attachBondId = struct.bonds.add(
+    new Bond({
+      begin: insideAtom1Id,
+      end: outsideAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  struct.bondInitHalfBonds(attachBondId);
+  struct.initNeighbors();
+
+  return { struct, insideAtom1Id, insideAtom2Id, outsideAtomId };
+};
+
+const makeRestruct = (struct: Struct) => {
+  const options = {
+    scale: 40,
+    width: 100,
+    height: 100,
+  } as unknown as RenderOptions;
+  const render = new Render(document as unknown as HTMLElement, options);
+  return new ReStruct(struct, render);
+};
+
 describe('setExpandMonomerSGroup', () => {
   afterEach(() => {
     (getAttachmentPointStereoBond as jest.Mock).mockReset();
@@ -231,5 +277,46 @@ describe('setExpandMonomerSGroup', () => {
     expect(moleculeNodes).toHaveLength(1);
     expect(moleculeNodes[0].fragment?.atoms.size).toBe(2);
     expect(moleculeNodes[0].fragment?.bonds.size).toBe(1);
+  });
+
+  it('does not move the attached structure when collapsing a functional group (#10372)', () => {
+    const { struct, insideAtom1Id, insideAtom2Id, outsideAtomId } =
+      buildAttachedStructure();
+    // A plain SUP S-group is a functional group, not a monomer (isMonomer=false).
+    const sgroup = new SGroup(SGroup.TYPES.SUP);
+    const sgroupId = struct.sgroups.add(sgroup);
+    sgroup.id = sgroupId;
+    sgroup.data.name = 'Cbz';
+    sgroup.data.expanded = true;
+    sgroup.pp = new Vec2(struct.atoms.get(insideAtom1Id)?.pp ?? new Vec2());
+    struct.atomAddToSGroup(sgroupId, insideAtom1Id);
+    struct.atomAddToSGroup(sgroupId, insideAtom2Id);
+    addAttachmentPoint(struct, sgroupId, insideAtom1Id, 1);
+
+    const restruct = makeRestruct(struct);
+    const before = new Vec2(struct.atoms.get(outsideAtomId)?.pp ?? new Vec2());
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: false });
+
+    const after = struct.atoms.get(outsideAtomId)?.pp;
+    expect(after?.x).toBe(before.x);
+    expect(after?.y).toBe(before.y);
+  });
+
+  it('still repositions the attached structure when collapsing a monomer', () => {
+    const { struct, insideAtom1Id, insideAtom2Id, outsideAtomId } =
+      buildAttachedStructure();
+    const sgroupId = createMonomerSGroup(struct, insideAtom1Id);
+    struct.atomAddToSGroup(sgroupId, insideAtom2Id);
+    addAttachmentPoint(struct, sgroupId, insideAtom1Id, 1);
+
+    const restruct = makeRestruct(struct);
+    const before = new Vec2(struct.atoms.get(outsideAtomId)?.pp ?? new Vec2());
+
+    setExpandMonomerSGroup(restruct, sgroupId, { expanded: false });
+
+    const after = struct.atoms.get(outsideAtomId)?.pp;
+    const moved = after ? after.x !== before.x || after.y !== before.y : false;
+    expect(moved).toBe(true);
   });
 });

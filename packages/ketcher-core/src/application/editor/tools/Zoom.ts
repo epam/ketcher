@@ -48,6 +48,13 @@ export class ZoomTool implements BaseTool {
   private zoomLevel: number;
   private _zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
+  // Background rect drawn behind the horizontal scrollbar to visually reserve
+  // the scrollbar zone. It occludes any monomers that scroll into that region,
+  // so the scrollbar area always appears clean (mirroring how the library panel
+  // on the right prevents monomers from being visible underneath it).
+  private hScrollBarBgRect: D3SvgElementSelection<SVGRectElement, void> | null =
+    null;
+
   drawingEntitiesManager: DrawingEntitiesManager;
   private zoomEventHandlers: Array<(transform?: ZoomTransform) => void> = [];
   private scrollBars!: {
@@ -203,6 +210,16 @@ export class ZoomTool implements BaseTool {
   }
 
   drawScrollBar(scrollBar: ScrollBar) {
+    if (scrollBar.name === 'horizontal' && !this.hScrollBarBgRect) {
+      // Draw a background rect that fills the scrollbar zone with the canvas
+      // background colour. This hides any monomers that drift into that area,
+      // giving the same "reserved space" effect as the library panel on the
+      // right — monomers simply disappear behind it rather than overlapping
+      // the scrollbar thumb.
+      this.hScrollBarBgRect = this.canvasWrapper
+        .append('rect')
+        .attr('class', 'dynamic-element');
+    }
     scrollBar.bar = this.canvasWrapper.append('rect');
     const dragged = drag().on(
       'drag',
@@ -216,6 +233,18 @@ export class ZoomTool implements BaseTool {
     const { start, length } = this.calculateDynamicAttr(scrollBar);
 
     if (scrollBar.name === 'horizontal') {
+      const bgY = scrollBar.maxHeight - this.HORIZONTAL_DIST_TO_EDGE;
+      const bgHeight = this.HORIZONTAL_DIST_TO_EDGE;
+      const bgColor = this.getCanvasBgColor();
+      this.hScrollBarBgRect
+        ?.attr('x', 0)
+        .attr('y', bgY)
+        .attr('width', scrollBar.maxWidth)
+        .attr('height', bgHeight)
+        .attr('fill', bgColor)
+        .attr('stroke', 'none')
+        .attr('pointer-events', 'none');
+
       scrollBar.bar
         ?.attr('x', start)
         .attr('y', scrollBar.maxHeight - this.HORIZONTAL_DIST_TO_EDGE)
@@ -336,11 +365,22 @@ export class ZoomTool implements BaseTool {
   public scrollToVerticalBottom() {
     this.drawScrollBars();
 
-    if (this.scrollBars.vertical.offsetEnd < 0) {
+    const wrapperBB = this.canvasWrapper.node()?.getBoundingClientRect();
+    const contentBB = this.canvas.node()?.getBoundingClientRect();
+    if (!wrapperBB || !contentBB) return;
+
+    // Use actual viewport coordinates so the SVG's position on the page
+    // does not affect the calculation.  Keep content at least
+    // (HORIZONTAL_DIST_TO_EDGE + WIDTH) pixels above the SVG bottom so
+    // monomers are never clipped by the canvas edge or hidden behind the
+    // horizontal scrollbar strip.
+    const safeZone = this.HORIZONTAL_DIST_TO_EDGE + this.WIDTH;
+    const gapToSVGBottom = wrapperBB.bottom - contentBB.bottom;
+    if (gapToSVGBottom < safeZone) {
       this.zoom?.translateBy(
         this.canvasWrapper,
         0,
-        this.scrollBars.vertical.offsetEnd / this.zoomLevel,
+        (gapToSVGBottom - safeZone) / this.zoomLevel,
       );
     }
   }
@@ -441,6 +481,23 @@ export class ZoomTool implements BaseTool {
     this.resizeObserver.observe(this.canvasWrapper.node() as SVGSVGElement);
   };
 
+  // Walk up the DOM from the canvas wrapper to find the first ancestor that
+  // has a non-transparent background colour.  This is what the horizontal
+  // scrollbar background rect uses to visually "erase" any monomers that
+  // drift into the scrollbar zone.
+  private getCanvasBgColor(): string {
+    const TRANSPARENT = ['rgba(0, 0, 0, 0)', 'transparent', ''];
+    let el: Element | null = this.canvasWrapper.node()?.parentElement ?? null;
+    while (el) {
+      const bg = getComputedStyle(el).backgroundColor;
+      if (bg && !TRANSPARENT.includes(bg)) {
+        return bg;
+      }
+      el = el.parentElement;
+    }
+    return '#F5F5F5'; // macromolecules default canvas background
+  }
+
   defaultWheelDelta(event) {
     let wheelDeltaFactor = 0.002;
 
@@ -476,6 +533,8 @@ export class ZoomTool implements BaseTool {
   destroy() {
     this.scrollBars?.horizontal?.bar?.remove();
     this.scrollBars?.vertical?.bar?.remove();
+    this.hScrollBarBgRect?.remove();
+    this.hScrollBarBgRect = null;
     this.resizeObserver?.disconnect();
     this.resizeObserver = null;
     this.zoom = null;

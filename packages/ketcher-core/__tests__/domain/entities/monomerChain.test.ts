@@ -1,88 +1,127 @@
-import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { Phosphate } from 'domain/entities/Phosphate';
+import { Sugar } from 'domain/entities/Sugar';
+import { RNABase } from 'domain/entities/RNABase';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'domain/constants/monomers';
 import { Struct, Vec2 } from 'domain/entities';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import {
+  getAntisenseTerminalPhosphateCount,
+  isAntisenseTerminalPhosphateRun,
+} from 'domain/helpers/monomers';
 
-// Helper to create a phosphate monomer item
-const createPhosphateMonomerItem = (isAntisense: boolean): MonomerItemType => ({
-  favorite: false,
-  label: 'P',
-  props: {
-    BranchMonomer: '',
-    MonomerCaps: { R1: 'H', R2: 'OH' },
-    MonomerCode: 'P',
-    MonomerName: 'Phosphate',
-    MonomerType: 'PHOSPHATE',
-    MonomerClass: KetMonomerClass.Phosphate,
-    Name: 'Phosphate',
-    MonomerNaturalAnalogCode: 'P',
-  },
-  struct: new Struct(),
-  isAntisense,
-});
+const makeItem = (
+  monomerClass: KetMonomerClass,
+  analog: string,
+  isAntisense: boolean,
+): MonomerItemType =>
+  ({
+    favorite: false,
+    label: analog,
+    props: {
+      MonomerCaps: { R1: 'H', R2: 'OH', R3: 'H' },
+      MonomerCode: analog,
+      MonomerName: analog,
+      MonomerType: monomerClass,
+      MonomerClass: monomerClass,
+      Name: analog,
+      MonomerNaturalAnalogCode: analog,
+    },
+    struct: new Struct(),
+    isAntisense,
+  } as unknown as MonomerItemType);
 
-describe('Chain - Antisense Phosphate Rendering', () => {
+const bond = (
+  first: BaseMonomer,
+  firstAp: AttachmentPointName,
+  second: BaseMonomer,
+  secondAp: AttachmentPointName,
+) => {
+  const polymerBond = new PolymerBond(first);
+  polymerBond.setSecondMonomer(second);
+  first.setBond(firstAp, polymerBond);
+  second.setBond(secondAp, polymerBond);
+};
+
+const phosphate = (isAntisense = true) =>
+  new Phosphate(makeItem(KetMonomerClass.Phosphate, 'P', isAntisense));
+
+describe('antisense terminal phosphate helpers', () => {
   /**
-   * Test for issue #6438: System shows phosphate as CHEM in antisense chain
-   * Terminal phosphates in antisense chains should be rendered as "p" (MonomerSequenceNode)
-   * not as "@" (LinkerSequenceNode)
+   * Issue #6438: antisense terminal phosphates must be shown as "p" (or "pp"
+   * when there is an adjacent phosphate) in sequence mode, while every other
+   * phosphate keeps its default "@" representation. The decision is derived from
+   * the monomer graph only, so flex mode / editing are not affected.
    */
 
-  it('should render antisense phosphate as standalone (MonomerSequenceNode) when followed by another phosphate', () => {
-    // Arrange: Create two phosphates in antisense chain (p-p pattern)
-    const phosphate1 = new Phosphate(createPhosphateMonomerItem(true));
-    const phosphate2 = new Phosphate(createPhosphateMonomerItem(true));
-    phosphate1.moveAbsolute(new Vec2(0, 0));
-    phosphate2.moveAbsolute(new Vec2(1, 0));
+  it('counts a single terminal antisense phosphate as one "p"', () => {
+    const p = phosphate();
+    p.moveAbsolute(new Vec2(0, 0));
 
-    // Connect them: phosphate1(R2) -> phosphate2(R1)
-    const bond = new PolymerBond(phosphate1);
-    bond.setSecondMonomer(phosphate2);
-    phosphate1.setBond(AttachmentPointName.R2, bond);
-    phosphate2.setBond(AttachmentPointName.R1, bond);
+    expect(isAntisenseTerminalPhosphateRun([p])).toBe(true);
+    expect(getAntisenseTerminalPhosphateCount([p])).toBe(1);
+  });
 
-    // Act: Create chain starting with first phosphate
-    const chain = new Chain(phosphate1);
+  it('counts two adjacent terminal antisense phosphates (single node) as "pp"', () => {
+    const p1 = phosphate();
+    const p2 = phosphate();
+    p1.moveAbsolute(new Vec2(0, 0));
+    p2.moveAbsolute(new Vec2(1, 0));
+    // p1(R2) -> p2(R1); both chain ends are free (terminal run)
+    bond(p1, AttachmentPointName.R2, p2, AttachmentPointName.R1);
 
-    // Assert: First phosphate should be MonomerSequenceNode (displayed as "p")
-    // because it's followed by another phosphate, not a nucleoside/nucleotide
-    expect(chain.nodes.length).toBeGreaterThan(0);
-    const phosphate1Node = chain.nodes.find((node) =>
-      node.monomers.includes(phosphate1),
+    expect(isAntisenseTerminalPhosphateRun([p1, p2])).toBe(true);
+    expect(getAntisenseTerminalPhosphateCount([p1, p2])).toBe(2);
+  });
+
+  it('counts a terminal phosphate adjacent to a nucleotide-absorbed phosphate as "pp"', () => {
+    // Antisense fragment: sugar(U) - pAbsorbed - pTerminal
+    // sugar + base + pAbsorbed form a valid nucleotide (pAbsorbed is not rendered
+    // separately), so the terminal phosphate must represent both as "pp".
+    const sugar = new Sugar(makeItem(KetMonomerClass.Sugar, 'R', true));
+    const base = new RNABase(makeItem(KetMonomerClass.Base, 'U', true));
+    const pAbsorbed = phosphate();
+    const pTerminal = phosphate();
+    [sugar, base, pAbsorbed, pTerminal].forEach((monomer, index) =>
+      monomer.moveAbsolute(new Vec2(index, 0)),
     );
-    expect(phosphate1Node).toBeDefined();
-    expect(phosphate1Node).toBeInstanceOf(MonomerSequenceNode);
+
+    bond(sugar, AttachmentPointName.R3, base, AttachmentPointName.R1);
+    bond(sugar, AttachmentPointName.R2, pAbsorbed, AttachmentPointName.R1);
+    bond(pAbsorbed, AttachmentPointName.R2, pTerminal, AttachmentPointName.R1);
+
+    expect(isAntisenseTerminalPhosphateRun([pTerminal])).toBe(true);
+    expect(getAntisenseTerminalPhosphateCount([pTerminal])).toBe(2);
   });
 
-  it('should render standalone antisense phosphate as MonomerSequenceNode', () => {
-    // Arrange: Create a single antisense phosphate (no connections)
-    const phosphate = new Phosphate(createPhosphateMonomerItem(true));
-    phosphate.moveAbsolute(new Vec2(0, 0));
+  it('does not treat a sense phosphate as an antisense terminal run', () => {
+    const p = phosphate(false);
+    p.moveAbsolute(new Vec2(0, 0));
 
-    // Act: Create chain with just the phosphate
-    const chain = new Chain(phosphate);
-
-    // Assert: Standalone antisense phosphate should be MonomerSequenceNode (displayed as "p")
-    expect(chain.nodes.length).toBe(1);
-    expect(chain.nodes[0]).toBeInstanceOf(MonomerSequenceNode);
-    expect(chain.nodes[0].monomers).toContain(phosphate);
+    expect(isAntisenseTerminalPhosphateRun([p])).toBe(false);
   });
 
-  it('should render sense standalone phosphate as MonomerSequenceNode', () => {
-    // Arrange: Create a single sense phosphate (no connections)
-    const phosphate = new Phosphate(createPhosphateMonomerItem(false));
-    phosphate.moveAbsolute(new Vec2(0, 0));
+  it('does not treat a non-terminal antisense phosphate as a terminal run', () => {
+    const before = phosphate();
+    const p = phosphate();
+    const after = phosphate();
+    [before, p, after].forEach((monomer, index) =>
+      monomer.moveAbsolute(new Vec2(index, 0)),
+    );
+    // before(R2) -> p(R1); p(R2) -> after(R1). p has neighbours on both sides.
+    bond(before, AttachmentPointName.R2, p, AttachmentPointName.R1);
+    bond(p, AttachmentPointName.R2, after, AttachmentPointName.R1);
 
-    // Act: Create chain with just the phosphate
-    const chain = new Chain(phosphate);
+    expect(isAntisenseTerminalPhosphateRun([p])).toBe(false);
+  });
 
-    // Assert: Standalone sense phosphate should also be MonomerSequenceNode
-    // (this is existing behavior - we're verifying we didn't break it)
-    expect(chain.nodes.length).toBe(1);
-    expect(chain.nodes[0]).toBeInstanceOf(MonomerSequenceNode);
-    expect(chain.nodes[0].monomers).toContain(phosphate);
+  it('does not treat a run that is not solely phosphates as a terminal run', () => {
+    const sugar = new Sugar(makeItem(KetMonomerClass.Sugar, 'R', true));
+    const p = phosphate();
+    sugar.moveAbsolute(new Vec2(0, 0));
+    p.moveAbsolute(new Vec2(1, 0));
+
+    expect(isAntisenseTerminalPhosphateRun([sugar, p])).toBe(false);
   });
 });

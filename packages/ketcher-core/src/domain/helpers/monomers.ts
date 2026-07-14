@@ -425,6 +425,81 @@ export function isSugarOrAmbiguousSugar(
   );
 }
 
+/**
+ * A phosphate is "absorbed" into a nucleotide when it is the trailing phosphate
+ * of a valid nucleotide (Sugar + Base + Phosphate). Such a phosphate is not
+ * rendered as its own sequence symbol.
+ */
+function isPhosphateAbsorbedInNucleotide(phosphate: BaseMonomer): boolean {
+  const previousMonomer = getPreviousMonomerInChain(phosphate);
+  return (
+    isSugarOrAmbiguousSugar(previousMonomer) &&
+    isValidNucleotide(previousMonomer)
+  );
+}
+
+/**
+ * Returns true when the given linker-node monomers form a run consisting solely
+ * of antisense phosphates that sits at a chain terminal (one side is a chain
+ * end). Such a run is rendered as "p"/"pp" instead of the default "@".
+ *
+ * The decision relies solely on the monomer graph (R1/R2 neighbours), so it does
+ * not depend on - and does not affect - the sequence node structure. This keeps
+ * flex mode and sequence editing identical to their previous behaviour.
+ */
+export function isAntisenseTerminalPhosphateRun(
+  monomers: BaseMonomer[],
+): boolean {
+  if (
+    monomers.length === 0 ||
+    !monomers.every(
+      (monomer) =>
+        isPhosphateOrAmbiguousPhosphate(monomer) &&
+        monomer.monomerItem.isAntisense,
+    )
+  ) {
+    return false;
+  }
+
+  const firstMonomer = monomers[0];
+  const lastMonomer = monomers[monomers.length - 1];
+  const monomerBeforeRun = getPreviousMonomerInChain(firstMonomer);
+  const monomerAfterRun = getNextMonomerInChain(lastMonomer);
+
+  // The phosphate run must sit at a chain terminal (one side is a chain end).
+  return !monomerBeforeRun || !monomerAfterRun;
+}
+
+/**
+ * Number of "p" glyphs a terminal antisense phosphate run represents. This is
+ * the amount of phosphates in the run plus, when the inner neighbour is a
+ * phosphate absorbed into an adjacent nucleotide (and therefore not rendered as
+ * its own symbol), one extra phosphate.
+ */
+export function getAntisenseTerminalPhosphateCount(
+  monomers: BaseMonomer[],
+): number {
+  if (!isAntisenseTerminalPhosphateRun(monomers)) {
+    return 0;
+  }
+
+  const firstMonomer = monomers[0];
+  const lastMonomer = monomers[monomers.length - 1];
+  const monomerBeforeRun = getPreviousMonomerInChain(firstMonomer);
+  const monomerAfterRun = getNextMonomerInChain(lastMonomer);
+
+  let phosphateCount = monomers.length;
+  const innerNeighbour = monomerBeforeRun ?? monomerAfterRun;
+  if (
+    isPhosphateOrAmbiguousPhosphate(innerNeighbour) &&
+    isPhosphateAbsorbedInNucleotide(innerNeighbour)
+  ) {
+    phosphateCount += 1;
+  }
+
+  return phosphateCount;
+}
+
 export {
   isMonomerItemSugar,
   isMonomerItemPhosphate,

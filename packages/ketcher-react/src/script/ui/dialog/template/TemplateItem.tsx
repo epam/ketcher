@@ -18,7 +18,11 @@ import { type FC, type KeyboardEvent, memo } from 'react';
 import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
-import { Icon, MemoizedStructRender } from 'components';
+import {
+  Icon,
+  MemoizedStructRender,
+  type IStructRenderProps,
+} from 'components';
 import type { Template } from './TemplateTable';
 
 const isSaltOrSolventTemplate = (template: Template) =>
@@ -66,7 +70,7 @@ export interface TemplateItemProps {
   index: number;
   isSelected: boolean;
   shouldRenderPreview: boolean;
-  renderOptions?: any;
+  renderOptions?: IStructRenderProps['options'];
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;
   onAttach?: (tmpl: Template) => void;

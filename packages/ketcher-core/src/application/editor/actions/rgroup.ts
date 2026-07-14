@@ -15,13 +15,15 @@
  ***************************************************************************/
 
 import { RGroupAttr, RGroupFragment, UpdateIfThen } from '../operations';
+import type { RGroupAttributeKey } from '../operations/rgroup/RGroupAttr';
+import type { RGroupAttributes } from 'domain/entities/rgroup';
 
 import { Action } from './action';
 
-export function fromRGroupAttrs(restruct, id, attrs) {
+export function fromRGroupAttrs(restruct, id, attrs: RGroupAttributes) {
   const action = new Action();
 
-  Object.keys(attrs).forEach((key) => {
+  (Object.keys(attrs) as Array<RGroupAttributeKey>).forEach((key) => {
     action.addOp(new RGroupAttr(id, key, attrs[key]));
   });
 

@@ -1398,9 +1398,9 @@ export class SequenceMode extends BaseMode {
 
           // Gap case: cursor is to the left of a missing antisense segment.
           // Condition (3) — the next nucleotide node also lacks antisense —
-          // distinguishes a real antisense gap (A2 has no pair → fill it) from
-          // a phosphate column sitting just before an already-paired nucleotide
-          // (where the correct action is to break the sense chain instead).
+          // distinguishes a real multi-column antisense gap from a phosphate
+          // column sitting just before an already-paired nucleotide (which
+          // should fall through to the early-return and do nothing).
           const nextNucleotideFromCurrent = getNextNodeWithNucleotideSense(
             currentTwoStrandedNode,
           );
@@ -1440,9 +1440,9 @@ export class SequenceMode extends BaseMode {
           }
 
           // Antisense mode: break the sense chain bond at the previous node.
-          // Placed before the strict early-return so it works even when the
-          // current column has no antisense node (cursor is at a gap position —
-          // the early-return would otherwise block this case).
+          // Only fires when the previous node has a valid antisense nucleotide —
+          // if prev has no antisense (blank/backbone) the cursor is at the start
+          // of the antisense region and there is nothing to break.
           if (
             this.isAntisenseEditMode &&
             previousTwoStrandedNodeInSameChain?.senseNode &&
@@ -1450,6 +1450,7 @@ export class SequenceMode extends BaseMode {
               previousTwoStrandedNodeInSameChain.senseNode instanceof
               EmptySequenceNode
             ) &&
+            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
             !(currentTwoStrandedNode?.senseNode instanceof BackBoneSequenceNode)
           ) {
             this.deleteBondToNextNodeInChain(

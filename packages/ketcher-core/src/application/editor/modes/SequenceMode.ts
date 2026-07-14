@@ -1378,13 +1378,37 @@ export class SequenceMode extends BaseMode {
             node?.antisenseNode &&
             !(node.antisenseNode instanceof EmptySequenceNode);
 
-          // Gap case: cursor is to the left of a gap in the antisense strand.
-          // The previous node has a valid antisense but the current does not.
-          // Find the next node in the same chain that has a valid antisense and
-          // connect the two antisense nodes to fill the gap.
+          // Find the first node with a nucleotide (not phosphate/empty) sense
+          // node, starting from startNode inclusive.
+          const getNextNodeWithNucleotideSense = (
+            startNode: ITwoStrandedChainItem | undefined,
+          ): ITwoStrandedChainItem | undefined => {
+            let node = startNode;
+            while (node) {
+              if (
+                node.senseNode instanceof Nucleotide ||
+                node.senseNode instanceof Nucleoside
+              ) {
+                return node;
+              }
+              node = SequenceRenderer.getNextNodeInSameChain(node);
+            }
+            return undefined;
+          };
+
+          // Gap case: cursor is to the left of a missing antisense segment.
+          // Condition (3) — the next nucleotide node also lacks antisense —
+          // distinguishes a real antisense gap (A2 has no pair → fill it) from
+          // a phosphate column sitting just before an already-paired nucleotide
+          // (where the correct action is to break the sense chain instead).
+          const nextNucleotideFromCurrent = getNextNodeWithNucleotideSense(
+            currentTwoStrandedNode,
+          );
           if (
             hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
-            !hasValidAntisense(currentTwoStrandedNode)
+            !hasValidAntisense(currentTwoStrandedNode) &&
+            nextNucleotideFromCurrent !== undefined &&
+            !hasValidAntisense(nextNucleotideFromCurrent)
           ) {
             let nextNodeWithAntisense = currentTwoStrandedNode
               ? SequenceRenderer.getNextNodeInSameChain(currentTwoStrandedNode)
@@ -1415,6 +1439,28 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
+          // Antisense mode: break the sense chain bond at the previous node.
+          // Placed before the strict early-return so it works even when the
+          // current column has no antisense node (cursor is at a gap position —
+          // the early-return would otherwise block this case).
+          if (
+            this.isAntisenseEditMode &&
+            previousTwoStrandedNodeInSameChain?.senseNode &&
+            !(
+              previousTwoStrandedNodeInSameChain.senseNode instanceof
+              EmptySequenceNode
+            )
+          ) {
+            this.deleteBondToNextNodeInChain(
+              previousTwoStrandedNodeInSameChain.senseNode,
+              modelChanges,
+            );
+            modelChanges.addOperation(new ReinitializeModeOperation());
+            editor.renderersContainer.update(modelChanges);
+            history.update(modelChanges);
+            return;
+          }
+
           if (
             !currentTwoStrandedNode?.senseNode ||
             !currentTwoStrandedNode?.antisenseNode ||
@@ -1431,18 +1477,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
-          if (
-            this.isAntisenseEditMode &&
-            previousTwoStrandedNodeInSameChain?.senseNode
-          ) {
-            this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain.senseNode,
-              modelChanges,
-            );
-          } else if (
-            !this.isAntisenseEditMode &&
-            currentTwoStrandedNode?.antisenseNode
-          ) {
+          if (currentTwoStrandedNode?.antisenseNode) {
             this.deleteBondToNextNodeInChain(
               currentTwoStrandedNode.antisenseNode,
               modelChanges,

@@ -35,16 +35,11 @@ import { ConfirmYourActionDialog } from '@tests/pages/macromolecules/canvas/Conf
 
 let page: Page;
 
-async function configureInitialState(page: Page) {
-  await Library(page).switchToRNATab();
-}
-
 test.beforeAll(async ({ initSequenceCanvas }) => {
   page = await initSequenceCanvas();
 });
 
 test.beforeEach(async ({ SequenceCanvas: _ }) => {
-  await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);
 });

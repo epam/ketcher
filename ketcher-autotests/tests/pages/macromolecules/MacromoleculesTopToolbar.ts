@@ -130,7 +130,7 @@ export const MacromoleculesTopToolbar = (page: Page) => {
 
       try {
         await locators.switchLayoutModeDropdownButton.click();
-        await page.waitForTimeout(0.1 * 1000);
+        await page.waitForTimeout(100);
         await switchLayoutModeDropdown.waitFor({
           state: 'visible',
           timeout: 5000,

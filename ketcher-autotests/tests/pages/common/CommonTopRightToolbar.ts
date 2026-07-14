@@ -122,7 +122,9 @@ export const CommonTopRightToolbar = (page: Page) => {
       }
       const switcher = locators.ketcherModeSwitcherCombobox;
       const macroOption = page.getByTestId(Mode.Macromolecules);
-      const macromoleculesCanvas = page.locator('#polymer-editor-canvas');
+      const macromoleculesCanvas = page.locator(
+        '[data-testid="ketcher-canvas"][canvasmode="macromolecules-mode"]',
+      );
 
       if (!(await macromoleculesCanvas.isVisible())) {
         await switcher.waitFor({ state: 'visible' });
@@ -159,7 +161,9 @@ export const CommonTopRightToolbar = (page: Page) => {
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
       const microOption = page.getByTestId(Mode.Molecules);
-      const moleculesCanvas = page.getByTestId('canvas');
+      const moleculesCanvas = page.locator(
+        '[data-testid="ketcher-canvas"][canvasmode="molecules-mode"]',
+      );
 
       if (!(await moleculesCanvas.isVisible())) {
         await switcher.waitFor({ state: 'visible' });

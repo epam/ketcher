@@ -475,13 +475,14 @@ class ReAtom extends ReObject {
         functionalGroups,
       )
     ) {
-      const isPositionAtom =
-        sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
+      const { atomId: contractedAtomId, position: contractedPosition } =
+        sgroup!.getContractedPosition(restruct.molecule);
+      const isPositionAtom = contractedAtomId === aid;
       if (isPositionAtom) {
+        // contractedPosition is geometric center for regular SGroups;
+        // MonomerMicromolecule.getContractedPosition overrides it to sgroup.pp.
         const position = Scale.modelToCanvas(
-          sgroup instanceof MonomerMicromolecule
-            ? (sgroup.pp as Vec2)
-            : this.a.pp,
+          contractedPosition,
           render.options,
         );
         const fontFamily = options.font.substr(
@@ -489,7 +490,7 @@ class ReAtom extends ReObject {
           options.font.length,
         );
         const sGroupName =
-          sgroup.data.name ?? SUPERATOM_CLASS_TEXT[sgroup.data.class] ?? '';
+          sgroup?.data?.name ?? SUPERATOM_CLASS_TEXT[sgroup?.data?.class] ?? '';
         const path = render.paper
           .text(position.x, position.y, sGroupName)
           .attr({
@@ -500,9 +501,9 @@ class ReAtom extends ReObject {
 
         path.node?.setAttribute('data-testid', 's-group-label');
         path.node?.setAttribute('data-label-text', sGroupName);
-        path.node?.setAttribute('data-sgroup-id', sgroup.id);
+        path.node?.setAttribute('data-sgroup-id', sgroup?.id);
         path.node?.setAttribute('data-sgroup-name', sGroupName);
-        path.node?.setAttribute('data-sgroup-type', sgroup.type);
+        path.node?.setAttribute('data-sgroup-type', sgroup?.type);
 
         restruct.addReObjectPath(
           LayerMap.data,

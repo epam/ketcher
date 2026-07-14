@@ -1629,7 +1629,9 @@ export class SequenceMode extends BaseMode {
                     isDnaEnteringMode,
                   ),
               previousTwoStrandedNodeInSameChain?.antisenseNode ?? null,
-              currentTwoStrandedNode?.antisenseNode,
+              insertAsStandaloneChain
+                ? undefined
+                : currentTwoStrandedNode?.antisenseNode,
             );
 
             if (antisenseNodeCreationResult) {
@@ -2805,8 +2807,7 @@ export class SequenceMode extends BaseMode {
     if (this.isEditMode) {
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
       const currentNode = currentTwoStrandedNode?.senseNode;
-      const previousTwoStrandedNode =
-        SequenceRenderer.previousFromCurrentEdittingMonomer;
+      const previousTwoStrandedNode = SequenceRenderer.previousNode;
       const previousNode = previousTwoStrandedNode?.senseNode;
       const twoStrandedNodeBeforePreviousNode = previousNode
         ? SequenceRenderer.getPreviousNodeInSameChain(previousTwoStrandedNode)

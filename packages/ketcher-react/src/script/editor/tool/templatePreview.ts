@@ -141,8 +141,26 @@ class TemplatePreview {
   private moveFloatingPreview() {
     const dist = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
-    fromMultipleMove(this.restruct, this.floatingPreview, dist);
+    fromMultipleMove(
+      this.restruct,
+      {
+        ...this.floatingPreview,
+        enhancedFlags: this.getFloatingPreviewFragmentIds(),
+      },
+      dist,
+    );
     this.editor.render.update(false, null);
+  }
+
+  private getFloatingPreviewFragmentIds(): number[] {
+    const fragmentIds = new Set<number>();
+    this.floatingPreview?.atoms.forEach((atomId) => {
+      const atom = this.struct.atoms.get(atomId);
+      if (atom) {
+        fragmentIds.add(atom.fragment);
+      }
+    });
+    return Array.from(fragmentIds);
   }
 
   private showFloatingPreview(position: Vec2) {

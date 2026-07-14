@@ -1,4 +1,4 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import { tryProvideEditorInstance } from 'application/editor/editorSingleton';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
 import { LinkerSequenceNode, UnresolvedMonomer, Vec2 } from 'domain/entities';
@@ -16,7 +16,7 @@ import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/Chain
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import { MONOMER_CONST } from 'domain/constants';
+import { MONOMER_CONST } from 'domain/constants/monomers';
 import { SettingsManager } from 'utilities';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
@@ -126,19 +126,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    return provideEditorInstance().isSequenceEditMode;
+    return tryProvideEditorInstance()?.isSequenceEditMode ?? false;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    return provideEditorInstance().isSequenceEditInRNABuilderMode;
+    return tryProvideEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
   }
 
   private get isAntisenseEditMode() {
-    return provideEditorInstance().mode.isAntisenseEditMode;
+    return tryProvideEditorInstance()?.mode?.isAntisenseEditMode ?? false;
   }
 
   private get isSyncEditMode() {
-    return provideEditorInstance().mode.isSyncEditMode;
+    return tryProvideEditorInstance()?.mode?.isSyncEditMode ?? false;
   }
 
   protected appendRootElement() {

@@ -14,6 +14,7 @@ import { selectEditor } from 'state/common';
 
 export const DragGhost = () => {
   const editor = useSelector(selectEditor);
+  const editorEvents = editor?.events;
 
   const [libraryItemDragData, setLibraryItemDragData] =
     useState<LibraryItemDragState>(null);
@@ -25,7 +26,7 @@ export const DragGhost = () => {
   const transform = useZoomTransform();
 
   useEffect(() => {
-    if (!editor) {
+    if (!editorEvents) {
       return;
     }
 
@@ -33,12 +34,12 @@ export const DragGhost = () => {
       setLibraryItemDragData(state);
     };
 
-    editor.events.setLibraryItemDragState.add(handleLibraryItemDrag);
+    editorEvents.setLibraryItemDragState.add(handleLibraryItemDrag);
 
     return () => {
-      editor.events.setLibraryItemDragState.remove(handleLibraryItemDrag);
+      editorEvents.setLibraryItemDragState.remove(handleLibraryItemDrag);
     };
-  }, [editor]);
+  }, [editorEvents]);
 
   useEffect(() => {
     if (!ZoomTool.instance || !libraryItemDragData) {

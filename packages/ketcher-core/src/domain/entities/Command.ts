@@ -1,4 +1,4 @@
-import type { Operation } from 'domain/entities/Operation';
+import type { Operation } from './Operation';
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class Command {

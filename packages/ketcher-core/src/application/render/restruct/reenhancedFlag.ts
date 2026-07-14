@@ -21,7 +21,7 @@ import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 class ReEnhancedFlag extends ReObject {
   #path: any;

@@ -43,7 +43,8 @@ import type Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
-import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 import { ReMultitailArrow } from './remultitailArrow';
 
 class ReStruct {

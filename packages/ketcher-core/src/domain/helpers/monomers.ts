@@ -425,10 +425,7 @@ export function isSugarOrAmbiguousSugar(
   );
 }
 
-export {
-  isMonomerItemSugar,
-  isMonomerItemPhosphate,
-} from 'domain/helpers/monomerItem';
+export { isMonomerItemSugar, isMonomerItemPhosphate } from './monomerItem';
 
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (

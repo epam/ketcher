@@ -1,4 +1,4 @@
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
+import type { SubChainNode } from './types';
 import type { PolymerBond } from '../PolymerBond';
 
 export class BaseSubChain {

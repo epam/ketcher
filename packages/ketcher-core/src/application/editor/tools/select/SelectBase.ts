@@ -42,7 +42,7 @@ import {
   HalfMonomerSize,
   MonomerSize,
   StandardBondLength,
-} from 'domain/constants';
+} from 'domain/constants/monomers';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import { RotationView } from 'application/render/renderers/TransientView/RotationView';
 import { Atom } from 'domain/entities/CoreAtom';

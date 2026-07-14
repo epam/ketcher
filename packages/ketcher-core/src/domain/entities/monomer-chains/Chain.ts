@@ -1,25 +1,25 @@
-import type { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Sugar } from 'domain/entities/Sugar';
-import { UnresolvedMonomer } from 'domain/entities/UnresolvedMonomer';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
-import { Nucleoside } from 'domain/entities/Nucleoside';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
+import type { BaseSubChain } from './BaseSubChain';
+import type { BaseMonomer } from '../BaseMonomer';
+import { Peptide } from '../Peptide';
+import { Phosphate } from '../Phosphate';
+import type { SubChainNode } from './types';
+import { Sugar } from '../Sugar';
+import { UnresolvedMonomer } from '../UnresolvedMonomer';
+import { UnsplitNucleotide } from '../UnsplitNucleotide';
+import { Nucleoside } from '../Nucleoside';
+import { Nucleotide } from '../Nucleotide';
+import { MonomerSequenceNode } from '../MonomerSequenceNode';
+import { EmptySequenceNode } from '../EmptySequenceNode';
+import { LinkerSequenceNode } from '../LinkerSequenceNode';
+import { AmbiguousMonomer } from '../AmbiguousMonomer';
+import type { PolymerBond } from '../PolymerBond';
 import {
   getNextMonomerInChain,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { EmptySubChain } from './EmptySubChain';
+import { AmbiguousMonomerSequenceNode } from '../AmbiguousMonomerSequenceNode';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 let id = 0;

@@ -66,6 +66,7 @@ export const EditorEvents = () => {
   const lastSelectedSelectionMenuItem = useAppSelector(
     selectLastSelectedSelectionMenuItem,
   );
+  const editorEvents = editor?.events;
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
@@ -74,27 +75,31 @@ export const EditorEvents = () => {
   }, [editor]);
 
   useEffect(() => {
-    editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
 
     return () => {
-      editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
+      editorEvents.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
     };
-  }, [editor]);
+  }, [editorEvents, handleMonomersLibraryUpdate]);
 
   useEffect(() => {
     const onSelectSelectionTool = () => {
-      editor?.events.selectTool.dispatch([lastSelectedSelectionMenuItem]);
+      editorEvents?.selectTool.dispatch([lastSelectedSelectionMenuItem]);
       dispatch(selectTool(lastSelectedSelectionMenuItem));
     };
 
-    if (editor) {
-      editor.events.selectSelectionTool.add(onSelectSelectionTool);
+    if (editorEvents) {
+      editorEvents.selectSelectionTool.add(onSelectSelectionTool);
     }
 
     return () => {
-      editor?.events.selectSelectionTool.remove(onSelectSelectionTool);
+      editorEvents?.selectSelectionTool.remove(onSelectSelectionTool);
     };
-  }, [dispatch, editor, lastSelectedSelectionMenuItem]);
+  }, [dispatch, editorEvents, lastSelectedSelectionMenuItem]);
 
   useEffect(() => {
     const handler = ([toolName]: [string]) => {
@@ -103,19 +108,19 @@ export const EditorEvents = () => {
       }
     };
 
-    if (editor) {
-      editor.events.error.add((errorText) => {
+    if (editorEvents) {
+      editorEvents.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
       });
-      editor.events.openErrorModal.add(
+      editorEvents.openErrorModal.add(
         (errorData: string | { errorMessage: string; errorTitle: string }) => {
           dispatch(openErrorModal(errorData));
         },
       );
 
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
-      editor.events.openMonomerConnectionModal.add(
+      editorEvents.selectTool.dispatch(['select-rectangle']);
+      editorEvents.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(
             openModal({
@@ -124,7 +129,7 @@ export const EditorEvents = () => {
             }),
           ),
       );
-      editor.events.openConfirmationDialog.add(
+      editorEvents.openConfirmationDialog.add(
         (additionalProps: ConfirmationDialogOnlyProps) =>
           dispatch(
             openModal({
@@ -133,14 +138,14 @@ export const EditorEvents = () => {
             }),
           ),
       );
-      editor.events.selectTool.add(handler);
+      editorEvents.selectTool.add(handler);
     }
 
     return () => {
       dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
+      editorEvents?.selectTool.remove(handler);
     };
-  }, [editor]);
+  }, [dispatch, editorEvents]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -321,14 +326,18 @@ export const EditorEvents = () => {
   }, [debouncedShowPreview, dispatch]);
 
   useEffect(() => {
-    editor?.events.mouseOverMonomer.add(handleOpenPreview);
-    editor?.events.mouseLeaveMonomer.add(handleClosePreview);
-    editor?.events.mouseLeaveAttachmentPoint.add(handleClosePreview);
-    editor?.events.mouseDownAttachmentPoint.add(handleClosePreview);
-    editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
-    editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
-    editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
-    editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.mouseOverMonomer.add(handleOpenPreview);
+    editorEvents.mouseLeaveMonomer.add(handleClosePreview);
+    editorEvents.mouseLeaveAttachmentPoint.add(handleClosePreview);
+    editorEvents.mouseDownAttachmentPoint.add(handleClosePreview);
+    editorEvents.mouseOverSequenceItem.add(handleOpenPreview);
+    editorEvents.mouseLeaveSequenceItem.add(handleClosePreview);
+    editorEvents.mouseOverPolymerBond.add(handleOpenPreview);
+    editorEvents.mouseLeavePolymerBond.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -337,36 +346,36 @@ export const EditorEvents = () => {
         handleOpenPreview(e);
       }
     };
-    editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
-    editor?.events.mouseMoveAttachmentPoint.add(onMoveHandler);
-    editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
-    editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
+    editorEvents.mouseOnMoveMonomer.add(onMoveHandler);
+    editorEvents.mouseMoveAttachmentPoint.add(onMoveHandler);
+    editorEvents.mouseOnMoveSequenceItem.add(onMoveHandler);
+    editorEvents.mouseOnMovePolymerBond.add(onMoveHandler);
 
     window.addEventListener('hidePreview', handleClosePreview);
 
     return () => {
-      editor?.events.mouseOverMonomer.remove(handleOpenPreview);
-      editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
-      editor?.events.mouseLeaveAttachmentPoint.remove(handleClosePreview);
-      editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
-      editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
-      editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
-      editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
+      editorEvents.mouseOverMonomer.remove(handleOpenPreview);
+      editorEvents.mouseLeaveMonomer.remove(handleClosePreview);
+      editorEvents.mouseLeaveAttachmentPoint.remove(handleClosePreview);
+      editorEvents.mouseOverSequenceItem.remove(handleOpenPreview);
+      editorEvents.mouseLeaveSequenceItem.remove(handleClosePreview);
+      editorEvents.mouseOverPolymerBond.remove(handleOpenPreview);
+      editorEvents.mouseLeavePolymerBond.remove(handleClosePreview);
 
-      editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
-      editor?.events.mouseMoveAttachmentPoint.remove(onMoveHandler);
-      editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
-      editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
+      editorEvents.mouseOnMoveMonomer.remove(onMoveHandler);
+      editorEvents.mouseMoveAttachmentPoint.remove(onMoveHandler);
+      editorEvents.mouseOnMoveSequenceItem.remove(onMoveHandler);
+      editorEvents.mouseOnMovePolymerBond.remove(onMoveHandler);
 
       window.removeEventListener('hidePreview', handleClosePreview);
     };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+  }, [activeTool, editorEvents, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
     if (!hasAtLeastOneAntisense) {
-      editor?.events.resetSequenceEditMode.dispatch();
+      editorEvents?.resetSequenceEditMode.dispatch();
     }
-  }, [hasAtLeastOneAntisense]);
+  }, [editorEvents, hasAtLeastOneAntisense]);
 
   return <></>;
 };

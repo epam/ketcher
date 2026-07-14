@@ -17,7 +17,7 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 
 export class AtomMove extends BaseOperation {
   data: {

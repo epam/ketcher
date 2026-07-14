@@ -1,7 +1,7 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { SELECTION_COLOR } from 'application/render/renderers/constants';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { SGroup, Vec2 } from 'domain/entities';
 import type { SUPERATOM_CLASS } from 'domain/entities/sgroup';

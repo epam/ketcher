@@ -1,13 +1,13 @@
 import type { RenderersManager } from 'application/render/renderers/RenderersManager';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
-import type { Atom } from 'domain/entities/CoreAtom';
-import type { Bond } from 'domain/entities/CoreBond';
-import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
-import type { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
-import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
-import type { SGroupDrawingEntity } from 'domain/entities/SGroupDrawingEntity';
+import type { BaseMonomer } from './BaseMonomer';
+import type { PolymerBond } from './PolymerBond';
+import type { Atom } from './CoreAtom';
+import type { Bond } from './CoreBond';
+import type { MonomerToAtomBond } from './MonomerToAtomBond';
+import type { RxnArrow } from './CoreRxnArrow';
+import type { MultitailArrow } from './CoreMultitailArrow';
+import type { RxnPlus } from './CoreRxnPlus';
+import type { SGroupDrawingEntity } from './SGroupDrawingEntity';
 
 export interface Operation {
   priority?: number;

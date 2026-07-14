@@ -1,5 +1,5 @@
 import { KetMonomerClass } from 'domain/constants/monomers';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName } from '../types/monomers';
 
 export function getAttachmentPointTooltip(
   monomerClass: KetMonomerClass | 'rnaPreset' | undefined,

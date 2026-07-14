@@ -1,5 +1,8 @@
 import { EditorHistory } from 'application/editor/EditorHistory';
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  tryProvideEditorInstance,
+} from 'application/editor/editorSingleton';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import type { LayoutMode } from 'application/editor/modes/types';
 import { isTwoStrandedNodeRestrictedForHydrogenBondCreation } from './helpers';
@@ -34,7 +37,7 @@ import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
   getSugarBySequenceType,
-} from 'domain/helpers/rna';
+} from '../../../domain/helpers/rna';
 import {
   type RnaDnaNaturalAnaloguesEnum,
   peptideNaturalAnalogues,
@@ -65,8 +68,8 @@ import { NewSequenceButton } from 'application/render/renderers/sequence/ui-cont
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { STRAND_TYPE } from 'domain/constants';
-import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
+import { STRAND_TYPE } from 'domain/constants/chains';
+import { getNodeFromTwoStrandedNode } from '../../../domain/helpers/chains';
 import type { CoreEditor } from 'application/editor/Editor';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import { KetMonomerClass } from 'application/formatters';
@@ -2309,7 +2312,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else if (editor.isSequenceEditMode) {
+    } else if (tryProvideEditorInstance()?.isSequenceEditMode ?? false) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
@@ -2609,7 +2612,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithPreset(selections, preset);
       }
-    } else if (editor.isSequenceEditMode) {
+    } else if (tryProvideEditorInstance()?.isSequenceEditMode ?? false) {
       const newNodePosition = this.getNewNodePosition();
       const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 

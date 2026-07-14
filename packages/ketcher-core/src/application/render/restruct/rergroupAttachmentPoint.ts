@@ -7,7 +7,7 @@ import type {
 } from 'domain/entities/rgroupAttachmentPoint';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import type ReAtom from './reatom';
 import ReObject from './reobject';
 import type ReStruct from './restruct';

@@ -1,3 +1,3 @@
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import { BaseSubChain } from './BaseSubChain';
 
 export class RnaSubChain extends BaseSubChain {}

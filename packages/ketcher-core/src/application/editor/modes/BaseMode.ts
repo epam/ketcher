@@ -2,7 +2,10 @@ import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { EditorHistory } from '../EditorHistory';
 import type { CoreEditor } from '../Editor';
-import { provideEditorInstance } from '../editorSingleton';
+import {
+  provideEditorInstance,
+  tryProvideEditorInstance,
+} from '../editorSingleton';
 import { type LayoutMode, DEFAULT_LAYOUT_MODE } from './types';
 import { getModeConstructor } from './modesRegistry';
 import {
@@ -167,7 +170,7 @@ export abstract class BaseMode {
 
     if (isClipboardAPIAvailable()) {
       const isSequenceEditInRNABuilderMode =
-        provideEditorInstance().isSequenceEditInRNABuilderMode;
+        tryProvideEditorInstance()?.isSequenceEditInRNABuilderMode ?? false;
 
       if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
       this._pasteIsInProgress = true;

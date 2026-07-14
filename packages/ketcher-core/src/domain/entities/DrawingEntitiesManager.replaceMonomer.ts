@@ -1,13 +1,13 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from './BaseMonomer';
 import type {
   AttachmentPointName,
   MonomerItemType,
   MonomerOrAmbiguousType,
-} from 'domain/types';
-import { Command } from 'domain/entities/Command';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
-import type { Atom } from 'domain/entities/CoreAtom';
-import type { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+} from '../types/monomers';
+import { Command } from './Command';
+import type { PolymerBond } from './PolymerBond';
+import type { Atom } from './CoreAtom';
+import type { MonomerToAtomBond } from './MonomerToAtomBond';
 import assert from 'assert';
 
 import type { DrawingEntitiesManager } from './DrawingEntitiesManager';

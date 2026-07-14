@@ -34,6 +34,18 @@ export * from './application/utils';
 export * from './application/ketcherProvider';
 export * from './application/getStructure';
 export * from './domain/helpers/monomers';
+export { KetMonomerClass } from './domain/constants/monomers';
+export type { DeepPartial } from './types/utilities';
+export type { Settings, SettingsFormValue } from './application/settings';
+export {
+  normalizeSettingsForCore,
+  normalizeSettingsForForm,
+} from './application/settings';
+export type { EditorTheme } from './domain/types/theme';
+export { isPasteContentAvailable } from './utilities/clipboardUtils';
+export type { RnaPresetWithOptionalFields } from './application/editor/tools';
+export type { SdfItem } from './domain/serializers/sdf';
+export type { MolfileFormat } from './domain/serializers/mol/mol.types';
 
 export * from './utilities';
 export * from './types';

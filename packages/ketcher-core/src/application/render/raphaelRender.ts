@@ -21,7 +21,7 @@ import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import defaultOptions from './options';
 import draw from './draw';
 import type { RenderOptions, ViewBox } from './render.types';

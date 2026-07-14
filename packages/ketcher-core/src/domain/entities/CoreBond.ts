@@ -1,9 +1,9 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
-import type { Atom } from 'domain/entities/CoreAtom';
+import { DrawingEntity } from './DrawingEntity';
+import { Vec2 } from './vec2';
+import type { Atom } from './CoreAtom';
 import type { BaseRenderer } from 'application/render';
 import type { BondRenderer } from 'application/render/renderers/BondRenderer';
-import type { BondCIP } from 'domain/entities/types';
+import type { BondCIP } from './types';
 
 export enum BondType {
   None,

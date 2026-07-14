@@ -20,7 +20,7 @@ import { OperationType } from 'application/editor/operations/OperationType';
 import type { Image } from 'domain/entities/image';
 import type { ReStruct } from 'application/render';
 import { ReImage } from 'application/render/restruct/reImage';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
 
 interface ImageUpsertData {
   id?: number;

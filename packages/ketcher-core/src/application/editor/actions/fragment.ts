@@ -39,7 +39,8 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
-import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);

@@ -3,6 +3,14 @@ declare module '*.less' {
   export default classes;
 }
 
+declare module '*.css' {
+  const classes: { [className: string]: string };
+  export default classes;
+}
+
+declare module 'react-contexify/ReactContexify.css';
+declare module 'react-contexify/dist/ReactContexify.css';
+
 declare namespace JSX {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   type Element = React.ReactElement<any, any>;

@@ -22,7 +22,7 @@ import { flatten } from 'lodash/fp';
 import { LayerMap } from './generalEnumTypes';
 import ReObject from './reobject';
 import type ReStruct from './restruct';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import type { RaphaelBaseElement } from 'raphael';
 
 export interface SerializedTextNode {

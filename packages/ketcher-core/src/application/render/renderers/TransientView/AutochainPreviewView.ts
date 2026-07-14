@@ -7,7 +7,7 @@ import type { IRnaPreset } from 'application/editor/tools/Tool';
 import { monomerFactory } from 'application/render/renderers/monomerFactory';
 import type { MonomerItemType } from 'domain/types';
 import { type BaseMonomer, Vec2 } from 'domain/entities';
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from 'domain/constants/layout';
 import { KetcherLogger } from 'utilities';
 import { isLibraryItemRnaPreset } from 'domain/helpers/monomers';
 

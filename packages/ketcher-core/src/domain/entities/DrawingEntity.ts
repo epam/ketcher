@@ -1,4 +1,4 @@
-import { Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from './vec2';
 import type { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
 import { Coordinates } from 'application/editor/shared/coordinates';

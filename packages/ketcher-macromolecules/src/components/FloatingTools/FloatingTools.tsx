@@ -76,6 +76,7 @@ const POSITION_EPSILON = 0.1; // view-pixel threshold to avoid noisy updates
 
 export const FloatingTools = () => {
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const [visible, setVisible] = useState(false);
   const [position, setPosition] = useState<Vec2>(new Vec2(0, 0));
   const positionRef = useRef<Vec2>(new Vec2(0, 0));
@@ -102,7 +103,7 @@ export const FloatingTools = () => {
   }, [editor]);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editorEvents) return;
 
     const handleSelectEntities = () => {
       const selectedEntities =
@@ -130,12 +131,12 @@ export const FloatingTools = () => {
       }
     };
 
-    editor.events.selectEntities.add(handleSelectEntities);
+    editorEvents.selectEntities.add(handleSelectEntities);
 
     return () => {
-      editor.events.selectEntities.remove(handleSelectEntities);
+      editorEvents.selectEntities.remove(handleSelectEntities);
     };
-  }, [editor, updatePosition]);
+  }, [editorEvents, updatePosition]);
 
   useEffect(() => {
     if (!editor || !visible) return;
@@ -159,15 +160,15 @@ export const FloatingTools = () => {
   }, [editor, visible, updatePosition]);
 
   const handleFlipHorizontal = () => {
-    editor?.events.flipHorizontal.dispatch();
+    editorEvents?.flipHorizontal.dispatch();
   };
 
   const handleFlipVertical = () => {
-    editor?.events.flipVertical.dispatch();
+    editorEvents?.flipVertical.dispatch();
   };
 
   const handleDelete = () => {
-    editor?.events.deleteSelectedStructure.dispatch();
+    editorEvents?.deleteSelectedStructure.dispatch();
     setVisible(false);
   };
 

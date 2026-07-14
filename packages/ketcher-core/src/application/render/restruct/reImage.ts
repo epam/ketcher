@@ -7,12 +7,12 @@ import type {
   ImageReferencePositionInfo,
 } from 'domain/entities/image';
 import type { RenderOptions } from 'application/render/render.types';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import type { RaphaelPaper, RaphaelSet } from 'raphael';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { Vec2 } from 'domain/entities/vec2';
 import draw from 'application/render/draw';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants/image';
 import type { Render } from 'application/render/raphaelRender';
 
 type GetReferencePositions = ReturnType<Image['getReferencePositions']>;

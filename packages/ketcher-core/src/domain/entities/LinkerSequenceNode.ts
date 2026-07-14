@@ -1,15 +1,15 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from './BaseMonomer';
 import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   isValidNucleoside,
   isValidNucleotide,
-} from 'domain/helpers/monomers';
-import { Chem } from 'domain/entities/Chem';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+} from '../helpers/monomers';
+import { Chem } from './Chem';
+import { Phosphate } from './Phosphate';
+import { RNABase } from './RNABase';
+import { Sugar } from './Sugar';
+import { AmbiguousMonomer } from './AmbiguousMonomer';
 import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class LinkerSequenceNode {

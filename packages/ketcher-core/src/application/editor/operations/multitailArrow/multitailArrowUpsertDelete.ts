@@ -3,7 +3,7 @@ import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MultitailArrow } from 'domain/entities/multitailArrow';
 import { OperationType } from 'application/editor/operations/OperationType';
 import { type ReStruct, ReMultitailArrow } from 'application/render';
-import { MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 
 interface MultitailArrowUpsertData {
   id?: number;

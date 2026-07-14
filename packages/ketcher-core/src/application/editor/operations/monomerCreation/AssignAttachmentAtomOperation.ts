@@ -4,7 +4,7 @@ import { OperationType } from 'application/editor/operations/OperationType';
 import { RemoveAttachmentPointOperation } from './RemoveAttachmentPointOperation';
 import assert from 'assert';
 import type { AttachmentPointName } from 'domain/types';
-import { getNextFreeAttachmentPoint } from 'domain/helpers';
+import { getNextFreeAttachmentPoint } from '../../../../domain/helpers/attachmentPointCalculations';
 
 export class AssignAttachmentAtomOperation extends BaseOperation {
   private attachmentPointName: AttachmentPointName | null = null;

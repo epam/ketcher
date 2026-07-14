@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { SGroup } from 'domain/entities/sgroup';
-import type { Struct } from 'domain/entities/struct';
+import { SGroup } from './sgroup';
+import type { Struct } from './struct';
 import assert from 'assert';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from './BaseMonomer';
 
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer: BaseMonomer) {

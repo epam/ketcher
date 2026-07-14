@@ -72,9 +72,10 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 
 export const SequenceTypeGroupButton = () => {
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
-    editor?.events.changeSequenceTypeEnterMode,
+    editorEvents?.changeSequenceTypeEnterMode,
   );
   const [isSequenceMode, setIsSequenceMode] = useState(false);
   const isSequenceEditInRNABuilderMode = useAppSelector(
@@ -102,24 +103,24 @@ export const SequenceTypeGroupButton = () => {
       setActiveSequenceType(mode);
       persistSequenceType(mode);
     };
-    editor?.events.selectMode.add(onToggleSequenceMode);
-    editor?.events.changeSequenceTypeEnterMode.add(onChangeSequenceType);
-    editor?.events.changeSequenceTypeEnterMode.dispatch(
+    editorEvents?.selectMode.add(onToggleSequenceMode);
+    editorEvents?.changeSequenceTypeEnterMode.add(onChangeSequenceType);
+    editorEvents?.changeSequenceTypeEnterMode.dispatch(
       getPersistedSequenceType(),
     );
 
     return () => {
-      editor?.events.selectMode.remove(onToggleSequenceMode);
-      editor?.events.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
+      editorEvents?.selectMode.remove(onToggleSequenceMode);
+      editorEvents?.changeSequenceTypeEnterMode.remove(onChangeSequenceType);
     };
-  }, [editor]);
+  }, [editorEvents]);
 
   useEffect(() => {
     onToggleSequenceMode(layoutMode);
   }, [layoutMode]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
-    editor?.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
+    editorEvents?.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 
   return isSequenceMode ? (

@@ -29,6 +29,13 @@ export function resetEditorInstance(ketcherId?: string): void {
 }
 
 export function provideEditorInstance(ketcherId?: string): CoreEditor {
+  const editor = tryProvideEditorInstance(ketcherId);
+  return editor as CoreEditor;
+}
+
+export function tryProvideEditorInstance(
+  ketcherId?: string,
+): CoreEditor | undefined {
   if (_renderingContext) return _renderingContext;
   if (ketcherId) {
     const editor = editorInstances.get(ketcherId);
@@ -36,5 +43,5 @@ export function provideEditorInstance(ketcherId?: string): CoreEditor {
   }
   // Fall back to the most recently registered instance for callers without context
   const values = [...editorInstances.values()];
-  return (values[values.length - 1] ?? _lastEditorInstance) as CoreEditor;
+  return values[values.length - 1] ?? _lastEditorInstance;
 }

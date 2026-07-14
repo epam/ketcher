@@ -14,6 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+// Keep a runtime artifact for the entities barrel to support preserveModules consumers.
+export const entitiesRuntimeBarrel = true;
+
 export * from './atom';
 export * from './atomList';
 export * from './bond';

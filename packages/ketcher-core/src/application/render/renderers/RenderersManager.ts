@@ -46,7 +46,7 @@ import type { RxnPlus } from 'domain/entities/CoreRxnPlus';
 import { RxnPlusRenderer } from 'application/render/renderers/RxnPlusRenderer';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
 import { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
 import type { Loop } from '../view-model/Loop';

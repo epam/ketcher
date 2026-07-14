@@ -38,6 +38,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export function useLayoutMode() {
   const ketcherId = useAppSelector(selectKetcherId);
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
 
   let ketcher: Ketcher;
@@ -65,19 +66,24 @@ export function useLayoutMode() {
   }, []);
 
   useEffect(() => {
-    editor?.events.layoutModeChange.add(onLayoutModeChange);
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.layoutModeChange.add(onLayoutModeChange);
 
     return () => {
       onLayoutModeChange(DEFAULT_LAYOUT_MODE);
-      editor?.events.layoutModeChange.remove(onLayoutModeChange);
+      editorEvents.layoutModeChange.remove(onLayoutModeChange);
     };
-  }, [onLayoutModeChange, editor]);
+  }, [editorEvents, onLayoutModeChange]);
 
   return layoutMode;
 }
 
 export function useSequenceEditInRNABuilderMode() {
   const editor = useAppSelector(selectEditor);
+  const editorEvents = editor?.events;
   const isSequenceEditInRNABuilderModeInitial = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
@@ -89,16 +95,20 @@ export function useSequenceEditInRNABuilderMode() {
   }, []);
 
   useEffect(() => {
-    editor?.events.toggleSequenceEditInRNABuilderMode.add(
+    if (!editorEvents) {
+      return;
+    }
+
+    editorEvents.toggleSequenceEditInRNABuilderMode.add(
       onSequenceEditInRNABuilderModeChange,
     );
 
     return () => {
-      editor?.events.toggleSequenceEditInRNABuilderMode.remove(
+      editorEvents.toggleSequenceEditInRNABuilderMode.remove(
         onSequenceEditInRNABuilderModeChange,
       );
     };
-  }, [onSequenceEditInRNABuilderModeChange, editor]);
+  }, [editorEvents, onSequenceEditInRNABuilderModeChange]);
 
   return isSequenceEditInRNABuilderMode;
 }

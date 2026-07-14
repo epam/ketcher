@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { type FC, useCallback, useEffect } from 'react';
 import { type MenuProps, contextMenu, Menu } from 'react-contexify';
-import 'react-contexify/ReactContexify.css';
+import 'react-contexify/dist/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
 import type Editor from 'src/script/editor';
 import styles from './ContextMenu.module.less';

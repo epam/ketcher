@@ -15,16 +15,14 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Atom,
-  Bond,
-  SGroupAttachmentPoint,
-  Struct,
-  Vec2,
-  RxnArrow as MicromoleculeRxnArrow,
-  MultitailArrow as MicromoleculeMultitailArrow,
-  RxnPlus as MicromoleculeRxnPlus,
-} from 'domain/entities';
+import { Atom } from '../../entities/atom';
+import { Bond } from '../../entities/bond';
+import { SGroupAttachmentPoint } from '../../entities/sGroupAttachmentPoint';
+import { Struct } from '../../entities/struct';
+import { Vec2 } from '../../entities/vec2';
+import { RxnArrow as MicromoleculeRxnArrow } from '../../entities/rxnArrow';
+import { MultitailArrow as MicromoleculeMultitailArrow } from '../../entities/multitailArrow';
+import { RxnPlus as MicromoleculeRxnPlus } from '../../entities/rxnPlus';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 import type { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
@@ -52,7 +50,7 @@ import {
   KetNodeType,
   KetTemplateType,
 } from 'application/formatters/types/ket';
-import { Command } from 'domain/entities/Command';
+import { Command } from '../../entities/Command';
 import type { CoreEditor } from 'application/editor/Editor';
 import type { EditorSelection } from 'application/editor/editor.types';
 import {
@@ -61,18 +59,18 @@ import {
   monomerToDrawingEntity,
   templateToMonomerProps,
   variantMonomerToDrawingEntity,
-} from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
+} from './fromKet/monomerToDrawingEntity';
 import assert from 'assert';
-import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
-import { getMonomerUniqueKey } from 'domain/helpers/monomers';
+import { polymerBondToDrawingEntity } from './fromKet/polymerBondToDrawingEntity';
+import { getMonomerUniqueKey } from '../../helpers/monomers';
 import {
   convertMonomerTemplateToStruct,
   fillStructRgLabelsByMonomerTemplate,
   getTemplateAttachmentPoints,
-} from 'domain/serializers/ket/fromKet/monomerTemplateUtils';
+} from './fromKet/monomerTemplateUtils';
 import { KetcherLogger } from 'utilities';
-import { Chem } from 'domain/entities/Chem';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { Chem } from '../../entities/Chem';
+import { DrawingEntitiesManager } from '../../entities/DrawingEntitiesManager';
 import {
   getKetRef,
   modifyTransformation,
@@ -81,28 +79,26 @@ import {
   setMonomerPrefix,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
-} from 'domain/serializers/ket/helpers';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { validate } from 'domain/serializers/ket/validate';
+} from './helpers';
+import type { BaseMonomer } from '../../entities/BaseMonomer';
+import { validate } from './validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { isNumber } from 'lodash';
 import {
   type AmbiguousMonomerType,
   type MonomerItemType,
   AttachmentPointName,
-} from 'domain/types';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
-import { imageToKet } from 'domain/serializers/ket/toKet/imageToKet';
-import { imageToStruct } from 'domain/serializers/ket/fromKet/imageToStruct';
-import {
-  IMAGE_SERIALIZE_KEY,
-  MULTITAIL_ARROW_SERIALIZE_KEY,
-} from 'domain/constants';
-import { multitailArrowToKet } from 'domain/serializers/ket/toKet/multitailArrowToKet';
-import { multitailArrowToStruct } from 'domain/serializers/ket/fromKet/multitailArrowToStruct';
-import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+} from '../../types/monomers';
+import type { PolymerBond } from '../../entities/PolymerBond';
+import { imageToKet } from './toKet/imageToKet';
+import { imageToStruct } from './fromKet/imageToStruct';
+import { IMAGE_SERIALIZE_KEY } from '../../constants/image';
+import { MULTITAIL_ARROW_SERIALIZE_KEY } from '../../constants/multitailArrow';
+import { multitailArrowToKet } from './toKet/multitailArrowToKet';
+import { multitailArrowToStruct } from './fromKet/multitailArrowToStruct';
+import { AmbiguousMonomer } from '../../entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { HydrogenBond } from '../../entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 

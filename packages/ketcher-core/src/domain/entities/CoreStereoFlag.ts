@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import type { BaseRenderer } from 'application/render';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import type { Vec2 } from 'domain/entities/vec2';
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import type { StereoFlag as StereoFlagEnum } from 'domain/entities/fragment';
+import { DrawingEntity } from './DrawingEntity';
+import type { Vec2 } from './vec2';
+import type { BaseMonomer } from './BaseMonomer';
+import type { StereoFlag as StereoFlagEnum } from './fragment';
 import type { StereoFlagRenderer } from 'application/render/renderers/StereoFlagRenderer';
 
 export class CoreStereoFlag extends DrawingEntity {

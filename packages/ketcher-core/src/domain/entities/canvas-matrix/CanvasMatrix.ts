@@ -1,11 +1,11 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import type { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
-import type { PolymerBond } from 'domain/entities/PolymerBond';
-import { Connection } from 'domain/entities/canvas-matrix/Connection';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import type { BaseMonomer } from '../BaseMonomer';
+import { MonomerToAtomBond } from '../MonomerToAtomBond';
+import type { SubChainNode } from '../monomer-chains/types';
+import type { ChainsCollection } from '../monomer-chains/ChainsCollection';
+import { Matrix } from '../canvas-matrix/Matrix';
+import type { PolymerBond } from '../PolymerBond';
+import { Connection } from '../canvas-matrix/Connection';
+import { Cell } from '../canvas-matrix/Cell';
 import { isNumber } from 'lodash';
 
 interface MatrixConfig {

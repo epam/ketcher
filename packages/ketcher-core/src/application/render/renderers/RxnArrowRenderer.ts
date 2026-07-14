@@ -1,6 +1,6 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import type { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Vec2 } from 'domain/entities/vec2';

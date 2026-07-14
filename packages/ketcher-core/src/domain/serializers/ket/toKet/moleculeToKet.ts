@@ -20,7 +20,7 @@ import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { Vec2 } from 'domain/entities/vec2';
-import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import { switchIntoChemistryCoordSystem } from '../helpers';
 
 import { ifDef } from 'utilities';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';

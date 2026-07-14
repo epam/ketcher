@@ -1,4 +1,4 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from '../BaseMonomer';
 import type { ISnakeLayoutMonomersNode } from './types';
 
 export class SingleMonomerSnakeLayoutNode implements ISnakeLayoutMonomersNode {

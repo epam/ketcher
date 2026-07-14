@@ -1,4 +1,4 @@
-import { ShowHydrogenLabels } from 'application/render';
+import { ShowHydrogenLabels } from 'application/render/restruct/showHydrogenLabels';
 import { ketcherProvider } from 'application/ketcherProvider';
 
 enum IndigoShowHydrogenLabelsMode {

@@ -1,4 +1,4 @@
-import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from './BaseMonomer';
 
 export class MonomerSequenceNode {
   private readonly monomersCache: BaseMonomer[] = [];

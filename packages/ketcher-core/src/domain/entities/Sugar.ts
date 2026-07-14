@@ -1,13 +1,13 @@
 import { BaseMonomer } from './BaseMonomer';
-import { AttachmentPointName } from 'domain/types';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { AttachmentPointName } from '../types/monomers';
+import { RnaSubChain } from './monomer-chains/RnaSubChain';
+import type { SubChainNode } from './monomer-chains/types';
+import { PhosphateSubChain } from './monomer-chains/PhosphateSubChain';
 import {
   isPhosphateOrAmbiguousPhosphate,
   isRnaBaseOrAmbiguousRnaBase,
-} from 'domain/helpers/monomers';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+} from '../helpers/monomers';
+import { PolymerBond } from './PolymerBond';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer) {

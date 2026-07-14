@@ -18,7 +18,7 @@ import { type Point, Vec2 } from './vec2';
 import {
   type initiallySelectedType,
   BaseMicromoleculeEntity,
-} from 'domain/entities/BaseMicromoleculeEntity';
+} from './BaseMicromoleculeEntity';
 
 export enum SimpleObjectMode {
   ellipse = 'ellipse',

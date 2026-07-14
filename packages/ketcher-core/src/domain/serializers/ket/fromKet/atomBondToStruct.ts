@@ -20,7 +20,7 @@ import {
   type AtomQueryProperties,
 } from 'domain/entities/atom';
 import { Bond, type BondAttributes } from 'domain/entities/bond';
-import { Elements } from 'domain/constants';
+import { Elements } from '../../../constants/elements';
 import { ifDef } from 'utilities';
 
 export function atomToStruct(source) {

@@ -1,6 +1,6 @@
-import type { Atom } from 'domain/entities/atom';
-import type { Pool } from 'domain/entities/pool';
-import { Vec2 } from 'domain/entities/vec2';
+import type { Atom } from './atom';
+import type { Pool } from './pool';
+import { Vec2 } from './vec2';
 
 export function geometricCenter(positions: Vec2[]): Vec2 {
   return positions

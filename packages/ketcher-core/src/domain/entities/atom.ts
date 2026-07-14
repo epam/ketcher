@@ -17,17 +17,17 @@
 import { type AtomListParams, AtomList } from './atomList';
 import { type Point, Vec2 } from './vec2';
 
-import { Elements } from 'domain/constants';
+import { Elements } from '../constants/elements';
 import { Pile } from './pile';
 import type { Struct } from './struct';
 import {
   type initiallySelectedType,
   BaseMicromoleculeEntity,
-} from 'domain/entities/BaseMicromoleculeEntity';
+} from './BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
 import type { AtomCIP } from './types';
-import { SGroup } from 'domain/entities/sgroup';
-import { FunctionalGroup } from 'domain/entities/functionalGroup';
+import { SGroup } from './sgroup';
+import { FunctionalGroup } from './functionalGroup';
 
 /**
  * Return unions of Pick.

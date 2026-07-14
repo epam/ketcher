@@ -22,7 +22,8 @@ import type { Struct } from 'domain/entities/struct';
 import { Box2Abs } from 'domain/entities/box2Abs';
 import { StereoFlag } from 'domain/entities/fragment';
 import { Vec2 } from 'domain/entities/vec2';
-import { ElementColor, Elements } from 'domain/constants';
+import { ElementColor } from 'domain/constants/elementColor';
+import { Elements } from 'domain/constants/elements';
 import {
   LayerMap,
   StereoLabelStyleType,
@@ -32,7 +33,7 @@ import {
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import { Scale } from 'domain/helpers/scale';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
@@ -42,12 +43,15 @@ import type {
 } from 'application/render/render.types';
 import { UsageInMacromolecule } from 'application/render/render.constants';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { type AttachmentPointName, attachmentPointNames } from 'domain/types';
-import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
+import {
+  type AttachmentPointName,
+  attachmentPointNames,
+} from 'domain/types/monomers';
+import { getAttachmentPointLabel } from '../../../domain/helpers/attachmentPointCalculations';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
 import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
-import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
+import { getAttachmentPointTooltip } from '../../../domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
 
 interface ElemAttr {

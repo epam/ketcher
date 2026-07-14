@@ -1,23 +1,26 @@
 import { BaseMonomer } from './BaseMonomer';
-import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import type { SubChainNode } from 'domain/entities/monomer-chains/types';
-import type { Vec2 } from 'domain/entities/vec2';
-import { Struct } from 'domain/entities/struct';
+import { ChemSubChain } from './monomer-chains/ChemSubChain';
+import type { SubChainNode } from './monomer-chains/types';
+import type { Vec2 } from './vec2';
+import { Struct } from './struct';
 import { resolveMonomerClass } from 'application/editor/operations/monomer/resolveMonomerClass';
 import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
-import type { IVariantMonomer } from 'domain/entities/types';
-import type { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
-import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
-import { Chem } from 'domain/entities/Chem';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { Sugar } from 'domain/entities/Sugar';
-import { RNABase } from 'domain/entities/RNABase';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import type { IVariantMonomer } from './types';
+import type {
+  AmbiguousMonomerType,
+  AttachmentPointName,
+} from '../types/monomers';
+import { PeptideSubChain } from './monomer-chains/PeptideSubChain';
+import { RnaSubChain } from './monomer-chains/RnaSubChain';
+import { Chem } from './Chem';
+import { Peptide } from './Peptide';
+import { Phosphate } from './Phosphate';
+import { Sugar } from './Sugar';
+import { RNABase } from './RNABase';
+import { UnsplitNucleotide } from './UnsplitNucleotide';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 

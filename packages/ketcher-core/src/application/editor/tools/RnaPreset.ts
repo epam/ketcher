@@ -26,7 +26,7 @@ import type { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
-import { SnakeLayoutCellWidth } from 'domain/constants';
+import { SnakeLayoutCellWidth } from 'domain/constants/layout';
 import type { IKetTemplateConnection } from 'application/formatters';
 import { getRnaPresetPhosphatePosition } from './rnaPresetConnections';
 

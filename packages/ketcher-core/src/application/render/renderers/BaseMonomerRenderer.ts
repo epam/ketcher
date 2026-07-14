@@ -13,7 +13,7 @@ import {
   attachmentPointNumberToAngle,
   checkFor0and360,
   sectorsList,
-} from 'domain/helpers/attachmentPointCalculations';
+} from '../../../domain/helpers/attachmentPointCalculations';
 import type {
   AttachmentPointConstructorParams,
   AttachmentPointName,

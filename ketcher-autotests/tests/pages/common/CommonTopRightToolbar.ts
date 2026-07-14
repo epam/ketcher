@@ -106,12 +106,10 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMacromoleculesEditor(
       options: {
-        enableFlexMode?: boolean;
         goToPeptides?: boolean;
         disableChainLengthRuler?: boolean;
         disableAutozoom?: boolean;
       } = {
-        enableFlexMode: true,
         goToPeptides: true,
         disableChainLengthRuler: true,
         disableAutozoom: true,
@@ -134,11 +132,7 @@ export const CommonTopRightToolbar = (page: Page) => {
         ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
       }
 
-      if (options.enableFlexMode) {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
-      } else if (options.goToPeptides) {
+      if (options.goToPeptides) {
         await Library(page).switchToPeptidesTab();
       } else {
         await Library(page).rnaTab.nucleotidesSection.waitFor({

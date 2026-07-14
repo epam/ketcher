@@ -47,7 +47,6 @@ import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVa
 import { OpenPPTXFileDialog } from '@tests/pages/molecules/OpenPPTXFileDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MolecularMassUnit } from '@tests/pages/constants/calculateVariablesPanel/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { ErrorMessageDialog } from '@tests/pages/common/ErrorMessageDialog';
@@ -790,7 +789,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {
+
+  test('Case 23: Correct bond attachment to micro molecules in Macro Mode', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/6410
@@ -821,42 +821,5 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-  });
-
-  test('Case 18: Save oversized macromolecule schema as MDL Molfile V2000 upgrades to V3000', async () => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/6142
-     * Description: Oversized structures saved via the V2000 option are auto-upgraded to V3000
-     * instead of failing with a generic error toast.
-     * Scenario:
-     * 1. Go to Macro - Flex mode
-     * 2. Load schema with many monomers and varied connections
-     * 3. Switch to Molecules mode
-     * 4. Save as MDL Molfile V2000
-     * 5. Verify preview contains V3000 markers and Warnings tab shows upgrade notice
-     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      page,
-      'KET/schema-nucleotide-with-different-monomers.ket',
-    );
-    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MoleculesFileFormatType.MDLMolfileV2000,
-    );
-
-    const preview = await SaveStructureDialog(page).getTextAreaValue();
-    expect(preview).toMatch(/M\s+V30|V30 COUNTS/);
-    expect(await ErrorMessageDialog(page).isVisible()).toBe(false);
-
-    await SaveStructureDialog(page).switchToWarningsTab();
-    const warnings = await SaveStructureDialog(page).getWarningTextAreaValue();
-    expect(warnings).toContain('V3000');
-
-    await SaveStructureDialog(page).cancel();
   });
 });

@@ -1,7 +1,15 @@
 import { RefObject, useEffect } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
 import { selectEditor, setIsDragging } from 'state/common';
-import { IRnaPreset, MonomerOrAmbiguousType, ZoomTool } from 'ketcher-core';
+import {
+  IRnaPreset,
+  MonomerOrAmbiguousType,
+  ZoomTool,
+  BaseMonomer,
+  canReplaceMonomer,
+  Vec2,
+  Coordinates,
+} from 'ketcher-core';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const useLibraryItemDrag = (
@@ -35,12 +43,56 @@ export const useLibraryItemDrag = (
         dispatch(setIsDragging(true));
 
         const { clientX: x, clientY: y } = event.sourceEvent;
+        const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+          .node()
+          ?.getBoundingClientRect();
+
+        let hoveredMonomer: BaseMonomer | null = null;
+        let isValidReplacement = false;
+
+        if (canvasWrapperBoundingClientRect) {
+          const { top, left } = canvasWrapperBoundingClientRect;
+          const transform = ZoomTool.instance.zoomTransform;
+          const adjustedX = x - left;
+          const adjustedY = y - top;
+          const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
+          const modelPosition = Coordinates.canvasToModel(
+            new Vec2(scaledX, scaledY),
+          );
+
+          // Find CLOSEST monomer within 1.5 angstrom radius
+          const monomers = Array.from(
+            editor.drawingEntitiesManager.monomers.values(),
+          );
+          const HIT_RADIUS = 1.5; // angstroms
+          let closestDistance = Infinity;
+
+          for (const monomer of monomers) {
+            const distance = Math.sqrt(
+              Math.pow(monomer.position.x - modelPosition.x, 2) +
+                Math.pow(monomer.position.y - modelPosition.y, 2),
+            );
+            if (distance < HIT_RADIUS && distance < closestDistance) {
+              closestDistance = distance;
+              hoveredMonomer = monomer;
+              if (!Array.isArray(item) && 'label' in item) {
+                isValidReplacement = canReplaceMonomer(
+                  monomer,
+                  item as MonomerOrAmbiguousType,
+                );
+              }
+            }
+          }
+        }
+
         editor.events.setLibraryItemDragState.dispatch({
           item,
           position: {
             x: x - (editor.ketcherRootElementBoundingClientRect?.left || 0),
             y: y - (editor.ketcherRootElementBoundingClientRect?.top || 0),
           },
+          hoveredMonomer,
+          isValidReplacement,
         });
       })
       .on('end', (event: D3DragEvent<HTMLElement, unknown, unknown>) => {
@@ -48,20 +100,68 @@ export const useLibraryItemDrag = (
           const { clientX: x, clientY: y } = event.sourceEvent;
           const canvasWrapperBoundingClientRect =
             ZoomTool.instance.canvasWrapper.node()?.getBoundingClientRect();
+
           if (canvasWrapperBoundingClientRect) {
             const { top, left, right, bottom } =
               canvasWrapperBoundingClientRect;
             const transform = ZoomTool.instance.zoomTransform;
-            const adjustedX = x - left + transform.k * 15;
-            const adjustedY = y - top + transform.k * 15;
-            const [scaledX, scaledY] = transform.invert([adjustedX, adjustedY]);
             const mouseWithinCanvas =
               x >= left && x <= right && y >= top && y <= bottom;
+
             if (mouseWithinCanvas) {
-              editor.events.placeLibraryItemOnCanvas.dispatch(item, {
-                x: scaledX,
-                y: scaledY,
-              });
+              const adjustedX = x - left;
+              const adjustedY = y - top;
+              const [scaledX, scaledY] = transform.invert([
+                adjustedX,
+                adjustedY,
+              ]);
+              const modelPosition = Coordinates.canvasToModel(
+                new Vec2(scaledX, scaledY),
+              );
+
+              // Find CLOSEST monomer within 1.5 angstrom radius
+              let hoveredMonomer: BaseMonomer | null = null;
+              const monomers = Array.from(
+                editor.drawingEntitiesManager.monomers.values(),
+              );
+              const HIT_RADIUS = 1.5; // angstroms
+              let closestDistance = Infinity;
+
+              for (const monomer of monomers) {
+                const distance = Math.sqrt(
+                  Math.pow(monomer.position.x - modelPosition.x, 2) +
+                    Math.pow(monomer.position.y - modelPosition.y, 2),
+                );
+                if (distance < HIT_RADIUS && distance < closestDistance) {
+                  closestDistance = distance;
+                  hoveredMonomer = monomer;
+                }
+              }
+
+              if (hoveredMonomer && !Array.isArray(item) && 'label' in item) {
+                const isValid = canReplaceMonomer(
+                  hoveredMonomer,
+                  item as MonomerOrAmbiguousType,
+                );
+                if (isValid) {
+                  editor.events.replaceMonomerOnCanvas.dispatch(
+                    hoveredMonomer,
+                    item as MonomerOrAmbiguousType,
+                  );
+                }
+              } else {
+                // Dropping on empty canvas - add new monomer (existing behavior)
+                const adjustedXForPlacement = x - left + transform.k * 15;
+                const adjustedYForPlacement = y - top + transform.k * 15;
+                const [scaledXPlacement, scaledYPlacement] = transform.invert([
+                  adjustedXForPlacement,
+                  adjustedYForPlacement,
+                ]);
+                editor.events.placeLibraryItemOnCanvas.dispatch(item, {
+                  x: scaledXPlacement,
+                  y: scaledYPlacement,
+                });
+              }
             }
           }
         }

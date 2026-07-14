@@ -25,3 +25,7 @@ export {
   isSingleRGroupAttachmentPoint,
   getAttachmentPointLabelWithBinaryShift,
 } from './attachmentPointCalculations';
+export {
+  canReplaceMonomer,
+  getAttachmentPointNames,
+} from './monomerValidation';

@@ -20,6 +20,7 @@ import type { Struct } from 'domain/entities/struct';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
@@ -110,4 +111,8 @@ export type LibraryItemDragState = {
     x: number;
     y: number;
   };
+  // Monomer drag-and-replace feature: track hovered monomer for replacement
+  hoveredMonomer?: BaseMonomer | null;
+  // Monomer drag-and-replace feature: validation result for replacement compatibility
+  isValidReplacement?: boolean;
 } | null;

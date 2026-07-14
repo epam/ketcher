@@ -64,6 +64,7 @@ import {
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
 } from 'domain/entities/DrawingEntitiesManager';
+import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { getStructureBbox } from 'domain/entities/structureBbox';
 import type { PolymerBond } from 'domain/entities/PolymerBond';
 import {
@@ -1238,6 +1239,18 @@ export class CoreEditor {
         this.calculateAndStoreNextAutochainPosition(
           monomersAddResult.lastMonomer,
         );
+      },
+    );
+    this.events.replaceMonomerOnCanvas.add(
+      (targetMonomer: BaseMonomer, replacementItem: MonomerOrAmbiguousType) => {
+        const command = replaceMonomer(
+          this.drawingEntitiesManager,
+          targetMonomer,
+          replacementItem,
+        );
+        const history = EditorHistory.getInstance(this);
+        history.update(command);
+        this.renderersContainer.update(command);
       },
     );
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));

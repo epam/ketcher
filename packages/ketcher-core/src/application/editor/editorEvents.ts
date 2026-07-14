@@ -71,6 +71,7 @@ export interface IEditorEvents {
   toggleLineLengthHighlighting: Subscription;
   setLibraryItemDragState: Subscription;
   placeLibraryItemOnCanvas: Subscription;
+  replaceMonomerOnCanvas: Subscription;
   autochain: Subscription;
   previewAutochain: Subscription;
   removeAutochainPreview: Subscription;
@@ -147,6 +148,7 @@ export const editorEvents: IEditorEvents = {
   toggleLineLengthHighlighting: new Subscription(),
   setLibraryItemDragState: new Subscription(),
   placeLibraryItemOnCanvas: new Subscription(),
+  replaceMonomerOnCanvas: new Subscription(),
   autochain: new Subscription(),
   previewAutochain: new Subscription(),
   removeAutochainPreview: new Subscription(),

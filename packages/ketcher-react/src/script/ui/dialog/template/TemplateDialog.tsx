@@ -422,7 +422,9 @@ const TemplateDialog: FC<Props> = (props) => {
 
 const selectTemplate = (template, props, dispatch) => {
   dispatch(selectTmpl(null));
-  if (!template) return;
+  if (!template) {
+    return;
+  }
   dispatch(changeFilter(''));
   dispatch(selectTmpl(template));
   dispatch(onAction({ tool: 'template', opts: template }));

@@ -3,7 +3,6 @@ import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
-import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
 
 type CommonTopRightToolbarLocators = {

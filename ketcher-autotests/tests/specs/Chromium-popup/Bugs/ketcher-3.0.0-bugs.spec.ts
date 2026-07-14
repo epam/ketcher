@@ -449,7 +449,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Click on A peptide
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
       goToPeptides: false,
     });
     await Library(page).selectMonomer(Peptide.A);
@@ -616,7 +615,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
@@ -659,7 +657,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 20: Entire element bounding box should be clickable, not only black dots`, async () => {
+  test(`Case 20: Entire element bounding box should be clickable, not only black dots`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6127
@@ -670,10 +670,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Click on the center of double bond (e.g. between two black lines)
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Chromium-popup/Bugs/Entire element bounding box should be clickable, not only black dots.ket',
@@ -708,7 +704,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 22: Atom properties not missing on initial load in Macro mode and correct hydrogen rendering on mode switch`, async () => {
+  test(`Case 22: Atom properties not missing on initial load in Macro mode and correct hydrogen rendering on mode switch`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6237
@@ -722,7 +720,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await pageReload(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
       goToPeptides: false,
     });
     await openFileAndAddToCanvasAsNewProject(
@@ -732,7 +729,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
       goToPeptides: false,
     });
     await takeEditorScreenshot(page);
@@ -756,13 +752,14 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Chromium-popup/Bugs/ketcher - 2025-01-06T160012.582.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
       goToPeptides: false,
     });
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 24: Export to 3-letter sequence work`, async () => {
+  test(`Case 24: Export to 3-letter sequence work`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6240
@@ -774,10 +771,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      *
      * Version 3.5
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -824,7 +817,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
   //   },
   // );
 
-  test(`Case 26: Consistent zoom behavior when inserting a molecule via setMolecule and Paste from Clipboard/Open from File`, async () => {
+  test(`Case 26: Consistent zoom behavior when inserting a molecule via setMolecule and Paste from Clipboard/Open from File`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6370
@@ -834,10 +829,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       page,
       'Molfiles-V3000/Bugs/macromol.mol',
@@ -852,7 +843,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 27: Layout in case of two sense chains connected to same antisense works as expected`, async () => {
+  test(`Case 27: Layout in case of two sense chains connected to same antisense works as expected`, async ({
+    SnakeCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6106
@@ -863,7 +856,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
       goToPeptides: false,
     });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
@@ -986,7 +978,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 32: Natural monomer have standard bond lengths and angles`, async () => {
+  test(`Case 32: Natural monomer have standard bond lengths and angles`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6563
@@ -1000,7 +994,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 6. Compare bond lengths
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
       goToPeptides: false,
     });
     await Library(page).selectMonomer(Base.A);

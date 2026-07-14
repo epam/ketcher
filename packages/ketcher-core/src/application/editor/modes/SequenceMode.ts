@@ -1449,7 +1449,8 @@ export class SequenceMode extends BaseMode {
             !(
               previousTwoStrandedNodeInSameChain.senseNode instanceof
               EmptySequenceNode
-            )
+            ) &&
+            !(currentTwoStrandedNode?.senseNode instanceof BackBoneSequenceNode)
           ) {
             this.deleteBondToNextNodeInChain(
               previousTwoStrandedNodeInSameChain.senseNode,

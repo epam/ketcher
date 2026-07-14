@@ -319,7 +319,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       name: 'Sugar-np14',
     });
     await presetSection.setupPhosphate({
-      atomIds: [1, 0, 12],
+      atomIds: [1, 0, 11, 12],
       bondIds: [0, 10, 11],
       code: Phosphate.P.alias,
       name: 'Phosphate-np14',

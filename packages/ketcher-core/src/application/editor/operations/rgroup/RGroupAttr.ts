@@ -19,7 +19,7 @@ import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import type { RGroup, RGroupAttributes } from 'domain/entities/rgroup';
 
-export type RGroupAttributeKey = keyof RGroupAttributes & keyof RGroup;
+export type RGroupAttributeKey = keyof RGroupAttributes;
 
 type Data<K extends RGroupAttributeKey = RGroupAttributeKey> = {
   rgid?: number;

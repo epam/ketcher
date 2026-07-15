@@ -1116,5 +1116,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
     }
+
+    // After a side-chain bond is removed, set all remaining side-chain bonds to the default color (#43B5C0)
+    const editor = provideEditorInstance();
+    const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+      `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+    );
+
+    Array.from(allSideConnectionBondsBodyElements).forEach(
+      (bondBodyElement) => {
+        // Set all remaining side-chain bonds to the default color (#43B5C0)
+        bondBodyElement.setAttribute(
+          'stroke',
+          this.isHydrogenBond ? '#333333' : '#43B5C0',
+        );
+      },
+    );
   }
 }

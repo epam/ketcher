@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@fixtures';
@@ -25,7 +26,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 
-import { pageReload } from '@utils/common/helpers';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -44,16 +44,7 @@ test.beforeAll(async ({ initFlexCanvas }) => {
   page = await initFlexCanvas();
 });
 
-test.beforeEach(async ({ FlexCanvas: _ }) => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-    enableFlexMode: false,
-    goToPeptides: false,
-  });
-});
-
-test.afterEach(async () => {
-  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-});
+test.beforeEach(async ({ FlexCanvas: _ }) => {});
 
 test.afterAll(async ({ closePage }) => {
   await closePage();
@@ -620,8 +611,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
@@ -721,8 +711,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
@@ -766,8 +755,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
@@ -810,8 +798,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await pageReload(page);
+    test(`for ${fileName}`, async ({ FlexCanvas: _ }) => {
       await openFileAndAddToCanvasMacro(
         page,
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,

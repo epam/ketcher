@@ -32,6 +32,7 @@ import {
   dragTo,
   setMolecule,
   readFileContent,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -67,6 +68,7 @@ import { AbbreviationPreviewTooltip } from '@tests/pages/molecules/canvas/Abbrev
 import { ArrowTool } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
 import { EditConnectionPointPopup } from '@tests/pages/molecules/canvas/createMonomer/EditConnectionPointPopup';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
 
 let page: Page;
 
@@ -328,9 +330,8 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      */
     await RightToolbar(page).clickAtom(Atom.Oxygen);
     await clickOnCanvas(page, 100, 50);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToCHEMTab();
     await Library(page).clickMonomerAutochain(Chem.Test_6_Ch);
     for (let i = 1; i <= 6; i++) {
@@ -744,13 +745,9 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    const ketMolecule = await readFileContent(
-      "KET/Bugs/Carbon label doesn't apper in case of 180 degree angle on macro mode.ket",
-    );
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    await openFileAndAddToCanvasAsNewProjectMacro(
       page,
-      MacroFileType.KetFormat,
-      ketMolecule,
+      "KET/Bugs/Carbon label doesn't apper in case of 180 degree angle on macro mode.ket",
     );
 
     const atomInMacroMode = getAtomLocator(page, {
@@ -807,6 +804,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
     await dragMouseTo(page, 500, 300);
 
     await takeEditorScreenshot(page);
+    await CreateMonomerDialog(page).discard();
   });
 
   test("Case 24 — System shouldn't allow to upload monomers with no base IDT alias defined", async ({

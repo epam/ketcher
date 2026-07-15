@@ -438,7 +438,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 12: Canvas remain in edit mode if we insert monomer from the library`, async () => {
+  test(`Case 12: Canvas remain in edit mode if we insert monomer from the library`, async ({
+    SequenceCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5231
@@ -448,9 +450,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Go to the Library - Peptide tab
      * 3. Click on A peptide
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
     await Library(page).selectMonomer(Peptide.A);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
@@ -603,7 +602,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 18: All side chain bonds are shown in Sequence mode for bases, CHEMs, phosphates and sugars`, async () => {
+  test(`Case 18: All side chain bonds are shown in Sequence mode for bases, CHEMs, phosphates and sugars`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5317
@@ -614,9 +615,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Sequence mode
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -719,9 +717,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Chromium-popup/Bugs/ketcher - 2025-01-06T161755.116.ket',
@@ -751,9 +746,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
       'KET/Chromium-popup/Bugs/ketcher - 2025-01-06T160012.582.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -855,10 +848,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load from HELM using paste from clipboard
      * 3. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -993,9 +982,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Draw a cyclohexane
      * 6. Compare bond lengths
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
     await Library(page).selectMonomer(Base.A);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);

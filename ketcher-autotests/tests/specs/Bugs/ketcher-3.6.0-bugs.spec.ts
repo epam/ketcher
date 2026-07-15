@@ -789,7 +789,8 @@ test.describe('Ketcher bugs in 3.6.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
   });
-  test('Case 1: Correct bond attachment to micro molecules in Macro Mode', async () => {
+
+  test('Case 23: Correct bond attachment to micro molecules in Macro Mode', async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7454
      * Bug: https://github.com/epam/ketcher/issues/6410

@@ -389,31 +389,25 @@ export class RenderersManager {
     atom.renderer?.remove();
   }
 
-  public addBond(bond: Bond) {
-    if (bond.renderer) {
-      bond.renderer.remove();
-    }
-
-    const bondRenderer = new BondRenderer(bond);
-
-    this.bonds.set(bond.id, bondRenderer);
-
-    // redraw connected atoms labels as their connections numbers can be updated after bond is added
+  // redraw connected atoms labels as their connections numbers can be updated after bond is added
+  private syncAndRedrawBondAtomLabels(bond: Bond, isAddAction = false) {
     [bond.firstAtom, bond.secondAtom].forEach((bondAtom) => {
       if (bondAtom.bonds.indexOf(bond) !== -1) return;
 
-      bondAtom.addBond(bond);
+      if (isAddAction) {
+        bondAtom.addBond(bond);
+      }
       this.atoms.forEach((atom) => {
         if (bondAtom.renderer?.atom.id !== atom.atom.id) return;
 
         atom.redrawLabel();
       });
     });
+  }
 
-    bondRenderer.show();
-
-    // covers the case when atom label is redrawn and start/end positions
-    // of PolymerBond and MonomerToAtomBond must be redrawn
+  // covers the case when atom label is redrawn and start/end positions
+  // of PolymerBond and MonomerToAtomBond must be redrawn
+  private syncAndRedrawBondAtomLines(bond: Bond) {
     this.bonds.forEach((redrawBondRenderer) => {
       const { firstAtom, secondAtom } = redrawBondRenderer.bond;
 
@@ -436,9 +430,29 @@ export class RenderersManager {
     });
   }
 
+  public addBond(bond: Bond) {
+    if (bond.renderer) {
+      bond.renderer.remove();
+    }
+
+    const bondRenderer = new BondRenderer(bond);
+
+    this.bonds.set(bond.id, bondRenderer);
+
+    this.syncAndRedrawBondAtomLabels(bond, true);
+
+    bondRenderer.show();
+
+    this.syncAndRedrawBondAtomLines(bond);
+  }
+
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
     bond.renderer?.remove();
+
+    this.syncAndRedrawBondAtomLabels(bond);
+
+    this.syncAndRedrawBondAtomLines(bond);
   }
 
   public addSGroup(sgroupDrawingEntity: SGroupDrawingEntity) {

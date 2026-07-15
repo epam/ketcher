@@ -812,6 +812,23 @@ export class Struct {
     return bld.cnt > 0 ? bld.totalLength / bld.cnt : -1;
   }
 
+  getMedianBondLength(): number {
+    const lengths: number[] = [];
+    this.bonds.forEach((bond) => {
+      lengths.push(
+        Vec2.dist(this.atoms.get(bond.begin)!.pp, this.atoms.get(bond.end)!.pp),
+      );
+    });
+    if (lengths.length === 0) {
+      return -1;
+    }
+    lengths.sort((a, b) => a - b);
+    const middle = Math.floor(lengths.length / 2);
+    return lengths.length % 2 === 0
+      ? (lengths[middle - 1] + lengths[middle]) / 2
+      : lengths[middle];
+  }
+
   getAvgClosestAtomDistance(): number {
     let totalDist = 0;
     let minDist;
@@ -984,13 +1001,17 @@ export class Struct {
   }
 
   rescale() {
-    let avg = this.getAvgBondLength();
-    if (avg <= 0) {
+    // Normalize by the MEDIAN bond length, not the mean: a few long bonds — such
+    // as the bond between two contracted functional groups drawn far apart —
+    // inflate the mean and shrink the whole structure on open/paste (#3406).
+    // The median reflects the typical bond and is robust to those outliers.
+    let bondLength = this.getMedianBondLength();
+    if (bondLength <= 0) {
       return;
     }
-    if (avg < 1e-3) avg = 1;
+    if (bondLength < 1e-3) bondLength = 1;
 
-    const scale = 1 / avg;
+    const scale = 1 / bondLength;
     this.scale(scale);
   }
 

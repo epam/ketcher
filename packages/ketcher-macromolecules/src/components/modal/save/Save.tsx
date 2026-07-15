@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -92,14 +92,20 @@ export const Save = ({
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  const editor = provideEditorInstance();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
-  const [struct, setStruct] = useState('');
+  const [struct, setStruct] = useState(() => {
+    const ketSerializer = new KetSerializer();
+    return ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
-  const indigo = IndigoProvider.getIndigo() as StructService;
-  const editor = provideEditorInstance();
 
   const handleSelectChange = async (fileFormat) => {
     setCurrentFileFormat(fileFormat);
@@ -114,15 +120,7 @@ export const Save = ({
       return;
     }
     if (fileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
       setSvgData(svgData);
       return;
     }
@@ -187,15 +185,7 @@ export const Save = ({
   const handleSave = () => {
     let blobPart;
     if (currentFileFormat === 'svg') {
-      // Get Ketcher root element offset for SVG positioning
-      const ketcherRootRect = editor.ketcherRootElementBoundingClientRect;
-      const ketcherRootOffsetX = ketcherRootRect?.x || 0;
-      const ketcherRootOffsetY = ketcherRootRect?.y || 0;
-
-      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file', {
-        horizontal: ketcherRootOffsetX,
-        vertical: ketcherRootOffsetY,
-      });
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
       if (!svgData) {
         onClose();
         return;
@@ -228,17 +218,6 @@ export const Save = ({
       dispatch(openErrorModal('This feature is not available in your browser'));
     }
   };
-
-  useEffect(() => {
-    if (currentFileFormat === 'ket') {
-      const ketSerializer = new KetSerializer();
-      const serializedKet = ketSerializer.serialize(
-        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
-        editor.drawingEntitiesManager,
-      );
-      setStruct(serializedKet);
-    }
-  }, [currentFileFormat]);
 
   return (
     <StyledModal

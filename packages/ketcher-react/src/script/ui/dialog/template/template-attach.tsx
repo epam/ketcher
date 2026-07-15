@@ -287,14 +287,7 @@ class Attach extends Component<AttachProps> {
   }
 
   render() {
-    const {
-      name,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      onNameEdit,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      onAttachEdit,
-      ...prop
-    } = this.props;
+    const { name, onNameEdit, onAttachEdit, ...prop } = this.props;
     const struct = this.tmpl.struct;
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
@@ -356,7 +349,7 @@ class Attach extends Component<AttachProps> {
             <NameInput
               name="name"
               value={name}
-              onChange={this.props.onNameEdit}
+              onChange={onNameEdit}
               placeholder="template"
             />
             <span>Selected attachment points</span>

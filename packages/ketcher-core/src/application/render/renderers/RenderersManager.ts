@@ -1,4 +1,8 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  setEditorRenderingContext,
+} from 'application/editor/editorSingleton';
+import type { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -57,6 +61,8 @@ type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class RenderersManager {
   private readonly theme: ThemeType;
+  public zoomTool?: ZoomTool;
+  public editor?: CoreEditor;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -373,16 +379,23 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = provideEditorInstance();
+    const editor = this.editor ?? provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
   public update(modelChanges?: Command) {
-    this.reinitializeViewModel();
-    modelChanges?.execute(this);
-    this.runPostRenderMethods();
-    notifyRenderComplete();
+    if (this.zoomTool) ZoomTool.setRenderingContext(this.zoomTool);
+    if (this.editor) setEditorRenderingContext(this.editor);
+    try {
+      this.reinitializeViewModel();
+      modelChanges?.execute(this);
+      this.runPostRenderMethods();
+      notifyRenderComplete();
+    } finally {
+      if (this.zoomTool) ZoomTool.setRenderingContext(undefined);
+      if (this.editor) setEditorRenderingContext(undefined);
+    }
   }
 
   public addAtom(atom: Atom) {

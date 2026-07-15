@@ -3,7 +3,7 @@ import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   AttachmentPoint,
   AttachmentPointName as AttachmentPointNameComponent,
@@ -227,19 +227,9 @@ function AttachmentPointSelectionPanel({
   expanded = false,
   position,
 }: Readonly<AttachmentPointSelectionPanelProps>): React.ReactElement {
-  const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
-    () => getConnectedAttachmentPoints(bonds),
+    () => getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
   );
-
-  useEffect(() => {
-    setBonds(monomer.attachmentPointsToBonds);
-  }, [selectedAttachmentPoint]);
-
-  useEffect(() => {
-    const newConnectedAttachmentPoints = getConnectedAttachmentPoints(bonds);
-    setConnectedAttachmentPoints(newConnectedAttachmentPoints);
-  }, [bonds]);
 
   const getLeavingGroup = (attachmentPoint): LeavingGroup | null => {
     const MonomerCaps = monomer.monomerCaps;
@@ -254,22 +244,17 @@ function AttachmentPointSelectionPanel({
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
-    const newBonds = { ...monomer.attachmentPointsToBonds };
     const selectedBond = selectedAttachmentPoint
-      ? newBonds[selectedAttachmentPoint]
+      ? monomer.attachmentPointsToBonds[selectedAttachmentPoint]
       : null;
     if (selectedAttachmentPoint && selectedBond) {
       monomer.removeBond(selectedBond);
     }
 
-    const potentialBond = monomer.getPotentialBond(attachmentPoint);
-    newBonds[attachmentPoint] = potentialBond;
-
-    setBonds(newBonds);
+    setConnectedAttachmentPoints(
+      getConnectedAttachmentPoints(monomer.attachmentPointsToBonds),
+    );
     onSelectAttachmentPoint(attachmentPoint);
-
-    const newConnectedAttachmentPoints = getConnectedAttachmentPoints(newBonds);
-    setConnectedAttachmentPoints(newConnectedAttachmentPoints);
   };
 
   return (

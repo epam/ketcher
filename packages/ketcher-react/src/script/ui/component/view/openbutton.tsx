@@ -98,11 +98,8 @@ class OpenButton extends Component<OpenButtonProps, OpenButtonState> {
     const {
       children,
       type,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      server,
-      onLoad,
-      onError,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      onLoad: _onLoad,
+      onError: _onError,
       className,
       ...buttonProps
     } = this.props;

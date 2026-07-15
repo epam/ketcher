@@ -80,6 +80,7 @@ test.afterAll(async ({ closePage }) => {
   await closePage();
 });
 test.beforeEach(async ({ FlexCanvas: _ }) => {});
+
 test.describe('Macro-Micro-Switcher2', () => {
   test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then Hide Library and switch to Micro mode and back', async () => {
     /* 

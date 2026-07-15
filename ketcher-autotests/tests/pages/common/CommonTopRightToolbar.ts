@@ -1,6 +1,5 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { Library } from '../macromolecules/Library';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
@@ -105,11 +104,9 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMacromoleculesEditor(
       options: {
-        goToPeptides?: boolean;
         disableChainLengthRuler?: boolean;
         disableAutozoom?: boolean;
       } = {
-        goToPeptides: true,
         disableChainLengthRuler: true,
         disableAutozoom: true,
       },
@@ -126,18 +123,11 @@ export const CommonTopRightToolbar = (page: Page) => {
         await switcher.click();
         await macroOption.waitFor({ state: 'visible' });
         await macroOption.click();
-        await MacromoleculesTopToolbar(
-          page,
-        ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
       }
 
-      if (options.goToPeptides) {
-        await Library(page).switchToPeptidesTab();
-      } else {
-        await Library(page).rnaTab.nucleotidesSection.waitFor({
-          state: 'visible',
-        });
-      }
+      await MacromoleculesTopToolbar(
+        page,
+      ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
 
       if (options.disableAutozoom !== false) {
         await page.evaluate(() => {

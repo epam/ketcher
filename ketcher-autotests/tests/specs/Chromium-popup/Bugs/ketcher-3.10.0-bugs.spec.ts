@@ -146,9 +146,7 @@ test.describe('Ketcher-3.10 Bugs', () => {
      */
     const anyMonomer = getMonomerLocator(page, {}).first();
 
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

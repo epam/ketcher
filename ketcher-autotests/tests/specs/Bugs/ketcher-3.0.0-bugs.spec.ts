@@ -670,6 +670,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/Entire element bounding box should be clickable, not only black dots.ket',

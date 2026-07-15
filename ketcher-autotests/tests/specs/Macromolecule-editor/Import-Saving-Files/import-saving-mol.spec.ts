@@ -325,30 +325,25 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test.fail(
-    'Check that you can save snake viewed chain of peptides in a Mol v3000 file',
-    async () => {
-      /*
-    Test case: Import/Saving files
-    Description: Snake viewed chain of peptides saved in a Mol v3000 file
-
-    Test fails because we have bug https://github.com/epam/ketcher/issues/5634
-    */
-      await openFileAndAddToCanvasMacro(
-        page,
-        'Molfiles-V3000/snake-mode-peptides.mol',
-        MacroFileType.MOLv3000,
-      );
-      await resetZoomLevelToDefault(page);
-      await verifyFileExport(
-        page,
-        'Molfiles-V3000/snake-mode-peptides-expected.mol',
-        FileType.MOL,
-        MolFileFormat.v3000,
-        [1],
-      );
-    },
-  );
+  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
+    /*
+     * Test case: Import/Saving files
+     * Description: Snake viewed chain of peptides saved in a Mol v3000 file
+     */
+    await openFileAndAddToCanvasMacro(
+      page,
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      MacroFileType.MOLv3000,
+    );
+    await resetZoomLevelToDefault(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-expected.mol',
+      FileType.MOL,
+      MolFileFormat.v3000,
+      [1],
+    );
+  });
 
   test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
     FlexCanvas: _,

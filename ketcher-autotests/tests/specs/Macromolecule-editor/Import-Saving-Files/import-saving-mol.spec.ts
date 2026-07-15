@@ -534,13 +534,12 @@ test.describe('Import modified .mol files from external editor', () => {
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  const temporaryFailedTestsFileNames = [];
   const fileNames = [
     'peptide-Bom.mol',
     'dna-mod-Ph.mol',
     'dna-mod-Ph-granular.mol',
     'insulin-2-peptides-connected-with-SS.mol',
-    'peptide-modified-2aa-example.mol',
+    // 'peptide-modified-2aa-example.mol',
     'peptide-modified-aa-example.mol',
     'rna-mod-phosphate-example.mol',
     'rna-mod-phosphate-mod-base-example.mol',

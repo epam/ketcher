@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@fixtures';
 import { waitForKetcherInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
@@ -13,7 +14,8 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await Library(page).switchToRNATab();
+    // Wait for the library to load
+    await page.waitForTimeout(1000);
   });
 
   test('Should not delete default RNA preset', async ({ page }) => {

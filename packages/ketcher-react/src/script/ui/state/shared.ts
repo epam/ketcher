@@ -64,10 +64,8 @@ export function parseStruct(
   if (typeof struct === 'string') {
     options = options || {};
     const {
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      rescale,
-      fragment,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      rescale: _rescale,
+      fragment: _fragment,
       ...formatterOptions
     } = options;
 

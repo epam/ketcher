@@ -339,7 +339,7 @@ function Field(props: Readonly<FieldProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, onExtraChange, extraValue, ...fieldOpts } =
     stateStore.field(name ?? '', onChange, extraName);
@@ -354,7 +354,7 @@ function Field(props: Readonly<FieldProps>) {
       onExtraChange={onExtraChange}
       extraValue={extraValue}
       {...(extraName && {
-        extraSchema: rest.extraSchema || schema.properties?.[extraName],
+        extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
       {...fieldOpts}
       {...rest}
@@ -423,7 +423,7 @@ function FieldWithModal(props: Readonly<FieldWithModalProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(inputRest.schema) && inputRest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
 
@@ -491,7 +491,7 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
   const { schema, stateStore } = useFormContext();
   const desc: SchemaProperty =
     ((!Array.isArray(rest.schema) && rest.schema) ||
-      schema.properties?.[name ?? '']) ??
+      schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
   const handleCheckboxChange = (value: boolean) => {

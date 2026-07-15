@@ -100,6 +100,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await Library(page).hideLibrary();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).showLibrary();
     await Library(page).switchToFavoritesTab();
     await takeMonomerLibraryScreenshot(page);
@@ -233,6 +234,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await getAtomLocator(page, { atomLabel: 'O' }).click({ force: true });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonLeftToolbar(page).bondTool(MacroBondTool.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
@@ -278,6 +280,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
@@ -294,6 +297,7 @@ test.describe('Macro-Micro-Switcher2', () => {
      *
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/three-different-multi-tail-arrows.ket',
@@ -331,6 +335,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await BottomToolbar(page).clickRing(RingButton.Benzene);
     await clickInTheMiddleOfTheCanvas(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Ket,
@@ -400,6 +405,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
   });
 
@@ -420,6 +426,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getAtomLocator(page, { atomLabel: 'Zn' }).first().dblclick({
       force: true,
     });
@@ -437,6 +444,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -464,6 +472,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -493,6 +502,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -512,6 +522,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -550,6 +561,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
@@ -586,6 +598,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
@@ -616,6 +629,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await clickOnCanvas(page, 400, 400, { from: 'pageTopLeft' });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 600, 100, { from: 'pageTopLeft' });
@@ -636,6 +650,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -665,6 +680,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     */
     await pageReloadMicro(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/single-atom-properties.ket',
@@ -683,27 +699,6 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas', async () => {
-    /* 
-      Test case: https://github.com/epam/ketcher/issues/6029
-      Description: Flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas
-      Case: 
-      1. Open KET file with drawing in Micro mode
-      2. Switch to Macromolecules mode
-      3. Verify that Flex mode is opened
-    */
-    await pageReloadMicro(page);
-    await openFileAndAddToCanvasAsNewProject(
-      page,
-      'KET/benzene-ring-with-two-atoms.ket',
-    );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
-    await takePageScreenshot(page);
-  });
-
   test('Verify that flex mode is not opened by default if the user previously entered macromolecules mode change macro mode to (Snake, Sequence) and re-entering it from Micro mode', async () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/6029
@@ -716,17 +711,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Macromolecules mode
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Snake);
     await takePageScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takePageScreenshot(page);
   });
 
@@ -740,10 +729,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Verify that Sequence mode is opened
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takePageScreenshot(page);
   });
 
@@ -757,10 +743,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Default tab should be RNA
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -774,10 +757,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Changing typing type to PEP switches the library tab to Peptide
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).peptides();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -793,10 +773,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Changing typing type to RNA switches the library tab to RNA
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).peptides();
     await MacromoleculesTopToolbar(page).rna();
     await takeMonomerLibraryScreenshot(page);
@@ -812,10 +789,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Changing typing type to DNA switches the library tab to RNA
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).dna();
     await takeMonomerLibraryScreenshot(page);
   });
@@ -831,10 +805,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).dna();
     await takeMonomerLibraryScreenshot(page);
     await MacromoleculesTopToolbar(page).rna();
@@ -851,11 +822,7 @@ test.describe('Macro-Micro-Switcher2', () => {
      * 3. Press Ctrl+Alt+P for Peptides
      * 4. Press Ctrl+Alt+R for RNA
      */
-    // await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await keyboardPressOnCanvas(page, 'ControlOrMeta+Alt+D');
     await takeMonomerLibraryScreenshot(page);
@@ -878,10 +845,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Start typing type PEP
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).rna();
     await keyboardTypeOnCanvas(page, 'CCC');
     await MacromoleculesTopToolbar(page).dna();
@@ -905,10 +869,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       7. Switch to Flex mode and back to Sequence mode
       */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await keyboardTypeOnCanvas(page, 'CCC');
     await MacromoleculesTopToolbar(page).dna();
@@ -937,19 +898,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Switch to Macromolecules mode
     */
     await pageReloadMicro(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(
       LayoutMode.Sequence,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takePageScreenshot(page);
   });
 
@@ -969,10 +924,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
       'KET/benzene-ring-with-two-atoms.ket',
     );
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopLeftToolbar(page).clearCanvas();
     await CommonTopLeftToolbar(page).undo();
     await takePageScreenshot(page);
@@ -995,6 +947,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1016,6 +969,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1046,6 +1000,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1072,6 +1027,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await verticalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1098,6 +1054,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await horizontalFlipByKeyboard(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1124,6 +1081,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonLeftToolbar(page).erase();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1145,6 +1103,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1168,6 +1127,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
@@ -1214,6 +1174,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -1244,6 +1205,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifyFileExport(page, 'KET/all-arrows-expected.ket', FileType.KET);
     await openFileAndAddToCanvasAsNewProject(
       page,
@@ -1269,6 +1231,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifySVGExport(page);
   });
 
@@ -1287,6 +1250,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await openFileAndAddToCanvasAsNewProject(page, 'KET/resized-arrows.ket');
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifySVGExport(page);
   });
 
@@ -1335,6 +1299,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getArrowLocator(page, { arrowType: ArrowType.OpenAngle }).hover({
       force: true,
     });
@@ -1369,7 +1334,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
       After fixing this bug, we should update the screenshot in this test case
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/all-arrows-expected.ket',
@@ -1381,6 +1345,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1402,7 +1367,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
       After fixing this bug, we should update the screenshot in this test case
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1441,7 +1405,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
       After fixing this bug, we should update the screenshot in this test case
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1485,7 +1448,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       Structures on screenshots are not in center of the canvas because we have a bug https://github.com/epam/ketcher/issues/7375
       After fixing this bug, we should update the screenshot in this test case
     */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(page, 'KET/all-arrows.ket');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

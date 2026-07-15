@@ -279,6 +279,9 @@ test.describe('Import-Saving .mol Files', () => {
       page = await context.newPage();
       await waitForPageInit(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
     },
   );
 
@@ -530,30 +533,13 @@ test.describe('Import-Saving .mol Files', () => {
 });
 
 test.describe('Import modified .mol files from external editor', () => {
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  });
-  We have opened feature request https://github.com/epam/ketcher/issues/4532
-  After closing the ticket, you need to delete two files from temporaryFailedTestsFileNames
-  */
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
     await CommonTopLeftToolbar(page).clearCanvas();
   });
 
-  const temporaryFailedTestsFileNames = [
-    'peptide-modified-2aa-example.mol',
-    'peptide-modified-aa-example.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'dna-peptideSS-conj-example.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'peptide-Fmoc.mol',
-    // https://github.com/epam/Indigo/issues/3048
-    'dna-peptide-conj-example.mol',
-  ];
+  const temporaryFailedTestsFileNames = [];
   const fileNames = [
     'peptide-Bom.mol',
     'dna-mod-Ph.mol',
@@ -567,28 +553,19 @@ test.describe('Import modified .mol files from external editor', () => {
   ];
 
   for (const fileName of fileNames) {
-    if (temporaryFailedTestsFileNames.includes(fileName)) {
-      test(`for ${fileName} @IncorrectResultBecauseOfBug`, async () => {
-        test.fail(true, 'This test is expected to fail due to a known issue.');
-        throw new Error('Test intentionally failed due to known issue.');
-      });
-    } else {
-      test(`for ${fileName}`, async () => {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
-        await openFileAndAddToCanvasMacro(
-          page,
-          `Molfiles-V3000/${fileName}`,
-          MacroFileType.MOLv3000,
-        );
-        const numberOfPressZoomOut = 4;
-        await CommonTopRightToolbar(page).selectZoomOutTool(
-          numberOfPressZoomOut,
-        );
-        await clickInTheMiddleOfTheCanvas(page);
-      });
-    }
+    test(`for ${fileName}`, async () => {
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
+      await openFileAndAddToCanvasMacro(
+        page,
+        `Molfiles-V3000/${fileName}`,
+        MacroFileType.MOLv3000,
+      );
+      const numberOfPressZoomOut = 4;
+      await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+      await clickInTheMiddleOfTheCanvas(page);
+    });
   }
 });
 

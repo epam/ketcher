@@ -81,6 +81,7 @@ test.describe('Autotests: Defining other monomer properties - presets in the mon
     await dialog.submit();
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 
     // Verify preset is created successfully
     expect(

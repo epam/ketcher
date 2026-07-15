@@ -358,10 +358,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Save canvas to Fasta or Sequence file
      * 4. Take screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await Library(page).selectMonomer(Peptide.O);
     await Library(page).selectMonomer(Peptide.K);
     await verifyFASTAExport(page, '>Sequence1\nOK');
@@ -428,6 +424,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -453,6 +450,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -544,10 +542,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -651,6 +645,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     });
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
     await ContextMenu(
@@ -671,10 +666,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the Calculate Properties window.
      * 4. From the Ambiguous Amino Acids section in the library, click to add any ambiguous amino acid (e.g., X, B, J, Z) to the peptide sequence.
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-      LayoutMode.Sequence,
-    );
     await MacromoleculesTopToolbar(page).peptides();
     await keyboardTypeOnCanvas(page, 'QWERTYASDF');
     await MacromoleculesTopToolbar(page).calculateProperties();
@@ -730,6 +721,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/benzene-ring-with-attachment-point.ket',
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await getMonomerLocator(page, {
       monomerAlias: 'F1',
     }).hover();
@@ -775,9 +767,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       'KET/Bugs/Layout changes when switching from micro mode to sequence mode and back.ket',
     );
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('60');
     await takeEditorScreenshot(page);
@@ -1076,7 +1067,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1150,7 +1140,6 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 3. Open the "Calculate Properties" window
      * 4. Verify that the properties are calculated correctly for the Peptides tab
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/Bugs/sequenses-connected-through-chem.ket',

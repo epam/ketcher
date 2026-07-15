@@ -723,9 +723,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      goToPeptides: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 

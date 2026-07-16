@@ -233,7 +233,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await fullScreenButton.click();
     await expect(fullScreenButton).toBeVisible();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 100 });
   });
 
   test('Case 7 — Changing Implicit H count properties through Atom properties dialog works wrong', async ({

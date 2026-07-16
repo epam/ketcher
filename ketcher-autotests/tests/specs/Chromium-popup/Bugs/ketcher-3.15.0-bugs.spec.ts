@@ -20,6 +20,7 @@ import {
   getSmarts,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
+  selectCanvasArea,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -318,12 +319,15 @@ test.describe('Bugs: ketcher-3.15.0', () => {
       code: Sugar.R.alias,
       name: 'Sugar-np14',
     });
-    await presetSection.setupPhosphate({
-      atomIds: [1, 0, 11, 12],
-      bondIds: [0, 10, 11],
-      code: Phosphate.P.alias,
-      name: 'Phosphate-np14',
-    });
+    await CommonLeftToolbar(page).handTool();
+
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
+    await selectCanvasArea(page, { x: 400, y: 350 }, { x: 520, y: 480 });
+    await presetSection.markAsPhosphate();
+    await presetSection.phosphateTab.codeEditbox.fill(Phosphate.P.alias);
+    await presetSection.phosphateTab.nameEditbox.fill('Phosphate-np14');
     await dialog.submit();
 
     await expect(

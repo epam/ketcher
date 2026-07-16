@@ -362,7 +362,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
 
-    pasteFromClipboardAndOpenAsNewProject(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
       '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
     );

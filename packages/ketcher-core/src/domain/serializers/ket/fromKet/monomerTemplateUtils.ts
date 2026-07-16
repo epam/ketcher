@@ -2,7 +2,7 @@ import type {
   IKetAttachmentPoint,
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
-import { Atom, Struct, Vec2, BaseMonomer } from 'domain/entities';
+import { Struct, Vec2, BaseMonomer, type Atom } from 'domain/entities';
 import { type MonomerItemType, AttachmentPointName } from 'domain/types';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';

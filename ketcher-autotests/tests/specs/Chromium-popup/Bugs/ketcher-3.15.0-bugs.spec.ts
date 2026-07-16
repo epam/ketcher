@@ -242,13 +242,13 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 7 — Changing Implicit H count properties thru Atom properties dialog works wrong', async ({
+  test('Case 7 — Changing Implicit H count properties through Atom properties dialog works wrong', async ({
     MoleculesCanvas: _,
   }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9963
      * Bug: https://github.com/epam/ketcher/issues/8799
-     * Description: Changing Implicit H count properties thru Atom properties dialog works wrong
+     * Description: Changing Implicit H count properties through Atom properties dialog works wrong
      *
      * Scenario:
      * 1. Open Molecules canvas

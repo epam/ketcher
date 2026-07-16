@@ -17,9 +17,9 @@ import {
   dragMouseTo,
   takeTopToolbarScreenshot,
   setMolecule,
-  getSmarts,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
@@ -41,6 +41,7 @@ import { ImplicitHCount } from '@tests/pages/constants/atomProperties/Constants'
 import { NotificationMessageBanner } from '@tests/pages/molecules/canvas/createMonomer/NotificationMessageBanner';
 import { ErrorMessage } from '@tests/pages/constants/notificationMessageBanner/Constants';
 import { Preset } from '@tests/pages/constants/monomers/Presets';
+import { verifySMARTSExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -150,12 +151,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      *
      * Version 3.15.0
      */
-
     await Library(page).setSearchValue('v');
     await Library(page).openRNASection(RNASection.Bases);
-    const basesSection = page.getByTestId('rna-accordion');
 
-    await expect(basesSection.getByText(/^U$/)).toBeVisible();
+    await expect(Library(page).rnaAccordion.getByText(/^U$/)).toBeVisible();
   });
 
   test('Case 4 — Search using some AxoLabs aliases fails', async ({
@@ -175,9 +174,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      */
 
     await Library(page).setSearchValue('(5MdC');
-    const presetsSection = page.getByTestId('rna-preset-group');
 
-    await expect(presetsSection.getByText('dR(5meC)P')).toBeVisible();
+    await expect(
+      Library(page).getMonomerLibraryCardLocator(Preset.dR_5meC_P),
+    ).toBeVisible();
   });
 
   test('Case 5 — Disable molecules/macromolecules switcher and settings when the monomer creation wizard is active', async ({
@@ -254,7 +254,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
 
-    await setMolecule(page, '[Na]');
+    await pasteFromClipboardAndOpenAsNewProject(page, '[Na]');
     const sodiumAtom = getAtomLocator(page, { atomLabel: 'Na' }).first();
     await expect(sodiumAtom).toBeVisible();
     await ContextMenu(page, sodiumAtom).click(MicroAtomOption.Edit);
@@ -264,9 +264,8 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         ImplicitHCount: ImplicitHCount.Two,
       },
     });
-    const smarts = await getSmarts(page);
 
-    expect(smarts).toContain(';h2');
+    await verifySMARTSExport(page, '[Na;h2]');
   });
 
   test('Case 8 — Incorrect selection a part of structure for phosphate when moving mouse from top to bottom', async ({
@@ -287,9 +286,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
 
-    const smarts =
-      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]';
-    await setMolecule(page, smarts);
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
+    );
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
@@ -362,9 +362,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * Version 3.15.0
      */
 
-    const smarts =
-      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]';
-    await setMolecule(page, smarts);
+    pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]',
+    );
     await selectByAtomAndBondIds(page, {
       atoms: [10, 9, 8, 7],
       bonds: [9, 8, 7],
@@ -394,9 +395,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Verify that the number of attached hydrogens on the canvas got changed to 3
      * Version 3.15.0
      */
-
-    const carbonAtom = 'C';
-    await setMolecule(page, carbonAtom);
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C');
     const carbonAtomLocator = getAtomLocator(page, { atomLabel: 'C' }).first();
     await expect(carbonAtomLocator).toBeVisible();
     await ContextMenu(page, carbonAtomLocator).click(MicroAtomOption.Edit);
@@ -406,9 +405,8 @@ test.describe('Bugs: ketcher-3.15.0', () => {
         ImplicitHCount: ImplicitHCount.Three,
       },
     });
-    const smarts = await getSmarts(page);
 
-    expect(smarts).toContain(';h3');
+    await verifySMARTSExport(page, '[#6;h3]');
   });
 
   test('Case 11 — AxoLabs alias is missing from library preset card preview tooltip and symbol preview tooltip on sequence canvas', async ({
@@ -428,9 +426,9 @@ test.describe('Bugs: ketcher-3.15.0', () => {
 
     await Library(page).openRNASection(RNASection.Presets);
     const presetA = page.getByTestId('A_A_R_P');
-    await expect(presetA).toBeVisible();
-    await presetA.hover();
+    expect(await Library(page).isMonomerExist(Preset.A)).toBeTruthy();
 
+    await presetA.hover();
     await takeElementScreenshot(page, presetA, {
       padding: 16,
     });

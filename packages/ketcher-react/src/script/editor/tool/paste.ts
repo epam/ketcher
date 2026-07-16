@@ -73,7 +73,10 @@ class PasteTool implements Tool {
     const { clientHeight, clientWidth } = rnd.clientArea;
     const clientAreaRect = rnd.clientArea.getBoundingClientRect();
     const point = this.editor.lastEvent
-      ? CoordinateTransformation.pageToModel(this.editor.lastEvent, rnd)
+      ? CoordinateTransformation.pageToModel(
+          this.editor.lastEvent as MouseEvent,
+          rnd,
+        )
       : CoordinateTransformation.pageToModel(
           {
             clientX: clientAreaRect.left + clientWidth / 2,

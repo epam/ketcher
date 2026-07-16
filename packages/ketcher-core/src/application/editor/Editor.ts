@@ -6,10 +6,9 @@ import {
 } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
-  editorEvents,
+  createEditorEvents,
   hotkeysConfiguration,
   renderersEvents,
-  resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
@@ -104,7 +103,12 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
+import {
+  getEmptyMonomersLibraryJson,
+  MonomerNameValidationErrorType,
+  parseMonomersLibrary,
+  validateMonomerName,
+} from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
@@ -308,8 +312,7 @@ export class CoreEditor {
       drawnStructuresSelector,
     ) as SVGGElement;
     this.mode = mode ?? new (getModeConstructor(DEFAULT_LAYOUT_MODE))();
-    resetEditorEvents();
-    this.events = editorEvents;
+    this.events = createEditorEvents();
     KetSerializer.setMonomerFactory(monomerFactory);
     this.setMonomersLibrary(monomersDataRaw);
     this.events.updateMonomersLibrary.dispatch();
@@ -324,7 +327,12 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.resetCanvasOffset();
     this.resetKetcherRootElementOffset();
-    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.zoomTool = ZoomTool.initInstance(
+      this.drawingEntitiesManager,
+      this.canvas,
+    );
+    this.renderersContainer.zoomTool = this.zoomTool;
+    this.renderersContainer.editor = this;
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
@@ -725,25 +733,34 @@ export class CoreEditor {
         return;
       }
 
-      if (!templateDefinition.name?.trim()) {
-        reportValidationError(
-          templateRef.$ref,
-          `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
-        );
-        return;
-      }
+      const monomerNameValidationResult = validateMonomerName(
+        templateDefinition.name,
+      );
 
-      if (
-        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
-      ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
-        );
-        return;
+      if (!monomerNameValidationResult.isValid) {
+        switch (monomerNameValidationResult.error) {
+          case MonomerNameValidationErrorType.Empty:
+            reportValidationError(
+              templateRef.$ref,
+              `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
+            );
+            return;
+          case MonomerNameValidationErrorType.TooLong: {
+            const truncatedTemplateName = `${templateDefinition.name.slice(
+              0,
+              MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+            )}...`;
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+            );
+            return;
+          }
+          case MonomerNameValidationErrorType.InvalidCharacters:
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
+            );
+            return;
+        }
       }
 
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -2272,7 +2289,7 @@ export class CoreEditor {
 
   private resetModeIfNeeded() {
     if (this.previousModes.length === 0) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
       const isBlank = ketcher?.editor?.struct().isBlank();
       const oldModeName = this.mode?.modeName;
       const newModeName = isBlank
@@ -2402,6 +2419,6 @@ export class CoreEditor {
   public destroy() {
     this.unsubscribeEvents();
     editor = undefined;
-    resetEditorInstance();
+    resetEditorInstance(this.ketcherId);
   }
 }

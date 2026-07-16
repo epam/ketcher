@@ -2,7 +2,6 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
@@ -106,11 +105,11 @@ export class AtomRenderer extends BaseRenderer {
 
     rootElement
       ?.on('mouseover', (event) => {
-        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
       .on('mouseleave', (event) => {
-        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {
@@ -901,7 +900,24 @@ export class AtomRenderer extends BaseRenderer {
     direction: Vec2,
   ): number {
     const baseDistance = 3;
-    const labelBox = {
+
+    // Forward shift: clearance past the atom label in the placement direction.
+    // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
+    let forwardShift = 0;
+    this.labelBBoxes.forEach((labelSymbolBBox) => {
+      const absoluteBox = new Box2Abs(
+        labelSymbolBBox.x,
+        labelSymbolBBox.y,
+        labelSymbolBBox.x + labelSymbolBBox.width,
+        labelSymbolBBox.y + labelSymbolBBox.height,
+      ).translate(this.scaledPosition);
+      forwardShift = Math.max(
+        forwardShift,
+        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+      );
+    });
+
+    const stereoLabelBox = {
       x: this.scaledPosition.x - width / 2,
       y: this.scaledPosition.y - height / 2,
       width,
@@ -911,10 +927,10 @@ export class AtomRenderer extends BaseRenderer {
     const backwardShift = util.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
-      Box2Abs.fromRelBox(labelBox),
+      Box2Abs.fromRelBox(stereoLabelBox),
     );
 
-    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+    return LABEL_CLEARANCE_OFFSET + baseDistance + forwardShift + backwardShift;
   }
 
   private getLabelProjectionRadius(

@@ -471,7 +471,13 @@ class Editor implements KetcherEditor {
     });
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
-    this.struct(struct.clone());
+
+    const shouldPreservePosition = this.shouldPreserveStructPosition(
+      value,
+      struct,
+    );
+
+    this.struct(struct.clone(), !shouldPreservePosition);
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;
@@ -479,6 +485,18 @@ class Editor implements KetcherEditor {
 
   public setServerSettings(serverSettings) {
     this.serverSettings = serverSettings;
+  }
+
+  /**
+   * Determines whether structure position should be preserved when applying options.
+   * Preserves atom coordinates only when viewOnlyMode is being set/changed on existing structure.
+   * This prevents structures from shifting when enabling/disabling viewOnlyMode.
+   * In all other cases (opening files, changing settings), structures are centered as before.
+   */
+  private shouldPreserveStructPosition(options: any, struct: Struct): boolean {
+    const hasAtoms = struct.atoms.size > 0;
+    const isSettingViewOnlyMode = options && 'viewOnlyMode' in options;
+    return hasAtoms && isSettingViewOnlyMode;
   }
 
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
@@ -2121,7 +2139,7 @@ class Editor implements KetcherEditor {
         atomIdMap.forEach((newAtomId) => {
           const atom = struct.atoms.get(newAtomId);
           if (atom?.pp) {
-            atom.pp = atom.pp.add(monomerShiftVector as Vec2);
+            atom.pp = atom.pp.add(monomerShiftVector);
           }
         });
       }

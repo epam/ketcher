@@ -17,7 +17,6 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import type { D3SvgElementSelection } from 'application/render/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { editorEvents } from 'application/editor/editorEvents';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { ketcherProvider } from 'application/ketcherProvider';
 import type { CoreStereoFlag } from 'domain/entities/CoreStereoFlag';
@@ -169,11 +168,11 @@ export class StereoFlagRenderer extends BaseRenderer {
 
     this.hoverAreaElement
       .on('mouseover', (event) => {
-        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }

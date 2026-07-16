@@ -1,6 +1,9 @@
 import type { RxnArrowMode } from 'domain/entities/rxnArrow';
 import type { Vec2 } from 'domain/entities/vec2';
-import type { StereoLabelStyleType } from 'application/render/restruct/generalEnumTypes';
+import type {
+  StereoColoringType,
+  StereoLabelStyleType,
+} from 'application/render/restruct/generalEnumTypes';
 import type { UsageInMacromolecule } from './render.constants';
 
 export { UsageInMacromolecule } from './render.constants';
@@ -88,6 +91,7 @@ export type RenderOptions = {
   contractedFunctionalGroupSize: number;
 
   stereoLabelStyle?: StereoLabelStyleType;
+  colorStereogenicCenters: StereoColoringType;
 
   previewOpacity: number;
 

@@ -10,48 +10,44 @@ Load, cache, validate, merge, and serve monomer templates and RNA presets so use
 
 ## Loading, caching & merging
 
-- **Bundled default data:** `packages/ketcher-core/src/application/editor/data/monomers.ket` — a KET-format JSON (~3.55 MB) with all default monomer templates, ambiguous templates, and RNA preset (monomer-group) templates. Imported in `CoreEditor` (`editor/Editor.ts`).
-- **Parse pipeline:** `parseMonomersLibrary` (`editor/helpers.ts`) → `new KetSerializer().convertMonomersLibrary(...)` iterates `root.templates`, converting `MONOMER_TEMPLATE` → `MonomerItemType` and `AMBIGUOUS_MONOMER_TEMPLATE` → `AmbiguousMonomerType`.
-- **Module-level cache (survives editor re-instantiation):** `persistentMonomersLibrary` and `persistentMonomersLibraryParsedJson` in `editor/Editor.ts`. `setMonomersLibrary()` reuses the cache when present (this is the "load once" behavior noted in [architecture.md](../architecture.md)); otherwise it parses, replays stored updates from `SettingsManager.monomerLibraryUpdates`, and populates the cache.
+- **Bundled default data:** A large KET-format JSON ships with the core package and contains all default monomer templates, ambiguous templates, and RNA preset (monomer-group) templates. It is loaded when the macromolecules editor is instantiated.
+- **Parse pipeline:** The raw KET library is parsed by the KET serializer, which iterates the template list and converts each entry into its runtime form — plain monomer templates become monomer items, and ambiguous templates become ambiguous monomer definitions.
+- **Persistent cache (survives editor re-instantiation):** The parsed library and its source JSON are cached at module scope so the (large) default library is parsed only once per page rather than once per editor instance. When the cache is present it is reused directly ("load once" behavior); otherwise the library is parsed, any stored user updates are replayed on top, and the cache is populated.
 - **Custom libraries:**
-  - `updateMonomersLibrary(data)` — merge/upsert path. Validates disallowed modification types and HELM/BILN/IDT alias rules, detects alias collisions, then upserts (matching monomers replaced in place preserving `id`, new ones appended) and merges RNA preset group templates. Dispatches `events.updateMonomersLibrary`. Throws `MonomerLibraryUpdateError` if items were skipped.
-  - `initializeMonomersLibraryFromKetcher(update?, replace?)` — `replace` clears first (`clearMonomersLibrary()`), converts to KET, then updates.
-  - Updates are persisted via `SettingsManager.addMonomerLibraryUpdate` (localStorage) when `persistMonomerLibraryUpdates` is true.
-- **Into the UI:** `EditorEvents.tsx` dispatches `loadMonomerLibrary(editor.monomersLibrary)` and `loadDefaultPresets(...)`, and subscribes to `editor.events.updateMonomersLibrary`.
+  - **Merge/upsert path** — validates disallowed modification types and HELM/BILN/IDT alias rules, detects alias collisions, then upserts (matching monomers are replaced in place preserving their id, new ones are appended) and merges RNA preset group templates. An update event is dispatched, and an error is raised if any items had to be skipped.
+  - **Initialize from Ketcher** — an optional `replace` mode clears the existing library first, then converts the incoming data to KET and merges it.
+  - Updates can be persisted to localStorage (replayed on next load) when the corresponding setting is enabled.
+- **Into the UI:** On startup the UI is seeded with the current library and default presets, and it subscribes to library-update events to stay in sync.
 
 ## Data model
 
-`domain/types/monomers.ts`:
+- **Monomer item** — the template form of a monomer: a label, a `Struct`, optional attachment points, and a props bag (monomer name, monomer class, natural-analogue code, HELM/BILN/IDT aliases, modification types, and flags such as `isMicromoleculeFragment` and `hidden`).
+- **Ambiguous monomer** — an id plus a set of member monomers, a subtype, options, and an `isAmbiguous` flag.
+- **Attachment points** — named `R1`–`R8`. Each name maps to either a polymer bond, a monomer-to-atom bond, or nothing.
 
-- `MonomerItemType` — `{ label, struct: Struct, attachmentPoints?, props: { MonomerName, MonomerClass?: KetMonomerClass, MonomerNaturalAnalogCode, aliasHELM?, aliasBILN?, idtAliases?, modificationTypes?, isMicromoleculeFragment?, hidden?, … } }`.
-- `AmbiguousMonomerType` — `{ id, monomers: BaseMonomer[], subtype, options, isAmbiguous: true }`.
-- `AttachmentPointName` enum — `R1`–`R8` + `HYDROGEN`. `AttachmentPointsToBonds` maps each name → `PolymerBond | MonomerToAtomBond | null`.
-
-`domain/constants/monomers.ts`: `KetMonomerClass` enum (`AminoAcid, Sugar, Phosphate, Base, Terminator, Linker, Unknown, CHEM, RNA, DNA`), natural-analogue tables, ambiguous symbols (`StandardAmbiguousRnaBase`, `StandardAmbiguousPeptide`).
-
-**Monomer entity classes** (`domain/entities/`): `BaseMonomer` (abstract, holds `monomerItem`, `attachmentPointsToBonds`, `hydrogenBonds`), concrete `Peptide`, `Sugar`, `Phosphate`, `RNABase`, `Chem`, and `AmbiguousMonomer` (`getMonomerClass` resolves from components, returns `CHEM` if mixed; `getAttachmentPoints` intersects component attachment points). `monomerFactory(monomer)` returns `[EntityClass, RendererClass, KetMonomerClass]`.
+**Monomer entity classes:** An abstract base monomer holds the monomer item, the attachment-point-to-bond map, and hydrogen bonds. Concrete subclasses exist for peptide, sugar, phosphate, RNA base, and CHEM. The ambiguous monomer resolves its class from its components (falling back to CHEM when mixed) and derives its attachment points from the intersection of its components. A factory maps a monomer to its entity class, renderer class, and monomer class.
 
 ## RNA builder & presets
 
-A preset (`IRnaPreset`, defined in `application/editor/tools/Tool.ts`) bundles a **Sugar + Base + Phosphate** with a `phosphatePosition` ('left'/'right') and connections.
+A preset bundles a **Sugar + Base + Phosphate** with a phosphate position ('left'/'right') and the connections between them.
 
-- **Default presets** are `MONOMER_GROUP_TEMPLATE` entries of class RNA, exposed via `CoreEditor.defaultRnaPresetsLibraryItems`. Resolved into `IRnaPreset` objects by `getPresets` (`ketcher-macromolecules/src/helpers/getPreset.ts`).
-- **Placement:** `DrawingEntitiesManager.addRnaPreset(...)` positions the three monomers, determines 5′/3′ phosphate via attachment points, and creates `MonomerAddOperation`s + inter-monomer bonds. `RnaPresetTool` (`tools/RnaPreset.ts`, `ToolName.preset`) drives canvas placement; `SequenceMode.insertPresetFromLibrary` handles sequence mode.
-- **State:** `rnaBuilderSlice.ts` holds `activePreset`, `presetsDefault`, `presetsCustom`, group validations, and `presetPhosphateFilter` (5′/3′/no-phosphate, persisted). Custom presets are cached in localStorage (`manipulateCachedRnaPresets.ts`); the `useSetRnaPresets` hook seeds default + custom presets on mount.
+- **Default presets** are monomer-group templates of class RNA from monomer library, exposed by the editor and resolved into preset objects by the macromolecules helpers.
+- **Placement:** The drawing-entities manager positions the three monomers, determines the 5′/3′ phosphate from attachment points, and creates the monomer-add operations plus inter-monomer bonds. A dedicated preset tool drives placement on the canvas, while sequence mode has its own path for inserting a preset from the library.
+- **State:** The RNA-builder store slice tracks the active preset, default and custom presets, group validations, and a phosphate filter (5′/3′/no-phosphate, persisted). Custom presets are cached in localStorage, and a hook seeds default + custom presets on mount.
 
 ## Library UI panel
 
-`packages/ketcher-macromolecules/src/components/monomerLibrary/`:
+The panel lives in the macromolecules package and is composed of:
 
-- `MonomerLibrary.tsx` — search input + hide toggle + tabs.
-- `tabsContent.tsx` — four tabs: **Favorites**, **Peptides**, **RNA** (→ `RnaBuilder`), **CHEM**. Default tab: RNA.
-- `monomerLibraryList/MonomerList.tsx` — renders `MonomerGroup` per natural-analog code, ambiguous groups, and preset favorites.
-- `RnaBuilder/` — preset editor (collapsed/expanded), element views (tabs/accordion), phosphate-filter popup.
+- A search input, a hide toggle, and a set of tabs.
+- **Four tabs:** Favorites, Peptides, RNA (which hosts the RNA builder), and CHEM. RNA is the default tab.
+- A monomer list that renders a group per natural-analogue code, ambiguous groups, and preset favorites.
+- The RNA builder: a preset editor (collapsed/expanded), element views (tabs/accordion), and a phosphate-filter popup.
 
-**State:** `librarySlice.ts` holds `monomers`, `defaultRnaPresets`, `favorites`, `searchFilter`, `selectedTabIndex`. `selectFilteredMonomers` matches name, full name, IDT/HELM/BILN/AxoLabs aliases, modification types, and 3-letter amino-acid codes; it filters out `hidden` monomers (preset components). Favorites are keyed by `getMonomerUniqueKey` and persisted to localStorage.
+**State:** A library store slice holds the monomers, default RNA presets, favorites, the search filter, and the selected tab. The filtering logic matches on name, full name, IDT/HELM/BILN/AxoLabs aliases, modification types, and 3-letter amino-acid codes; it excludes `hidden` monomers (preset components). Favorites are keyed by a unique monomer key and persisted to localStorage.
 
 ## Assumptions & constraints
 
 - The persistent cache means the (large) default library is parsed once per page, not per editor instance.
 - Custom-library upserts have **no rollback**: valid items commit even if others are skipped.
-- Preset components are marked `hidden` so they don't appear as standalone monomers in search.
+- Preset components created in monomer creation wizard are marked `hidden` so they don't appear as standalone monomers in search.

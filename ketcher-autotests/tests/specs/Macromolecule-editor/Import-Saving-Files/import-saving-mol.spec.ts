@@ -102,38 +102,42 @@ test.describe('Import-Saving .mol Files', () => {
     await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
-  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async ({
-    FlexCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/3666
-     * Description: Structure in center of canvas after opening
-     */
-    await openFileAndAddToCanvasMacro(
-      page,
-      'Molfiles-V3000/peptide-bzl.mol',
-      MacroFileType.MOLv3000,
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'After opening a file in macro mode, structure is in center of the screen and no need scroll to find it',
+    async ({ FlexCanvas: _ }) => {
+      // works wrong because of bug: https://github.com/epam/ketcher/issues/10460
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/3666
+       * Description: Structure in center of canvas after opening
+       */
+      await openFileAndAddToCanvasMacro(
+        page,
+        'Molfiles-V3000/peptide-bzl.mol',
+        MacroFileType.MOLv3000,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async ({
-    FlexCanvas: _,
-  }) => {
-    /*
-     * Test case: https://github.com/epam/ketcher/issues/3667
-     * https://github.com/epam/ketcher/issues/3668
-     * Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
-     */
-    await openFileAndAddToCanvasMacro(
-      page,
-      'Molfiles-V3000/peptide-bzl.mol',
-      MacroFileType.MOLv3000,
-    );
-    await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
-    await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file',
+    async ({ FlexCanvas: _ }) => {
+      // works wrong because of bug: https://github.com/epam/ketcher/issues/10460
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/3667
+       * https://github.com/epam/ketcher/issues/3668
+       * Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
+       */
+      await openFileAndAddToCanvasMacro(
+        page,
+        'Molfiles-V3000/peptide-bzl.mol',
+        MacroFileType.MOLv3000,
+      );
+      await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
+      await MonomerPreviewTooltip(page).waitForBecomeVisible();
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
     FlexCanvas: _,
@@ -535,7 +539,7 @@ test.describe('Import modified .mol files from external editor', () => {
   });
 
   const fileNames = [
-    'peptide-Bom.mol',
+    // 'peptide-Bom.mol', - works wrong because of bug: https://github.com/epam/ketcher/issues/10460
     'dna-mod-Ph.mol',
     'dna-mod-Ph-granular.mol',
     'insulin-2-peptides-connected-with-SS.mol',

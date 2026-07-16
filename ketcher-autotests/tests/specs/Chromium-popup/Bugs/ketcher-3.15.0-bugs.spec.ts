@@ -69,7 +69,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Call context menu for -Me monomer and click Expand monomer option
      * 5. Verify that monomer label gets replaced with CH3 atom (the content -Me monomer)
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
     const helmMolecule =
       'PEPTIDE1{A}|PEPTIDE2{[-Me]}$PEPTIDE2,PEPTIDE1,1:R1-1:R1$$$V2.0';
@@ -107,7 +107,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Open the layout mode dropdown
      * 5. Verify that the Layout Mode Dropdown and Create Antisense Strand dropdown are fully visible and not overlapped
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
     const helmMolecule = 'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0';
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -148,7 +148,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Go to RNA tab, Bases tab
      * 5. Verify that label for non-ambigouse monomers is shown (U)
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     await Library(page).setSearchValue('v');
@@ -171,7 +171,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 2. Input (5MdC to the Library search field
      * 3. Verify that dR(5meC)P preset is shown since it has (5MdC) AxoLabs alias
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     await Library(page).setSearchValue('(5MdC');
@@ -193,7 +193,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 2. Input (5MdC to the Library search field
      * 3. Verify that settings and molecules/macromolecules switcher are disabled when the wizard is active. Help and About buttons are enabled.
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
     await setMolecule(page, 'C');
     await LeftToolbar(page).createMonomer();
@@ -221,7 +221,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Verify that Fullscreen mode button state indicates its actual state
      * 5. Verify that pressing the Fullscreen mode button enables the full screen mode
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
@@ -251,7 +251,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Set Implicit H count query value to 2 and press Apply button
      * 5. Verify that number of attached hydrogens become two since atom has no bond connections and Implicit H count = 2
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     await setMolecule(page, '[Na]');
@@ -284,7 +284,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
           Select Base, Sugar and Phosphate from Top to Bottom.
      * 4. Verify that error messages do not appear when we select the part of structure for Phosphate from Top to Bottom and press on Submit.
      *
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     const smarts =
@@ -359,7 +359,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 6. Add Code
      * 7. Submit
      * 8. Verify that the monomer is not moved after pressing the "Submit" button for any type of monomer
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     const smarts =
@@ -392,7 +392,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 2. Add carbon atom on the canvas
      * 3. Open Atom Properties for it and set Implicit H count query property value to 3
      * 4. Verify that the number of attached hydrogens on the canvas got changed to 3
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     const carbonAtom = 'C';
@@ -423,7 +423,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 2. Navigate to RNA tab - Presets section
      * 3. Hover mouse over any monomer that has AxoLabs alias (eg. A) and wait while preview tooltip appear
      * 4. Verify that AxoLabs alias is present on library preset card preview tooltip and symbol preview tooltip on sequence canvas
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     await Library(page).openRNASection(RNASection.Presets);
@@ -450,7 +450,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 4. Switch to Molecules mode
      * 5. Try to expand/collapse the monomers on the canvas
      * 6. Verify that monomer structures or elements do not disappear when trying to expand/collapse monomers in Molecules Mode
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     await Library(page).openRNASection(RNASection.Presets);
@@ -487,7 +487,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      * 1. Go to Macro - Sequence mode (clean canvas)
      * 2. Paste from clipboard (e.g. press Ctrl+v) following helm HELM: RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0
      * 3. Verify that SYNC mode button is present and enabled on the top right toolbar
-     * Version 3.12.0
+     * Version 3.15.0
      */
 
     const helmMolecule =

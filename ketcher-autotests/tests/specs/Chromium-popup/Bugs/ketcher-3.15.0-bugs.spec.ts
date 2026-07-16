@@ -20,22 +20,15 @@ import {
   getSmarts,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
-  selectCanvasArea,
 } from '@utils';
 import { Library } from '@tests/pages/macromolecules/Library';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  MonomerType,
-  NucleotideNaturalAnalogue,
-} from '@tests/pages/constants/createMonomerDialog/Constants';
+import { MonomerType } from '@tests/pages/constants/createMonomerDialog/Constants';
 import { CreateMonomerDialog } from '@tests/pages/molecules/canvas/CreateMonomerDialog';
 import { NucleotidePresetSection } from '@tests/pages/molecules/canvas/createMonomer/NucleotidePresetSection';
-import { Phosphate } from '@tests/pages/constants/monomers/Phosphates';
-import { Sugar } from '@tests/pages/constants/monomers/Sugars';
-import { Base } from '@tests/pages/constants/monomers/Bases';
 import {
   MicroAtomOption,
   MonomerOnMicroOption,
@@ -297,37 +290,37 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     const smarts =
       '[#7](-[#6])(/[#7](-[#6])/[#6]/[#7](-[#6])/[#7](-[#6])/[#6]/[#6])/[#6]/[#6]';
     await setMolecule(page, smarts);
+    await CommonLeftToolbar(page).areaSelectionTool();
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).createMonomer();
+
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);
+
     await dialog.selectType(MonomerType.NucleotidePreset);
-    await presetSection.setName('np14');
+    await presetSection.setName('badValence');
+
     await presetSection.setupBase({
-      atomIds: [10, 8, 7],
-      bondIds: [9, 8, 7],
-      code: Base.A.alias,
-      name: 'Base-np14',
-      naturalAnalogue: NucleotideNaturalAnalogue.C,
+      atomIds: [7, 8, 9, 10],
+      bondIds: [7, 8, 9],
     });
+
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 200);
     await dragMouseTo(page, 450, 250);
+    await page.mouse.move(600, 200);
+    await dragMouseTo(page, 450, 250);
+
     await presetSection.setupSugar({
-      atomIds: [5, 6, 2, 3],
-      bondIds: [5, 4, 3, 2],
-      code: Sugar.R.alias,
-      name: 'Sugar-np14',
+      atomIds: [2, 3, 4, 5, 6],
+      bondIds: [2, 3, 4, 5],
     });
-    await CommonLeftToolbar(page).handTool();
 
-    await page.mouse.move(600, 200);
-    await dragMouseTo(page, 450, 250);
+    await presetSection.setupPhosphate({
+      atomIds: [0, 1, 11, 12],
+      bondIds: [0, 10, 11],
+    });
 
-    await selectCanvasArea(page, { x: 400, y: 350 }, { x: 520, y: 480 });
-    await presetSection.markAsPhosphate();
-    await presetSection.phosphateTab.codeEditbox.fill(Phosphate.P.alias);
-    await presetSection.phosphateTab.nameEditbox.fill('Phosphate-np14');
     await dialog.submit();
 
     await expect(

@@ -44,6 +44,7 @@ test.beforeAll(async ({ browser }) => {
   page = await sharedContext.newPage();
   await waitForPageInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 });
 
 test.afterEach(async () => {

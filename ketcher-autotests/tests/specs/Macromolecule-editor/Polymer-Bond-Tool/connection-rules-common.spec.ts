@@ -65,6 +65,7 @@ test.describe('Common connection rules: ', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test.afterEach(async () => {
@@ -506,6 +507,7 @@ test.describe('Common connection rules: ', () => {
       AbbreviationPreviewTooltip(page).abbreviationPreviewTooltipPicture,
     );
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   });
 
   test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {

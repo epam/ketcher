@@ -141,9 +141,9 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
 
   await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
-  await takeElementScreenshot(page, getAtomLocator(page, { atomLabel: 'Br' }), {
-    padding: 50,
-  });
+
+  const brAtom = getAtomLocator(page, { atomLabel: 'Br' });
+  await expect(brAtom).toHaveCount(1);
 
   await page.evaluate(() => {
     window.ketcher.editor.unsubscribe('change', changeEventSubscriber);

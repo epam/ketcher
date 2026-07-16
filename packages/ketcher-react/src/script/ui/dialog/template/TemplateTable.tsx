@@ -14,11 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { FC, KeyboardEvent } from 'react';
+import {
+  type FC,
+  useState,
+  useEffect,
+  useRef,
+  useTransition,
+  useLayoutEffect,
+} from 'react';
 import type { Struct } from 'ketcher-core';
+import clsx from 'clsx';
 import classes from './TemplateTable.module.less';
-import { greekify } from '../../utils';
-import { Icon, StructRender } from 'components';
+import TemplateItem from './TemplateItem';
 
 export interface Template {
   struct: Struct;
@@ -42,40 +49,10 @@ interface TemplateTableProps {
   renderOptions?: any;
 }
 
-const isSaltOrSolventTemplate = (template) =>
-  template.props.group === 'Salts and Solvents';
-const isFunctionalGroupTemplate = (template) =>
-  template.props.group === 'Functional Groups';
-
-function getTemplateTitle(template: Template, index: number): string {
-  if (isSaltOrSolventTemplate(template)) {
-    return template.props.name;
-  }
-  return (
-    template.struct.name || `${template.props.group} template ${index + 1}`
-  );
-}
-
-function tmplName(tmpl: Template, i: number): string {
-  if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation ?? '';
-  }
-  return (
-    tmpl.props.abbreviation ??
-    tmpl.struct.name ??
-    `${tmpl.props.group} template ${i + 1}`
-  );
-}
-
-function createKeyDownHandler(callback: () => void) {
-  return (e: KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      e.stopPropagation();
-      callback();
-    }
-  };
-}
+// Render all tiles immediately to keep accordion height stable,
+// then progressively mount heavy SVG previews with low-priority updates.
+const INITIAL_PREVIEW_COUNT = 4;
+const PREVIEW_BATCH_SIZE = 4;
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
@@ -88,79 +65,108 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     renderOptions,
   } = props;
 
+  const [prevTemplates, setPrevTemplates] = useState(templates);
+  const [previewRenderedCount, setPreviewRenderedCount] = useState(() =>
+    Math.min(INITIAL_PREVIEW_COUNT, templates.length),
+  );
+  const [, startTransition] = useTransition();
+  const [containerSize, setContainerSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  if (templates !== prevTemplates) {
+    setPrevTemplates(templates);
+    setPreviewRenderedCount(Math.min(INITIAL_PREVIEW_COUNT, templates.length));
+  }
+
+  // Calculate container size once to avoid getBoundingClientRect() calls during rendering
+  // This prevents forced reflows when rendering multiple items in a batch
+  useLayoutEffect(() => {
+    if (!containerRef.current) {
+      return;
+    }
+
+    const calculateSize = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        setContainerSize({ width: rect.width, height: rect.height });
+      }
+    };
+
+    // Calculate on mount
+    calculateSize();
+
+    // Recalculate on resize
+    const resizeObserver = new ResizeObserver(calculateSize);
+    resizeObserver.observe(containerRef.current);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (previewRenderedCount >= templates.length) {
+      return;
+    }
+
+    // Use idle/frame scheduling for progressive preview hydration.
+    const requestIdle = window.requestIdleCallback;
+    if (typeof requestIdle === 'function') {
+      const callback = requestIdle(
+        () => {
+          startTransition(() => {
+            setPreviewRenderedCount((prev) =>
+              Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+            );
+          });
+        },
+        { timeout: 500 },
+      );
+      return () => {
+        if (callback) window.cancelIdleCallback?.(callback);
+      };
+    } else {
+      const frameId = window.requestAnimationFrame(() => {
+        startTransition(() => {
+          setPreviewRenderedCount((prev) =>
+            Math.min(prev + PREVIEW_BATCH_SIZE, templates.length),
+          );
+        });
+      });
+      return () => window.cancelAnimationFrame(frameId);
+    }
+  }, [previewRenderedCount, templates.length, startTransition]);
+
+  // Pass container size to StructRender to avoid getBoundingClientRect() calls
+  // This eliminates forced reflows during rendering batches
+  const optimizedRenderOptions = {
+    ...renderOptions,
+    ...(containerSize && { wrapperDimensions: containerSize }),
+  };
+
   return (
     <div
-      className={`${classes.tableContent} ${
-        titleRows === 1 ? classes.oneRowTitleTable : classes.twoRowsTitleTable
-      }`}
-      data-testid="templates-modal"
-    >
-      {templates.map((tmpl, i) => {
-        return (
-          <button
-            type="button"
-            className={
-              tmpl.struct !== selected?.struct
-                ? classes.td
-                : `${classes.td} ${classes.selected}`
-            }
-            title={greekify(getTemplateTitle(tmpl, i))}
-            key={
-              tmpl.struct.name !== selected?.struct.name
-                ? `${tmpl.struct.name}_${i}`
-                : `${tmpl.struct.name}_${i}_selected`
-            }
-            onClick={() => onSelect(tmpl)}
-          >
-            <StructRender
-              testId={tmpl.struct.name}
-              struct={tmpl.struct}
-              className={classes.struct}
-              fullsize={true}
-              options={{
-                ...renderOptions,
-                autoScaleMargin: 10,
-                cachePrefix: 'templates',
-                downScale: true,
-              }}
-            />
-            <div
-              className={`${classes.structTitle} ${
-                selected?.struct === tmpl.struct ? classes.selectedTitle : ''
-              }`}
-            >
-              {greekify(tmplName(tmpl, i))}
-            </div>
-            {tmpl.props.group === 'User Templates' && (
-              <button
-                data-testid={'delete-template-button'}
-                className={`${classes.button} ${classes.deleteButton}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete!(tmpl);
-                }}
-                onKeyDown={createKeyDownHandler(() => onDelete!(tmpl))}
-              >
-                <Icon name="delete" />
-              </button>
-            )}
-            {!isFunctionalGroupTemplate(tmpl) &&
-              !isSaltOrSolventTemplate(tmpl) && (
-                <button
-                  data-testid={'edit-template-button'}
-                  className={`${classes.button} ${classes.editButton}`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAttach!(tmpl);
-                  }}
-                  onKeyDown={createKeyDownHandler(() => onAttach!(tmpl))}
-                >
-                  <Icon name="edit" />
-                </button>
-              )}
-          </button>
-        );
+      className={clsx(classes.tableContent, {
+        [classes.oneRowTitleTable]: titleRows === 1,
+        [classes.twoRowsTitleTable]: titleRows !== 1,
       })}
+      data-testid="templates-modal"
+      ref={containerRef}
+    >
+      {templates.map((tmpl, i) => (
+        <TemplateItem
+          key={`${tmpl.struct.name}_${i}`}
+          tmpl={tmpl}
+          index={i}
+          isSelected={selected?.struct === tmpl.struct}
+          shouldRenderPreview={i < previewRenderedCount}
+          renderOptions={optimizedRenderOptions}
+          onSelect={onSelect}
+          onDelete={onDelete}
+          onAttach={onAttach}
+        />
+      ))}
     </div>
   );
 };

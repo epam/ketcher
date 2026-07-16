@@ -20,6 +20,7 @@ import {
   resetZoomLevelToDefault,
   selectCanvasArea,
   takeEditorScreenshot,
+  takeElementScreenshot,
 } from '@utils';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -60,6 +61,7 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 declare global {
   interface Window {
@@ -139,9 +141,8 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
 
   await clickInTheMiddleOfTheCanvas(page);
   await moveMouseAway(page);
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
+  await takeElementScreenshot(page, getAtomLocator(page, { atomLabel: 'Br' }), {
+    padding: 50,
   });
 
   await page.evaluate(() => {

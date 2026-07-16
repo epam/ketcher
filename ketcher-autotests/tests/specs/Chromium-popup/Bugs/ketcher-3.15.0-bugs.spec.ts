@@ -228,11 +228,11 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await fullScreenButton.click();
     const commonTopRightToolbar = CommonTopRightToolbar(page);
     await commonTopRightToolbar.turnOnMacromoleculesEditor();
-    await takeElementScreenshot(page, fullScreenButton, {
-      padding: 16,
-    });
-    await fullScreenButton.click();
+    await expect(fullScreenButton).toBeVisible();
+    await takeElementScreenshot(page, fullScreenButton);
 
+    await fullScreenButton.click();
+    await expect(fullScreenButton).toBeVisible();
     await takeEditorScreenshot(page);
   });
 

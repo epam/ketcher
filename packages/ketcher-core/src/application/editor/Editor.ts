@@ -103,7 +103,12 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
+import {
+  getEmptyMonomersLibraryJson,
+  MonomerNameValidationErrorType,
+  parseMonomersLibrary,
+  validateMonomerName,
+} from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
@@ -728,25 +733,34 @@ export class CoreEditor {
         return;
       }
 
-      if (!templateDefinition.name?.trim()) {
-        reportValidationError(
-          templateRef.$ref,
-          `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
-        );
-        return;
-      }
+      const monomerNameValidationResult = validateMonomerName(
+        templateDefinition.name,
+      );
 
-      if (
-        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
-      ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
-        );
-        return;
+      if (!monomerNameValidationResult.isValid) {
+        switch (monomerNameValidationResult.error) {
+          case MonomerNameValidationErrorType.Empty:
+            reportValidationError(
+              templateRef.$ref,
+              `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
+            );
+            return;
+          case MonomerNameValidationErrorType.TooLong: {
+            const truncatedTemplateName = `${templateDefinition.name.slice(
+              0,
+              MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+            )}...`;
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+            );
+            return;
+          }
+          case MonomerNameValidationErrorType.InvalidCharacters:
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
+            );
+            return;
+        }
       }
 
       // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion

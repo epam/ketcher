@@ -11,6 +11,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
+  moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -137,6 +138,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   await atomToolbar.clickAtom(Atom.Bromine);
 
   await clickInTheMiddleOfTheCanvas(page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

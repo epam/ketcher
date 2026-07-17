@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import { LibraryNameType } from 'src/constants';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerOrAmbiguousType } from 'ketcher-core';
 
 export type Group = {
-  groupItems: Array<MonomerItemType>;
+  groupItems: Array<MonomerOrAmbiguousType>;
   groupTitle?: string;
 };
 

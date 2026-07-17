@@ -6,10 +6,15 @@ import {
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
 
-const RNABASE_HOVERED_ELEMENT_ID = MONOMER_SYMBOLS_IDS.Base.hover;
-const RNABASE_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS.Base.body;
+const RNABASE_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.Base;
+if (!RNABASE_SYMBOL_ELEMENTS_IDS) {
+  throw new Error('Missing monomer symbol ids for Base');
+}
+
+const RNABASE_HOVERED_ELEMENT_ID = RNABASE_SYMBOL_ELEMENTS_IDS.hover;
+const RNABASE_SYMBOL_ELEMENT_ID = RNABASE_SYMBOL_ELEMENTS_IDS.body;
 const RNABASE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS.Base.autochainPreview;
+  RNABASE_SYMBOL_ELEMENTS_IDS.autochainPreview;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
   constructor(public monomer: RNABase, scale?: number) {

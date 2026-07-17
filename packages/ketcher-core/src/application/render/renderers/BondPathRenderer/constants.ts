@@ -19,11 +19,11 @@ export const StereoBondWidth = 6;
 export const BondSpace = 6;
 export const LinesOffset = BondSpace / 2;
 
-export const BondDashArrayMap = {
+export const BondDashArrayMap: Partial<Record<BondType, string>> = {
   4: '6',
   5: '6',
   6: '4 4 1 4',
   7: '4 4 1 4',
   8: '6',
   10: '3',
-} as const satisfies Partial<Record<BondType, string>>;
+};

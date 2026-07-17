@@ -106,6 +106,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       options: {
         disableChainLengthRuler?: boolean;
         disableAutozoom?: boolean;
+        enableFlexMode?: boolean;
       } = {
         disableChainLengthRuler: true,
         disableAutozoom: true,

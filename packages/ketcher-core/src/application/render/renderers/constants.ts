@@ -8,7 +8,17 @@ export const BAD_VALENCE_LINE_OFFSET = 2;
 export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
 
-export const MONOMER_SYMBOLS_IDS = {
+export const MONOMER_SYMBOLS_IDS: Partial<
+  Record<
+    KetMonomerClass,
+    {
+      hover: string;
+      body: string;
+      variant?: string;
+      autochainPreview: string;
+    }
+  >
+> = {
   AminoAcid: {
     hover: '#peptide-hover',
     body: '#peptide',
@@ -42,14 +52,4 @@ export const MONOMER_SYMBOLS_IDS = {
     body: '#nucleotide',
     autochainPreview: '#nucleotide-autochain-preview',
   },
-} as const satisfies Partial<
-  Record<
-    KetMonomerClass,
-    {
-      hover: string;
-      body: string;
-      variant?: string;
-      autochainPreview: string;
-    }
-  >
->;
+};

@@ -20,15 +20,18 @@ type PreviewAttachmentPointParams = {
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private readonly monomerRenderer: BaseMonomerRenderer;
   private readonly monomerSymbolElementsIds: {
-    selected: string;
     hover: string;
     body: string;
     variant?: string;
+    autochainPreview: string;
   };
 
   constructor(public monomer: AmbiguousMonomer, scale?: number) {
     const monomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
     const monomerSymbolElementsIds = MONOMER_SYMBOLS_IDS[monomerClass];
+    if (!monomerSymbolElementsIds) {
+      throw new Error(`Missing monomer symbol ids for ${monomerClass}`);
+    }
 
     super(
       monomer,

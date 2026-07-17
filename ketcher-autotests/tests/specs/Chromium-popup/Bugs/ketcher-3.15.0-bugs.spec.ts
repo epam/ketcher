@@ -16,7 +16,6 @@ import {
   takeEditorScreenshot,
   dragMouseTo,
   takeTopToolbarScreenshot,
-  setMolecule,
   selectByAtomAndBondIds,
   clickInTheMiddleOfTheCanvas,
   pasteFromClipboardAndOpenAsNewProject,

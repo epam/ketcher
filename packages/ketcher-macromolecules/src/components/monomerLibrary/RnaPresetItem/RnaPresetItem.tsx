@@ -27,6 +27,7 @@ import { useLibraryItemDrag } from '../monomerLibraryItem/hooks/useLibraryItemDr
 import {
   AutochainIcon,
   AutochainIconWrapper,
+  CardTitle,
 } from 'components/monomerLibrary/monomerLibraryItem/styles';
 import {
   selectEditor,
@@ -133,7 +134,7 @@ const RnaPresetItem = ({
           </AutochainIconWrapper>
         </Tooltip>
       )}
-      <span>{preset.name}</span>
+      <CardTitle>{preset.name}</CardTitle>
       <StyledIcon
         name="vertical-dots"
         className="dots"

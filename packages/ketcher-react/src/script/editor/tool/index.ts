@@ -57,14 +57,20 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,
   attach: AttachTool,
-  reactionarrow: CommonArrowTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  reactionarrow: CommonArrowTool as unknown as ToolConstructorInterface,
   reactionplus: ReactionPlusTool,
   reactionmap: ReactionMapTool,
   reactionunmap: ReactionUnmapTool,
   paste: PasteTool,
-  rotate: RotateTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  rotate: RotateTool as unknown as ToolConstructorInterface,
   enhancedStereo: EnhancedStereoTool,
-  simpleobject: SimpleObjectTool,
+  // Cast to ToolConstructorInterface: constructor param types are narrower
+  // than `unknown[]`, but toolsMap only ever calls these with the correct args.
+  simpleobject: SimpleObjectTool as unknown as ToolConstructorInterface,
   text: TextTool,
   [IMAGE_KEY]: ImageTool,
   [CREATE_MONOMER_TOOL_NAME]: CreateMonomerTool,

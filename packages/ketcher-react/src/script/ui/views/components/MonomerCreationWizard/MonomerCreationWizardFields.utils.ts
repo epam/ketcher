@@ -14,6 +14,10 @@ export const getMonomerPropertyVisibility = (
     type === KetMonomerClass.CHEM;
   const displayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
+  const displayIdtAlias =
+    type === KetMonomerClass.RNA ||
+    type === KetMonomerClass.CHEM ||
+    type === KetMonomerClass.Phosphate;
 
   return {
     displayNaturalAnalogue,
@@ -21,5 +25,6 @@ export const getMonomerPropertyVisibility = (
     displayAliases: displayHelmAlias || displayBilnAlias,
     displayHelmAlias,
     displayBilnAlias,
+    displayIdtAlias,
   };
 };

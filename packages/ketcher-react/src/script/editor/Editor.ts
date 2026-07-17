@@ -84,6 +84,7 @@ import {
   Visel,
   paperPathFromSVGElement,
   fromFragmentDeletion,
+  buildIdtAliasesFromWizardInputs,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -1435,6 +1436,9 @@ class Editor implements KetcherEditor {
       modificationTypes,
       aliasHELM,
       aliasBILN,
+      idtAlias5,
+      idtAliasInternal,
+      idtAlias3,
       hidden,
     } = data;
 
@@ -1473,6 +1477,12 @@ class Editor implements KetcherEditor {
       type,
     );
 
+    const idtAliases = buildIdtAliasesFromWizardInputs(
+      idtAlias5,
+      idtAliasInternal,
+      idtAlias3,
+    );
+
     const monomerTemplate: IKetMonomerTemplate = {
       type: KetTemplateType.MONOMER_TEMPLATE,
       id: monomerId,
@@ -1484,6 +1494,7 @@ class Editor implements KetcherEditor {
       modificationTypes,
       aliasHELM,
       aliasBILN,
+      ...(idtAliases ? { idtAliases } : {}),
       // TODO: Even though atoms positions are normalized, collapsing/expanding monomers still has some shift, investigate
       atoms: normalizeMonomerAtomsPositions(ketMicromolecule.mol0.atoms),
       bonds: ketMicromolecule.mol0.bonds,

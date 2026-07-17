@@ -17,6 +17,10 @@ import {
   getAttachmentPointNumberFromLabel,
   isValidBilnAlias,
   isValidHelmAlias,
+  isValidIdtAlias,
+  isValidIdtAliasFormat,
+  isValidIdtAliasLength,
+  buildIdtAliasesFromWizardInputs,
   KetcherLogger,
   ketcherProvider,
   KetMonomerClass,
@@ -89,6 +93,9 @@ const getInitialWizardState = (
     naturalAnalogue,
     aliasHELM: '',
     aliasBILN: '',
+    idtAlias5: '',
+    idtAliasInternal: '',
+    idtAlias3: '',
   },
   errors: {},
   notifications: new Map(),
@@ -118,6 +125,11 @@ const getInitialWizardStateForEdit = (
       naturalAnalogue: initialValues.naturalAnalogue,
       aliasHELM: initialValues.aliasHELM,
       aliasBILN: initialValues.aliasBILN,
+      // Edit is save-as-copy: IDT must stay blank so the copy does not collide
+      // with the original monomer's library-unique IDT alias.
+      idtAlias5: '',
+      idtAliasInternal: '',
+      idtAlias3: '',
     },
   };
 };
@@ -184,6 +196,9 @@ const wizardReducer = (
 
       if (fieldId === 'type') {
         values.naturalAnalogue = '';
+        values.idtAlias5 = '';
+        values.idtAliasInternal = '';
+        values.idtAlias3 = '';
       }
 
       return {
@@ -545,7 +560,14 @@ const validateInputs = (
   const editor = provideEditorInstance();
   const errors: Partial<Record<WizardFormFieldId, boolean>> = {};
   const notifications = new Map<WizardNotificationId, WizardNotification>();
-  const optionalFields = new Set(['aliasHELM', 'aliasBILN', 'name']);
+  const optionalFields = new Set([
+    'aliasHELM',
+    'aliasBILN',
+    'name',
+    'idtAlias5',
+    'idtAliasInternal',
+    'idtAlias3',
+  ]);
 
   Object.entries(values).forEach(([key, value]) => {
     if (!value?.trim()) {
@@ -642,7 +664,97 @@ const validateInputs = (
         });
       }
     }
+
+    if (
+      key === 'idtAlias5' ||
+      key === 'idtAliasInternal' ||
+      key === 'idtAlias3'
+    ) {
+      if (!isValidIdtAliasFormat(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('invalidIDTAlias', {
+          type: 'error',
+          message: NotificationMessages.invalidIDTAlias,
+        });
+
+        return;
+      }
+
+      if (!isValidIdtAlias(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('idtAliasNonTerminalSlash', {
+          type: 'error',
+          message: NotificationMessages.idtAliasNonTerminalSlash,
+        });
+
+        return;
+      }
+
+      if (!isValidIdtAliasLength(value)) {
+        errors[key as WizardFormFieldId] = true;
+        notifications.set('idtAliasTooLong', {
+          type: 'error',
+          message: NotificationMessages.idtAliasTooLong,
+        });
+
+        return;
+      }
+    }
   });
+
+  // IDT uniqueness is checked once for the whole idtAliases object (not per field).
+  // Gated on !skipUniquenessChecks so RNA-preset components skip it exactly as
+  // symbol/HELM/BILN do; uniqueness is still enforced at commit by aliasCollisionExists.
+  if (!skipUniquenessChecks) {
+    const hasIdtFormatError =
+      errors.idtAlias5 || errors.idtAliasInternal || errors.idtAlias3;
+
+    if (!hasIdtFormatError) {
+      const idtAliases = buildIdtAliasesFromWizardInputs(
+        values.idtAlias5,
+        values.idtAliasInternal,
+        values.idtAlias3,
+      );
+
+      if (idtAliases) {
+        const collisions = editor.checkIfIdtAliasesCollide(idtAliases);
+        const hasCollision =
+          collisions.base ||
+          collisions.endpoint5 ||
+          collisions.internal ||
+          collisions.endpoint3;
+
+        if (hasCollision) {
+          notifications.set('notUniqueIDTAlias', {
+            type: 'error',
+            message: NotificationMessages.notUniqueIDTAlias,
+          });
+
+          if (collisions.base) {
+            if (values.idtAlias5.trim()) {
+              errors.idtAlias5 = true;
+            }
+            if (values.idtAliasInternal.trim()) {
+              errors.idtAliasInternal = true;
+            }
+            if (values.idtAlias3.trim()) {
+              errors.idtAlias3 = true;
+            }
+          } else {
+            if (collisions.endpoint5) {
+              errors.idtAlias5 = true;
+            }
+            if (collisions.internal) {
+              errors.idtAliasInternal = true;
+            }
+            if (collisions.endpoint3) {
+              errors.idtAlias3 = true;
+            }
+          }
+        }
+      }
+    }
+  }
 
   return { errors, notifications };
 };
@@ -821,7 +933,17 @@ const MonomerCreationWizardInternal = ({
     notifications: monomerWizardNotifications,
     errors,
   } = wizardState;
-  const { type, symbol, name, naturalAnalogue, aliasHELM, aliasBILN } = values;
+  const {
+    type,
+    symbol,
+    name,
+    naturalAnalogue,
+    aliasHELM,
+    aliasBILN,
+    idtAlias5,
+    idtAliasInternal,
+    idtAlias3,
+  } = values;
   const [modificationTypes, setModificationTypes] = useState<string[]>([]);
   const [leavingGroupDialogMessage, setLeavingGroupDialogMessage] =
     useState('');
@@ -1878,6 +2000,9 @@ const MonomerCreationWizardInternal = ({
           modificationTypes,
           aliasHELM: valuesToSave.aliasHELM,
           aliasBILN: valuesToSave.aliasBILN,
+          idtAlias5: valuesToSave.idtAlias5,
+          idtAliasInternal: valuesToSave.idtAliasInternal,
+          idtAlias3: valuesToSave.idtAlias3,
           structure,
           attachmentPoints: monomerAssignedAttachmentPoints,
           // Mark monomers as hidden when they are part of a preset and don't have all properties filled
@@ -2090,6 +2215,9 @@ const MonomerCreationWizardInternal = ({
                     modificationTypes,
                     aliasHELM,
                     aliasBILN,
+                    idtAlias5,
+                    idtAliasInternal,
+                    idtAlias3,
                     attachmentPoints: assignedAttachmentPoints,
                     structure,
                   });

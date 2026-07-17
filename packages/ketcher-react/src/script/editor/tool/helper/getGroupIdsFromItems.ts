@@ -5,14 +5,32 @@ type Items = {
   bonds?: number[];
 };
 
-function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
+type GetGroupIdsFromItemArraysOptions = {
+  // Once a superatom is expanded, its leaving-group (R#) atoms become
+  // ordinary atoms of the structure and should be treated the same as any
+  // other atom when resolving which group a click belongs to (#6743).
+  includeExpandedLeavingGroupAtoms?: boolean;
+};
+
+function getGroupIdsFromItemArrays(
+  struct: Struct,
+  items?: Items,
+  options?: GetGroupIdsFromItemArraysOptions,
+): number[] {
   if (!struct.sgroups.size) return [];
 
   const groupsIds = new Set<number>();
   if (items?.atoms) {
     items.atoms
       .filter((atomId) => {
-        return !Atom.isSuperatomLeavingGroupAtom(struct, atomId);
+        if (!Atom.isSuperatomLeavingGroupAtom(struct, atomId)) {
+          return true;
+        }
+
+        return (
+          options?.includeExpandedLeavingGroupAtoms &&
+          Boolean(struct.getGroupFromAtomId(atomId)?.isExpanded())
+        );
       })
       .forEach((atomId) => {
         const groupId = struct.getGroupIdFromAtomId(atomId);

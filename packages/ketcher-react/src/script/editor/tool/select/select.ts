@@ -136,7 +136,9 @@ class SelectTool implements Tool {
       ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
     };
     const selectedSgroups = ci
-      ? getGroupIdsFromItemArrays(molecule, selected)
+      ? getGroupIdsFromItemArrays(molecule, selected, {
+          includeExpandedLeavingGroupAtoms: true,
+        })
       : [];
     const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
     // Only auto-expand the selection to the enclosing sgroup(s) when the

@@ -1131,10 +1131,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          // Set all remaining side-chain bonds to the default color (#43B5C0)
+          const renderer =
+            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
+
           bondBodyElement.setAttribute(
             'stroke',
-            this.isHydrogenBond ? '#333333' : '#43B5C0',
+            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+              ? '#43B5C0'
+              : '#333333',
           );
         },
       );

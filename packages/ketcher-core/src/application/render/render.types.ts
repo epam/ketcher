@@ -4,6 +4,7 @@ import type {
   StereoColoringType,
   StereoLabelStyleType,
 } from 'application/render/restruct/generalEnumTypes';
+import type { ShowHydrogenLabels } from 'application/render/restruct/showHydrogenLabels';
 import type { UsageInMacromolecule } from './render.constants';
 
 export { UsageInMacromolecule } from './render.constants';
@@ -51,7 +52,7 @@ export type RenderOptions = {
   hideTerminalLabels: boolean;
   carbonExplicitly: boolean;
   showCharge: boolean;
-  showHydrogenLabels: string;
+  showHydrogenLabels: ShowHydrogenLabels;
   showValence: boolean;
   aromaticCircle: boolean;
   microModeScale: number;
@@ -92,6 +93,10 @@ export type RenderOptions = {
 
   stereoLabelStyle?: StereoLabelStyleType;
   colorStereogenicCenters: StereoColoringType;
+  colorOfAbsoluteCenters?: string;
+  colorOfAndCenters?: string;
+  colorOfOrCenters?: string;
+  autoFadeOfStereoLabels?: boolean;
 
   previewOpacity: number;
 

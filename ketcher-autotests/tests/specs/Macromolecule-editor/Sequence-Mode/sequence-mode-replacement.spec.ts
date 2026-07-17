@@ -1469,9 +1469,9 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
   }
 }
 
-test(`Case 4878. Replacing selected monomer with a monomer that lacks the required R1 shows a specific error message`, async () => {
+test(`Case 5331. Replacing selected monomer with a monomer that lacks the required R1 shows a specific error message`, async () => {
   /*
-    Test case: https://github.com/epam/ketcher/issues/4878
+    Test case: https://github.com/epam/ketcher/issues/5331
     Description:
       When a monomer is selected in the sequence and the user tries to replace it
       with a monomer from the library that lacks the R1 connection point needed to

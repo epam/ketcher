@@ -1,8 +1,10 @@
 import {
   DISALLOWED_MONOMER_MODIFICATION_TYPES,
+  buildIdtAliasesFromWizardInputs,
   getDisallowedModificationTypes,
   HELM_ALIAS_MAX_LENGTH,
   isValidHelmAliasLength,
+  isValidIdtAliasFormat,
 } from '../../src/utilities/monomers';
 
 describe('monomers utilities', () => {
@@ -17,6 +19,115 @@ describe('monomers utilities', () => {
       expect(
         isValidHelmAliasLength('A'.repeat(HELM_ALIAS_MAX_LENGTH + 1)),
       ).toBe(false);
+    });
+  });
+
+  describe('isValidIdtAliasFormat', () => {
+    it.each(['Sp18', '5Sp18', '/5Sp18/', 'A_b-9/', 'aZ0_-/'])(
+      'accepts valid IDT alias "%s"',
+      (alias) => {
+        expect(isValidIdtAliasFormat(alias)).toBe(true);
+      },
+    );
+
+    it.each(['Sp 18', '5Sp18*', 'has space', 'bad!', 'foo@bar'])(
+      'rejects invalid IDT alias "%s"',
+      (alias) => {
+        expect(isValidIdtAliasFormat(alias)).toBe(false);
+      },
+    );
+
+    it('accepts empty string', () => {
+      expect(isValidIdtAliasFormat('')).toBe(true);
+    });
+  });
+
+  describe('buildIdtAliasesFromWizardInputs', () => {
+    it('returns undefined when all inputs are empty', () => {
+      expect(buildIdtAliasesFromWizardInputs('', '', '')).toBeUndefined();
+      expect(buildIdtAliasesFromWizardInputs()).toBeUndefined();
+    });
+
+    it('collapses matching 5/i/3 indicator forms to base only', () => {
+      expect(
+        buildIdtAliasesFromWizardInputs('5Sp18', 'iSp18', '3Sp18'),
+      ).toEqual({ base: 'Sp18' });
+      expect(
+        buildIdtAliasesFromWizardInputs('/5Sp18/', '/iSp18/', '/3Sp18/'),
+      ).toEqual({ base: 'Sp18' });
+    });
+
+    it('stores modifications for a two-position input', () => {
+      expect(buildIdtAliasesFromWizardInputs('5Phos', '', '3Phos')).toEqual({
+        base: 'Phos',
+        modifications: {
+          endpoint5: '/5Phos/',
+          endpoint3: '/3Phos/',
+        },
+      });
+    });
+
+    it('does not collapse when the common base differs', () => {
+      expect(
+        buildIdtAliasesFromWizardInputs('52AmPr', 'i2AmPr', '32AmPu'),
+      ).toEqual({
+        base: '2AmPr',
+        modifications: {
+          endpoint5: '/52AmPr/',
+          internal: '/i2AmPr/',
+          endpoint3: '/32AmPu/',
+        },
+      });
+    });
+
+    it('derives base from a single 5′ position', () => {
+      expect(buildIdtAliasesFromWizardInputs('5AmMC12')).toEqual({
+        base: 'AmMC12',
+        modifications: {
+          endpoint5: '/5AmMC12/',
+        },
+      });
+    });
+
+    it('force-adds terminal slashes for slashless input', () => {
+      expect(buildIdtAliasesFromWizardInputs('5DigN', 'iDigN')).toEqual({
+        base: 'DigN',
+        modifications: {
+          endpoint5: '/5DigN/',
+          internal: '/iDigN/',
+        },
+      });
+    });
+
+    it('does not collapse rA/rA/rA (no position indicators)', () => {
+      expect(buildIdtAliasesFromWizardInputs('rA', 'rA', 'rA')).toEqual({
+        base: 'rA',
+        modifications: {
+          endpoint5: '/rA/',
+          internal: '/rA/',
+          endpoint3: '/rA/',
+        },
+      });
+    });
+
+    it('does not collapse bare position indicators to an empty base', () => {
+      expect(buildIdtAliasesFromWizardInputs('5', 'i', '3')).toEqual({
+        base: '5',
+        modifications: {
+          endpoint5: '/5/',
+          internal: '/i/',
+          endpoint3: '/3/',
+        },
+      });
+    });
+
+    it('keeps a bare 5′ indicator as a non-empty base', () => {
+      expect(buildIdtAliasesFromWizardInputs('5')).toEqual({
+        base: '5',
+        modifications: {
+          endpoint5: '/5/',
+        },
+      });
     });
   });
 

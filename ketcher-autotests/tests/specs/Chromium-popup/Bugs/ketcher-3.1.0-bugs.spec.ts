@@ -178,10 +178,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
         getAtomLocator(page, { atomLabel: 'C', atomId: 10 }),
       ).open();
       await takeEditorScreenshot(page);
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-        enableFlexMode: true,
-        goToPeptides: false,
-      });
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -332,7 +332,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 12: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip`, async () => {
+  test(`Case 12: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip`, async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5195
@@ -343,10 +345,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-      goToPeptides: false,
-    });
     await Library(page).switchToPeptidesTab();
     await Library(page).hoverMonomer(Peptide.D_OAla);
     await MonomerPreviewTooltip(page).waitForBecomeVisible();

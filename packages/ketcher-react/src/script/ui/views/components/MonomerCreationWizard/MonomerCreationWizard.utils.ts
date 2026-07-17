@@ -27,7 +27,7 @@ const getInitialValues = (
   const { label, props } = monomer.monomerItem;
   const type = props.MonomerClass ?? KetMonomerClass.CHEM;
   const symbol = props.MonomerCode ?? label;
-  const name = props.MonomerName ?? props.Name ?? symbol;
+  const name = props.MonomerFullName ?? props.Name ?? symbol;
   const naturalAnalogue = isNaturalAnalogueSupported(type)
     ? props.MonomerNaturalAnalogCode
     : '';

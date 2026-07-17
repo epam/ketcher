@@ -143,7 +143,7 @@ export function setFunctionalGroupsTooltip({
   let infoPanelData: null | InfoPanelData = null;
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups'];
   const closestCollapsibleStructures = editor.findItem(
-    event,
+    event as Event,
     checkFunctionGroupTypes,
   );
   if (closestCollapsibleStructures && event) {

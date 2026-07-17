@@ -384,7 +384,9 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     await dialog.cancel();
   });
 
-  test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async () => {
+  test('Case 7 — Expanded monomer disappears after switching back to Macromolecules mode', async ({
+    FlexCanvas: _,
+  }) => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/9137
      * Bug: https://github.com/epam/ketcher/issues/7153
@@ -405,11 +407,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * Expected Result:
      * Expanded molecule remains on canvas and does NOT disappear.
      */
-
-    // Step 1: Macro → Flex mode (popup-friendly)
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
 
     // Step 2: Load HELM
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -461,11 +458,6 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
      * Expected Result:
      * Natural analog category is NOT shown for phosphates.
      */
-
-    // Step 1: Switch to Macromolecules Flex mode
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: true,
-    });
 
     // Step 2–3: Open Library → RNA → Phosphates section
     await Library(page).openRNASection(RNASection.Phosphates);
@@ -645,11 +637,11 @@ test.describe('Bugs: ketcher-3.13.0 — Small molecules positioning rule', () =>
     // Step 3: Select the whole structure and open Create Monomer wizard
     // The molecule is centered in the full canvas, but the wizard panel covers the right ~320px.
     // Pan left so all atoms are within the visible canvas area before the wizard opens.
-    await shiftCanvas(page, -300, 0);
     await selectAllStructuresOnCanvas(page);
 
     // Step 4: Select type Nucleotide Preset
     await LeftToolbar(page).createMonomer();
+    await shiftCanvas(page, -55, 0);
 
     const dialog = CreateMonomerDialog(page);
     const presetSection = NucleotidePresetSection(page);

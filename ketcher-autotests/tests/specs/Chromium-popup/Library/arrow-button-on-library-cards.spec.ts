@@ -44,6 +44,8 @@ import {
   AttachmentPoint,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 let page: Page;
 
@@ -768,6 +770,9 @@ test.describe('Arrow button on Library cards', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+        LayoutMode.Flex,
+      );
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
         hideMacromoleculeEditorScrollBars: true,
@@ -1062,7 +1067,7 @@ test.describe('Arrow button on Library cards', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await verifyHELMExport(page, `RNA1{[moe](T)p.[moe](T)p.[moe](T)p}$$$$V2.0`);
+    await verifyHELMExport(page, `RNA1{[MOE](T)P.[MOE](T)P.[MOE](T)P}$$$$V2.0`);
   });
 
   test('Case 28: Check saving and opening monomers added by arrow button (SVG Document)', async () => {

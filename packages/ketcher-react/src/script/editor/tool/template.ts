@@ -122,7 +122,7 @@ class TemplateTool implements Tool {
   }
 
   private get closestItem() {
-    return this.editor.findItem(this.event, [
+    return this.editor.findItem(this.event as Event, [
       'atoms',
       'bonds',
       'sgroups',

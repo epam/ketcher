@@ -72,12 +72,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      *
      * Version 3.15.0
      */
-    const helmMolecule =
-      'PEPTIDE1{A}|PEPTIDE2{[-Me]}$PEPTIDE2,PEPTIDE1,1:R1-1:R1$$$V2.0';
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      helmMolecule,
+      'PEPTIDE1{A}|PEPTIDE2{[-Me]}$PEPTIDE2,PEPTIDE1,1:R1-1:R1$$$V2.0',
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     const meMonomer = getAbbreviationLocator(page, { name: '-Me' }).first();
@@ -110,11 +108,10 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      *
      * Version 3.15.0
      */
-    const helmMolecule = 'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0';
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      helmMolecule,
+      'RNA1{r(A)p.r(C)p.r(G)p}$$$$V2.0',
     );
     await CommonLeftToolbar(page).handTool();
     await page.mouse.move(600, 300);
@@ -154,7 +151,11 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await Library(page).setSearchValue('v');
     await Library(page).openRNASection(RNASection.Bases);
 
-    await expect(Library(page).rnaAccordion.getByText(/^U$/)).toBeVisible();
+    await expect(
+      Library(page).rnaTab.rnaAccordion.getByText('U', {
+        exact: true,
+      }),
+    ).toBeVisible();
   });
 
   test('Case 4 — Search using some AxoLabs aliases fails', async ({
@@ -195,7 +196,7 @@ test.describe('Bugs: ketcher-3.15.0', () => {
      *
      * Version 3.15.0
      */
-    await setMolecule(page, 'C');
+    await pasteFromClipboardAndOpenAsNewProject(page, 'C');
     await LeftToolbar(page).createMonomer();
     const commonTopRightToolbar = CommonTopRightToolbar(page);
     const topRightToolbar = TopRightToolbar(page);

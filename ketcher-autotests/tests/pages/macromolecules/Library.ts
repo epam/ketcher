@@ -21,6 +21,7 @@ type PresetsSectionLocators = {
 };
 
 type RNATabLocators = {
+  rnaAccordion: Locator;
   presetsSection: Locator & PresetsSectionLocators;
   sugarsSection: Locator;
   basesSection: Locator;
@@ -35,7 +36,6 @@ type LibraryLocators = {
   favoritesTab: Locator;
   peptidesTab: Locator;
   rnaTab: Locator & RNATabLocators;
-  rnaAccordion: Locator;
   chemTab: Locator;
 };
 
@@ -53,6 +53,7 @@ export const Library = (page: Page) => {
   const rnaTab: Locator & RNATabLocators = Object.assign(
     page.getByTestId(LibraryTab.RNA),
     {
+      rnaAccordion: page.getByTestId('rna-accordion'),
       presetsSection,
       sugarsSection: page.getByTestId(RNASection.Sugars),
       basesSection: page.getByTestId(RNASection.Bases),
@@ -68,7 +69,6 @@ export const Library = (page: Page) => {
     favoritesTab: page.getByTestId(LibraryTab.Favorites),
     peptidesTab: page.getByTestId(LibraryTab.Peptides),
     rnaTab,
-    rnaAccordion: page.getByTestId('rna-accordion'),
     chemTab: page.getByTestId(LibraryTab.CHEM),
   };
 

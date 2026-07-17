@@ -1,6 +1,7 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
+import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
 
@@ -17,6 +18,12 @@ type ZoomDropdownLocators = {
   zoomOutButton: Locator;
   zoomInButton: Locator;
   zoomDefaultButton: Locator;
+};
+
+type TurnOnMacromoleculesEditorOptions = {
+  disableChainLengthRuler?: boolean;
+  disableAutozoom?: boolean;
+  enableFlexMode?: boolean;
 };
 
 export const CommonTopRightToolbar = (page: Page) => {
@@ -103,10 +110,7 @@ export const CommonTopRightToolbar = (page: Page) => {
     },
 
     async turnOnMacromoleculesEditor(
-      options: {
-        disableChainLengthRuler?: boolean;
-        disableAutozoom?: boolean;
-      } = {
+      options: TurnOnMacromoleculesEditorOptions = {
         disableChainLengthRuler: true,
         disableAutozoom: true,
       },
@@ -128,6 +132,12 @@ export const CommonTopRightToolbar = (page: Page) => {
       await MacromoleculesTopToolbar(
         page,
       ).switchLayoutModeDropdownButton.waitFor({ state: 'visible' });
+
+      if (options.enableFlexMode) {
+        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+          LayoutMode.Flex,
+        );
+      }
 
       if (options.disableAutozoom !== false) {
         await page.evaluate(() => {

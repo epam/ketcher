@@ -18,6 +18,7 @@ import { useMemo } from 'react';
 import {
   IRnaPreset,
   KetMonomerClass,
+  MonomerItemType,
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import {
@@ -31,6 +32,9 @@ import { selectPresetsInFavorites } from 'state/rna-builder';
 import { MONOMER_TYPES, MonomerGroups } from 'src/constants';
 import { Group } from '../types';
 
+const isMonomerItem = (item: MonomerOrAmbiguousType): item is MonomerItemType =>
+  !item.isAmbiguous;
+
 const filterGroupsByMonomerClass = (
   groups: Group[],
   monomerClass: KetMonomerClass,
@@ -39,7 +43,8 @@ const filterGroupsByMonomerClass = (
     .map((group) => ({
       ...group,
       groupItems: group.groupItems.filter(
-        (item) => item.props?.MonomerClass === monomerClass,
+        (item) =>
+          isMonomerItem(item) && item.props?.MonomerClass === monomerClass,
       ),
     }))
     .filter((group) => group.groupItems.length > 0);

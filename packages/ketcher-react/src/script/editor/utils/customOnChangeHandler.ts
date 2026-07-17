@@ -14,8 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { OperationType } from 'ketcher-core';
-import type { RxnArrowMode, SimpleObjectMode } from 'ketcher-core';
+import {
+  type RxnArrowMode,
+  type SimpleObjectMode,
+  OperationType,
+} from 'ketcher-core';
 
 type OperationTypeValue = typeof OperationType[keyof typeof OperationType];
 

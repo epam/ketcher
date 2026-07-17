@@ -138,6 +138,7 @@ export const NewPresetButton = styled(StyledButton)`
   height: 24px;
   border-radius: 4px;
   font-size: 12px;
+  font-family: Arial, sans-serif;
 `;
 
 export const FilterIconButton = styled.button<{

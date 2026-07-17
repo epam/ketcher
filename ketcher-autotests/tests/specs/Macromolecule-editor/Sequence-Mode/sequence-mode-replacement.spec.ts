@@ -753,7 +753,7 @@ function addAnnotation(message: string) {
   test.info().annotations.push({ type: 'WARNING', description: message });
 }
 
-function noConnectionPointErrorMessage(missingAttachmentPoint: 'R1' | 'R2') {
+function noAttachmentPointErrorMessage(missingAttachmentPoint: 'R1' | 'R2') {
   return `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
 }
 
@@ -1076,7 +1076,7 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R2'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R2'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1143,7 +1143,7 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
           : 'R1';
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(
-        noConnectionPointErrorMessage(missingAttachmentPoint),
+        noAttachmentPointErrorMessage(missingAttachmentPoint),
       );
 
       await ErrorMessageDialog(page).close();
@@ -1182,7 +1182,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R1'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1218,7 +1218,7 @@ for (const noR2AttachmentPointReplaceMonomer of noR2AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R2'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R2'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1263,7 +1263,7 @@ for (const noR1orR2AttachmentPointReplaceMonomer of noR1orR2AttachmentPointRepla
           : 'R1';
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
       expect(errorMessage).toContain(
-        noConnectionPointErrorMessage(missingAttachmentPoint),
+        noAttachmentPointErrorMessage(missingAttachmentPoint),
       );
 
       await ErrorMessageDialog(page).close();
@@ -1302,7 +1302,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R1'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1418,7 +1418,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R1'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1456,7 +1456,7 @@ for (const noR1AttachmentPointReplaceMonomer of noR1AttachmentPointReplaceMonome
       );
 
       const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-      expect(errorMessage).toContain(noConnectionPointErrorMessage('R1'));
+      expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
       await ErrorMessageDialog(page).close();
       // skip that test if bug(s) exists
@@ -1499,7 +1499,7 @@ test(`Case 5331. Replacing selected monomer with a monomer that lacks the requir
   );
 
   const errorMessage = await ErrorMessageDialog(page).getErrorMessage();
-  expect(errorMessage).toContain(noConnectionPointErrorMessage('R1'));
+  expect(errorMessage).toContain(noAttachmentPointErrorMessage('R1'));
 
   await ErrorMessageDialog(page).close();
 });

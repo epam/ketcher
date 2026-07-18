@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 
 import { Modal } from 'components/shared/modal';
 import { Option } from 'components/shared/dropDown/dropDown';
@@ -107,7 +107,7 @@ export const Save = ({
   const [isLoading, setIsLoading] = useState(false);
   const [svgData, setSvgData] = useState<string | undefined>();
 
-  const handleSelectChange = async (fileFormat) => {
+  const handleSelectChange = async (fileFormat: SupportedFormats) => {
     setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
@@ -178,7 +178,7 @@ export const Save = ({
     }
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     setCurrentFileName(value);
   };
 
@@ -202,16 +202,19 @@ export const Save = ({
     onClose();
   };
 
-  const handleCopy = (event) => {
+  const handleCopy = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     try {
       if (isClipboardAPIAvailable()) {
         navigator.clipboard.writeText(struct);
       } else {
-        legacyCopy(event.clipboardData, {
-          'text/plain': struct,
-        });
+        legacyCopy(
+          (event.nativeEvent as unknown as ClipboardEvent).clipboardData,
+          {
+            'text/plain': struct,
+          },
+        );
       }
     } catch (e) {
       KetcherLogger.error('copyAs.js::copyAs', e);
@@ -242,7 +245,9 @@ export const Save = ({
               label="File format:"
               options={options}
               currentSelection={currentFileFormat}
-              selectionHandler={handleSelectChange}
+              selectionHandler={(value) =>
+                handleSelectChange(value as SupportedFormats)
+              }
               customStylesForExpanded={stylesForExpanded}
               testId="file-format-list"
             />

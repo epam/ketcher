@@ -652,13 +652,9 @@ function findCloseMerge(
         Map<number, number>
       >((res, srcId) => {
         const skip: SkipItem = { map, id: srcId };
-        const item = findMaps[map](
-          restruct,
-          posMap.get(srcId)!,
-          skip,
-          null,
-          options,
-        );
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const srcPos = posMap.get(srcId)!;
+        const item = findMaps[map](restruct, srcPos, skip, null, options);
 
         if (item && !selected[map].includes(item.id)) {
           res.set(srcId, item.id);

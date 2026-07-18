@@ -45,21 +45,27 @@ import {
   getBondFlipSign,
   getSign,
 } from './template.helpers';
+import type {
+  DragContext,
+  InternalTemplate,
+  TemplateToolInput,
+} from './template.types';
+import type { ClosestItemWithMap } from '../shared/closest.types';
 
 export { getAngleFromEvent, getBondFlipSign, getSign };
 
 class TemplateTool implements Tool {
   private readonly editor: Editor;
-  private readonly mode: any;
-  private readonly template: any;
+  private readonly mode: string | null;
+  private readonly template: InternalTemplate;
   private readonly findItems: Array<string>;
   public templatePreview: TemplatePreview | null;
-  private dragCtx: any;
+  private dragCtx: DragContext | undefined;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
 
-  constructor(editor: Editor, tmpl) {
+  constructor(editor: Editor, tmpl: TemplateToolInput) {
     this.editor = editor;
     this.mode = getTemplateMode(tmpl);
     this.editor.selection(null);
@@ -68,8 +74,8 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      aid: (parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
-      bid: parseInt(tmpl.bid) || 0,
+      aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
+      bid: Number(tmpl.bid) || 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -249,15 +255,16 @@ class TemplateTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: Event) {
+    const mouseEvent = event as MouseEvent;
     if (!this.dragCtx) {
       this.editor.hover(
-        this.editor.findItem(event, this.findItems),
+        this.editor.findItem(mouseEvent, this.findItems),
         null,
-        event,
+        mouseEvent as PointerEvent,
       );
 
-      this.templatePreview?.movePreview(event);
+      this.templatePreview?.movePreview(mouseEvent as PointerEvent);
 
       return;
     }
@@ -268,7 +275,7 @@ class TemplateTool implements Tool {
     }
 
     const eventPosition = CoordinateTransformation.pageToModel(
-      event,
+      mouseEvent,
       this.editor.render,
     );
     const dragCtx = this.dragCtx;
@@ -279,7 +286,7 @@ class TemplateTool implements Tool {
       const bond = this.struct.bonds.get(ci.id);
       let sign = getSign(this.struct, bond, eventPosition);
 
-      if (dragCtx.sign1 * this.template.sign > 0) {
+      if (dragCtx.sign1! * this.template.sign! > 0) {
         sign = -sign;
       }
 
@@ -294,9 +301,9 @@ class TemplateTool implements Tool {
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1 * dragCtx.sign2 > 0,
+          dragCtx.sign1! * dragCtx.sign2! > 0,
           false,
-        ) as Array<any>;
+        ) as [Action, { atoms: number[]; bonds: number[] }];
 
         dragCtx.action = action;
         this.editor.update(dragCtx.action, true);
@@ -335,7 +342,7 @@ class TemplateTool implements Tool {
     // calc angle
     let angle = vectorUtils.calcAngle(targetPos, eventPosition);
 
-    if (!event.ctrlKey) {
+    if (!mouseEvent.ctrlKey) {
       angle = vectorUtils.fracAngle(angle, null);
     }
 
@@ -388,13 +395,16 @@ class TemplateTool implements Tool {
     }
     dragCtx.action = action;
 
-    this.editor.update(dragCtx.action, true);
+    if (dragCtx.action) {
+      this.editor.update(dragCtx.action, true);
+    }
 
     // TODO: refactor after #2195 comes into effect
     if (this.targetGroupsIds.length) this.targetGroupsIds.length = 0;
   }
 
-  mouseup(event?) {
+  mouseup(event?: Event) {
+    const mouseEvent = event as MouseEvent | undefined;
     const dragCtx = this.dragCtx;
 
     if (!dragCtx) {
@@ -420,9 +430,9 @@ class TemplateTool implements Tool {
         this.template,
         ci.id,
         this.editor.event,
-        dragCtx.sign1 * dragCtx.sign2 > 0,
+        dragCtx.sign1! * dragCtx.sign2! > 0,
         true,
-      ) as Promise<any>;
+      ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
 
       promise.then(([action, pasteItems]) => {
         const mergeItems = getItemsToFuse(this.editor, pasteItems);
@@ -456,7 +466,7 @@ class TemplateTool implements Tool {
           template: this.template,
           dragCtx,
           editor: this.editor,
-          event,
+          event: mouseEvent,
         });
         return;
       }
@@ -476,7 +486,7 @@ class TemplateTool implements Tool {
         fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom }),
       );
 
-      ci = { map: 'atoms', id: sGroupPositionAtomId };
+      ci = { map: 'atoms', id: sGroupPositionAtomId, dist: 0 };
     }
 
     if (!dragCtx.action) {
@@ -486,7 +496,7 @@ class TemplateTool implements Tool {
           template: this.template,
           dragCtx,
           editor: this.editor,
-          event,
+          event: mouseEvent,
         });
         return;
       } else if (ci.map === 'atoms') {
@@ -498,12 +508,12 @@ class TemplateTool implements Tool {
             template: this.template,
             dragCtx,
             editor: this.editor,
-            event,
+            event: mouseEvent,
           });
           return;
         }
 
-        const angle = getAngleFromEvent(event, ci, restruct);
+        const angle = getAngleFromEvent(mouseEvent, ci, restruct);
 
         [action] = fromTemplateOnAtom(
           restruct,
@@ -522,9 +532,9 @@ class TemplateTool implements Tool {
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1 * dragCtx.sign2 > 0,
+          dragCtx.sign1! * dragCtx.sign2! > 0,
           true,
-        ) as Promise<any>;
+        ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
 
         promise.then(([action, pasteItems]) => {
           if (!this.isModeFunctionalGroup) {
@@ -548,7 +558,13 @@ class TemplateTool implements Tool {
     if (completeAction && !completeAction.isDummy(restruct)) {
       this.editor.update(completeAction);
     }
-    this.editor.hover(this.editor.findItem(event, null), null, event);
+    if (mouseEvent) {
+      this.editor.hover(
+        this.editor.findItem(mouseEvent, null),
+        null,
+        mouseEvent as PointerEvent,
+      );
+    }
   }
 
   cancel() {
@@ -573,10 +589,10 @@ function addOnCanvasWithoutMerge({
   event,
 }: {
   restruct: ReStruct;
-  template: Struct;
-  dragCtx;
+  template: InternalTemplate;
+  dragCtx: Pick<DragContext, 'xy0'>;
   editor: Editor;
-  event: PointerEvent;
+  event?: MouseEvent;
 }) {
   const [action] = fromTemplateOnCanvas(
     restruct,
@@ -587,25 +603,33 @@ function addOnCanvasWithoutMerge({
   );
   editor.update(action);
   editor.selection(null);
-  editor.hover(editor.findItem(event, null), null, event);
+  if (event) {
+    editor.hover(editor.findItem(event, null), null, event as PointerEvent);
+  }
   editor.event.message.dispatch({
     info: false,
   });
 }
 
-function getTemplateMode(tmpl) {
+function getTemplateMode(tmpl: TemplateToolInput): string | null {
   if (tmpl.mode) {
     return tmpl.mode;
   }
 
-  if (['Functional Groups', 'Salts and Solvents'].includes(tmpl.props?.group)) {
+  if (
+    tmpl.props?.group &&
+    ['Functional Groups', 'Salts and Solvents'].includes(tmpl.props.group)
+  ) {
     return MODES.FG;
   }
 
   return null;
 }
 
-function getTargetAtomId(struct: Struct, ci): number | void {
+function getTargetAtomId(
+  struct: Struct,
+  ci: ClosestItemWithMap,
+): number | void {
   if (ci.map === 'atoms') {
     return ci.id;
   }

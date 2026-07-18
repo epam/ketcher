@@ -34,7 +34,9 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
+import type { ReStruct } from 'application/render';
 import type { MultitailArrow } from 'domain/entities/multitailArrow';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -54,14 +56,19 @@ type CreatedItems = {
   multitailArrows: number[];
 };
 
+type PasteItems = {
+  atoms: number[];
+  bonds: number[];
+};
+
 export function fromPaste(
-  restruct,
-  pstruct,
-  point,
+  restruct: ReStruct,
+  pstruct: Struct,
+  point: Vec2,
   angle = 0,
   isPreview = false,
   needMoveFromTopLeftPoint = false,
-): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+): [Action, PasteItems, CreatedItems] {
   const xy0 = needMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
@@ -69,13 +76,13 @@ export function fromPaste(
 
   const action = new Action();
 
-  const aidMap = new Map();
-  const fridMap = new Map();
+  const aidMap = new Map<number, number>();
+  const fridMap = new Map<number, number>();
 
-  const pasteItems = {
+  const pasteItems: PasteItems = {
     // only atoms and bonds now
-    atoms: [] as number[],
-    bonds: [] as number[],
+    atoms: [],
+    bonds: [],
   };
 
   const items: CreatedItems = {
@@ -90,19 +97,27 @@ export function fromPaste(
   };
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment) && !pstruct.isAtomFromMacromolecule(aid)) {
-      fridMap.set(
-        atom.fragment,
-        (
-          action.addOp(
-            new FragmentAdd(null, atom.fragment.properties).perform(restruct),
-          ) as FragmentAdd
-        ).frid,
-      );
+    const fragmentId = atom.fragment;
+
+    if (
+      fragmentId != null &&
+      !fridMap.has(fragmentId) &&
+      !pstruct.isAtomFromMacromolecule(aid)
+    ) {
+      const fragmentAdd = action.addOp(
+        new FragmentAdd(
+          null,
+          pstruct.frags.get(fragmentId)?.properties,
+        ).perform(restruct),
+      ) as FragmentAdd;
+
+      if (fragmentAdd.frid !== null) {
+        fridMap.set(fragmentId, fragmentAdd.frid);
+      }
     }
 
     const tmpAtom = Object.assign(atom.clone(), {
-      fragment: fridMap.get(atom.fragment),
+      fragment: fragmentId == null ? fragmentId : fridMap.get(fragmentId),
     });
     const operation = new AtomAdd(
       tmpAtom,
@@ -126,19 +141,28 @@ export function fromPaste(
   pstruct.frags.forEach((frag, frid) => {
     if (!frag) return;
     if (frag.properties) {
+      const newFragmentId = fridMap.get(frid);
+
+      if (newFragmentId === undefined) return;
+
       action.addOp(
-        new FragmentSetProperties(fridMap.get(frid), frag.properties).perform(
+        new FragmentSetProperties(newFragmentId, frag.properties).perform(
           restruct,
         ),
       );
     }
-    frag.stereoAtoms.forEach((aid) =>
+    frag.stereoAtoms.forEach((aid) => {
+      const newFragmentId = fridMap.get(frid);
+      const newStereoAtomId = aidMap.get(aid);
+
+      if (newFragmentId === undefined || newStereoAtomId === undefined) return;
+
       action.addOp(
-        new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
+        new FragmentAddStereoAtom(newFragmentId, newStereoAtomId).perform(
           restruct,
         ),
-      ),
-    );
+      );
+    });
   });
 
   pstruct.bonds.forEach((bond) => {
@@ -163,7 +187,7 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
-    let attachmentPoints;
+    let attachmentPoints: ReadonlyArray<SGroupAttachmentPoint>;
     try {
       attachmentPoints = sg.cloneAttachmentPoints(aidMap);
     } catch (e) {
@@ -257,11 +281,13 @@ export function fromPaste(
 
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((__frag, frid) => {
-      action.addOp(
-        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct),
-      );
+      const newFragmentId = fridMap.get(frid);
+
+      if (newFragmentId === undefined) return;
+
+      action.addOp(new RGroupFragment(rgid, newFragmentId).perform(restruct));
     });
-    const ifThen = pstruct.rgroups.get(rgid).ifthen;
+    const ifThen = rg.ifthen;
     const newRgId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
     action
       .mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))

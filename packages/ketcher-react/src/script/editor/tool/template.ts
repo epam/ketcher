@@ -76,6 +76,7 @@ class TemplateTool implements Tool {
     this.template = {
       aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: Number(tmpl.bid) || 0,
+      sign: 0,
     };
 
     this.templatePreview = new TemplatePreview(
@@ -234,6 +235,8 @@ class TemplateTool implements Tool {
     this.dragCtx = {
       xy0: CoordinateTransformation.pageToModel(event, this.editor.render),
       item: this.editor.findItem(this.event, this.findItems),
+      sign1: 0,
+      sign2: 0,
     };
 
     const dragCtx = this.dragCtx;
@@ -255,16 +258,15 @@ class TemplateTool implements Tool {
     }
   }
 
-  mousemove(event: Event) {
-    const mouseEvent = event as MouseEvent;
+  mousemove(event: MouseEvent) {
     if (!this.dragCtx) {
       this.editor.hover(
-        this.editor.findItem(mouseEvent, this.findItems),
+        this.editor.findItem(event, this.findItems),
         null,
-        mouseEvent as PointerEvent,
+        event as PointerEvent,
       );
 
-      this.templatePreview?.movePreview(mouseEvent as PointerEvent);
+      this.templatePreview?.movePreview(event as PointerEvent);
 
       return;
     }
@@ -275,7 +277,7 @@ class TemplateTool implements Tool {
     }
 
     const eventPosition = CoordinateTransformation.pageToModel(
-      mouseEvent,
+      event,
       this.editor.render,
     );
     const dragCtx = this.dragCtx;
@@ -286,7 +288,7 @@ class TemplateTool implements Tool {
       const bond = this.struct.bonds.get(ci.id);
       let sign = getSign(this.struct, bond, eventPosition);
 
-      if (dragCtx.sign1! * this.template.sign! > 0) {
+      if (dragCtx.sign1 * this.template.sign > 0) {
         sign = -sign;
       }
 
@@ -301,7 +303,7 @@ class TemplateTool implements Tool {
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1! * dragCtx.sign2! > 0,
+          dragCtx.sign1 * dragCtx.sign2 > 0,
           false,
         ) as [Action, { atoms: number[]; bonds: number[] }];
 
@@ -342,7 +344,7 @@ class TemplateTool implements Tool {
     // calc angle
     let angle = vectorUtils.calcAngle(targetPos, eventPosition);
 
-    if (!mouseEvent.ctrlKey) {
+    if (!event.ctrlKey) {
       angle = vectorUtils.fracAngle(angle, null);
     }
 
@@ -430,7 +432,7 @@ class TemplateTool implements Tool {
         this.template,
         ci.id,
         this.editor.event,
-        dragCtx.sign1! * dragCtx.sign2! > 0,
+        dragCtx.sign1 * dragCtx.sign2 > 0,
         true,
       ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
 
@@ -535,7 +537,7 @@ class TemplateTool implements Tool {
           this.template,
           ci.id,
           this.editor.event,
-          dragCtx.sign1! * dragCtx.sign2! > 0,
+          dragCtx.sign1 * dragCtx.sign2 > 0,
           true,
         ) as Promise<[Action, { atoms: number[]; bonds: number[] }]>;
 

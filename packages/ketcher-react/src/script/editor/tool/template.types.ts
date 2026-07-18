@@ -27,7 +27,8 @@ export interface InternalTemplate {
   molecule?: Struct;
   xy0?: Vec2;
   angle0?: number;
-  sign?: number;
+  /** Sign of the template relative to its attachment bond (+1 or -1). 0 when no bond is present. */
+  sign: number;
 }
 
 /**
@@ -60,8 +61,10 @@ export type MergeItems = {
 export interface DragContext {
   xy0: Vec2;
   item?: ClosestItemWithMap | null;
-  sign1?: number;
-  sign2?: number;
+  /** Sign of the bond relative to the molecule (+1 or -1). 0 until set in mousedown. */
+  sign1: number;
+  /** Sign of the bond relative to the template (+1 or -1). 0 until set in mousedown. */
+  sign2: number;
   action?: Action | null;
   mergeItems?: MergeItems;
   angle?: number;

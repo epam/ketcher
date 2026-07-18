@@ -74,7 +74,6 @@
   },
   "dependencies": {
     "@playwright/test": "^1.59.1",
-    "ajv": "^8.20.0",
     "minimatch": "^10.2.4",
     "playwright": "^1.59.1",
     "playwright-core": "^1.59.1",

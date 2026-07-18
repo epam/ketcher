@@ -74,6 +74,9 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
+      // Number() safely converts string | number | undefined: returns NaN for
+      // undefined/non-numeric strings, which the || operator then discards in
+      // favour of the fallback — identical behaviour to the original parseInt().
       aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: Number(tmpl.bid) || 0,
       sign: 0,

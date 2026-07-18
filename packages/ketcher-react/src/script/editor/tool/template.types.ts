@@ -34,15 +34,21 @@ export interface InternalTemplate {
 /**
  * The raw template input received by TemplateTool as the `opts` argument.
  * This covers all callers: TemplateDialog, AbbreviationLookup, TemplatesList, etc.
+ *
+ * Only properties accessed inside template.ts are declared here; additional
+ * properties on the passed object are ignored (TypeScript structural typing
+ * allows callers to pass richer objects such as `Template` from TemplateTable).
  */
 export interface TemplateToolInput {
   struct: Struct;
+  /** Attachment-atom id override (string or number from SDF; falls back to SGroup attachment). */
   aid?: string | number;
+  /** Attachment-bond id override (string or number from SDF). */
   bid?: string | number;
   mode?: string;
   props?: {
+    /** Template group name (e.g. "Functional Groups", "Salts and Solvents"). */
     group?: string;
-    [key: string]: string | number | undefined;
   };
 }
 

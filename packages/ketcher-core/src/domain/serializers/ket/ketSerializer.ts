@@ -105,8 +105,29 @@ import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
+import type { KetFileImageNode } from 'domain/entities/image';
+import type {
+  KetFileMultitailArrowNode,
+} from 'domain/entities/multitailArrow';
+import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-function parseNode(node: any, struct: any) {
+type KetMicromoleculeNode = Record<string, unknown>;
+
+interface IKetMicromoleculeFile {
+  header?: { moleculeName?: string };
+  root: {
+    nodes: Record<string, KetMicromoleculeNode>;
+  };
+  [key: string]: unknown;
+}
+
+interface IKetMicromoleculeSerializedResult {
+  root: { nodes: unknown[] };
+  header?: unknown;
+  [key: string]: unknown;
+}
+
+function parseNode(node: KetMicromoleculeNode, struct: Struct) {
   const type = node.type;
   switch (type) {
     case 'arrow':
@@ -122,7 +143,9 @@ function parseNode(node: any, struct: any) {
       const currentStruct = moleculeToStruct(node);
       if (node.stereoFlagPosition) {
         const fragment = currentStruct.frags.get(0)!;
-        fragment.stereoFlagPosition = new Vec2(node.stereoFlagPosition);
+        fragment.stereoFlagPosition = new Vec2(
+          node.stereoFlagPosition as ConstructorParameters<typeof Vec2>[0],
+        );
       }
 
       currentStruct.mergeInto(struct);
@@ -137,11 +160,14 @@ function parseNode(node: any, struct: any) {
       break;
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
-      multitailArrowToStruct(node, struct);
+      multitailArrowToStruct(
+        node as KetFileNode<KetFileMultitailArrowNode>,
+        struct,
+      );
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node, struct);
+      imageToStruct(node as KetFileImageNode, struct);
       break;
     }
     default:
@@ -173,13 +199,16 @@ export class KetSerializer implements Serializer<Struct> {
     return KetSerializer.fillStruct(ket);
   }
 
-  private static fillStruct(ket) {
+  private static fillStruct(ket: IKetMicromoleculeFile) {
     const resultingStruct = new Struct();
     const nodes = ket.root.nodes;
 
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
-      else if (nodes[i].$ref) parseNode(ket[nodes[i].$ref], resultingStruct);
+      else if (nodes[i].$ref) {
+        const ref = nodes[i].$ref as string;
+        parseNode(ket[ref] as KetMicromoleculeNode, resultingStruct);
+      }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';
 
@@ -187,7 +216,7 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   serializeMicromolecules(struct: Struct, monomer?: BaseMonomer): string {
-    const result: any = {
+    const result: IKetMicromoleculeSerializedResult = {
       root: {
         nodes: [],
       },

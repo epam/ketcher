@@ -250,9 +250,10 @@ class BondTool implements Tool {
     let endPos;
 
     if (hasItem && dragCtx.item?.map === 'atoms') {
+      const item = dragCtx.item;
       ({ beginAtom, endAtom } = this.resolveAtomDragTarget(
         event,
-        dragCtx,
+        item,
         molecule,
       ));
     } else {
@@ -284,12 +285,10 @@ class BondTool implements Tool {
 
   private resolveAtomDragTarget(
     event: PointerEvent,
-    dragCtx: BondToolDragContext,
+    item: BondItemRef,
     molecule: Struct,
   ) {
     const editor = this.editor;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const item = dragCtx.item!; // Item is guaranteed by the caller's guard check
     const beginAtom = item.id;
     let endAtom: BondItemRef | null = editor.findItem(
       event,
@@ -415,10 +414,15 @@ class BondTool implements Tool {
     if (beginPos) {
       endPos = vectorUtils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
     } else {
-      const atom = rnd.ctab.molecule.atoms.get(beginAtom as number);
+      if (typeof beginAtom !== 'number') {
+        return { endAtom: newEndAtom, endPos };
+      }
+      const atom = rnd.ctab.molecule.atoms.get(beginAtom);
+      if (!atom) {
+        return { endAtom: newEndAtom, endPos };
+      }
       endPos = vectorUtils.calcNewAtomPos(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        atom!.pp.get_xy0(),
+        atom.pp.get_xy0(),
         xy1,
         event.ctrlKey,
       );

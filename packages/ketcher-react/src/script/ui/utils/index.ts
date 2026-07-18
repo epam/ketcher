@@ -59,13 +59,21 @@ export function filterLib<T extends LibraryItem>(
 ): GroupedLibrary<T> {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
+  const matches = (value?: string) => {
+    if (!value) {
+      return false;
+    }
+
+    return re.test(greekify(value));
+  };
+
   return flow(
     _filter(
       (item: T) =>
         !trimmedFilter ||
-        re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group || '')) ||
-        re.test(greekify(item.props.abbreviation || '')),
+        matches(item.struct.name) ||
+        matches(item.props.group) ||
+        matches(item.props.abbreviation),
     ),
     reduce((res: GroupedLibrary<T>, item: T) => {
       const group = item.props.group || '';
@@ -107,7 +115,9 @@ export const getSelectOptionsFromSchema = (
   const enumValues = Array.isArray(schema?.enum)
     ? schema.enum.filter(
         (value): value is string | number | boolean =>
-          ['string', 'number', 'boolean'].includes(typeof value),
+          typeof value === 'string' ||
+          typeof value === 'number' ||
+          typeof value === 'boolean',
       )
     : [];
 

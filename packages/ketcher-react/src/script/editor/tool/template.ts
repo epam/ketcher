@@ -74,9 +74,11 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined;
     this.template = {
-      // Number() safely converts string | number | undefined: returns NaN for
-      // undefined/non-numeric strings, which the || operator then discards in
-      // favour of the fallback — identical behaviour to the original parseInt().
+      // Number() is used instead of parseInt() because tmpl.aid/bid are typed
+      // as string | number | undefined, and TypeScript's parseInt() signature
+      // only accepts string. Number() handles all three input variants and
+      // returns NaN for undefined/non-numeric strings, which the || operator
+      // discards in favour of the fallback — identical runtime behaviour.
       aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: Number(tmpl.bid) || 0,
       sign: 0,
@@ -263,6 +265,10 @@ class TemplateTool implements Tool {
 
   mousemove(event: MouseEvent) {
     if (!this.dragCtx) {
+      // editor.hover and movePreview require PointerEvent; in practice all
+      // mouse-based tool events are PointerEvent at runtime (PointerEvent
+      // extends MouseEvent). The Tool interface uses the base Event type for
+      // compatibility, so we cast here.
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,

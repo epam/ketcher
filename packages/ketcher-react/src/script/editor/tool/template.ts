@@ -111,7 +111,7 @@ class TemplateTool implements Tool {
     const bond = frag.bonds.get(this.template.bid);
     if (bond && !this.isModeFunctionalGroup) {
       // template location sign against attachment bond
-      this.template.sign = getSign(frag, bond, this.template.xy0);
+      this.template.sign = getSign(frag, bond, this.template.xy0) as 0 | 1 | -1;
       this.findItems.push('bonds');
     }
 
@@ -258,7 +258,7 @@ class TemplateTool implements Tool {
       const bond = this.struct.bonds.get(ci.id)!;
 
       // calculate default template flip
-      dragCtx.sign1 = getBondFlipSign(this.struct, bond);
+      dragCtx.sign1 = getBondFlipSign(this.struct, bond) as 1 | -1;
       dragCtx.sign2 = this.template.sign;
     }
   }
@@ -306,7 +306,7 @@ class TemplateTool implements Tool {
           dragCtx.action.perform(this.editor.render.ctab);
         } // undo previous action
 
-        dragCtx.sign2 = sign;
+        dragCtx.sign2 = sign as 0 | 1 | -1;
         const [action, pasteItems] = fromTemplateOnBondAction(
           this.editor.render.ctab,
           this.template,

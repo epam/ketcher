@@ -13,7 +13,7 @@ import { ChemSequenceItemRenderer } from './ChemSequenceItemRenderer';
 import { PhosphateSequenceItemRenderer } from './PhosphateSequenceItemRenderer';
 import { NucleotideSequenceItemRenderer } from './NucleotideSequenceItemRenderer';
 import { EmptySequenceItemRenderer } from './EmptySequenceItemRenderer';
-import type { BaseMonomerRenderer } from '../BaseMonomerRenderer';
+import { BaseMonomerRenderer } from '../BaseMonomerRenderer';
 import type { BaseSequenceItemRenderer } from './BaseSequenceItemRenderer';
 import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
 import { UnresolvedMonomerSequenceItemRenderer } from './UnresolvedMonomerSequenceItemRenderer';
@@ -25,10 +25,6 @@ import type { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
-
-type SequenceNodeRendererClass = new (
-  ...args: unknown[]
-) => BaseSequenceItemRenderer;
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -43,71 +39,92 @@ export class SequenceNodeRendererFactory {
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
     previousRowsWithAntisense = 0,
   ): BaseSequenceItemRenderer {
-    let RendererClass: SequenceNodeRendererClass;
+    const monomerSize = renderer?.monomerSize ?? { width: 0, height: 0 };
+    const scaledMonomerPosition =
+      renderer?.scaledMonomerPosition ??
+      BaseMonomerRenderer.getScaledMonomerPosition(
+        node.monomer.position,
+        monomerSize,
+      );
 
-    switch (node.constructor) {
-      case Nucleotide:
-        RendererClass =
-          NucleotideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      case Nucleoside:
-        RendererClass =
-          NucleosideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      case EmptySequenceNode:
-        RendererClass =
-          EmptySequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      case BackBoneSequenceNode:
-        RendererClass =
-          BackBoneSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      case LinkerSequenceNode:
-        RendererClass =
-          ChemSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      case AmbiguousMonomerSequenceNode:
-        RendererClass =
-          AmbiguousSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-        break;
-      default:
-        switch (node.monomer.constructor) {
-          case Phosphate:
-            RendererClass =
-              PhosphateSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-            break;
-          case Peptide:
-            RendererClass =
-              PeptideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-            break;
-          case UnresolvedMonomer:
-            RendererClass =
-              UnresolvedMonomerSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-            break;
-          case UnsplitNucleotide:
-            RendererClass =
-              UnsplitNucleotideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-            break;
-          case Chem:
-          default:
-            RendererClass =
-              ChemSequenceItemRenderer as unknown as SequenceNodeRendererClass;
-            break;
-        }
+    const createRenderer = <
+      TNode extends SequenceNode,
+      TRenderer extends BaseSequenceItemRenderer,
+      TRendererNode extends TNode,
+    >(
+      RendererClass: new (
+        node: TNode,
+        firstMonomerInChainPosition: Vec2,
+        monomerIndexInChain: number,
+        isLastMonomerInChain: boolean,
+        chain: Chain,
+        nodeIndexOverall: number,
+        editingNodeIndexOverall: number,
+        monomerSize: { width: number; height: number },
+        scaledMonomerPosition: Vec2,
+        twoStrandedNode: ITwoStrandedChainItem,
+        previousRowsWithAntisense?: number,
+      ) => TRenderer,
+      rendererNode: TRendererNode,
+    ): BaseSequenceItemRenderer =>
+      new RendererClass(
+        rendererNode,
+        firstMonomerInChainPosition,
+        monomerIndexInChain,
+        isLastMonomerInChain,
+        chain,
+        nodeIndexOverall,
+        editingNodeIndexOverall,
+        monomerSize,
+        scaledMonomerPosition,
+        twoStrandedNode,
+        previousRowsWithAntisense,
+      ) as BaseSequenceItemRenderer;
+
+    if (node instanceof Nucleotide) {
+      return createRenderer(NucleotideSequenceItemRenderer, node);
     }
 
-    return new RendererClass(
-      node,
-      firstMonomerInChainPosition,
-      monomerIndexInChain,
-      isLastMonomerInChain,
-      chain,
-      nodeIndexOverall,
-      editingNodeIndexOverall,
-      renderer?.monomerSize,
-      renderer?.scaledMonomerPosition,
-      twoStrandedNode,
-      previousRowsWithAntisense,
-    );
+    if (node instanceof Nucleoside) {
+      return createRenderer(NucleosideSequenceItemRenderer, node);
+    }
+
+    if (node instanceof EmptySequenceNode) {
+      return createRenderer(EmptySequenceItemRenderer, node);
+    }
+
+    if (node instanceof BackBoneSequenceNode) {
+      return createRenderer(BackBoneSequenceItemRenderer, node);
+    }
+
+    if (node instanceof LinkerSequenceNode) {
+      return createRenderer(ChemSequenceItemRenderer, node);
+    }
+
+    if (node instanceof AmbiguousMonomerSequenceNode) {
+      return createRenderer(AmbiguousSequenceItemRenderer, node);
+    }
+
+    if (node.monomer instanceof Phosphate) {
+      return createRenderer(PhosphateSequenceItemRenderer, node);
+    }
+
+    if (node.monomer instanceof Peptide) {
+      return createRenderer(PeptideSequenceItemRenderer, node);
+    }
+
+    if (node.monomer instanceof UnresolvedMonomer) {
+      return createRenderer(UnresolvedMonomerSequenceItemRenderer, node);
+    }
+
+    if (node.monomer instanceof UnsplitNucleotide) {
+      return createRenderer(UnsplitNucleotideSequenceItemRenderer, node);
+    }
+
+    if (node.monomer instanceof Chem) {
+      return createRenderer(ChemSequenceItemRenderer, node);
+    }
+
+    return createRenderer(ChemSequenceItemRenderer, node);
   }
 }

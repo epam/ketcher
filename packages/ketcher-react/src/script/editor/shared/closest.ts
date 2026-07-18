@@ -45,7 +45,7 @@ type FindMapFn = (
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
 
-const findMaps = {
+const findMaps: Record<string, FindMapFn> = {
   atoms: findClosestAtom,
   bonds: findClosestBond,
   enhancedFlags: findClosestEnhancedFlag,
@@ -275,8 +275,8 @@ function findClosestBond(
 function findClosestEnhancedFlag(
   restruct: ReStruct,
   pos: Vec2,
-  _skip: unknown,
-  _minDist: unknown,
+  _skip: SkipItem | null,
+  _minDist: number | null,
   options: ClosestFunctionOptions,
 ) {
   let minDist;
@@ -405,8 +405,8 @@ function findClosestRGroup(
 function findClosestRgroupAttachmentPoints(
   restruct: ReStruct,
   cursorPosition: Vec2,
-  _skip: unknown,
-  minDistToOtherItems: number | null | undefined,
+  _skip: SkipItem | null,
+  minDistToOtherItems: number | null,
 ) {
   let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
   /** @type {number | undefined} */
@@ -564,13 +564,7 @@ function findClosestItem(
 
   const closestItem = maps.reduce<ClosestItemWithMap | null>((res, mp) => {
     const minDist = res?.dist ?? null;
-    const item = (findMaps[mp as keyof typeof findMaps] as FindMapFn)(
-      restruct,
-      pos,
-      skip,
-      minDist,
-      options,
-    );
+    const item = findMaps[mp](restruct, pos, skip, minDist, options);
 
     if (item !== null) {
       const enrichedItem: ClosestItemWithMap = {
@@ -658,20 +652,15 @@ function findCloseMerge(
         Map<number, number>
       >((res, srcId) => {
         const skip: SkipItem = { map, id: srcId };
-        const item = (findMaps[map as keyof typeof findMaps] as FindMapFn)(
+        const item = findMaps[map](
           restruct,
-          posMap.get(srcId) as Vec2,
+          posMap.get(srcId)!,
           skip,
           null,
           options,
         );
 
-        if (
-          item &&
-          !(selected as unknown as Record<string, number[]>)[map].includes(
-            item.id,
-          )
-        ) {
+        if (item && !selected[map].includes(item.id)) {
           res.set(srcId, item.id);
         }
 

@@ -19,6 +19,7 @@ export interface SkipItem {
 export interface SelectedItems {
   atoms: number[];
   bonds: number[];
+  [key: string]: number[];
 }
 
 export interface MergeResult {

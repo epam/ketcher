@@ -27,13 +27,13 @@ import { ifDef } from 'utilities';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
 
-type KetObject = Record<string, unknown>;
+type KetPropertyMap = Record<string, unknown>;
 
 export type KetMolecule = {
   type: 'molecule';
-  atoms: KetObject[];
-  bonds?: KetObject[];
-  sgroups?: KetObject[];
+  atoms: KetPropertyMap[];
+  bonds?: KetPropertyMap[];
+  sgroups?: KetPropertyMap[];
   stereoFlagPosition?: unknown;
   properties?: unknown;
 };
@@ -104,7 +104,7 @@ export function moleculeToKet(
   return ketMolecule;
 }
 
-function atomToKet(source: AtomForKet, monomer?: BaseMonomer): KetObject {
+function atomToKet(source: AtomForKet, monomer?: BaseMonomer): KetPropertyMap {
   const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
     {};
 
@@ -120,7 +120,11 @@ function atomToKet(source: AtomForKet, monomer?: BaseMonomer): KetObject {
         : source.label,
     );
     // reaction
-    ifDef(result, 'mapping', Number.parseInt(String(source.aam), 10), 0);
+    const mapping =
+      typeof source.aam === 'number'
+        ? source.aam
+        : Number.parseInt(source.aam ?? '', 10);
+    ifDef(result, 'mapping', mapping, 0);
   } else if (source.atomList) {
     result.type = 'atom-list';
     ifDef(result, 'elements', source.atomList.labelList());
@@ -163,7 +167,7 @@ function atomToKet(source: AtomForKet, monomer?: BaseMonomer): KetObject {
   return result;
 }
 
-function rglabelToKet(source: AtomForKet): KetObject {
+function rglabelToKet(source: AtomForKet): KetPropertyMap {
   const result = {
     type: 'rg-label',
   };
@@ -182,8 +186,8 @@ function rglabelToKet(source: AtomForKet): KetObject {
   return result;
 }
 
-function bondToKet(source: Bond): KetObject {
-  const result: KetObject = {};
+function bondToKet(source: Bond): KetPropertyMap {
+  const result: KetPropertyMap = {};
   if (source.customQuery) {
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
@@ -200,7 +204,7 @@ function bondToKet(source: Bond): KetObject {
 }
 
 function sgroupToKet(struct: Struct, source: SGroup) {
-  const result: KetObject = {};
+  const result: KetPropertyMap = {};
 
   ifDef(result, 'type', source.type);
   ifDef(result, 'atoms', source.atoms);
@@ -265,7 +269,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
 }
 
 function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
-  const result: KetObject = {};
+  const result: KetPropertyMap = {};
 
   ifDef(result, 'attachmentAtom', source.atomId);
   ifDef(result, 'leavingAtom', source.leaveAtomId);

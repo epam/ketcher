@@ -35,6 +35,7 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
+type ClosestAtomResult = { id: number; dist: number } | null;
 
 export function atomGetAttr(
   restruct: ReStruct,
@@ -248,13 +249,10 @@ export function atomForNewBond(
 
   v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-  const closestAtom = closest.atom(restruct, v, null, 0.1) as {
-    id: number;
-    dist: number;
-  } | null;
-  const a = closestAtom === null ? { label: 'C' } : closestAtom.id;
+  const closestAtom = closest.atom(restruct, v, null, 0.1) as ClosestAtomResult;
+  const atomIdOrProps = closestAtom === null ? { label: 'C' } : closestAtom.id;
 
-  return { atom: a, pos: v };
+  return { atom: atomIdOrProps, pos: v };
 }
 
 export function getRelSGroupsBySelection(

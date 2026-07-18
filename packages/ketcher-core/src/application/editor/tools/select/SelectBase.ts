@@ -108,6 +108,10 @@ abstract class SelectBase implements BaseTool {
     this.updateRotationView();
   };
 
+  private static getRendererFromEvent<T>(event: MouseEvent): T | undefined {
+    return (event.target as { __data__?: T } | null)?.__data__;
+  }
+
   constructor(protected readonly editor: CoreEditor) {
     this.destroy();
     this.rotationHandleUnsubscribe = RotationView.subscribeRotationHandle(
@@ -1174,8 +1178,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mouseOverDrawingEntity(event: MouseEvent): void {
-    const renderer = (event.target as { __data__?: BaseRenderer } | null)
-      ?.__data__;
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
     if (!renderer) {
       return;
     }
@@ -1187,8 +1190,7 @@ abstract class SelectBase implements BaseTool {
   }
 
   mouseLeaveDrawingEntity(event: MouseEvent): void {
-    const renderer = (event.target as { __data__?: BaseRenderer } | null)
-      ?.__data__;
+    const renderer = SelectBase.getRendererFromEvent<BaseRenderer>(event);
     if (!renderer) {
       return;
     }
@@ -1205,11 +1207,10 @@ abstract class SelectBase implements BaseTool {
       return;
     }
 
-    const renderer = (
-      event.target as {
-        __data__?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
-      } | null
-    )?.__data__;
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
     if (!renderer) {
       return;
     }
@@ -1222,11 +1223,10 @@ abstract class SelectBase implements BaseTool {
   }
 
   public mouseLeavePolymerBond(event: MouseEvent): void {
-    const renderer = (
-      event.target as {
-        __data__?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
-      } | null
-    )?.__data__;
+    const renderer =
+      SelectBase.getRendererFromEvent<DeprecatedFlexModeOrSnakeModePolymerBondRenderer>(
+        event,
+      );
     if (!renderer?.polymerBond) {
       return;
     }

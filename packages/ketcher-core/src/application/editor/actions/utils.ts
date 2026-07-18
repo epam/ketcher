@@ -47,14 +47,17 @@ export function atomGetAttr(
 }
 
 export function atomGetDegree(restruct: ReStruct, aid: number) {
+  // aid is always a valid atom id within this restruct
   return restruct.atoms.get(aid)!.a.neighbors.length;
 }
 
 export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
+  // atomId is always a valid atom id within this restruct
   return Array.from(restruct.atoms.get(atomId)!.a.sgs);
 }
 
 export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
+  // id is always a valid atom id within this restruct
   return restruct.molecule.atoms.get(id)!.pp;
 }
 
@@ -237,6 +240,7 @@ export function atomForNewBond(
         bond?.type === Bond.PATTERN.TYPE.SINGLE);
 
     if (shallBe180DegToPrevBond) {
+      // prevBondId is non-null here: shallBe180DegToPrevBond requires prevBond which requires prevBondId
       const prevBondAngle = restruct.molecule.bonds.get(prevBondId!)!.angle;
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI;

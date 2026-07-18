@@ -186,7 +186,7 @@ export const initHotKeys = (
     }
   });
 
-  return keyNorm(hotKeys) as Record<string, string | string[]>;
+  return normalizeKeyMap(hotKeys);
 };
 
 const lookup = (map: Record<string, string>, event: KeyboardEvent) => {

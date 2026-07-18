@@ -32,7 +32,7 @@ export class SGroupDataMove extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { d, id } = this.data;
-    if (id === undefined || !d) return;
+    if (id === undefined || d === undefined) return;
 
     const { sgroups } = restruct.molecule;
 

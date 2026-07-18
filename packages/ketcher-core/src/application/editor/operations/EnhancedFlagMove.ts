@@ -34,7 +34,7 @@ export class EnhancedFlagMove extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { frid, p } = this.data;
-    if (frid === undefined || !p) return;
+    if (frid === undefined || p === undefined) return;
 
     const fragment = restruct.molecule.frags.get(frid);
     if (!fragment) return;

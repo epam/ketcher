@@ -36,7 +36,7 @@ export class LoopMove extends BaseOperation {
     // but we have to somehow move the aromatic ring,
     // which is associated with the loop, rather than with any of the bonds
     const { id, d } = this.data;
-    if (id === undefined || !d) return;
+    if (id === undefined || d === undefined) return;
 
     const reloop = restruct.reloops.get(id);
 

@@ -36,7 +36,7 @@ export class RxnArrowMove extends Base {
 
   execute(restruct: ReStruct): void {
     const { id, d, noinvalidate } = this.data;
-    if (id === undefined || !d) return;
+    if (id === undefined || d === undefined) return;
 
     const struct = restruct.molecule;
     const item = struct.rxnArrows.get(id);

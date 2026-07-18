@@ -33,7 +33,7 @@ export class BondMove extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { bid, d } = this.data;
-    if (bid === undefined || !d) return;
+    if (bid === undefined || d === undefined) return;
 
     const bond = restruct.bonds.get(bid);
     if (!bond) return;

@@ -304,7 +304,7 @@ describe('Atom', () => {
     it('should return false if atom has rgLabel', () => {
       const paramsWithRgLabel = {
         ...hydrogenParams,
-        rglabel: 'test',
+        rglabel: 1,
       };
 
       const atom = new Atom(paramsWithRgLabel);

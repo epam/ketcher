@@ -39,7 +39,6 @@ export interface KetAtomNode {
   selected?: boolean;
   stereoLabel?: string | null;
   stereoParity?: number;
-  weight?: number;
   ringBondCount?: number;
   substitutionCount?: number;
   unsaturatedAtom?: boolean;

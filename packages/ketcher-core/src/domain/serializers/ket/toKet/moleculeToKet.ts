@@ -97,9 +97,7 @@ function atomToKet(source: Atom, monomer?: BaseMonomer): KetAtomNode {
       'label',
       source.label === 'R#' && monomer
         ? monomer.monomerItem.props.MonomerCaps?.[
-            getAttachmentPointLabelWithBinaryShift(
-              source.rglabel as unknown as number,
-            )
+            getAttachmentPointLabelWithBinaryShift(source.rglabel ?? 0)
           ]
         : source.label,
     );
@@ -156,7 +154,7 @@ function rglabelToKet(source: Atom): KetRgLabelNode {
   ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
-  const refsToRGroups = fromRlabel(source.rglabel as unknown as number).map(
+  const refsToRGroups = fromRlabel(source.rglabel ?? 0).map(
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);

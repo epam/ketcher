@@ -1007,6 +1007,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     );
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await verifyFileExport(
       page,
       'Molfiles-V3000/monomers-connected-to-microstructures-expected.mol',

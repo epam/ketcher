@@ -19,6 +19,7 @@ import React from 'react';
 export interface SchemaProperty {
   title?: string;
   type?: string;
+  description?: string;
   enum?: unknown[];
   enumNames?: string[];
   default?: unknown;
@@ -26,6 +27,7 @@ export interface SchemaProperty {
   pattern?: string;
   maxLength?: number;
   invalidMessage?: string | ((data: unknown) => string);
+  items?: SchemaProperty;
 }
 
 export interface FormSchema {

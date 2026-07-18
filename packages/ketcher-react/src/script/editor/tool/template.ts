@@ -75,10 +75,13 @@ class TemplateTool implements Tool {
       | undefined;
     this.template = {
       // Number() is used instead of parseInt() because tmpl.aid/bid are typed
-      // as string | number | undefined, and TypeScript's parseInt() signature
-      // only accepts string. Number() handles all three input variants and
-      // returns NaN for undefined/non-numeric strings, which the || operator
-      // discards in favour of the fallback — identical runtime behaviour.
+      // as string | number | undefined, and TypeScript's parseInt() only accepts
+      // string. Number() coerces all three variants: Number(undefined) → NaN,
+      // Number(n: number) → n, Number(s: string) → parsed value or NaN.
+      // NaN is falsy so the || operator falls through to the fallback, giving
+      // identical runtime behaviour to the original parseInt() call.
+      // Note: Number("") returns 0, but aid/bid values come from numeric SDF
+      // fields and will never be an empty string in practice.
       aid: (Number(tmpl.aid) || sGroup?.getAttachmentAtomId()) ?? 0,
       bid: Number(tmpl.bid) || 0,
       sign: 0,
@@ -265,10 +268,13 @@ class TemplateTool implements Tool {
 
   mousemove(event: MouseEvent) {
     if (!this.dragCtx) {
-      // editor.hover and movePreview require PointerEvent; in practice all
-      // mouse-based tool events are PointerEvent at runtime (PointerEvent
-      // extends MouseEvent). The Tool interface uses the base Event type for
-      // compatibility, so we cast here.
+      // editor.hover and movePreview are typed as requiring PointerEvent, but
+      // they only access MouseEvent-compatible properties (clientX/clientY and
+      // findItem coordinates). The Tool interface uses the base Event type for
+      // compatibility so we cast here. In practice all tool mouse events are
+      // dispatched as PointerEvent at runtime (PointerEvent extends MouseEvent),
+      // and no PointerEvent-specific properties (pointerId, pressure, etc.) are
+      // accessed by the callee, making this cast safe.
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,
@@ -498,8 +504,10 @@ class TemplateTool implements Tool {
       );
 
       // Reassign ci to the attachment atom of the replaced functional group so
-      // the template is placed on that atom. dist is required by ClosestItemWithMap
-      // but is not used in the subsequent atom-merge code path.
+      // the template is placed on that atom. dist is 0 because this atom IS
+      // the merge target (zero distance from the intended attachment point);
+      // ClosestItemWithMap requires dist but it is not read in the atom-merge
+      // code path that follows.
       ci = { map: 'atoms', id: sGroupPositionAtomId, dist: 0 };
     }
 

@@ -60,6 +60,7 @@ import {
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
   type ExportImageParams,
+  type KetcherApiSettings,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -70,6 +71,7 @@ import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { ISettingsService, Settings } from 'application/settings';
 import { getStructure } from 'application/getStructure';
+import type { RenderOptions } from './render';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -82,7 +84,15 @@ const allowedApiSettings = {
   ignoreChiralFlag: 'ignoreChiralFlag',
   disableQueryElements: 'disableQueryElements',
   bondThickness: 'bondThickness',
-};
+} as const;
+
+type AllowedApiSettings = typeof allowedApiSettings;
+type AllowedApiSetting = keyof AllowedApiSettings;
+type AllowedEditorSetting = AllowedApiSettings[AllowedApiSetting];
+type KetcherSettingsAliasMap = Partial<AllowedApiSettings>;
+type KetcherSetOptionsPayload = Partial<
+  Record<AllowedEditorSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   inputFormat: ChemicalMimeType.MonomerLibrary,
@@ -173,17 +183,18 @@ export class Ketcher {
   }
 
   // TEMP.: getting only dearomatize-on-load setting
-  get settings() {
-    const options = this.editor.options();
-    const result = Object.entries(allowedApiSettings).reduce(
-      (acc, [apiSetting, clientSetting]) => {
-        if (clientSetting in options) {
-          return { ...acc, [apiSetting]: clientSetting };
-        }
-        return acc;
-      },
-      {},
-    );
+  get settings(): KetcherSettingsAliasMap {
+    const options = this.editor.options() as Partial<RenderOptions>;
+    const result = (
+      Object.entries(allowedApiSettings) as Array<
+        [AllowedApiSetting, AllowedEditorSetting]
+      >
+    ).reduce<KetcherSettingsAliasMap>((acc, [apiSetting, clientSetting]) => {
+      if (clientSetting in options) {
+        return { ...acc, [apiSetting]: clientSetting };
+      }
+      return acc;
+    }, {});
 
     if (!Object.keys(result).length) {
       throw new Error('Allowed options are not provided');
@@ -196,17 +207,25 @@ export class Ketcher {
     this.#editor = editor;
   }
 
-  // TODO: create options type
-  setSettings(settings: Record<string, string | boolean>) {
+  setSettings(settings: KetcherApiSettings): void {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');
     }
-    const options = {};
-    for (const [apiSetting, clientSetting] of Object.entries(
+    const options: KetcherSetOptionsPayload = {};
+    const assignAllowedSetting = (apiSetting: AllowedApiSetting) => {
+      const clientSetting = allowedApiSettings[apiSetting];
+      const value = settings[apiSetting];
+
+      if (value !== undefined) {
+        options[clientSetting] = value;
+      }
+    };
+
+    for (const apiSetting of Object.keys(
       allowedApiSettings,
-    )) {
-      options[clientSetting] = settings[apiSetting];
+    ) as Array<AllowedApiSetting>) {
+      assignAllowedSetting(apiSetting);
     }
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
@@ -218,7 +237,7 @@ export class Ketcher {
         !!settings.persistMonomerLibraryUpdates;
     }
 
-    return this.editor.setOptions(JSON.stringify(options));
+    this.editor.setOptions(JSON.stringify(options));
   }
 
   getSmiles(isExtended = false): Promise<string> {
@@ -731,7 +750,7 @@ export class Ketcher {
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
     const editor = provideEditorInstance();
     const fileName = 'ketcher';
-    let blobPart;
+    let blobPart: string | undefined;
 
     if (format === 'svg' && editor?.canvas) {
       blobPart = getSvgFromDrawnStructures(
@@ -834,7 +853,7 @@ export class Ketcher {
         );
 
         dataInKetFormat = convertResult.struct;
-      } catch (error) {
+      } catch (error: unknown) {
         const originalMessage =
           error instanceof Error ? error.message : String(error);
         throw new MonomerLibraryConvertError(

@@ -318,9 +318,6 @@ export async function waitForViewOnlyModeState(
 export async function disableQueryElements(page: Page): Promise<void> {
   return await page.evaluate(() => {
     return window.ketcher.setSettings({
-      // TODO fix types for setSettings in Ketcher-core
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       disableQueryElements: ['Pol', 'CYH', 'CXH'],
     });
   });

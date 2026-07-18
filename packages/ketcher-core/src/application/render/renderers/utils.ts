@@ -8,10 +8,10 @@ import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 export function getRenderedStructuresBbox(drawingEntities?: DrawingEntity[]) {
-  let left;
-  let right;
-  let top;
-  let bottom;
+  let left!: number;
+  let right!: number;
+  let top!: number;
+  let bottom!: number;
   const editor = provideEditorInstance();
 
   (

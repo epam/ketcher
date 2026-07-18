@@ -783,7 +783,7 @@ export class Struct {
     );
   }
 
-  getCoordBoundingBoxObj(): CoordBoundingBox | null {
+  getCoordBoundingBoxObj(): CoordBoundingBox {
     let bb: CoordBoundingBox | null = null;
     function extend(pp: Vec2) {
       if (!bb) {
@@ -800,7 +800,12 @@ export class Struct {
     this.atoms.forEach((atom) => {
       extend(atom.pp);
     });
-    return bb;
+    return (
+      bb ?? {
+        min: new Vec2(0, 0),
+        max: new Vec2(1, 1),
+      }
+    );
   }
 
   getBondLengthData() {
@@ -1096,9 +1101,9 @@ export class Struct {
       of bonds for planar graphs.
    */
 
-    let hbIdNext = 0;
-    let c = 0;
-    let loop: LoopHalfBondIds = [];
+    let hbIdNext: number;
+    let c: number;
+    let loop: LoopHalfBondIds;
     this.halfBonds.forEach((hb, hbId) => {
       if (hb.loop !== -1) return;
 

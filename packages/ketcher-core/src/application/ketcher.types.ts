@@ -23,7 +23,7 @@ export type UpdateMonomersLibraryParams = {
   needDispatchLibraryUpdateEvent?: boolean;
 };
 
-type KetcherApiSettingsValueByKey = {
+type PublicApiSettingsValueMap = {
   'general.dearomatize-on-load': RenderOptions['dearomatize-on-load'];
   ignoreChiralFlag: RenderOptions['ignoreChiralFlag'];
   disableQueryElements: RenderOptions['disableQueryElements'];
@@ -31,7 +31,7 @@ type KetcherApiSettingsValueByKey = {
 };
 
 export type KetcherApiSettings = Partial<{
-  [Key in keyof KetcherApiSettingsValueByKey]: KetcherApiSettingsValueByKey[Key];
+  [Key in keyof PublicApiSettingsValueMap]: PublicApiSettingsValueMap[Key];
 }> & {
   disableCustomQuery?: boolean;
   persistMonomerLibraryUpdates?: boolean;

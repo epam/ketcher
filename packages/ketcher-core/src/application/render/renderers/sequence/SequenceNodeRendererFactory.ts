@@ -26,6 +26,10 @@ import { BackBoneSequenceItemRenderer } from 'application/render/renderers/seque
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
+type SequenceNodeRendererClass = new (
+  ...args: unknown[]
+) => BaseSequenceItemRenderer;
+
 export class SequenceNodeRendererFactory {
   static fromNode(
     node: SequenceNode,
@@ -39,44 +43,55 @@ export class SequenceNodeRendererFactory {
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
     previousRowsWithAntisense = 0,
   ): BaseSequenceItemRenderer {
-    let RendererClass;
+    let RendererClass: SequenceNodeRendererClass;
 
     switch (node.constructor) {
       case Nucleotide:
-        RendererClass = NucleotideSequenceItemRenderer;
+        RendererClass =
+          NucleotideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       case Nucleoside:
-        RendererClass = NucleosideSequenceItemRenderer;
+        RendererClass =
+          NucleosideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       case EmptySequenceNode:
-        RendererClass = EmptySequenceItemRenderer;
+        RendererClass =
+          EmptySequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       case BackBoneSequenceNode:
-        RendererClass = BackBoneSequenceItemRenderer;
+        RendererClass =
+          BackBoneSequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       case LinkerSequenceNode:
-        RendererClass = ChemSequenceItemRenderer;
+        RendererClass =
+          ChemSequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       case AmbiguousMonomerSequenceNode:
-        RendererClass = AmbiguousSequenceItemRenderer;
+        RendererClass =
+          AmbiguousSequenceItemRenderer as unknown as SequenceNodeRendererClass;
         break;
       default:
         switch (node.monomer.constructor) {
           case Phosphate:
-            RendererClass = PhosphateSequenceItemRenderer;
+            RendererClass =
+              PhosphateSequenceItemRenderer as unknown as SequenceNodeRendererClass;
             break;
           case Peptide:
-            RendererClass = PeptideSequenceItemRenderer;
+            RendererClass =
+              PeptideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
             break;
           case UnresolvedMonomer:
-            RendererClass = UnresolvedMonomerSequenceItemRenderer;
+            RendererClass =
+              UnresolvedMonomerSequenceItemRenderer as unknown as SequenceNodeRendererClass;
             break;
           case UnsplitNucleotide:
-            RendererClass = UnsplitNucleotideSequenceItemRenderer;
+            RendererClass =
+              UnsplitNucleotideSequenceItemRenderer as unknown as SequenceNodeRendererClass;
             break;
           case Chem:
           default:
-            RendererClass = ChemSequenceItemRenderer;
+            RendererClass =
+              ChemSequenceItemRenderer as unknown as SequenceNodeRendererClass;
             break;
         }
     }

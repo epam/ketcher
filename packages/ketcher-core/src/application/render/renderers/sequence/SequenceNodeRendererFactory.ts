@@ -27,7 +27,7 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import type { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 const DEFAULT_MONOMER_SIZE = { width: 0, height: 0 };
-const createDefaultScaledMonomerPosition = () => new Vec2(0, 0);
+const DEFAULT_SCALED_MONOMER_POSITION = new Vec2(0, 0);
 
 type SequenceNodeRendererConstructor<
   TNode extends SequenceNode,
@@ -61,15 +61,14 @@ export class SequenceNodeRendererFactory {
   ): BaseSequenceItemRenderer {
     const monomerSize = renderer?.monomerSize ?? DEFAULT_MONOMER_SIZE;
     const scaledMonomerPosition =
-      renderer?.scaledMonomerPosition ?? createDefaultScaledMonomerPosition();
+      renderer?.scaledMonomerPosition ?? DEFAULT_SCALED_MONOMER_POSITION;
 
     const createRenderer = <
       TNode extends SequenceNode,
       TRenderer extends BaseSequenceItemRenderer,
-      TSpecificNode extends TNode,
     >(
       RendererClass: SequenceNodeRendererConstructor<TNode, TRenderer>,
-      rendererNode: TSpecificNode,
+      rendererNode: TNode,
     ): BaseSequenceItemRenderer =>
       new RendererClass(
         rendererNode,
@@ -83,7 +82,7 @@ export class SequenceNodeRendererFactory {
         scaledMonomerPosition,
         twoStrandedNode,
         previousRowsWithAntisense,
-      ) as BaseSequenceItemRenderer;
+      );
 
     if (node instanceof Nucleotide) {
       return createRenderer(NucleotideSequenceItemRenderer, node);

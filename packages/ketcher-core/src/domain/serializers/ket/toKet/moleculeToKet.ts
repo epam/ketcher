@@ -45,8 +45,10 @@ type AtomForKet = Atom & {
   weight?: number | null;
 };
 
-function fromRlabel(rg: AtomForKet['rglabel'] | number | null | undefined) {
-  const normalizedRglabel = Number(rg);
+function fromRlabel(
+  rglabel: AtomForKet['rglabel'] | number | null | undefined,
+) {
+  const normalizedRglabel = Number(rglabel);
   if (!Number.isFinite(normalizedRglabel)) {
     return [];
   }
@@ -109,13 +111,13 @@ function atomToKet(source: AtomForKet, monomer?: BaseMonomer): KetPropertyMap {
     {};
 
   if (source.label !== 'L#') {
-    const sourceRglabel = Number(source.rglabel);
+    const numericRglabel = Number(source.rglabel);
     ifDef(
       result,
       'label',
       source.label === 'R#' && monomer
         ? monomer.monomerItem.props.MonomerCaps?.[
-            getAttachmentPointLabelWithBinaryShift(sourceRglabel)
+            getAttachmentPointLabelWithBinaryShift(numericRglabel)
           ]
         : source.label,
     );

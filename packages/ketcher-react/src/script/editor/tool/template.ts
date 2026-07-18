@@ -486,6 +486,9 @@ class TemplateTool implements Tool {
         fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom }),
       );
 
+      // Reassign ci to the attachment atom of the replaced functional group so
+      // the template is placed on that atom. dist is required by ClosestItemWithMap
+      // but is not used in the subsequent atom-merge code path.
       ci = { map: 'atoms', id: sGroupPositionAtomId, dist: 0 };
     }
 

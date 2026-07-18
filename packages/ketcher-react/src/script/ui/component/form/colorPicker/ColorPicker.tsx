@@ -19,6 +19,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
   useCallback,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -61,6 +62,15 @@ const ColorPicker = (props: Props) => {
   const paletteId = 'color-picker-' + useId();
   const clickThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
+  );
+
+  useEffect(
+    () => () => {
+      if (clickThrottleTimeoutRef.current) {
+        clearTimeout(clickThrottleTimeoutRef.current);
+      }
+    },
+    [],
   );
 
   const handleChange = useCallback(

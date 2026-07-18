@@ -124,8 +124,10 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
   return [...appliedModifiersInOrder, key].join('+');
 };
 
-const normalizeKeyMap = (map) => {
-  const copy = Object.create(null);
+const normalizeKeyMap = (
+  map: Record<string, string | string[]>,
+): Record<string, string | string[]> => {
+  const copy: Record<string, string | string[]> = Object.create(null);
 
   Object.keys(map).forEach((prop) => {
     copy[normalizeShortcut(prop)] = map[prop];
@@ -140,7 +142,9 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
 
 // TODO rename and unify after moving all hotkeys to core editor
 //  to handle all events in same way and to have same structure for all hotkey configs
-const keyNorm = (obj) => {
+const keyNorm = (
+  obj: string | KeyboardEvent | Record<string, string | string[]>,
+): string | Record<string, string | string[]> => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -163,8 +167,10 @@ const setHotKey = (
   }
 };
 
-export const initHotKeys = (actions) => {
-  const hotKeys = {};
+export const initHotKeys = (
+  actions: Record<string, { shortcut?: string | string[] }>,
+) => {
+  const hotKeys: Record<string, string | string[]> = {};
   let act;
 
   Object.keys(actions).forEach((actName) => {

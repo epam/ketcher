@@ -494,9 +494,9 @@ function CustomQueryField(props: Readonly<CustomQueryFieldProps>) {
       schema?.properties?.[name ?? '']) ??
     {};
   const { dataError, ...fieldOpts } = stateStore.field(name ?? '', onChange);
-  const handleCheckboxChange = (value: boolean) => {
+  const handleCheckboxChange = (value: unknown) => {
     onCheckboxChange?.(
-      value,
+      value as boolean,
       stateStore.props.result,
       fieldOpts.onChange,
       stateStore.updateState,

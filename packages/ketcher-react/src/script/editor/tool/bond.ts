@@ -289,17 +289,18 @@ class BondTool implements Tool {
   ) {
     const editor = this.editor;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const beginAtom = dragCtx.item!.id;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const item = dragCtx.item!; // Item is guaranteed by the caller's guard check
+    const beginAtom = item.id;
     let endAtom: BondItemRef | null = editor.findItem(
       event,
       ['atoms'],
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      dragCtx.item!,
+      item,
     ) as BondItemRef | null;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const closestSGroup = editor.findItem(event, ['functionalGroups'])!;
-    const sgroup = molecule.sgroups.get(closestSGroup?.id);
+    const closestSGroup = editor.findItem(event, ['functionalGroups']);
+    const sgroup =
+      closestSGroup != null
+        ? molecule.sgroups.get(closestSGroup.id)
+        : undefined;
 
     if (sgroup) {
       endAtom = this.adjustEndAtomForSGroup(sgroup, beginAtom, endAtom);
@@ -533,24 +534,26 @@ class BondTool implements Tool {
     But we can change our mind, then deleted bond needs to be restored
   */
   restoreBondWhenHoveringOnCanvas(event: PointerEvent) {
-    if (!this.dragCtx || !this.dragCtx.existedBond) {
+    if (!this.dragCtx) {
       return;
     }
     const dragCtx = this.dragCtx;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const existedBond = dragCtx.existedBond!;
+    if (!dragCtx.existedBond) {
+      return;
+    }
+    const existedBond = dragCtx.existedBond;
     const isHoveringOverAtom = this.editor.findItem(event, ['atoms']);
     if (!isHoveringOverAtom) {
+      if (!dragCtx.item || !dragCtx.action) {
+        return;
+      }
       const { begin, end } = existedBond;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const bondEnd = dragCtx.item!.id === begin ? end : begin;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      dragCtx.action!.mergeWith(
+      const bondEnd = dragCtx.item.id === begin ? end : begin;
+      dragCtx.action.mergeWith(
         fromBondAddition(
           this.editor.render.ctab,
           existedBond,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          dragCtx.item!.id,
+          dragCtx.item.id,
           bondEnd,
         )[0],
       );

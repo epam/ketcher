@@ -25,7 +25,6 @@ interface LibraryItem {
     group?: string;
     abbreviation?: string;
     name?: string;
-    [key: string]: unknown;
   };
 }
 
@@ -66,8 +65,7 @@ export function filterLib<T extends LibraryItem>(
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
         re.test(greekify(item.props.group || '')) ||
-        (Boolean(item.props.abbreviation) &&
-          re.test(greekify(item.props.abbreviation || ''))),
+        re.test(greekify(item.props.abbreviation || '')),
     ),
     reduce((res: GroupedLibrary<T>, item: T) => {
       const group = item.props.group || '';
@@ -110,7 +108,7 @@ export const getSelectOptionsFromSchema = (
 
   return enumValues.reduce<Array<Option>>((options, value, index) => {
     options.push({
-      value: value as Option['value'],
+      value: String(value),
       label: schema?.enumNames?.[index] ?? String(value),
     });
 

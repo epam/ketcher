@@ -169,7 +169,7 @@ const setHotKey = (
 
 export const initHotKeys = (
   actions: Record<string, { shortcut?: string | string[] }>,
-) => {
+): Record<string, string | string[]> => {
   const hotKeys: Record<string, string | string[]> = {};
   let act;
 
@@ -186,7 +186,7 @@ export const initHotKeys = (
     }
   });
 
-  return keyNorm(hotKeys);
+  return keyNorm(hotKeys) as Record<string, string | string[]>;
 };
 
 const lookup = (map: Record<string, string>, event: KeyboardEvent) => {

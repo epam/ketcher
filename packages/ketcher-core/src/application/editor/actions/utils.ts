@@ -47,15 +47,15 @@ export function atomGetAttr(
 }
 
 export function atomGetDegree(restruct: ReStruct, aid: number) {
-  return restruct.atoms.get(aid).a.neighbors.length;
+  return restruct.atoms.get(aid)!.a.neighbors.length;
 }
 
 export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
-  return Array.from(restruct.atoms.get(atomId).a.sgs);
+  return Array.from(restruct.atoms.get(atomId)!.a.sgs);
 }
 
-export function atomGetPos(restruct: ReStruct, id: number) {
-  return restruct.molecule.atoms.get(id).pp;
+export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
+  return restruct.molecule.atoms.get(id)!.pp;
 }
 
 export function findStereoAtoms(
@@ -132,17 +132,20 @@ export function atomForNewBond(
   restruct: ReStruct,
   id: number,
   bond?: Partial<BondAttributes>,
-) {
+): { atom: AtomAttributes | number; pos: Vec2 } {
   // eslint-disable-line max-statements
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = restruct.molecule.atomGetNeighbors(id);
 
-  const prevBondId = restruct.molecule.findBondId(
-    id,
-    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
-  );
-  const prevBond = restruct.molecule.bonds.get(prevBondId);
+  const firstNeighborAid = atomNeighbours.length
+    ? atomNeighbours[0]?.aid
+    : undefined;
+  const prevBondId =
+    firstNeighborAid !== undefined
+      ? restruct.molecule.findBondId(id, firstNeighborAid)
+      : null;
+  const prevBond = prevBondId !== null ? restruct.molecule.bonds.get(prevBondId) : undefined;
   let prevBondType = 1;
   if (prevBond) {
     prevBondType = prevBond.type;
@@ -234,7 +237,7 @@ export function atomForNewBond(
         bond?.type === Bond.PATTERN.TYPE.SINGLE);
 
     if (shallBe180DegToPrevBond) {
-      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle;
+      const prevBondAngle = restruct.molecule.bonds.get(prevBondId!)!.angle;
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
       } else {

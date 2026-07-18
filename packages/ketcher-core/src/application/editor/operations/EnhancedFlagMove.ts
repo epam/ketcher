@@ -23,18 +23,19 @@ import type { ReStruct } from '../../render';
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
-    frid: any;
-    p: any;
+    frid?: number;
+    p?: Vec2;
   };
 
-  constructor(fragmentId?: any, p?: any) {
+  constructor(fragmentId?: number, p?: Vec2) {
     super(OperationType.ENHANCED_FLAG_MOVE);
     this.data = { frid: fragmentId, p };
   }
 
   execute(restruct: ReStruct) {
-    const { frid } = this.data;
-    const { p } = this.data;
+    const { frid, p } = this.data;
+    if (frid === undefined || !p) return;
+
     const fragment = restruct.molecule.frags.get(frid);
     if (!fragment) return;
 

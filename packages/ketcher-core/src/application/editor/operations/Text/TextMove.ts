@@ -18,25 +18,27 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
 
 interface TextMoveData {
-  id: any;
-  d: any;
+  id?: number;
+  d?: Vec2;
   noinvalidate?: boolean;
 }
 
 export class TextMove extends BaseOperation {
   data: TextMoveData;
 
-  constructor(id: any, d: any, noinvalidate?: boolean) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.TEXT_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: ReStruct): void {
+    const { id, d, noinvalidate } = this.data;
+    if (id === undefined || !d) return;
+
     const struct = restruct.molecule;
-    const id = this.data.id;
-    const difference = this.data.d;
     const item = struct.texts.get(id);
     const renderItem = restruct.texts.get(id);
 
@@ -44,30 +46,24 @@ export class TextMove extends BaseOperation {
       return;
     }
 
-    item.position.add_(difference);
+    item.position.add_(d);
     item.setPos(renderItem.getReferencePoints());
 
     renderItem.visel.translate(
-      Scale.modelToCanvas(difference, restruct.render.options),
+      Scale.modelToCanvas(d, restruct.render.options),
     );
 
-    this.data.d = difference.negated();
+    this.data.d = d.negated();
 
-    if (!this.data.noinvalidate) {
+    if (!noinvalidate) {
       BaseOperation.invalidateItem(restruct, 'texts', id, 1);
     }
   }
 
   invert(): BaseOperation {
-    const move = new TextMove(
-      this.data.id,
-      this.data.d,
-      this.data.noinvalidate,
-    );
-
-    move.data = this.data;
-
-    return move;
+    const inverted = new TextMove();
+    inverted.data = this.data;
+    return inverted;
   }
 
   isDummy() {

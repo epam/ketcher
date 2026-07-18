@@ -17,20 +17,23 @@
 import { BaseOperation } from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
+import type { Vec2 } from 'domain/entities';
 
 export class SGroupDataMove extends BaseOperation {
   data: {
-    id: any;
-    d: any;
+    id?: number;
+    d?: Vec2;
   };
 
-  constructor(id?: any, d?: any) {
+  constructor(id?: number, d?: Vec2) {
     super(OperationType.S_GROUP_DATA_MOVE);
     this.data = { id, d };
   }
 
   execute(restruct: ReStruct) {
     const { d, id } = this.data;
+    if (id === undefined || !d) return;
+
     const { sgroups } = restruct.molecule;
 
     sgroups.get(id)!.pp?.add_(d); // eslint-disable-line no-underscore-dangle

@@ -17,44 +17,43 @@
 import Base from '../BaseOperation';
 import { OperationType } from '../OperationType';
 import { Scale } from 'domain/helpers';
+import type { ReStruct } from 'application/render';
+import type { Vec2 } from 'domain/entities';
 
 interface RxnArrowMoveData {
-  id: number;
-  d: any;
-  noinvalidate: boolean;
+  id?: number;
+  d?: Vec2;
+  noinvalidate?: boolean;
 }
 
 export class RxnArrowMove extends Base {
   data: RxnArrowMoveData;
 
-  constructor(id?: any, d?: any, noinvalidate?: any) {
+  constructor(id?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.RXN_ARROW_MOVE);
     this.data = { id, d, noinvalidate };
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
+    const { id, d, noinvalidate } = this.data;
+    if (id === undefined || !d) return;
+
     const struct = restruct.molecule;
-    const id = this.data.id;
-    const d = this.data.d;
     const item = struct.rxnArrows.get(id);
     item.pos.forEach((p) => p.add_(d));
     restruct.rxnArrows
       .get(id)
       .visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
-    if (!this.data.noinvalidate) {
+    if (!noinvalidate) {
       Base.invalidateItem(restruct, 'rxnArrows', id, 1);
     }
   }
 
   invert() {
-    const move = new RxnArrowMove(
-      this.data.id,
-      this.data.d,
-      this.data.noinvalidate,
-    );
-    move.data = this.data;
-    return move;
+    const inverted = new RxnArrowMove();
+    inverted.data = this.data;
+    return inverted;
   }
 
   isDummy() {

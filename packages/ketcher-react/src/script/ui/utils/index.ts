@@ -35,8 +35,6 @@ interface SelectOptionsSchema {
   enumNames?: string[];
 }
 
-type SelectOptionValue = string | number | boolean;
-
 const GREEK_SIMBOLS = {
   Alpha: 'A',
   alpha: 'α',
@@ -89,7 +87,7 @@ export function filterFGLib<T extends LibraryItem>(
       item.struct.name,
       item.props.abbreviation,
       item.props.name,
-    ].filter((field): field is string => Boolean(field));
+    ].filter((field): field is string => typeof field === 'string');
     return fields.some((field) => re.test(greekify(field)));
   };
   return flow(
@@ -108,7 +106,7 @@ export const getSelectOptionsFromSchema = (
 ): Array<Option> => {
   const enumValues = Array.isArray(schema?.enum)
     ? schema.enum.filter(
-        (value): value is SelectOptionValue =>
+        (value): value is string | number | boolean =>
           ['string', 'number', 'boolean'].includes(typeof value),
       )
     : [];

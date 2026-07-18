@@ -111,7 +111,11 @@ import type {
 } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 
-type KetMicromoleculeNode = Record<string, unknown>;
+type KetMicromoleculeNode = {
+  type?: string;
+  $ref?: string;
+  [key: string]: unknown;
+};
 
 interface IKetMicromoleculeFile {
   header?: { moleculeName?: string };
@@ -122,7 +126,7 @@ interface IKetMicromoleculeFile {
 }
 
 interface IKetMicromoleculeSerializedResult {
-  root: { nodes: unknown[] };
+  root: { nodes: KetMicromoleculeNode[] };
   header?: unknown;
   [key: string]: unknown;
 }
@@ -206,8 +210,7 @@ export class KetSerializer implements Serializer<Struct> {
     Object.keys(nodes).forEach((i) => {
       if (nodes[i].type) parseNode(nodes[i], resultingStruct);
       else if (nodes[i].$ref) {
-        const ref = nodes[i].$ref as string;
-        parseNode(ket[ref] as KetMicromoleculeNode, resultingStruct);
+        parseNode(ket[nodes[i].$ref!] as KetMicromoleculeNode, resultingStruct);
       }
     });
     resultingStruct.name = ket.header?.moleculeName ?? '';

@@ -71,7 +71,6 @@ import { isNumber, uniqueId } from 'lodash';
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 import type { ISettingsService, Settings } from 'application/settings';
 import { getStructure } from 'application/getStructure';
-import type { RenderOptions } from './render';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -79,19 +78,20 @@ type SetMoleculeOptions = {
   preserveCanvasPosition?: boolean;
 };
 
-const allowedApiSettings = {
-  'general.dearomatize-on-load': 'dearomatize-on-load',
-  ignoreChiralFlag: 'ignoreChiralFlag',
-  disableQueryElements: 'disableQueryElements',
-  bondThickness: 'bondThickness',
-} as const;
+const allowedApiSettings = [
+  ['general.dearomatize-on-load', 'dearomatize-on-load'],
+  ['ignoreChiralFlag', 'ignoreChiralFlag'],
+  ['disableQueryElements', 'disableQueryElements'],
+  ['bondThickness', 'bondThickness'],
+] as const;
 
-type AllowedApiSettings = typeof allowedApiSettings;
-type AllowedApiSetting = keyof AllowedApiSettings;
-type AllowedEditorSetting = AllowedApiSettings[AllowedApiSetting];
-type KetcherSettingsAliasMap = Partial<AllowedApiSettings>;
+type AllowedApiSetting = typeof allowedApiSettings[number][0];
+type AllowedClientSetting = typeof allowedApiSettings[number][1];
+type KetcherGetSettingsResult = Partial<
+  Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
 type KetcherSetOptionsPayload = Partial<
-  Record<AllowedEditorSetting, KetcherApiSettings[AllowedApiSetting]>
+  Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
 >;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
@@ -183,18 +183,17 @@ export class Ketcher {
   }
 
   // TEMP.: getting only dearomatize-on-load setting
-  get settings(): KetcherSettingsAliasMap {
-    const options = this.editor.options() as Partial<RenderOptions>;
-    const result = (
-      Object.entries(allowedApiSettings) as Array<
-        [AllowedApiSetting, AllowedEditorSetting]
-      >
-    ).reduce<KetcherSettingsAliasMap>((acc, [apiSetting, clientSetting]) => {
-      if (clientSetting in options) {
-        return { ...acc, [apiSetting]: clientSetting };
+  get settings(): KetcherGetSettingsResult {
+    const options = this.editor.options();
+    const result: KetcherGetSettingsResult = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = options[clientSetting];
+
+      if (value !== undefined) {
+        result[apiSetting] = value;
       }
-      return acc;
-    }, {});
+    }
 
     if (!Object.keys(result).length) {
       throw new Error('Allowed options are not provided');
@@ -213,19 +212,13 @@ export class Ketcher {
       throw new Error('Please provide settings');
     }
     const options: KetcherSetOptionsPayload = {};
-    const assignAllowedSetting = (apiSetting: AllowedApiSetting) => {
-      const clientSetting = allowedApiSettings[apiSetting];
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
       const value = settings[apiSetting];
 
       if (value !== undefined) {
         options[clientSetting] = value;
       }
-    };
-
-    for (const apiSetting of Object.keys(
-      allowedApiSettings,
-    ) as Array<AllowedApiSetting>) {
-      assignAllowedSetting(apiSetting);
     }
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
@@ -237,7 +230,7 @@ export class Ketcher {
         !!settings.persistMonomerLibraryUpdates;
     }
 
-    this.editor.setOptions(JSON.stringify(options));
+    return this.editor.setOptions(JSON.stringify(options));
   }
 
   getSmiles(isExtended = false): Promise<string> {

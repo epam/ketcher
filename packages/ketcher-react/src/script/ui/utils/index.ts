@@ -17,6 +17,25 @@ import _ from 'lodash';
 import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp';
 import type { Option } from '../component/form/Select';
 
+interface LibraryItem {
+  struct: {
+    name: string;
+  };
+  props: {
+    group?: string;
+    abbreviation?: string;
+    name?: string;
+    [key: string]: unknown;
+  };
+}
+
+type GroupedLibrary<T extends LibraryItem> = Record<string, T[]>;
+
+interface SelectOptionsSchema {
+  enum?: unknown[];
+  enumNames?: string[];
+}
+
 const GREEK_SIMBOLS = {
   Alpha: 'A',
   alpha: 'α',
@@ -35,51 +54,64 @@ export function greekify(str: string): string {
   return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
 }
 
-export function filterLib(lib, filter: string) {
+export function filterLib<T extends LibraryItem>(
+  lib: T[],
+  filter: string,
+): GroupedLibrary<T> {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   return flow(
     _filter(
-      (item: any) =>
+      (item: T) =>
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group)) ||
-        (item.props.abbreviation && re.test(greekify(item.props.abbreviation))),
+        re.test(greekify(item.props.group || '')) ||
+        (Boolean(item.props.abbreviation) &&
+          re.test(greekify(item.props.abbreviation || ''))),
     ),
-    reduce((res, item) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+    reduce((res: GroupedLibrary<T>, item: T) => {
+      const group = item.props.group || '';
+      if (!res[group]) res[group] = [item];
+      else res[group].push(item);
       return res;
-    }, {}),
+    }, {} as GroupedLibrary<T>),
   )(lib);
 }
 
-export function filterFGLib(lib, filter) {
+export function filterFGLib<T extends LibraryItem>(
+  lib: T[],
+  filter: string,
+): GroupedLibrary<T> {
   const trimmedFilter = filter.trim();
   const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
-  const searchFunction = (item) => {
+  const searchFunction = (item: T): boolean => {
     const fields = [
       item.struct.name,
       item.props.abbreviation,
       item.props.name,
-    ].filter(Boolean);
+    ].filter((field): field is string => Boolean(field));
     return fields.some((field) => re.test(greekify(field)));
   };
   return flow(
-    _filter((item: any) => !trimmedFilter || searchFunction(item)),
-    reduce((res, item) => {
-      if (!res[item.props.group]) res[item.props.group] = [item];
-      else res[item.props.group].push(item);
+    _filter((item: T) => !trimmedFilter || searchFunction(item)),
+    reduce((res: GroupedLibrary<T>, item: T) => {
+      const group = item.props.group || '';
+      if (!res[group]) res[group] = [item];
+      else res[group].push(item);
       return res;
-    }, {}),
+    }, {} as GroupedLibrary<T>),
   )(lib);
 }
 
-export const getSelectOptionsFromSchema = (schema): Array<Option> => {
-  return schema.enum.reduce((options, value, index) => {
+export const getSelectOptionsFromSchema = (
+  schema?: SelectOptionsSchema,
+): Array<Option> => {
+  const enumValues = Array.isArray(schema?.enum) ? schema.enum : [];
+
+  return enumValues.reduce<Array<Option>>((options, value, index) => {
     options.push({
-      value,
-      label: schema?.enumNames?.[index] ?? value,
+      value: value as Option['value'],
+      label: schema?.enumNames?.[index] ?? String(value),
     });
 
     return options;
@@ -93,16 +125,16 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
  * @param skipArguments indexes in arguments array to skip for comparison
  * @returns debounced function, which is not called with previous argument
  */
-export function memoizedDebounce(
-  func,
+export function memoizedDebounce<TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
   delay = 0,
   skipArguments: number[] = [],
 ) {
-  let lastArgs;
+  let lastArgs: TArgs | undefined;
   const debouncedFunction = _.debounce(func, delay);
-  const getArgumentsToCompare = (args) =>
+  const getArgumentsToCompare = (args?: TArgs) =>
     args?.filter((_, index: number) => !skipArguments.includes(index)) || [];
-  return function (...args) {
+  return function (...args: TArgs) {
     const lastArgsToCompare = getArgumentsToCompare(lastArgs);
     const argsToCompare = getArgumentsToCompare(args);
     if (lastArgs && _.isEqual(argsToCompare, lastArgsToCompare)) {

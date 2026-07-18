@@ -171,7 +171,7 @@ const FooterContent = ({ data, tab, isMonomerCreationWizardActive }) => {
   );
 };
 
-const EMPTY_TEMPLATES: ReadonlyArray<Template> = [];
+const EMPTY_TEMPLATES: Template[] = [];
 
 const TemplateDialog: FC<Props> = (props) => {
   const {

@@ -61,7 +61,7 @@ export class RxnArrowResize extends Base {
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0();
       const previousPos1 = item.pos[1].get_xy0();
-      let middlePoint;
+      let middlePoint: Vec2 | undefined;
 
       if (RxnArrow.isElliptical(item)) {
         [, , middlePoint] = reItem.getReferencePoints();
@@ -118,8 +118,9 @@ export class RxnArrowResize extends Base {
       }
 
       if (
-        toFixed(anchor.x) === toFixed(middlePoint?.x) &&
-        toFixed(anchor.y) === toFixed(middlePoint?.y)
+        middlePoint &&
+        toFixed(anchor.x) === toFixed(middlePoint.x) &&
+        toFixed(anchor.y) === toFixed(middlePoint.y)
       ) {
         const { angle } = reItem.getArrowParams(
           item.pos[0].x,

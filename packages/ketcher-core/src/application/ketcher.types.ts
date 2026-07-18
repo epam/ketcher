@@ -31,10 +31,8 @@ type KetcherApiSettingsValueByKey = {
 };
 
 export type KetcherApiSettings = Partial<{
-  [Key in keyof KetcherApiSettingsValueByKey]:
-    | KetcherApiSettingsValueByKey[Key]
-    | string;
+  [Key in keyof KetcherApiSettingsValueByKey]: KetcherApiSettingsValueByKey[Key];
 }> & {
-  disableCustomQuery?: boolean | string;
-  persistMonomerLibraryUpdates?: boolean | string;
+  disableCustomQuery?: boolean;
+  persistMonomerLibraryUpdates?: boolean;
 };

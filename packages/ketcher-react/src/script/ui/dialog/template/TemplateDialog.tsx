@@ -355,11 +355,11 @@ const TemplateDialog: FC<Props> = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                       <MemoizedTemplateTable
-                        templates={(
+                        templates={
                           shouldGroupBeRended
                             ? filteredTemplateLib[groupName]
                             : EMPTY_TEMPLATES
-                        ) as Template[]}
+                        }
                         onSelect={select}
                         selected={props.selected}
                         onDelete={props.onDelete}

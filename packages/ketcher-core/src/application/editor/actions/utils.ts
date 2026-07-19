@@ -35,7 +35,7 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
-type FormattedEditorSelection = Record<typeof selectionKeys[number], number[]>;
+type NormalizedEditorSelection = Record<typeof selectionKeys[number], number[]>;
 type ClosestAtom = {
   id: number;
   dist: number;
@@ -44,6 +44,7 @@ type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
 };
+// New bonds fall back to single bonds when there is no previous bond type.
 const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 
 function getReAtom(restruct: ReStruct, atomId: number) {
@@ -177,12 +178,12 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
 
 export function formatSelection(
   selection: EditorSelection,
-): FormattedEditorSelection {
-  return selectionKeys.reduce<FormattedEditorSelection>((res, key) => {
+): NormalizedEditorSelection {
+  return selectionKeys.reduce<NormalizedEditorSelection>((res, key) => {
     res[key] = selection[key] || [];
 
     return res;
-  }, {} as FormattedEditorSelection);
+  }, {} as NormalizedEditorSelection);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
@@ -202,11 +203,11 @@ export function atomForNewBond(
     : null;
   const prevBond =
     prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
-  let prevBondType: number | undefined = DEFAULT_BOND_TYPE;
+  let prevBondType = DEFAULT_BOND_TYPE;
   if (prevBond) {
     prevBondType = prevBond.type;
   } else if (bond) {
-    prevBondType = bond.type;
+    prevBondType = bond.type ?? DEFAULT_BOND_TYPE;
   }
 
   getAtomNeighbors(restruct.molecule, id).forEach((nei) => {

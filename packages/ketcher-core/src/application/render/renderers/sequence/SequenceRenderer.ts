@@ -159,7 +159,9 @@ export class SequenceRenderer {
     this.newSequenceButtons = [];
   }
 
-  private static addNewEmptyChainIfNeeded(chainBeforeNewEmptyChainIndex) {
+  private static addNewEmptyChainIfNeeded(
+    chainBeforeNewEmptyChainIndex?: number,
+  ): SequenceViewModelChain | undefined {
     if (this.sequenceViewModel.hasOnlyOneNewChain) {
       return;
     }
@@ -412,7 +414,7 @@ export class SequenceRenderer {
                 return;
               }
 
-              let bondRenderer;
+              let bondRenderer: SequenceBondRenderer;
 
               // If side connection comes from rna base then take connected sugar and draw side connection from it
               // because for rna we display only one letter instead of three
@@ -660,7 +662,7 @@ export class SequenceRenderer {
 
   private static getNodeIndexInRowByGlobalIndex(nodeIndexOverall: number) {
     let restNodes = nodeIndexOverall;
-    let nodeIndexInRow;
+    let nodeIndexInRow: number | undefined;
 
     this.nodesGroupedByRows.forEach((row) => {
       if (nodeIndexInRow === undefined && restNodes - row.length < 0) {
@@ -1160,7 +1162,7 @@ export class SequenceRenderer {
     return nodeToReturn;
   }
 
-  public static shiftArrowSelectionInEditMode(event) {
+  public static shiftArrowSelectionInEditMode(event: KeyboardEvent) {
     const editor = provideEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
@@ -1320,7 +1322,7 @@ export class SequenceRenderer {
     const editor = provideEditorInstance();
     const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
-    let previousNode;
+    let previousNode: SequenceNode | undefined;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       const nodeToCheck = twoStrandedNode.senseNode?.monomer.selected
@@ -1368,10 +1370,10 @@ export class SequenceRenderer {
   }
 
   public static getRenderedStructuresBbox() {
-    let left;
-    let right;
-    let top;
-    let bottom;
+    let left: number | undefined;
+    let right: number | undefined;
+    let top: number | undefined;
+    let bottom: number | undefined;
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       assert(
         twoStrandedNode.senseNode?.monomer.renderer instanceof
@@ -1385,6 +1387,10 @@ export class SequenceRenderer {
       top = top ? Math.min(top, nodePosition.y) : nodePosition.y;
       bottom = bottom ? Math.max(bottom, nodePosition.y) : nodePosition.y;
     });
+    assert(left !== undefined);
+    assert(right !== undefined);
+    assert(top !== undefined);
+    assert(bottom !== undefined);
     return {
       left,
       right,
@@ -1396,16 +1402,20 @@ export class SequenceRenderer {
   }
 
   public static getRendererByMonomer(monomer: BaseMonomer) {
-    let rendererToReturn;
+    let rendererToReturn: BaseSequenceItemRenderer | undefined;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
         twoStrandedNode.senseNode?.monomers.includes(monomer) ||
         twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
-        rendererToReturn =
+        const renderer =
           twoStrandedNode.senseNode?.renderer ??
           twoStrandedNode.antisenseNode?.renderer;
+
+        if (renderer instanceof BaseSequenceItemRenderer) {
+          rendererToReturn = renderer;
+        }
       }
     });
 

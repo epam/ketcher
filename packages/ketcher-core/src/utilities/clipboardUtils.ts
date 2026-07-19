@@ -12,9 +12,10 @@ const clipboardDataTypes = [
 
 type ClipboardDataType = typeof clipboardDataTypes[number];
 
-type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
+export type ModernClipboardData = ClipboardItem[];
+export type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
 
-export type ClipboardData = ClipboardItem[] | LegacyClipboardData;
+export type ClipboardData = ModernClipboardData | LegacyClipboardData;
 
 /**
  *
@@ -77,7 +78,7 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
-function isValidClipboardItem(item?: ClipboardItem): item is ClipboardItem {
+function isClipboardItem(item?: ClipboardItem): item is ClipboardItem {
   return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
 }
 
@@ -97,7 +98,7 @@ export async function getStructStringFromClipboardData(
   if (Array.isArray(data)) {
     const clipboardItem = data[0];
 
-    if (!isValidClipboardItem(clipboardItem)) {
+    if (!isClipboardItem(clipboardItem)) {
       return '';
     }
 

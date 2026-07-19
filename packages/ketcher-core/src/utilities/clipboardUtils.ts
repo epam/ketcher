@@ -60,6 +60,7 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
+// Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
 const clipboardDataTypes = [
   ChemicalMimeType.KET,
   ChemicalMimeType.Mol,
@@ -67,17 +68,21 @@ const clipboardDataTypes = [
   PLAIN_TEXT_MIME_TYPE,
 ] as const;
 
+function isValidClipboardItem(item?: ClipboardItem): item is ClipboardItem {
+  return (
+    Boolean(item) &&
+    typeof ClipboardItem !== 'undefined' &&
+    item instanceof ClipboardItem
+  );
+}
+
 export async function getStructStringFromClipboardData(
   data: ClipboardData,
 ): Promise<string> {
   if (Array.isArray(data)) {
     const clipboardItem = data[0];
 
-    if (
-      !clipboardItem ||
-      typeof ClipboardItem === 'undefined' ||
-      !(clipboardItem instanceof ClipboardItem)
-    ) {
+    if (!isValidClipboardItem(clipboardItem)) {
       return '';
     }
 
@@ -89,7 +94,6 @@ export async function getStructStringFromClipboardData(
     return structStr === '' ? '' : structStr.text();
   }
 
-  // Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
   for (const clipboardDataType of clipboardDataTypes) {
     const structStr = data[clipboardDataType];
     if (structStr) {

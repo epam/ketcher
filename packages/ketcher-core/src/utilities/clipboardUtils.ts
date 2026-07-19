@@ -55,26 +55,15 @@ export function legacyCopy(
 }
 
 export function legacyPaste(
-<<<<<<< HEAD
-  cb: ClipboardTransferData,
-  formats: string[],
-): ClipboardData {
-  const data: ClipboardData = { 'text/plain': '' };
-
-  if (!cb) {
-    return data;
-  }
-
-=======
   cb: DataTransfer | null,
-  formats: string[],
+  formats: Array<ChemicalMimeType | 'text/plain'>,
 ): ClipboardData {
   let data: LegacyClipboardData = {};
   if (!cb) return data;
   data['text/plain'] = cb.getData('text/plain');
   return formats.reduce<ClipboardData>((res, fmt) => {
     const d = cb.getData(fmt);
-    if (d) res[fmt as ChemicalMimeType | 'text/plain'] = d;
+    if (d) res[fmt] = d;
     return res;
   }, data);
 }
@@ -97,36 +86,33 @@ export async function getStructStringFromClipboardData(
 =======
   data: ClipboardData,
 ): Promise<string> {
-  const clipboardItem = Array.isArray(data) ? data[0] : undefined;
+  if (Array.isArray(data)) {
+    const clipboardItem = data[0];
 
-  if (
-    clipboardItem &&
-    typeof ClipboardItem !== 'undefined' &&
-    clipboardItem instanceof ClipboardItem
-  ) {
->>>>>>> ae183cda7d (Clean up BaseMode any types)
+    if (
+      !clipboardItem ||
+      typeof ClipboardItem === 'undefined' ||
+      !(clipboardItem instanceof ClipboardItem)
+    ) {
+      return '';
+    }
+
     const structStr =
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
       (await safelyGetMimeType(clipboardItem, 'text/plain'));
     return structStr === '' ? '' : structStr.text();
-<<<<<<< HEAD
-=======
-  } else {
-    if (Array.isArray(data)) {
-      return '';
-    }
-
-    for (const clipboardDataType of clipboardDataTypes) {
-      const structStr = data[clipboardDataType];
-      if (structStr) {
-        return structStr;
-      }
-    }
-
-    return '';
   }
+
+  for (const clipboardDataType of clipboardDataTypes) {
+    const structStr = data[clipboardDataType];
+    if (structStr) {
+      return structStr;
+    }
+  }
+
+  return '';
 }
 
 /**

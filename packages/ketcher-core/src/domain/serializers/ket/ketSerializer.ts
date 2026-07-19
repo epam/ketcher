@@ -106,9 +106,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 import type { KetFileImageNode } from 'domain/entities/image';
-import type {
-  KetFileMultitailArrowNode,
-} from 'domain/entities/multitailArrow';
+import type { KetFileMultitailArrowNode } from 'domain/entities/multitailArrow';
 import type { KetFileNode } from 'domain/serializers/serializers.types';
 
 type KetMicromoleculeNode = {
@@ -165,13 +163,13 @@ function parseNode(node: KetMicromoleculeNode, struct: Struct) {
     }
     case MULTITAIL_ARROW_SERIALIZE_KEY: {
       multitailArrowToStruct(
-        node as KetFileNode<KetFileMultitailArrowNode>,
+        node as unknown as KetFileNode<KetFileMultitailArrowNode>,
         struct,
       );
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
-      imageToStruct(node as KetFileImageNode, struct);
+      imageToStruct(node as unknown as KetFileImageNode, struct);
       break;
     }
     default:

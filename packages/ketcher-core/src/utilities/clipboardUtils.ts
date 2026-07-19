@@ -1,8 +1,10 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
-type LegacyClipboardData = Partial<
-  Record<ChemicalMimeType | 'text/plain', string>
->;
+export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
+
+type ClipboardDataType = ChemicalMimeType | typeof PLAIN_TEXT_MIME_TYPE;
+
+type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
 
 export type ClipboardData = ClipboardItem[] | LegacyClipboardData;
 
@@ -10,7 +12,7 @@ const clipboardDataTypes = [
   ChemicalMimeType.KET,
   ChemicalMimeType.Mol,
   ChemicalMimeType.Rxn,
-  'text/plain',
+  PLAIN_TEXT_MIME_TYPE,
 ] as const;
 
 /**
@@ -41,7 +43,7 @@ export function legacyCopy(
 ): void {
   if (!clipboardData) return;
   let curFmt;
-  clipboardData.setData('text/plain', data['text/plain'] ?? '');
+  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] ?? '');
   try {
     Object.keys(data).forEach((fmt) => {
       curFmt = fmt;
@@ -55,12 +57,12 @@ export function legacyCopy(
 
 export function legacyPaste(
   cb: DataTransfer | null,
-  formats: Array<ChemicalMimeType | 'text/plain'>,
+  formats: ClipboardDataType[],
 ): LegacyClipboardData {
   let data: LegacyClipboardData = {};
   if (!cb) return data;
-  data['text/plain'] = cb.getData('text/plain');
-  return formats.reduce<ClipboardData>((res, fmt) => {
+  data[PLAIN_TEXT_MIME_TYPE] = cb.getData(PLAIN_TEXT_MIME_TYPE);
+  data = formats.reduce((res, fmt) => {
     const d = cb.getData(fmt);
     if (d) res[fmt] = d;
     return res;
@@ -100,7 +102,7 @@ export async function getStructStringFromClipboardData(
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-      (await safelyGetMimeType(clipboardItem, 'text/plain'));
+      (await safelyGetMimeType(clipboardItem, PLAIN_TEXT_MIME_TYPE));
     return structStr === '' ? '' : structStr.text();
   }
 

@@ -1,20 +1,17 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
-<<<<<<< HEAD
-export interface ClipboardData {
-  'text/plain': string;
-  [key: string]: string;
-}
+type LegacyClipboardData = Partial<
+  Record<ChemicalMimeType | 'text/plain', string>
+>;
 
-type ClipboardTransferData =
-  | Pick<DataTransfer, 'getData' | 'setData'>
-  | null
-  | undefined;
-=======
-export type ClipboardData =
-  | ClipboardItem[]
-  | Partial<Record<ChemicalMimeType | 'text/plain', string>>;
->>>>>>> ae183cda7d (Clean up BaseMode any types)
+export type ClipboardData = ClipboardItem[] | LegacyClipboardData;
+
+const clipboardDataTypes = [
+  ChemicalMimeType.KET,
+  ChemicalMimeType.Mol,
+  ChemicalMimeType.Rxn,
+  'text/plain',
+] as const;
 
 /**
  *
@@ -72,13 +69,12 @@ export function legacyPaste(
   cb: DataTransfer | null,
   formats: string[],
 ): ClipboardData {
-  if (!cb) return {};
-  let data: Partial<Record<ChemicalMimeType | 'text/plain', string>> = {};
->>>>>>> ae183cda7d (Clean up BaseMode any types)
+  let data: LegacyClipboardData = {};
+  if (!cb) return data;
   data['text/plain'] = cb.getData('text/plain');
   return formats.reduce<ClipboardData>((res, fmt) => {
     const d = cb.getData(fmt);
-    if (d) res[fmt] = d;
+    if (d) res[fmt as ChemicalMimeType | 'text/plain'] = d;
     return res;
   }, data);
 }
@@ -118,22 +114,19 @@ export async function getStructStringFromClipboardData(
 <<<<<<< HEAD
 =======
   } else {
-    return Array.isArray(data)
-      ? ''
-      : data[ChemicalMimeType.KET] ||
-          data[ChemicalMimeType.Mol] ||
-          data[ChemicalMimeType.Rxn] ||
-          data['text/plain'] ||
-          '';
->>>>>>> ae183cda7d (Clean up BaseMode any types)
-  }
+    if (Array.isArray(data)) {
+      return '';
+    }
 
-  return (
-    data[ChemicalMimeType.KET] ||
-    data[ChemicalMimeType.Mol] ||
-    data[ChemicalMimeType.Rxn] ||
-    data['text/plain']
-  );
+    for (const clipboardDataType of clipboardDataTypes) {
+      const structStr = data[clipboardDataType];
+      if (structStr) {
+        return structStr;
+      }
+    }
+
+    return '';
+  }
 }
 
 /**

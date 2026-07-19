@@ -253,7 +253,7 @@ export function atomForNewBond(
       // zig-zag
       const nei = getAtomNeighbors(restruct.molecule, id)[0];
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbors: number[] = [];
+        const neiNeighborAngles: number[] = [];
         const neiPos = atomGetPos(restruct, nei.aid);
         const neiV = Vec2.diff(pos, neiPos);
         const neiAngle = Math.atan2(neiV.y, neiV.x);
@@ -270,13 +270,13 @@ export function atomForNewBond(
 
           if (ang < 0) ang += 2 * Math.PI;
 
-          neiNeighbors.push(ang);
+          neiNeighborAngles.push(ang);
         });
-        neiNeighbors.sort((nei1, nei2) => nei1 - nei2);
+        neiNeighborAngles.sort((nei1, nei2) => nei1 - nei2);
 
         if (
-          neiNeighbors[0] <= Math.PI * 1.01 &&
-          neiNeighbors[neiNeighbors.length - 1] <= 1.01 * Math.PI
+          neiNeighborAngles[0] <= Math.PI * 1.01 &&
+          neiNeighborAngles[neiNeighborAngles.length - 1] <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }

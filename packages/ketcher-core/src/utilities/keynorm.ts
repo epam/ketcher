@@ -189,17 +189,14 @@ export const initHotKeys = (actions: HotKeyActions) => {
   return keyNormBase(hotKeys);
 };
 
-const lookup = (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
-  const shortcut = normalizeShortcut(event);
-
-  return map[shortcut];
-};
-
 type KeyNorm = typeof keyNormBase & {
-  lookup: typeof lookup;
+  lookup: (map: HotKeyMap, event: KeyboardEvent) => string[] | undefined;
 };
 
-const keyNorm = keyNormBase as KeyNorm;
-keyNorm.lookup = lookup;
+const keyNorm: KeyNorm = Object.assign(keyNormBase, {
+  lookup: (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
+    return map[normalizeShortcut(event)];
+  },
+});
 
 export { keyNorm };

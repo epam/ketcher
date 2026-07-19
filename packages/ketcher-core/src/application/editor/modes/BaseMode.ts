@@ -215,7 +215,7 @@ export abstract class BaseMode {
   }
 
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
-    let pasteCommand: Command | undefined;
+    let pasteOperations: Command | undefined;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     if (!pastedStr?.trim()) {
@@ -223,21 +223,21 @@ export abstract class BaseMode {
     }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
-      pasteCommand = this.pasteKetFormatFragment(pastedStr);
+      pasteOperations = this.pasteKetFormatFragment(pastedStr);
     } else {
-      pasteCommand = await this.pasteWithIndigoConversion(
+      pasteOperations = await this.pasteWithIndigoConversion(
         pastedStr,
         editor.sequenceTypeEnterMode,
       );
     }
 
-    if (!pasteCommand || pasteCommand.operations.length === 0) {
+    if (!pasteOperations || pasteOperations.operations.length === 0) {
       return;
     }
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
-    editor.renderersContainer.update(pasteCommand);
-    EditorHistory.getInstance(editor).update(pasteCommand);
+    editor.renderersContainer.update(pasteOperations);
+    EditorHistory.getInstance(editor).update(pasteOperations);
     editor.events.mouseLeaveSequenceItem.dispatch();
     await this.scrollForView();
   }

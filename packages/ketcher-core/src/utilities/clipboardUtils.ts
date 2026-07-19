@@ -37,12 +37,11 @@ export function legacyCopy(
   let curFmt: string | null = null;
 =======
   clipboardData: DataTransfer | null,
-  data: Record<string, string>,
+  data: LegacyClipboardData,
 ): void {
   if (!clipboardData) return;
   let curFmt;
->>>>>>> ae183cda7d (Clean up BaseMode any types)
-  clipboardData.setData('text/plain', data['text/plain']);
+  clipboardData.setData('text/plain', data['text/plain'] ?? '');
   try {
     Object.keys(data).forEach((fmt) => {
       curFmt = fmt;
@@ -57,7 +56,7 @@ export function legacyCopy(
 export function legacyPaste(
   cb: DataTransfer | null,
   formats: Array<ChemicalMimeType | 'text/plain'>,
-): ClipboardData {
+): LegacyClipboardData {
   let data: LegacyClipboardData = {};
   if (!cb) return data;
   data['text/plain'] = cb.getData('text/plain');
@@ -105,6 +104,7 @@ export async function getStructStringFromClipboardData(
     return structStr === '' ? '' : structStr.text();
   }
 
+  // Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
   for (const clipboardDataType of clipboardDataTypes) {
     const structStr = data[clipboardDataType];
     if (structStr) {

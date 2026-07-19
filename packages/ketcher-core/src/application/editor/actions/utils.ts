@@ -46,15 +46,15 @@ export function atomGetAttr(
   return atom[name];
 }
 
-export function atomGetDegree(restruct, aid) {
+export function atomGetDegree(restruct: ReStruct, aid: number) {
   return restruct.atoms.get(aid).a.neighbors.length;
 }
 
-export function atomGetSGroups(restruct, atomId: number): number[] {
+export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
   return Array.from(restruct.atoms.get(atomId).a.sgs);
 }
 
-export function atomGetPos(restruct, id) {
+export function atomGetPos(restruct: ReStruct, id: number) {
   return restruct.molecule.atoms.get(id).pp;
 }
 
@@ -88,11 +88,11 @@ export function findStereoAtoms(
   });
 }
 
-export function structSelection(struct): EditorSelection {
+export function structSelection(struct: Struct): EditorSelection {
   return selectionKeys.reduce((res, key) => {
     res[key] = Array.from(struct[key].keys());
     return res;
-  }, {});
+  }, {} as EditorSelection);
 }
 
 export function getSelectionFromStruct(struct: Struct): EditorSelection {
@@ -117,16 +117,16 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
   return selection;
 }
 
-export function formatSelection(selection): any {
+export function formatSelection(selection: EditorSelection): EditorSelection {
   return selectionKeys.reduce((res, key) => {
     res[key] = selection[key] || [];
 
     return res;
-  }, {});
+  }, {} as EditorSelection);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-export function atomForNewBond(restruct, id, bond?) {
+export function atomForNewBond(restruct: ReStruct, id: number, bond?: Bond) {
   // eslint-disable-line max-statements
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
@@ -187,7 +187,7 @@ export function atomForNewBond(restruct, id, bond?) {
       // zig-zag
       const nei = restruct.molecule.atomGetNeighbors(id)[0];
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours: Array<any> = [];
+        const neiNeighbours: number[] = [];
         const neiPos = atomGetPos(restruct, nei.aid);
         const neiV = Vec2.diff(pos, neiPos);
         const neiAngle = Math.atan2(neiV.y, neiV.x);
@@ -244,10 +244,14 @@ export function atomForNewBond(restruct, id, bond?) {
 
   v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-  let a: any = closest.atom(restruct, v, null, 0.1);
-  a = a === null ? { label: 'C' } : a.id;
+  const closestAtomResult = closest.atom(restruct, v, null, 0.1) as {
+    id: number;
+    dist: number;
+  } | null;
+  const atomIdentifier: { label: string } | number =
+    closestAtomResult === null ? { label: 'C' } : closestAtomResult.id;
 
-  return { atom: a, pos: v };
+  return { atom: atomIdentifier, pos: v };
 }
 
 export function getRelSGroupsBySelection(

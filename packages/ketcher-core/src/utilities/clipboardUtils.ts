@@ -33,7 +33,8 @@ export function legacyCopy(
 ): void {
   if (!clipboardData) return;
   let curFmt;
-  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, data[PLAIN_TEXT_MIME_TYPE] ?? '');
+  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] ?? '';
+  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, plainTextData);
   try {
     Object.keys(data).forEach((fmt) => {
       curFmt = fmt;

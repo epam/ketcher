@@ -215,7 +215,7 @@ export abstract class BaseMode {
   }
 
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
-    let pasteCommand: Command | void;
+    let pasteCommand: Command | undefined;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     if (!pastedStr?.trim()) {
@@ -242,7 +242,7 @@ export abstract class BaseMode {
     await this.scrollForView();
   }
 
-  pasteKetFormatFragment(pastedStr: string): Command | void {
+  pasteKetFormatFragment(pastedStr: string): Command | undefined {
     const editor = provideEditorInstance();
     const ketSerializer = new KetSerializer();
     const deserialisedKet =
@@ -283,7 +283,7 @@ export abstract class BaseMode {
   async pasteWithIndigoConversion(
     pastedStr: string,
     sequenceType: SequenceType,
-  ): Promise<Command | void> {
+  ): Promise<Command | undefined> {
     const editor = provideEditorInstance();
     const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {

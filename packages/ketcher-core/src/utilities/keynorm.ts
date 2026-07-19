@@ -146,10 +146,12 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
 
 // TODO rename and unify after moving all hotkeys to core editor
 //  to handle all events in same way and to have same structure for all hotkey configs
-function keyNorm(obj: KeyboardEvent): string;
-function keyNorm(obj: string): string;
-function keyNorm(obj: HotKeyMap): HotKeyMap;
-function keyNorm(obj: string | KeyboardEvent | HotKeyMap): string | HotKeyMap {
+function keyNormBase(obj: KeyboardEvent): string;
+function keyNormBase(obj: string): string;
+function keyNormBase(obj: HotKeyMap): HotKeyMap;
+function keyNormBase(
+  obj: string | KeyboardEvent | HotKeyMap,
+): string | HotKeyMap {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -184,18 +186,20 @@ export const initHotKeys = (actions: HotKeyActions) => {
     }
   });
 
-  return keyNorm(hotKeys);
+  return keyNormBase(hotKeys);
 };
 
-namespace keyNorm {
-  export const lookup = (
-    map: HotKeyMap,
-    event: KeyboardEvent,
-  ): string[] | undefined => {
-    const shortcut = normalizeShortcut(event);
+const lookup = (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
+  const shortcut = normalizeShortcut(event);
 
-    return map[shortcut];
-  };
-}
+  return map[shortcut];
+};
+
+type KeyNorm = typeof keyNormBase & {
+  lookup: typeof lookup;
+};
+
+const keyNorm = keyNormBase as KeyNorm;
+keyNorm.lookup = lookup;
 
 export { keyNorm };

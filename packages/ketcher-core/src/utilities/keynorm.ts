@@ -131,7 +131,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 };
 
 const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
-  const copy: HotKeyMap = Object.create(null);
+  const copy: HotKeyMap = {};
 
   Object.keys(map).forEach((prop) => {
     copy[normalizeShortcut(prop)] = map[prop];
@@ -187,12 +187,15 @@ export const initHotKeys = (actions: HotKeyActions) => {
   return keyNorm(hotKeys);
 };
 
-const lookup = (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
-  const shortcut = normalizeShortcut(event);
+namespace keyNorm {
+  export const lookup = (
+    map: HotKeyMap,
+    event: KeyboardEvent,
+  ): string[] | undefined => {
+    const shortcut = normalizeShortcut(event);
 
-  return shortcut in map ? map[shortcut] : undefined;
-};
+    return map[shortcut];
+  };
+}
 
-const keyNormWithLookup = Object.assign(keyNorm, { lookup });
-
-export { keyNormWithLookup as keyNorm };
+export { keyNorm };

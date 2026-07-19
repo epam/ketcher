@@ -15,6 +15,7 @@ import {
   legacyCopy,
   legacyPaste,
   normalizeError,
+  PLAIN_TEXT_MIME_TYPE,
 } from 'utilities';
 import { type SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat } from 'application/formatters/identifyStructFormat';
@@ -142,7 +143,7 @@ export abstract class BaseMode {
       navigator.clipboard.writeText(serializedKet);
     } else if (event) {
       legacyCopy(event.clipboardData, {
-        'text/plain': serializedKet,
+        [PLAIN_TEXT_MIME_TYPE]: serializedKet,
       });
       event.preventDefault();
     }
@@ -195,7 +196,9 @@ export abstract class BaseMode {
         editor.zoomToStructuresIfNeeded();
       });
     } else if (event) {
-      const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
+      const clipboardData = legacyPaste(event.clipboardData, [
+        PLAIN_TEXT_MIME_TYPE,
+      ]);
       this.pasteFromClipboard(clipboardData);
       event.preventDefault();
 
@@ -212,7 +215,7 @@ export abstract class BaseMode {
   }
 
   async pasteFromClipboard(clipboardData: ClipboardData): Promise<void> {
-    let modelChanges: Command | void;
+    let pasteCommand: Command | void;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     if (!pastedStr?.trim()) {
@@ -220,21 +223,21 @@ export abstract class BaseMode {
     }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
-      modelChanges = this.pasteKetFormatFragment(pastedStr);
+      pasteCommand = this.pasteKetFormatFragment(pastedStr);
     } else {
-      modelChanges = await this.pasteWithIndigoConversion(
+      pasteCommand = await this.pasteWithIndigoConversion(
         pastedStr,
         editor.sequenceTypeEnterMode,
       );
     }
 
-    if (!modelChanges || modelChanges.operations.length === 0) {
+    if (!pasteCommand || pasteCommand.operations.length === 0) {
       return;
     }
 
     editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
-    editor.renderersContainer.update(modelChanges);
-    EditorHistory.getInstance(editor).update(modelChanges);
+    editor.renderersContainer.update(pasteCommand);
+    EditorHistory.getInstance(editor).update(pasteCommand);
     editor.events.mouseLeaveSequenceItem.dispatch();
     await this.scrollForView();
   }

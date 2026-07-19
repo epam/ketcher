@@ -44,6 +44,7 @@ type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
 };
+const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 
 function getReAtom(restruct: ReStruct, atomId: number) {
   const atom = restruct.atoms.get(atomId);
@@ -73,7 +74,11 @@ function getAtomNeighbors(struct: Struct, atomId: number) {
 }
 
 function getBondAngle(struct: Struct, bondId: number | null) {
-  const bond = bondId === null ? undefined : struct.bonds.get(bondId);
+  if (bondId === null) {
+    throw new Error('Previous bond is required');
+  }
+
+  const bond = struct.bonds.get(bondId);
   if (!bond) {
     throw new Error(`Bond ${bondId} not found in struct`);
   }
@@ -83,7 +88,7 @@ function getBondAngle(struct: Struct, bondId: number | null) {
 
 function getAtomId(atom: number | AtomAttributes): number {
   if (typeof atom !== 'number') {
-    throw new Error('Atom id is required');
+    throw new Error('Expected atom id (number), but received atom attributes');
   }
 
   return atom;
@@ -197,7 +202,7 @@ export function atomForNewBond(
     : null;
   const prevBond =
     prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
-  let prevBondType: number | undefined = 1;
+  let prevBondType: number | undefined = DEFAULT_BOND_TYPE;
   if (prevBond) {
     prevBondType = prevBond.type;
   } else if (bond) {

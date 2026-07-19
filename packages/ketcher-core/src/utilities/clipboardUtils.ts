@@ -2,7 +2,15 @@ import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
 
-type ClipboardDataType = ChemicalMimeType | typeof PLAIN_TEXT_MIME_TYPE;
+// Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
+const clipboardDataTypes = [
+  ChemicalMimeType.KET,
+  ChemicalMimeType.Mol,
+  ChemicalMimeType.Rxn,
+  PLAIN_TEXT_MIME_TYPE,
+] as const;
+
+type ClipboardDataType = typeof clipboardDataTypes[number];
 
 type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
 
@@ -60,14 +68,6 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
-// Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
-const clipboardDataTypes = [
-  ChemicalMimeType.KET,
-  ChemicalMimeType.Mol,
-  ChemicalMimeType.Rxn,
-  PLAIN_TEXT_MIME_TYPE,
-] as const;
-
 function isValidClipboardItem(item?: ClipboardItem): item is ClipboardItem {
   return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
 }
@@ -82,12 +82,18 @@ export async function getStructStringFromClipboardData(
       return '';
     }
 
-    const structStr =
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-      (await safelyGetMimeType(clipboardItem, PLAIN_TEXT_MIME_TYPE));
-    return structStr === '' ? '' : structStr.text();
+    for (const clipboardDataType of clipboardDataTypes) {
+      const mimeType =
+        clipboardDataType === PLAIN_TEXT_MIME_TYPE
+          ? clipboardDataType
+          : `web ${clipboardDataType}`;
+      const structStr = await safelyGetMimeType(clipboardItem, mimeType);
+      if (structStr) {
+        return structStr.text();
+      }
+    }
+
+    return '';
   }
 
   for (const clipboardDataType of clipboardDataTypes) {

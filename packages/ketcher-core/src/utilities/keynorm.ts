@@ -131,7 +131,7 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
 };
 
 const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
-  const copy: HotKeyMap = {};
+  const copy = Object.create(null) as HotKeyMap;
 
   Object.keys(map).forEach((prop) => {
     copy[normalizeShortcut(prop)] = map[prop];

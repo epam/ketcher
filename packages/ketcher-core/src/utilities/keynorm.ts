@@ -30,7 +30,7 @@ export const KeyCodePrefixes = {
   Digit: 'Digit',
 };
 
-type HotKeyMap = Record<string, string | string[]>;
+type HotKeyMap = Record<string, string[]>;
 type HotKeyAction = {
   shortcut?: string | string[];
 };
@@ -130,14 +130,14 @@ const normalizeShortcut = (input: string | KeyboardEvent) => {
   return [...appliedModifiersInOrder, key].join('+');
 };
 
-const normalizeKeyMap = <T extends Record<string, unknown>>(map: T): T => {
-  const copy: Record<string, unknown> = Object.create(null);
+const normalizeKeyMap = (map: HotKeyMap): HotKeyMap => {
+  const copy: HotKeyMap = Object.create(null);
 
   Object.keys(map).forEach((prop) => {
     copy[normalizeShortcut(prop)] = map[prop];
   });
 
-  return copy as T;
+  return copy;
 };
 
 export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
@@ -149,11 +149,11 @@ export const isControlKey = (event: KeyboardEvent | PointerEvent) => {
 type KeyNorm = {
   (obj: KeyboardEvent): string;
   (obj: string): string;
-  <T extends Record<string, unknown>>(obj: T): T;
-  lookup: (map: HotKeyMap, event: KeyboardEvent) => string;
+  (obj: HotKeyMap): HotKeyMap;
+  lookup: (map: HotKeyMap, event: KeyboardEvent) => string[] | undefined;
 };
 
-const keyNorm = ((obj: string | KeyboardEvent | Record<string, unknown>) => {
+const keyNorm = ((obj: string | KeyboardEvent | HotKeyMap) => {
   if (obj instanceof KeyboardEvent) {
     return normalizeShortcut(obj);
   }
@@ -191,8 +191,8 @@ export const initHotKeys = (actions: HotKeyActions) => {
   return keyNorm(hotKeys);
 };
 
-const lookup = (map: HotKeyMap, event: KeyboardEvent): string => {
-  return map[normalizeShortcut(event)] as string;
+const lookup = (map: HotKeyMap, event: KeyboardEvent): string[] | undefined => {
+  return map[normalizeShortcut(event)];
 };
 
 keyNorm.lookup = lookup;

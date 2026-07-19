@@ -74,9 +74,9 @@ export abstract class BaseMode {
   async onKeyDown(event: KeyboardEvent) {
     if (!this.checkIfTargetIsInput(event)) {
       const hotKeys = initHotKeys(this.keyboardEventHandlers);
-      const shortcutKey = keyNorm.lookup(hotKeys, event);
+      const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
-      if (this.keyboardEventHandlers[shortcutKey]) {
+      if (shortcutKey && this.keyboardEventHandlers[shortcutKey]) {
         event.stopImmediatePropagation();
       }
     }
@@ -85,8 +85,10 @@ export abstract class BaseMode {
         const editor = provideEditorInstance();
         if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
-          const shortcutKey = keyNorm.lookup(hotKeys, event);
-          this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
+          if (shortcutKey) {
+            this.keyboardEventHandlers[shortcutKey]?.handler(event);
+          }
         }
         editor.events.mouseLeaveSequenceItem.dispatch();
         resolve();

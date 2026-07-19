@@ -8,13 +8,6 @@ type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
 
 export type ClipboardData = ClipboardItem[] | LegacyClipboardData;
 
-const clipboardDataTypes = [
-  ChemicalMimeType.KET,
-  ChemicalMimeType.Mol,
-  ChemicalMimeType.Rxn,
-  PLAIN_TEXT_MIME_TYPE,
-] as const;
-
 /**
  *
  * Legacy browser API doesn't support async operations, so it is not possible
@@ -31,6 +24,7 @@ export function legacyCopy(
   clipboardData: DataTransfer | null,
   data: LegacyClipboardData,
 ): void {
+  // ClipboardEvent.clipboardData can be null in non-standard or synthetic events.
   if (!clipboardData) return;
   let curFmt;
   const plainTextData = data[PLAIN_TEXT_MIME_TYPE] ?? '';
@@ -65,6 +59,13 @@ export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
   window.dispatchEvent(event);
 }
+
+const clipboardDataTypes = [
+  ChemicalMimeType.KET,
+  ChemicalMimeType.Mol,
+  ChemicalMimeType.Rxn,
+  PLAIN_TEXT_MIME_TYPE,
+] as const;
 
 export async function getStructStringFromClipboardData(
   data: ClipboardData,

@@ -304,7 +304,7 @@ class TemplateTool implements Tool {
       let sign: 0 | 1 | -1 = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {
-        sign = (-sign) as 0 | 1 | -1;
+        sign = -sign as 0 | 1 | -1;
       }
 
       if (sign !== dragCtx.sign2 || !dragCtx.action) {

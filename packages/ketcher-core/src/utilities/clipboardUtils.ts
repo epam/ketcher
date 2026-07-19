@@ -27,7 +27,7 @@ export function legacyCopy(
   // ClipboardEvent.clipboardData can be null in non-standard or synthetic events.
   if (!clipboardData) return;
   let curFmt;
-  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] ?? '';
+  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] || '';
   clipboardData.setData(PLAIN_TEXT_MIME_TYPE, plainTextData);
   try {
     Object.keys(data).forEach((fmt) => {
@@ -69,11 +69,7 @@ const clipboardDataTypes = [
 ] as const;
 
 function isValidClipboardItem(item?: ClipboardItem): item is ClipboardItem {
-  return (
-    Boolean(item) &&
-    typeof ClipboardItem !== 'undefined' &&
-    item instanceof ClipboardItem
-  );
+  return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
 }
 
 export async function getStructStringFromClipboardData(

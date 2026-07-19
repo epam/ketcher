@@ -1378,10 +1378,13 @@ export class SequenceRenderer {
       top = top ? Math.min(top, nodePosition.y) : nodePosition.y;
       bottom = bottom ? Math.max(bottom, nodePosition.y) : nodePosition.y;
     });
-    assert(left !== undefined);
-    assert(right !== undefined);
-    assert(top !== undefined);
-    assert(bottom !== undefined);
+    assert(
+      left !== undefined &&
+        right !== undefined &&
+        top !== undefined &&
+        bottom !== undefined,
+      'Unable to calculate bounding box: no nodes found',
+    );
     return {
       left,
       right,

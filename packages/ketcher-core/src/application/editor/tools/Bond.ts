@@ -33,7 +33,10 @@ import { Peptide } from 'domain/entities/Peptide';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
-import { AttachmentPointName, type MouseEventWithAttachmentPoint } from 'domain/types';
+import {
+  AttachmentPointName,
+  type MouseEventWithAttachmentPoint,
+} from 'domain/types';
 // FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
 //  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
 //  which probably due to a circular dependency

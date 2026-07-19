@@ -1,5 +1,6 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
+<<<<<<< HEAD
 export interface ClipboardData {
   'text/plain': string;
   [key: string]: string;
@@ -9,6 +10,11 @@ type ClipboardTransferData =
   | Pick<DataTransfer, 'getData' | 'setData'>
   | null
   | undefined;
+=======
+export type ClipboardData =
+  | ClipboardItem[]
+  | Partial<Record<ChemicalMimeType | 'text/plain', string>>;
+>>>>>>> ae183cda7d (Clean up BaseMode any types)
 
 /**
  *
@@ -23,6 +29,7 @@ export function isClipboardAPIAvailable(): boolean {
 }
 
 export function legacyCopy(
+<<<<<<< HEAD
   clipboardData: ClipboardTransferData,
   data: ClipboardData,
 ): void {
@@ -31,6 +38,13 @@ export function legacyCopy(
   }
 
   let curFmt: string | null = null;
+=======
+  clipboardData: DataTransfer | null,
+  data: Record<string, string>,
+): void {
+  if (!clipboardData) return;
+  let curFmt;
+>>>>>>> ae183cda7d (Clean up BaseMode any types)
   clipboardData.setData('text/plain', data['text/plain']);
   try {
     Object.keys(data).forEach((fmt) => {
@@ -44,6 +58,7 @@ export function legacyCopy(
 }
 
 export function legacyPaste(
+<<<<<<< HEAD
   cb: ClipboardTransferData,
   formats: string[],
 ): ClipboardData {
@@ -53,6 +68,13 @@ export function legacyPaste(
     return data;
   }
 
+=======
+  cb: DataTransfer | null,
+  formats: string[],
+): ClipboardData {
+  if (!cb) return {};
+  let data: Partial<Record<ChemicalMimeType | 'text/plain', string>> = {};
+>>>>>>> ae183cda7d (Clean up BaseMode any types)
   data['text/plain'] = cb.getData('text/plain');
   return formats.reduce<ClipboardData>((res, fmt) => {
     const d = cb.getData(fmt);
@@ -67,6 +89,7 @@ export function notifyCopyCut() {
 }
 
 export async function getStructStringFromClipboardData(
+<<<<<<< HEAD
   data: ClipboardItem[] | ClipboardData,
 ): Promise<string> {
   if (Array.isArray(data)) {
@@ -75,12 +98,34 @@ export async function getStructStringFromClipboardData(
       return '';
     }
 
+=======
+  data: ClipboardData,
+): Promise<string> {
+  const clipboardItem = Array.isArray(data) ? data[0] : undefined;
+
+  if (
+    clipboardItem &&
+    typeof ClipboardItem !== 'undefined' &&
+    clipboardItem instanceof ClipboardItem
+  ) {
+>>>>>>> ae183cda7d (Clean up BaseMode any types)
     const structStr =
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
       (await safelyGetMimeType(clipboardItem, 'text/plain'));
     return structStr === '' ? '' : structStr.text();
+<<<<<<< HEAD
+=======
+  } else {
+    return Array.isArray(data)
+      ? ''
+      : data[ChemicalMimeType.KET] ||
+          data[ChemicalMimeType.Mol] ||
+          data[ChemicalMimeType.Rxn] ||
+          data['text/plain'] ||
+          '';
+>>>>>>> ae183cda7d (Clean up BaseMode any types)
   }
 
   return (

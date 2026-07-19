@@ -30,7 +30,11 @@ import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import BracketParams from '../bracket-params';
-import type { Element as RaphaelElement, RaphaelPaper, RaphaelSet } from 'raphael';
+import type {
+  Element as RaphaelElement,
+  RaphaelPaper,
+  RaphaelSet,
+} from 'raphael';
 import type { RenderOptions } from '../render.types';
 import paperjs from 'paper';
 interface SGroupdrawBracketsOptions {

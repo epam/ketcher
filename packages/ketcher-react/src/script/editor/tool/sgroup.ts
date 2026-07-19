@@ -16,6 +16,7 @@
 
 import {
   type Pool,
+  type Bond,
   Pile,
   SgContexts,
   checkOverlapping,
@@ -45,7 +46,7 @@ const searchMaps = [
 
 class SGroupTool implements Tool {
   private readonly editor: Editor;
-  private readonly lassoHelper: any;
+  private readonly lassoHelper: LassoHelper;
   isNotActiveTool: boolean | undefined;
 
   constructor(editor) {
@@ -78,7 +79,7 @@ class SGroupTool implements Tool {
       const selectedAtoms = this.editor.selection()?.atoms;
 
       const sgroups: Pool<SGroup> = molecule.sgroups;
-      const newSelected: { atoms: Array<any>; bonds: Array<any> } = {
+      const newSelected: { atoms: number[]; bonds: number[] } = {
         atoms: [],
         bonds: [],
       };
@@ -658,7 +659,7 @@ class SGroupTool implements Tool {
       return;
     }
 
-    const newSelected: Record<string, Array<any>> = { atoms: [], bonds: [] };
+    const newSelected: { atoms: number[]; bonds: number[] } = { atoms: [], bonds: [] };
     const { atomsResult, extraAtoms } = this.processSelectedAtoms(
       selected,
       functionalGroups,
@@ -852,7 +853,7 @@ function getContextBySgroup(restruct, sgAtoms) {
   const atomSet = new Pile(sgAtoms);
 
   const sgBonds = Array.from(struct.bonds.values()).filter(
-    (bond: any) => atomSet.has(bond.begin) && atomSet.has(bond.end),
+    (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
@@ -948,7 +949,7 @@ function manyComponentsSelected(restruct, atoms) {
   return countOfSelectedComponents(restruct, atoms) > 1;
 }
 
-function countOfSelectedComponents(restruct, atoms): any {
+function countOfSelectedComponents(restruct, atoms): number {
   const atomSet = new Pile(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(

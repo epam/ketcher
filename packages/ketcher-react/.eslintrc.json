@@ -83,7 +83,6 @@
         "src/script/editor/tool/rotate-controller.ts",
         "src/script/editor/tool/rotate.ts",
         "src/script/editor/tool/select.ts",
-        "src/script/editor/tool/sgroup.ts",
         "src/script/editor/tool/simpleobject.ts",
         "src/script/editor/tool/template.ts",
         "src/script/editor/tool/text.ts",

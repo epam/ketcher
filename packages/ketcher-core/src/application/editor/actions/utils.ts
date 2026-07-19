@@ -40,20 +40,21 @@ type ClosestAtom = {
   id: number;
   dist: number;
 };
+type ClosestSkip = {
+  map: 'atoms';
+  id: number;
+} | null;
 type FindClosestAtom = (
   restruct: ReStruct,
   pos: Vec2,
-  skip: null,
+  skip: ClosestSkip,
   minDist: number,
 ) => ClosestAtom | null;
 type AtomForNewBondResult = {
   atom: number | AtomAttributes;
   pos: Vec2;
 };
-/**
- * New bonds fall back to single bonds when there is no previous bond type
- * to use as a reference.
- */
+/** Default bond type used when no previous bond type is available as a reference. */
 const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
 const findClosestAtom: FindClosestAtom = closest.atom;
 
@@ -97,7 +98,7 @@ function getBondAngle(struct: Struct, bondId: number | null) {
   return bond.angle;
 }
 
-function assertAtomIsId(atom: number | AtomAttributes): number {
+function ensureAtomId(atom: number | AtomAttributes): number {
   if (typeof atom !== 'number') {
     throw new Error('Expected atom id (number), but received atom attributes');
   }
@@ -189,20 +190,11 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
 export function formatSelection(
   selection: EditorSelection,
 ): NormalizedEditorSelection {
-  return {
-    atoms: selection.atoms || [],
-    bonds: selection.bonds || [],
-    frags: selection.frags || [],
-    sgroups: selection.sgroups || [],
-    rgroups: selection.rgroups || [],
-    rgroupAttachmentPoints: selection.rgroupAttachmentPoints || [],
-    rxnArrows: selection.rxnArrows || [],
-    rxnPluses: selection.rxnPluses || [],
-    simpleObjects: selection.simpleObjects || [],
-    texts: selection.texts || [],
-    images: selection.images || [],
-    multitailArrows: selection.multitailArrows || [],
-  };
+  return selectionKeys.reduce<NormalizedEditorSelection>((res, key) => {
+    res[key] = selection[key] || [];
+
+    return res;
+  }, {} as NormalizedEditorSelection);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
@@ -212,7 +204,7 @@ export function atomForNewBond(
   bond?: Partial<BondAttributes>,
 ): AtomForNewBondResult {
   // eslint-disable-line max-statements
-  const id = assertAtomIsId(atom);
+  const id = ensureAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = getAtomNeighbors(restruct.molecule, id);

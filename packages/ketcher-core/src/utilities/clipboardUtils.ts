@@ -1,8 +1,17 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
-export type ClipboardData =
-  | ClipboardItem[]
-  | Partial<Record<ChemicalMimeType | 'text/plain', string>>;
+type LegacyClipboardData = Partial<
+  Record<ChemicalMimeType | 'text/plain', string>
+>;
+
+export type ClipboardData = ClipboardItem[] | LegacyClipboardData;
+
+const clipboardDataTypes = [
+  ChemicalMimeType.KET,
+  ChemicalMimeType.Mol,
+  ChemicalMimeType.Rxn,
+  'text/plain',
+] as const;
 
 /**
  *
@@ -38,12 +47,12 @@ export function legacyPaste(
   cb: DataTransfer | null,
   formats: string[],
 ): ClipboardData {
-  if (!cb) return {};
-  let data: Partial<Record<ChemicalMimeType | 'text/plain', string>> = {};
+  let data: LegacyClipboardData = {};
+  if (!cb) return data;
   data['text/plain'] = cb.getData('text/plain');
   data = formats.reduce((res, fmt) => {
     const d = cb.getData(fmt);
-    if (d) res[fmt] = d;
+    if (d) res[fmt as ChemicalMimeType | 'text/plain'] = d;
     return res;
   }, data);
   return data;
@@ -71,13 +80,18 @@ export async function getStructStringFromClipboardData(
       (await safelyGetMimeType(clipboardItem, 'text/plain'));
     return structStr === '' ? '' : structStr.text();
   } else {
-    return Array.isArray(data)
-      ? ''
-      : data[ChemicalMimeType.KET] ||
-          data[ChemicalMimeType.Mol] ||
-          data[ChemicalMimeType.Rxn] ||
-          data['text/plain'] ||
-          '';
+    if (Array.isArray(data)) {
+      return '';
+    }
+
+    for (const clipboardDataType of clipboardDataTypes) {
+      const structStr = data[clipboardDataType];
+      if (structStr) {
+        return structStr;
+      }
+    }
+
+    return '';
   }
 }
 

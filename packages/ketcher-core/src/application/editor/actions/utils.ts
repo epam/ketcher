@@ -87,7 +87,7 @@ function getBondAngle(struct: Struct, bondId: number | null) {
   return bond.angle;
 }
 
-function getAtomId(atom: number | AtomAttributes): number {
+function validateAtomId(atom: number | AtomAttributes): number {
   if (typeof atom !== 'number') {
     throw new Error('Expected atom id (number), but received atom attributes');
   }
@@ -193,7 +193,7 @@ export function atomForNewBond(
   bond?: Partial<BondAttributes>,
 ): AtomForNewBondResult {
   // eslint-disable-line max-statements
-  const id = getAtomId(atom);
+  const id = validateAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
   const atomNeighbours = getAtomNeighbors(restruct.molecule, id);
@@ -253,7 +253,7 @@ export function atomForNewBond(
       // zig-zag
       const nei = getAtomNeighbors(restruct.molecule, id)[0];
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours: number[] = [];
+        const neiNeighbors: number[] = [];
         const neiPos = atomGetPos(restruct, nei.aid);
         const neiV = Vec2.diff(pos, neiPos);
         const neiAngle = Math.atan2(neiV.y, neiV.x);
@@ -270,13 +270,13 @@ export function atomForNewBond(
 
           if (ang < 0) ang += 2 * Math.PI;
 
-          neiNeighbours.push(ang);
+          neiNeighbors.push(ang);
         });
-        neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
+        neiNeighbors.sort((nei1, nei2) => nei1 - nei2);
 
         if (
-          neiNeighbours[0] <= Math.PI * 1.01 &&
-          neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
+          neiNeighbors[0] <= Math.PI * 1.01 &&
+          neiNeighbors[neiNeighbors.length - 1] <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }

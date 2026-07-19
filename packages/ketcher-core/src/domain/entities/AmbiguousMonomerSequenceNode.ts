@@ -1,4 +1,5 @@
 import type { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { KetMonomerClass } from 'domain/constants/monomers';
 
 export class AmbiguousMonomerSequenceNode {
   constructor(public monomer: AmbiguousMonomer) {}
@@ -17,6 +18,14 @@ export class AmbiguousMonomerSequenceNode {
 
   public get monomers() {
     return [this.monomer];
+  }
+
+  /**
+   * Returns true if this node contains only phosphate monomers.
+   * For ambiguous monomers, checks if the resolved monomerClass is Phosphate.
+   */
+  public get isPhosphateOnly() {
+    return this.monomer.monomerClass === KetMonomerClass.Phosphate;
   }
 
   public get renderer() {

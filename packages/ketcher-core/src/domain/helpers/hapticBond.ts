@@ -90,6 +90,46 @@ export function isSuperAttachmentPointById(struct: Struct, atomId: number) {
   return isSuperAttachmentPointAtom(atom);
 }
 
+export function isHapticBondWithAttachmentGroup(
+  struct: Struct,
+  bond?: Pick<Bond, 'type' | 'begin' | 'end'> | null,
+) {
+  if (!bond || bond.type !== Bond.PATTERN.TYPE.HAPTIC) {
+    return false;
+  }
+
+  return (
+    isSuperAttachmentPointById(struct, bond.begin) ||
+    isSuperAttachmentPointById(struct, bond.end)
+  );
+}
+
+export function getAttachmentGroupIdForHapticBondHalf(
+  struct: Struct,
+  bond: Pick<Bond, 'type' | 'begin' | 'end'> | null | undefined,
+  pointer: Vec2,
+): number | null {
+  if (!isHapticBondWithAttachmentGroup(struct, bond) || !bond) {
+    return null;
+  }
+
+  const attachmentGroupId = isSuperAttachmentPointById(struct, bond.begin)
+    ? bond.begin
+    : bond.end;
+  const otherAtomId = attachmentGroupId === bond.begin ? bond.end : bond.begin;
+  const attachmentGroup = struct.atoms.get(attachmentGroupId);
+  const otherAtom = struct.atoms.get(otherAtomId);
+
+  if (!attachmentGroup || !otherAtom) {
+    return null;
+  }
+
+  return Vec2.dist(pointer, attachmentGroup.pp) <=
+    Vec2.dist(pointer, otherAtom.pp)
+    ? attachmentGroupId
+    : null;
+}
+
 export function isSuperAttachmentPointWithHapticBond(
   struct: Struct,
   atomId: number,

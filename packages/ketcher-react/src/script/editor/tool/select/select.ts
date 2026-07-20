@@ -25,6 +25,7 @@ import {
   fromTextDeletion,
   fromTextUpdating,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   getHoverToFuse,
   getItemsToFuse,
   IMAGE_KEY,
@@ -33,6 +34,7 @@ import {
   isControlKey,
   SGroup,
   vectorUtils,
+  isHapticBondWithAttachmentGroup,
   isSuperAttachmentPointById,
 } from 'ketcher-core';
 
@@ -371,6 +373,22 @@ class SelectTool implements Tool {
         } else {
           this.lastHoveredFragmentId = undefined;
           this.lastHoveredFragmentTarget = null;
+
+          if (item?.map === 'bonds') {
+            const molecule = editor.struct();
+            const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+              molecule,
+              molecule.bonds.get(item.id),
+              CoordinateTransformation.pageToModel(event, editor.render),
+            );
+
+            if (attachmentGroupId !== null) {
+              hoverTarget = {
+                map: 'atoms',
+                id: attachmentGroupId,
+              };
+            }
+          }
         }
 
         editor.hover(hoverTarget, null, event);
@@ -549,6 +567,11 @@ class SelectTool implements Tool {
         changeAtomPromise,
       });
     } else if (ci.map === 'bonds') {
+      const clickedBond = molecule.bonds.get(ci.id);
+      if (isHapticBondWithAttachmentGroup(molecule, clickedBond)) {
+        return true;
+      }
+
       const bonds = getSelectedBonds(selection, molecule);
       const changeBondPromise = editor.event.bondEdit.dispatch(bonds);
       updateSelectedBonds({

@@ -21,6 +21,7 @@ import {
   type AtomAllAttributeName,
   atomGetAttr,
   Atom,
+  isSuperAttachmentPointById,
   ketcherProvider,
 } from 'ketcher-core';
 import { atom } from '../../../../data/schema/struct-schema';
@@ -29,6 +30,7 @@ import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors'
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
 import useSuperAttachmentPointCreate from '../hooks/useSuperAttachmentPointCreate';
+import useAttachmentGroupDelete from '../hooks/useAttachmentGroupDelete';
 import clsx from 'clsx';
 
 const {
@@ -110,6 +112,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
+  const handleAttachmentGroupDelete = useAttachmentGroupDelete();
   const {
     handler: handleMarkAs,
     isVisible: markAsIsVisible,
@@ -162,6 +165,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
   const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
+  const isAttachmentGroupMarker =
+    selectedAtomId !== undefined &&
+    isSuperAttachmentPointById(struct, selectedAtomId);
   const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
     struct,
     selectedAtomId,
@@ -182,6 +188,19 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     selectedAtomId,
     editor,
   });
+
+  if (isAttachmentGroupMarker && onlyOneAtomSelected) {
+    return (
+      <Item
+        {...props}
+        data-testid="Delete Attachment Group-option"
+        onClick={handleAttachmentGroupDelete}
+      >
+        <Icon name="deleteMenu" className={styles.icon} />
+        <span className={styles.contextMenuText}>Delete attachment group</span>
+      </Item>
+    );
+  }
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (

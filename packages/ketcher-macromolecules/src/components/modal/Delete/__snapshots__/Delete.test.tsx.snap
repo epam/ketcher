@@ -96,7 +96,7 @@ exports[`Delete component should render correctly 1`] = `
             class="MuiDialogActions-root MuiDialogActions-spacing css-k8y9qp-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-1gtlr3p-MuiButtonBase-root"
+              class="MuiButtonBase-root css-7xskd2-MuiButtonBase-root"
               data-testid="cancel-delete-preset-button"
               tabindex="0"
               title="Cancel"
@@ -108,7 +108,7 @@ exports[`Delete component should render correctly 1`] = `
               />
             </button>
             <button
-              class="MuiButtonBase-root css-1arq8ci-MuiButtonBase-root"
+              class="MuiButtonBase-root css-w2uymu-MuiButtonBase-root"
               data-testid="delete-preset-button"
               tabindex="0"
               title="Delete"

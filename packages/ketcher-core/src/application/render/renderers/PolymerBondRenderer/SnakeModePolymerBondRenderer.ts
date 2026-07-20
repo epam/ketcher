@@ -1070,7 +1070,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+            renderer.polymerBond.isSideChainConnection &&
+              !renderer.isHydrogenBond
               ? '#43B5C0'
               : '#333333',
           );
@@ -1136,7 +1137,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+            renderer.polymerBond.isSideChainConnection &&
+              !renderer.isHydrogenBond
               ? '#43B5C0'
               : '#333333',
           );

@@ -1,0 +1,64 @@
+schema: spec-driven
+
+context: |
+  ## Project: Ketcher
+
+  Ketcher is an open-source chemical structure editor built with TypeScript and React.
+  It renders molecules, reactions, macromolecules, and monomers using a custom MVC
+  architecture over SVG. It is a TypeScript/React monorepo (npm workspaces) with four
+  packages: ketcher-core, ketcher-react, ketcher-macromolecules, ketcher-standalone.
+
+  ## Memory Bank
+
+  The `.memory-bank/` directory at the repo root is the canonical knowledge base for
+  this project. Read it before creating any artifact.
+
+  ### When to read it
+  - Before writing a proposal, spec, design, or tasks artifact
+  - To understand existing architecture, domain concepts, and invariants
+  - To find existing spec names before declaring capabilities in a proposal
+
+  ### Structure
+
+  ```
+  .memory-bank/
+  ├── architecture.md     # Package structure, subsystems, data flow
+  ├── domain.md           # Domain concepts: atoms, bonds, monomers, reactions
+  ├── glossary.md         # Term definitions used in code and product
+  ├── invariants.md       # Rules labeled D1/A1/etc. that must never be broken
+  ├── testing.md          # Test strategy: Jest (unit), Playwright (E2E)
+  ├── features/           # Current observable behavior of each product feature
+  │   └── <feature>.md    # Problem / User interaction / Expected behavior (WHEN/THEN) / Guarantees / Limitations
+  ├── modules/            # Deep-dive docs for each subsystem
+  │   └── <module>.md     # Responsibility / Public interfaces / Dependencies / Dependents / Constraints
+  ├── adr/                # Architecture Decision Records (YYYY-MM-DD-<title>.md)
+  └── specs/
+      ├── active/         # Specs for changes in progress
+      └── archived/       # Completed specs (read-only)
+  ```
+
+  ### File format details
+
+  | File | Key sections |
+  |------|-------------|
+  | `architecture.md` | Package structure, subsystems, data flow |
+  | `domain.md` | Entities, relationships, constraints |
+  | `glossary.md` | Term, Definition, Used In |
+  | `invariants.md` | Labeled rules (D1, A1, ...) — what must never break |
+  | `testing.md` | Test levels, locations, commands |
+  | `features/<name>.md` | Problem, User interaction, Expected behavior (WHEN/THEN), Guarantees, Limitations |
+  | `modules/<name>.md` | Responsibility, Public interfaces, Dependencies, Dependents, Assumptions & constraints |
+  | `adr/YYYY-MM-DD-<title>.md` | Decision, Context, Alternatives considered, Rationale, Consequences |
+
+  ### How to update the memory bank (after archiving a change)
+
+  Update the memory bank whenever product behavior or architecture changes:
+
+  - New or changed feature behavior → `features/<name>.md` (create if new)
+  - Architectural changes → `architecture.md` and/or a new `adr/YYYY-MM-DD-<title>.md`
+  - New subsystem → `modules/<name>.md`
+  - New terms → `glossary.md`
+  - New non-negotiable rules → `invariants.md`
+
+  Do NOT put implementation details (function names, file paths) into `features/` or
+  `domain.md`. Those belong in `modules/` or code comments.

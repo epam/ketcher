@@ -3,9 +3,11 @@ import {
   type BondAttributes,
   HAPTIC_BOND_ERROR_MESSAGE,
   SAP_HAPTIC_BOND_ERROR_MESSAGE,
+  getHapticBondEndPosition,
   type Struct,
   isHapticBondPairAllowed,
   isSuperAttachmentPointAtom,
+  type Vec2,
 } from 'ketcher-core';
 
 import type Editor from '../Editor';
@@ -39,6 +41,10 @@ export class HapticBondToolHelper {
 
   isHapticBondType() {
     return this.bondProps.type === Bond.PATTERN.TYPE.HAPTIC;
+  }
+
+  getNewAtomPosition(start: Vec2, end: Vec2) {
+    return this.isHapticBondType() ? getHapticBondEndPosition(start, end) : end;
   }
 
   getAtomForValidation(molecule: Struct, atomOrProps: AtomValidationInput) {
@@ -99,10 +105,7 @@ export class HapticBondToolHelper {
     return null;
   }
 
-  hasInvalidSelectedHapticBonds(
-    molecule: Struct,
-    selectedBonds: number[],
-  ) {
+  hasInvalidSelectedHapticBonds(molecule: Struct, selectedBonds: number[]) {
     if (!this.isHapticBondType()) {
       return false;
     }

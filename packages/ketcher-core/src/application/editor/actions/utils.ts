@@ -23,6 +23,7 @@ import { Bond, type BondAttributes } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { getHapticBondEndPosition } from 'domain/helpers/hapticBond';
 import { KetcherLogger } from 'utilities';
 
 import closest from '../shared/closest';
@@ -328,6 +329,9 @@ export function atomForNewBond(
   }
 
   v.add_(pos);
+  if (bond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+    v = getHapticBondEndPosition(pos, v);
+  }
 
   const closestAtom = findClosestAtom(restruct, v, null, 0.1);
   const a = closestAtom === null ? { label: 'C' } : closestAtom.id;

@@ -4,6 +4,8 @@ import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   getAttachmentGroupIdForHapticBondHalf,
+  getHapticBondEndPosition,
+  HAPTIC_BOND_LENGTH_FACTOR,
   isAllowedNonSapHapticBondMetal,
   isAtomPartOfSuperAttachmentPoint,
   isHapticBondWithAttachmentGroup,
@@ -15,6 +17,15 @@ import {
 } from 'domain/helpers/hapticBond';
 
 describe('hapticBond helpers', () => {
+  it('increases the distance to an automatically created haptic bond atom', () => {
+    const start = new Vec2(1, 2);
+    const end = new Vec2(2, 2);
+
+    expect(getHapticBondEndPosition(start, end)).toEqual(
+      new Vec2(1 + HAPTIC_BOND_LENGTH_FACTOR, 2),
+    );
+  });
+
   it('detects a super-attachment point atom by label and endpoints', () => {
     expect(
       isSuperAttachmentPointAtom({ label: '*', endpoints: [1, 2, 3] }),

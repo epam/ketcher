@@ -13,6 +13,12 @@ export const HAPTIC_BOND_ERROR_MESSAGE =
 export const SAP_HAPTIC_BOND_ERROR_MESSAGE =
   'Attachment groups can only participate in haptic bonds.';
 
+export const HAPTIC_BOND_LENGTH_FACTOR = 1.8;
+
+export function getHapticBondEndPosition(start: Vec2, end: Vec2) {
+  return start.addScaled(Vec2.diff(end, start), HAPTIC_BOND_LENGTH_FACTOR);
+}
+
 const HAPTIC_BOND_ALLOWED_METALS = new Set([
   'Sc',
   'Ti',

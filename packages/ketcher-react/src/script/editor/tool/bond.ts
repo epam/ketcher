@@ -430,9 +430,8 @@ class BondTool implements Tool {
 
     const newEndAtom: AtomAttributes = this.atomProps;
     const xy1 = CoordinateTransformation.pageToModel(event, rnd);
-    if (beginPos) {
-      endPos = vectorUtils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
-    } else {
+    let startPos = beginPos;
+    if (!startPos) {
       if (typeof beginAtom !== 'number') {
         return { endAtom: newEndAtom, endPos };
       }
@@ -441,12 +440,11 @@ class BondTool implements Tool {
         beginAtom,
         entityNotFoundMessage('Atom', beginAtom),
       );
-      endPos = vectorUtils.calcNewAtomPos(
-        atom.pp.get_xy0(),
-        xy1,
-        event.ctrlKey,
-      );
+      startPos = atom.pp.get_xy0();
     }
+
+    endPos = vectorUtils.calcNewAtomPos(startPos, xy1, event.ctrlKey);
+    endPos = this.hapticBond.getNewAtomPosition(startPos, endPos);
 
     return { endAtom: newEndAtom, endPos };
   }

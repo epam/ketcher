@@ -18,7 +18,11 @@ import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
-import { ketcherProvider, MonomerMicromolecule } from 'ketcher-core';
+import {
+  isHapticBondWithAttachmentGroup,
+  ketcherProvider,
+  MonomerMicromolecule,
+} from 'ketcher-core';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -38,11 +42,18 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     useBondSGroupEdit();
   const handleDelete = useDelete();
   const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
+  const struct = editor.struct();
+  const selectedBondIds = props.propsFromTrigger?.bondIds ?? [];
   const isDisabled = disabled({
     props: props.propsFromTrigger,
   } as Params);
+  const hasAttachmentGroupHapticBond = selectedBondIds.some((bondId) =>
+    isHapticBondWithAttachmentGroup(struct, struct.bonds.get(bondId)),
+  );
+  const isDisabledForAttachmentGroup =
+    isDisabled || hasAttachmentGroupHapticBond;
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
-  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
   useEffect(() => {
     const editor = ketcherProvider.getKetcher(ketcherId)?.editor;
@@ -98,7 +109,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             : 'Edit...-option'
         }
         onClick={handleEdit}
-        disabled={isDisabled}
+        disabled={isDisabledForAttachmentGroup}
       >
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>
@@ -120,7 +131,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
             id={name}
             onClick={handleTypeChange}
             key={name}
-            disabled={isDisabled}
+            disabled={isDisabledForAttachmentGroup}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title ?? '')}</span>
@@ -134,7 +145,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         data-testid="Query bonds-option"
         label="Query bonds"
         className={styles.subMenu}
-        disabled={disabledForMonomerCreation}
+        disabled={disabledForMonomerCreation || hasAttachmentGroupHapticBond}
       >
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
@@ -145,7 +156,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
               id={name}
               onClick={handleTypeChange}
               key={name}
-              disabled={isDisabled}
+              disabled={isDisabledForAttachmentGroup}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title ?? '')}</span>
@@ -159,7 +170,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
           {...props}
           data-testid="Change direction-option"
           onClick={changeDirection}
-          disabled={isBondBetweenMonomers}
+          disabled={isBondBetweenMonomers || hasAttachmentGroupHapticBond}
         >
           Change direction
         </Item>

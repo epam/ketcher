@@ -71,8 +71,10 @@ interface IRnaPresetTabsProps {
   ) => void;
 }
 
+// Active component (its tab is open): soft pale-blue shading (#8851 §2.2.2).
 const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+// Inactive component (its tab is not open): fluorescent-cyan outline (#8851 §2.2.1).
+const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 const RNA_COMPONENT_KEYS = ['base', 'sugar', 'phosphate'] as const;
 const RNA_COMPONENT_HINTS: Record<RnaPresetComponentKey, string> = {
   base: 'Select all atoms that form the base.',
@@ -187,6 +189,8 @@ export const RnaPresetTabs = (props: IRnaPresetTabsProps) => {
           bonds: componentState.structure.bonds || [],
           rgroupAttachmentPoints: [],
           color: highlightColor,
+          // Active tab → filled shading; other tabs → stroked outline.
+          outline: !isActiveTab,
         });
       });
     },

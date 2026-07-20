@@ -24,6 +24,7 @@ export interface Serializer<T> {
 export interface KetFileNode<T = unknown> {
   type: string;
   fragment?: Struct;
+  sourceAtomIdMap?: Map<number, number>;
   center: Vec2;
   data?: T;
   selected?: boolean;

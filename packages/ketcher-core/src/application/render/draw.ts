@@ -1466,6 +1466,27 @@ function bondDative(
     .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
+function bondHaptic(
+  paper: RaphaelPaper,
+  halfBond1: HalfBond,
+  halfBond2: HalfBond,
+  options: RenderOptions,
+  isSnapping: boolean,
+  color = '#000',
+) {
+  // @yulei TODO: make it longer
+  const a = halfBond1.p;
+  const b = halfBond2.p;
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+}
+
 function drawArrowSymbol(
   paper: RaphaelPaper,
   point: Vec2,
@@ -1791,6 +1812,7 @@ export default {
   bondAny,
   bondHydrogen,
   bondDative,
+  bondHaptic,
   reactingCenter,
   bondMark,
   radicalCap,

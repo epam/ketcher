@@ -28,6 +28,7 @@ import styles from '../ContextMenu.module.less';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 import { Icon } from 'components';
 import useMakeAttachmentPointMenuItems from '../hooks/useMakeAttachmentPointMenuItems';
+import useSuperAttachmentPointCreate from '../hooks/useSuperAttachmentPointCreate';
 import clsx from 'clsx';
 
 const {
@@ -114,6 +115,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     isVisible: markAsIsVisible,
     isDisabled: markAsIsDisabled,
   } = useMarkAs();
+  const {
+    handler: handleSuperAttachmentPointCreate,
+    isVisible: superAttachmentPointCreateIsVisible,
+    isDisabled: superAttachmentPointCreateDisabled,
+  } = useSuperAttachmentPointCreate();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;
@@ -197,6 +203,8 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const disabledForMonomerCreation = editor.isMonomerCreationWizardActive;
   const showMarkAsMenu = markAsIsVisible();
   const markAsDisabled = markAsIsDisabled();
+  const showSuperAttachmentPointCreateMenu =
+    superAttachmentPointCreateIsVisible();
 
   return (
     <>
@@ -257,6 +265,19 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         <Icon name="editMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>{editMenuItemTitle}</span>
       </Item>
+
+      {/* Only select atoms with `Shift` key pressed */}
+      {showSuperAttachmentPointCreateMenu && (
+        <Item
+          {...props}
+          data-testid="Create super-attachment point-option"
+          onClick={handleSuperAttachmentPointCreate}
+          disabled={superAttachmentPointCreateDisabled()}
+        >
+          Create Super-attachment Point
+        </Item>
+      )}
+
       <Item
         {...props}
         data-testid="Enhanced stereochemistry...-option"

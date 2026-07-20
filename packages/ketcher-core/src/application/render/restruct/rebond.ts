@@ -965,6 +965,15 @@ function getBondPath(
         isSnapping,
       );
       break;
+    case Bond.PATTERN.TYPE.HAPTIC:
+      path = draw.bondHaptic(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
+      break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
   }

@@ -32,7 +32,12 @@ import {
 import ReObject from './reobject';
 import type ReStruct from './restruct';
 import type { Render } from '../raphaelRender';
-import { Scale } from 'domain/helpers';
+import {
+  Scale,
+  isSuperAttachmentPointAtom,
+  isSuperAttachmentPointWithHapticBond,
+  recalculateSuperAttachmentPointPosition,
+} from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
@@ -49,6 +54,11 @@ import { SUPERATOM_CLASS_TEXT } from 'application/render/restruct/resgroup';
 import assert from 'assert';
 import { getAttachmentPointTooltip } from 'domain/helpers/attachmentPointTooltips';
 import { ShowHydrogenLabels } from './showHydrogenLabels';
+import {
+  drawSuperAttachmentPointHover,
+  getSuperAttachmentPointLabelAttrs,
+  type SuperAttachmentPointHoverHost,
+} from './superAttachmentPointRender';
 
 interface ElemAttr {
   text: string;
@@ -109,6 +119,14 @@ class ReAtom extends ReObject {
   }
 
   drawHover(render: Render, drawOutline = true) {
+    if (isSuperAttachmentPointAtom(this.a)) {
+      return drawSuperAttachmentPointHover(
+        this as unknown as SuperAttachmentPointHoverHost,
+        render,
+        drawOutline,
+      );
+    }
+
     const ret = this.makeHoverPlate(render, drawOutline);
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
@@ -324,7 +342,9 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-      ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId) ||
+      isSuperAttachmentPointWithHapticBond(struct, atomId)
     );
   };
 
@@ -1116,6 +1136,8 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 
+    recalculateSuperAttachmentPointPosition(this.a, struct);
+
     if (atom.cip) {
       const paper = render.paper;
       const options = render.options;
@@ -1396,6 +1418,15 @@ function shouldDisplayStereoLabel(
 }
 
 function isLabelVisible(restruct, options, atom: ReAtom) {
+  const atomId = restruct.molecule.atoms.keyOf(atom.a);
+
+  if (
+    atomId !== undefined &&
+    isSuperAttachmentPointWithHapticBond(restruct.molecule, atomId)
+  ) {
+    return false;
+  }
+
   const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleNeighbors = getVisibleNeighborHalfBondIds(
@@ -1596,6 +1627,7 @@ function buildLabel(
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    ...getSuperAttachmentPointLabelAttrs(atom.a),
   });
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {

@@ -1,4 +1,9 @@
 import { difference } from 'lodash';
+import { isAtomPartOfSuperAttachmentPoint, type Struct } from 'ketcher-core';
+import type { Selection } from 'src/script/editor/Editor';
+import Editor from 'src/script/editor';
+
+const SUPER_ATTACHMENT_POINT_SELECTION_IGNORED_KEYS = ['enhancedFlags'];
 
 /**
  * Remove the word `bond` out of the title
@@ -63,4 +68,126 @@ export function onlyHasProperty<T extends object>(
 
   const numberOfProps = props.length;
   return numberOfProps === 1 && key in checkedObject;
+}
+
+export function getBondIdsConnectingSelectedAtoms(
+  struct: Struct,
+  atomIds: number[],
+  selectedBondIds: number[] = [],
+): number[] {
+  if (selectedBondIds.length > 0) {
+    return selectedBondIds;
+  }
+
+  const atomIdSet = new Set(atomIds);
+  const bondIds: number[] = [];
+
+  struct.bonds.forEach((bond, bondId) => {
+    if (atomIdSet.has(bond.begin) && atomIdSet.has(bond.end)) {
+      bondIds.push(bondId);
+    }
+  });
+
+  return bondIds;
+}
+
+export function isContinuousAtomSelection(
+  struct: Struct,
+  atomIds: number[],
+  bondIds: number[],
+): boolean {
+  if (atomIds.length < 2) {
+    return false;
+  }
+
+  return Editor.isStructureContinuous(struct, {
+    atoms: atomIds,
+    bonds: bondIds,
+  });
+}
+
+export function hasDisallowedSuperAttachmentPointSelectionElements(
+  selection: Selection,
+): boolean {
+  const allowedKeys = new Set([
+    'atoms',
+    'bonds',
+    ...SUPER_ATTACHMENT_POINT_SELECTION_IGNORED_KEYS,
+  ]);
+
+  return Object.keys(selection).some((key) => {
+    if (allowedKeys.has(key)) {
+      return false;
+    }
+
+    const value = selection[key as keyof Selection];
+    return Array.isArray(value) && value.length > 0;
+  });
+}
+
+export function areSelectedBondsBetweenSelectedAtoms(
+  struct: Struct,
+  atomIds: number[],
+  bondIds: number[],
+): boolean {
+  if (bondIds.length === 0) {
+    return true;
+  }
+
+  const atomIdSet = new Set(atomIds);
+
+  return bondIds.every((bondId) => {
+    const bond = struct.bonds.get(bondId);
+    return bond && atomIdSet.has(bond.begin) && atomIdSet.has(bond.end);
+  });
+}
+
+export function isSuperAttachmentPointCreationSelectionVisible(
+  struct: Struct,
+  selection: Selection | null,
+): boolean {
+  if (!selection?.atoms || selection.atoms.length < 2) {
+    return false;
+  }
+
+  const bondIds = getBondIdsConnectingSelectedAtoms(
+    struct,
+    selection.atoms,
+    selection.bonds,
+  );
+
+  return isContinuousAtomSelection(struct, selection.atoms, bondIds);
+}
+
+export function isSuperAttachmentPointCreationSelectionValid(
+  struct: Struct,
+  selection: Selection | null,
+): boolean {
+  if (!isSuperAttachmentPointCreationSelectionVisible(struct, selection)) {
+    return false;
+  }
+
+  const atomIds = selection?.atoms ?? [];
+
+  if (
+    atomIds.some((atomId) => isAtomPartOfSuperAttachmentPoint(struct, atomId))
+  ) {
+    return false;
+  }
+
+  if (hasDisallowedSuperAttachmentPointSelectionElements(selection ?? {})) {
+    return false;
+  }
+
+  if (
+    !areSelectedBondsBetweenSelectedAtoms(
+      struct,
+      atomIds,
+      selection?.bonds ?? [],
+    )
+  ) {
+    return false;
+  }
+
+  return true;
 }

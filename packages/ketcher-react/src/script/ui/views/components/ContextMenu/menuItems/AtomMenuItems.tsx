@@ -269,11 +269,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       {showSuperAttachmentPointCreateMenu && (
         <Item
           {...props}
-          data-testid="Create super-attachment point-option"
+          data-testid="Create Attachment Group-option"
           onClick={handleSuperAttachmentPointCreate}
           disabled={superAttachmentPointCreateDisabled()}
         >
-          Create Super-attachment Point
+          Create attachment group
         </Item>
       )}
 

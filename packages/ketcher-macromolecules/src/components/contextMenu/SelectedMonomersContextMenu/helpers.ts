@@ -2,11 +2,13 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
+  ChainsCollection,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
-  isRnaBaseOrAmbiguousRnaBase,
   isSugarOrAmbiguousSugar,
   KetAmbiguousMonomerTemplateSubType,
+  Nucleoside,
+  Nucleotide,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
@@ -92,21 +94,48 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
-  return selectedMonomers?.some((selectedMonomer: BaseMonomer) => {
-    const rnaBaseForSugar =
-      selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
+  if (!selectedMonomers?.length) {
+    return true;
+  }
 
-    return (
-      (selectedMonomer instanceof RNABase &&
-        (selectedMonomer.hydrogenBonds.length > 0 ||
-          selectedMonomer.covalentBonds.length > 1)) ||
-      (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
-        !isSenseBase(selectedMonomer)) ||
-      (rnaBaseForSugar &&
-        (rnaBaseForSugar.hydrogenBonds.length > 0 ||
-          rnaBaseForSugar.covalentBonds.length > 1 ||
-          !isSenseBase(rnaBaseForSugar)))
-    );
+  const monomers = selectedMonomers.filter((m) => m?.monomerItem != null);
+  if (!monomers.length) {
+    return true;
+  }
+
+  const chainsCollection = ChainsCollection.fromMonomers(monomers);
+
+  return !chainsCollection.chains.some((chain) => {
+    let hasValidSenseNucleotide = false;
+
+    for (const node of chain.nodes) {
+      if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+        continue;
+      }
+
+      if (!node.monomer.selected) {
+        continue;
+      }
+
+      const { rnaBase } = node;
+
+      if (!rnaBase) {
+        continue;
+      }
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1
+      ) {
+        return false;
+      }
+
+      if (isSenseBase(rnaBase)) {
+        hasValidSenseNucleotide = true;
+      }
+    }
+
+    return hasValidSenseNucleotide;
   });
 };
 export const hasOnlyDeoxyriboseSugars = (selectedMonomers: BaseMonomer[]) => {

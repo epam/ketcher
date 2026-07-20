@@ -1008,10 +1008,25 @@ export const MacromoleculePropertiesWindow = () => {
   useEffect(() => {
     debouncedRecalculateMacromoleculeProperties(skipDataFetch);
   }, [
-    unipositiveIonsMeasurementUnit,
-    oligonucleotidesMeasurementUnit,
     unipositiveIonsValue,
     oligonucleotidesValue,
+    skipDataFetch,
+    debouncedRecalculateMacromoleculeProperties,
+  ]);
+
+  // Unlike the value inputs above (typed character by character, hence
+  // debounced), the measurement unit is a single discrete dropdown
+  // selection, so recalculating immediately here avoids an unnecessary
+  // 500ms delay on top of the actual recalculation time (#7316). Both
+  // effects share `skipDataFetch`, so opening the properties window also
+  // re-runs the effect above and schedules a debounced call; cancel it so
+  // only this immediate calculation actually runs.
+  useEffect(() => {
+    debouncedRecalculateMacromoleculeProperties.cancel();
+    recalculateMacromoleculePropertiesRef.current(skipDataFetch);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
     skipDataFetch,
     debouncedRecalculateMacromoleculeProperties,
   ]);

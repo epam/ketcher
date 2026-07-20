@@ -40,7 +40,7 @@ export interface Template {
 }
 
 interface TemplateTableProps {
-  templates: Array<Template>;
+  templates: ReadonlyArray<Template>;
   selected: Template | null;
   onSelect: (tmpl: Template) => void;
   onDelete?: (tmpl: Template) => void;

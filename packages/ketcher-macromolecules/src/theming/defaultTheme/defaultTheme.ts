@@ -191,6 +191,7 @@ export const defaultTheme: EditorTheme = {
         // TODO: revert to original font-family in #10400
         'Roboto, FreeSans, Arimo, Droid Sans, Helvetica, Helvetica Neue, Arial, sans-serif',
       // 'Arial, sans-serif',
+      arial: 'Arial, sans-serif',
     },
     weight: {
       light: 300,

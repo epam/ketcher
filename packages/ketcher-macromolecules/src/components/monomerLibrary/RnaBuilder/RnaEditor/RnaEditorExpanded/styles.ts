@@ -109,6 +109,7 @@ export const StyledButton = styled(Button)<{ primary?: boolean }>((props) => {
     width: '100%',
     whiteSpace: 'nowrap',
     fontSize: props.theme.ketcher.font.size.regular,
+    fontFamily: props.theme.ketcher.font.family.arial,
     backgroundColor: props.primary
       ? props.theme.ketcher.color.button.primary.active
       : undefined,

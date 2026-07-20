@@ -11,6 +11,7 @@ import {
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
+  UnsplitNucleotide,
   getAminoAcidsToModify,
   canModifyAminoAcid,
   compareByTitleWithNaturalFirst,
@@ -100,6 +101,9 @@ export const isAntisenseCreationDisabled = (
       (selectedMonomer instanceof RNABase &&
         (selectedMonomer.hydrogenBonds.length > 0 ||
           selectedMonomer.covalentBonds.length > 1)) ||
+      (selectedMonomer instanceof UnsplitNucleotide &&
+        (selectedMonomer.hydrogenBonds.length > 0 ||
+          !isSenseBase(selectedMonomer))) ||
       (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
         !isSenseBase(selectedMonomer)) ||
       (rnaBaseForSugar &&
@@ -130,9 +134,23 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
       (selectedMonomer instanceof RNABase &&
         getSugarFromRnaBase(selectedMonomer)) ||
       (isSugarOrAmbiguousSugar(selectedMonomer) &&
-        getRnaBaseFromSugar(selectedMonomer))
+        getRnaBaseFromSugar(selectedMonomer)) ||
+      selectedMonomer instanceof UnsplitNucleotide
     );
   });
+};
+
+export const hasUnsplitNucleotideWithoutSugars = (
+  selectedMonomers: BaseMonomer[],
+) => {
+  return (
+    selectedMonomers?.some(
+      (selectedMonomer) => selectedMonomer instanceof UnsplitNucleotide,
+    ) &&
+    !selectedMonomers?.some(
+      (selectedMonomer) => selectedMonomer instanceof Sugar,
+    )
+  );
 };
 
 export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =

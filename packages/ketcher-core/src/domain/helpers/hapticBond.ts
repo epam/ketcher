@@ -200,42 +200,6 @@ export function prepareHapticBondAttributes<T extends Partial<BondAttributes>>(
   return preparedBond;
 }
 
-export function findSuperAttachmentPointAtomInBondPair(
-  beginAtom?: Atom | null,
-  endAtom?: Atom | null,
-): Atom | null {
-  if (isSuperAttachmentPointAtom(beginAtom)) {
-    return beginAtom ?? null;
-  }
-
-  if (isSuperAttachmentPointAtom(endAtom)) {
-    return endAtom ?? null;
-  }
-
-  return null;
-}
-
-export function syncSuperAttachmentPointEndpointsFromHapticBonds(
-  struct: Struct,
-) {
-  struct.bonds.forEach((bond) => {
-    if (bond.type !== Bond.PATTERN.TYPE.HAPTIC || !bond.endpoints?.length) {
-      return;
-    }
-
-    const beginAtom = struct.atoms.get(bond.begin);
-    const endAtom = struct.atoms.get(bond.end);
-    const superAttachmentPointAtom = findSuperAttachmentPointAtomInBondPair(
-      beginAtom,
-      endAtom,
-    );
-
-    if (superAttachmentPointAtom) {
-      superAttachmentPointAtom.endpoints = [...bond.endpoints];
-    }
-  });
-}
-
 export function recalculateSuperAttachmentPointPosition(
   atom: Pick<Atom, 'label' | 'endpoints' | 'pp'>,
   struct: Struct,

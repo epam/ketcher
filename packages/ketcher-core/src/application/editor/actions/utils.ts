@@ -23,6 +23,7 @@ import { Bond } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
+import { getHapticBondEndPosition } from 'domain/helpers/hapticBond';
 
 import closest from '../shared/closest';
 import type { ReStruct } from 'application/render';
@@ -243,6 +244,9 @@ export function atomForNewBond(restruct, id, bond?) {
   }
 
   v.add_(pos); // eslint-disable-line no-underscore-dangle
+  if (bond?.type === Bond.PATTERN.TYPE.HAPTIC) {
+    v = getHapticBondEndPosition(pos, v);
+  }
 
   let a: any = closest.atom(restruct, v, null, 0.1);
   a = a === null ? { label: 'C' } : a.id;

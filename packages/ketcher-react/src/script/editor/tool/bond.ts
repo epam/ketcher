@@ -375,17 +375,14 @@ class BondTool implements Tool {
 
     endAtom = this.atomProps;
     const xy1 = CoordinateTransformation.pageToModel(event, rnd);
-    if (beginPos) {
-      endPos = vectorUtils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
-    } else {
-      const atom = rnd.ctab.molecule.atoms.get(beginAtom);
-      endPos = vectorUtils.calcNewAtomPos(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        atom!.pp.get_xy0(),
-        xy1,
-        event.ctrlKey,
-      );
+    const startPos =
+      beginPos ?? rnd.ctab.molecule.atoms.get(beginAtom)?.pp.get_xy0();
+    if (!startPos) {
+      return { endAtom, endPos };
     }
+
+    endPos = vectorUtils.calcNewAtomPos(startPos, xy1, event.ctrlKey);
+    endPos = this.hapticBond.getNewAtomPosition(startPos, endPos);
 
     return { endAtom, endPos };
   }

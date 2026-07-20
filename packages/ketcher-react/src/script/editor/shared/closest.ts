@@ -189,10 +189,17 @@ function findClosestBond(
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const p1 = restruct.atoms.get(bond.b.begin)!.a.pp;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const p2 = restruct.atoms.get(bond.b.end)!.a.pp;
+    const beginAtom = restruct.atoms.get(bond.b.begin);
+    const endAtom = restruct.atoms.get(bond.b.end);
+    if (!beginAtom || !endAtom) {
+      // A bond's begin/end atoms are always present in the same restruct;
+      // their absence would indicate a corrupted structure.
+      throw new Error(
+        `Atom(s) for bond ${bid} not found: begin=${bond.b.begin}, end=${bond.b.end}`,
+      );
+    }
+    const p1 = beginAtom.a.pp;
+    const p2 = endAtom.a.pp;
 
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5);
     const cdist = Vec2.dist(pos, mid);
@@ -208,8 +215,12 @@ function findClosestBond(
       closestBondCenter = bid;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number)!;
+    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number);
+    if (!hb) {
+      // Every bond has a corresponding half-bond created alongside it;
+      // its absence would indicate a corrupted structure.
+      throw new Error(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
+    }
     const dir = hb.dir;
     const norm = hb.norm;
 
@@ -321,9 +332,13 @@ function findClosestFrag(
   const closestAtom = findClosestAtom(restruct, pos, skip, minDist);
 
   if (closestAtom) {
+    const atom = struct.atoms.get(closestAtom.id);
+    if (!atom) {
+      // closestAtom.id always comes from an atom present in the same struct.
+      throw new Error(`Atom ${closestAtom.id} not found`);
+    }
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: struct.atoms.get(closestAtom.id)!.fragment,
+      id: atom.fragment,
       dist: closestAtom.dist,
     };
   }
@@ -331,11 +346,19 @@ function findClosestFrag(
   const closestBond = findClosestBond(restruct, pos, skip, minDist, options);
 
   if (closestBond) {
-    // eslint-disable-next-line
-    const atomId = struct.bonds.get(closestBond.id)!.begin;
+    const bond = struct.bonds.get(closestBond.id);
+    if (!bond) {
+      // closestBond.id always comes from a bond present in the same struct.
+      throw new Error(`Bond ${closestBond.id} not found`);
+    }
+    const atomId = bond.begin;
+    const atom = struct.atoms.get(atomId);
+    if (!atom) {
+      // A bond's begin atom is always present in the same struct.
+      throw new Error(`Atom ${atomId} not found`);
+    }
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      id: struct.atoms.get(atomId)!.fragment,
+      id: atom.fragment,
       dist: closestBond.dist,
     };
   }
@@ -510,8 +533,12 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
       const cursorPosition = new Vec2(x, y);
 
       const dist = Vec2.dist(rectangleCenter, cursorPosition);
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const { id } = reSGroup.item!;
+      const sGroupItem = reSGroup.item;
+      if (!sGroupItem) {
+        // A ReSGroup is always constructed with its underlying SGroup item.
+        throw new Error(`ReSGroup ${reSGroupId} has no item`);
+      }
+      const { id } = sGroupItem;
       return { id, dist };
     }
   }
@@ -587,17 +614,15 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      pos.bonds.set(
-        bid,
-        Vec2.lc2(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          struct.atoms.get(bond.begin)!.pp,
-          0.5,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          struct.atoms.get(bond.end)!.pp,
-          0.5,
-        ),
-      );
+      const beginAtom = struct.atoms.get(bond.begin);
+      const endAtom = struct.atoms.get(bond.end);
+      if (!beginAtom || !endAtom) {
+        // A bond's begin/end atoms are always present in the same struct.
+        throw new Error(
+          `Atom(s) for bond ${bid} not found: begin=${bond.begin}, end=${bond.end}`,
+        );
+      }
+      pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
   });
 

@@ -1,8 +1,11 @@
 import {
   type ReMultitailArrow,
   FunctionalGroup,
+  getAttachmentGroupIdForHapticBondHalf,
   MonomerMicromolecule,
   MULTITAIL_ARROW_KEY,
+  type Struct,
+  type Vec2,
 } from 'ketcher-core';
 import type { Editor, ClosestItemWithMap } from 'src/script/editor';
 import {
@@ -93,6 +96,30 @@ function computeHasNonMonomerStructure(
   }
 
   return false;
+}
+
+export function getAttachmentGroupTargetForBondHalf(
+  struct: Struct,
+  closestItem: ClosestItemWithMap,
+  pointer: Vec2,
+): ClosestItemWithMap | null {
+  if (closestItem.map !== 'bonds') {
+    return null;
+  }
+
+  const attachmentGroupId = getAttachmentGroupIdForHapticBondHalf(
+    struct,
+    struct.bonds.get(closestItem.id),
+    pointer,
+  );
+
+  return attachmentGroupId === null
+    ? null
+    : {
+        ...closestItem,
+        map: 'atoms',
+        id: attachmentGroupId,
+      };
 }
 
 export const getIsItemInSelection = ({

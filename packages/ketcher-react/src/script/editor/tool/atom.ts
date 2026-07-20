@@ -205,9 +205,9 @@ class AtomTool implements Tool {
       atomId = sGroup?.getAttachmentAtomId();
     }
 
-    if (atomId !== undefined) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const atom = molecule.atoms.get(atomId)!;
+    const atom = atomId !== undefined ? molecule.atoms.get(atomId) : undefined;
+
+    if (atomId !== undefined && atom) {
       let angle = vectorUtils.calcAngle(
         atom.pp,
         CoordinateTransformation.pageToModel(event, rnd),

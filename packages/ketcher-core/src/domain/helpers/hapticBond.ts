@@ -8,10 +8,10 @@ type HapticBondAtomLike = Pick<AtomAttributes, 'label' | 'endpoints'> &
   Partial<Pick<Atom, 'label' | 'endpoints'>>;
 
 export const HAPTIC_BOND_ERROR_MESSAGE =
-  'Haptic bonds are permitted only between a super-attachment point and a central atom, or between an atom and an element belonging to the transition metals, lanthanoids, or actinoids.';
+  'Haptic bonds are permitted only between an attachment group and a central atom, or between an atom and an element belonging to the transition metals, lanthanoids, or actinoids.';
 
 export const SAP_HAPTIC_BOND_ERROR_MESSAGE =
-  'Super-attachment point can only participate in haptic bonds.';
+  'Attachment groups can only participate in haptic bonds.';
 
 const HAPTIC_BOND_ALLOWED_METALS = new Set([
   'Sc',

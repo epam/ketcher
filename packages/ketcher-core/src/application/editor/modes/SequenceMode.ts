@@ -2177,21 +2177,21 @@ export class SequenceMode extends BaseMode {
         monomerItem.attachmentPoints,
       );
     // Side chains
-    const oldMonomerBonds: [string, PolymerBond | MonomerToAtomBond | null][] =
-      sideChainConnections
-        ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
-        : [
-            [
-              AttachmentPointName.R1 as string,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1!,
-            ],
-            [
-              AttachmentPointName.R2 as string,
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2!,
-            ],
-          ];
+    const oldMonomerBonds: [
+      string,
+      PolymerBond | MonomerToAtomBond | null | undefined,
+    ][] = sideChainConnections
+      ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
+      : [
+          [
+            AttachmentPointName.R1 as string,
+            selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
+          ],
+          [
+            AttachmentPointName.R2 as string,
+            selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
+          ],
+        ];
     // Backbone
     return oldMonomerBonds.every(([key, bond]) => {
       if (

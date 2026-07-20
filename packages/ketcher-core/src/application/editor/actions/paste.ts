@@ -298,20 +298,51 @@ function getStructCenter(struct: Struct): Vec2 {
     });
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp;
-  if (struct.simpleObjects.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.simpleObjects.get(0)!.center();
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.texts.size > 0) return struct.texts.get(0)!.position;
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  if (struct.images.size > 0) return struct.images.get(0)!.center();
-  if (struct.multitailArrows.size > 0)
-    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-    return struct.multitailArrows.get(0)!.center();
+  if (struct.rxnArrows.size > 0) {
+    const rxnArrow = struct.rxnArrows.get(0);
+    // `size > 0` guarantees an entry exists at id 0; a missing value here
+    // would mean the pool's ids are no longer contiguous from 0, which is
+    // a programming error rather than a normal runtime case.
+    if (!rxnArrow) {
+      throw new Error('getStructCenter: rxnArrows pool is missing id 0');
+    }
+    return rxnArrow.center();
+  }
+  if (struct.rxnPluses.size > 0) {
+    const rxnPlus = struct.rxnPluses.get(0);
+    if (!rxnPlus) {
+      throw new Error('getStructCenter: rxnPluses pool is missing id 0');
+    }
+    return rxnPlus.pp;
+  }
+  if (struct.simpleObjects.size > 0) {
+    const simpleObject = struct.simpleObjects.get(0);
+    if (!simpleObject) {
+      throw new Error('getStructCenter: simpleObjects pool is missing id 0');
+    }
+    return simpleObject.center();
+  }
+  if (struct.texts.size > 0) {
+    const text = struct.texts.get(0);
+    if (!text) {
+      throw new Error('getStructCenter: texts pool is missing id 0');
+    }
+    return text.position;
+  }
+  if (struct.images.size > 0) {
+    const image = struct.images.get(0);
+    if (!image) {
+      throw new Error('getStructCenter: images pool is missing id 0');
+    }
+    return image.center();
+  }
+  if (struct.multitailArrows.size > 0) {
+    const multitailArrow = struct.multitailArrows.get(0);
+    if (!multitailArrow) {
+      throw new Error('getStructCenter: multitailArrows pool is missing id 0');
+    }
+    return multitailArrow.center();
+  }
 
   return new Vec2(0, 0);
 }

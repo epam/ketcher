@@ -105,8 +105,8 @@ export interface AtomAttributes {
   implicitHCount?: number | null;
   initiallySelected?: initiallySelectedType;
   /**
-   * Endpoints of a super-attachment point atom.
-   * In `.ket` format, it equals to `ENDPTS` property for haptic bonds.
+   * Internal endpoints of a super-attachment point atom.
+   * KET serializes these endpoints as molecule attachment groups.
    */
   endpoints?: number[];
 }

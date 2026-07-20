@@ -25,7 +25,6 @@ import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 import { ifDef } from 'utilities';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
-import { Bond } from 'src/domain/entities';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -154,32 +153,18 @@ function rglabelToKet(source) {
   return result;
 }
 
-/**
- * In KET, the identifier of haptic bond is the same as dative bond,
-   but with `attach` and `endpts` (optional) properties
- * @function(reversed): `bondTypeToStruct()` in `atomBondToStruct.ts`
- */
-function bondTypeToKet(type: number) {
-  if (type === Bond.PATTERN.TYPE.HAPTIC) {
-    return Bond.PATTERN.TYPE.DATIVE;
-  }
-  return type;
-}
-
 function bondToKet(source) {
   const result = {};
   if (source.customQuery) {
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'customQuery', source.customQuery);
   } else {
-    ifDef(result, 'type', bondTypeToKet(source.type));
+    ifDef(result, 'type', source.type);
     ifDef(result, 'atoms', [source.begin, source.end]);
     ifDef(result, 'stereo', source.stereo, 0);
     ifDef(result, 'topology', source.topology, 0);
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
-    ifDef(result, 'endpts', source.endpoints);
-    ifDef(result, 'attach', source.attach);
   }
   ifDef(result, 'selected', source.getInitiallySelected());
   return result;

@@ -125,7 +125,7 @@ export function hasDisallowedSuperAttachmentPointSelectionElements(
   });
 }
 
-export function areSelectedBondsBetweenSelectedAtoms(
+export function areSelectedBondsAttachedToSelectedAtoms(
   struct: Struct,
   atomIds: number[],
   bondIds: number[],
@@ -138,7 +138,7 @@ export function areSelectedBondsBetweenSelectedAtoms(
 
   return bondIds.every((bondId) => {
     const bond = struct.bonds.get(bondId);
-    return bond && atomIdSet.has(bond.begin) && atomIdSet.has(bond.end);
+    return bond && (atomIdSet.has(bond.begin) || atomIdSet.has(bond.end));
   });
 }
 
@@ -180,7 +180,7 @@ export function isSuperAttachmentPointCreationSelectionValid(
   }
 
   if (
-    !areSelectedBondsBetweenSelectedAtoms(
+    !areSelectedBondsAttachedToSelectedAtoms(
       struct,
       atomIds,
       selection?.bonds ?? [],

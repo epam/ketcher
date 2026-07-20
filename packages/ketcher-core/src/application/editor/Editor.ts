@@ -50,7 +50,6 @@ import {
   type SubChainNode,
   ChainsCollection,
   Phosphate,
-  RNABase,
   Struct,
   Sugar,
   Vec2,
@@ -119,6 +118,8 @@ import {
   getMonomerUniqueKey,
   isAmbiguousMonomerLibraryItem,
   isLibraryItemRnaPreset,
+  getNextMonomerInChain,
+  getPreviousMonomerInChain,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import {
@@ -140,6 +141,7 @@ import {
 import type { SequenceMode } from './modes/types/sequenceMode';
 import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
@@ -1286,9 +1288,38 @@ export class CoreEditor {
                 ),
               );
 
+              // In Flex mode, reposition the dropped monomer (and any preset
+              // group) so the new bond has standard length and follows the AP
+              // direction (req. 2.4, 2.5). Also mirror the preset if needed
+              // (req. 3.3.1).
+              if (this.mode.modeName === 'flex-layout-mode') {
+                modelChanges.merge(
+                  this.computeAndApplyFlexDropRepositioning(
+                    droppedMonomer,
+                    addedMonomers,
+                    targetMonomer,
+                    targetAP,
+                  ),
+                );
+
+                // Preset mirroring: if both bonded ends are on the same
+                // topology side (both first or both last in their chains),
+                // mirror the dropped preset horizontally (req. 3.3.1).
+                if (isLibraryItemRnaPreset(item) && addedMonomers.length > 1) {
+                  modelChanges.merge(
+                    this.applyPresetMirroringIfNeeded(
+                      droppedMonomer,
+                      addedMonomers,
+                      targetMonomer,
+                    ),
+                  );
+                }
+              }
+
+              // Non-standard bond notification: same-group APs (req. 4.2).
               if (sourceAP === targetAP) {
                 this.events.error.dispatch(
-                  'You have connected monomers using attachment points with the same name (e.g., both R1 or both R2)',
+                  'You have connected monomers with attachment points of the same group',
                 );
               }
 
@@ -2202,8 +2233,126 @@ export class CoreEditor {
   }
 
   /**
+   * In Flex mode, after a drag-drop bond is established, reposition the
+   * dropped monomer (and all monomers in its preset group) so that the new bond
+   * has the standard bond length and follows the target AP direction.
+   *
+   * Formula (all values in model space / Å):
+   *   droppedCenter = targetCenter + unitVector(apOutward) * (targetBodyRadius + bondLength + droppedBodyRadius)
+   *
+   * The offset delta is applied uniformly to all monomers in `addedMonomers`
+   * so that a preset group moves as a rigid body.
+   */
+  private computeAndApplyFlexDropRepositioning(
+    droppedMonomer: BaseMonomer,
+    addedMonomers: BaseMonomer[],
+    targetMonomer: BaseMonomer,
+    targetAP: AttachmentPointName,
+  ): Command {
+    const command = new Command();
+    const settings = provideEditorSettings();
+    const scale = settings.macroModeScale; // px per Å
+
+    // Get AP outward angle in radians (canonical angle is inward → subtract 180°)
+    const angleDeg =
+      attachmentPointNumberToAngle[
+        targetAP as keyof typeof attachmentPointNumberToAngle
+      ];
+    if (angleDeg === undefined) return command; // unknown AP name — skip
+
+    const outwardAngleDeg = angleDeg - 180;
+    const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
+    const unitVec = new Vec2(
+      Math.cos(outwardAngleRad),
+      Math.sin(outwardAngleRad),
+    );
+
+    // Body radii in model space
+    const { width, height } = BaseMonomerRenderer.monomerSize;
+    const bodyRadiusCanvas = (width + height) / 4;
+    const bodyRadiusModel = bodyRadiusCanvas / scale;
+
+    // Bond length in model space: AP line + AP circle radius
+    const bondLengthModel =
+      (AttachmentPoint.attachmentPointLength + AttachmentPoint.radius) / scale;
+
+    // Target position for the dropped monomer's center in model space
+    const targetCenter = targetMonomer.position;
+    const desiredDroppedCenter = new Vec2(
+      targetCenter.x +
+        unitVec.x * (bodyRadiusModel + bondLengthModel + bodyRadiusModel),
+      targetCenter.y +
+        unitVec.y * (bodyRadiusModel + bondLengthModel + bodyRadiusModel),
+    );
+
+    // Compute the delta to move the entire dropped group
+    const currentDroppedCenter = droppedMonomer.position;
+    const delta = new Vec2(
+      desiredDroppedCenter.x - currentDroppedCenter.x,
+      desiredDroppedCenter.y - currentDroppedCenter.y,
+    );
+
+    // Apply the same delta to every monomer in the dropped group
+    for (const monomer of addedMonomers) {
+      const newPos = new Vec2(
+        monomer.position.x + delta.x,
+        monomer.position.y + delta.y,
+      );
+      command.merge(this.drawingEntitiesManager.moveMonomer(monomer, newPos));
+    }
+
+    return command;
+  }
+
+  /**
+   * Mirror the dropped preset horizontally around the bond insertion point
+   * when both bonded ends are on the same topology side (req. 3.3.1).
+   *
+   * A monomer is "first" in its chain when it has no R2→R1 predecessor
+   * (getPreviousMonomerInChain returns undefined). It is "last" when it
+   * has no R2 successor (getNextMonomerInChain returns undefined).
+   *
+   * If both `droppedMonomer` and `targetMonomer` are first, or both are last,
+   * the preset is mirrored by negating the x-offset of each preset monomer
+   * relative to `droppedMonomer`'s current position (set by repositioning).
+   */
+  private applyPresetMirroringIfNeeded(
+    droppedMonomer: BaseMonomer,
+    addedMonomers: BaseMonomer[],
+    targetMonomer: BaseMonomer,
+  ): Command {
+    const command = new Command();
+
+    const droppedIsFirst =
+      getPreviousMonomerInChain(droppedMonomer) === undefined;
+    const droppedIsLast = getNextMonomerInChain(droppedMonomer) === undefined;
+    const targetIsFirst =
+      getPreviousMonomerInChain(targetMonomer) === undefined;
+    const targetIsLast = getNextMonomerInChain(targetMonomer) === undefined;
+
+    const shouldMirror =
+      (droppedIsFirst && targetIsFirst) || (droppedIsLast && targetIsLast);
+
+    if (!shouldMirror) return command;
+
+    // Mirror each preset monomer's x-offset relative to droppedMonomer's center
+    const pivotX = droppedMonomer.position.x;
+    for (const monomer of addedMonomers) {
+      const offsetX = monomer.position.x - pivotX;
+      const newPos = new Vec2(pivotX - offsetX, monomer.position.y);
+      command.merge(this.drawingEntitiesManager.moveMonomer(monomer, newPos));
+    }
+
+    return command;
+  }
+
+  /**
    * For a preset being dropped onto a target attachment point, find the
    * best monomer within the preset to form the bond.
+   *
+   * Delegates to the shared `findPresetMonomerForBonding` helper in
+   * `bondConnectionHelpers` so that the logic can be unit-tested
+   * independently of `CoreEditor`.
    *
    * Implements requirements 3.1–3.3:
    * - R1 target → preset component with free R2
@@ -2214,35 +2363,7 @@ export class CoreEditor {
     addedMonomers: BaseMonomer[],
     targetAP: AttachmentPointName,
   ): BaseMonomer | undefined {
-    const oppositeAP =
-      targetAP === AttachmentPointName.R1
-        ? AttachmentPointName.R2
-        : targetAP === AttachmentPointName.R2
-        ? AttachmentPointName.R1
-        : null;
-
-    if (oppositeAP) {
-      const match = addedMonomers.find((m) =>
-        m.isAttachmentPointExistAndFree(oppositeAP),
-      );
-      if (match) return match;
-    }
-
-    // Fallback per requirement 3.3: sugar → phosphate → base
-    const sugar = addedMonomers.find(
-      (m) => m instanceof Sugar && m.hasFreeAttachmentPoint,
-    );
-    if (sugar) return sugar;
-
-    const phosphate = addedMonomers.find(
-      (m) => m instanceof Phosphate && m.hasFreeAttachmentPoint,
-    );
-    if (phosphate) return phosphate;
-
-    const base = addedMonomers.find(
-      (m) => m instanceof RNABase && m.hasFreeAttachmentPoint,
-    );
-    return base;
+    return findPresetMonomerForBondingHelper(addedMonomers, targetAP);
   }
 
   private onSelectMode(

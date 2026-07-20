@@ -21,18 +21,8 @@ import type { FlexModePolymerBondRenderer } from 'application/render/renderers/P
 import type { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import {
-  AmbiguousMonomer,
-  UnresolvedMonomer,
-  UnsplitNucleotide,
-} from 'domain/entities';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
 // FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
 //  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
@@ -44,9 +34,9 @@ import {
   MACROMOLECULES_BOND_TYPES,
   ToolName,
 } from 'application/editor/tools/types';
-import { KetMonomerClass } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { shouldInvokeConnectionModal } from 'application/editor/tools/bondConnectionHelpers';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -626,120 +616,12 @@ class PolymerBond implements BaseTool {
     secondMonomer: BaseMonomer,
     checkForPotentialBonds = true,
   ) {
-    if (this.isHydrogenBond) {
-      return;
-    }
-
-    // No Modal: no free attachment point on second monomer
-    if (!secondMonomer.hasFreeAttachmentPoint) {
-      return false;
-    }
-
-    // No Modal: Both monomers have APs selected
-    if (
-      firstMonomer.chosenFirstAttachmentPointForBond !== null &&
-      secondMonomer.chosenSecondAttachmentPointForBond !== null
-    ) {
-      return false;
-    }
-
-    // Modal: either of the monomers doesn't have any potential APs
-    if (
-      checkForPotentialBonds &&
-      (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
-    ) {
-      return true;
-    }
-
-    // No Modal: Both monomers have only 1 attachment point
-    if (
-      firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
-      secondMonomer.unUsedAttachmentPointsNamesList.length === 1
-    ) {
-      return false;
-    }
-
-    // Modal: Any or both monomers are Chems
-    if (
-      firstMonomer instanceof Chem ||
-      secondMonomer instanceof Chem ||
-      (firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.CHEM) ||
-      (secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.CHEM)
-    ) {
-      return true;
-    }
-
-    // Modal: Any or both monomers are unresolved
-    if (
-      firstMonomer instanceof UnresolvedMonomer ||
-      secondMonomer instanceof UnresolvedMonomer
-    ) {
-      return true;
-    }
-
-    // Modal: One monomer is Peptide and another is RNA monomer
-    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-    const firstMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => firstMonomer instanceof RNAClass,
+    return shouldInvokeConnectionModal(
+      firstMonomer,
+      secondMonomer,
+      checkForPotentialBonds,
+      this.isHydrogenBond,
     );
-    const secondMonomerIsRNA = rnaMonomerClasses.find(
-      (RNAClass) => secondMonomer instanceof RNAClass,
-    );
-    if (
-      (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
-      (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide) ||
-      (firstMonomerIsRNA &&
-        secondMonomer instanceof AmbiguousMonomer &&
-        secondMonomer.monomerClass === KetMonomerClass.AminoAcid) ||
-      (secondMonomerIsRNA &&
-        firstMonomer instanceof AmbiguousMonomer &&
-        firstMonomer.monomerClass === KetMonomerClass.AminoAcid)
-    ) {
-      return true;
-    }
-
-    // Modal: special case for Peptide chain
-    if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {
-      // one of monomers has more than 2 AP
-      const hasPlentyAttachmentPoints =
-        firstMonomer.listOfAttachmentPoints.length > 2 ||
-        secondMonomer.listOfAttachmentPoints.length > 2;
-
-      // at least one of monomers has more than 1 free AP
-      const hasPlentyFreeAttachmentPoints =
-        firstMonomer.unUsedAttachmentPointsNamesList.length > 1 ||
-        secondMonomer.unUsedAttachmentPointsNamesList.length > 1;
-
-      // there is no possibility to connect R1-R2
-      const BothR1AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1);
-
-      const BothR2AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2);
-
-      const R1AndR2AttachmentPointUsed =
-        (firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1)) ||
-        (secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
-          secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1));
-
-      if (
-        hasPlentyAttachmentPoints &&
-        hasPlentyFreeAttachmentPoints &&
-        (BothR1AttachmentPointUsed ||
-          BothR2AttachmentPointUsed ||
-          R1AndR2AttachmentPointUsed)
-      ) {
-        return true;
-      }
-    }
-    return false;
   }
 }
 

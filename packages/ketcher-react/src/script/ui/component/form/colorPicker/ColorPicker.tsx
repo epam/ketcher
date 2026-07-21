@@ -14,7 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useId, useState } from 'react';
+import {
+  type FocusEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 
 import { HexColorPicker, HexColorInput } from 'react-colorful';
 import classes from './ColorPicker.module.less';
@@ -32,6 +41,10 @@ interface ColorPickerCallProps {
 
 type Props = ColorPickerProps & ColorPickerCallProps;
 
+type ToggleEvent = MouseEvent | KeyboardEvent | FocusEvent;
+
+const CLICK_THROTTLE_DELAY_MS = 200;
+
 const presetColors = [
   '#FF4545',
   '#FFAD31',
@@ -47,57 +60,60 @@ const ColorPicker = (props: Props) => {
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const { onChange, value } = props;
   const paletteId = 'color-picker-' + useId();
+  const clickThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(
+    () => () => {
+      if (clickThrottleTimeoutRef.current) {
+        clearTimeout(clickThrottleTimeoutRef.current);
+      }
+    },
+    [],
+  );
 
   const handleChange = useCallback(
-    (color) => {
+    (color: string) => {
       onChange(color);
     },
     [onChange],
   );
 
-  const throttle = useCallback((func, limit) => {
-    let inThrottle;
-    return (e) => {
-      if (!inThrottle) {
-        func(e);
-        inThrottle = true;
-        setTimeout(() => {
-          inThrottle = false;
-        }, limit);
-      }
-    };
-  }, []);
+  const handleClick = useCallback((event: ToggleEvent) => {
+    if (clickThrottleTimeoutRef.current) {
+      return;
+    }
 
-  const handleClick = useCallback(
-    throttle((e) => {
-      e.preventDefault();
-      setIsOpen((prev) => !prev);
-      setIsPaletteOpen(false);
-    }, 200),
-    [],
-  );
+    event.preventDefault();
+    setIsOpen((prev) => !prev);
+    setIsPaletteOpen(false);
+    clickThrottleTimeoutRef.current = setTimeout(() => {
+      clickThrottleTimeoutRef.current = null;
+    }, CLICK_THROTTLE_DELAY_MS);
+  }, []);
 
   const handlePaletteOpen = () => {
     setIsPaletteOpen(true);
   };
-  const handleColorChange = (color) => {
+  const handleColorChange = (color: string) => {
     handleChange(color);
   };
 
-  const handleBlur = (e) => {
+  const handleBlur = (e: FocusEvent<HTMLDivElement>) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       handleClick(e);
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleClick(e);
     }
   };
 
-  const handleWrapperKeyDown = (e) => {
+  const handleWrapperKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       e.stopPropagation();

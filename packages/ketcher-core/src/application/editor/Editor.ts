@@ -103,7 +103,12 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import type { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { getEmptyMonomersLibraryJson, parseMonomersLibrary } from './helpers';
+import {
+  getEmptyMonomersLibraryJson,
+  MonomerNameValidationErrorType,
+  parseMonomersLibrary,
+  validateMonomerName,
+} from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { ReinitializeModeOperation } from 'application/editor/operations';
@@ -479,6 +484,18 @@ export class CoreEditor {
    *   the first failure remain in the library.
    */
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+    // `_monomersLibraryParsedJson` is always initialized by `setMonomersLibrary`
+    // in the constructor before any consumer can call `updateMonomersLibrary`.
+    // A `null` value here would indicate a programming error (e.g. calling
+    // this method before the editor finished constructing), not a normal
+    // runtime case, so we fail loudly instead of silently no-op-ing.
+    const monomersLibraryParsedJson = this._monomersLibraryParsedJson;
+    if (!monomersLibraryParsedJson) {
+      throw new Error(
+        'Editor::updateMonomersLibrary: monomers library parsed JSON is not initialized',
+      );
+    }
+
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
@@ -672,10 +689,8 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex],
         );
 
-        // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson!.root.templates.findIndex(
+          monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerTemplateRef,
           );
         if (existingMonomerRefIndex !== -1) {
@@ -687,8 +702,7 @@ export class CoreEditor {
             existingMonomerId;
           didCommitAnyItem = true;
 
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson![existingMonomerTemplateRef] =
+          monomersLibraryParsedJson[existingMonomerTemplateRef] =
             newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
         } else {
           // This case should never happen because if we have a monomer in the library it should have a reference in the parsed JSON
@@ -701,12 +715,10 @@ export class CoreEditor {
         this._monomersLibrary.push(newMonomer);
         didCommitAnyItem = true;
 
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push(
+        monomersLibraryParsedJson.root.templates.push(
           getKetRef(newMonomerTemplateRef),
         );
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson![newMonomerTemplateRef] =
+        monomersLibraryParsedJson[newMonomerTemplateRef] =
           newMonomersLibraryChunkParsedJson[newMonomerTemplateRef];
       }
     });
@@ -728,39 +740,45 @@ export class CoreEditor {
         return;
       }
 
-      if (!templateDefinition.name?.trim()) {
-        reportValidationError(
-          templateRef.$ref,
-          `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
-        );
-        return;
+      const monomerNameValidationResult = validateMonomerName(
+        templateDefinition.name,
+      );
+
+      if (!monomerNameValidationResult.isValid) {
+        switch (monomerNameValidationResult.error) {
+          case MonomerNameValidationErrorType.Empty:
+            reportValidationError(
+              templateRef.$ref,
+              `Monomer group template name cannot be empty or whitespace. The template was not added to the library.`,
+            );
+            return;
+          case MonomerNameValidationErrorType.TooLong: {
+            const truncatedTemplateName = `${templateDefinition.name.slice(
+              0,
+              MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
+            )}...`;
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
+            );
+            return;
+          }
+          case MonomerNameValidationErrorType.InvalidCharacters:
+            KetcherLogger.error(
+              `Editor::updateMonomersLibrary: Load of monomer group template "${templateDefinition.name}" (template: ${templateRef.$ref}) has failed. Monomer group template name must consist only of letters, numbers, hyphens, underscores and asterisks. The template was not added to the library.`,
+            );
+            return;
+        }
       }
 
-      if (
-        templateDefinition.name.length > MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH
-      ) {
-        const truncatedTemplateName = `${templateDefinition.name.slice(
-          0,
-          MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH,
-        )}...`;
-        KetcherLogger.error(
-          `Editor::updateMonomersLibrary: Load of monomer group template "${truncatedTemplateName}" (length: ${templateDefinition.name.length}, template: ${templateRef.$ref}) has failed. ${MONOMER_GROUP_TEMPLATE_NAME_MAX_LENGTH_ERROR_MESSAGE} The template was not added to the library.`,
-        );
-        return;
-      }
-
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      this._monomersLibraryParsedJson![templateRef.$ref] = templateDefinition;
+      monomersLibraryParsedJson[templateRef.$ref] = templateDefinition;
       didCommitAnyItem = true;
       if (
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        !this._monomersLibraryParsedJson!.root.templates.find(
+        !monomersLibraryParsedJson.root.templates.find(
           (existingTemplateRef) =>
             existingTemplateRef.$ref === templateRef.$ref,
         )
       ) {
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push(templateRef);
+        monomersLibraryParsedJson.root.templates.push(templateRef);
       }
     });
 

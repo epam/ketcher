@@ -68,6 +68,47 @@
   }
 }
 
+.structSlot {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.structPlaceholder {
+  width: 100px;
+  height: 100px;
+  border: 1px solid @color-grey-5;
+  border-radius: 5px;
+  background: linear-gradient(
+    90deg,
+    @color-background-primary 20%,
+    @form-hover-background 50%,
+    @color-background-primary 80%
+  );
+  background-size: 200% 100%;
+  animation: templatePreviewPlaceholderPulse 1.2s ease-in-out infinite;
+}
+
+.structFade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+
+.structVisible {
+  opacity: 1;
+}
+
+@keyframes templatePreviewPlaceholderPulse {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 .selectedTitle {
   background-color: fade(@color-background-primary, 70%);
 }
@@ -86,6 +127,16 @@
     background-color: fade(@color-primary, 5%);
     border: 2px solid @color-primary;
   }
+}
+
+.selectButton {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+  cursor: inherit;
 }
 
   .button {

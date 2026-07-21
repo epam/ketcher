@@ -133,7 +133,6 @@ interface EditorProps {
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: (editor: CoreEditor) => void;
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 

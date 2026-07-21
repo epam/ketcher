@@ -11,6 +11,7 @@ import {
   clickInTheMiddleOfTheCanvas,
   copyToClipboardByKeyboard,
   MacroFileType,
+  moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -59,6 +60,7 @@ import { StructureLibraryDialog } from '@tests/pages/molecules/canvas/StructureL
 import { FunctionalGroupsTabItems } from '@tests/pages/constants/structureLibraryDialog/Constants';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
 import { Library } from '@tests/pages/macromolecules/Library';
+import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 
 declare global {
   interface Window {
@@ -137,10 +139,10 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   await atomToolbar.clickAtom(Atom.Bromine);
 
   await clickInTheMiddleOfTheCanvas(page);
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
+  await moveMouseAway(page);
+
+  const brAtom = getAtomLocator(page, { atomLabel: 'Br' });
+  await expect(brAtom).toHaveCount(1);
 
   await page.evaluate(() => {
     window.ketcher.editor.unsubscribe('change', changeEventSubscriber);

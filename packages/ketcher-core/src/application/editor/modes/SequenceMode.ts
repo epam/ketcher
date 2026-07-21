@@ -1374,6 +1374,95 @@ export class SequenceMode extends BaseMode {
           const previousTwoStrandedNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
 
+          const hasValidAntisense = (node: ITwoStrandedChainItem | undefined) =>
+            node?.antisenseNode &&
+            !(node.antisenseNode instanceof EmptySequenceNode);
+
+          // Find the first node with a nucleotide (not phosphate/empty) sense
+          // node, starting from startNode inclusive.
+          const getNextNodeWithNucleotideSense = (
+            startNode: ITwoStrandedChainItem | undefined,
+          ): ITwoStrandedChainItem | undefined => {
+            let node = startNode;
+            while (node) {
+              if (
+                node.senseNode instanceof Nucleotide ||
+                node.senseNode instanceof Nucleoside
+              ) {
+                return node;
+              }
+              node = SequenceRenderer.getNextNodeInSameChain(node);
+            }
+            return undefined;
+          };
+
+          // Gap case: cursor is to the left of a missing antisense segment.
+          // Condition (3) — the next nucleotide node also lacks antisense —
+          // distinguishes a real multi-column antisense gap from a phosphate
+          // column sitting just before an already-paired nucleotide (which
+          // should fall through to the early-return and do nothing).
+          const nextNucleotideFromCurrent = getNextNodeWithNucleotideSense(
+            currentTwoStrandedNode,
+          );
+          if (
+            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
+            !hasValidAntisense(currentTwoStrandedNode) &&
+            nextNucleotideFromCurrent !== undefined &&
+            !hasValidAntisense(nextNucleotideFromCurrent)
+          ) {
+            let nextNodeWithAntisense = currentTwoStrandedNode
+              ? SequenceRenderer.getNextNodeInSameChain(currentTwoStrandedNode)
+              : undefined;
+
+            while (
+              nextNodeWithAntisense &&
+              !hasValidAntisense(nextNodeWithAntisense)
+            ) {
+              nextNodeWithAntisense = SequenceRenderer.getNextNodeInSameChain(
+                nextNodeWithAntisense,
+              );
+            }
+
+            if (!nextNodeWithAntisense) return;
+
+            const newNodePosition = this.getNewNodePosition();
+            this.connectNodes(
+              nextNodeWithAntisense.antisenseNode,
+              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              modelChanges,
+              newNodePosition,
+            );
+
+            modelChanges.addOperation(new ReinitializeModeOperation());
+            editor.renderersContainer.update(modelChanges);
+            history.update(modelChanges);
+            return;
+          }
+
+          // Antisense mode: break the sense chain bond at the previous node.
+          // Only fires when the previous node has a valid antisense nucleotide —
+          // if prev has no antisense (blank/backbone) the cursor is at the start
+          // of the antisense region and there is nothing to break.
+          if (
+            this.isAntisenseEditMode &&
+            previousTwoStrandedNodeInSameChain?.senseNode &&
+            !(
+              previousTwoStrandedNodeInSameChain.senseNode instanceof
+              EmptySequenceNode
+            ) &&
+            hasValidAntisense(previousTwoStrandedNodeInSameChain) &&
+            !(currentTwoStrandedNode?.senseNode instanceof BackBoneSequenceNode)
+          ) {
+            this.deleteBondToNextNodeInChain(
+              previousTwoStrandedNodeInSameChain.senseNode,
+              modelChanges,
+            );
+            modelChanges.addOperation(new ReinitializeModeOperation());
+            editor.renderersContainer.update(modelChanges);
+            history.update(modelChanges);
+            return;
+          }
+
           if (
             !currentTwoStrandedNode?.senseNode ||
             !currentTwoStrandedNode?.antisenseNode ||
@@ -1390,18 +1479,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
-          if (
-            this.isAntisenseEditMode &&
-            previousTwoStrandedNodeInSameChain?.senseNode
-          ) {
-            this.deleteBondToNextNodeInChain(
-              previousTwoStrandedNodeInSameChain.senseNode,
-              modelChanges,
-            );
-          } else if (
-            !this.isAntisenseEditMode &&
-            currentTwoStrandedNode?.antisenseNode
-          ) {
+          if (currentTwoStrandedNode?.antisenseNode) {
             this.deleteBondToNextNodeInChain(
               currentTwoStrandedNode.antisenseNode,
               modelChanges,
@@ -1686,7 +1764,7 @@ export class SequenceMode extends BaseMode {
             modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           }
 
-          history.update(modelChanges);
+          history.update(modelChanges, selectionsBeforeDeletion.length > 0);
         },
       },
       'sequence-edit-select': {

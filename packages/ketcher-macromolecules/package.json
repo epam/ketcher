@@ -99,6 +99,7 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.27.1",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "eslint-plugin-react-you-might-not-need-an-effect": "^1.0.1",
     "eslint-plugin-testing-library": "^5.0.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",

@@ -731,6 +731,15 @@ class SGroupTool implements Tool {
       return Promise.resolve();
     }
 
+    // Prevent opening S-Group properties for Generic S-Groups (type 'GEN')
+    // Generic S-Groups are not supported for editing
+    if (sg?.type === 'GEN') {
+      editor.errorHandler?.(
+        'This is not a supported S-Group type, editing is not allowed.',
+      );
+      return Promise.resolve();
+    }
+
     let attrs;
     if (sg) {
       attrs = sg.getAttrs();

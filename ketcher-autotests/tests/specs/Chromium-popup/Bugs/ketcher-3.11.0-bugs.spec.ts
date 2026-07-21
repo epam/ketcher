@@ -529,10 +529,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
 
     await openFileAndAddToCanvasMacro(page, 'KET/sugar-phosphate-core.ket');
     expect(
-      await ContextMenu(
-        page,
-        getBondLocator(page, { bondId: 45 }),
-      ).isOptionEnabled(MacroBondOption.Delete),
+      await ContextMenu(page, getBondLocator(page, {}).first()).isOptionEnabled(
+        MacroBondOption.Delete,
+      ),
     ).toBeTruthy();
   });
 

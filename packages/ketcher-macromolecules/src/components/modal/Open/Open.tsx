@@ -334,18 +334,6 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     useState(ONE_LETTER);
 
   useEffect(() => {
-    const splittedFilenameByDot = fileName?.split('.');
-    const fileExtension =
-      splittedFilenameByDot[splittedFilenameByDot.length - 1];
-
-    if (fileExtension) {
-      const option = options.find((el) => el.id === fileExtension);
-      const id = option?.id ? option.id : SEQ;
-      setFormatSelection(id);
-    }
-  }, [fileName]);
-
-  useEffect(() => {
     fileOpener().then((chosenOpener) => {
       setOpener({ chosenOpener });
     });
@@ -375,7 +363,18 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     };
     const onError = () => errorHandler('Error processing file');
 
-    setFileName(files[0].name);
+    const fileName = files[0].name;
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension =
+      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+
+    setFileName(fileName);
+    if (fileExtension) {
+      const option = options.find((el) => el.id === fileExtension);
+      const id = option?.id ? option.id : SEQ;
+      setFormatSelection(id);
+    }
+
     opener?.chosenOpener(files[0]).then(onLoad, onError);
   };
 

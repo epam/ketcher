@@ -243,6 +243,31 @@ test(`Verify that small molecules with any bond type retain their representation
   await takeEditorScreenshot(page);
 });
 
+test(`Verify that a thick foreground bond flanked by wedges renders identically in molecules and macromolecules modes`, async ({
+  MoleculesCanvas: _,
+}) => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6234
+   * Description: A Single Up bond whose both atoms are the wide end of a
+   *              neighboring Single Up bond renders as a uniform "thick
+   *              foreground" parallelogram, and the flanking wedges join it
+   *              seamlessly. This representation must not change when switching
+   *              from molecules to macromolecules mode (no taper, no sliver).
+   *
+   * Case: 1. Load a structure with a thick foreground bond flanked by two wedges at Micro
+   *       2. Take screenshot to witness the molecules-mode representation
+   *       3. Switch to Macro
+   *       4. Take screenshot - the bond and the wedge joins must match molecules mode
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    page,
+    'KET/Micro-Macro-Switcher/Thick foreground bond flanked by wedges.mol',
+  );
+  await takeEditorScreenshot(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await takeEditorScreenshot(page);
+});
+
 test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules mode in KET`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6318

@@ -833,12 +833,11 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendStereoLabel() {
-    if (!this.shouldDisplayStereoLabel()) {
+    const stereoLabel = this.atom.properties.stereoLabel;
+
+    if (!stereoLabel || !this.shouldDisplayStereoLabel()) {
       return;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const stereoLabel = this.atom.properties.stereoLabel!;
 
     this.stereoLabelElement = this.canvas
       ?.append('g')
@@ -900,7 +899,24 @@ export class AtomRenderer extends BaseRenderer {
     direction: Vec2,
   ): number {
     const baseDistance = 3;
-    const labelBox = {
+
+    // Forward shift: clearance past the atom label in the placement direction.
+    // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
+    let forwardShift = 0;
+    this.labelBBoxes.forEach((labelSymbolBBox) => {
+      const absoluteBox = new Box2Abs(
+        labelSymbolBBox.x,
+        labelSymbolBBox.y,
+        labelSymbolBBox.x + labelSymbolBBox.width,
+        labelSymbolBBox.y + labelSymbolBBox.height,
+      ).translate(this.scaledPosition);
+      forwardShift = Math.max(
+        forwardShift,
+        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+      );
+    });
+
+    const stereoLabelBox = {
       x: this.scaledPosition.x - width / 2,
       y: this.scaledPosition.y - height / 2,
       width,
@@ -910,10 +926,10 @@ export class AtomRenderer extends BaseRenderer {
     const backwardShift = util.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
-      Box2Abs.fromRelBox(labelBox),
+      Box2Abs.fromRelBox(stereoLabelBox),
     );
 
-    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+    return LABEL_CLEARANCE_OFFSET + baseDistance + forwardShift + backwardShift;
   }
 
   private getLabelProjectionRadius(

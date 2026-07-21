@@ -281,6 +281,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Click on any monomer in the RNA Builder section
      * 4. Observe that the corresponding monomer in the library is highlighted
      */
+    await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
       Sugar.UNA,

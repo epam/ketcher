@@ -36,7 +36,10 @@ import {
   setCachedCustomRnaPreset,
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
-import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
+import {
+  deriveRnaPresetAliasesFromDefaults,
+  transformRnaPresetToRnaLabeledPreset,
+} from './rnaBuilderSlice.helper';
 import { getValidations } from 'helpers/rnaValidations';
 import {
   selectAxoLabsAliasesByPresetName,
@@ -239,7 +242,17 @@ export const rnaBuilderSlice = createSlice({
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
-      const newPreset = { ...preset };
+      const newPreset = {
+        ...preset,
+        // Cast strips Immer's WritableDraft<> wrapper: state.presetsDefault is
+        // already an IRnaPreset[] (which carries the alias fields), but as an
+        // Immer draft its element type is WritableDraft<IRnaPreset>, whose deep
+        // Draft<Struct> is not assignable to Struct.
+        ...deriveRnaPresetAliasesFromDefaults(
+          preset,
+          state.presetsDefault as IRnaPreset[],
+        ),
+      };
 
       setCachedCustomRnaPreset(transformRnaPresetToRnaLabeledPreset(newPreset));
 

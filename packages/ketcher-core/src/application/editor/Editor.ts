@@ -1289,6 +1289,19 @@ export class CoreEditor {
                 ),
               );
 
+              // Preset mirroring: if both bonded ends are on the same
+              // topology side (both first or both last in their chains),
+              // mirror the dropped preset horizontally (req. 3.3.1).
+              if (isLibraryItemRnaPreset(item) && addedMonomers.length > 1) {
+                modelChanges.merge(
+                  this.applyPresetMirroringIfNeeded(
+                    droppedMonomer,
+                    addedMonomers,
+                    targetMonomer,
+                  ),
+                );
+              }
+
               // In Flex mode, reposition the dropped monomer (and any preset
               // group) so the new bond has standard length and follows the AP
               // direction (req. 2.4, 2.5). Also mirror the preset if needed
@@ -1302,19 +1315,6 @@ export class CoreEditor {
                     targetAP,
                   ),
                 );
-
-                // Preset mirroring: if both bonded ends are on the same
-                // topology side (both first or both last in their chains),
-                // mirror the dropped preset horizontally (req. 3.3.1).
-                if (isLibraryItemRnaPreset(item) && addedMonomers.length > 1) {
-                  modelChanges.merge(
-                    this.applyPresetMirroringIfNeeded(
-                      droppedMonomer,
-                      addedMonomers,
-                      targetMonomer,
-                    ),
-                  );
-                }
               }
 
               // Non-standard bond notification: same-group APs (req. 4.2).

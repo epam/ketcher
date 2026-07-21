@@ -34,6 +34,10 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
+import {
+  $patchStyleText,
+  $getSelectionStyleValueForProperty,
+} from '@lexical/selection';
 import { Dialog } from '../../../components';
 import type { DialogParams } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
@@ -163,14 +167,51 @@ const TextEditorInner = (props: {
     };
   }, [editor, position, id]);
 
+  const SCRIPT_FONT_SCALE = 0.7;
+
   const toggleStyle = useCallback(
     (command: TextCommand): void => {
       const format = textCommandToFormat[command];
-      if (format) {
-        editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
+      if (!format) return;
+
+      const isSubOrSuper =
+        command === TextCommand.Subscript ||
+        command === TextCommand.Superscript;
+      const oppositeCommand =
+        command === TextCommand.Subscript
+          ? TextCommand.Superscript
+          : TextCommand.Subscript;
+      const isCurrentlyActive = activeFormats.has(command);
+      const isOppositeActive =
+        isSubOrSuper && activeFormats.has(oppositeCommand);
+
+      editor.dispatchCommand(FORMAT_TEXT_COMMAND, format);
+
+      if (isSubOrSuper) {
+        editor.update(() => {
+          const selection = $getSelection();
+          if (!$isRangeSelection(selection)) return;
+          const rawSize = $getSelectionStyleValueForProperty(
+            selection,
+            'font-size',
+            '13px',
+          );
+          const size = parseFloat(rawSize);
+          if (!isNaN(size)) {
+            if (isCurrentlyActive) {
+              $patchStyleText(selection, {
+                'font-size': `${Math.round(size / SCRIPT_FONT_SCALE)}px`,
+              });
+            } else if (!isOppositeActive) {
+              $patchStyleText(selection, {
+                'font-size': `${Math.round(size * SCRIPT_FONT_SCALE)}px`,
+              });
+            }
+          }
+        });
       }
     },
-    [editor],
+    [editor, activeFormats],
   );
 
   const setFocusInEditor = useCallback(() => {

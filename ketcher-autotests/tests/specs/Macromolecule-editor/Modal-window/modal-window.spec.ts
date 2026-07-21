@@ -1,5 +1,7 @@
 import { Chem } from '@tests/pages/constants/monomers/Chem';
 import { Locator, test, expect } from '@fixtures';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondTool } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
@@ -20,6 +22,7 @@ test.describe('Modal window', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToCHEMTab();
 
     await Library(page).dragMonomerOnCanvas(Chem.Test_6_Ch, {

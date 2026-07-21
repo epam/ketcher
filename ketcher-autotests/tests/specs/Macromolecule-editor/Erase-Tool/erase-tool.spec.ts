@@ -42,6 +42,7 @@ test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await Library(page).switchToPeptidesTab();
   });
 

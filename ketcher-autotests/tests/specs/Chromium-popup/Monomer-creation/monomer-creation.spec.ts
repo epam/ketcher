@@ -673,6 +673,7 @@ test(`10. Check that monomer can be created with empty name using symbol as fall
 
   // Verify monomer was created successfully by switching to macromolecules mode
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
   const monomerOnMacro = getMonomerLocator(page, {
     monomerAlias: testSymbol,
   });
@@ -1049,6 +1050,7 @@ for (const [index, eligableName] of eligableNames.entries()) {
       name: eligableName.value,
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: `Test11-${index}`,
     });
@@ -1107,6 +1109,7 @@ for (const eligableCode of eligableCodes) {
       name: 'Temp',
     });
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: eligableCode.value,
     });
@@ -1557,6 +1560,7 @@ for (const monomerToCreate of monomersToCreate) {
     });
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     const monomer = getMonomerLocator(page, {
       monomerAlias: monomerToCreate.code,
     });

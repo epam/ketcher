@@ -13,6 +13,8 @@ import {
 } from '@utils';
 import { selectRectangleArea } from '@utils/canvas/tools/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';
 
@@ -33,6 +35,7 @@ test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
     await openFileAndAddToCanvasMacro(page, fileName);
     await shiftStructure(page);
   });

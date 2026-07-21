@@ -1,6 +1,8 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit } from './loaders/waitForKetcherInit/waitForKetcherInit';
 import { waitForIndigoToLoad } from './loaders/waitForIndigoToLoad';
+import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 
 export async function emptyFunction() {
   // Intentionally empty callback used as a default async no-op in wait helpers.
@@ -14,6 +16,7 @@ export async function pageReload(page: Page) {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(LayoutMode.Flex);
 }
 
 export async function pageReloadMicro(page: Page) {

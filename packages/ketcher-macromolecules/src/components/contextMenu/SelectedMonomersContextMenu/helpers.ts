@@ -104,7 +104,19 @@ export const isAntisenseCreationDisabled = (
   }
 
   const selectedSet = new Set(monomers);
-  const chainsCollection = ChainsCollection.fromMonomers(monomers);
+
+  // fromMonomers excludes RNABase instances as chain seeds (they're treated as
+  // side-chain attachments, not backbone starts). When only bases are selected,
+  // add their connected sugars so the backbone traversal actually runs.
+  const seedMonomers = [...monomers];
+  for (const m of monomers) {
+    if (m instanceof RNABase) {
+      const sugar = getSugarFromRnaBase(m);
+      if (sugar) seedMonomers.push(sugar);
+    }
+  }
+
+  const chainsCollection = ChainsCollection.fromMonomers(seedMonomers);
 
   let hasAtLeastOneValidChain = false;
 

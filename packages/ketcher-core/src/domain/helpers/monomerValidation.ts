@@ -80,7 +80,7 @@ export function getAttachmentPointNames(
         typeof rgroups.forEach === 'function'
       ) {
         // rgroups is a Map with keys like 1, 2, 3 corresponding to R1, R2, R3
-        rgroups.forEach((_value: any, key: number) => {
+        rgroups.forEach((_value: unknown, key: number) => {
           const pointName = `R${key}` as AttachmentPointName;
           if (!attachmentPoints.includes(pointName)) {
             attachmentPoints.push(pointName);

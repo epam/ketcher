@@ -106,6 +106,7 @@ import { MonomerPreviewTooltip } from '@tests/pages/macromolecules/canvas/Monome
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { getSGroupLabelLocator } from '@utils/canvas/s-group-signes/getSGroupLabelLocator';
 import { getArrowLocator } from '@utils/canvas/arrow-signes/getArrowLocator';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -865,12 +866,11 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Expected Result: After clicking Create cyclic structure, the context menu should automatically close.
      * The cyclic structure should be generated, and the canvas should regain focus immediately.
      */
-
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProject(
       page,
       'KET/polymer-chain-that-meets-cyclic-structure-criteria.ket',
     );
-    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await CommonLeftToolbar(page).areaSelectionTool();
     await selectMonomersAndBonds(page, {
       monomerIds: [68, 69, 82, 83, 73, 71, 72, 80, 79, 84],

@@ -749,7 +749,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       monomerAlias: 'F1',
     }).hover();
     await MonomerPreviewTooltip(page).waitForBecomeVisible();
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, MonomerPreviewTooltip(page).window);
   });
 
   test('Case 28: Correct highlight (not missing fill) for leaving-group atoms', async ({

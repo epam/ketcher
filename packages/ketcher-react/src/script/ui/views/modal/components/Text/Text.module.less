@@ -49,16 +49,6 @@
     outline: none;
 
     .scrollbar();
-
-    sub,
-    sup {
-      font-size: inherit;
-      line-height: 0;
-      position: relative;
-      vertical-align: baseline;
-      bottom: 0;
-      top: 0;
-    }
   }
 
   .textBold {
@@ -70,14 +60,14 @@
   }
 
   .textSubscript {
-    line-height: 0;
-    position: relative;
-    top: 0.7em;
+    vertical-align: sub;
+    transform: scale(0.7);
+    transform-origin: left;
   }
 
   .textSuperscript {
-    line-height: 0;
-    position: relative;
-    top: -0.7em;
+    vertical-align: super;
+    transform: scale(0.7);
+    transform-origin: left;
   }
 }

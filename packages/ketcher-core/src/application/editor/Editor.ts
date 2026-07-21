@@ -898,6 +898,9 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.keydownEventHandler = (event: KeyboardEvent) => {
+      if (this._type === EditorType.Micromolecules) {
+        return;
+      }
       let isPropagationStopped = false;
       const originalStopPropagation = event.stopPropagation.bind(event);
       event.stopPropagation = () => {

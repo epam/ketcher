@@ -8,15 +8,17 @@ import {
   shouldInvokeConnectionModal,
   findPresetMonomerForBonding,
 } from 'application/editor/tools/bondConnectionHelpers';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
-import { AmbiguousMonomer } from 'domain/entities';
-import { UnresolvedMonomer } from 'domain/entities';
-import { UnsplitNucleotide } from 'domain/entities';
+import {
+  AmbiguousMonomer,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { KetMonomerClass } from 'application/formatters';
 

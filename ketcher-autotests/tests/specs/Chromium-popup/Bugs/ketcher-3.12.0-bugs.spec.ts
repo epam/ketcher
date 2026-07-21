@@ -33,6 +33,7 @@ import {
   setMolecule,
   readFileContent,
   openFileAndAddToCanvasAsNewProjectMacro,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { Peptide } from '@tests/pages/constants/monomers/Peptides';
 import { CalculateVariablesPanel } from '@tests/pages/macromolecules/CalculateVariablesPanel';
@@ -721,7 +722,7 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      * Version 3.12.0
      */
 
-    await setMolecule(page, '[Pt](C)(C)(C)(C)C');
+    await pasteFromClipboardAndOpenAsNewProject(page, '[Pt](C)(C)(C)(C)C');
     await takeEditorScreenshot(page);
 
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -792,10 +793,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      *
      * Version 3.12.0
      */
-
-    const smilesMolecule =
-      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|';
-    await setMolecule(page, smilesMolecule);
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      'C%91%92%93C.[*:2]%91.[*:1]%92.[*:3]%93 |$;;_R2;_R1;_R3$|',
+    );
 
     await LeftToolbar(page).createMonomer();
 
@@ -826,7 +827,10 @@ test.describe('Bugs: ketcher-3.12.0', () => {
      *
      * Version 3.12.0
      */
-    await setMolecule(page, '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|');
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      '[*:1]C%91.[*:2]%91 |$_R1;;_R2$|',
+    );
     await selectAllStructuresOnCanvas(page);
 
     await LeftToolbar(page).createMonomer();

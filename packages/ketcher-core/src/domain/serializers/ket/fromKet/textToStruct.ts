@@ -179,7 +179,7 @@ export function textToStruct(ketItem: any, struct: Struct) {
 
     // If the incoming node.content is Draft.js shape (stringified or object),
     // convert it to Lexical format at parse time so we store only Lexical JSON.
-    if (node && node.content) {
+    if (node?.content) {
       try {
         // If content is a JSON string, try to parse it
         const parsed =

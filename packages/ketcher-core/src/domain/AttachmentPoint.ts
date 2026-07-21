@@ -11,7 +11,6 @@ import {
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
-import { editorEvents } from 'application/editor/editorEvents';
 import {
   type AttachmentPointConstructorParams,
   AttachmentPointName,
@@ -59,7 +58,10 @@ export class AttachmentPoint {
   protected initialAngle = 0;
   private readonly isUsed: boolean;
   private readonly isSnake;
-  private readonly editorEvents: typeof editorEvents;
+  private get editorEvents() {
+    return provideEditorInstance().events;
+  }
+
   private readonly applyZoomForPositionCalculation: boolean;
 
   constructor(
@@ -81,7 +83,6 @@ export class AttachmentPoint {
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
-    this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
     if (!skipInit) {

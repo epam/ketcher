@@ -109,6 +109,10 @@ class ReStruct {
   private readonly multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
 
+  // RNA preset component outlines (#9441). These span many atoms/bonds, so they
+  // are not visel-bound; we track them here to clear and rebuild each render.
+  private highlightOutlinePaths: Array<{ remove: () => void }> = [];
+
   constructor(
     molecule,
     render: Render | { skipRaphaelInitialization: boolean; theme },
@@ -610,9 +614,131 @@ class ReStruct {
     this.showTexts();
     this.showImages();
     this.showMultitailArrows();
+    this.showHighlightOutlines();
     this.clearMarks();
 
     return true;
+  }
+
+  /**
+   * Draws RNA preset components whose tab is not active (#9441) as a single
+   * clean outline. Each "outline" highlight's per-atom/bond selection contours
+   * are merged into one path, and an SVG feMorphology filter turns the filled
+   * union into a single perimeter stroke (so the structure stays visible
+   * inside). Rebuilt every render since it spans many atoms/bonds.
+   */
+  showHighlightOutlines(): void {
+    this.highlightOutlinePaths.forEach((entry) => entry.remove());
+    this.highlightOutlinePaths = [];
+
+    const namespace = 'http://www.w3.org/2000/svg';
+
+    this.molecule.highlights.forEach((highlight) => {
+      if (!highlight.outline) {
+        return;
+      }
+
+      // Use the default selection-plate sizes (small <circle> for bare carbons,
+      // label-sized <rect> for labeled atoms) so the outline matches the
+      // standard selection contour: tight carbon corners, larger labeled loops.
+      const plates: Array<{ node: Element; remove: () => void }> = [];
+      const add = (contour) => {
+        if (contour) {
+          plates.push(contour);
+        }
+      };
+      highlight.atoms.forEach((atomId) => {
+        add(this.atoms.get(atomId)?.getSelectionContour(this.render));
+      });
+      highlight.bonds.forEach((bondId) => {
+        add(this.bonds.get(bondId)?.getSelectionContour(this.render, true));
+      });
+
+      if (plates.length === 0) {
+        return;
+      }
+
+      const parent = plates[0].node.parentNode as Element | null;
+      if (!parent) {
+        plates.forEach((plate) => plate.remove());
+        return;
+      }
+
+      // Render every plate as a solid shape inside one filtered group. The
+      // filter sees their rendered union (overlaps merge regardless of each
+      // path's winding) and turns it into a single perimeter ring, so the
+      // atom plates and bond capsules read as one continuous outline.
+      const filterId = this.ensureHighlightOutlineFilter();
+      const group = document.createElementNS(namespace, 'g');
+      group.setAttribute('filter', `url(#${filterId})`);
+      group.setAttribute('pointer-events', 'none');
+      plates.forEach((plate) => {
+        plate.node.setAttribute('fill', highlight.color);
+        plate.node.setAttribute('stroke', 'none');
+        group.appendChild(plate.node);
+      });
+      parent.appendChild(group);
+
+      this.highlightOutlinePaths.push({
+        remove: () => {
+          plates.forEach((plate) => plate.remove());
+          group.remove();
+        },
+      });
+    });
+  }
+
+  private ensureHighlightOutlineFilter(): string {
+    const filterId = 'ketcher-highlight-outline';
+    const scale = this.render.options.microModeScale ?? 100;
+    // Ring thickness matches the bond line width (scale / 20) so it tracks the
+    // render scale and stays a constant thickness on screen.
+    const ringRadius = String(scale / 20);
+    const svg = this.render.paper.canvas as SVGSVGElement | undefined;
+    if (!svg) {
+      return filterId;
+    }
+
+    // Keep the thickness in sync even if the filter survived a hot reload.
+    const existingDilate = svg.querySelector(`#${filterId} feMorphology`);
+    if (existingDilate) {
+      existingDilate.setAttribute('radius', ringRadius);
+      return filterId;
+    }
+
+    const namespace = 'http://www.w3.org/2000/svg';
+    let defs = svg.querySelector('defs');
+    if (!defs) {
+      defs = document.createElementNS(namespace, 'defs');
+      svg.insertBefore(defs, svg.firstChild);
+    }
+
+    const filter = document.createElementNS(namespace, 'filter');
+    filter.setAttribute('id', filterId);
+    filter.setAttribute('x', '-50%');
+    filter.setAttribute('y', '-50%');
+    filter.setAttribute('width', '200%');
+    filter.setAttribute('height', '200%');
+
+    // Grow the coloured silhouette outward, then subtract the original shape so
+    // only a clean perimeter ring of highlight.color remains — the outer
+    // boundary plus the inner ring-hole boundaries, as in the reference.
+    const dilate = document.createElementNS(namespace, 'feMorphology');
+    dilate.setAttribute('in', 'SourceGraphic');
+    dilate.setAttribute('operator', 'dilate');
+    dilate.setAttribute('radius', ringRadius);
+    dilate.setAttribute('result', 'dilated');
+
+    const ring = document.createElementNS(namespace, 'feComposite');
+    ring.setAttribute('in', 'dilated');
+    ring.setAttribute('in2', 'SourceAlpha');
+    ring.setAttribute('operator', 'out');
+
+    filter.appendChild(dilate);
+    filter.appendChild(ring);
+    defs.appendChild(filter);
+
+    return filterId;
   }
 
   updateLoops(): void {
@@ -624,7 +750,9 @@ class ReStruct {
       this.markBond(bid, 1);
     });
     ret.newLoops.forEach((loopId) => {
-      this.reloops.set(loopId, new ReLoop(this.molecule.loops.get(loopId)));
+      const loop = this.molecule.loops.get(loopId);
+      if (loop === undefined) return;
+      this.reloops.set(loopId, new ReLoop(loop));
     });
   }
 

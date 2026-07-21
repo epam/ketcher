@@ -131,7 +131,7 @@ test(`Case 2: Verify that system uses custom preset IDT code instead of base one
   await pasteFromClipboardAndOpenAsNewProjectMacro(
     page,
     MacroFileType.HELM,
-    'RNA1{d([Hyp])p.r(A)p.d([Hyp])p.r(A)p.d([Hyp])}$$$$V2.0',
+    'RNA1{dR([In])P.R(A)P.dR([In])P.R(A)P.dR([In])}$$$$V2.0',
   );
   await verifyIDTExport(page, '/5deoxyI/rA/ideoxyI/rA/3deoxyI/');
 });
@@ -150,7 +150,7 @@ test(`Case 3: Check that for Preset R(In)P only has the "special" code at the in
   await pasteFromClipboardAndOpenAsNewProjectMacro(
     page,
     MacroFileType.HELM,
-    'RNA1{r([Hyp])p.r([Hyp])p.r([Hyp])}$$$$V2.0',
+    'RNA1{R([In])P.R([In])P.R([In])}$$$$V2.0',
   );
   await verifyIDTExport(page, 'rI/iRiboI/rI');
 });

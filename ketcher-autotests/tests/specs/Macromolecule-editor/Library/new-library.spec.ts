@@ -1973,7 +1973,7 @@ test('39 Verify library searching using HELM aliases', async () => {
   await Library(page).openRNASection(RNASection.Bases);
   await takeMonomerLibraryScreenshot(page);
 
-  await Library(page).setSearchValue('Hyl_5xi');
+  await Library(page).setSearchValue('meD');
   await Library(page).switchToPeptidesTab();
   await takeMonomerLibraryScreenshot(page);
 });

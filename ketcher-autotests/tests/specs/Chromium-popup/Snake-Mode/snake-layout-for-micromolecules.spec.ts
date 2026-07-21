@@ -338,9 +338,7 @@ test.describe('Snake Layout for Microstructures', () => {
     await CommonTopRightToolbar(page).resetZoom();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
-      enableFlexMode: false,
-    });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonTopRightToolbar(page).setZoomInputValue('20');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

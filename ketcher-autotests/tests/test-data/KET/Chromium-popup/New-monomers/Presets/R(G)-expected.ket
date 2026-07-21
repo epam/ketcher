@@ -462,7 +462,7 @@
         "id": "R___Ribose",
         "fullName": "Ribose",
         "alias": "R",
-        "aliasHELM": "r",
+        "aliasHELM": "R",
         "attachmentPoints": [
             {
                 "attachmentAtom": 10,

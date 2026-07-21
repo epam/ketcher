@@ -25,15 +25,15 @@ import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 type Data = {
-  sgid: any;
-  type?: any;
-  pp?: any;
+  sgid?: number;
+  type?: string;
+  pp?: Vec2 | null;
   expanded?: boolean;
   name?: string;
   oldSgroup?: SGroup;
 };
 
-const SGROUP_TYPE_MAPPING = {
+const SGROUP_TYPE_MAPPING: Record<string, string> = {
   nucleotideComponent: SGroup.TYPES.SUP,
 };
 
@@ -41,9 +41,9 @@ class SGroupCreate extends BaseOperation {
   data: Data;
 
   constructor(
-    sgroupId?: any,
-    type?: any,
-    pp?: any,
+    sgroupId?: number,
+    type?: string,
+    pp?: Vec2,
     expanded?: boolean,
     name?: string,
     oldSgroup?: SGroup,
@@ -62,7 +62,12 @@ class SGroupCreate extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const { sgid, pp, expanded, name, oldSgroup } = this.data;
+    const { sgid, type, pp, expanded, name, oldSgroup } = this.data;
+
+    if (sgid === undefined || type === undefined) {
+      return;
+    }
+
     let sgroup: SGroup;
 
     if (oldSgroup && oldSgroup instanceof MonomerMicromolecule) {
@@ -70,9 +75,7 @@ class SGroupCreate extends BaseOperation {
     } else if (this.monomer) {
       sgroup = new MonomerMicromolecule(SGroup.TYPES.SUP, this.monomer);
     } else {
-      sgroup = new SGroup(
-        SGROUP_TYPE_MAPPING[this.data.type] || this.data.type,
-      );
+      sgroup = new SGroup(SGROUP_TYPE_MAPPING[type] || type);
     }
 
     sgroup.id = sgid;
@@ -82,7 +85,7 @@ class SGroupCreate extends BaseOperation {
       sgroup.pp = new Vec2(pp);
     }
 
-    if (expanded) {
+    if (expanded !== undefined) {
       sgroup.data.expanded = expanded;
       if (sgroup instanceof MonomerMicromolecule) {
         if (Object.isFrozen(sgroup.monomer.monomerItem)) {
@@ -114,7 +117,7 @@ class SGroupCreate extends BaseOperation {
 class SGroupDelete extends BaseOperation {
   data: Data;
 
-  constructor(sgroupId?: any) {
+  constructor(sgroupId?: number) {
     super(OperationType.S_GROUP_DELETE, OperationPriority.S_GROUP_DELETE);
     this.data = { sgid: sgroupId };
   }
@@ -122,6 +125,11 @@ class SGroupDelete extends BaseOperation {
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
     const { sgid } = this.data;
+
+    if (sgid === undefined) {
+      return;
+    }
+
     const sgroup = restruct.sgroups.get(sgid);
     const sgroupData = restruct.sgroupData.get(sgid);
     if (!sgroup) return;

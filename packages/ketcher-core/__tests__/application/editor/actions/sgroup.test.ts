@@ -34,6 +34,7 @@ import { prepareStructForKet } from 'domain/serializers/ket/toKet/prepare';
 import { Peptide } from 'domain/entities/Peptide';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
 import { peptideMonomerItem } from '../../../mock-data';
+import { SGroupCreate } from 'application/editor/operations/sgroup';
 
 jest.mock('domain/helpers/getAttachmentPointStereoBond', () => ({
   getAttachmentPointStereoBond: jest.fn(),
@@ -75,6 +76,33 @@ const addAttachmentPoint = (
 describe('setExpandMonomerSGroup', () => {
   afterEach(() => {
     (getAttachmentPointStereoBond as jest.Mock).mockReset();
+  });
+
+  it('preserves explicit false expanded state when creating monomer S-groups', () => {
+    const struct = new Struct();
+    const monomer = new Peptide(peptideMonomerItem);
+    monomer.monomerItem.expanded = true;
+    const options = {
+      scale: 40,
+      width: 100,
+      height: 100,
+    } as unknown as RenderOptions;
+    const render = new Render(document as unknown as HTMLElement, options);
+    const restruct = new ReStruct(struct, render);
+    const createSGroup = new SGroupCreate(
+      0,
+      SGroup.TYPES.SUP,
+      new Vec2(0, 0),
+      false,
+      'A',
+      undefined,
+      monomer,
+    );
+
+    createSGroup.execute(restruct);
+
+    expect(struct.sgroups.get(0)?.data.expanded).toBe(false);
+    expect(monomer.monomerItem.expanded).toBe(false);
   });
 
   it('preserves stereo bonds when collapsing monomers', () => {

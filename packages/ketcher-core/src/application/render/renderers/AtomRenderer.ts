@@ -2,7 +2,6 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { type Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { editorEvents } from 'application/editor/editorEvents';
 import { ketcherProvider } from 'application/ketcherProvider';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import type { D3SvgElementSelection } from 'application/render/types';
@@ -25,6 +24,21 @@ import {
 // Extra clearance in canvas units that keeps labels away from the atom bbox.
 const LABEL_CLEARANCE_OFFSET = 5;
 const STEREO_CIP_GAP = 2;
+
+export type AtomHoverContour =
+  | {
+      type: 'circle';
+      center: Vec2;
+      radius: number;
+    }
+  | {
+      type: 'rect';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      radius: number;
+    };
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
@@ -91,11 +105,11 @@ export class AtomRenderer extends BaseRenderer {
 
     rootElement
       ?.on('mouseover', (event) => {
-        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
         this.showHover();
       })
       .on('mouseleave', (event) => {
-        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
         this.hideHover();
       })
       .on('mouseup', (event) => {
@@ -147,6 +161,37 @@ export class AtomRenderer extends BaseRenderer {
         .attr('rx', HOVER_RECTANGLE_RADIUS)
         .attr('ry', HOVER_RECTANGLE_RADIUS);
     }
+  }
+
+  public getHoverContour(): AtomHoverContour {
+    if (
+      (this.labelLength < 2 || !this.isLabelVisible) &&
+      !this.atom.hasCharge
+    ) {
+      const macroModeScale = this.editorSettings.macroModeScale;
+
+      return {
+        type: 'circle',
+        center: this.center,
+        radius: Math.ceil(1.9 * (macroModeScale / 6)),
+      };
+    }
+
+    const labelBbox = this.textElement?.node()?.getBBox();
+    const labelX = labelBbox?.x ?? 0;
+    const labelWidth = labelBbox?.width ?? 8;
+    const labelHeight = labelBbox?.height ?? 8;
+    const HOVER_PADDING = 4;
+    const HOVER_RECTANGLE_RADIUS = 10;
+
+    return {
+      type: 'rect',
+      x: this.center.x + labelX - HOVER_PADDING,
+      y: this.center.y - (labelHeight / 2 + HOVER_PADDING),
+      width: labelWidth + HOVER_PADDING * 2,
+      height: labelHeight + HOVER_PADDING * 2,
+      radius: HOVER_RECTANGLE_RADIUS,
+    };
   }
 
   /**
@@ -855,7 +900,24 @@ export class AtomRenderer extends BaseRenderer {
     direction: Vec2,
   ): number {
     const baseDistance = 3;
-    const labelBox = {
+
+    // Forward shift: clearance past the atom label in the placement direction.
+    // Mirrors visel.exts iteration in molecules mode (reatom.ts lines 1085-1087).
+    let forwardShift = 0;
+    this.labelBBoxes.forEach((labelSymbolBBox) => {
+      const absoluteBox = new Box2Abs(
+        labelSymbolBBox.x,
+        labelSymbolBBox.y,
+        labelSymbolBBox.x + labelSymbolBBox.width,
+        labelSymbolBBox.y + labelSymbolBBox.height,
+      ).translate(this.scaledPosition);
+      forwardShift = Math.max(
+        forwardShift,
+        util.shiftRayBox(this.scaledPosition, direction, absoluteBox),
+      );
+    });
+
+    const stereoLabelBox = {
       x: this.scaledPosition.x - width / 2,
       y: this.scaledPosition.y - height / 2,
       width,
@@ -865,10 +927,10 @@ export class AtomRenderer extends BaseRenderer {
     const backwardShift = util.shiftRayBox(
       this.scaledPosition,
       direction.negated(),
-      Box2Abs.fromRelBox(labelBox),
+      Box2Abs.fromRelBox(stereoLabelBox),
     );
 
-    return LABEL_CLEARANCE_OFFSET + baseDistance + backwardShift;
+    return LABEL_CLEARANCE_OFFSET + baseDistance + forwardShift + backwardShift;
   }
 
   private getLabelProjectionRadius(
@@ -896,6 +958,16 @@ export class AtomRenderer extends BaseRenderer {
     this.cipLabelElement?.remove();
     this.stereoLabelElement?.remove();
     super.remove();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
+    this.cipLabelElement?.style('display', display);
+    this.stereoLabelElement?.style('display', display);
   }
 
   protected appendHoverAreaElement(): void {

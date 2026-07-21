@@ -284,7 +284,6 @@ const sequences: ISequence[] = [
   //     'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|PEPTIDE1{D.D.D.D}$RNA1,RNA3,2:pair-2:pair|RNA2,CHEM1,2:pair-1:pair|RNA3,CHEM1,1:R1-1:R2|PEPTIDE1,RNA2,1:R1-1:R2$$$V2.0',
   // },
   {
-    // known issue = https://github.com/epam/ketcher/issues/6761
     Id: 47,
     SequenceName: '(A---A)(_b)(A---A)',
     HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
@@ -2226,6 +2225,33 @@ test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sense 
   });
   await keyboardPressOnCanvas(page, 'Enter');
   await exitFromEditMode(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 42. Dash between nucleotide and nucleoside is shown for every antisense chain pair, not only the first`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6719
+   * Description: The line (dash) between a nucleotide and a nucleoside, shown when the antisense has no
+   *              connection, must appear for every chain pair - not only the first one.
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load two structurally identical chain pairs from HELM (each: sense A-A whose two bases pair to
+   *    two separate, unconnected antisense U's)
+   * 3. Switch to Sequence layout
+   * 4. Take screenshot to validate the dash between the two sense nucleotides is present for BOTH pairs
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}|RNA4{R(A)P.R(A)}|RNA5{R(U)}|RNA6{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair|RNA4,RNA5,5:pair-2:pair|RNA4,RNA6,2:pair-2:pair$$$V2.0',
+  );
+  await MacromoleculesTopToolbar(page).selectLayoutModeTool(
+    LayoutMode.Sequence,
+  );
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

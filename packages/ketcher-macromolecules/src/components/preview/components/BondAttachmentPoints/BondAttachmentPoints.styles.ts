@@ -39,5 +39,7 @@ export const LeavingGroup = styled.p<LeavingGroupProps>(
     lineHeight: '14px',
     borderRadius: '4px',
     backgroundColor: inBond ? '#CDF1FC' : 'transparent',
+    minWidth: inBond ? '8px' : undefined,
+    minHeight: inBond ? '14px' : undefined,
   }),
 );

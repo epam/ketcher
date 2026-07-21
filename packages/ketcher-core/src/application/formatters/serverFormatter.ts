@@ -108,7 +108,8 @@ export class ServerFormatter implements StructFormatter {
       };
     }
     const withCoords = getPropertiesByFormat(format).supportsCoords;
-    if (withCoords) {
+    const shouldConvert = format === SupportedFormat.idt || withCoords;
+    if (shouldConvert) {
       return {
         method: this.#structService.convert,
         struct: stringifiedStruct,

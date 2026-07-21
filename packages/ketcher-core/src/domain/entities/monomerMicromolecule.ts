@@ -23,6 +23,7 @@ export class MonomerMicromolecule extends SGroup {
     super(type);
     this.data.absolute = false;
     this.data.attached = false;
+    this.data.expanded = Boolean(monomer.monomerItem.expanded);
   }
 
   public get isMonomer() {

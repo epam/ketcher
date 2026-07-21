@@ -2,7 +2,14 @@
 // check rollup.config.mjs to see how different build types are handled.
 // This plugin can not result cjs modules.
 
-export const indigoWorker: Worker = new Worker(
-  new URL('./../indigoWorker.ts', import.meta.url),
-  { type: 'module' },
-);
+let _indigoWorker: Worker | null = null;
+
+export function getIndigoWorker(): Worker {
+  if (!_indigoWorker) {
+    _indigoWorker = new Worker(
+      new URL('./../indigoWorker.ts', import.meta.url),
+      { type: 'module' },
+    );
+  }
+  return _indigoWorker;
+}

@@ -720,7 +720,7 @@
         "id": "dR___Deoxy-Ribose",
         "fullName": "Deoxy-Ribose",
         "alias": "dR",
-        "aliasHELM": "d",
+        "aliasHELM": "dR",
         "attachmentPoints": [
             {
                 "attachmentAtom": 9,
@@ -1068,7 +1068,7 @@
         "id": "P___Phosphate",
         "fullName": "Phosphate",
         "alias": "P",
-        "aliasHELM": "p",
+        "aliasHELM": "P",
         "aliasAxoLabs": "p",
         "attachmentPoints": [
             {

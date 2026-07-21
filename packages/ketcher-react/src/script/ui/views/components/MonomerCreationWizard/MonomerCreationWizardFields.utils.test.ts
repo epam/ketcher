@@ -4,7 +4,7 @@ import { getMonomerPropertyVisibility } from './MonomerCreationWizardFields.util
 describe('getMonomerPropertyVisibility', () => {
   it.each`
     type                         | naturalAnalogue | modificationTypes | helmAlias | bilnAlias
-    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${false}  | ${true}
+    ${KetMonomerClass.CHEM}      | ${false}        | ${false}          | ${true}   | ${true}
     ${KetMonomerClass.AminoAcid} | ${true}         | ${true}           | ${true}   | ${true}
     ${KetMonomerClass.Sugar}     | ${false}        | ${false}          | ${true}   | ${false}
     ${KetMonomerClass.Base}      | ${true}         | ${false}          | ${true}   | ${false}

@@ -53,3 +53,15 @@ jobs:
         run: npm test
         env:
           CI: true
+
+      - name: Run build example-ssr
+        run: npm run build
+        working-directory: example-ssr
+
+      - name: Run lint example-ssr
+        run: npm run lint
+        working-directory: example-ssr
+
+      - name: Run test example-ssr
+        run: npm run test:types
+        working-directory: example-ssr

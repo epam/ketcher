@@ -281,6 +281,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 3. Click on any monomer in the RNA Builder section
      * 4. Observe that the corresponding monomer in the library is highlighted
      */
+    await Library(page).switchToRNATab();
     await Library(page).rnaBuilder.expand();
     await Library(page).selectMonomers([
       Sugar.UNA,
@@ -781,7 +782,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await Library(page).rnaBuilder.selectBaseSlot();
     await Library(page).selectMonomer(Base.DNA_N);
     await Library(page).rnaBuilder.save();
-    await verifyHELMExport(page, 'RNA1{r(A)p.r(A,C,G,T)p.r(A)}$$$$V2.0');
+    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async ({

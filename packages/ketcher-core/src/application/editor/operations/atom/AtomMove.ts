@@ -18,22 +18,30 @@ import { BaseOperation } from '../BaseOperation';
 import { OperationPriority, OperationType } from '../OperationType';
 import type { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
+import type { Vec2 } from 'domain/entities';
+
+type Data = {
+  aid: number | null;
+  d: Vec2 | null;
+  noinvalidate: boolean;
+};
 
 export class AtomMove extends BaseOperation {
-  data: {
-    aid: any;
-    d: any;
-    noinvalidate: any;
-  };
+  data: Data;
 
-  constructor(atomId?: any, d?: any, noinvalidate?: any) {
+  constructor(atomId?: number, d?: Vec2, noinvalidate?: boolean) {
     super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
-    this.data = { aid: atomId, d, noinvalidate };
+    this.data = {
+      aid: atomId ?? null,
+      d: d ?? null,
+      noinvalidate: noinvalidate ?? false,
+    };
   }
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
     const { aid, d } = this.data;
+    if (aid === null || !d) return;
     const atom = struct.atoms.get(aid);
     if (!atom) return;
     atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
@@ -58,6 +66,6 @@ export class AtomMove extends BaseOperation {
 
   isDummy() {
     const { d } = this.data;
-    return d.x === 0 && d.y === 0;
+    return d?.x === 0 && d?.y === 0;
   }
 }

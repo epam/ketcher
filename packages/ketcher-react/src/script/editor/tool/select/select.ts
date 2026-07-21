@@ -609,10 +609,10 @@ class SelectTool implements Tool {
         .map(({ item }) => item)
         .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
-        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
+        SGroup.isAtomInSaltOrSolvent(atomId, sgroupsOnCanvas),
       );
       isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
-        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas),
+        SGroup.isBondInSaltOrSolvent(bondId, sgroupsOnCanvas),
       );
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond;

@@ -15,9 +15,23 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-import { type Struct, SettingsManager } from 'ketcher-core';
+import {
+  type Struct,
+  type PersistedSelectionTool,
+  SettingsManager,
+} from 'ketcher-core';
 import actions, { type UiAction, type UiActionAction } from '../../action';
 import type Editor from '../../../editor/Editor';
+
+function isPersistedSelectionTool(
+  tool: UiActionAction | null | undefined,
+): tool is PersistedSelectionTool {
+  return (
+    typeof tool === 'object' &&
+    tool !== null &&
+    (tool as { tool?: string }).tool === 'select'
+  );
+}
 
 type ActionParams = {
   editor: Editor & {
@@ -153,7 +167,7 @@ export default function (
         ...(params as ActionParams),
         action: resolvedAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(
@@ -167,7 +181,7 @@ export default function (
         ...(params as ActionParams),
         action: action as UiActionAction,
       });
-      if ((activeTool as { tool?: string })?.tool === 'select') {
+      if (isPersistedSelectionTool(activeTool)) {
         SettingsManager.selectionTool = activeTool;
       }
       return buildStateWithStatuses(

@@ -10,7 +10,8 @@ export const getMonomerPropertyVisibility = (
     type === KetMonomerClass.AminoAcid ||
     type === KetMonomerClass.Base ||
     type === KetMonomerClass.Sugar ||
-    type === KetMonomerClass.Phosphate;
+    type === KetMonomerClass.Phosphate ||
+    type === KetMonomerClass.CHEM;
   const displayBilnAlias =
     type === KetMonomerClass.AminoAcid || type === KetMonomerClass.CHEM;
 

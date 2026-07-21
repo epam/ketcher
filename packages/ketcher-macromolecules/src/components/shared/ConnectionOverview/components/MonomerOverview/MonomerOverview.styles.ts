@@ -31,3 +31,12 @@ export const AttachmentPointList = styled.div({
   width: '100%',
   gap: '7px',
 });
+
+export const StyledUnresolvedMonomer = styled.div<IStyledStyledStructRender>(
+  ({ isExpanded }) => ({
+    minHeight: '150px',
+    height: isExpanded ? 'auto' : '150px',
+    width: isExpanded ? 'auto' : '150px',
+    alignSelf: 'stretch',
+  }),
+);

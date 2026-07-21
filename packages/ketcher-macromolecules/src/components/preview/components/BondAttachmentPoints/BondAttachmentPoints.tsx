@@ -16,18 +16,24 @@ const BondAttachmentPoints = ({
 }: Props) => {
   return (
     <>
-      {attachmentPoints.map((attachmentPoint) => (
-        <AttachmentPoint
-          connected={attachmentPoint.connected}
-          inBond={attachmentPoint.id === attachmentPointInBond}
-          key={attachmentPoint.id}
-        >
-          <AttachmentPointName>{attachmentPoint.id}</AttachmentPointName>
-          <LeavingGroup inBond={attachmentPoint.id === attachmentPointInBond}>
-            {attachmentPoint.label}
-          </LeavingGroup>
-        </AttachmentPoint>
-      ))}
+      {attachmentPoints.map((attachmentPoint) => {
+        const isInBond = attachmentPoint.id === attachmentPointInBond;
+
+        return (
+          <AttachmentPoint
+            connected={attachmentPoint.connected}
+            inBond={isInBond}
+            key={attachmentPoint.id}
+          >
+            <AttachmentPointName>{attachmentPoint.id}</AttachmentPointName>
+            {(attachmentPoint.label || isInBond) && (
+              <LeavingGroup inBond={isInBond}>
+                {attachmentPoint.label}
+              </LeavingGroup>
+            )}
+          </AttachmentPoint>
+        );
+      })}
     </>
   );
 };

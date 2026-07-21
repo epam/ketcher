@@ -1,6 +1,6 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { peptideMonomerItem } from '../../mock-data';
-import { Vec2 } from 'domain/entities';
+import { Atom, Bond, SGroup, Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import {
   PolymerBondAddOperation,
@@ -28,7 +28,52 @@ import { INVALID } from 'domain/entities/BaseMicromoleculeEntity';
 import { RxnArrowMode } from 'domain/entities/rxnArrow';
 import { Struct } from 'domain/entities/struct';
 
+function createStructWithSGroup(type = SGroup.TYPES.MUL) {
+  const struct = new Struct();
+  const firstAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(0, 0) }),
+  );
+  const secondAtomId = struct.atoms.add(
+    new Atom({ label: 'C', pp: new Vec2(1, 0) }),
+  );
+  struct.bonds.add(
+    new Bond({
+      begin: firstAtomId,
+      end: secondAtomId,
+      type: Bond.PATTERN.TYPE.SINGLE,
+    }),
+  );
+  const sgroup = new SGroup(type);
+  sgroup.data.fieldValue = 'Value';
+  const sgroupId = struct.sgroups.add(sgroup);
+  struct.atomAddToSGroup(sgroupId, firstAtomId);
+  struct.atomAddToSGroup(sgroupId, secondAtomId);
+  struct.markFragments();
+
+  return { struct, sgroup };
+}
+
 describe('Drawing Entities Manager', () => {
+  const originalGetBBox = SVGElement.prototype.getBBox;
+
+  beforeEach(() => {
+    Object.defineProperty(SVGElement.prototype, 'getBBox', {
+      configurable: true,
+      value: jest.fn(() => ({ x: 0, y: 0, width: 10, height: 10 })),
+    });
+  });
+
+  afterEach(() => {
+    if (originalGetBBox) {
+      Object.defineProperty(SVGElement.prototype, 'getBBox', {
+        configurable: true,
+        value: originalGetBBox,
+      });
+    } else {
+      Reflect.deleteProperty(SVGElement.prototype, 'getBBox');
+    }
+  });
+
   it('should create monomer', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const command = drawingEntitiesManager.addMonomer(
@@ -217,5 +262,72 @@ describe('Drawing Entities Manager', () => {
 
     expect(rxnArrow.getInitiallySelected()).toBeUndefined();
     expect(rxnPlus.getInitiallySelected()).toBeUndefined();
+  });
+
+  it('should create macro S-group drawing entities for micromolecule fragments', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct } = createStructWithSGroup();
+
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    expect(editor.drawingEntitiesManager.sgroups.size).toEqual(1);
+    expect(
+      [...editor.drawingEntitiesManager.sgroups.values()][0].sgroup.type,
+    ).toBe(SGroup.TYPES.MUL);
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(editor.renderersContainer.sgroups.size).toEqual(1);
+    expect(document.querySelector('[data-testid="s-group"]')).toBeTruthy();
+    expect(document.querySelector('[data-label-text="1"]')).toBeTruthy();
+  });
+
+  it('should store monomer expanded state as a boolean in converted S-groups', () => {
+    const struct = new Struct();
+    const monomer = new Peptide(peptideMonomerItem);
+    monomer.monomerItem.expanded = undefined;
+
+    const collapsedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(collapsedSGroup.data.expanded).toBe(false);
+
+    monomer.monomerItem.expanded = true;
+    const expandedSGroup =
+      MacromoleculesConverter.convertMonomerToMonomerMicromolecule(
+        monomer,
+        struct,
+      );
+
+    expect(expandedSGroup.data.expanded).toBe(true);
+  });
+
+  it('should render macro data S-group field values', () => {
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      renderersContainer: createRenderersManager(),
+    });
+    const { struct } = createStructWithSGroup(SGroup.TYPES.DAT);
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        editor.drawingEntitiesManager,
+      );
+
+    editor.renderersContainer.update(modelChanges);
+
+    expect(document.querySelector('[data-label-text="Value"]')).toBeTruthy();
   });
 });

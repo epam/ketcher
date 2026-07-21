@@ -26,7 +26,6 @@ import {
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
-import { editorEvents } from 'application/editor/editorEvents';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -211,6 +210,10 @@ export class BondRenderer extends BaseRenderer {
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
+    if (!pathShape) {
+      return;
+    }
+
     if (this.selectionElement) {
       this.selectionElement.attr('d', pathShape);
     } else {
@@ -241,6 +244,10 @@ export class BondRenderer extends BaseRenderer {
     }
 
     const pathShape = this.getSelectionContour();
+
+    if (!pathShape) {
+      return;
+    }
 
     this.hoverElement = this.canvas
       ?.insert('path', ':first-child')
@@ -450,7 +457,17 @@ export class BondRenderer extends BaseRenderer {
     ];
   }
 
-  private getSelectionContour() {
+  public getHoverContourPath(): string | undefined {
+    return this.getSelectionContour();
+  }
+
+  private getSelectionContour(): string | undefined {
+    const selectionPoints = this.getSelectionPoints();
+
+    if (selectionPoints.length !== 8) {
+      return undefined;
+    }
+
     const [
       startPadTop,
       startTop,
@@ -460,17 +477,15 @@ export class BondRenderer extends BaseRenderer {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints();
+    ] = selectionPoints;
 
-    const pathString = `
+    return `
       M ${startTop.x} ${startTop.y}
       L ${endTop.x} ${endTop.y}
       C ${endPadTop.x} ${endPadTop.y}, ${endPadBottom.x} ${endPadBottom.y}, ${endBottom.x} ${endBottom.y}
       L ${startBottom.x} ${startBottom.y}
       C ${startPadBottom.x} ${startPadBottom.y}, ${startPadTop.x} ${startPadTop.y}, ${startTop.x} ${startTop.y}
     `;
-
-    return pathString;
   }
 
   public moveSelection() {
@@ -521,11 +536,11 @@ export class BondRenderer extends BaseRenderer {
 
     hoverPath
       .on('mouseenter', (event) => {
-        editorEvents.mouseOverDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseOverDrawingEntity.dispatch(event);
         this.appendHover();
       })
       .on('mouseleave', (event) => {
-        editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        provideEditorInstance().events.mouseLeaveDrawingEntity.dispatch(event);
         this.removeHover();
       });
   }
@@ -586,7 +601,10 @@ export class BondRenderer extends BaseRenderer {
     switch (this.bond.type) {
       case BondType.Single:
         if (this.bond.stereo === BondStereo.Up) {
-          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(
+            bondVectors,
+            viewModel,
+          );
         } else if (this.bond.stereo === BondStereo.Down) {
           bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
         } else if (this.bond.stereo === BondStereo.Either) {
@@ -1015,6 +1033,14 @@ export class BondRenderer extends BaseRenderer {
     super.remove();
     this.removeHover();
     this.removeSelection();
+  }
+
+  public setVisibility(isVisible: boolean): void {
+    super.setVisibility(isVisible);
+
+    const display = isVisible ? '' : 'none';
+    this.rootElement?.style('display', display);
+    this.selectionElement?.style('display', display);
   }
 
   public move() {

@@ -21,6 +21,7 @@ import type { RaphaelPaper } from 'raphael';
 
 import Raphael from './raphael-ext';
 import ReStruct from './restruct/restruct';
+import type Visel from './restruct/visel';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
@@ -33,6 +34,11 @@ import type { AttachmentPointName } from 'domain/types';
 import type { KetMonomerClass } from 'application/formatters/types/ket';
 import type { RnaPresetComponentKey } from 'application/editor/shared/customEvents';
 
+export type EditAllInstancesPresetRequirements = {
+  type: KetMonomerClass;
+  attachmentPoints: AttachmentPointName[];
+};
+
 export type MonomerCreationInitialValues = {
   type: KetMonomerClass;
   symbol: string;
@@ -40,6 +46,11 @@ export type MonomerCreationInitialValues = {
   naturalAnalogue: string;
   aliasHELM: string;
   aliasBILN: string;
+  position?: Vec2;
+  editMode?: 'instance' | 'all';
+  originalType?: KetMonomerClass;
+  originalSymbol?: string;
+  presetRequirements?: EditAllInstancesPresetRequirements;
 };
 
 export type RnaComponentAtoms = Map<
@@ -78,6 +89,7 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public combinedHover: Visel | null = null;
   public viewBox!: ViewBox;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;

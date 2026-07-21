@@ -21,7 +21,7 @@ import {
   StyledTabs,
   TabPanelContent,
 } from './Tabs.styles';
-import { memo } from 'react';
+import { FC, memo } from 'react';
 import { TabsData } from './Tabs.types';
 
 const a11yProps = (index: number) => {
@@ -41,7 +41,7 @@ type Props = {
 const Tabs = (props: Props) => {
   const { tabs, selectedTabIndex, isLayoutToRight, onChange } = props;
   const tabPanel = tabs[selectedTabIndex];
-  const Component = tabPanel?.component;
+  const Component = tabPanel?.component as FC<Record<string, unknown>>;
   const componentProps = tabPanel?.props;
 
   return (

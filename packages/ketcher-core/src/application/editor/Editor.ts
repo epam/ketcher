@@ -284,6 +284,18 @@ export class CoreEditor {
 
   private isDragDropBondModalOpen = false;
 
+  /**
+   * Stores context needed to reposition the dropped monomer after the user
+   * picks attachment points in the connection modal (drag-drop path only).
+   * Cleared once the bond is committed or the dialog is cancelled.
+   */
+  private dragDropModalContext: {
+    droppedMonomer: BaseMonomer;
+    addedMonomers: BaseMonomer[];
+    targetMonomer: BaseMonomer;
+    targetAP: AttachmentPointName;
+  } | null = null;
+
   public theme;
   public zoomTool: ZoomTool;
   private tool?: Tool | BaseTool;
@@ -1336,6 +1348,12 @@ export class CoreEditor {
               droppedMonomer.unUsedAttachmentPointsNamesList.length > 0
             ) {
               this.isDragDropBondModalOpen = true;
+              this.dragDropModalContext = {
+                droppedMonomer,
+                addedMonomers,
+                targetMonomer,
+                targetAP,
+              };
               this.events.openMonomerConnectionModal.dispatch({
                 firstMonomer: droppedMonomer,
                 secondMonomer: targetMonomer,
@@ -1997,12 +2015,47 @@ export class CoreEditor {
         secondSelectedAttachmentPoint,
       } = payload;
 
-      this.commitPolymerBond(
-        firstMonomer,
-        secondMonomer,
-        firstSelectedAttachmentPoint,
-        secondSelectedAttachmentPoint,
+      const command = new Command();
+      command.merge(
+        this.drawingEntitiesManager.createPolymerBond(
+          firstMonomer,
+          secondMonomer,
+          firstSelectedAttachmentPoint,
+          secondSelectedAttachmentPoint,
+        ),
       );
+
+      // In Flex mode, reposition the dropped monomer so the new bond has
+      // standard length and follows the target AP direction (req. 2.4, 2.5).
+      // The target AP is the one selected by the user for the target monomer
+      // (secondMonomer = target canvas monomer, secondSelectedAttachmentPoint).
+      if (
+        this.mode.modeName === 'flex-layout-mode' &&
+        this.dragDropModalContext
+      ) {
+        const { droppedMonomer, addedMonomers } = this.dragDropModalContext;
+        command.merge(
+          this.computeAndApplyFlexDropRepositioning(
+            droppedMonomer,
+            addedMonomers,
+            secondMonomer,
+            secondSelectedAttachmentPoint,
+          ),
+        );
+      }
+
+      if (this.mode.modeName === 'snake-layout-mode') {
+        command.merge(
+          this.drawingEntitiesManager.recalculateCanvasMatrix(
+            this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
+            this.drawingEntitiesManager.snakeLayoutMatrix,
+          ),
+        );
+      }
+
+      const history = EditorHistory.getInstance(this);
+      history.update(command);
+      this.renderersContainer.update(command);
 
       if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
         this.events.error.dispatch(
@@ -2011,6 +2064,7 @@ export class CoreEditor {
       }
 
       this.isDragDropBondModalOpen = false;
+      this.dragDropModalContext = null;
     }
   }
 
@@ -2021,6 +2075,7 @@ export class CoreEditor {
     }
     if (this.isDragDropBondModalOpen) {
       this.isDragDropBondModalOpen = false;
+      this.dragDropModalContext = null;
     }
   }
 
@@ -2036,42 +2091,6 @@ export class CoreEditor {
     if (renderer instanceof BaseMonomerRenderer) {
       renderer.setDragTargetAttachmentPoint(apName);
     }
-  }
-
-  /**
-   * Creates a polymer bond between two monomers, applies a snake-mode
-   * recalculation when applicable, and commits the result to history.
-   * Extracted to avoid duplicating this pattern across the PolymerBondTool
-   * path and the drag-drop modal path.
-   */
-  private commitPolymerBond(
-    firstMonomer: BaseMonomer,
-    secondMonomer: BaseMonomer,
-    firstAP: AttachmentPointName,
-    secondAP: AttachmentPointName,
-  ): void {
-    const command = new Command();
-    command.merge(
-      this.drawingEntitiesManager.createPolymerBond(
-        firstMonomer,
-        secondMonomer,
-        firstAP,
-        secondAP,
-      ),
-    );
-
-    if (this.mode.modeName === 'snake-layout-mode') {
-      command.merge(
-        this.drawingEntitiesManager.recalculateCanvasMatrix(
-          this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
-          this.drawingEntitiesManager.snakeLayoutMatrix,
-        ),
-      );
-    }
-
-    const history = EditorHistory.getInstance(this);
-    history.update(command);
-    this.renderersContainer.update(command);
   }
 
   /**

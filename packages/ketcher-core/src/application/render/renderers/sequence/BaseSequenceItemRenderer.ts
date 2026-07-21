@@ -54,6 +54,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   abstract get symbolToDisplay(): string;
 
+  // Horizontal offset (px) applied to the symbol text. Overridden by renderers
+  // that need to shift a symbol (e.g. crammed terminal phosphates) into the free
+  // margin so it does not overlap the neighbouring symbol. Display-only.
+  protected get symbolXOffset(): number {
+    return 0;
+  }
+
+  // Extra spacing (px) between the glyphs of the symbol text so a multi-glyph
+  // symbol (e.g. "pp") aligns to the sequence column grid. Display-only.
+  protected get symbolLetterSpacing(): number {
+    return 0;
+  }
+
   public isEditingSymbol(editingNodeIndexOverall?: number) {
     return (
       this.nodeIndexOverall ===
@@ -691,6 +704,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.textElement = this.rootElement
       .append('text')
       .text(this.symbolToDisplay)
+      .attr('x', this.symbolXOffset)
+      .attr('letter-spacing', `${this.symbolLetterSpacing}px`)
       .attr('font-family', 'Courier New')
       .attr('font-size', '20px')
       .attr('font-weight', '700')

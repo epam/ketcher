@@ -389,8 +389,15 @@ function getAttachmentDirectionForOnlyOneBond(
   const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3;
   const DEGREE_180_FOR_TRIPLE_BOND = Math.PI;
   const onlyNeighbor = atom.a.neighbors[0];
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  const neighbour = struct.halfBonds.get(onlyNeighbor)!;
+  const neighbour = struct.halfBonds.get(onlyNeighbor);
+  if (!neighbour) {
+    // Every neighbor id stored on an atom must have a matching half-bond in
+    // the struct; a miss here means the struct's internal bookkeeping is
+    // corrupted, which is a programming error, not a normal runtime case.
+    throw new Error(
+      `HalfBond not found for neighbor id ${onlyNeighbor} while resolving R-group attachment point direction`,
+    );
+  }
   const angle = neighbour.ang;
   const isTripleBond =
     struct.bonds.get(neighbour.bid)?.type === Bond.PATTERN.TYPE.TRIPLE;

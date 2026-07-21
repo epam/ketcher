@@ -495,17 +495,21 @@ class ReBond extends ReObject {
     const highlights = restruct.molecule.highlights;
     let isHighlighted = false;
     let highlightColor = '';
+    let highlightOutline = false;
     highlights.forEach((highlight) => {
       const hasCurrentHighlight = highlight.bonds?.includes(bid);
       isHighlighted = isHighlighted || hasCurrentHighlight;
       if (hasCurrentHighlight) {
         highlightColor = highlight.color;
+        highlightOutline = highlight.outline;
       }
     });
 
-    // Drawing highlight
-    if (isHighlighted) {
-      const style = {
+    // Drawing highlight. Outline highlights (#9441) are drawn as a single
+    // merged contour by ReStruct.showHighlightOutlines, so skip them here;
+    // only filled (active-tab) highlights are drawn per-bond.
+    if (isHighlighted && !highlightOutline) {
+      const style: RenderOptionStyles = {
         fill: highlightColor,
         stroke: 'none',
       };

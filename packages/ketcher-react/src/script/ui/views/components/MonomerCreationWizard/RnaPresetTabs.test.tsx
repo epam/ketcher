@@ -256,7 +256,7 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('should apply inactive highlight color to inactive tab components', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],
@@ -299,18 +299,20 @@ describe('RnaPresetTabs - applyHighlights function', () => {
       atoms: [1, 2, 3],
       bonds: [1, 2],
       color: ACTIVE_HIGHLIGHT_COLOR,
+      outline: false,
     });
 
     expect(sugarHighlight).toMatchObject({
       atoms: [4, 5, 6],
       bonds: [3, 4],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
   });
 
   it('should handle multiple components with correct colors', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],
@@ -351,22 +353,25 @@ describe('RnaPresetTabs - applyHighlights function', () => {
       h.atoms?.includes(7),
     );
 
-    // Base should have inactive color
+    // Base should have inactive color + outline
     expect(baseHighlight).toMatchObject({
       atoms: [1, 2, 3],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
 
-    // Sugar should have active color
+    // Sugar should have active color + filled shading
     expect(sugarHighlight).toMatchObject({
       atoms: [4, 5, 6],
       color: ACTIVE_HIGHLIGHT_COLOR,
+      outline: false,
     });
 
-    // Phosphate should have inactive color
+    // Phosphate should have inactive color + outline
     expect(phosphateHighlight).toMatchObject({
       atoms: [7, 8, 9],
       color: INACTIVE_HIGHLIGHT_COLOR,
+      outline: true,
     });
   });
 
@@ -407,7 +412,7 @@ describe('RnaPresetTabs - applyHighlights function', () => {
 
   it('should update highlights when switching between tabs', () => {
     const ACTIVE_HIGHLIGHT_COLOR = '#CDF1FC';
-    const INACTIVE_HIGHLIGHT_COLOR = '#EFF2F5';
+    const INACTIVE_HIGHLIGHT_COLOR = '#00EAFF';
 
     wizardState.base.structure = {
       atoms: [1, 2, 3],

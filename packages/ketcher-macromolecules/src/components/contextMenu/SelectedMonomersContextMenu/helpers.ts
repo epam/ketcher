@@ -105,8 +105,12 @@ export const isAntisenseCreationDisabled = (
 
   const chainsCollection = ChainsCollection.fromMonomers(monomers);
 
-  return !chainsCollection.chains.some((chain) => {
-    let hasValidSenseNucleotide = false;
+  let hasAtLeastOneValidChain = false;
+
+  for (const chain of chainsCollection.chains) {
+    let chainHasR3R1 = false;
+    let chainHasInvalidBase = false;
+    let chainHasValidSenseNucleotide = false;
 
     for (const node of chain.nodes) {
       if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
@@ -123,20 +127,32 @@ export const isAntisenseCreationDisabled = (
         continue;
       }
 
+      chainHasR3R1 = true;
+
       if (
         rnaBase.hydrogenBonds.length > 0 ||
         rnaBase.covalentBonds.length > 1
       ) {
-        return false;
+        chainHasInvalidBase = true;
+        break;
       }
 
       if (isSenseBase(rnaBase)) {
-        hasValidSenseNucleotide = true;
+        chainHasValidSenseNucleotide = true;
       }
     }
 
-    return hasValidSenseNucleotide;
-  });
+    // A chain that has R3R1 connection but invalid bases poisons the whole selection
+    if (chainHasR3R1 && chainHasInvalidBase) {
+      return true;
+    }
+
+    if (chainHasValidSenseNucleotide) {
+      hasAtLeastOneValidChain = true;
+    }
+  }
+
+  return !hasAtLeastOneValidChain;
 };
 export const hasOnlyDeoxyriboseSugars = (selectedMonomers: BaseMonomer[]) => {
   return selectedMonomers?.every((selectedMonomer: BaseMonomer) =>

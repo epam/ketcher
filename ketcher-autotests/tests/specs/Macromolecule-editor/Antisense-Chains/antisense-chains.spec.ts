@@ -2871,9 +2871,14 @@ for (const monomer1 of shortMonomerList) {
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent) ||
         (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide) ||
-        // One chain is eligible+R3R1, the other is ineligible+R3R1:
-        // antisense is enabled because at least one valid chain exists
+        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+      ) {
+        await selectAllStructuresOnCanvas(page);
+        await ContextMenu(page, monomerLocator).click(
+          MonomerOption.CreateAntisenseRNAStrand,
+        );
+        await takeEditorScreenshot(page);
+      } else if (
         (monomer1.eligibleForAntisense &&
           monomer1.baseWithR3R1ConnectionPresent &&
           !monomer2.eligibleForAntisense &&
@@ -2884,10 +2889,11 @@ for (const monomer1 of shortMonomerList) {
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
-        await ContextMenu(page, monomerLocator).click(
-          MonomerOption.CreateAntisenseRNAStrand,
-        );
-        await takeEditorScreenshot(page);
+        expect(
+          await ContextMenu(page, monomerLocator).isOptionEnabled(
+            MonomerOption.CreateAntisenseRNAStrand,
+          ),
+        ).toBeTruthy();
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent
@@ -4112,16 +4118,6 @@ for (const monomer1 of shortMonomerList) {
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
           monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        // One chain is eligible+R3R1, the other is ineligible+R3R1:
-        // antisense is enabled because at least one valid chain exists
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (!monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
@@ -4133,6 +4129,23 @@ for (const monomer1 of shortMonomerList) {
           hideMonomerPreview: true,
           hideMacromoleculeEditorScrollBars: true,
         });
+      } else if (
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent)
+      ) {
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionEnabled(SequenceSymbolOption.CreateRNAAntisenseStrand),
+        ).toBeTruthy();
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent
@@ -4200,16 +4213,6 @@ for (const monomer1 of shortMonomerList) {
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
           monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        // One chain is eligible+R3R1, the other is ineligible+R3R1:
-        // antisense is enabled because at least one valid chain exists
-        (monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          !monomer2.eligibleForAntisense &&
-          monomer2.baseWithR3R1ConnectionPresent) ||
-        (!monomer1.eligibleForAntisense &&
-          monomer1.baseWithR3R1ConnectionPresent &&
-          monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
@@ -4221,6 +4224,23 @@ for (const monomer1 of shortMonomerList) {
           hideMonomerPreview: true,
           hideMacromoleculeEditorScrollBars: true,
         });
+      } else if (
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent)
+      ) {
+        await selectAllStructuresOnCanvas(page);
+        expect(
+          await ContextMenu(
+            page,
+            getSymbolLocator(page, {}).first(),
+          ).isOptionEnabled(SequenceSymbolOption.CreateDNAAntisenseStrand),
+        ).toBeTruthy();
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent

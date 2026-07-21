@@ -103,6 +103,7 @@ export const isAntisenseCreationDisabled = (
     return true;
   }
 
+  const selectedSet = new Set(monomers);
   const chainsCollection = ChainsCollection.fromMonomers(monomers);
 
   let hasAtLeastOneValidChain = false;
@@ -116,11 +117,12 @@ export const isAntisenseCreationDisabled = (
         continue;
       }
 
-      if (!node.monomer.selected) {
+      const { rnaBase } = node;
+
+      // node.monomer is the sugar; also check rnaBase for base-only selections
+      if (!selectedSet.has(node.monomer) && !selectedSet.has(rnaBase)) {
         continue;
       }
-
-      const { rnaBase } = node;
 
       if (!rnaBase) {
         continue;

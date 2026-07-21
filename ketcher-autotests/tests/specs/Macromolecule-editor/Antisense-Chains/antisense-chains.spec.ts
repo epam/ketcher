@@ -2871,7 +2871,17 @@ for (const monomer1 of shortMonomerList) {
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent) ||
         (monomer1.eligibleForAntisense && monomer1.unsplitNucleotide) ||
-        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide)
+        (monomer2.eligibleForAntisense && monomer2.unsplitNucleotide) ||
+        // One chain is eligible+R3R1, the other is ineligible+R3R1:
+        // antisense is enabled because at least one valid chain exists
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
         await ContextMenu(page, monomerLocator).click(
@@ -4102,6 +4112,16 @@ for (const monomer1 of shortMonomerList) {
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
           monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        // One chain is eligible+R3R1, the other is ineligible+R3R1:
+        // antisense is enabled because at least one valid chain exists
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {
         await selectAllStructuresOnCanvas(page);
@@ -4179,6 +4199,16 @@ for (const monomer1 of shortMonomerList) {
           !monomer2.baseWithR3R1ConnectionPresent) ||
         (!monomer1.eligibleForAntisense &&
           !monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        // One chain is eligible+R3R1, the other is ineligible+R3R1:
+        // antisense is enabled because at least one valid chain exists
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
           monomer2.eligibleForAntisense &&
           monomer2.baseWithR3R1ConnectionPresent)
       ) {

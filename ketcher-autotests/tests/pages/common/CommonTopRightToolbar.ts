@@ -1,7 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { Mode } from '../constants/commonTopRightToolbar/Constants';
-import { LayoutMode } from '../constants/macromoleculesTopToolbar/Constants';
 import { MacromoleculesTopToolbar } from '../macromolecules/MacromoleculesTopToolbar';
 import { hideRuler } from '@utils/canvas/ruler/helpers';
 
@@ -107,7 +106,6 @@ export const CommonTopRightToolbar = (page: Page) => {
       options: {
         disableChainLengthRuler?: boolean;
         disableAutozoom?: boolean;
-        enableFlexMode?: boolean;
       } = {
         disableChainLengthRuler: true,
         disableAutozoom: true,
@@ -138,12 +136,6 @@ export const CommonTopRightToolbar = (page: Page) => {
           // @ts-ignore
           window._ketcher_isAutozoomDisabled = true;
         });
-      }
-
-      if (options.enableFlexMode) {
-        await MacromoleculesTopToolbar(page).selectLayoutModeTool(
-          LayoutMode.Flex,
-        );
       }
     },
 

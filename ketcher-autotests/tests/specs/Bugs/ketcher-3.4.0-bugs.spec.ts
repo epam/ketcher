@@ -98,6 +98,19 @@ async function openPPTXFileAndValidateStructurePreview(
 
 let page: Page;
 
+async function moveMouseToCanvasCenter(page: Page) {
+  const canvas = page.getByTestId('ketcher-canvas').filter({
+    has: page.locator(':visible'),
+  });
+  const box = await canvas.first().boundingBox();
+
+  if (!box) {
+    return;
+  }
+
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+}
+
 test.describe('Ketcher bugs in 3.4.0', () => {
   test.beforeAll(async ({ initSequenceCanvas }) => {
     page = await initSequenceCanvas();
@@ -211,6 +224,8 @@ test.describe('Ketcher bugs in 3.4.0', () => {
      * 2. Сheck the button sizes on the control panel
      */
     await takeLeftToolbarMacromoleculeScreenshot(page);
+    // Avoid incidental button hover state in top toolbar baseline.
+    await moveMouseToCanvasCenter(page);
     await takeTopToolbarScreenshot(page);
   });
 
@@ -567,6 +582,7 @@ test.describe('Ketcher bugs in 3.4.0', () => {
     await page.keyboard.press('Alt+C');
     await page.waitForTimeout(1 * 1000);
     await takeEditorScreenshot(page);
+    await MacromoleculesTopToolbar(page).calculateProperties();
   });
 
   test('Case 21: Tooltip displayed for the “Calculate Properties” button in main toolbar', async () => {
@@ -584,17 +600,24 @@ test.describe('Ketcher bugs in 3.4.0', () => {
       title: 'Calculate properties (Alt+C)',
     };
     const button = MacromoleculesTopToolbar(page).calculatePropertiesButton;
+    if (await CalculateVariablesPanel(page).closeButton.isVisible()) {
+      await CalculateVariablesPanel(page).closeWindow();
+    }
     await expect(button).toHaveAttribute(
       'title',
       calculatePropertiesButton.title,
     );
+    await moveMouseToCanvasCenter(page);
     await button.hover();
     await expect(button).toHaveAttribute(
       'title',
       calculatePropertiesButton.title,
     );
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await button.click();
+    await expect(CalculateVariablesPanel(page).closeButton).toBeVisible();
+    await page.waitForTimeout(200);
     await takeTopToolbarScreenshot(page);
     await MacromoleculesTopToolbar(page).calculateProperties();
   });

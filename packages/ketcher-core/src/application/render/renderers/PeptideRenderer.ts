@@ -1,10 +1,12 @@
 import type { Selection } from 'd3';
 import type { Peptide } from 'domain/entities/Peptide';
+import type { EditorTheme } from 'domain/types/theme';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import {
   MONOMER_SYMBOLS_IDS,
   UNRESOLVED_MONOMER_COLOR,
 } from 'application/render/renderers/constants';
+import type { DeepPartial } from 'types';
 
 const PEPTIDE_SYMBOL_ELEMENTS_IDS = MONOMER_SYMBOLS_IDS.AminoAcid;
 if (!PEPTIDE_SYMBOL_ELEMENTS_IDS) {
@@ -15,6 +17,8 @@ const PEPTIDE_HOVERED_ELEMENT_ID = PEPTIDE_SYMBOL_ELEMENTS_IDS.hover;
 const PEPTIDE_SYMBOL_ELEMENT_ID = PEPTIDE_SYMBOL_ELEMENTS_IDS.body;
 const PEPTIDE_AUTOCHAIN_PREVIEW_ELEMENT_ID =
   PEPTIDE_SYMBOL_ELEMENTS_IDS.autochainPreview;
+
+type RendererTheme = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';
@@ -39,7 +43,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
 
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
-    theme,
+    theme: RendererTheme,
   ) {
     const isUnresolved = this.monomer.monomerItem.props.unresolved;
     let color;
@@ -102,7 +106,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     return baseColor;
   }
 
-  show(theme) {
+  show(theme: RendererTheme) {
     super.show(theme);
     this.appendEnumeration();
   }

@@ -108,7 +108,6 @@ export const isAntisenseCreationDisabled = (
   let hasAtLeastOneValidChain = false;
 
   for (const chain of chainsCollection.chains) {
-    let chainHasR3R1 = false;
     let chainHasInvalidBase = false;
     let chainHasValidSenseNucleotide = false;
 
@@ -127,8 +126,6 @@ export const isAntisenseCreationDisabled = (
         continue;
       }
 
-      chainHasR3R1 = true;
-
       if (
         rnaBase.hydrogenBonds.length > 0 ||
         rnaBase.covalentBonds.length > 1 ||
@@ -141,12 +138,7 @@ export const isAntisenseCreationDisabled = (
       chainHasValidSenseNucleotide = true;
     }
 
-    // A chain that has R3R1 connection but invalid bases poisons the whole selection
-    if (chainHasR3R1 && chainHasInvalidBase) {
-      return true;
-    }
-
-    if (chainHasValidSenseNucleotide) {
+    if (!chainHasInvalidBase && chainHasValidSenseNucleotide) {
       hasAtLeastOneValidChain = true;
     }
   }

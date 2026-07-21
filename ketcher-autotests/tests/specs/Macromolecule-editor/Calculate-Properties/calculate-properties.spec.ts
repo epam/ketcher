@@ -32,7 +32,6 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
-import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -1643,7 +1642,6 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
-    await pageReload(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1651,8 +1649,7 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await waitForCalculateProperties(page);
-    await page.waitForTimeout(6000);
+    await page.waitForTimeout(5000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

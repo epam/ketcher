@@ -51,6 +51,7 @@ export abstract class BaseMode {
     needRemoveSelection = true,
     _isUndo = false,
     _needReArrangeChains = false,
+    _forceRecalculateAntisense = false,
   ) {
     const command = new Command();
     const editor = provideEditorInstance();

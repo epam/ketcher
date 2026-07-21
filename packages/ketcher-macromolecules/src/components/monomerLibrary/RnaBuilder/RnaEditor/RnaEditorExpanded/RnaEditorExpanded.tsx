@@ -576,9 +576,6 @@ export const RnaEditorExpanded = ({
     } else if (isActivePresetEmpty && presets.length > 0) {
       resetRnaBuilder(dispatch);
       dispatch(setActivePreset(presets[0]));
-      if (!isSequenceMode) {
-        editor?.events.selectPreset.dispatch(presets[0]);
-      }
     } else {
       setNewPreset(activePreset);
       setSelectedPhosphatePosition(

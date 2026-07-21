@@ -281,6 +281,7 @@ export class CoreEditor {
     monomer: BaseMonomer;
     attachmentPointName: AttachmentPointName;
   } | null = null;
+
   private isDragDropBondModalOpen = false;
 
   public theme;
@@ -2247,42 +2248,28 @@ export class CoreEditor {
     droppedMonomer: BaseMonomer,
     addedMonomers: BaseMonomer[],
     targetMonomer: BaseMonomer,
-    targetAP: AttachmentPointName,
+    targetAttachmentPoint: AttachmentPointName,
   ): Command {
     const command = new Command();
-    const settings = provideEditorSettings();
-    const scale = settings.macroModeScale; // px per Å
+    const editorSettings = provideEditorSettings();
+    const bondLengthInAngstroms =
+      SnakeLayoutCellWidth / editorSettings.macroModeScale;
+    const attachmentPointAngleDegrees =
+      attachmentPointNumberToAngle[targetAttachmentPoint];
+    if (attachmentPointAngleDegrees === undefined) return command;
 
-    // Get AP outward angle in radians (canonical angle is inward → subtract 180°)
-    const angleDeg =
-      attachmentPointNumberToAngle[
-        targetAP as keyof typeof attachmentPointNumberToAngle
-      ];
-    if (angleDeg === undefined) return command; // unknown AP name — skip
-
-    const outwardAngleDeg = angleDeg - 180;
+    const outwardAngleDeg = attachmentPointAngleDegrees - 180;
     const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
-    const unitVec = new Vec2(
+    const unitVector = new Vec2(
       Math.cos(outwardAngleRad),
       Math.sin(outwardAngleRad),
     );
 
-    // Body radii in model space
-    const { width, height } = BaseMonomerRenderer.monomerSize;
-    const bodyRadiusCanvas = (width + height) / 4;
-    const bodyRadiusModel = bodyRadiusCanvas / scale;
-
-    // Bond length in model space: AP line + AP circle radius
-    const bondLengthModel =
-      (AttachmentPoint.attachmentPointLength + AttachmentPoint.radius) / scale;
-
     // Target position for the dropped monomer's center in model space
     const targetCenter = targetMonomer.position;
     const desiredDroppedCenter = new Vec2(
-      targetCenter.x +
-        unitVec.x * (bodyRadiusModel + bondLengthModel + bodyRadiusModel),
-      targetCenter.y +
-        unitVec.y * (bodyRadiusModel + bondLengthModel + bodyRadiusModel),
+      targetCenter.x + unitVector.x * bondLengthInAngstroms,
+      targetCenter.y + unitVector.y * bondLengthInAngstroms,
     );
 
     // Compute the delta to move the entire dropped group
@@ -2294,11 +2281,16 @@ export class CoreEditor {
 
     // Apply the same delta to every monomer in the dropped group
     for (const monomer of addedMonomers) {
-      const newPos = new Vec2(
+      const newPosition = new Vec2(
         monomer.position.x + delta.x,
         monomer.position.y + delta.y,
       );
-      command.merge(this.drawingEntitiesManager.moveMonomer(monomer, newPos));
+      command.merge(
+        this.drawingEntitiesManager.moveMonomer(monomer, newPosition),
+      );
+      monomer.polymerBonds.forEach((polymerBond) => {
+        this.drawingEntitiesManager.movePolymerBond(polymerBond);
+      });
     }
 
     return command;

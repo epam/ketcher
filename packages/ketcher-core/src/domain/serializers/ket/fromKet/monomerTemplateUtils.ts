@@ -187,7 +187,7 @@ export function fillStructRgLabelsByMonomerTemplate(
         : attachmentPoint.attachmentAtom,
     );
     assert(leavingGroupAtom);
-    leavingGroupAtom.rglabel = (
+    leavingGroupAtom.rglabel =
       0 |
       (1 <<
         (Number(
@@ -196,11 +196,10 @@ export function fillStructRgLabelsByMonomerTemplate(
             : attachmentPointsList[attachmentPointIndex]
           ).replace('R', ''),
         ) -
-          1))
-    ).toString();
+          1));
     assert(monomerItem.props.MonomerCaps);
     monomerItem.props.MonomerCaps[
-      getAttachmentPointLabelWithBinaryShift(Number(leavingGroupAtom.rglabel))
+      getAttachmentPointLabelWithBinaryShift(leavingGroupAtom.rglabel)
     ] = leavingGroupAtom.label;
   });
 }

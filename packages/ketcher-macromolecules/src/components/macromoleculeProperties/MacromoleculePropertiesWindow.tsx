@@ -113,6 +113,13 @@ const GrossFormula = styled('div')(() => ({
   color: '#585858',
 }));
 
+const GrossFormulaSub = styled('sub')(() => ({
+  verticalAlign: 'sub',
+  fontSize: '11.667px',
+  lineHeight: '13.4px',
+  bottom: '0',
+}));
+
 const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -454,7 +461,7 @@ const GrossFormulaPart = ({ part }) => {
   return (
     <span>
       {element}
-      <sub>{count}</sub>
+      <GrossFormulaSub>{count}</GrossFormulaSub>
     </span>
   );
 };

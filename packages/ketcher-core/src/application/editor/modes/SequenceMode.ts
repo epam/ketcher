@@ -2178,17 +2178,20 @@ export class SequenceMode extends BaseMode {
       );
     // Side chains
     const oldMonomerBonds: [
-      string,
+      AttachmentPointName,
       PolymerBond | MonomerToAtomBond | null | undefined,
     ][] = sideChainConnections
-      ? Object.entries(selectedNode.monomer.attachmentPointsToBonds)
+      ? (Object.entries(selectedNode.monomer.attachmentPointsToBonds) as [
+          AttachmentPointName,
+          PolymerBond | MonomerToAtomBond | null | undefined,
+        ][])
       : [
           [
-            AttachmentPointName.R1 as string,
+            AttachmentPointName.R1,
             selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1,
           ],
           [
-            AttachmentPointName.R2 as string,
+            AttachmentPointName.R2,
             selectedNode.lastMonomerInNode.attachmentPointsToBonds.R2,
           ],
         ];
@@ -2204,9 +2207,7 @@ export class SequenceMode extends BaseMode {
         return true;
       }
 
-      return newMonomerAttachmentPoints.attachmentPointsList.includes(
-        key as AttachmentPointName,
-      );
+      return newMonomerAttachmentPoints.attachmentPointsList.includes(key);
     });
   }
 

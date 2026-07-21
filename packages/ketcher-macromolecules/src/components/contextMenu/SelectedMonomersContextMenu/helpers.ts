@@ -131,15 +131,14 @@ export const isAntisenseCreationDisabled = (
 
       if (
         rnaBase.hydrogenBonds.length > 0 ||
-        rnaBase.covalentBonds.length > 1
+        rnaBase.covalentBonds.length > 1 ||
+        !isSenseBase(rnaBase)
       ) {
         chainHasInvalidBase = true;
         break;
       }
 
-      if (isSenseBase(rnaBase)) {
-        chainHasValidSenseNucleotide = true;
-      }
+      chainHasValidSenseNucleotide = true;
     }
 
     // A chain that has R3R1 connection but invalid bases poisons the whole selection

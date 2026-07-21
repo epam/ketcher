@@ -210,6 +210,7 @@ logger.warn = (msg, options) => {
 
 export default defineConfig({
   server: {
+    host: '127.0.0.1',
     open: true,
   },
   optimizeDeps: {
@@ -220,10 +221,7 @@ export default defineConfig({
     rolldownOptions: {
       output: {
         manualChunks(id) {
-          if (
-            id.includes('/node_modules/@emotion/') ||
-            id.includes('/node_modules/@mui/')
-          ) {
+          if (id.includes('@emotion') || id.includes('@mui')) {
             return 'vendor-emotion-mui';
           }
         },
@@ -239,6 +237,7 @@ export default defineConfig({
       '@emotion/sheet',
       '@emotion/utils',
       '@emotion/weak-memoize',
+      '@mui/material',
     ],
   },
   css: {

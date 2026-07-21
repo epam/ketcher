@@ -40,9 +40,7 @@ type Props = {
 };
 
 export function GenericInput({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  schema: _schema,
   value,
   onChange,
   innerRef,
@@ -99,15 +97,7 @@ GenericInput.val = function (ev, schema) {
   return value;
 };
 
-function TextArea({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  value,
-  onChange,
-  innerRef,
-  ...rest
-}) {
+function TextArea({ schema: _schema, value, onChange, innerRef, ...rest }) {
   return (
     <textarea value={value ?? ''} ref={innerRef} onInput={onChange} {...rest} />
   );
@@ -116,9 +106,7 @@ function TextArea({
 TextArea.val = (ev) => ev.target.value;
 
 function CheckBox({
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  schema,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  schema: _schema,
   value = '',
   onChange,
   innerRef,
@@ -401,10 +389,8 @@ class Input extends PureComponent<
 
   render() {
     const {
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      children,
-      onChange,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
+      children: _children,
+      onChange: _onChange,
       innerRef,
       ...restProps
     } = this.props;

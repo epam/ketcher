@@ -6,10 +6,11 @@ import {
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
-import type {
-  Ketcher,
-  Editor as MoleculesEditor,
-  CoreEditor,
+import {
+  type Ketcher,
+  type Editor as MoleculesEditor,
+  type CoreEditor,
+  ketcherProvider,
 } from 'ketcher-core';
 
 type Props = Omit<EditorProps, 'ketcherId'> & {
@@ -118,7 +119,9 @@ export const Editor = (props: Props) => {
       moleculesEditor &&
       (macromoleculesEditor || props.disableMacromoleculesEditor)
     ) {
-      props.onInit?.(ketcher);
+      if (ketcherProvider.getIndexById(ketcher.id) !== -1) {
+        props.onInit?.(ketcher);
+      }
     }
   }, [moleculesEditor, macromoleculesEditor]);
 

@@ -188,20 +188,17 @@ class ReSGroup extends ReObject {
     let height = 0;
     const sGroup = this.item;
     if (sGroup) {
-      const { atomId, position } = sGroup.getContractedPosition(
-        render.ctab.molecule,
-      );
-      if (sGroup?.isContracted() && position) {
+      if (sGroup?.isContracted()) {
+        const { atomId } = sGroup.getContractedPosition(render.ctab.molecule);
         const reSGroupAtom = render.ctab.atoms.get(atomId);
         const sGroupTextBoundingBox =
           reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox;
         if (sGroupTextBoundingBox) {
-          const { x, y } = Scale.modelToCanvas(position, render.options);
           const { p0, p1 } = sGroupTextBoundingBox;
           width = p1.x - p0.x + padding * 2;
           height = p1.y - p0.y + padding * 2;
-          startX = x - width / 2;
-          startY = y - height / 2;
+          startX = p0.x - padding;
+          startY = p0.y - padding;
         }
       }
     }

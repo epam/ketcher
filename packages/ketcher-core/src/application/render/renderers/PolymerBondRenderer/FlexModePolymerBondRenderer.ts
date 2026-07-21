@@ -1,4 +1,4 @@
-import { editorEvents } from 'application/editor/editorEvents';
+import { provideEditorInstance } from 'application/editor/editorSingleton';
 import {
   SELECTION_COLOR,
   SELECTION_HOVERED_COLOR,
@@ -25,7 +25,10 @@ import {
 } from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
-  private readonly editorEvents: typeof editorEvents;
+  private get editorEvents() {
+    return provideEditorInstance().events;
+  }
+
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
@@ -35,7 +38,6 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond);
     this.polymerBond.setRenderer(this);
-    this.editorEvents = editorEvents;
   }
 
   public get rootBBox(): DOMRect | undefined {

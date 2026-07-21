@@ -34,9 +34,10 @@ import {
   SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
+  isPasteContentAvailable,
   DeepPartial,
 } from 'ketcher-core';
-import { store } from 'state';
+import { configureAppStore } from 'state';
 import {
   defaultTheme,
   EditorTheme,
@@ -132,7 +133,6 @@ interface EditorProps {
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: (editor: CoreEditor) => void;
   isMacromoleculesEditorTurnedOn?: boolean;
 }
 
@@ -145,6 +145,7 @@ function EditorContainer({
   monomersLibraryReplace,
   isMacromoleculesEditorTurnedOn,
 }: Readonly<EditorContainerProps>) {
+  const [store] = useState(() => configureAppStore());
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -156,7 +157,7 @@ function EditorContainer({
 
   useEffect(() => {
     store.dispatch(initKetcherId(ketcherId));
-  }, [ketcherId]);
+  }, [ketcherId, store]);
 
   return (
     <Provider store={store}>
@@ -183,6 +184,7 @@ function EditorContainer({
 }
 
 function Editor({
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -200,6 +202,10 @@ function Editor({
   const [selections, setSelections] = useState<NodeSelection[][]>();
   const [contextMenuEvent, setContextMenuEvent] = useState<PointerEvent>();
   const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
+  const [isPasteAvailable, setIsPasteAvailable] = useState(true);
+  const updatePasteAvailability = useCallback(() => {
+    isPasteContentAvailable().then(setIsPasteAvailable);
+  }, []);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -210,6 +216,7 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
+        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
@@ -239,6 +246,7 @@ function Editor({
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       setContextMenuEvent(event);
+      updatePasteAvailability();
       window.dispatchEvent(new Event('hidePreview'));
       dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
@@ -268,6 +276,7 @@ function Editor({
       ([event, selectedMonomers]: [PointerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         setContextMenuEvent(event);
+        updatePasteAvailability();
         showSelectedMonomersContextMenu({
           event,
           props: { selectedMonomers },
@@ -277,6 +286,7 @@ function Editor({
     editor?.events.rightClickCanvas.add(
       ([event, selections]: [PointerEvent, BaseMonomer[]]) => {
         setContextMenuEvent(event);
+        updatePasteAvailability();
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelectedMonomers(selections);
@@ -289,6 +299,7 @@ function Editor({
     editor?.events.rightClickCanvasSequence.add(
       ([event, selections]: [PointerEvent, NodesSelection]) => {
         setContextMenuEvent(event);
+        updatePasteAvailability();
         window.dispatchEvent(new Event('hidePreview'));
         dispatch(setContextMenuActive(true));
         setSelections(selections);
@@ -433,10 +444,12 @@ function Editor({
       <SequenceItemContextMenu
         selections={selections}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <SelectedMonomersContextMenu
         selectedMonomers={selectedMonomers}
         contextMenuEvent={contextMenuEvent}
+        isPasteAvailable={isPasteAvailable}
       />
       <ModalContainer />
       <ErrorModal />

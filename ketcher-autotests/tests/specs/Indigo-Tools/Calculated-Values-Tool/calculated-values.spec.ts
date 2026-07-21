@@ -153,6 +153,8 @@ test.describe('Calculated Values Tools', () => {
 
     await openFileAndAddToCanvas(page, 'Rxn-V2000/calcvalues-reaction.rxn');
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
 
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
@@ -243,18 +245,21 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(page, x + 300, y - 600);
     await IndigoFunctionsToolbar(page).calculatedValues();
+    await CalculatedValuesDialog(page).selectMolecularWeightDecimalPlaces(3);
+    await CalculatedValuesDialog(page).selectExactMassDecimalPlaces(3);
+
     await expect(
       CalculatedValuesDialog(page).chemicalFormulaInput,
-    ).toContainText('C9H9O2');
+    ).toContainText('C3H4O2');
     await expect(CalculatedValuesDialog(page).molecularWeightInput).toHaveValue(
-      '149.169',
+      '72.063',
     );
     await expect(CalculatedValuesDialog(page).exactMassInput).toHaveValue(
-      '149.060',
+      '72.021',
     );
     await expect(
       CalculatedValuesDialog(page).elementalAnalysisInput,
-    ).toHaveValue('C 72.5 H 6.1 O 21.4');
+    ).toHaveValue('C 50.0 H 5.6 O 44.4');
   });
 
   test('Calculation of exact mass for the reaction components', async () => {

@@ -74,8 +74,8 @@ describe('Zoom Tool', () => {
   describe('drawScrollBars', () => {
     beforeEach(() => {
       jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
-      // eslint-disable-next-line no-new
-      new CoreEditor({
+      // @ts-expect-error TS6133: Instantiated for side effects (singleton registration)
+      const _editor = new CoreEditor({
         theme: polymerEditorTheme,
         canvas,
         renderersContainer: createRenderersManager(polymerEditorTheme),

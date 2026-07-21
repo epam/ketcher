@@ -1,5 +1,6 @@
 import type { FC } from 'react';
-import { Item, Submenu, Separator } from 'react-contexify';
+import { Item, Submenu } from 'react-contexify';
+import MenuSeparator from '../MenuSeparator';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
@@ -180,7 +181,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
     return (
       <>
         <HighlightMenu onHighlight={highlightAtomWithColor} />
-        <Separator />
+        <MenuSeparator />
         <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
           <Icon name="deleteMenu" className={styles.icon} />
           <span className={styles.contextMenuText}>Delete</span>
@@ -245,7 +246,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       {makeAttachmentPointMenuItems && (
         <>
           {makeAttachmentPointMenuItems}
-          <Separator />
+          <MenuSeparator />
         </>
       )}
       <Item
@@ -296,7 +297,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         onHighlight={highlightAtomWithColor}
         disabled={disabledForMonomerCreation}
       />
-      <Separator />
+      <MenuSeparator />
       <Item {...props} data-testid="Delete-option" onClick={handleDelete}>
         <Icon name="deleteMenu" className={styles.icon} />
         <span className={styles.contextMenuText}>Delete</span>

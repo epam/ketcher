@@ -61,16 +61,6 @@ const createIntegrationStore = (settingsService?: any) => {
   const rootReducer = (state = initialState, action: any) => {
     switch (action.type) {
       case 'SAVE_SETTINGS':
-        return {
-          ...state,
-          options: {
-            ...state.options,
-            settings: {
-              ...state.options.settings,
-              ...action.data,
-            },
-          },
-        };
       case 'SYNC_SETTINGS_FROM_CORE':
         return {
           ...state,

@@ -1,4 +1,8 @@
-import { provideEditorInstance } from 'application/editor/editorSingleton';
+import {
+  provideEditorInstance,
+  setEditorRenderingContext,
+} from 'application/editor/editorSingleton';
+import type { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from './monomerFactory';
 import { notifyRenderComplete } from 'application/render/internal';
 import type { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
@@ -11,7 +15,6 @@ import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Sugar } from 'domain/entities/Sugar';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
 import { Vec2 } from 'domain/entities/vec2';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -58,6 +61,8 @@ type ThemeType = DeepPartial<{ ketcher: EditorTheme }>;
 
 export class RenderersManager {
   private readonly theme: ThemeType;
+  public zoomTool?: ZoomTool;
+  public editor?: CoreEditor;
   public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
@@ -236,21 +241,46 @@ export class RenderersManager {
     });
   }
 
+  private isRnaEnumerationNode(node: RnaSubChain['nodes'][number]) {
+    return (
+      node instanceof Nucleotide ||
+      node instanceof Nucleoside ||
+      node.monomer instanceof UnsplitNucleotide
+    );
+  }
+
+  private getRnaEnumerationSegmentLength(
+    subChain: RnaSubChain,
+    startNodeIndex: number,
+  ) {
+    let segmentLength = 0;
+
+    for (
+      let index = startNodeIndex;
+      index < subChain.nodes.length &&
+      this.isRnaEnumerationNode(subChain.nodes[index]);
+      index++
+    ) {
+      segmentLength++;
+    }
+
+    return segmentLength;
+  }
+
   private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
     let currentEnumeration = 1;
-    const nucleotidesAmount = subChain.nodes.reduce(
-      (nucleotidesAmount, node) =>
-        node instanceof Nucleotide ||
-        node instanceof Nucleoside ||
-        node.monomer instanceof UnsplitNucleotide
-          ? nucleotidesAmount + 1
-          : nucleotidesAmount,
-      0,
-    );
+    let currentSegmentLength = 0;
 
-    subChain.nodes.forEach((node) => {
+    subChain.nodes.forEach((node, nodeIndex) => {
+      if (this.isRnaEnumerationNode(node) && currentSegmentLength === 0) {
+        currentSegmentLength = this.getRnaEnumerationSegmentLength(
+          subChain,
+          nodeIndex,
+        );
+      }
+
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? currentEnumeration === nucleotidesAmount
+        ? currentEnumeration === currentSegmentLength
         : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
@@ -268,10 +298,11 @@ export class RenderersManager {
         node instanceof LinkerSequenceNode
       ) {
         node.monomers.forEach((monomer) => {
-          if (monomer instanceof Sugar) {
-            monomer.renderer?.redrawEnumeration(false);
-          }
+          monomer.renderer?.setEnumeration(null);
+          monomer.renderer?.redrawEnumeration(false);
         });
+        currentEnumeration = 1;
+        currentSegmentLength = 0;
       }
     });
   }
@@ -348,16 +379,23 @@ export class RenderersManager {
   }
 
   public reinitializeViewModel() {
-    const editor = provideEditorInstance();
+    const editor = this.editor ?? provideEditorInstance();
     const viewModel = editor.viewModel;
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
   public update(modelChanges?: Command) {
-    this.reinitializeViewModel();
-    modelChanges?.execute(this);
-    this.runPostRenderMethods();
-    notifyRenderComplete();
+    if (this.zoomTool) ZoomTool.setRenderingContext(this.zoomTool);
+    if (this.editor) setEditorRenderingContext(this.editor);
+    try {
+      this.reinitializeViewModel();
+      modelChanges?.execute(this);
+      this.runPostRenderMethods();
+      notifyRenderComplete();
+    } finally {
+      if (this.zoomTool) ZoomTool.setRenderingContext(undefined);
+      if (this.editor) setEditorRenderingContext(undefined);
+    }
   }
 
   public addAtom(atom: Atom) {

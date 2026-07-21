@@ -34,6 +34,18 @@ const ColorPicker = (props: Props) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverActionRef = useRef<PopoverActions>(null);
   const paletteId = 'color-picker-' + useId();
+  const clickThrottleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(
+    () => () => {
+      if (clickThrottleTimeoutRef.current) {
+        clearTimeout(clickThrottleTimeoutRef.current);
+      }
+    },
+    [],
+  );
 
   const handleContentResize = () => {
     popoverActionRef.current?.updatePosition();

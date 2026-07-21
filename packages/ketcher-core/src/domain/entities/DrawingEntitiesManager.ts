@@ -2337,6 +2337,7 @@ export class DrawingEntitiesManager {
   }
 
   public setMicromoleculesHiddenEntities(struct: Struct) {
+    this.clearMicromoleculesHiddenEntities();
     struct.mergeInto(this.micromoleculesHiddenEntities);
     this.micromoleculesHiddenEntities.atoms = new Pool();
     this.micromoleculesHiddenEntities.bonds = new Pool();

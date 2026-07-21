@@ -1,4 +1,3 @@
-import { editorEvents } from 'application/editor/editorEvents';
 import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -32,8 +31,11 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
-  private readonly editorEvents: typeof editorEvents;
   private readonly editor: CoreEditor;
+  private get editorEvents() {
+    return provideEditorInstance().events;
+  }
+
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
@@ -73,7 +75,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
-    this.editorEvents = editorEvents;
     this.editor = provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
@@ -266,6 +267,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPointName: AttachmentPointName,
     customAngle?: number,
   ): AttachmentPointConstructorParams {
+    // Attachment points are only ever prepared/drawn after the root element
+    // has been appended (see drawAttachmentPoints callers, which bail out
+    // early when `rootElement` is not yet set). Reaching this point without
+    // a root element would indicate a programming error, not a normal
+    // runtime case.
+    if (!this.rootElement) {
+      throw new Error(
+        'Cannot prepare attachment point params before the root element is appended.',
+      );
+    }
+
     let rotation;
 
     if (!this.monomer.isAttachmentPointUsed(attachmentPointName)) {
@@ -273,8 +285,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
 
     return {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      rootElement: this.rootElement!,
+      rootElement: this.rootElement,
       monomer: this.monomer,
       bodyWidth: this.monomerSize.width,
       bodyHeight: this.monomerSize.height,

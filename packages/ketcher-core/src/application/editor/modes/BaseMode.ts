@@ -203,6 +203,9 @@ export abstract class BaseMode {
     let modelChanges;
     const editor = provideEditorInstance();
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
+    if (!pastedStr?.trim()) {
+      return;
+    }
     const format = identifyStructFormat(pastedStr, true);
     if (format === SupportedFormat.ket) {
       modelChanges = this.pasteKetFormatFragment(pastedStr);

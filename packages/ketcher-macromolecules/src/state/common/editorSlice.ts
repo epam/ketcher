@@ -42,6 +42,11 @@ export const molarMeasurementUnitToNumber = {
   [MolarMeasurementUnit.milliMol]: 10 ** 3,
 };
 
+const env =
+  typeof process !== 'undefined'
+    ? process.env
+    : ({} as Record<string, string | undefined>);
+
 interface AppMeta {
   buildDate: string;
   indigoVersion: string;
@@ -94,10 +99,10 @@ const initialState: EditorState = {
   unipositiveIonsValue: 140,
   oligonucleotidesValue: 200,
   app: {
-    buildDate: process.env.BUILD_DATE ?? '',
-    indigoVersion: process.env.INDIGO_VERSION ?? '',
-    indigoMachine: process.env.INDIGO_MACHINE ?? '',
-    version: process.env.VERSION ?? '',
+    buildDate: env.BUILD_DATE ?? '',
+    indigoVersion: env.INDIGO_VERSION ?? '',
+    indigoMachine: env.INDIGO_MACHINE ?? '',
+    version: env.VERSION ?? '',
   },
   selectedMenuGroupItems: {},
 };

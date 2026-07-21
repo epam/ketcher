@@ -1187,7 +1187,31 @@ export class CoreEditor {
     );
 
     this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
+      // Clear previous replacement target highlight
+      if (this.libraryItemDragState?.hoveredMonomer) {
+        const previousRenderer =
+          this.libraryItemDragState.hoveredMonomer.renderer;
+        if (
+          previousRenderer &&
+          'removeReplacementTargetHighlight' in previousRenderer
+        ) {
+          previousRenderer.removeReplacementTargetHighlight();
+        }
+      }
+
       this.libraryItemDragState = state;
+
+      // Show replacement target highlight for newly hovered monomer
+      if (state?.hoveredMonomer) {
+        const renderer = state.hoveredMonomer.renderer;
+        if (renderer && 'showReplacementTargetValid' in renderer) {
+          if (state.isValidReplacement) {
+            renderer.showReplacementTargetValid();
+          } else if ('showReplacementTargetInvalid' in renderer) {
+            renderer.showReplacementTargetInvalid();
+          }
+        }
+      }
     });
 
     this.events.placeLibraryItemOnCanvas.add(

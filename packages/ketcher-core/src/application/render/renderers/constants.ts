@@ -8,6 +8,9 @@ export const BAD_VALENCE_LINE_OFFSET = 2;
 export const SELECTION_COLOR = '#57FF8F';
 export const SELECTION_HOVERED_COLOR = '#CCFFDD';
 
+export const REPLACEMENT_TARGET_VALID_COLOR = '#4A90E2';
+export const REPLACEMENT_TARGET_INVALID_COLOR = '#FF6B6B';
+
 export const MONOMER_SYMBOLS_IDS = {
   [KetMonomerClass.AminoAcid]: {
     hover: '#peptide-hover',

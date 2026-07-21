@@ -64,10 +64,11 @@ export const useLibraryItemDrag = (
           const monomers = Array.from(
             editor.drawingEntitiesManager.monomers.values(),
           );
-          const HIT_RADIUS = 1.5; // angstroms
+          const HIT_RADIUS = 0.5; // angstroms
           let closestDistance = Infinity;
 
           for (const monomer of monomers) {
+            // Calculate Euclidean distance between cursor and monomer position
             const distance = Math.sqrt(
               Math.pow(monomer.position.x - modelPosition.x, 2) +
                 Math.pow(monomer.position.y - modelPosition.y, 2),
@@ -75,6 +76,8 @@ export const useLibraryItemDrag = (
             if (distance < HIT_RADIUS && distance < closestDistance) {
               closestDistance = distance;
               hoveredMonomer = monomer;
+              // Validate replacement: check if library item has all active attachment points
+              // that the target monomer currently uses for bonds
               if (!Array.isArray(item) && 'label' in item) {
                 isValidReplacement = canReplaceMonomer(
                   monomer,
@@ -124,7 +127,7 @@ export const useLibraryItemDrag = (
               const monomers = Array.from(
                 editor.drawingEntitiesManager.monomers.values(),
               );
-              const HIT_RADIUS = 1.5; // angstroms
+              const HIT_RADIUS = 0.5; // angstroms
               let closestDistance = Infinity;
 
               for (const monomer of monomers) {

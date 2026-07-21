@@ -3,7 +3,11 @@ import type { CoreEditor } from 'application/editor/Editor';
 import { provideEditorInstance } from 'application/editor/editorSingleton';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { D3SvgElementSelection } from 'application/render/types';
-import { SELECTION_COLOR } from 'application/render/renderers/constants';
+import {
+  SELECTION_COLOR,
+  REPLACEMENT_TARGET_VALID_COLOR,
+  REPLACEMENT_TARGET_INVALID_COLOR,
+} from 'application/render/renderers/constants';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import type { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -487,6 +491,52 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.selectionBorder = undefined;
   }
 
+  private replacementTargetCircle?: D3SvgElementSelection<
+    SVGCircleElement,
+    void
+  >;
+
+  public showReplacementTargetValid() {
+    if (this.replacementTargetCircle) {
+      this.replacementTargetCircle
+        .attr('fill', REPLACEMENT_TARGET_VALID_COLOR)
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y);
+    } else {
+      this.replacementTargetCircle = this.canvas
+        ?.insert('circle', ':first-child')
+        .attr('r', `${BaseMonomerRenderer.selectionCircleRadius}px`)
+        .attr('opacity', '0.6')
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y)
+        .attr('fill', REPLACEMENT_TARGET_VALID_COLOR)
+        .attr('class', 'dynamic-element replacement-target-highlight');
+    }
+  }
+
+  public showReplacementTargetInvalid() {
+    if (this.replacementTargetCircle) {
+      this.replacementTargetCircle
+        .attr('fill', REPLACEMENT_TARGET_INVALID_COLOR)
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y);
+    } else {
+      this.replacementTargetCircle = this.canvas
+        ?.insert('circle', ':first-child')
+        .attr('r', `${BaseMonomerRenderer.selectionCircleRadius}px`)
+        .attr('opacity', '0.6')
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y)
+        .attr('fill', REPLACEMENT_TARGET_INVALID_COLOR)
+        .attr('class', 'dynamic-element replacement-target-highlight');
+    }
+  }
+
+  public removeReplacementTargetHighlight() {
+    this.replacementTargetCircle?.remove();
+    this.replacementTargetCircle = undefined;
+  }
+
   protected abstract appendBody(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
     theme?,
@@ -680,6 +730,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
+    this.removeReplacementTargetHighlight();
     if (this.monomer.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
     }

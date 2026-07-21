@@ -214,22 +214,26 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
 
     const appendFnToUse = appendFn ?? this.appendAttachmentPoint.bind(this);
+    const hasDragTarget = this._dragTargetAttachmentPoint !== null;
 
-    // draw used attachment points
-    this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = appendFnToUse(item);
-      const angle: number = attachmentPoint.getAngle();
+    // draw used attachment points (hidden when a drag target is active)
+    if (!hasDragTarget) {
+      this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+        const attachmentPoint = appendFnToUse(item);
+        const angle: number = attachmentPoint.getAngle();
 
-      this.attachmentPoints.push(attachmentPoint as never);
+        this.attachmentPoints.push(attachmentPoint as never);
 
-      // remove this sector from list of free sectors
-      const newList = this.freeSectorsList.filter((item) => {
-        return (
-          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
-        );
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
       });
-      this.freeSectorsList = checkFor0and360(newList);
-    });
+    }
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
 

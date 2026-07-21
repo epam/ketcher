@@ -38,6 +38,7 @@ import draw from '../draw';
 import util from '../util';
 import { toFixed } from 'utilities';
 import type {
+  RelativeBox,
   RenderOptions,
   RenderOptionStyles,
 } from 'application/render/render.types';
@@ -54,11 +55,12 @@ import { ShowHydrogenLabels } from './showHydrogenLabels';
 interface ElemAttr {
   text: string;
   path: Element | RaphaelSet;
-  rbb: { x: number; y: number; width: number; height: number };
+  rbb: RelativeBox;
   background?: Element;
 }
 
 const StereoLabelMinOpacity = 0.3;
+const DEFAULT_STEREO_COLOR = '#000';
 const MAX_LABEL_LENGTH = 8;
 
 export enum ShowHydrogenLabelNames {
@@ -556,21 +558,21 @@ class ReAtom extends ReObject {
     }
 
     if (options.showAtomIds) {
-      index = {} as ElemAttr;
-      index.text = aid.toString();
+      const text = aid.toString();
       let idPos = this.hydrogenOnTheLeft
         ? Vec2.lc(ps, 1, new Vec2({ x: -2, y: 0, z: 0 }), 6)
         : Vec2.lc(ps, 1, new Vec2({ x: 2, y: 0, z: 0 }), 6);
       if (this.showLabel) {
         idPos = Vec2.lc(idPos, 1, new Vec2({ x: 1, y: -3, z: 0 }), 6);
       }
-      index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
+      const path = render.paper.text(idPos.x, idPos.y, text).attr({
         font: options.font,
         'font-size': options.fontszsubInPx,
         fill: '#070',
       });
-      index.rbb = util.relBox(index.path.getBBox());
-      draw.recenterText(index.path, index.rbb);
+      const rbb = util.relBox(path.getBBox());
+      draw.recenterText(path, rbb);
+      index = { text, path, rbb };
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
     }
 
@@ -629,7 +631,6 @@ class ReAtom extends ReObject {
         !shouldHideHydrogenInPreview
       ) {
         const data = showHydrogen(this, render, implh, {
-          hydrogen: {} as ElemAttr,
           hydroIndex,
           rightMargin,
           leftMargin,
@@ -1074,7 +1075,9 @@ class ReAtom extends ReObject {
         // of just created text
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
-        aamPath.node.childNodes[0].setAttribute('fill', color);
+        if (color !== undefined) {
+          aamPath.node.childNodes[0].setAttribute('fill', color);
+        }
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
         aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
@@ -1322,13 +1325,13 @@ class ReAtom extends ReObject {
 function getStereoAtomColor(
   options: RenderOptions,
   stereoLabel: string | null | undefined,
-) {
+): string | undefined {
   if (
     !stereoLabel ||
     options.colorStereogenicCenters === StereoColoringType.Off ||
     options.colorStereogenicCenters === StereoColoringType.BondsOnly
   ) {
-    return '#000';
+    return DEFAULT_STEREO_COLOR;
   }
 
   return getColorFromStereoLabel(options, stereoLabel);
@@ -1337,18 +1340,18 @@ function getStereoAtomColor(
 export function getColorFromStereoLabel(
   options: RenderOptions,
   stereoLabel: string,
-) {
+): string | undefined {
   const stereoLabelType = stereoLabel.match(/\D+/g)?.[0] ?? '';
 
   switch (stereoLabelType) {
     case StereoLabel.And:
-      return options.colorOfAndCenters ?? '#000';
+      return options.colorOfAndCenters ?? DEFAULT_STEREO_COLOR;
     case StereoLabel.Or:
-      return options.colorOfOrCenters ?? '#000';
+      return options.colorOfOrCenters ?? DEFAULT_STEREO_COLOR;
     case StereoLabel.Abs:
-      return options.colorOfAbsoluteCenters ?? '#000';
+      return options.colorOfAbsoluteCenters;
     default:
-      return '#000';
+      return DEFAULT_STEREO_COLOR;
   }
 }
 
@@ -1498,8 +1501,9 @@ function shouldHydrogenBeOnLeft(struct: Struct, atom: ReAtom) {
   if (visibleNeighbors.length === 1) {
     const neighbor = visibleNeighbors[0];
     const neighborHalfBond = struct.halfBonds.get(neighbor);
+    const neighborDirX = neighborHalfBond?.dir.x ?? 0;
 
-    return (neighborHalfBond?.dir.x ?? 0) > 0;
+    return neighborDirX > 0;
   }
 
   return false;
@@ -1561,24 +1565,23 @@ function buildLabel(
     usageInMacromolecule,
   } = options;
   // eslint-disable-line max-statements
-  const label = {} as ElemAttr;
-  label.text = getLabelText(atom.a, atomId, sgroup, options) || 'R#';
+  let text = getLabelText(atom.a, atomId, sgroup, options) || 'R#';
 
   let tooltip: string | null = null;
 
-  if (label.text === atom.a.label) {
-    const element = Elements.get(label.text);
+  if (text === atom.a.label) {
+    const element = Elements.get(text);
     if (atomColoring && element) {
-      atom.color = ElementColor[label.text] ?? '#000';
+      atom.color = ElementColor[text] ?? '#000';
     }
   }
 
   const shouldStyleLabel = usageInMacromolecule !== undefined;
-  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(text);
   const isMonomerAttachmentPointSelected =
-    currentlySelectedMonomerAttachmentPoint === label.text;
+    currentlySelectedMonomerAttachmentPoint === text;
   const isMonomerAttachmentPointUsed =
-    connectedMonomerAttachmentPoints?.includes(label.text) ?? false;
+    connectedMonomerAttachmentPoints?.includes(text) ?? false;
 
   const { color, fill, stroke } = util.useLabelStyles(
     isMonomerAttachmentPointSelected,
@@ -1590,20 +1593,20 @@ function buildLabel(
     atom.color = color;
   }
 
-  if (label.text?.length > MAX_LABEL_LENGTH) {
-    tooltip = label.text;
-    label.text = `${label.text?.substring(0, 8)}...`;
+  if (text.length > MAX_LABEL_LENGTH) {
+    tooltip = text;
+    text = `${text.substring(0, 8)}...`;
   }
 
   const { previewOpacity } = options;
 
   // not properly centered otherwise
-  if (label.text === '*') {
+  if (text === '*') {
     ps.x = ps.x - 1;
     ps.y = ps.y + 3;
   }
 
-  label.path = paper.text(ps.x, ps.y, label.text).attr({
+  const path = paper.text(ps.x, ps.y, text).attr({
     font,
     'font-size': fontszInPx,
     fill: atom.color,
@@ -1611,47 +1614,38 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (isMonomerAttachmentPoint && shouldStyleLabel) {
-    const backgroundSize = fontszInPx * 2;
+  const background =
+    isMonomerAttachmentPoint && shouldStyleLabel
+      ? paper
+          .rect(
+            ps.x - (fontszInPx * 2) / 2,
+            ps.y - (fontszInPx * 2) / 2,
+            fontszInPx * 2,
+            fontszInPx * 2,
+            10,
+          )
+          .attr({ fill })
+          .attr({ stroke })
+      : undefined;
 
-    label.background = paper
-      .rect(
-        ps.x - backgroundSize / 2,
-        ps.y - backgroundSize / 2,
-        backgroundSize,
-        backgroundSize,
-        10,
-      )
-      .attr({ fill })
-      .attr({ stroke });
-  }
   if (tooltip) {
-    addTooltip(label.path.node, tooltip);
+    addTooltip(path.node, tooltip);
   }
 
-  label.rbb = util.relBox(label.path.getBBox());
-  draw.recenterText(label.path, label.rbb);
-  let rightMargin =
-    (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom); //
-  let leftMargin =
-    (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  const rbb = util.relBox(path.getBBox());
+  draw.recenterText(path, rbb);
+  let rightMargin = (rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+  let leftMargin = (-rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
 
   if (atom.a.atomList !== null) {
     const xShift =
-      ((atom.hydrogenOnTheLeft ? -1 : 1) *
-        (label.rbb.width - label.rbb.height)) /
-      2;
-    pathAndRBoxTranslate(
-      label.path,
-      label.rbb,
-      xShift,
-
-      0,
-    );
+      ((atom.hydrogenOnTheLeft ? -1 : 1) * (rbb.width - rbb.height)) / 2;
+    pathAndRBoxTranslate(path, rbb, xShift, 0);
     rightMargin += xShift;
     leftMargin += xShift;
   }
 
+  const label: ElemAttr = { text, path, rbb, background };
   atom.label = label;
   return { label, rightMargin, leftMargin };
 }
@@ -1723,64 +1717,65 @@ function showHydroIndex(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const hydroIndex = {} as ElemAttr;
-  hydroIndex.text = (implh + 1).toString();
-  hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
+  const text = (implh + 1).toString();
+  const path = render.paper.text(ps.x, ps.y, text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
-  draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+  const rbb = util.relBox(path.getBBox());
+  draw.recenterText(path, rbb);
+  const labelHeight = atom.label?.rbb.height ?? 0;
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    hydroIndex.path,
-    hydroIndex.rbb,
-    rightMargin + 0.5 * hydroIndex.rbb.width + delta,
-    0.2 * (atom.label?.rbb.height ?? 0),
+    path,
+    rbb,
+    rightMargin + 0.5 * rbb.width + delta,
+    0.2 * labelHeight,
   );
   /* eslint-enable no-mixed-operators */
-  return hydroIndex;
+  return { text, path, rbb };
 }
 
 function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
   const ps: Vec2 = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const paper = render.paper;
-  const radical = {} as Omit<ElemAttr, 'text'>;
+  let path = paper.set();
   let hshift: number;
   switch (atom.a.radical) {
     case 1:
-      radical.path = paper.set();
+      path = paper.set();
       hshift = 1.6 * options.lineWidth;
-      radical.path.push(
+      path.push(
         draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
         draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options),
       );
-      radical.path.attr('fill', atom.color);
+      path.attr('fill', atom.color);
       break;
     case 2:
-      radical.path = paper.set();
-      radical.path.push(draw.radicalBullet(paper, ps, options));
-      radical.path.attr('fill', atom.color);
+      path = paper.set();
+      path.push(draw.radicalBullet(paper, ps, options));
+      path.attr('fill', atom.color);
       break;
     case 3:
-      radical.path = paper.set();
+      path = paper.set();
       hshift = 1.6 * options.lineWidth;
-      radical.path.push(
+      path.push(
         draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
         draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options),
       );
-      radical.path.attr('stroke', atom.color);
+      path.attr('stroke', atom.color);
       break;
     default:
       break;
   }
-  radical.rbb = util.relBox(radical.path.getBBox());
-  let vshift = -0.5 * (atom.label!.rbb.height + radical.rbb.height);
+  const rbb = util.relBox(path.getBBox());
+  const labelHeight = atom.label?.rbb.height ?? 0;
+  let vshift = -0.5 * (labelHeight + rbb.height);
   if (atom.a.radical === 3) vshift -= options.lineWidth / 2;
-  pathAndRBoxTranslate(radical.path, radical.rbb, 0, vshift);
-  return radical;
+  pathAndRBoxTranslate(path, rbb, 0, vshift);
+  return { path, rbb };
 }
 
 function showIsotope(
@@ -1791,24 +1786,23 @@ function showIsotope(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const isotope = {} as ElemAttr;
-  isotope.text = atom.a.isotope?.toString() ?? '';
-  isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
+  const text = atom.a.isotope?.toString() ?? '';
+  const path = render.paper.text(ps.x, ps.y, text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  isotope.rbb = util.relBox(isotope.path.getBBox());
-  draw.recenterText(isotope.path, isotope.rbb);
+  const rbb = util.relBox(path.getBBox());
+  draw.recenterText(path, rbb);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    isotope.path,
-    isotope.rbb,
-    leftMargin - 0.5 * isotope.rbb.width - delta,
-    -0.3 * atom.label!.rbb.height,
+    path,
+    rbb,
+    leftMargin - 0.5 * rbb.width - delta,
+    -0.3 * (atom.label?.rbb.height ?? 0),
   );
   /* eslint-enable no-mixed-operators */
-  return isotope;
+  return { text, path, rbb };
 }
 
 function showCharge(
@@ -1819,33 +1813,29 @@ function showCharge(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const charge = {} as ElemAttr;
-  charge.text = '';
+  let text = '';
   if (atom.a.charge !== null) {
     const absCharge = Math.abs(atom.a.charge);
-    if (absCharge !== 1) charge.text = absCharge.toString();
-    if (atom.a.charge < 0) charge.text += '\u2013';
-    else charge.text += '+';
-  } else {
-    charge.text = '';
+    if (absCharge !== 1) text = absCharge.toString();
+    if (atom.a.charge < 0) text += '\u2013';
+    else text += '+';
   }
-
-  charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
+  const path = render.paper.text(ps.x, ps.y, text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  charge.rbb = util.relBox(charge.path.getBBox());
-  draw.recenterText(charge.path, charge.rbb);
+  const rbb = util.relBox(path.getBBox());
+  draw.recenterText(path, rbb);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    charge.path,
-    charge.rbb,
-    rightMargin + 0.5 * charge.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height,
+    path,
+    rbb,
+    rightMargin + 0.5 * rbb.width + delta,
+    -0.3 * (atom.label?.rbb.height ?? 0),
   );
   /* eslint-enable no-mixed-operators */
-  return charge;
+  return { text, path, rbb };
 }
 
 function showExplicitValence(
@@ -1856,28 +1846,27 @@ function showExplicitValence(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const valence = {} as ElemAttr;
-  valence.text = VALENCE_MAP[atom.a.explicitValence];
-  if (!valence.text) {
+  const baseText = VALENCE_MAP[atom.a.explicitValence];
+  if (!baseText) {
     throw new Error('invalid valence ' + atom.a.explicitValence.toString());
   }
-  valence.text = '(' + valence.text + ')';
-  valence.path = render.paper.text(ps.x, ps.y, valence.text).attr({
+  const text = '(' + baseText + ')';
+  const path = render.paper.text(ps.x, ps.y, text).attr({
     font: options.font,
     'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
-  valence.rbb = util.relBox(valence.path.getBBox());
-  draw.recenterText(valence.path, valence.rbb);
+  const rbb = util.relBox(path.getBBox());
+  draw.recenterText(path, rbb);
   /* eslint-disable no-mixed-operators */
   pathAndRBoxTranslate(
-    valence.path,
-    valence.rbb,
-    rightMargin + 0.5 * valence.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height,
+    path,
+    rbb,
+    rightMargin + 0.5 * rbb.width + delta,
+    -0.3 * (atom.label?.rbb.height ?? 0),
   );
   /* eslint-enable no-mixed-operators */
-  return valence;
+  return { text, path, rbb };
 }
 
 function showHydrogen(
@@ -1885,7 +1874,6 @@ function showHydrogen(
   render: Render,
   implh: number,
   data: {
-    hydrogen: ElemAttr;
     hydroIndex: ElemAttr | null;
     rightMargin: number;
     leftMargin: number;
@@ -1902,44 +1890,47 @@ function showHydrogen(
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
-  const hydrogen = data.hydrogen;
-  hydrogen.text = 'H';
-  hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
+  const hydrogenText = 'H';
+  const hydrogenPath = render.paper.text(ps.x, ps.y, hydrogenText).attr({
     font: options.font,
     'font-size': options.fontszInPx,
     fill: atom.color,
   });
-  hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
-  draw.recenterText(hydrogen.path, hydrogen.rbb);
+  const hydrogenRbb = util.relBox(hydrogenPath.getBBox());
+  draw.recenterText(hydrogenPath, hydrogenRbb);
   if (!hydrogenLeft) {
     pathAndRBoxTranslate(
-      hydrogen.path,
-      hydrogen.rbb,
-      data.rightMargin + 0.35 * hydrogen.rbb.width + delta,
+      hydrogenPath,
+      hydrogenRbb,
+      data.rightMargin + 0.35 * hydrogenRbb.width + delta,
       0,
     );
-    data.rightMargin += hydrogen.rbb.width + delta;
+    data.rightMargin += hydrogenRbb.width + delta;
   }
   if (implh > 1) {
-    hydroIndex = {} as ElemAttr;
-    hydroIndex.text = implh.toString();
-    hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
+    const hydroIndexText = implh.toString();
+    const hydroIndexPath = render.paper.text(ps.x, ps.y, hydroIndexText).attr({
       font: options.font,
       'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
-    hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
-    draw.recenterText(hydroIndex.path, hydroIndex.rbb);
+    const hydroIndexRbb = util.relBox(hydroIndexPath.getBBox());
+    draw.recenterText(hydroIndexPath, hydroIndexRbb);
+    hydroIndex = {
+      text: hydroIndexText,
+      path: hydroIndexPath,
+      rbb: hydroIndexRbb,
+    };
     if (!hydrogenLeft) {
       pathAndRBoxTranslate(
-        hydroIndex.path,
-        hydroIndex.rbb,
+        hydroIndexPath,
+        hydroIndexRbb,
         data.rightMargin +
-          0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
+          0.15 * hydroIndexRbb.width * (options.zoom > 1 ? 1 : options.zoom) +
           delta,
-        0.2 * atom.label!.rbb.height,
+        0.2 * (atom.label?.rbb.height ?? 0),
       );
-      data.rightMargin += hydroIndex.rbb.width + delta;
+      data.rightMargin += hydroIndexRbb.width + delta;
     }
   }
   if (hydrogenLeft) {
@@ -1948,22 +1939,27 @@ function showHydrogen(
         hydroIndex.path,
         hydroIndex.rbb,
         data.leftMargin - 0.4 * hydroIndex.rbb.width - delta,
-        0.2 * atom.label!.rbb.height,
+        0.2 * (atom.label?.rbb.height ?? 0),
       );
       data.leftMargin -= hydroIndex.rbb.width + delta;
     }
     pathAndRBoxTranslate(
-      hydrogen.path,
-      hydrogen.rbb,
+      hydrogenPath,
+      hydrogenRbb,
       data.leftMargin -
         0.4 *
-          hydrogen.rbb.width *
+          hydrogenRbb.width *
           (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
         delta,
       0,
     );
-    data.leftMargin -= hydrogen.rbb.width + delta;
+    data.leftMargin -= hydrogenRbb.width + delta;
   }
+  const hydrogen: ElemAttr = {
+    text: hydrogenText,
+    path: hydrogenPath,
+    rbb: hydrogenRbb,
+  };
   return Object.assign(data, { hydrogen, hydroIndex });
 }
 
@@ -1975,9 +1971,9 @@ function showWarning(
 ): Omit<ElemAttr, 'text'> {
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
-  const warning = {} as Omit<ElemAttr, 'text'>;
-  const y = ps.y + (atom.label?.rbb.height ?? 0) / 2 + delta;
-  warning.path = render.paper
+  const labelHeight = atom.label?.rbb.height ?? 0;
+  const y = ps.y + labelHeight / 2 + delta;
+  const path = render.paper
     .path(
       'M{0},{1}L{2},{3}',
       toFixed(ps.x + leftMargin),
@@ -1987,8 +1983,8 @@ function showWarning(
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });
-  warning.rbb = util.relBox(warning.path.getBBox());
-  return warning;
+  const rbb = util.relBox(path.getBBox());
+  return { path, rbb };
 }
 
 function getAamText(atom: ReAtom) {
@@ -2091,7 +2087,7 @@ export function getAtomCustomQuery(
     if (queryAttrsText.length > 0) queryAttrsText += ';';
   };
   const patterns: {
-    [key: string]: (value: string, atom: unknown) => string;
+    [key: string]: (value: string, atom: Record<string, unknown>) => string;
   } = {
     isotope: (value) => value,
     aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
@@ -2128,7 +2124,9 @@ export function getAtomCustomQuery(
 
     const value = atom[propertyName];
     if (propertyName in atom && value !== null) {
-      const attrText = patterns[propertyName](value as unknown as string, atom);
+      const normalizedValue =
+        typeof value === 'boolean' ? Number(value) : value;
+      const attrText = patterns[propertyName](String(normalizedValue), atom);
       if (attrText) {
         addSemicolon();
       }
@@ -2169,7 +2167,7 @@ function getQueryAttrsText(atom: ReAtom): string {
 
 function pathAndRBoxTranslate(
   path: Element | RaphaelSet,
-  rbb: { x: number; y: number; width: number; height: number },
+  rbb: RelativeBox,
   x: number,
   y: number,
 ) {

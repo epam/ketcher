@@ -56,7 +56,7 @@ class ReBond extends ReObject {
   neihbid1 = -1;
   neihbid2 = -1;
   boldStereo?: boolean;
-  rbb?: { x: number; y: number; width: number; height: number };
+  rbb?: RelativeBox;
   cip?: {
     // Raphael paths
     path: RaphaelSet;
@@ -1057,7 +1057,7 @@ function getStereoBondColor(
     return defaultColor;
   }
 
-  return getColorFromStereoLabel(options, stereoLabel);
+  return getColorFromStereoLabel(options, stereoLabel) ?? defaultColor;
 }
 
 function getBondSingleStereoBoldPath(

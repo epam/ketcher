@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Popover, type PopoverActions } from '@mui/material';
 
 import classes from './ColorPicker.module.less';

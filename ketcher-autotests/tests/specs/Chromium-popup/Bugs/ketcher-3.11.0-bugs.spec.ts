@@ -845,7 +845,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await takeElementScreenshot(
       page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
+      CommonLeftToolbar(page).areaSelectionDropdownButton.first(),
       {
         paddingWidth: 90,
         paddingHeight: 10,

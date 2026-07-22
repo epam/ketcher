@@ -25,10 +25,11 @@ When users drag a monomer or preset from the library and drop it near an existin
 
 ## Impact
 
-- **`ketcher-core`** — `Editor.ts`: the `placeLibraryItemOnCanvas` handler already has partial logic for bond creation on drop (`dragDropBondTarget`). The remaining gaps are: preset mirroring in Flex, non-standard bond notification routing, and edge-case AP resolution for presets (req. 3.3).
+- **`ketcher-core`** — `LibraryItemDragDropHandler` (`application/editor/libraryItemDragDrop/`): all drag-drop attachment-point logic has been extracted from `Editor.ts` into this dedicated class. It owns proximity detection, hover state, the drop-and-bond flow, modal continuation, Flex-mode repositioning, and preset mirroring. The companion `repositioning.ts` module holds the pure repositioning and mirroring helpers.
+- **`ketcher-core`** — `Editor.ts`: holds a single `dragDropHandler: LibraryItemDragDropHandler` field; delegates via `cancelLibraryItemDrag()`, `onCreateBond()`, and `onCancelBondCreation()`. The `placeItemOnCanvasForHandler` bridge method routes item placement back to the existing private placement methods (`onPlaceMonomerOnCanvas`, `onPlaceRnaPresetOnCanvas`, `onPlaceAmbiguousMonomerOnCanvas`).
 - **`ketcher-core`** — `AttachmentPoint.ts`: the `+` indicator and AP visibility changes are already implemented. No changes expected here.
-- **`ketcher-core`** — `DrawingEntitiesManager.ts`: `createPolymerBond` is already called for the drag-drop path; Flex bond-length and AP-direction orientation may need to be enforced post-creation.
-- **`ketcher-core`** — `Bond.ts` (`shouldInvokeModal`): the modal-trigger logic must be reused/shared for the drag-drop path (currently partially duplicated in `Editor.ts`).
+- **`ketcher-core`** — `DrawingEntitiesManager.ts`: `createPolymerBond` is already called for the drag-drop path; Flex bond-length and AP-direction orientation are enforced post-creation inside `LibraryItemDragDropHandler`.
+- **`ketcher-core`** — `Bond.ts` (`shouldInvokeModal`): the modal-trigger logic must be reused/shared for the drag-drop path (currently partially duplicated in `LibraryItemDragDropHandler`).
 - **`ketcher-macromolecules`** — `MonomerConnections.tsx` / modal wiring: no new UI components required; the existing modal is reused.
 - No public API or import/export format changes.
 - No new dependencies.

@@ -353,6 +353,7 @@ function Field(props: Readonly<FieldProps>) {
       className={className}
       onExtraChange={onExtraChange}
       extraValue={extraValue}
+      {...(labelPos === false && { error: dataError })}
       {...(extraName && {
         extraSchema: rest.extraSchema || schema?.properties?.[extraName],
       })}
@@ -370,7 +371,39 @@ function Field(props: Readonly<FieldProps>) {
     />
   );
 
-  if (labelPos === false) return formField;
+  if (labelPos === false) {
+    if (Component) {
+      return formField;
+    }
+
+    return (
+      <>
+        <div className={clsx({ [classes.dataError]: dataError }, className)}>
+          <span
+            className={classes.inputWrapper}
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            data-testid={
+              props['data-testid']
+                ? `${props['data-testid']}-input-span`
+                : undefined
+            }
+            role="none"
+          >
+            {formField}
+          </span>
+        </div>
+        {dataError && anchorEl && (
+          <ErrorPopover
+            anchorEl={anchorEl}
+            open={!!anchorEl}
+            error={dataError}
+            onClose={handlePopoverClose}
+          />
+        )}
+      </>
+    );
+  }
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}

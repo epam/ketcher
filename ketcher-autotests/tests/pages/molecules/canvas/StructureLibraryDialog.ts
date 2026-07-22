@@ -114,7 +114,7 @@ export const StructureLibraryDialog = (page: Page) => {
     async openTab(tabSection: TabSection) {
       if (!(await this.isTabOpened(tabSection))) {
         await getElement(tabSection).click();
-        // Wait for the tab to open and content to load
+        // Wait for the content to load after switching tabs
         await page.waitForTimeout(250);
       }
     },

@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { OperationType } from 'ketcher-core';
+import {
+  type RxnArrowMode,
+  type SimpleObjectMode,
+  OperationType,
+} from 'ketcher-core';
+
+type OperationTypeValue = typeof OperationType[keyof typeof OperationType];
 
 type Position = {
   x: number;
@@ -24,18 +30,18 @@ type Position = {
 type ArrowPosition = [Position, Position];
 
 export type ChangeEventData = {
-  operation: any;
+  operation: OperationTypeValue;
   id?: number;
   label?: string;
   position?: Position | ArrowPosition;
-  attribute?: any;
-  from?: any;
-  to?: any;
-  atomId?: any;
-  fragId?: any;
-  sGroupId?: any;
-  type?: any;
-  mode?: any;
+  attribute?: string;
+  from?: unknown;
+  to?: unknown;
+  atomId?: number;
+  fragId?: number;
+  sGroupId?: number;
+  type?: string;
+  mode?: RxnArrowMode | SimpleObjectMode;
 };
 
 export function customOnChangeHandler(action, handler) {

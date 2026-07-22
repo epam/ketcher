@@ -833,16 +833,12 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Clicking on the Selection tool icon (both in Macro and Micro modes) should open the dropdown menu with all selection tools, providing a consistent user experience.
      */
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton,
-      {
-        paddingWidth: 90,
-        paddingHeight: 10,
-      },
-    );
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
+<<<<<<< HEAD
     await takeElementScreenshot(
       page,
       CommonLeftToolbar(page).areaSelectionDropdownButton.first(),
@@ -851,6 +847,11 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
         paddingHeight: 10,
       },
     );
+=======
+    await expect(
+      CommonLeftToolbar(page).toolSelectionDropdownPanel,
+    ).toBeVisible();
+>>>>>>> origin/master
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({

@@ -1635,7 +1635,7 @@ test.describe('Calculate Properties tests', () => {
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
-     * Description: Check that graph remains readable for 532 amino acids
+     * Description: Check that graph remains readable for 1240 amino acids
      * Scenario:
      * 1. Go to Macro - Flex
      * 2. Load from HELM peptide chain

@@ -1764,7 +1764,7 @@ export class SequenceMode extends BaseMode {
             modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           }
 
-          history.update(modelChanges);
+          history.update(modelChanges, selectionsBeforeDeletion.length > 0);
         },
       },
       'sequence-edit-select': {

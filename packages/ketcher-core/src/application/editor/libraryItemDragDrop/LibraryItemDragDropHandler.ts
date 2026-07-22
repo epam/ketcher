@@ -154,12 +154,7 @@ export class LibraryItemDragDropHandler {
     }
 
     if (getModeName() === 'snake-layout-mode') {
-      command.merge(
-        drawingEntitiesManager.recalculateCanvasMatrix(
-          drawingEntitiesManager.canvasMatrix?.chainsCollection,
-          drawingEntitiesManager.snakeLayoutMatrix,
-        ),
-      );
+      command.merge(drawingEntitiesManager.applySnakeLayout(true));
     }
 
     if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
@@ -393,12 +388,7 @@ export class LibraryItemDragDropHandler {
           }
 
           if (getModeName() === 'snake-layout-mode') {
-            modelChanges.merge(
-              drawingEntitiesManager.recalculateCanvasMatrix(
-                drawingEntitiesManager.canvasMatrix?.chainsCollection,
-                drawingEntitiesManager.snakeLayoutMatrix,
-              ),
-            );
+            modelChanges.merge(drawingEntitiesManager.applySnakeLayout(true));
           }
         } else if (droppedMonomer.unUsedAttachmentPointsNamesList.length > 0) {
           this.isDragDropBondModalOpen = true;

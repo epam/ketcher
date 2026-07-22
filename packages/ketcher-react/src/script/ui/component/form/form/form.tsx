@@ -376,9 +376,13 @@ function Field(props: Readonly<FieldProps>) {
       return formField;
     }
 
+    const isSelectableControl =
+      rest.type === 'radio' || rest.type === 'checkbox';
+    const showError = Boolean(dataError) && !isSelectableControl;
+
     return (
       <>
-        <span className={clsx({ [classes.dataError]: dataError }, className)}>
+        <span className={clsx({ [classes.dataError]: showError }, className)}>
           <span
             className={classes.inputWrapper}
             onMouseEnter={handlePopoverOpen}
@@ -393,7 +397,7 @@ function Field(props: Readonly<FieldProps>) {
             {formField}
           </span>
         </span>
-        {dataError && anchorEl && (
+        {showError && dataError && anchorEl && (
           <ErrorPopover
             anchorEl={anchorEl}
             open={!!anchorEl}

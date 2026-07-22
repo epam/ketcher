@@ -600,6 +600,33 @@ export class DrawingEntitiesManager {
     return drawingEntity;
   }
 
+  public moveAllEntitiesWithHiddenMicromolecules(offset: Vec2) {
+    this.allEntities.forEach(([, drawingEntity]) => {
+      this.moveDrawingEntityModelChange(drawingEntity, offset);
+    });
+
+    this.micromoleculesHiddenEntities.simpleObjects.forEach((simpleObject) => {
+      simpleObject.pos = simpleObject.pos.map((position) =>
+        position.add(offset),
+      );
+    });
+
+    this.micromoleculesHiddenEntities.texts.forEach((text) => {
+      text.position = text.position.add(offset);
+      text.pos = text.pos.map((position) => position.add(offset));
+    });
+
+    this.micromoleculesHiddenEntities.images.forEach((image) => {
+      image.addPositionOffset(offset);
+    });
+
+    this.micromoleculesHiddenEntities.multitailArrows.forEach(
+      (multitailArrow) => {
+        multitailArrow.move(offset);
+      },
+    );
+  }
+
   private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
     if (drawingEntity.monomerItem.props.isMicromoleculeFragment && offset) {
       drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
@@ -2639,9 +2666,7 @@ export class DrawingEntitiesManager {
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
 
-    this.allEntities.forEach(([, entity]) => {
-      this.moveDrawingEntityModelChange(entity, offset);
-    });
+    this.moveAllEntitiesWithHiddenMicromolecules(offset);
   }
 
   public getCurrentCenterPointOfCanvas() {
@@ -2761,6 +2786,14 @@ export class DrawingEntitiesManager {
     });
 
     SequenceRenderer.clear();
+  }
+
+  public restoreSGroupRenderers() {
+    const editor = provideEditorInstance();
+
+    this.sgroups.forEach((sgroup) => {
+      editor.renderersContainer.addSGroup(sgroup);
+    });
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {

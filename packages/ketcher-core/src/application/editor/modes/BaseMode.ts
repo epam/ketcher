@@ -296,12 +296,7 @@ export abstract class BaseMode {
       drawingEntitiesManager.allEntities[0]?.[1].position;
     const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
 
-    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
-      drawingEntitiesManager.moveDrawingEntityModelChange(
-        drawindEntity,
-        offset,
-      );
-    });
+    drawingEntitiesManager.moveAllEntitiesWithHiddenMicromolecules(offset);
   }
 
   unsupportedSymbolsError(errorMessage: string) {

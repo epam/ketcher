@@ -29,6 +29,7 @@ export class SnakeMode extends BaseMode {
     editor.drawingEntitiesManager.applyFlexLayoutMode();
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);
+    editor.drawingEntitiesManager.restoreSGroupRenderers();
     command.setUndoOperationReverse();
 
     if (editor.drawingEntitiesManager.hasMonomers) {

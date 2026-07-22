@@ -29,6 +29,7 @@ export class AttachmentPoint {
 
   static readonly labelOffset = 3.5;
   static readonly radius = 3;
+  static readonly dragTargetRadius = 5;
   static readonly labelSize = { x: 3.5, y: 2.5 };
   static readonly DRAG_TARGET_INDICATOR_FONT_SIZE = '5px';
   static readonly colors = {
@@ -59,6 +60,7 @@ export class AttachmentPoint {
   protected initialAngle = 0;
   private readonly isUsed: boolean;
   private readonly isDragTarget: boolean;
+  private readonly isDragCircleHover: boolean;
   private readonly isSnake;
   private get editorEvents() {
     return provideEditorInstance().events;
@@ -83,6 +85,7 @@ export class AttachmentPoint {
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
     this.isDragTarget = constructorParams.isDragTarget ?? false;
+    this.isDragCircleHover = constructorParams.isDragCircleHover ?? false;
     this.initialAngle = constructorParams.angle;
     this.applyZoomForPositionCalculation =
       constructorParams.applyZoomForPositionCalculation;
@@ -159,7 +162,12 @@ export class AttachmentPoint {
 
     attachmentPointElement
       .append('circle')
-      .attr('r', AttachmentPoint.radius)
+      .attr(
+        'r',
+        this.isDragCircleHover
+          ? AttachmentPoint.dragTargetRadius
+          : AttachmentPoint.radius,
+      )
       .attr('cx', attachmentPointCoordinates.x)
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', circleStroke)
@@ -169,34 +177,6 @@ export class AttachmentPoint {
       .attr('data-parent-monomer-id', this.monomer.id)
       .attr('data-monomerid', this.monomer.id)
       .attr('fill', this.isDragTarget ? 'white' : fill);
-
-    if (this.isDragTarget) {
-      const cx = attachmentPointCoordinates.x;
-      const cy = attachmentPointCoordinates.y;
-      const armLength = AttachmentPoint.radius * 0.55;
-
-      attachmentPointElement
-        .append('line')
-        .attr('x1', cx - armLength)
-        .attr('y1', cy)
-        .attr('x2', cx + armLength)
-        .attr('y2', cy)
-        .attr('stroke', '#167782')
-        .attr('stroke-width', '1px')
-        .attr('stroke-linecap', 'round')
-        .style('pointer-events', 'none');
-
-      attachmentPointElement
-        .append('line')
-        .attr('x1', cx)
-        .attr('y1', cy - armLength)
-        .attr('x2', cx)
-        .attr('y2', cy + armLength)
-        .attr('stroke', '#167782')
-        .attr('stroke-width', '1px')
-        .attr('stroke-linecap', 'round')
-        .style('pointer-events', 'none');
-    }
 
     const labelGroup = this.attachmentPoint.append('text');
 

@@ -145,6 +145,7 @@ import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
+const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 8;
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -278,6 +279,11 @@ export class CoreEditor {
   private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
   private dragDropBondTarget: {
+    monomer: BaseMonomer;
+    attachmentPointName: AttachmentPointName;
+  } | null = null;
+
+  private dragCircleHoverTarget: {
     monomer: BaseMonomer;
     attachmentPointName: AttachmentPointName;
   } | null = null;
@@ -1273,10 +1279,11 @@ export class CoreEditor {
 
         modelChanges.merge(monomersAddResult.modelChanges);
 
-        // If dragged near a free attachment point, establish a bond
-        if (this.dragDropBondTarget) {
+        // If dragged and dropped directly on a free attachment point circle,
+        // establish a bond
+        if (this.dragCircleHoverTarget) {
           const { monomer: targetMonomer, attachmentPointName: targetAP } =
-            this.dragDropBondTarget;
+            this.dragCircleHoverTarget;
 
           const addedMonomers = monomersAddResult.drawingEntities.filter(
             (e): e is BaseMonomer => e instanceof BaseMonomer,
@@ -1361,8 +1368,11 @@ export class CoreEditor {
             }
           }
 
-          this.setMonomerDragTargetAP(this.dragDropBondTarget.monomer, null);
-          this.dragDropBondTarget = null;
+          this.setMonomerDragCircleHoverAP(
+            this.dragCircleHoverTarget.monomer,
+            null,
+          );
+          this.dragCircleHoverTarget = null;
         }
 
         modelChanges.merge(
@@ -2093,6 +2103,16 @@ export class CoreEditor {
     }
   }
 
+  private setMonomerDragCircleHoverAP(
+    monomer: BaseMonomer,
+    apName: AttachmentPointName | null,
+  ): void {
+    const renderer = monomer.renderer;
+    if (renderer instanceof BaseMonomerRenderer) {
+      renderer.setDragCircleHoverAttachmentPoint(apName);
+    }
+  }
+
   /**
    * Returns the approximate canvas-space position of an attachment point
    * on a monomer renderer, based on the canonical angle for that AP.
@@ -2132,10 +2152,10 @@ export class CoreEditor {
    * Finds the nearest free attachment point of any on-canvas monomer
    * within DRAG_BOND_PROXIMITY_THRESHOLD_PX of the given ketcherRoot-relative position.
    */
-  private findNearestFreeAttachmentPointForDrag(position: {
-    x: number;
-    y: number;
-  }): {
+  private findNearestFreeAttachmentPointForDrag(
+    position: { x: number; y: number },
+    threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
+  ): {
     monomer: BaseMonomer;
     attachmentPointName: AttachmentPointName;
   } | null {
@@ -2151,7 +2171,7 @@ export class CoreEditor {
       monomer: BaseMonomer;
       attachmentPointName: AttachmentPointName;
     } | null = null;
-    let minDist = DRAG_BOND_PROXIMITY_THRESHOLD_PX;
+    let minDist = threshold;
 
     for (const [, monomer] of this.drawingEntitiesManager.monomers) {
       const renderer = monomer.renderer;
@@ -2203,11 +2223,40 @@ export class CoreEditor {
       state.position,
     );
 
-    // No change — avoid unnecessary re-renders
+    const circleHoverAP = this.findNearestFreeAttachmentPointForDrag(
+      state.position,
+      DRAG_CIRCLE_HOVER_THRESHOLD_PX,
+    );
+
+    // Update circle hover state independently — no re-render needed, just
+    // update the flag so the next drawAttachmentPoints() picks it up.
+    const circleHoverChanged =
+      circleHoverAP?.monomer !== this.dragCircleHoverTarget?.monomer ||
+      circleHoverAP?.attachmentPointName !==
+        this.dragCircleHoverTarget?.attachmentPointName;
+
+    if (circleHoverChanged) {
+      if (this.dragCircleHoverTarget) {
+        this.setMonomerDragCircleHoverAP(
+          this.dragCircleHoverTarget.monomer,
+          null,
+        );
+      }
+      this.dragCircleHoverTarget = circleHoverAP;
+      if (circleHoverAP) {
+        this.setMonomerDragCircleHoverAP(
+          circleHoverAP.monomer,
+          circleHoverAP.attachmentPointName,
+        );
+      }
+    }
+
+    // No change in proximity target — avoid unnecessary re-renders
     if (
       nearestAP?.monomer === this.dragDropBondTarget?.monomer &&
       nearestAP?.attachmentPointName ===
-        this.dragDropBondTarget?.attachmentPointName
+        this.dragDropBondTarget?.attachmentPointName &&
+      !circleHoverChanged
     ) {
       return;
     }
@@ -2242,6 +2291,14 @@ export class CoreEditor {
    * Clears any drag-drop bond target hover state and resets related fields.
    */
   private clearDragDropBondTarget(): void {
+    if (this.dragCircleHoverTarget) {
+      this.setMonomerDragCircleHoverAP(
+        this.dragCircleHoverTarget.monomer,
+        null,
+      );
+      this.dragCircleHoverTarget = null;
+    }
+
     if (!this.dragDropBondTarget) return;
 
     this.setMonomerDragTargetAP(this.dragDropBondTarget.monomer, null);

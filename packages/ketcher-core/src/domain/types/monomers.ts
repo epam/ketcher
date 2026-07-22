@@ -113,6 +113,7 @@ export type AttachmentPointConstructorParams = {
   isSnake: boolean;
   applyZoomForPositionCalculation: boolean;
   isDragTarget?: boolean;
+  isDragCircleHover?: boolean;
 };
 
 export type PreviewAttachmentPointConstructorParams =

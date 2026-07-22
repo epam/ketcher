@@ -15,12 +15,8 @@ import { provideEditorInstance } from 'application/editor/editorSingleton';
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  type HydrogenBond,
-  type PolymerBond,
-  BaseMonomer,
-  Vec2,
-} from 'domain/entities';
+import { HydrogenBond, PolymerBond, BaseMonomer, Vec2 } from 'domain/entities';
+import { getAllConnectedMonomersRecursively } from 'domain/helpers/monomers';
 import type { CoreEditor } from 'application/editor/Editor';
 import { EditorHistory } from 'application/editor/EditorHistory';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -344,6 +340,33 @@ abstract class SelectBase implements BaseTool {
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
         ),
+      );
+    } else if (modKey && renderer.drawingEntity instanceof BaseMonomer) {
+      // Ctrl/Cmd + drag on a monomer in Flex/Snake mode selects and moves
+      // the whole chain it belongs to, same as the Sequence mode case above (#4451).
+      this.startMoveIfNeeded(renderer);
+      const connectedMonomers = getAllConnectedMonomersRecursively(
+        renderer.drawingEntity,
+      );
+      connectedMonomers.forEach((connectedMonomer) =>
+        connectedMonomer.turnOnSelection(),
+      );
+      // A bond's `firstMonomer` is fixed at construction, so checking it here
+      // (rather than just `.selected` on both ends) naturally visits each
+      // intra-chain bond exactly once instead of twice.
+      const bondsInsideChain = connectedMonomers.flatMap((connectedMonomer) =>
+        connectedMonomer.bonds.filter(
+          (bond): bond is PolymerBond | HydrogenBond =>
+            (bond instanceof PolymerBond || bond instanceof HydrogenBond) &&
+            bond.firstMonomer === connectedMonomer &&
+            Boolean(bond.secondMonomer?.selected),
+        ),
+      );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.selectDrawingEntities([
+          ...connectedMonomers,
+          ...bondsInsideChain,
+        ]),
       );
     }
 

@@ -248,9 +248,9 @@ test.describe('Selection tools', () => {
     );
     await takeElementScreenshot(
       page,
-      getAtomLocator(page, { atomLabel: 'O' }).nth(1),
+      getAtomLocator(page, { atomLabel: 'N' }).nth(0),
       {
-        padding: 210,
+        padding: 250,
       },
     );
   });

@@ -378,7 +378,7 @@ function Field(props: Readonly<FieldProps>) {
 
     return (
       <>
-        <div className={clsx({ [classes.dataError]: dataError }, className)}>
+        <span className={clsx({ [classes.dataError]: dataError }, className)}>
           <span
             className={classes.inputWrapper}
             onMouseEnter={handlePopoverOpen}
@@ -392,7 +392,7 @@ function Field(props: Readonly<FieldProps>) {
           >
             {formField}
           </span>
-        </div>
+        </span>
         {dataError && anchorEl && (
           <ErrorPopover
             anchorEl={anchorEl}

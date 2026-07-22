@@ -2,17 +2,19 @@
 
 The drag-and-drop path in Ketcher's macromolecules editor already has partial proximity detection infrastructure:
 
-- `DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25` is defined in `Editor.ts`
+- `DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25` and `DRAG_CIRCLE_HOVER_THRESHOLD_PX = 8` are defined in `LibraryItemDragDropHandler.ts`
 - `findNearestFreeAttachmentPointForDrag` iterates canvas monomers and computes AP screen positions using canonical angles
 - `onLibraryItemDragOver` calls `setMonomerDragTargetAP` to mark the nearest AP with a `+` indicator and show all free APs
-- `dragDropBondTarget` is stored on the Editor during drag
+- `dragDropBondTarget` and `dragCircleHoverTarget` are stored in `LibraryItemDragDropHandler` during drag
 
-On mouse release (`placeLibraryItemOnCanvas`), the Editor attempts to create a bond when `dragDropBondTarget` is set. It calls `getValidSourcePoint` on the dropped monomer to resolve default APs and either calls `createPolymerBond` directly or opens the `MonomerConnectionModal`.
+On mouse release (`placeLibraryItemOnCanvas`), the handler attempts to create a bond when `dragCircleHoverTarget` is set. It calls `getValidSourcePoint` on the dropped monomer to resolve default APs and either calls `createPolymerBond` directly or opens the `MonomerConnectionModal`.
+
+**Implementation note:** All drag-and-drop attachment-point logic was extracted from `Editor.ts` into a dedicated `LibraryItemDragDropHandler` class located at `packages/ketcher-core/src/application/editor/libraryItemDragDrop/LibraryItemDragDropHandler.ts`. The repositioning and preset mirroring helpers live in the companion `repositioning.ts` module in the same directory. `Editor.ts` holds a single `dragDropHandler` field and delegates through thin methods (`cancelLibraryItemDrag`, `onCreateBond`, `onCancelBondCreation`).
 
 **Current gaps identified against issue #7926:**
 
 1. **Preset mirroring in Flex mode** (req. 3.3.1) — `findPresetMonomerForBonding` resolves which preset component to bond, but the preset is not mirrored when connecting leftmost-to-leftmost or rightmost-to-rightmost in Flex.
-2. **Non-standard bond notification routing** — the `shouldInvokeModal` logic in `Bond.ts` has the non-standard bond check; the drag-drop path in `Editor.ts` duplicates some of this but may not surface the "same group AP" toast consistently.
+2. **Non-standard bond notification routing** — the `shouldInvokeModal` logic in `Bond.ts` has the non-standard bond check; the drag-drop path duplicates some of this but may not surface the "same group AP" toast consistently.
 3. **AP resolution fallback for presets (req. 3.3)** — `findPresetMonomerForBonding` already implements the sugar → phosphate → base fallback, but the case where all three have no free APs and a modal should open needs validation.
 4. **Flex bond-length and AP-direction placement** (req. 2.4, 2.5) — after creating a bond via drag-drop in Flex mode, the dropped monomer's position is currently whatever the cursor was at. Standard bond length and AP-direction orientation are not enforced.
 

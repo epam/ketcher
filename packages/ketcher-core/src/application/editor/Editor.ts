@@ -1,10 +1,5 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import {
-  type AttachmentPointTarget,
-  type Editor,
-  type LibraryItemDragState,
-  EditorType,
-} from 'application/editor/editor.types';
+import { type Editor, EditorType } from 'application/editor/editor.types';
 import {
   type IEditorEvents,
   createEditorEvents,
@@ -119,8 +114,6 @@ import {
   getMonomerUniqueKey,
   isAmbiguousMonomerLibraryItem,
   isLibraryItemRnaPreset,
-  getNextMonomerInChain,
-  getPreviousMonomerInChain,
 } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 import {
@@ -132,7 +125,6 @@ import { blurActiveElement } from '../../utilities/dom';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { debounce } from 'lodash';
 import type { D3SvgElementSelection } from 'application/render/types';
-import type { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { SelectBase } from 'application/editor/tools/select/SelectBase';
 import {
   getKetRef,
@@ -140,13 +132,12 @@ import {
   KetSerializer,
 } from 'domain/serializers';
 import type { SequenceMode } from './modes/types/sequenceMode';
-import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
-import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { findPresetMonomerForBonding as findPresetMonomerForBondingHelper } from 'application/editor/tools/bondConnectionHelpers';
+import {
+  LibraryItemDragDropHandler,
+  type IAutochainMonomerAddResult,
+} from 'application/editor/libraryItemDragDrop';
 
 const SCROLL_SMOOTHNESS_IM_MS = 300;
-const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
-const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 8;
 
 const turnOnScrollAnimation = (
   canvas: D3SvgElementSelection<SVGGElement, void>,
@@ -224,13 +215,6 @@ interface ModifyAminoAcidsHandlerParams {
   modificationType: string;
 }
 
-interface IAutochainMonomerAddResult {
-  modelChanges: Command;
-  firstMonomer: BaseMonomer;
-  lastMonomer: BaseMonomer;
-  drawingEntities: DrawingEntity[];
-}
-
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const NATURAL_AMINO_ACID_MODIFICATION_TYPE = 'Natural amino acid';
@@ -277,25 +261,10 @@ export class CoreEditor {
 
   public nextAutochainPosition?: Vec2 = undefined;
 
-  private libraryItemDragState: LibraryItemDragState = null;
   private libraryItemDragCancelled = false;
-  private dragDropBondTarget: AttachmentPointTarget | null = null;
 
-  private dragCircleHoverTarget: AttachmentPointTarget | null = null;
-
-  private isDragDropBondModalOpen = false;
-
-  /**
-   * Stores context needed to reposition the dropped monomer after the user
-   * picks attachment points in the connection modal (drag-drop path only).
-   * Cleared once the bond is committed or the dialog is cancelled.
-   */
-  private dragDropModalContext: {
-    droppedMonomer: BaseMonomer;
-    addedMonomers: BaseMonomer[];
-    targetMonomer: BaseMonomer;
-    targetAP: AttachmentPointName;
-  } | null = null;
+  /** Handles all drag-and-drop attachment-point logic for library items. */
+  private dragDropHandler!: LibraryItemDragDropHandler;
 
   public theme;
   public zoomTool: ZoomTool;
@@ -345,6 +314,20 @@ export class CoreEditor {
     this.renderersContainer = renderersContainer;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
+    this.dragDropHandler = new LibraryItemDragDropHandler({
+      drawingEntitiesManager: this.drawingEntitiesManager,
+      renderersContainer: this.renderersContainer,
+      events: this.events,
+      getCanvasOffset: () => this.canvasOffset,
+      getKetcherRootRect: () => this.ketcherRootElementBoundingClientRect,
+      getModeName: () => this.mode.modeName,
+      getEditor: () => this,
+      placeItemOnCanvas: (item, position) =>
+        this.placeItemOnCanvasForHandler(item, position),
+      calculateAndStoreNextAutochainPosition: (lastMonomer) =>
+        this.calculateAndStoreNextAutochainPosition(lastMonomer),
+    });
+    this.dragDropHandler.subscribe();
     this.domEventSetup();
     this.setupContextMenuEvents();
     this.setupKeyboardEvents();
@@ -895,7 +878,7 @@ export class CoreEditor {
   }
 
   public cancelLibraryItemDrag() {
-    if (this.libraryItemDragState) {
+    if (this.dragDropHandler.isDragging) {
       this.libraryItemDragCancelled = true;
       this.events.setLibraryItemDragState.dispatch(null);
     }
@@ -988,7 +971,7 @@ export class CoreEditor {
 
       event.preventDefault();
 
-      if (this.libraryItemDragState) {
+      if (this.dragDropHandler.isDragging) {
         this.cancelLibraryItemDrag();
         return;
       }
@@ -1227,162 +1210,6 @@ export class CoreEditor {
       },
     );
 
-    this.events.setLibraryItemDragState.add((state: LibraryItemDragState) => {
-      this.libraryItemDragState = state;
-      if (state) {
-        this.onLibraryItemDragOver(state);
-      } else {
-        this.clearDragDropBondTarget();
-      }
-    });
-
-    this.events.placeLibraryItemOnCanvas.add(
-      (
-        item: IRnaPreset | MonomerOrAmbiguousType,
-        position: { x: number; y: number },
-      ) => {
-        const modelChanges = new Command();
-        const history = EditorHistory.getInstance(this);
-        const { x, y } = position;
-
-        let monomersAddResult: IAutochainMonomerAddResult | undefined;
-
-        if (isLibraryItemRnaPreset(item)) {
-          if (!item.sugar) {
-            return;
-          }
-
-          monomersAddResult = this.onPlaceRnaPresetOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        } else if (isAmbiguousMonomerLibraryItem(item)) {
-          monomersAddResult = this.onPlaceAmbiguousMonomerOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        } else {
-          monomersAddResult = this.onPlaceMonomerOnCanvas(
-            item,
-            Coordinates.canvasToModel(new Vec2(x, y)),
-          );
-        }
-
-        if (!monomersAddResult) {
-          return;
-        }
-
-        modelChanges.merge(monomersAddResult.modelChanges);
-
-        // If dragged and dropped directly on a free attachment point circle,
-        // establish a bond
-        if (this.dragCircleHoverTarget) {
-          const { monomer: targetMonomer, attachmentPointName: targetAP } =
-            this.dragCircleHoverTarget;
-
-          const addedMonomers = monomersAddResult.drawingEntities.filter(
-            (e): e is BaseMonomer => e instanceof BaseMonomer,
-          );
-
-          const droppedMonomer = isLibraryItemRnaPreset(item)
-            ? this.findPresetMonomerForBonding(addedMonomers, targetAP)
-            : monomersAddResult.firstMonomer;
-
-          if (droppedMonomer && droppedMonomer.hasFreeAttachmentPoint) {
-            targetMonomer.setPotentialSecondAttachmentPoint(targetAP);
-            const sourceAP = droppedMonomer.getValidSourcePoint(targetMonomer);
-            targetMonomer.setPotentialSecondAttachmentPoint(null);
-
-            if (sourceAP) {
-              modelChanges.merge(
-                this.drawingEntitiesManager.createPolymerBond(
-                  droppedMonomer,
-                  targetMonomer,
-                  sourceAP,
-                  targetAP,
-                ),
-              );
-
-              // Preset mirroring: if both bonded ends are on the same
-              // topology side (both first or both last in their chains),
-              // mirror the dropped preset horizontally (req. 3.3.1).
-              if (isLibraryItemRnaPreset(item) && addedMonomers.length > 1) {
-                modelChanges.merge(
-                  this.applyPresetMirroringIfNeeded(
-                    droppedMonomer,
-                    addedMonomers,
-                    targetMonomer,
-                  ),
-                );
-              }
-
-              // In Flex mode, reposition the dropped monomer (and any preset
-              // group) so the new bond has standard length and follows the AP
-              // direction (req. 2.4, 2.5). Also mirror the preset if needed
-              // (req. 3.3.1).
-              if (this.mode.modeName === 'flex-layout-mode') {
-                modelChanges.merge(
-                  this.computeAndApplyFlexDropRepositioning(
-                    droppedMonomer,
-                    addedMonomers,
-                    targetMonomer,
-                    targetAP,
-                  ),
-                );
-              }
-
-              // Non-standard bond notification: same-group APs (req. 4.2).
-              if (sourceAP === targetAP) {
-                this.events.error.dispatch(
-                  'You have connected monomers with attachment points of the same group',
-                );
-              }
-
-              if (this.mode.modeName === 'snake-layout-mode') {
-                modelChanges.merge(
-                  this.drawingEntitiesManager.recalculateCanvasMatrix(
-                    this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
-                    this.drawingEntitiesManager.snakeLayoutMatrix,
-                  ),
-                );
-              }
-            } else if (
-              droppedMonomer.unUsedAttachmentPointsNamesList.length > 0
-            ) {
-              this.isDragDropBondModalOpen = true;
-              this.dragDropModalContext = {
-                droppedMonomer,
-                addedMonomers,
-                targetMonomer,
-                targetAP,
-              };
-              this.events.openMonomerConnectionModal.dispatch({
-                firstMonomer: droppedMonomer,
-                secondMonomer: targetMonomer,
-              });
-            }
-          }
-
-          this.setMonomerDragCircleHoverAP(
-            this.dragCircleHoverTarget.monomer,
-            null,
-          );
-          this.dragCircleHoverTarget = null;
-        }
-
-        modelChanges.merge(
-          this.drawingEntitiesManager.selectDrawingEntities(
-            monomersAddResult.drawingEntities,
-          ),
-        );
-
-        history.update(modelChanges);
-        this.renderersContainer.update(modelChanges);
-        this.calculateAndStoreNextAutochainPosition(
-          monomersAddResult.lastMonomer,
-        );
-      },
-    );
     this.events.autochain.add((monomerItem) => this.onAutochain(monomerItem));
     this.events.previewAutochain.add((monomerItem) =>
       this.onPreviewAutochain(monomerItem),
@@ -1662,6 +1489,25 @@ export class CoreEditor {
 
     this.onRemoveAutochainPreview();
     this.onPreviewAutochain(monomerOrRnaItem);
+  }
+
+  /**
+   * Bridge method called by LibraryItemDragDropHandler to route item placement
+   * to the correct private handler based on item type.
+   */
+  private placeItemOnCanvasForHandler(
+    item: IRnaPreset | MonomerOrAmbiguousType,
+    position: Vec2,
+  ): IAutochainMonomerAddResult | undefined {
+    const modelPosition = Coordinates.canvasToModel(position);
+    if (isLibraryItemRnaPreset(item)) {
+      if (!item.sugar) return undefined;
+      return this.onPlaceRnaPresetOnCanvas(item, modelPosition);
+    } else if (isAmbiguousMonomerLibraryItem(item)) {
+      return this.onPlaceAmbiguousMonomerOnCanvas(item, modelPosition);
+    } else {
+      return this.onPlaceMonomerOnCanvas(item, modelPosition);
+    }
   }
 
   private onPlaceRnaPresetOnCanvas(
@@ -2012,64 +1858,8 @@ export class CoreEditor {
     }
 
     // Drag-drop from library: bond creation via modal
-    if (this.isDragDropBondModalOpen) {
-      const {
-        firstMonomer,
-        secondMonomer,
-        firstSelectedAttachmentPoint,
-        secondSelectedAttachmentPoint,
-      } = payload;
-
-      const command = new Command();
-      command.merge(
-        this.drawingEntitiesManager.createPolymerBond(
-          firstMonomer,
-          secondMonomer,
-          firstSelectedAttachmentPoint,
-          secondSelectedAttachmentPoint,
-        ),
-      );
-
-      // In Flex mode, reposition the dropped monomer so the new bond has
-      // standard length and follows the target AP direction (req. 2.4, 2.5).
-      // The target AP is the one selected by the user for the target monomer
-      // (secondMonomer = target canvas monomer, secondSelectedAttachmentPoint).
-      if (
-        this.mode.modeName === 'flex-layout-mode' &&
-        this.dragDropModalContext
-      ) {
-        const { droppedMonomer, addedMonomers } = this.dragDropModalContext;
-        command.merge(
-          this.computeAndApplyFlexDropRepositioning(
-            droppedMonomer,
-            addedMonomers,
-            secondMonomer,
-            secondSelectedAttachmentPoint,
-          ),
-        );
-      }
-
-      if (this.mode.modeName === 'snake-layout-mode') {
-        command.merge(
-          this.drawingEntitiesManager.recalculateCanvasMatrix(
-            this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
-            this.drawingEntitiesManager.snakeLayoutMatrix,
-          ),
-        );
-      }
-
-      const history = EditorHistory.getInstance(this);
-      history.update(command);
-      this.renderersContainer.update(command);
-
-      if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
-        this.events.error.dispatch(
-          'You have connected monomers using attachment points with the same name (e.g., both R1 or both R2)',
-        );
-      }
-
-      this.isDragDropBondModalOpen = false;
-      this.dragDropModalContext = null;
+    if (this.dragDropHandler.isModalOpen) {
+      this.dragDropHandler.handleMonomerConnection(payload);
     }
   }
 
@@ -2078,381 +1868,9 @@ export class CoreEditor {
       this.tool.handleBondCreationCancellation(secondMonomer);
       return;
     }
-    if (this.isDragDropBondModalOpen) {
-      this.isDragDropBondModalOpen = false;
-      this.dragDropModalContext = null;
+    if (this.dragDropHandler.isModalOpen) {
+      this.dragDropHandler.handleMonomerConnectionCancel();
     }
-  }
-
-  /**
-   * Sets or clears the drag-target attachment point on a monomer's renderer,
-   * guarded by instanceof to ensure only BaseMonomerRenderer is used.
-   */
-  private setMonomerDragTargetAP(
-    monomer: BaseMonomer,
-    apName: AttachmentPointName | null,
-  ): void {
-    const renderer = monomer.renderer;
-    if (renderer instanceof BaseMonomerRenderer) {
-      renderer.setDragTargetAttachmentPoint(apName);
-    }
-  }
-
-  private setMonomerDragCircleHoverAP(
-    monomer: BaseMonomer,
-    apName: AttachmentPointName | null,
-  ): void {
-    const renderer = monomer.renderer;
-    if (renderer instanceof BaseMonomerRenderer) {
-      renderer.setDragCircleHoverAttachmentPoint(apName);
-    }
-  }
-
-  /**
-   * Returns the approximate canvas-space position of an attachment point
-   * on a monomer renderer, based on the canonical angle for that AP.
-   */
-  private getAttachmentPointApproxCanvasPosition(
-    renderer: BaseMonomerRenderer,
-    apName: AttachmentPointName,
-  ): Vec2 {
-    const center = renderer.center;
-    const angleDeg =
-      attachmentPointNumberToAngle[
-        apName as keyof typeof attachmentPointNumberToAngle
-      ];
-    // `attachmentPointNumberToAngle` stores the inward-facing angle (toward the
-    // monomer centre).  Subtract 180° to get the outward direction used to
-    // position the AP circle relative to the monomer body.
-    const outwardAngleDeg = angleDeg - 180;
-    const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
-
-    const { width, height } = renderer.monomerSize;
-    // Average half-dimension approximates the body radius for a roughly
-    // circular/square monomer: (w + h) / 2 gives the average side, then /2
-    // gives the approximate radius → (w + h) / 4.
-    const bodyRadius = (width + height) / 4;
-    const apDistance =
-      bodyRadius +
-      AttachmentPoint.attachmentPointLength +
-      AttachmentPoint.radius;
-
-    return new Vec2(
-      center.x + Math.cos(outwardAngleRad) * apDistance,
-      center.y + Math.sin(outwardAngleRad) * apDistance,
-    );
-  }
-
-  /**
-   * Finds the nearest free attachment point of any on-canvas monomer
-   * within DRAG_BOND_PROXIMITY_THRESHOLD_PX of the given ketcherRoot-relative position.
-   */
-  private findNearestFreeAttachmentPointForDrag(
-    position: { x: number; y: number },
-    threshold = DRAG_BOND_PROXIMITY_THRESHOLD_PX,
-  ): AttachmentPointTarget | null {
-    const rootOffset = this.ketcherRootElementBoundingClientRect;
-    if (!rootOffset) return null;
-
-    const canvasOffset = this.canvasOffset;
-    // Offset of canvas top-left relative to ketcherRoot
-    const canvasRelLeft = canvasOffset.left - rootOffset.left;
-    const canvasRelTop = canvasOffset.top - rootOffset.top;
-
-    let nearest: AttachmentPointTarget | null = null;
-    let minDist = threshold;
-
-    for (const [, monomer] of this.drawingEntitiesManager.monomers) {
-      const renderer = monomer.renderer;
-      if (!renderer || !(renderer instanceof BaseMonomerRenderer)) continue;
-
-      for (const apName of monomer.unUsedAttachmentPointsNamesList) {
-        // Skip if this AP's angle is not defined (unusual AP names)
-        if (
-          !(apName in (attachmentPointNumberToAngle as Record<string, unknown>))
-        ) {
-          continue;
-        }
-
-        const apCanvasPos = this.getAttachmentPointApproxCanvasPosition(
-          renderer,
-          apName,
-        );
-        const apViewPos = Coordinates.canvasToView(apCanvasPos);
-
-        // Convert view position to ketcherRoot-relative
-        const apScreenX = canvasRelLeft + apViewPos.x;
-        const apScreenY = canvasRelTop + apViewPos.y;
-
-        const dist = Math.sqrt(
-          (position.x - apScreenX) ** 2 + (position.y - apScreenY) ** 2,
-        );
-
-        if (dist < minDist) {
-          minDist = dist;
-          nearest = { monomer, attachmentPointName: apName };
-        }
-      }
-    }
-
-    return nearest;
-  }
-
-  /**
-   * Updates an attachment-point drag target field and synchronises the
-   * corresponding renderer flag.
-   *
-   * Compares `previousTarget` against `nextTarget`: if they differ, clears the
-   * renderer flag on the old target (if any), sets it on the new one (if any),
-   * and returns the `nextTarget` value.  If nothing changed, returns
-   * `previousTarget` unchanged so callers can detect a no-op.
-   *
-   * @param previousTarget    The existing target stored on `this`.
-   * @param nextTarget        The candidate new target (result of the latest spatial query).
-   * @param applyRendererFlag Renderer delegate — called with `(monomer, apName | null)`.
-   * @returns The updated target value to assign back to the field, and whether it changed.
-   */
-  private updateAttachmentPointTarget(
-    previousTarget: AttachmentPointTarget | null,
-    nextTarget: AttachmentPointTarget | null,
-    applyRendererFlag: (
-      monomer: BaseMonomer,
-      apName: AttachmentPointName | null,
-    ) => void,
-  ): {
-    updatedTarget: AttachmentPointTarget | null;
-    hasTargetChanged: boolean;
-  } {
-    const hasTargetChanged =
-      nextTarget?.monomer !== previousTarget?.monomer ||
-      nextTarget?.attachmentPointName !== previousTarget?.attachmentPointName;
-
-    if (!hasTargetChanged) {
-      return { updatedTarget: previousTarget, hasTargetChanged: false };
-    }
-
-    if (previousTarget) {
-      applyRendererFlag(previousTarget.monomer, null);
-    }
-    if (nextTarget) {
-      applyRendererFlag(nextTarget.monomer, nextTarget.attachmentPointName);
-    }
-    return { updatedTarget: nextTarget, hasTargetChanged: true };
-  }
-
-  /**
-   * Called on each drag event from the library. Updates the visual hover state
-   * to indicate the nearest free attachment point.
-   */
-  private onLibraryItemDragOver(
-    state: NonNullable<LibraryItemDragState>,
-  ): void {
-    // Skip in sequence mode
-    if (this.mode.modeName === 'sequence-layout-mode') return;
-
-    const nearestAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-    );
-
-    const circleHoverAP = this.findNearestFreeAttachmentPointForDrag(
-      state.position,
-      DRAG_CIRCLE_HOVER_THRESHOLD_PX,
-    );
-
-    // Update circle hover state independently — no re-render needed, just
-    // update the flag so the next drawAttachmentPoints() picks it up.
-    const {
-      updatedTarget: updatedCircleHoverTarget,
-      hasTargetChanged: hasCircleHoverTargetChanged,
-    } = this.updateAttachmentPointTarget(
-      this.dragCircleHoverTarget,
-      circleHoverAP,
-      this.setMonomerDragCircleHoverAP.bind(this),
-    );
-    this.dragCircleHoverTarget = updatedCircleHoverTarget;
-
-    // No change in either proximity target — avoid unnecessary re-renders
-    const {
-      updatedTarget: updatedBondTarget,
-      hasTargetChanged: hasBondTargetChanged,
-    } = this.updateAttachmentPointTarget(
-      this.dragDropBondTarget,
-      nearestAP,
-      this.setMonomerDragTargetAP.bind(this),
-    );
-
-    if (!hasBondTargetChanged && !hasCircleHoverTargetChanged) {
-      return;
-    }
-
-    this.dragDropBondTarget = updatedBondTarget;
-
-    const command = new Command();
-    command.merge(this.drawingEntitiesManager.removeHoverForAllMonomers());
-
-    if (nearestAP) {
-      command.merge(
-        this.drawingEntitiesManager.intendToStartBondCreation(
-          nearestAP.monomer,
-        ),
-      );
-    }
-
-    this.renderersContainer.update(command);
-  }
-
-  /**
-   * Clears any drag-drop bond target hover state and resets related fields.
-   */
-  private clearDragDropBondTarget(): void {
-    const { updatedTarget: clearedCircleHoverTarget } =
-      this.updateAttachmentPointTarget(
-        this.dragCircleHoverTarget,
-        null,
-        this.setMonomerDragCircleHoverAP.bind(this),
-      );
-    this.dragCircleHoverTarget = clearedCircleHoverTarget;
-
-    const {
-      updatedTarget: clearedBondTarget,
-      hasTargetChanged: hasBondTargetChanged,
-    } = this.updateAttachmentPointTarget(
-      this.dragDropBondTarget,
-      null,
-      this.setMonomerDragTargetAP.bind(this),
-    );
-    this.dragDropBondTarget = clearedBondTarget;
-
-    if (!hasBondTargetChanged) return;
-
-    const clearCommand =
-      this.drawingEntitiesManager.removeHoverForAllMonomers();
-    this.renderersContainer.update(clearCommand);
-  }
-
-  /**
-   * In Flex mode, after a drag-drop bond is established, reposition the
-   * dropped monomer (and all monomers in its preset group) so that the new bond
-   * has the standard bond length and follows the target AP direction.
-   *
-   * Formula (all values in model space / Å):
-   *   droppedCenter = targetCenter + unitVector(apOutward) * (targetBodyRadius + bondLength + droppedBodyRadius)
-   *
-   * The offset delta is applied uniformly to all monomers in `addedMonomers`
-   * so that a preset group moves as a rigid body.
-   */
-  private computeAndApplyFlexDropRepositioning(
-    droppedMonomer: BaseMonomer,
-    addedMonomers: BaseMonomer[],
-    targetMonomer: BaseMonomer,
-    targetAttachmentPoint: AttachmentPointName,
-  ): Command {
-    const command = new Command();
-    const editorSettings = provideEditorSettings();
-    const bondLengthInAngstroms =
-      SnakeLayoutCellWidth / editorSettings.macroModeScale;
-    const attachmentPointAngleDegrees =
-      attachmentPointNumberToAngle[targetAttachmentPoint];
-    if (attachmentPointAngleDegrees === undefined) return command;
-
-    const outwardAngleDeg = attachmentPointAngleDegrees - 180;
-    const outwardAngleRad = (outwardAngleDeg * Math.PI) / 180;
-    const unitVector = new Vec2(
-      Math.cos(outwardAngleRad),
-      Math.sin(outwardAngleRad),
-    );
-
-    // Target position for the dropped monomer's center in model space
-    const targetCenter = targetMonomer.position;
-    const desiredDroppedCenter = new Vec2(
-      targetCenter.x + unitVector.x * bondLengthInAngstroms,
-      targetCenter.y + unitVector.y * bondLengthInAngstroms,
-    );
-
-    // Compute the delta to move the entire dropped group
-    const currentDroppedCenter = droppedMonomer.position;
-    const delta = new Vec2(
-      desiredDroppedCenter.x - currentDroppedCenter.x,
-      desiredDroppedCenter.y - currentDroppedCenter.y,
-    );
-
-    // Apply the same delta to every monomer in the dropped group
-    for (const monomer of addedMonomers) {
-      const newPosition = new Vec2(
-        monomer.position.x + delta.x,
-        monomer.position.y + delta.y,
-      );
-      command.merge(
-        this.drawingEntitiesManager.moveMonomer(monomer, newPosition),
-      );
-      monomer.polymerBonds.forEach((polymerBond) => {
-        this.drawingEntitiesManager.movePolymerBond(polymerBond);
-      });
-    }
-
-    return command;
-  }
-
-  /**
-   * Mirror the dropped preset horizontally around the bond insertion point
-   * when both bonded ends are on the same topology side (req. 3.3.1).
-   *
-   * A monomer is "first" in its chain when it has no R2→R1 predecessor
-   * (getPreviousMonomerInChain returns undefined). It is "last" when it
-   * has no R2 successor (getNextMonomerInChain returns undefined).
-   *
-   * If both `droppedMonomer` and `targetMonomer` are first, or both are last,
-   * the preset is mirrored by negating the x-offset of each preset monomer
-   * relative to `droppedMonomer`'s current position (set by repositioning).
-   */
-  private applyPresetMirroringIfNeeded(
-    droppedMonomer: BaseMonomer,
-    addedMonomers: BaseMonomer[],
-    targetMonomer: BaseMonomer,
-  ): Command {
-    const command = new Command();
-
-    const droppedIsFirst =
-      getPreviousMonomerInChain(droppedMonomer) === undefined;
-    const droppedIsLast = getNextMonomerInChain(droppedMonomer) === undefined;
-    const targetIsFirst =
-      getPreviousMonomerInChain(targetMonomer) === undefined;
-    const targetIsLast = getNextMonomerInChain(targetMonomer) === undefined;
-
-    const shouldMirror =
-      (droppedIsFirst && targetIsFirst) || (droppedIsLast && targetIsLast);
-
-    if (!shouldMirror) return command;
-
-    // Mirror each preset monomer's x-offset relative to droppedMonomer's center
-    const pivotX = droppedMonomer.position.x;
-    for (const monomer of addedMonomers) {
-      const offsetX = monomer.position.x - pivotX;
-      const newPos = new Vec2(pivotX - offsetX, monomer.position.y);
-      command.merge(this.drawingEntitiesManager.moveMonomer(monomer, newPos));
-    }
-
-    return command;
-  }
-
-  /**
-   * For a preset being dropped onto a target attachment point, find the
-   * best monomer within the preset to form the bond.
-   *
-   * Delegates to the shared `findPresetMonomerForBonding` helper in
-   * `bondConnectionHelpers` so that the logic can be unit-tested
-   * independently of `CoreEditor`.
-   *
-   * Implements requirements 3.1–3.3:
-   * - R1 target → preset component with free R2
-   * - R2 target → preset component with free R1
-   * - Otherwise → sugar (if free), then phosphate (if free), then base (if free)
-   */
-  private findPresetMonomerForBonding(
-    addedMonomers: BaseMonomer[],
-    targetAP: AttachmentPointName,
-  ): BaseMonomer | undefined {
-    return findPresetMonomerForBondingHelper(addedMonomers, targetAP);
   }
 
   private onSelectMode(

@@ -49,3 +49,15 @@
 
 - [ ] 8.1 Update `.memory-bank/features/macromolecules.md` to add the new drag-and-drop bonding scenario and guarantee
 - [ ] 8.2 Confirm no changes needed to `architecture.md`, `domain.md`, or `glossary.md` (this change is behavioral, not architectural)
+
+## 9. Refactor: extract drag-drop logic into LibraryItemDragDropHandler
+
+- [x] 9.1 Create `packages/ketcher-core/src/application/editor/libraryItemDragDrop/` directory with `LibraryItemDragDropHandler.ts`, `repositioning.ts`, `libraryItemDragDrop.types.ts`, and `index.ts`
+- [x] 9.2 Move all drag-drop state (`dragDropBondTarget`, `dragCircleHoverTarget`, `isDragDropBondModalOpen`, `dragDropModalContext`) and the proximity constants into `LibraryItemDragDropHandler`
+- [x] 9.3 Move all drag-drop private methods from `Editor.ts` (`setMonomerDragTargetAP`, `setMonomerDragCircleHoverAP`, `getAttachmentPointApproxCanvasPosition`, `findNearestFreeAttachmentPointForDrag`, `updateAttachmentPointTarget`, `onLibraryItemDragOver`, `clearDragDropBondTarget`, `findPresetMonomerForBonding`) into `LibraryItemDragDropHandler`
+- [x] 9.4 Extract `computeAndApplyFlexDropRepositioning` and `applyPresetMirroringIfNeeded` as standalone exported pure functions in `repositioning.ts`
+- [x] 9.5 Move the `setLibraryItemDragState` and `placeLibraryItemOnCanvas` event subscription bodies into `LibraryItemDragDropHandler.subscribe()` and `onPlaceOnCanvas()`; add a `placeItemOnCanvasForHandler` bridge method in `Editor.ts` to route item placement back to the existing private placement methods
+- [x] 9.6 Replace the drag-drop branch in `Editor.onCreateBond()` with `this.dragDropHandler.handleMonomerConnection(payload)` and in `Editor.onCancelBondCreation()` with `this.dragDropHandler.handleMonomerConnectionCancel()`
+- [x] 9.7 Update `Editor.cancelLibraryItemDrag()` to check `this.dragDropHandler.isDragging` instead of the now-removed `libraryItemDragState` field
+- [x] 9.8 Remove all now-unused imports from `Editor.ts` (`attachmentPointNumberToAngle`, `AttachmentPoint`, `findPresetMonomerForBondingHelper`, `getNextMonomerInChain`, `getPreviousMonomerInChain`, `DrawingEntity` type, `AttachmentPointTarget`, `LibraryItemDragState`, the two proximity constants)
+- [x] 9.9 Verify the build passes with zero new errors (`npm run build --workspace=packages/ketcher-core`)

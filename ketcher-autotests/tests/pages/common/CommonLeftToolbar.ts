@@ -43,7 +43,9 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
-    toolSelectionDropdownPanel: page.getByTestId('multi-tool-dropdown').first(),
+    toolSelectionDropdownPanel: page
+      .getByTestId('multi-tool-dropdown')
+      .filter({ has: page.locator(':visible') }),
   };
 
   return {

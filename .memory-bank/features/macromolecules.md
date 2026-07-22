@@ -28,6 +28,22 @@ Monomers connect through defined attachment points, sequences render as single-l
 - **WHEN** the user connects two monomers for which no default bond applies
 - **THEN** the _Select Attachment Points_ dialog opens so the user picks the exact points
 
+#### Scenario: Monomer placed without bonding (open canvas drop)
+
+- **WHEN** the user drags a monomer from the library and releases it on an area of the canvas with no monomer within 25 px of any free AP
+- **THEN** the monomer is placed at the drop position without any bond being created
+
+#### Scenario: Monomer placed with bonding (proximity drop)
+
+- **WHEN** the user drags a monomer from the library and releases it within 25 px of a free AP of a canvas monomer
+- **THEN** the monomer is placed and a polymer bond is established between the two monomers using default-bond rules
+- **AND** if no default bond can be resolved and multiple APs are available, the _Select Attachment Points_ dialog opens
+
+#### Scenario: Preset placed with bonding (proximity drop)
+
+- **WHEN** the user drags an RNA preset from the library and releases it within 25 px of a free AP of a canvas monomer
+- **THEN** the preset is placed and a polymer bond is established between the resolved preset component and the canvas monomer
+
 #### Scenario: Sequence-mode modification indicators
 
 - **WHEN** a nucleic-acid sequence contains modified components
@@ -54,6 +70,7 @@ Monomers connect through defined attachment points, sequences render as single-l
 - Hydrogen bonds never require attachment points and connect monomer centers only.
 - Presets and per-mode monomers-per-line counts are cached in the browser and restored on reopening.
 - The macromolecules editor keeps its own 32-step undo history, separate from molecules mode (see [undo-redo](./undo-redo.md)).
+- A drag-drop that places a monomer/preset **and** creates a bond is undoable as a single atomic step (both the placed entity and the bond are removed together on undo).
 
 ## Limitations
 

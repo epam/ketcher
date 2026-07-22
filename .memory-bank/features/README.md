@@ -29,10 +29,11 @@ The ten most important features, distilled from [documentation/help.md](../../do
 ### Macromolecules mode (polymers)
 
 6. [Macromolecules (Polymers)](./macromolecules.md) — monomer library, sequence/snake/flex layouts, antisense strands, polymer properties
+7. [Drag-Drop Bond Establishment](./drag-drop-bond-establishment.md) — proximity-triggered AP highlighting and automatic bond creation when dropping a library monomer/preset near a canvas monomer
 
 ### Both modes
 
-7. [Selection & Manipulation](./selection.md) — selection tools, move, rotate, flip, erase, highlight
-8. [Clipboard (Copy / Cut / Paste)](./clipboard.md) — copy/cut/paste across chemical formats
-9. [Undo / Redo](./undo-redo.md) — bounded 32-step command history
-10. [Import, Export & Structure Checking](./import-export.md) — file formats, open/save, structure check, calculated values
+8. [Selection & Manipulation](./selection.md) — selection tools, move, rotate, flip, erase, highlight
+9. [Clipboard (Copy / Cut / Paste)](./clipboard.md) — copy/cut/paste across chemical formats
+10. [Undo / Redo](./undo-redo.md) — bounded 32-step command history
+11. [Import, Export & Structure Checking](./import-export.md) — file formats, open/save, structure check, calculated values

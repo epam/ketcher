@@ -838,20 +838,9 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
     ).toBeVisible();
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
-<<<<<<< HEAD
-    await takeElementScreenshot(
-      page,
-      CommonLeftToolbar(page).areaSelectionDropdownButton.first(),
-      {
-        paddingWidth: 90,
-        paddingHeight: 10,
-      },
-    );
-=======
     await expect(
       CommonLeftToolbar(page).toolSelectionDropdownPanel,
     ).toBeVisible();
->>>>>>> origin/master
   });
 
   test('Case 22 - Context menu remains visible after creating cyclic structure via right-click menu', async ({

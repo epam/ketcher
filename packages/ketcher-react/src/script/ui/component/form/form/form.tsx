@@ -187,12 +187,19 @@ class Form extends Component<FormProps> {
       value,
       extraValue,
       onChange: (val: unknown) => {
-        const newState = { ...this.props.result, [name]: val };
+        const newState =
+          val === undefined
+            ? omit(this.props.result, [name])
+            : { ...this.props.result, [name]: val };
         this.updateState(newState);
         if (onChange) onChange(val);
       },
       onExtraChange: (val: unknown) => {
-        const newState = { ...this.props.result, [extraName ?? '']: val };
+        const extraFieldName = extraName ?? '';
+        const newState =
+          val === undefined
+            ? omit(this.props.result, [extraFieldName])
+            : { ...this.props.result, [extraFieldName]: val };
         this.updateState(newState);
       },
     };

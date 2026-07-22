@@ -89,7 +89,12 @@ GenericInput.val = function (ev, schema) {
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
   if (isInteger) {
-    return Number(value) || 0;
+    if (value.trim() === '') {
+      return undefined;
+    }
+
+    const parsedValue = Number(value);
+    return Number.isNaN(parsedValue) ? value : parsedValue;
   }
 
   // When the value can be a float the validation is passed to the parent component

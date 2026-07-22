@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import {
   FunctionalGroupsTabItems,
@@ -113,6 +114,8 @@ export const StructureLibraryDialog = (page: Page) => {
     async openTab(tabSection: TabSection) {
       if (!(await this.isTabOpened(tabSection))) {
         await getElement(tabSection).click();
+        // Wait for the content to load after switching tabs
+        await page.waitForTimeout(250);
       }
     },
 

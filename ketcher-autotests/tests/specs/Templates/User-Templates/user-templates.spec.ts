@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
-  getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
 import { copyAndPaste, cutAndPaste } from '@utils/canvas/selectSelection';
@@ -298,9 +297,9 @@ test.describe('Templates field lenght validations', () => {
 
   test('Molecule Name field length validation', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-10073(1)
-      Description: no mote than 128 symbols error validation
-    */
+     * Test case: EPMLSOPKET-10073(1)
+     * Description: no mote than 128 symbols error validation
+     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
@@ -320,9 +319,9 @@ test.describe('Templates field lenght validations', () => {
 
   test('Empty Molecule name field validation', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-10073(2)
-      Description: empty field validation
-    */
+     * Test case: EPMLSOPKET-10073(2)
+     * Description: empty field validation
+     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
@@ -340,9 +339,9 @@ test.describe('Templates field lenght validations', () => {
 
   test('Check a warning message about unique name', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-39948
-      Description: warning message validation
-    */
+     * Test case: EPMLSOPKET-39948
+     * Description: warning message validation
+     */
     const inputText = 'user_template_1';
 
     await BottomToolbar(page).structureLibrary();

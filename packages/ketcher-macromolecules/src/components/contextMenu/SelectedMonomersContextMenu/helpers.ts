@@ -2,11 +2,13 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   BaseSequenceItemRenderer,
+  ChainsCollection,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
-  isRnaBaseOrAmbiguousRnaBase,
   isSugarOrAmbiguousSugar,
   KetAmbiguousMonomerTemplateSubType,
+  Nucleoside,
+  Nucleotide,
   Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
@@ -92,22 +94,70 @@ export const isSenseBase = (monomer: BaseMonomer | AmbiguousMonomer) => {
 export const isAntisenseCreationDisabled = (
   selectedMonomers: BaseMonomer[],
 ) => {
-  return selectedMonomers?.some((selectedMonomer: BaseMonomer) => {
-    const rnaBaseForSugar =
-      selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer);
+  if (!selectedMonomers?.length) {
+    return true;
+  }
 
-    return (
-      (selectedMonomer instanceof RNABase &&
-        (selectedMonomer.hydrogenBonds.length > 0 ||
-          selectedMonomer.covalentBonds.length > 1)) ||
-      (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
-        !isSenseBase(selectedMonomer)) ||
-      (rnaBaseForSugar &&
-        (rnaBaseForSugar.hydrogenBonds.length > 0 ||
-          rnaBaseForSugar.covalentBonds.length > 1 ||
-          !isSenseBase(rnaBaseForSugar)))
-    );
-  });
+  const monomers = selectedMonomers.filter((m) => m?.monomerItem != null);
+  if (!monomers.length) {
+    return true;
+  }
+
+  const selectedSet = new Set(monomers);
+
+  // fromMonomers excludes RNABase instances as chain seeds (they're treated as
+  // side-chain attachments, not backbone starts). When only bases are selected,
+  // add their connected sugars so the backbone traversal actually runs.
+  const seedMonomers = [...monomers];
+  for (const m of monomers) {
+    if (m instanceof RNABase) {
+      const sugar = getSugarFromRnaBase(m);
+      if (sugar) seedMonomers.push(sugar);
+    }
+  }
+
+  const chainsCollection = ChainsCollection.fromMonomers(seedMonomers);
+
+  let hasAtLeastOneValidChain = false;
+
+  for (const chain of chainsCollection.chains) {
+    let chainHasInvalidBase = false;
+    let chainHasValidSenseNucleotide = false;
+
+    for (const node of chain.nodes) {
+      if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+        continue;
+      }
+
+      const { rnaBase } = node;
+
+      // node.monomer is the sugar; also check rnaBase for base-only selections
+      if (!selectedSet.has(node.monomer) && !selectedSet.has(rnaBase)) {
+        continue;
+      }
+
+      if (!rnaBase) {
+        continue;
+      }
+
+      if (
+        rnaBase.hydrogenBonds.length > 0 ||
+        rnaBase.covalentBonds.length > 1 ||
+        !isSenseBase(rnaBase)
+      ) {
+        chainHasInvalidBase = true;
+        break;
+      }
+
+      chainHasValidSenseNucleotide = true;
+    }
+
+    if (!chainHasInvalidBase && chainHasValidSenseNucleotide) {
+      hasAtLeastOneValidChain = true;
+    }
+  }
+
+  return !hasAtLeastOneValidChain;
 };
 export const hasOnlyDeoxyriboseSugars = (selectedMonomers: BaseMonomer[]) => {
   return selectedMonomers?.every((selectedMonomer: BaseMonomer) =>

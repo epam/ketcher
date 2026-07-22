@@ -168,7 +168,7 @@ const MeasureInput = ({
       <div style={{ display: 'flex' }}>
         <div className={clsx(error && formClasses.dataError)}>
           <span
-            className={formClasses.inputWrapper}
+            className={clsx(formClasses.inputWrapper, styles.errorWrapper)}
             onMouseEnter={error ? handlePopoverOpen : undefined}
             onMouseLeave={error ? handlePopoverClose : undefined}
             role="none"

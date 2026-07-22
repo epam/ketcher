@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheCanvas,
   clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getEditorScreenshot,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,

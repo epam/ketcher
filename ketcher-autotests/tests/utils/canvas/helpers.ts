@@ -1,11 +1,6 @@
 /* eslint-disable no-magic-numbers */
 /* eslint-disable no-useless-escape */
-import {
-  LocatorScreenshotOptions,
-  Page,
-  expect,
-  Locator,
-} from '@playwright/test';
+import { Page, expect, Locator } from '@playwright/test';
 import { dragMouseTo } from '@utils/clicks';
 import { emptyFunction } from '../common/helpers';
 import { waitForRender } from '../common/loaders/waitForRender';
@@ -177,25 +172,6 @@ export async function takeTopToolbarScreenshot(page: Page) {
 export async function takeMultitoolDropdownScreenshot(page: Page) {
   const dropdown = page.locator('.default-multitool-dropdown');
   await expect(dropdown).toHaveScreenshot();
-}
-
-/**
- * Returns an editor screenshot
- * Usage: convenient for temporary comparison of different states
- *
- * const beforeImage = await getEditorScreenshot(page); // first snapshoot
- *
- * // some state changes implemented here
- *
- * const afterImage = await getEditorScreenshot(page); // second snashoot
- *
- * expect(beforeImage.compare(afterImage)).not.toBe(0); // comparison
- **/
-export async function getEditorScreenshot(
-  page: Page,
-  options?: LocatorScreenshotOptions,
-) {
-  return await page.locator('[class*="App-module_canvas"]').screenshot(options);
 }
 
 export async function addBondedMonomersToCanvas(

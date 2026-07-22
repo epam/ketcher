@@ -282,9 +282,9 @@ test.describe('Templates field lenght validations', () => {
     page,
   }) => {
     /*
-      Test case: EPMLSOPKET-11852
-      Description: warning message validation
-    */
+     * Test case: EPMLSOPKET-11852
+     * Description: warning message validation
+     */
     await BottomToolbar(page).structureLibrary();
     await StructureLibraryDialog(page).selectTemplate(
       TemplateLibraryTab.Aromatics,
@@ -293,7 +293,7 @@ test.describe('Templates field lenght validations', () => {
     await clickInTheMiddleOfTheCanvas(page);
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
-    await getEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Molecule Name field length validation', async ({ page }) => {
@@ -314,7 +314,8 @@ test.describe('Templates field lenght validations', () => {
     await TemplateEditDialog(page).setMoleculeName(
       'a'.repeat(tooLongValueLength),
     );
-    await getEditorScreenshot(page);
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Empty Molecule name field validation', async ({ page }) => {
@@ -333,7 +334,8 @@ test.describe('Templates field lenght validations', () => {
     await TemplateEditDialog(page).clickMoleculeName();
     await TemplateEditDialog(page).setMoleculeName('template');
     await TemplateEditDialog(page).setMoleculeName('');
-    await getEditorScreenshot(page);
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Check a warning message about unique name', async ({ page }) => {
@@ -357,7 +359,8 @@ test.describe('Templates field lenght validations', () => {
     await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).saveToTemplates();
     await TemplateEditDialog(page).setMoleculeName(inputText);
-    await getEditorScreenshot(page);
+    await TemplateEditDialog(page).moleculeNameEditbox.hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Check scrollbar in the structure field is present for long structures', async ({
@@ -369,6 +372,6 @@ test.describe('Templates field lenght validations', () => {
     */
     await openFileAndAddToCanvas(page, 'Molfiles-V2000/long-structure.mol');
     await saveToTemplates(page, false);
-    await getEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

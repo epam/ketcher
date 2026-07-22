@@ -32,6 +32,7 @@ import {
 import { waitForCalculateProperties } from '@utils/common/loaders/waitForCalculateProperties';
 import { MacromoleculesTopToolbar } from '@tests/pages/macromolecules/MacromoleculesTopToolbar';
 import { LayoutMode } from '@tests/pages/constants/macromoleculesTopToolbar/Constants';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -1618,9 +1619,10 @@ test.describe('Calculate Properties tests', () => {
     await waitForCalculateProperties(page);
     // Dirty hack
     await CalculateVariablesPanel(page).closeWindow();
-    await page.waitForTimeout(1 * 1000);
+    await page.waitForTimeout(1000);
     await MacromoleculesTopToolbar(page).calculateProperties();
     await waitForCalculateProperties(page);
+    await page.waitForTimeout(2000);
 
     await takeElementScreenshot(
       page,
@@ -1633,7 +1635,7 @@ test.describe('Calculate Properties tests', () => {
   }) => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7312
-     * Description: Check that graph remains readable for 532 amino acids
+     * Description: Check that graph remains readable for 1240 amino acids
      * Scenario:
      * 1. Go to Macro - Flex
      * 2. Load from HELM peptide chain
@@ -1642,6 +1644,7 @@ test.describe('Calculate Properties tests', () => {
      *
      * Version 3.5
      */
+    await pageReload(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -1649,7 +1652,8 @@ test.describe('Calculate Properties tests', () => {
     );
 
     await MacromoleculesTopToolbar(page).calculateProperties();
-    await page.waitForTimeout(5000);
+    await waitForCalculateProperties(page);
+    await page.waitForTimeout(6000);
     await takeElementScreenshot(
       page,
       CalculateVariablesPanel(page).peptidesTab.hydrophobicityGraph,

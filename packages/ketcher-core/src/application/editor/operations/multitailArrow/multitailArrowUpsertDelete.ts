@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion,@typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/BaseOperation';
 import type { MultitailArrow } from 'domain/entities/multitailArrow';
 import { OperationType } from 'application/editor/operations/OperationType';
@@ -43,7 +43,13 @@ export class MultitailArrowUpsert extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new MultitailArrowDelete(this.data.id!);
+    if (this.data.id === undefined) {
+      // execute() always assigns an id before invert() can be called via
+      // BaseOperation.perform(), so a missing id here would be a programming error.
+      throw new Error('MultitailArrowUpsert.invert() called before execute()');
+    }
+
+    return new MultitailArrowDelete(this.data.id);
   }
 }
 
@@ -71,8 +77,14 @@ export class MultitailArrowDelete extends BaseOperation {
   }
 
   invert(): BaseOperation {
+    if (!this.multitailArrow) {
+      // execute() always clones the multitail arrow before invert() can be called
+      // via BaseOperation.perform(), so a missing value here would be a programming error.
+      throw new Error('MultitailArrowDelete.invert() called before execute()');
+    }
+
     return new MultitailArrowUpsert(
-      this.multitailArrow!,
+      this.multitailArrow,
       this.data.id,
       this.data.arrowId,
     );

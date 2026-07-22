@@ -56,7 +56,9 @@ export function useSettings() {
   const { ketcherId } = useAppContext();
 
   // Local state for settings (synced from service)
-  const [settings, setSettings] = useState<Settings | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(
+    () => findSettingsService(ketcherId)?.getSettings() ?? null,
+  );
 
   // Subscribe to settings changes from core
   useEffect(() => {

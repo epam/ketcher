@@ -144,6 +144,7 @@ const formatProperties: FormatPropertiesMap = {
     CHEMICAL_MIME_TYPE.SDF,
     ['.sdf'],
     true,
+    { 'molfile-saving-mode': '2000' },
   ),
   sdfV3000: new SupportedFormatProperties(
     'SDF V3000',

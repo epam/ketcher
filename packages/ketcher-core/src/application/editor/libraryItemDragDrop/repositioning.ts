@@ -1,8 +1,8 @@
 import { Vec2 } from 'domain/entities';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { AttachmentPointName } from 'domain/types';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
+import type { AttachmentPointName } from 'domain/types';
+import type { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { attachmentPointNumberToAngle } from 'domain/helpers/attachmentPointCalculations';
 import { SnakeLayoutCellWidth } from 'domain/constants';
 import { provideEditorSettings } from 'application/editor/editorSettings';

@@ -20,7 +20,8 @@ import type { Struct } from 'domain/entities/struct';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
 import type { IRnaPreset } from './tools/Tool';
-import type { MonomerOrAmbiguousType } from 'domain/types';
+import type { MonomerOrAmbiguousType, AttachmentPointName } from 'domain/types';
+import type { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
@@ -112,3 +113,12 @@ export type LibraryItemDragState = {
     y: number;
   };
 } | null;
+
+/**
+ * Identifies a specific free attachment point on a monomer.
+ * Used to track drag-over hover targets during library-item drag operations.
+ */
+export type AttachmentPointTarget = {
+  monomer: BaseMonomer;
+  attachmentPointName: AttachmentPointName;
+};

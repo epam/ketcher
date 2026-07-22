@@ -31,6 +31,8 @@ import {
   moleculeSgroupKet,
   preparedKet,
   rxnKet,
+  sgroupAllInvalidAtomsKet,
+  sgroupPartiallyInvalidAtomKet,
   simpleObjectKet,
   textKet,
   withoutHeaderKet,
@@ -160,6 +162,18 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[7].value.sgroups.get(0).data.connectivity).toEqual(
       'hh',
     );
+  });
+  it('keeps S-group when some atom references are invalid (#1804)', () => {
+    expect(ket.deserialize(sgroupPartiallyInvalidAtomKet).sgroups.size).toBe(1);
+  });
+  it('filters out dangling atom references from S-group (#1804)', () => {
+    const spy = jest.spyOn(moleculeToStruct, 'moleculeToStruct');
+    spy.mockClear();
+    ket.deserialize(sgroupPartiallyInvalidAtomKet);
+    expect(spy.mock.results[0].value.sgroups.get(0).atoms).toEqual([0, 1]);
+  });
+  it('drops S-group when all atom references are invalid (#1804)', () => {
+    expect(ket.deserialize(sgroupAllInvalidAtomsKet).sgroups.size).toBe(0);
   });
   it('rgroupToStruct', () => {
     const spy = jest.spyOn(rgroupToStruct, 'rgroupToStruct');

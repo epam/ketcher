@@ -74,6 +74,30 @@ export interface PanelProps {
 
 const collapseLimit = 650;
 const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
+const DEFAULT_COLLAPSE_BUTTON_WIDTH = 24;
+
+const COLLAPSE_WIDTH_BY_BUTTON: Record<string, number> = {
+  clear: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  open: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  save: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  copies: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  paste: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  cut: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  undo: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  redo: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  arom: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  dearom: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  layout: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  clean: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  cip: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  check: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  analyse: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  miew: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  settings: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  help: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  about: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+  fullscreen: DEFAULT_COLLAPSE_BUTTON_WIDTH,
+};
 
 const ControlsPanel = styled('div')`
   display: flex;
@@ -172,10 +196,19 @@ export const TopToolbar = ({
   );
 
   const collapseLimitWithCustomButtons = useMemo(() => {
-    return (
-      collapseLimit + customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH
+    const hiddenControlsWidth = [...new Set(hiddenButtons)].reduce(
+      (totalWidth, hiddenButton) =>
+        totalWidth + (COLLAPSE_WIDTH_BY_BUTTON[hiddenButton] ?? 0),
+      0,
     );
-  }, [customButtons.length]);
+
+    return Math.max(
+      0,
+      collapseLimit +
+        customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH -
+        hiddenControlsWidth,
+    );
+  }, [customButtons.length, hiddenButtons]);
 
   const isCollapsed = width < collapseLimitWithCustomButtons;
   const renderedTogglerComponent = togglerComponent

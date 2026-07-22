@@ -63,6 +63,15 @@ export function moleculeToStruct(ketItem: any): Struct {
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroupData) => {
       const sgroup = sgroupToStruct(sgroupData);
+      // Drop dangling atom references (atom ids absent from the struct). A malformed
+      // file can reference a non-existent atom; without this the whole S-group is later
+      // silently discarded when the struct is reconstructed/cloned (Struct.clone).
+      // Mirrors the MOL parser (SGroup.filter + empty-group removal in mol/v2000.ts).
+      const hadAtoms = sgroup.atoms.length > 0;
+      sgroup.atoms = sgroup.atoms.filter((atomId) => struct.atoms.has(atomId));
+      if (hadAtoms && sgroup.atoms.length === 0) {
+        return; // all references were invalid — skip this malformed S-group
+      }
       const id = struct.sgroups.add(sgroup);
       sgroup.id = id;
     });

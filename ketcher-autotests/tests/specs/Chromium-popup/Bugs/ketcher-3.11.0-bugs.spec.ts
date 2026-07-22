@@ -832,6 +832,7 @@ test.describe('Bugs: ketcher-3.11.0 — first trio', () => {
      * Expected Result:
      * Clicking on the Selection tool icon (both in Macro and Micro modes) should open the dropdown menu with all selection tools, providing a consistent user experience.
      */
+    await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await expect(
       CommonLeftToolbar(page).toolSelectionDropdownPanel,
     ).toBeVisible();

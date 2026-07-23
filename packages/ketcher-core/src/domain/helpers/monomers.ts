@@ -433,6 +433,7 @@ export {
 export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
   return (
     isMonomerOfClass(monomer, KetMonomerClass.RNA) ||
+    isMonomerOfClass(monomer, KetMonomerClass.DNA) ||
     (isRnaBaseOrAmbiguousRnaBase(monomer) &&
       Boolean(getSugarFromRnaBase(monomer)))
   );

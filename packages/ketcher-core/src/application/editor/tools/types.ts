@@ -9,6 +9,7 @@ export enum ToolName {
   erase = 'erase',
   clear = 'clear',
   hand = 'hand',
+  reactionArrow = 'reaction-arrow',
 }
 
 export enum MACROMOLECULES_BOND_TYPES {

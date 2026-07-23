@@ -118,7 +118,9 @@ import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import {
   RxnArrowAddOperation,
   RxnArrowDeleteOperation,
+  RxnArrowResizeOperation,
 } from 'application/editor/operations/coreRxn/rxnArrow';
+import { getSnappedArrowVector } from 'application/editor/operations/rxn/RxnArrowResize';
 import { RxnArrow } from 'domain/entities/CoreRxnArrow';
 import { MultitailArrow } from 'domain/entities/CoreMultitailArrow';
 import {
@@ -4131,6 +4133,60 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
+
+    return command;
+  }
+
+  private getSnappedArrowEndPosition(
+    arrow: RxnArrow,
+    endIndex: 0 | 1,
+    newPosition: Vec2,
+    isSnappingEnabled: boolean,
+  ): Vec2 {
+    if (!isSnappingEnabled) {
+      return new Vec2(newPosition);
+    }
+
+    const anchorIndex = endIndex === 0 ? 1 : 0;
+    const anchor = arrow.startEndPosition[anchorIndex];
+    const currentArrowVector = newPosition.sub(anchor);
+    const snappedArrowVector = getSnappedArrowVector(currentArrowVector);
+
+    return anchor.add(snappedArrowVector);
+  }
+
+  /**
+   * Command that moves one end of a reaction arrow.
+   * @param endIndex 0 for start, 1 for end.
+   * @param options.isSnappingEnabled snap the end to common angles (default true).
+   * @param options.previousPosition explicit previous position for undo; when omitted,
+   *   read from the live arrow (use only before mutating the model).
+   */
+  public resizeRxnArrow(
+    arrow: RxnArrow,
+    endIndex: 0 | 1,
+    newPosition: Vec2,
+    options?: { isSnappingEnabled?: boolean; previousPosition?: Vec2 },
+  ) {
+    const { isSnappingEnabled = true, previousPosition } = options ?? {};
+    const snappedPosition = this.getSnappedArrowEndPosition(
+      arrow,
+      endIndex,
+      newPosition,
+      isSnappingEnabled,
+    );
+    const resolvedPrevious = previousPosition
+      ? new Vec2(previousPosition)
+      : new Vec2(arrow.startEndPosition[endIndex]);
+    const command = new Command();
+    command.addOperation(
+      new RxnArrowResizeOperation(
+        arrow,
+        endIndex,
+        snappedPosition,
+        resolvedPrevious,
+      ),
+    );
 
     return command;
   }

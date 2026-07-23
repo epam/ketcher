@@ -18,7 +18,17 @@ import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
-import { SELECT_SUBMENU_ID } from 'components/menu/constants';
+import {
+  REACTION_ARROW_SUBMENU_ID,
+  SELECT_SUBMENU_ID,
+} from 'components/menu/constants';
+import {
+  isReactionArrowItemId,
+  REACTION_ARROW_ITEM_ID_TO_MODE,
+  REACTION_ARROW_MENU_ITEMS,
+  ToolName,
+} from 'ketcher-core';
+import type { IconName } from 'ketcher-react';
 
 export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
@@ -26,7 +36,18 @@ export function LeftMenuComponent() {
   const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const activeMenuItems = [activeTool];
 
-  const menuItemChanged = (name) => {
+  const menuItemChanged = (name: string) => {
+    if (isReactionArrowItemId(name)) {
+      editor?.events.selectTool.dispatch([
+        name,
+        {
+          toolName: ToolName.reactionArrow,
+          mode: REACTION_ARROW_ITEM_ID_TO_MODE[name],
+        },
+      ]);
+      return;
+    }
+
     editor?.events.selectTool.dispatch([name, { toolName: name }]);
   };
 
@@ -90,6 +111,22 @@ export function LeftMenuComponent() {
             testId="hydrogen-bond"
             disabled={isSequenceMode}
           />
+        </Menu.Submenu>
+        <Menu.Submenu
+          disabled={isSequenceMode}
+          testId="reaction-arrows-drop-down-button"
+          subMenuId={REACTION_ARROW_SUBMENU_ID}
+          needOpenByMenuItemClick={false}
+        >
+          {REACTION_ARROW_MENU_ITEMS.map(({ itemId, title }) => (
+            <Menu.Item
+              key={itemId}
+              itemId={itemId as IconName}
+              title={title}
+              testId={itemId}
+              disabled={isSequenceMode}
+            />
+          ))}
         </Menu.Submenu>
       </Menu.Group>
     </Menu>

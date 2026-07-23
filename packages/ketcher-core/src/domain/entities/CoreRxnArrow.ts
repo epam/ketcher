@@ -56,4 +56,12 @@ export class RxnArrow extends DrawingEntity {
 
     this.moveRelative(delta);
   }
+
+  public resize(endIndex: 0 | 1, newPosition: Vec2): void {
+    if (endIndex === 0) {
+      this.startPosition = new Vec2(newPosition);
+    } else {
+      this.endPosition = new Vec2(newPosition);
+    }
+  }
 }

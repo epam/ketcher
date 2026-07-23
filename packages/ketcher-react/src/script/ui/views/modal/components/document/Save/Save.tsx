@@ -549,7 +549,7 @@ class SaveDialog extends Component<SaveDialogProps, SaveDialogState> {
         navigator.clipboard.writeText(structStr || '');
       } else if ('clipboardData' in event) {
         legacyCopy(event.clipboardData, {
-          'text/plain': structStr,
+          'text/plain': structStr || '',
         });
         event.preventDefault();
       }

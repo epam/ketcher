@@ -28,7 +28,7 @@ import {
 } from './repositioning';
 
 const DRAG_BOND_PROXIMITY_THRESHOLD_PX = 25;
-const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 8;
+const DRAG_CIRCLE_HOVER_THRESHOLD_PX = 20;
 
 export interface IAutochainMonomerAddResult {
   modelChanges: Command;

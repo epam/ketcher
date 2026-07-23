@@ -885,9 +885,10 @@ export class CoreEditor {
     if (!(event.target instanceof HTMLElement)) return;
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
-    const shortcutKey = keyNorm.lookup(hotKeys, event);
+    const shortcutKey = keyNorm.lookup(hotKeys, event)?.[0];
 
     if (
+      shortcutKey &&
       keySettings[shortcutKey]?.handler &&
       !isEditableInputTarget(event.target)
     ) {

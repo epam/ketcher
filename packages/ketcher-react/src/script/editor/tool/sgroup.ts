@@ -16,6 +16,10 @@
 
 import {
   type Pool,
+  type Atom,
+  type Bond,
+  type Struct,
+  type ReStruct,
   Pile,
   SgContexts,
   checkOverlapping,
@@ -34,6 +38,12 @@ import { selMerge } from './select/select.helpers';
 import type { Editor, Selection } from '../Editor';
 import type { Tool } from './Tool';
 import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';
+import type { ClosestItemWithMap } from '../shared/closest.types';
+
+interface SGroupDialogResult {
+  type?: string;
+  attrs: { context?: string; expanded?: boolean; [key: string]: unknown };
+}
 
 const searchMaps = [
   'atoms',
@@ -45,10 +55,10 @@ const searchMaps = [
 
 class SGroupTool implements Tool {
   private readonly editor: Editor;
-  private readonly lassoHelper: any;
+  private readonly lassoHelper: LassoHelper;
   isNotActiveTool: boolean | undefined;
 
-  constructor(editor) {
+  constructor(editor: Editor) {
     this.editor = editor;
     this.lassoHelper = new LassoHelper(1, editor, null);
 
@@ -78,7 +88,7 @@ class SGroupTool implements Tool {
       const selectedAtoms = this.editor.selection()?.atoms;
 
       const sgroups: Pool<SGroup> = molecule.sgroups;
-      const newSelected: { atoms: Array<any>; bonds: Array<any> } = {
+      const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
         atoms: [],
         bonds: [],
       };
@@ -167,7 +177,7 @@ class SGroupTool implements Tool {
     }
   }
 
-  mousedown(event) {
+  mousedown(event: MouseEvent) {
     const ci = this.editor.findItem(event, searchMaps);
     const struct = this.editor.render.ctab;
     const sgroups = struct.sgroups;
@@ -271,34 +281,41 @@ class SGroupTool implements Tool {
     }
   }
 
-  mousemove(event) {
-    if (this.lassoHelper.running(event)) {
+  mousemove(event: MouseEvent) {
+    if (this.lassoHelper.running()) {
       this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
-      this.editor.hover(this.editor.findItem(event, searchMaps), null, event);
+      this.editor.hover(
+        this.editor.findItem(event, searchMaps),
+        null,
+        event as PointerEvent,
+      );
     }
   }
 
-  mouseleave(event) {
-    if (this.lassoHelper.running(event)) {
-      this.lassoHelper.end(event);
+  mouseleave(_event: MouseEvent) {
+    if (this.lassoHelper.running()) {
+      this.lassoHelper.end();
     }
   }
 
-  private isContractedFunctionalGroupClicked(ci, functionalGroups): boolean {
+  private isContractedFunctionalGroupClicked(
+    ci: ClosestItemWithMap | null,
+    functionalGroups: Pool<FunctionalGroup>,
+  ): boolean {
     return (
       ci?.map === 'functionalGroups' &&
-      functionalGroups.size &&
+      functionalGroups.size > 0 &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     );
   }
 
   private processSelectedAtoms(
-    selected,
-    functionalGroups,
-    struct,
-    molecule,
-    newSelected,
+    selected: Selection | null,
+    functionalGroups: Pool<FunctionalGroup>,
+    struct: ReStruct,
+    molecule: Struct,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     const atomsResult: Array<number> = [];
     let extraAtoms = false;
@@ -345,7 +362,7 @@ class SGroupTool implements Tool {
     return { atomsResult, extraAtoms };
   }
 
-  private getActualSgroupId(atomFromStruct): number | undefined {
+  private getActualSgroupId(atomFromStruct: Atom): number | undefined {
     let actualSgroupId;
     for (const sgId of atomFromStruct.sgs.values()) {
       actualSgroupId = sgId;
@@ -354,9 +371,9 @@ class SGroupTool implements Tool {
   }
 
   private isAtomInContractedGroup(
-    atomFromStruct,
-    sgroups,
-    functionalGroups,
+    atomFromStruct: Atom,
+    sgroups: ReStruct['sgroups'],
+    functionalGroups: Pool<FunctionalGroup>,
   ): boolean {
     return (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -368,11 +385,11 @@ class SGroupTool implements Tool {
   }
 
   private addContractedGroupToSelection(
-    atom,
-    actualSgroupId,
-    molecule,
-    struct,
-    newSelected,
+    atom: number,
+    actualSgroupId: number | undefined,
+    molecule: Struct,
+    struct: ReStruct,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     if (actualSgroupId === undefined) {
       return;
@@ -393,7 +410,12 @@ class SGroupTool implements Tool {
     }
   }
 
-  private processSelectedBonds(selected, functionalGroups, molecule, struct) {
+  private processSelectedBonds(
+    selected: Selection | null,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
+    struct: ReStruct,
+  ) {
     const bondsResult: Array<number> = [];
     let extraBonds = false;
 
@@ -423,12 +445,12 @@ class SGroupTool implements Tool {
   }
 
   private expandFunctionalGroupSelection(
-    atomsResult,
-    bondsResult,
-    functionalGroups,
-    molecule,
-    struct,
-    newSelected,
+    atomsResult: Array<number>,
+    bondsResult: Array<number>,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
+    struct: ReStruct,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     this.expandAtomsToFunctionalGroups(
       atomsResult,
@@ -447,11 +469,11 @@ class SGroupTool implements Tool {
   }
 
   private expandAtomsToFunctionalGroups(
-    atomsResult,
-    functionalGroups,
-    molecule,
-    struct,
-    newSelected,
+    atomsResult: Array<number>,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
+    struct: ReStruct,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     if (!atomsResult.length) {
       return;
@@ -476,11 +498,11 @@ class SGroupTool implements Tool {
   }
 
   private expandBondsToFunctionalGroups(
-    bondsResult,
-    functionalGroups,
-    molecule,
-    struct,
-    newSelected,
+    bondsResult: Array<number>,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
+    struct: ReStruct,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
   ) {
     if (!bondsResult.length) {
       return;
@@ -506,12 +528,12 @@ class SGroupTool implements Tool {
   }
 
   private collectFunctionalGroupIds(
-    atomsResult,
-    bondsResult,
-    extraAtoms,
-    extraBonds,
-    functionalGroups,
-    molecule,
+    atomsResult: Array<number>,
+    bondsResult: Array<number>,
+    extraAtoms: boolean,
+    extraBonds: boolean,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
   ): Array<number> {
     if (extraAtoms || extraBonds) {
       return [];
@@ -535,8 +557,8 @@ class SGroupTool implements Tool {
   }
 
   private collectFunctionalGroupIdsFromAtoms(
-    atomsResult,
-    functionalGroups,
+    atomsResult: Array<number>,
+    functionalGroups: Pool<FunctionalGroup>,
     result: Array<number>,
   ) {
     if (!atomsResult?.length) {
@@ -555,9 +577,9 @@ class SGroupTool implements Tool {
   }
 
   private collectFunctionalGroupIdsFromBonds(
-    bondsResult,
-    functionalGroups,
-    molecule,
+    bondsResult: Array<number>,
+    functionalGroups: Pool<FunctionalGroup>,
+    molecule: Struct,
     result: Array<number>,
   ) {
     if (!bondsResult?.length) {
@@ -582,16 +604,24 @@ class SGroupTool implements Tool {
     return functionalGroupIds.length === 1;
   }
 
-  private determineSelection(event, ci, newSelected, molecule) {
-    if (this.lassoHelper.running(event)) {
-      return this.handleLassoSelection(event, newSelected, molecule);
+  private determineSelection(
+    event: MouseEvent,
+    ci: ClosestItemWithMap | null,
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
+    molecule: Struct,
+  ) {
+    if (this.lassoHelper.running()) {
+      return this.handleLassoSelection(newSelected, molecule);
     }
 
     return this.handleClickSelection(event, ci);
   }
 
-  private handleLassoSelection(event, newSelected, molecule) {
-    const lassoSelection = this.lassoHelper.end(event);
+  private handleLassoSelection(
+    newSelected: { atoms: Array<number>; bonds: Array<number> },
+    molecule: Struct,
+  ) {
+    const lassoSelection = this.lassoHelper.end();
     let selection =
       newSelected.atoms.length > 0
         ? selMerge(lassoSelection, newSelected, false)
@@ -612,12 +642,19 @@ class SGroupTool implements Tool {
     return { id: null, selection };
   }
 
-  private handleClickSelection(event, ci) {
+  private handleClickSelection(
+    event: MouseEvent,
+    ci: ClosestItemWithMap | null,
+  ) {
     if (!ci) {
       return { id: null, selection: null };
     }
 
-    this.editor.hover(this.editor.findItem(event, searchMaps), null, event);
+    this.editor.hover(
+      this.editor.findItem(event, searchMaps),
+      null,
+      event as PointerEvent,
+    );
 
     if (ci.map === 'atoms') {
       return { id: null, selection: { atoms: [ci.id] } };
@@ -658,7 +695,10 @@ class SGroupTool implements Tool {
       return;
     }
 
-    const newSelected: Record<string, Array<any>> = { atoms: [], bonds: [] };
+    const newSelected: { atoms: Array<number>; bonds: Array<number> } = {
+      atoms: [],
+      bonds: [],
+    };
     const { atomsResult, extraAtoms } = this.processSelectedAtoms(
       selected,
       functionalGroups,
@@ -757,10 +797,10 @@ class SGroupTool implements Tool {
     });
 
     return Promise.resolve(res)
-      .then((newSg) => {
+      .then((newSg: SGroupDialogResult) => {
         // TODO: check before signal
-        const isQuerySGroup = SGroup.isQuerySGroup(newSg);
-        const isDataSGroup = SGroup.isDataSGroup(newSg);
+        const isQuerySGroup = SGroup.isQuerySGroup(newSg as unknown as SGroup);
+        const isDataSGroup = SGroup.isDataSGroup(newSg as unknown as SGroup);
         if (
           !isDataSGroup && // when data s-group separates
           !isQuerySGroup &&
@@ -813,7 +853,7 @@ class SGroupTool implements Tool {
 function createQueryComponentSGroup(
   id: number | null,
   editor: Editor,
-  newSg,
+  newSg: SGroupDialogResult,
   selection: Selection,
   sg: SGroup | null | undefined,
 ) {
@@ -834,7 +874,7 @@ function createQueryComponentSGroup(
   }
 }
 
-function getContextBySgroup(restruct, sgAtoms) {
+function getContextBySgroup(restruct: ReStruct, sgAtoms: Array<number>) {
   const struct = restruct.molecule;
 
   if (sgAtoms.length === 1) {
@@ -852,20 +892,22 @@ function getContextBySgroup(restruct, sgAtoms) {
   const atomSet = new Pile(sgAtoms);
 
   const sgBonds = Array.from(struct.bonds.values()).filter(
-    (bond: any) => atomSet.has(bond.begin) && atomSet.has(bond.end),
+    (bond: Bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
 }
 
-function getContextBySelection(restruct, selection) {
+function getContextBySelection(restruct: ReStruct, selection: Selection) {
   const struct = restruct.molecule;
 
   if (selection.atoms && !selection.bonds) {
     return SgContexts.Atom;
   }
 
-  const bonds = selection.bonds.map((bondid) => struct.bonds.get(bondid));
+  const bonds = (selection.bonds ?? [])
+    .map((bondid) => struct.bonds.get(bondid))
+    .filter((b): b is Bond => b !== undefined);
 
   if (!anyChainedBonds(bonds)) {
     return SgContexts.Bond;
@@ -887,9 +929,14 @@ function getContextBySelection(restruct, selection) {
     : SgContexts.Group;
 }
 
-function fromContextType(id, editor, newSg, currSelection) {
+function fromContextType(
+  id: number | null,
+  editor: Editor,
+  newSg: SGroupDialogResult,
+  currSelection: Selection,
+) {
   const restruct = editor.render.ctab;
-  const sg = restruct.molecule.sgroups.get(id);
+  const sg = id !== null ? restruct.molecule.sgroups.get(id) : undefined;
   const sourceAtoms = sg?.atoms ?? currSelection.atoms ?? [];
   const context = newSg.attrs.context;
 
@@ -919,7 +966,7 @@ function fromContextType(id, editor, newSg, currSelection) {
   return result;
 }
 
-function anyChainedBonds(bonds) {
+function anyChainedBonds(bonds: Array<Bond>) {
   if (bonds.length === 0) {
     return true;
   }
@@ -940,15 +987,18 @@ function anyChainedBonds(bonds) {
   return false;
 }
 
-function singleComponentSelected(restruct, atoms) {
+function singleComponentSelected(restruct: ReStruct, atoms: Array<number>) {
   return countOfSelectedComponents(restruct, atoms) === 1;
 }
 
-function manyComponentsSelected(restruct, atoms) {
+function manyComponentsSelected(restruct: ReStruct, atoms: Array<number>) {
   return countOfSelectedComponents(restruct, atoms) > 1;
 }
 
-function countOfSelectedComponents(restruct, atoms): any {
+function countOfSelectedComponents(
+  restruct: ReStruct,
+  atoms: Array<number>,
+): number {
   const atomSet = new Pile(atoms);
 
   return Array.from(restruct.connectedComponents.values()).reduce(

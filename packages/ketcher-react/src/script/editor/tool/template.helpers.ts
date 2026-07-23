@@ -16,7 +16,7 @@
 
 import { type Bond, type Struct, Vec2, vectorUtils } from 'ketcher-core';
 
-export function getSign(molecule, bond, v) {
+export function getSign(molecule, bond, v): 0 | 1 | -1 {
   const begin = molecule.atoms.get(bond.begin).pp;
   const end = molecule.atoms.get(bond.end).pp;
 
@@ -33,7 +33,7 @@ export function getSign(molecule, bond, v) {
   return 0;
 }
 
-export function getBondFlipSign(struct: Struct, bond: Bond): number {
+export function getBondFlipSign(struct: Struct, bond: Bond): 1 | -1 {
   const xy0 = new Vec2();
   const frid = struct.atoms.get(bond.begin)?.fragment;
   const frIds = struct.getFragmentIds(frid as number);

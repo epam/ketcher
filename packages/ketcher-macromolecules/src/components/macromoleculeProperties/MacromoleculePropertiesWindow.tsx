@@ -756,7 +756,14 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
                 ? _round(props.macromoleculesProperties.pKa, 2)
                 : '–'
             }
-            hint="The isoelectric point is calculated as the median of all pKa values for the structure."
+            hint={
+              <div>
+                The isoelectric point is calculated as the median of all pKa
+                values for amino acids (values from{' '}
+                <i>Miclotte et. al. (2020)</i>. Only amino acid natural
+                analogues are used in the calculation.
+              </div>
+            }
           />
           <BasicProperty
             name="Extinction Coef.(1/Mcm)"

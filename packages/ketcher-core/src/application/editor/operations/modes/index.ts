@@ -28,7 +28,12 @@ export class ReinitializeModeOperation implements Operation {
   public execute(_renderersManager: RenderersManager) {
     const editor = provideEditorInstance();
 
-    editor.mode.initialize(false, true, true, this.forceRecalculateAntisense);
+    editor.mode.initialize(
+      false,
+      undefined,
+      true,
+      this.forceRecalculateAntisense,
+    );
   }
 
   public invert(renderersManager: RenderersManager) {

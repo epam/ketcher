@@ -127,7 +127,6 @@ interface EditorProps {
   ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
-  isMacromoleculesEditorTurnedOn?: boolean;
   monomersLibraryUpdate?: string | JSON;
   monomersLibraryReplace?: string | JSON;
   onInit?: (editor: CoreEditor) => void;
@@ -173,7 +172,6 @@ function EditorContainer({
               ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
-              isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
               monomersLibraryUpdate={monomersLibraryUpdate}
               monomersLibraryReplace={monomersLibraryReplace}
               onInit={onInit}
@@ -189,7 +187,6 @@ function Editor({
   ketcherId,
   theme,
   togglerComponent,
-  isMacromoleculesEditorTurnedOn,
   monomersLibraryUpdate,
   monomersLibraryReplace,
   onInit,
@@ -243,12 +240,12 @@ function Editor({
   }, [dispatch]);
 
   useEffect(() => {
-    if (!isMacromoleculesEditorTurnedOn || !editor) {
+    if (!editor) {
       return;
     }
 
     editor.ensureDefaultMonomersLibraryLoaded();
-  }, [editor, isMacromoleculesEditorTurnedOn]);
+  }, [editor]);
 
   useSetRnaPresets();
   useMacromoleculesHotkeys();

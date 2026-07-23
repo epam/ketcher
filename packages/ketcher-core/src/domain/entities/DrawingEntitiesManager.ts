@@ -1972,7 +1972,7 @@ export class DrawingEntitiesManager {
       sortedGroupedMonomers[index] = [y, groupedByY];
     });
 
-    const monomerXToIndexInMatrix = {};
+    const monomerXToIndexInMatrix: Record<number, number> = {};
 
     const allXPositions = new Set<number>();
     sortedGroupedMonomers.forEach(([, groupedByX]) => {
@@ -2856,10 +2856,10 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const drawingEntities: DrawingEntity[] = [];
     const struct = sgroupDrawingEntity.monomer.monomerItem.struct;
-    const sgroupAtomIds = new Set(
+    const sgroupAtomIds: Set<number> = new Set(
       SGroup.getAtoms(struct, sgroupDrawingEntity.sgroup),
     );
-    const sgroupBondIds = new Set(
+    const sgroupBondIds: Set<number> = new Set(
       SGroup.getBonds(struct, sgroupDrawingEntity.sgroup),
     );
     const addDrawingEntity = (drawingEntity: DrawingEntity) => {
@@ -2965,7 +2965,7 @@ export class DrawingEntitiesManager {
       return false;
     }
 
-    const monomerTypes = new Set();
+    const monomerTypes: Set<string | undefined> = new Set();
     let isValid = true;
 
     this.monomers.forEach((monomer) => {

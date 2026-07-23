@@ -35,6 +35,19 @@ declare namespace NodeJS {
   }
 }
 
+interface ImportMetaEnv {
+  readonly VERSION?: string;
+  readonly BUILD_DATE?: string;
+  readonly BUILD_NUMBER?: string;
+  readonly HELP_LINK?: string;
+  readonly NODE_ENV?: string;
+  readonly KETCHER_ENABLE_REDUX_LOGGER?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
 interface Document {
   mozFullScreenElement?: Element;
   msFullscreenElement?: Element;

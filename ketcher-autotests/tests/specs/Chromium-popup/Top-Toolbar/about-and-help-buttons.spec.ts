@@ -10,7 +10,6 @@ import {
   clickByLink,
   takeEditorScreenshot,
   takeElementScreenshot,
-  takeTopToolbarScreenshot,
 } from '@utils';
 
 let page: Page;

@@ -124,10 +124,24 @@ test.describe('Bugs: ketcher-3.15.0', () => {
     await monomerC.click({ modifiers: ['Shift'] });
 
     await MacromoleculesTopToolbar(page).expandSwitchLayoutModeDropdown();
-    await takeTopToolbarScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).switchLayoutModeDropdownButton,
+      {
+        paddingWidth: 1,
+        paddingHeight: 50,
+      },
+    );
 
     await MacromoleculesTopToolbar(page).expandCreateAntisenseStrandDropdown();
-    await takeTopToolbarScreenshot(page);
+    await takeElementScreenshot(
+      page,
+      MacromoleculesTopToolbar(page).createAntisenseStrandDropdownButton,
+      {
+        paddingWidth: 1,
+        paddingHeight: 35,
+      },
+    );
   });
 
   test('Case 3 — Labels for monomer natural analog category is missing if filter applied in Ketcher popup mode', async ({

@@ -46,6 +46,7 @@ import {
   rotateDelta,
 } from 'application/editor/shared/utils';
 import { getAttachmentPointStereoBond } from 'domain/helpers/getAttachmentPointStereoBond';
+import { calculateDativeValence } from 'domain/helpers/dativeValence';
 
 export type Neighbor = {
   aid: number;
@@ -1151,6 +1152,70 @@ export class Struct {
     );
     let correctConn = conn;
     atom.badConn = false;
+    let dativeBondOrder = 0;
+    let donorCount = 0;
+    let acceptorCount = 0;
+
+    for (const neighborId of atom.neighbors) {
+      const bond = this.bonds.get(this.halfBonds.get(neighborId)!.bid)!;
+
+      if (
+        Bond.isBondToHiddenLeavingGroup(
+          this,
+          bond,
+          includeAtomsInCollapsedSgroups,
+        )
+      ) {
+        continue;
+      }
+
+      switch (bond.type) {
+        case Bond.PATTERN.TYPE.SINGLE:
+          dativeBondOrder += 1;
+          break;
+        case Bond.PATTERN.TYPE.DOUBLE:
+          dativeBondOrder += 2;
+          break;
+        case Bond.PATTERN.TYPE.TRIPLE:
+          dativeBondOrder += 3;
+          break;
+        case Bond.PATTERN.TYPE.AROMATIC:
+          dativeBondOrder += 1.5;
+          break;
+        case Bond.PATTERN.TYPE.DATIVE:
+          if (bond.begin === aid) {
+            donorCount++;
+          } else {
+            acceptorCount++;
+          }
+          break;
+      }
+    }
+
+    if (donorCount > 0 || acceptorCount > 0) {
+      const element = Elements.get(atom.label);
+
+      // Query and attachment-point atoms are ignored rather than marked invalid.
+      if (!element || atom.isQuery() || atom.attachmentPoints) {
+        atom.implicitH = 0;
+        return;
+      }
+
+      const dativeValence = calculateDativeValence({
+        element,
+        charge,
+        bondOrder: dativeBondOrder,
+        radicalCount: radicalElectrons(atom.radical),
+        donorCount,
+        acceptorCount,
+      });
+
+      // #10427 counts dative bonds as occupied orbitals, not covalent bond order.
+      atom.valence = Math.ceil(dativeBondOrder);
+      atom.badConn = !dativeValence.isValid;
+      atom.implicitH = atom.badConn ? 0 : dativeValence.hydrogenCount;
+      return;
+    }
 
     if (isAromatic) {
       if (atom.label === 'C' && charge === 0) {

@@ -74,6 +74,7 @@ import {
   takeMonomerLibraryScreenshot,
   updateMonomersLibrary,
   zoomOutByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import { getAtomLocator } from '@utils/canvas/atoms/getAtomLocator/getAtomLocator';
 import { getAbbreviationLocator } from '@utils/canvas/s-group-signes/getAbbreviationLocator';
@@ -930,6 +931,7 @@ test.describe('Ketcher bugs in 3.9.0: ', () => {
     );
     const textLabel = getTextLabelLocator(page, {}).first();
     await textLabel.dblclick();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await TextEditorDialog(page).cancel();
   });

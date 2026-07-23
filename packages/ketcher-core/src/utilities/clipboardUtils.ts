@@ -1,20 +1,43 @@
 import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
+export const PLAIN_TEXT_MIME_TYPE = 'text/plain';
+
+// Prefer exact KET data, then common structure formats, and use plain text last as a fallback.
+const clipboardDataTypes = [
+  ChemicalMimeType.KET,
+  ChemicalMimeType.Mol,
+  ChemicalMimeType.Rxn,
+  PLAIN_TEXT_MIME_TYPE,
+] as const;
+
+type ClipboardDataType = typeof clipboardDataTypes[number];
+
+export type ModernClipboardData = ClipboardItem[];
+export type LegacyClipboardData = Partial<Record<ClipboardDataType, string>>;
+
+export type ClipboardData = ModernClipboardData | LegacyClipboardData;
+
 /**
  *
  * Legacy browser API doesn't support async operations, so it is not possible
  * to call indigo, when copy/cut/paste
  */
-export function isClipboardAPIAvailable() {
+export function isClipboardAPIAvailable(): boolean {
   return (
     typeof navigator?.clipboard?.writeText === 'function' &&
     typeof navigator?.clipboard?.read === 'function'
   );
 }
 
-export function legacyCopy(clipboardData, data) {
+export function legacyCopy(
+  clipboardData: DataTransfer | null,
+  data: LegacyClipboardData,
+): void {
+  // ClipboardEvent.clipboardData can be null in non-standard or synthetic events.
+  if (!clipboardData) return;
   let curFmt;
-  clipboardData.setData('text/plain', data['text/plain']);
+  const plainTextData = data[PLAIN_TEXT_MIME_TYPE] || '';
+  clipboardData.setData(PLAIN_TEXT_MIME_TYPE, plainTextData);
   try {
     Object.keys(data).forEach((fmt) => {
       curFmt = fmt;
@@ -26,9 +49,13 @@ export function legacyCopy(clipboardData, data) {
   }
 }
 
-export function legacyPaste(cb, formats) {
-  let data = {};
-  data['text/plain'] = cb.getData('text/plain');
+export function legacyPaste(
+  cb: DataTransfer | null,
+  formats: ClipboardDataType[],
+): LegacyClipboardData {
+  let data: LegacyClipboardData = {};
+  if (!cb) return data;
+  data[PLAIN_TEXT_MIME_TYPE] = cb.getData(PLAIN_TEXT_MIME_TYPE);
   data = formats.reduce((res, fmt) => {
     const d = cb.getData(fmt);
     if (d) res[fmt] = d;
@@ -42,26 +69,42 @@ export function notifyCopyCut() {
   window.dispatchEvent(event);
 }
 
-export async function getStructStringFromClipboardData(
-  data: ClipboardItem[],
-): Promise<string> {
-  const clipboardItem = data[0];
+function isClipboardItem(item?: ClipboardItem): item is ClipboardItem {
+  return typeof ClipboardItem !== 'undefined' && item instanceof ClipboardItem;
+}
 
-  if (clipboardItem && clipboardItem instanceof ClipboardItem) {
-    const structStr =
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-      (await safelyGetMimeType(clipboardItem, 'text/plain'));
-    return structStr === '' ? '' : structStr.text();
-  } else {
-    return (
-      data[ChemicalMimeType.KET] ||
-      data[ChemicalMimeType.Mol] ||
-      data[ChemicalMimeType.Rxn] ||
-      data['text/plain']
-    );
+export async function getStructStringFromClipboardData(
+  data: ClipboardData,
+): Promise<string> {
+  if (Array.isArray(data)) {
+    const clipboardItem = data[0];
+
+    if (!isClipboardItem(clipboardItem)) {
+      return '';
+    }
+
+    for (const clipboardDataType of clipboardDataTypes) {
+      const mimeType =
+        clipboardDataType === PLAIN_TEXT_MIME_TYPE
+          ? clipboardDataType
+          : `web ${clipboardDataType}`;
+      const structStr = await safelyGetMimeType(clipboardItem, mimeType);
+      if (structStr) {
+        return structStr.text();
+      }
+    }
+
+    return '';
   }
+
+  for (const clipboardDataType of clipboardDataTypes) {
+    const structStr = data[clipboardDataType];
+    if (structStr) {
+      return structStr;
+    }
+  }
+
+  return '';
 }
 
 /**
@@ -85,7 +128,7 @@ export async function isPasteContentAvailable(): Promise<boolean> {
 export async function safelyGetMimeType(
   clipboardItem: ClipboardItem,
   mimeType: string,
-) {
+): Promise<Blob | ''> {
   try {
     const result = await clipboardItem.getType(mimeType);
     return result?.size > 0 ? result : '';

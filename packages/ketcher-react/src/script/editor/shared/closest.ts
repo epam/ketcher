@@ -84,14 +84,28 @@ function calculateDistanceToText(
 function findClosestText(restruct: ReStruct, cursorPosition: Vec2) {
   let minDist = Number.POSITIVE_INFINITY;
   let ret: ClosestReturnType = null;
+  const { microModeScale, offset } = restruct.render.options;
 
   restruct.texts.forEach((text, id) => {
-    const dist = calculateDistanceToText(
-      cursorPosition,
-      text.getReferencePoints(),
-    );
+    if (!text.paths.length) return;
 
-    if (dist < SELECTION_DISTANCE_COEFFICIENT && (!ret || dist < minDist)) {
+    const { p0, p1 } = text.getRelBox(text.paths);
+    // Convert from canvas coordinates (which include render offset) to model space.
+    // This correctly accounts for the font ascender/descender so the detection box
+    // matches the actual visible text bounds rather than the baseline-anchored position.
+    const topLeft = p0.sub(offset).scaled(1 / microModeScale);
+    const bottomRight = p1.sub(offset).scaled(1 / microModeScale);
+    // Build reference points in order: [top-left, bottom-left, bottom-right, top-right]
+    const referencePoints = [
+      topLeft,
+      new Vec2(topLeft.x, bottomRight.y),
+      bottomRight,
+      new Vec2(bottomRight.x, topLeft.y),
+    ];
+
+    const dist = calculateDistanceToText(cursorPosition, referencePoints);
+
+    if (dist === SELECTION_WITHIN_TEXT && (!ret || dist < minDist)) {
       minDist = dist;
       ret = { id, dist: minDist };
     }

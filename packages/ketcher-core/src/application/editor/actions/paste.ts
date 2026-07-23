@@ -34,7 +34,9 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
+import type { ReStruct } from 'application/render';
 import type { MultitailArrow } from 'domain/entities/multitailArrow';
+import type { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -54,14 +56,19 @@ type CreatedItems = {
   multitailArrows: number[];
 };
 
+type PasteItems = {
+  atoms: number[];
+  bonds: number[];
+};
+
 export function fromPaste(
-  restruct,
-  pstruct,
-  point,
+  restruct: ReStruct,
+  pstruct: Struct,
+  point: Vec2,
   angle = 0,
   isPreview = false,
   needMoveFromTopLeftPoint = false,
-): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
+): [Action, PasteItems, CreatedItems] {
   const xy0 = needMoveFromTopLeftPoint
     ? pstruct.getCoordBoundingBox().min
     : getStructCenter(pstruct);
@@ -69,13 +76,13 @@ export function fromPaste(
 
   const action = new Action();
 
-  const aidMap = new Map();
-  const fridMap = new Map();
+  const aidMap = new Map<number, number>();
+  const fridMap = new Map<number, number>();
 
-  const pasteItems = {
+  const pasteItems: PasteItems = {
     // only atoms and bonds now
-    atoms: [] as number[],
-    bonds: [] as number[],
+    atoms: [],
+    bonds: [],
   };
 
   const items: CreatedItems = {
@@ -90,19 +97,43 @@ export function fromPaste(
   };
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment) && !pstruct.isAtomFromMacromolecule(aid)) {
-      fridMap.set(
-        atom.fragment,
-        (
-          action.addOp(
-            new FragmentAdd(null, atom.fragment.properties).perform(restruct),
-          ) as FragmentAdd
-        ).frid,
-      );
+    const fragmentId = atom.fragment;
+    const isMacromoleculeAtom = pstruct.isAtomFromMacromolecule(aid);
+
+    if (
+      fragmentId !== undefined &&
+      fragmentId !== null &&
+      !fridMap.has(fragmentId) &&
+      !isMacromoleculeAtom
+    ) {
+      const fragment = pstruct.frags.get(fragmentId);
+
+      if (fragment === undefined || fragment === null) {
+        throw new Error(
+          `Fragment not found for pasted atom fragment ${fragmentId}`,
+        );
+      }
+
+      const fragmentAdd = action.addOp(
+        new FragmentAdd(null, fragment.properties).perform(restruct),
+      ) as FragmentAdd;
+
+      if (fragmentAdd.frid === null) {
+        throw new Error(
+          'FragmentAdd did not create a fragment ID during paste',
+        );
+      }
+
+      fridMap.set(fragmentId, fragmentAdd.frid);
+    }
+
+    let mappedFragmentId: number | undefined;
+    if (fragmentId !== undefined) {
+      mappedFragmentId = fridMap.get(fragmentId);
     }
 
     const tmpAtom = Object.assign(atom.clone(), {
-      fragment: fridMap.get(atom.fragment),
+      fragment: mappedFragmentId,
     });
     const operation = new AtomAdd(
       tmpAtom,
@@ -126,19 +157,40 @@ export function fromPaste(
   pstruct.frags.forEach((frag, frid) => {
     if (!frag) return;
     if (frag.properties) {
+      const newFragmentId = fridMap.get(frid);
+
+      if (newFragmentId === undefined) {
+        throw new Error(
+          `Fragment ${frid} is missing from fridMap during paste`,
+        );
+      }
+
       action.addOp(
-        new FragmentSetProperties(fridMap.get(frid), frag.properties).perform(
+        new FragmentSetProperties(newFragmentId, frag.properties).perform(
           restruct,
         ),
       );
     }
-    frag.stereoAtoms.forEach((aid) =>
+    frag.stereoAtoms.forEach((aid) => {
+      const newFragmentId = fridMap.get(frid);
+      const newStereoAtomId = aidMap.get(aid);
+
+      if (newFragmentId === undefined) {
+        throw new Error(
+          `Fragment ${frid} is missing for stereo atom paste operation`,
+        );
+      }
+
+      if (newStereoAtomId === undefined) {
+        throw new Error(`Atom ${aid} is missing from aidMap during paste`);
+      }
+
       action.addOp(
-        new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
+        new FragmentAddStereoAtom(newFragmentId, newStereoAtomId).perform(
           restruct,
         ),
-      ),
-    );
+      );
+    });
   });
 
   pstruct.bonds.forEach((bond) => {
@@ -163,14 +215,15 @@ export function fromPaste(
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
-    let attachmentPoints;
-    try {
-      attachmentPoints = sg.cloneAttachmentPoints(aidMap);
-    } catch (e) {
-      // For macromolecules, attachment points may reference atoms not in aidMap
-      // This is expected behavior, use empty array instead
-      attachmentPoints = [];
-    }
+    const attachmentPoints: ReadonlyArray<SGroupAttachmentPoint> = (() => {
+      try {
+        return sg.cloneAttachmentPoints(aidMap);
+      } catch (e) {
+        // For macromolecules, attachment points may reference atoms not in aidMap
+        // This is expected behavior, use empty array instead
+        return [];
+      }
+    })();
     if (
       sg.isNotContractible(pstruct) &&
       !(sg instanceof MonomerMicromolecule) &&
@@ -257,15 +310,21 @@ export function fromPaste(
 
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((__frag, frid) => {
-      action.addOp(
-        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct),
-      );
+      const newFragmentId = fridMap.get(frid);
+
+      if (newFragmentId === undefined) {
+        throw new Error(
+          `Fragment ${frid} is missing for R-group paste mapping`,
+        );
+      }
+
+      action.addOp(new RGroupFragment(rgid, newFragmentId).perform(restruct));
     });
-    const ifThen = pstruct.rgroups.get(rgid).ifthen;
-    const newRgId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
+    const ifThen = rg.ifthen;
+    const safeIfThenId = pstruct.rgroups.get(ifThen) ? ifThen : 0;
     action
       .mergeWith(fromRGroupAttrs(restruct, rgid, rg.getAttrs()))
-      .mergeWith(fromUpdateIfThen(restruct, newRgId, rg.ifthen));
+      .mergeWith(fromUpdateIfThen(restruct, safeIfThenId, rg.ifthen));
   });
 
   action.operations.reverse();

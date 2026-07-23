@@ -19,7 +19,7 @@ import {
   type AtomQueryProperties,
   Atom,
 } from 'domain/entities/atom';
-import { Bond } from 'domain/entities/bond';
+import { Bond, type BondAttributes } from 'domain/entities/bond';
 import type { SGroup } from 'domain/entities/sgroup';
 import type { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
@@ -35,6 +35,76 @@ export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
 export type AtomAllAttributeValue =
   | AtomAttributes[AtomAttributeName]
   | AtomQueryProperties[AtomQueryPropertiesName];
+type NormalizedEditorSelection = Record<typeof selectionKeys[number], number[]>;
+type ClosestAtom = {
+  id: number;
+  dist: number;
+};
+type ClosestSkip = {
+  map: 'atoms';
+  id: number;
+} | null;
+type FindClosestAtom = (
+  restruct: ReStruct,
+  pos: Vec2,
+  skip: ClosestSkip,
+  minDist: number,
+) => ClosestAtom | null;
+type AtomForNewBondResult = {
+  atom: number | AtomAttributes;
+  pos: Vec2;
+};
+/** Default bond type used when no previous bond type is available as a reference. */
+const DEFAULT_BOND_TYPE = Bond.PATTERN.TYPE.SINGLE;
+const findClosestAtom: FindClosestAtom = closest.atom;
+
+function getReAtom(restruct: ReStruct, atomId: number) {
+  const atom = restruct.atoms.get(atomId);
+  if (!atom) {
+    throw new Error(`Atom ${atomId} not found in restruct`);
+  }
+
+  return atom;
+}
+
+function getAtom(restruct: ReStruct, atomId: number): Atom {
+  const atom = restruct.molecule.atoms.get(atomId);
+  if (!atom) {
+    throw new Error(`Atom ${atomId} not found in struct`);
+  }
+
+  return atom;
+}
+
+function getAtomNeighbors(struct: Struct, atomId: number) {
+  const neighbors = struct.atomGetNeighbors(atomId);
+  if (!neighbors) {
+    throw new Error(`Atom ${atomId} not found in struct`);
+  }
+
+  return neighbors;
+}
+
+function getBondAngle(struct: Struct, bondId: number | null) {
+  if (bondId === null) {
+    throw new Error('Previous bond is required');
+  }
+
+  const bond = struct.bonds.get(bondId);
+  if (!bond) {
+    throw new Error(`Bond ${bondId} not found in struct`);
+  }
+
+  return bond.angle;
+}
+
+function ensureAtomId(atom: number | AtomAttributes): number {
+  if (typeof atom !== 'number') {
+    throw new Error('Expected atom id (number), but received atom attributes');
+  }
+
+  return atom;
+}
 
 export function atomGetAttr(
   restruct: ReStruct,
@@ -46,16 +116,16 @@ export function atomGetAttr(
   return atom[name];
 }
 
-export function atomGetDegree(restruct, aid) {
-  return restruct.atoms.get(aid).a.neighbors.length;
+export function atomGetDegree(restruct: ReStruct, aid: number): number {
+  return getReAtom(restruct, aid).a.neighbors.length;
 }
 
-export function atomGetSGroups(restruct, atomId: number): number[] {
-  return Array.from(restruct.atoms.get(atomId).a.sgs);
+export function atomGetSGroups(restruct: ReStruct, atomId: number): number[] {
+  return Array.from(getReAtom(restruct, atomId).a.sgs);
 }
 
-export function atomGetPos(restruct, id) {
-  return restruct.molecule.atoms.get(id).pp;
+export function atomGetPos(restruct: ReStruct, id: number): Vec2 {
+  return getAtom(restruct, id).pp;
 }
 
 export function findStereoAtoms(
@@ -88,8 +158,8 @@ export function findStereoAtoms(
   });
 }
 
-export function structSelection(struct): EditorSelection {
-  return selectionKeys.reduce((res, key) => {
+export function structSelection(struct: Struct): EditorSelection {
+  return selectionKeys.reduce<EditorSelection>((res, key) => {
     res[key] = Array.from(struct[key].keys());
     return res;
   }, {});
@@ -117,34 +187,41 @@ export function getSelectionFromStruct(struct: Struct): EditorSelection {
   return selection;
 }
 
-export function formatSelection(selection): any {
-  return selectionKeys.reduce((res, key) => {
+export function formatSelection(
+  selection: EditorSelection,
+): NormalizedEditorSelection {
+  return selectionKeys.reduce<NormalizedEditorSelection>((res, key) => {
     res[key] = selection[key] || [];
 
     return res;
-  }, {});
+  }, {} as NormalizedEditorSelection);
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
-export function atomForNewBond(restruct, id, bond?) {
+export function atomForNewBond(
+  restruct: ReStruct,
+  atom: number | AtomAttributes,
+  bond?: Partial<BondAttributes>,
+): AtomForNewBondResult {
   // eslint-disable-line max-statements
+  const id = ensureAtomId(atom);
   const neighbours: Array<{ id: number; v: Vec2 }> = [];
   const pos = atomGetPos(restruct, id);
-  const atomNeighbours = restruct.molecule.atomGetNeighbors(id);
+  const atomNeighbours = getAtomNeighbors(restruct.molecule, id);
 
-  const prevBondId = restruct.molecule.findBondId(
-    id,
-    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
-  );
-  const prevBond = restruct.molecule.bonds.get(prevBondId);
-  let prevBondType = 1;
+  const prevBondId = atomNeighbours.length
+    ? restruct.molecule.findBondId(id, atomNeighbours[0].aid)
+    : null;
+  const prevBond =
+    prevBondId === null ? undefined : restruct.molecule.bonds.get(prevBondId);
+  let prevBondType = DEFAULT_BOND_TYPE;
   if (prevBond) {
     prevBondType = prevBond.type;
   } else if (bond) {
-    prevBondType = bond.type;
+    prevBondType = bond.type ?? DEFAULT_BOND_TYPE;
   }
 
-  restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
+  getAtomNeighbors(restruct.molecule, id).forEach((nei) => {
     const neiPos = atomGetPos(restruct, nei.aid);
 
     if (Vec2.dist(pos, neiPos) < 0.1) return;
@@ -185,14 +262,14 @@ export function atomForNewBond(restruct, id, bond?) {
       maxAngle = -((4 * Math.PI) / 3);
 
       // zig-zag
-      const nei = restruct.molecule.atomGetNeighbors(id)[0];
+      const nei = getAtomNeighbors(restruct.molecule, id)[0];
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours: Array<any> = [];
+        const neiNeighborAngles: number[] = [];
         const neiPos = atomGetPos(restruct, nei.aid);
         const neiV = Vec2.diff(pos, neiPos);
         const neiAngle = Math.atan2(neiV.y, neiV.x);
 
-        restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
+        getAtomNeighbors(restruct.molecule, nei.aid).forEach((neiNei) => {
           const neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
@@ -204,13 +281,13 @@ export function atomForNewBond(restruct, id, bond?) {
 
           if (ang < 0) ang += 2 * Math.PI;
 
-          neiNeighbours.push(ang);
+          neiNeighborAngles.push(ang);
         });
-        neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
+        neiNeighborAngles.sort((nei1, nei2) => nei1 - nei2);
 
         if (
-          neiNeighbours[0] <= Math.PI * 1.01 &&
-          neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
+          neiNeighborAngles[0] <= Math.PI * 1.01 &&
+          neiNeighborAngles[neiNeighborAngles.length - 1] <= 1.01 * Math.PI
         ) {
           maxAngle *= -1;
         }
@@ -228,7 +305,7 @@ export function atomForNewBond(restruct, id, bond?) {
         bond?.type === Bond.PATTERN.TYPE.SINGLE);
 
     if (shallBe180DegToPrevBond) {
-      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle;
+      const prevBondAngle = getBondAngle(restruct.molecule, prevBondId);
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
         angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
       } else {
@@ -244,8 +321,8 @@ export function atomForNewBond(restruct, id, bond?) {
 
   v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-  let a: any = closest.atom(restruct, v, null, 0.1);
-  a = a === null ? { label: 'C' } : a.id;
+  const closestAtom = findClosestAtom(restruct, v, null, 0.1);
+  const a = closestAtom === null ? { label: 'C' } : closestAtom.id;
 
   return { atom: a, pos: v };
 }

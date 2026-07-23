@@ -190,6 +190,7 @@
         "fullName": "L-2-aminobutyric acid",
         "alias": "Abu",
         "aliasHELM": "Abu",
+        "aliasBILN": "Abu",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,
@@ -500,6 +501,7 @@
         "fullName": "3-(2-naphthyl)-alanine",
         "alias": "2Nal",
         "aliasHELM": "2Nal",
+        "aliasBILN": "Nal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 0,
@@ -743,6 +745,7 @@
         "fullName": "D-3-(3-pyridyl)-alanine",
         "alias": "D-3Pal",
         "aliasHELM": "D-3Pal",
+        "aliasBILN": "D-3Pal",
         "attachmentPoints": [
             {
                 "attachmentAtom": 1,

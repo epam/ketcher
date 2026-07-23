@@ -248,7 +248,7 @@ test.describe('Selection tools', () => {
     );
     await takeElementScreenshot(
       page,
-      getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       {
         padding: 250,
       },
@@ -352,7 +352,7 @@ test.describe('Selection tools', () => {
     );
     await takeElementScreenshot(
       page,
-      getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       {
         padding: 250,
       },
@@ -494,7 +494,7 @@ test.describe('Selection tools', () => {
     );
     await takeElementScreenshot(
       page,
-      getAtomLocator(page, { atomLabel: 'O' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'O' }).nth(1),
       {
         padding: 190,
       },
@@ -651,7 +651,7 @@ test.describe('Selection tools', () => {
     );
     await takeElementScreenshot(
       page,
-      getAtomLocator(page, { atomLabel: 'N' }).nth(0),
+      getAtomLocator(page, { atomLabel: 'N' }).nth(1),
       {
         padding: 250,
       },

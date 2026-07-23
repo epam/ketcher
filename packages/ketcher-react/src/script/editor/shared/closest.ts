@@ -23,6 +23,9 @@ import {
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
   FunctionalGroup,
+  getOrThrow,
+  atomsForBondNotFoundMessage,
+  entityNotFoundMessage,
 } from 'ketcher-core';
 import type { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -189,15 +192,16 @@ function findClosestBond(
       return;
     }
 
-    const beginAtom = restruct.atoms.get(bond.b.begin);
-    const endAtom = restruct.atoms.get(bond.b.end);
-    if (!beginAtom || !endAtom) {
-      // A bond's begin/end atoms are always present in the same restruct;
-      // their absence would indicate a corrupted structure.
-      throw new Error(
-        `Atom(s) for bond ${bid} not found: begin=${bond.b.begin}, end=${bond.b.end}`,
-      );
-    }
+    const beginAtom = getOrThrow(
+      restruct.atoms,
+      bond.b.begin,
+      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+    );
+    const endAtom = getOrThrow(
+      restruct.atoms,
+      bond.b.end,
+      atomsForBondNotFoundMessage(bid, bond.b.begin, bond.b.end),
+    );
     const p1 = beginAtom.a.pp;
     const p2 = endAtom.a.pp;
 
@@ -215,12 +219,11 @@ function findClosestBond(
       closestBondCenter = bid;
     }
 
-    const hb = restruct.molecule.halfBonds.get(bond.b.hb1 as number);
-    if (!hb) {
-      // Every bond has a corresponding half-bond created alongside it;
-      // its absence would indicate a corrupted structure.
-      throw new Error(`Half-bond ${bond.b.hb1} for bond ${bid} not found`);
-    }
+    const hb = getOrThrow(
+      restruct.molecule.halfBonds,
+      bond.b.hb1 as number,
+      `Half-bond ${bond.b.hb1} for bond ${bid} not found`,
+    );
     const dir = hb.dir;
     const norm = hb.norm;
 
@@ -332,11 +335,11 @@ function findClosestFrag(
   const closestAtom = findClosestAtom(restruct, pos, skip, minDist);
 
   if (closestAtom) {
-    const atom = struct.atoms.get(closestAtom.id);
-    if (!atom) {
-      // closestAtom.id always comes from an atom present in the same struct.
-      throw new Error(`Atom ${closestAtom.id} not found`);
-    }
+    const atom = getOrThrow(
+      struct.atoms,
+      closestAtom.id,
+      entityNotFoundMessage('Atom', closestAtom.id),
+    );
     return {
       id: atom.fragment,
       dist: closestAtom.dist,
@@ -346,17 +349,17 @@ function findClosestFrag(
   const closestBond = findClosestBond(restruct, pos, skip, minDist, options);
 
   if (closestBond) {
-    const bond = struct.bonds.get(closestBond.id);
-    if (!bond) {
-      // closestBond.id always comes from a bond present in the same struct.
-      throw new Error(`Bond ${closestBond.id} not found`);
-    }
+    const bond = getOrThrow(
+      struct.bonds,
+      closestBond.id,
+      entityNotFoundMessage('Bond', closestBond.id),
+    );
     const atomId = bond.begin;
-    const atom = struct.atoms.get(atomId);
-    if (!atom) {
-      // A bond's begin atom is always present in the same struct.
-      throw new Error(`Atom ${atomId} not found`);
-    }
+    const atom = getOrThrow(
+      struct.atoms,
+      atomId,
+      entityNotFoundMessage('Atom', atomId),
+    );
     return {
       id: atom.fragment,
       dist: closestBond.dist,
@@ -614,14 +617,16 @@ function findCloseMerge(
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
     if (bond) {
-      const beginAtom = struct.atoms.get(bond.begin);
-      const endAtom = struct.atoms.get(bond.end);
-      if (!beginAtom || !endAtom) {
-        // A bond's begin/end atoms are always present in the same struct.
-        throw new Error(
-          `Atom(s) for bond ${bid} not found: begin=${bond.begin}, end=${bond.end}`,
-        );
-      }
+      const beginAtom = getOrThrow(
+        struct.atoms,
+        bond.begin,
+        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+      );
+      const endAtom = getOrThrow(
+        struct.atoms,
+        bond.end,
+        atomsForBondNotFoundMessage(bid, bond.begin, bond.end),
+      );
       pos.bonds.set(bid, Vec2.lc2(beginAtom.pp, 0.5, endAtom.pp, 0.5));
     }
   });

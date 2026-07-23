@@ -25,7 +25,7 @@ test.describe('getKet', () => {
 
     await page.evaluate(() => {
       window.ketcher.setSettings({
-        bondThickness: '22',
+        bondThickness: 22,
       });
     });
     await takeEditorScreenshot(page);

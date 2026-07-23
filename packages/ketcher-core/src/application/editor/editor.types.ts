@@ -15,7 +15,11 @@
  ***************************************************************************/
 
 import type { Action } from './actions/action';
-import type { MonomerCreationState, Render } from 'application/render';
+import type {
+  MonomerCreationState,
+  Render,
+  RenderOptions,
+} from 'application/render';
 import type { Struct } from 'domain/entities/struct';
 import type { selectionKeys } from './shared/constants';
 import type { PipelineSubscription, Subscription } from 'subscription';
@@ -30,6 +34,12 @@ export type FloatingToolsParams = {
   visible?: boolean;
   rotateHandlePosition?: { x: number; y: number };
 };
+
+export type EditorOptions = Partial<
+  RenderOptions & {
+    viewOnlyMode: boolean;
+  }
+>;
 
 export enum EditorType {
   Micromolecules = 0,
@@ -53,8 +63,9 @@ export interface Editor {
   redo: () => void;
   clear: () => void;
   clearHistory: () => void;
-  options: (value?: any) => any;
-  setOptions: (opts: string) => any;
+  options(): RenderOptions;
+  options(value: EditorOptions): void;
+  setOptions: (opts: string) => void;
   zoom: (value?: any) => any;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;

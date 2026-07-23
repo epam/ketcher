@@ -60,6 +60,7 @@ import {
 import { type EditorSelection, EditorType } from './editor/editor.types';
 import {
   type ExportImageParams,
+  type KetcherApiSettings,
   type SupportedImageFormats,
   type SupportedModes,
   type UpdateMonomersLibraryParams,
@@ -77,12 +78,21 @@ type SetMoleculeOptions = {
   preserveCanvasPosition?: boolean;
 };
 
-const allowedApiSettings = {
-  'general.dearomatize-on-load': 'dearomatize-on-load',
-  ignoreChiralFlag: 'ignoreChiralFlag',
-  disableQueryElements: 'disableQueryElements',
-  bondThickness: 'bondThickness',
-};
+const allowedApiSettings = [
+  ['general.dearomatize-on-load', 'dearomatize-on-load'],
+  ['ignoreChiralFlag', 'ignoreChiralFlag'],
+  ['disableQueryElements', 'disableQueryElements'],
+  ['bondThickness', 'bondThickness'],
+] as const;
+
+type AllowedApiSetting = typeof allowedApiSettings[number][0];
+type AllowedClientSetting = typeof allowedApiSettings[number][1];
+type KetcherGetSettingsResult = Partial<
+  Record<AllowedApiSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
+type KetcherSetOptionsPayload = Partial<
+  Record<AllowedClientSetting, KetcherApiSettings[AllowedApiSetting]>
+>;
 
 const MONOMER_LIBRARY_FORMAT_OPTIONS = {
   inputFormat: ChemicalMimeType.MonomerLibrary,
@@ -180,17 +190,17 @@ export class Ketcher {
   }
 
   // TEMP.: getting only dearomatize-on-load setting
-  get settings() {
+  get settings(): KetcherGetSettingsResult {
     const options = this.editor.options();
-    const result = Object.entries(allowedApiSettings).reduce(
-      (acc, [apiSetting, clientSetting]) => {
-        if (clientSetting in options) {
-          return { ...acc, [apiSetting]: clientSetting };
-        }
-        return acc;
-      },
-      {},
-    );
+    const result: KetcherGetSettingsResult = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = options[clientSetting];
+
+      if (value !== undefined) {
+        result[apiSetting] = value;
+      }
+    }
 
     if (!Object.keys(result).length) {
       throw new Error('Allowed options are not provided');
@@ -203,17 +213,19 @@ export class Ketcher {
     this.#editor = editor;
   }
 
-  // TODO: create options type
-  setSettings(settings: Record<string, string | boolean>) {
+  setSettings(settings: KetcherApiSettings): void {
     // TODO: need to expand this and refactor this method
     if (!settings) {
       throw new Error('Please provide settings');
     }
-    const options = {};
-    for (const [apiSetting, clientSetting] of Object.entries(
-      allowedApiSettings,
-    )) {
-      options[clientSetting] = settings[apiSetting];
+    const options: KetcherSetOptionsPayload = {};
+
+    for (const [apiSetting, clientSetting] of allowedApiSettings) {
+      const value = settings[apiSetting];
+
+      if (value !== undefined) {
+        options[clientSetting] = value;
+      }
     }
 
     if (Object.hasOwn(settings, 'disableCustomQuery')) {
@@ -738,7 +750,7 @@ export class Ketcher {
   exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
     const editor = provideEditorInstance();
     const fileName = 'ketcher';
-    let blobPart;
+    let blobPart: string | undefined;
 
     if (format === 'svg' && editor?.canvas) {
       blobPart = getSvgFromDrawnStructures(
@@ -841,7 +853,7 @@ export class Ketcher {
         );
 
         dataInKetFormat = convertResult.struct;
-      } catch (error) {
+      } catch (error: unknown) {
         const originalMessage =
           error instanceof Error ? error.message : String(error);
         throw new MonomerLibraryConvertError(
